@@ -104,7 +104,7 @@ pub(crate) fn report_rows(facts: BoxFacts) -> Vec<Diagnostic> {
         rows.push(
             Diagnostic::error(
                 "identity",
-                "Punktfunk's service isn't running as Local System. Reinstall Punktfunk.",
+                "Lilynk's service isn't running as Local System. Reinstall Lilynk.",
             )
             .worded("seatcheck_identity"),
         );
@@ -150,7 +150,7 @@ pub(crate) fn report_rows(facts: BoxFacts) -> Vec<Diagnostic> {
             Diagnostic::error(
                 "host_executable",
                 format!(
-                    "A Punktfunk file is missing ({}). Reinstall Punktfunk.",
+                    "A Lilynk file is missing ({}). Reinstall Lilynk.",
                     missing.display()
                 ),
             )
@@ -163,8 +163,8 @@ pub(crate) fn report_rows(facts: BoxFacts) -> Vec<Diagnostic> {
         rows.push(
             Diagnostic::error(
                 "seat_display_rank",
-                "Windows' own Remote Desktop display driver is newer than Punktfunk's, so seats \
-                 start without a picture. Update Punktfunk.",
+                "Windows' own Remote Desktop display driver is newer than Lilynk's, so seats \
+                 start without a picture. Update Lilynk.",
             )
             .worded("seatcheck_seat_display_rank"),
         );
@@ -247,7 +247,7 @@ fn driver_row(driver: &DriverState) -> Diagnostic {
         }
         DriverState::Outdated => Diagnostic::warning(
             "seat_display_driver",
-            "The seat display driver is older than this Punktfunk. Seats update it when they next start.",
+            "The seat display driver is older than this Lilynk. Seats update it when they next start.",
         )
         .worded("seatcheck_seat_display_driver_outdated"),
         DriverState::Missing => Diagnostic::error(
@@ -258,7 +258,7 @@ fn driver_row(driver: &DriverState) -> Diagnostic {
         .worded("seatcheck_seat_display_driver_missing"),
         DriverState::Unstaged => Diagnostic::error(
             "seat_display_driver",
-            "The seat display driver isn't on this PC. Reinstall Punktfunk.",
+            "The seat display driver isn't on this PC. Reinstall Lilynk.",
         )
         .worded("seatcheck_seat_display_driver_unstaged"),
     }
@@ -376,7 +376,7 @@ fn account_row(seat: &Seat, inspection: &AccountInspection, group: &str) -> Diag
             ))
         } else {
             ("seatcheck_account_not_ours", format!(
-                "Its Windows account {account} is missing or isn't Punktfunk's. Remove the profile and add it again."
+                "Its Windows account {account} is missing or isn't Lilynk's. Remove the profile and add it again."
             ))
         })
     } else if !inspection.credential_blob {
@@ -384,12 +384,12 @@ fn account_row(seat: &Seat, inspection: &AccountInspection, group: &str) -> Diag
             (
                 "seatcheck_account_password_lost_adopted",
                 format!(
-                "Punktfunk has lost {account}'s password. Enter it again on the profile's card."
-            ),
+                    "Lilynk has lost {account}'s password. Enter it again on the profile's card."
+                ),
             )
         } else {
             ("seatcheck_account_password_lost", format!(
-                "Punktfunk has lost the password of its Windows account {account}. Remove the profile and add it again."
+                "Lilynk has lost the password of its Windows account {account}. Remove the profile and add it again."
             ))
         })
     } else if inspection.administrator {
@@ -697,7 +697,7 @@ mod tests {
             pick(&rows, "identity"),
             (
                 Error,
-                "Punktfunk's service isn't running as Local System. Reinstall Punktfunk.".into()
+                "Lilynk's service isn't running as Local System. Reinstall Lilynk.".into()
             )
         );
         let rows = report_rows(healthy());
@@ -845,7 +845,7 @@ mod tests {
             pick(&rows, "host_executable"),
             (
                 Error,
-                "A Punktfunk file is missing (pf-keeper.exe). Reinstall Punktfunk.".into()
+                "A Lilynk file is missing (pf-keeper.exe). Reinstall Lilynk.".into()
             )
         );
     }
@@ -869,7 +869,7 @@ mod tests {
             row(DriverState::Outdated),
             (
                 Warning,
-                "The seat display driver is older than this Punktfunk. Seats update it when they next start."
+                "The seat display driver is older than this Lilynk. Seats update it when they next start."
                     .into()
             )
         );
@@ -886,7 +886,7 @@ mod tests {
             row(DriverState::Unstaged),
             (
                 Error,
-                "The seat display driver isn't on this PC. Reinstall Punktfunk.".into()
+                "The seat display driver isn't on this PC. Reinstall Lilynk.".into()
             )
         );
     }
@@ -913,8 +913,8 @@ mod tests {
             pick(&rows, "seat_display_rank"),
             (
                 Error,
-                "Windows' own Remote Desktop display driver is newer than Punktfunk's, so seats \
-                 start without a picture. Update Punktfunk."
+                "Windows' own Remote Desktop display driver is newer than Lilynk's, so seats \
+                 start without a picture. Update Lilynk."
                     .into()
             )
         );
@@ -1125,7 +1125,7 @@ mod tests {
         };
         let missing = (
             Error,
-            "Its Windows account pfs-one is missing or isn't Punktfunk's. Remove the profile and add it again."
+            "Its Windows account pfs-one is missing or isn't Lilynk's. Remove the profile and add it again."
                 .to_string(),
         );
         let lost = (
@@ -1152,7 +1152,7 @@ mod tests {
             }),
             (
                 Error,
-                "Punktfunk has lost the password of its Windows account pfs-one. Remove the profile and add it again."
+                "Lilynk has lost the password of its Windows account pfs-one. Remove the profile and add it again."
                     .into()
             )
         );
@@ -1253,7 +1253,7 @@ mod tests {
             }),
             (
                 Error,
-                "Punktfunk has lost Bärbel Ott's password. Enter it again on the profile's card."
+                "Lilynk has lost Bärbel Ott's password. Enter it again on the profile's card."
                     .into()
             )
         );

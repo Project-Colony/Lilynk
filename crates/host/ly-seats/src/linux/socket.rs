@@ -1,4 +1,4 @@
-//! The supervisor's Unix socket, open to root and the `punktfunk` user, and to the box owner for
+//! The supervisor's Unix socket, open to root and the `lilynk` user, and to the box owner for
 //! box-wide Flatpaks.
 //!
 //! One request per connection, framed as on the Windows pipe ([`crate::ipc::answer`]). The
@@ -23,10 +23,10 @@ use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
 /// Where the daemon listens and the box host connects.
-pub const SOCKET_PATH: &str = "/run/punktfunk/seats.sock";
+pub const SOCKET_PATH: &str = "/run/lilynk/seats.sock";
 
 /// The door user's primary group, which reads this socket and the box's library. Not
-/// `punktfunk`, the group of the vhci attach nodes.
+/// `lilynk`, the group of the vhci attach nodes.
 pub const DOOR_GROUP: &str = "lilynk-door";
 
 /// Requests served at once. A connection past it is closed unanswered.
@@ -38,7 +38,7 @@ const ANSWER_TIMEOUT: Duration = Duration::from_secs(180);
 /// A Flatpak install downloads hundreds of megabytes.
 const FLATPAK_TIMEOUT: Duration = Duration::from_secs(30 * 60);
 
-/// Root, or the `punktfunk` user when it exists. With no such user only root is let in.
+/// Root, or the `lilynk` user when it exists. With no such user only root is let in.
 pub fn peer_allowed(peer_uid: u32, lilynk_uid: Option<u32>) -> bool {
     peer_uid == 0 || lilynk_uid == Some(peer_uid)
 }
@@ -160,10 +160,10 @@ pub fn serve(listener: UnixListener, service: Arc<SeatService<LinuxBackend>>) {
 }
 
 fn handle(service: &SeatService<LinuxBackend>, mut stream: UnixStream) {
-    let punktfunk = accounts::lookup("punktfunk").ok().flatten().map(|u| u.uid);
+    let lilynk = accounts::lookup("lilynk").ok().flatten().map(|u| u.uid);
     let owner = service.backend().owner_uid();
     let uid = match peer_uid(&stream) {
-        Ok(uid) if peer_allowed(uid, punktfunk) || owner == Some(uid) => uid,
+        Ok(uid) if peer_allowed(uid, lilynk) || owner == Some(uid) => uid,
         Ok(uid) => {
             tracing::warn!(uid, "seats socket refused a peer");
             return;
@@ -175,7 +175,7 @@ fn handle(service: &SeatService<LinuxBackend>, mut stream: UnixStream) {
     };
     let _ = stream.set_write_timeout(Some(REQUEST_TIMEOUT));
     let admit = |command: &Command| {
-        let allowed = command_allowed(uid, punktfunk, owner, command);
+        let allowed = command_allowed(uid, lilynk, owner, command);
         if !allowed {
             tracing::warn!(uid, "seats socket refused the box owner a command");
         }
@@ -308,7 +308,7 @@ mod tests {
         assert!(peer_allowed(0, None));
         assert!(peer_allowed(0, Some(972)));
         assert!(peer_allowed(972, Some(972)));
-        assert!(!peer_allowed(972, None), "no punktfunk user: root only");
+        assert!(!peer_allowed(972, None), "no lilynk user: root only");
         assert!(!peer_allowed(1000, Some(972)));
         assert!(!peer_allowed(975, Some(972)), "a seat user is not the door");
     }

@@ -20,7 +20,7 @@ driver can still say no. Features that need both ends are listed under
 
 ## Host platforms
 
-Punktfunk hosts on **Linux** and **Windows**. macOS, iOS, tvOS and Android are clients only.
+Lilynk hosts on **Linux** and **Windows**. macOS, iOS, tvOS and Android are clients only.
 
 ### Display and capture
 
@@ -40,7 +40,7 @@ Each session gets its own display at the client's resolution and refresh rate �
 | Cinnamon (Mint · LMDE) | ❌ ¹¹ | ❌ | ❌ |
 | River, dwl, COSMIC, others | ❌ ¹² | ❌ | ❌ |
 
-1. Punktfunk's own display driver. Needs Windows 11 22H2 (build 22621); the installer refuses
+1. Lilynk's own display driver. Needs Windows 11 22H2 (build 22621); the installer refuses
    anything older. Each paired client gets its own monitor identity carrying its screen's HDR
    brightness, so Windows keeps per-client display settings and apps tone-map to your screen.
 2. Through Windows Graphics Capture: the pointer is part of the picture, and permission prompts
@@ -195,7 +195,7 @@ default, on the Linux, Windows and Apple clients; Android has none, and GameStre
 
 ## Client decode
 
-No Punktfunk host or client contains FFmpeg. Every client decodes with the platform's own
+No Lilynk host or client contains FFmpeg. Every client decodes with the platform's own
 decoders, with openh264 and rav1d as the software floor on the desktop.
 
 | Client | Decode path | Codecs | 10-bit / HDR | 4:4:4 |
@@ -248,7 +248,7 @@ decoders, with openh264 and rav1d as the software floor on the desktop.
 
 ## Clients and features
 
-Linux, Windows, the Decky plugin and the `punktfunk` CLI stream through the same session binary.
+Linux, Windows, the Decky plugin and the `lilynk` CLI stream through the same session binary.
 Apple is one app across macOS, iOS/iPadOS and tvOS. Android TV is the Android app.
 
 ### Before you connect
@@ -262,7 +262,7 @@ Apple is one app across macOS, iOS/iPadOS and tvOS. Android TV is the Android ap
 | Apple TV | ✅ ⁴ | ✅ | ✅ ¹ | ✅ | ✅ | ❌ ³ |
 | Android · Android TV | ✅ | ✅ | ✅ ¹ | ✅ | ✅ | ❌ ³ |
 | Decky (Steam Deck) | ⚠️ ⁵ | ❌ | ✅ ⁶ | ❌ | ✅ | ✅ ⁷ |
-| `punktfunk` CLI | ✅ | ✅ ⁸ | ✅ | ✅ | ✅ | ❌ |
+| `lilynk` CLI | ✅ | ✅ ⁸ | ✅ | ✅ | ✅ | ❌ |
 | Moonlight | ❌ | ❌ | ✅ ⁹ | ❓ | ❓ | ❓ |
 
 1. On any paired host. See [Game library](/docs/game-library).
@@ -351,7 +351,7 @@ Keyboard chords are in [Shortcuts and quick actions](/docs/shortcuts).
 9. tvOS gives apps no microphone and no pasteboard.
 10. Text only.
 11. Decided by the host.
-12. Moonlight has its own overlay; [stats](/docs/stats) covers Punktfunk's.
+12. Moonlight has its own overlay; [stats](/docs/stats) covers Lilynk's.
 
 No client offers file transfer through the clipboard yet. See [Shared clipboard](/docs/clipboard).
 
@@ -377,7 +377,7 @@ Either side can be the reason one of these didn't happen:
 |---|---|
 | **Protocol core** — `lilynk-core`, the C ABI, FEC and crypto | Stable; the wire format and the C ABI are versioned contracts (see [Mixing versions](#mixing-versions)). |
 | **Linux host** | The most exercised host. What it can do depends on the desktop — see the tables above. |
-| **Windows host** | An installer with its own display driver. Setup has a publicly trusted signature; the drivers carry Punktfunk's own, which setup trusts on install ([About the signatures](/docs/windows-host#about-the-signatures)). NVENC is well trodden; AMF and QSV see less field use. Runs in the signed-in console session, not session 0. |
+| **Windows host** | An installer with its own display driver. Setup has a publicly trusted signature; the drivers carry Lilynk's own, which setup trusts on install ([About the signatures](/docs/windows-host#about-the-signatures)). NVENC is well trodden; AMF and QSV see less field use. Runs in the signed-in console session, not session 0. |
 | **GameStream / Moonlight plane** | Works, and is off until you turn on **GameStream**. Pairs over plain HTTP — trusted LAN only ([Security](/docs/security#gamestream--moonlight-compatibility-is-the-weak-crypto-path)). Presets, links, clipboard and microphone aren't on it. |
 | **Linux and Windows desktop clients** | Packaged; one codebase with the Decky plugin and the CLI. Windows ships for x64 and ARM64. |
 | **Apple client** (macOS · iOS · iPadOS · tvOS) | On the App Store for iPhone, iPad and Apple TV; the Mac has a notarized DMG. Betas for all four on TestFlight. No microphone or clipboard on tvOS. |

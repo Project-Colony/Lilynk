@@ -1,4 +1,4 @@
-// Punktfunk's winget REST source — the read path only.
+// Lilynk's winget REST source — the read path only.
 //
 // The winget client consumes exactly three endpoints. `microsoft/winget-cli-restsource`'s other 23
 // (`/packages/**` CRUD and the manifest writes) are that reference implementation's ADMIN API for

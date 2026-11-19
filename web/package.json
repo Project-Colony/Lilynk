@@ -2,7 +2,7 @@
 	"name": "lilynk-web",
 	"private": true,
 	"type": "module",
-	"description": "punktfunk management console — TanStack Start + React Query (orval) + @unom/ui + Paraglide i18n",
+	"description": "lilynk management console — TanStack Start + React Query (orval) + @unom/ui + Paraglide i18n",
 	"scripts": {
 		"prepare": "bun run codegen",
 		"postinstall": "bun2nix -o bun.nix",

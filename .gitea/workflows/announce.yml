@@ -80,7 +80,7 @@ jobs:
             *-*) echo "pre-release tag $TAG — not publishing to the stable update feed"; exit 0 ;;
           esac
           VER="${TAG#v}"
-          URL="https://git.unom.io/unom/punktfunk/releases/download/${TAG}/punktfunk-host-setup-${VER}.exe"
+          URL="https://github.com/Project-Colony/Lilynk/releases/download/${TAG}/lilynk-host-setup-${VER}.exe"
           # Re-download and re-hash the real bytes; the sidecar is a cross-check, never the truth.
           curl -fsSL "$URL" -o /tmp/installer.exe
           curl -fsSL "$URL.sha256" -o /tmp/installer.sha256
@@ -134,7 +134,7 @@ jobs:
             exit 1
           fi
           # The arm64 installer is optional on a release; when present it carries the same leaf.
-          A64_URL="https://git.unom.io/unom/punktfunk/releases/download/${TAG}/punktfunk-host-setup-${VER}_arm64.exe"
+          A64_URL="https://github.com/Project-Colony/Lilynk/releases/download/${TAG}/lilynk-host-setup-${VER}_arm64.exe"
           if curl -fsSL "$A64_URL" -o /tmp/installer-arm64.exe; then
             A64_SHA="$(sha256sum /tmp/installer-arm64.exe | awk '{print $1}')"
             osslsigncode verify -CAfile "$ROOT" -TSA-CAfile "$ROOT" \
@@ -147,7 +147,7 @@ jobs:
             WINDOWS_URL="$URL" WINDOWS_SHA256="$SHA" \
             WINDOWS_ARM64_URL="$A64_URL" WINDOWS_ARM64_SHA256="$A64_SHA" \
             AUTHENTICODE_SHA256="$LEAF_SHA" AUTHENTICODE_SUBJECT="$AUTHENTICODE_SUBJECT" \
-            NOTES_URL="https://git.unom.io/unom/punktfunk/releases/tag/${TAG}" \
+            NOTES_URL="https://github.com/Project-Colony/Lilynk/releases/tag/${TAG}" \
             bash scripts/ci/publish-update-manifest.sh
 
       # SteamOS installs build the `stable` branch on the device. It moves with the manifest

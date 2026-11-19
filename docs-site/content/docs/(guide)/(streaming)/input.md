@@ -40,12 +40,12 @@ speed there; no client has a sensitivity setting.
 | Host | Where the stream's mouse takes its speed |
 |---|---|
 | Windows | **Settings → Bluetooth & devices → Mouse**: pointer speed and **Enhance pointer precision** |
-| KDE Plasma | **System Settings → Mouse & Touchpad**, device **Punktfunk Mouse**: a speed and acceleration of its own |
+| KDE Plasma | **System Settings → Mouse & Touchpad**, device **Lilynk Mouse**: a speed and acceleration of its own |
 | GNOME | **Settings → Mouse & Touchpad**: the speed and acceleration every mouse shares |
-| Sway, Hyprland | The compositor's input settings for the device named `Punktfunk Mouse` (Sway: `4617:20557:Lilynk_Mouse`) |
+| Sway, Hyprland | The compositor's input settings for the device named `Lilynk Mouse` (Sway: `4617:20557:Lilynk_Mouse`) |
 | gamescope, a headless Linux session | One pixel a count, as gamescope moves a plugged-in mouse. No setting |
 
-- On Linux the **Punktfunk Mouse** appears with the first input a client sends and stays until
+- On Linux the **Lilynk Mouse** appears with the first input a client sends and stays until
   the host stops. Its buttons and wheel follow the host's mouse settings too: left-handed
   buttons, natural scrolling.
 - Out of the box KDE Plasma moves it one pixel a count, with no acceleration. GNOME, Sway and
@@ -217,7 +217,7 @@ so drawing apps on the host see a real pen.
 
 | Host | Appears as |
 |---|---|
-| Linux | A **Punktfunk Pen** tablet for the session, mapped by your compositor. Needs `/dev/uinput`, the `input` group step of your [install guide](/docs/install) |
+| Linux | A **Lilynk Pen** tablet for the session, mapped by your compositor. Needs `/dev/uinput`, the `input` group step of your [install guide](/docs/install) |
 | Windows 10 1809 and newer | A system pen with pressure, tilt, rotation, barrel button and eraser |
 
 Without host support, the stylus works as a finger, without pressure or tilt. To turn pen off

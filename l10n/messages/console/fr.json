@@ -3,7 +3,7 @@
 	"console_error_connect_failed_detail": "Impossible de se connecter : {reason}",
 	"console_error_host_closed": "L’hôte a fermé la connexion.",
 	"console_exit_confirm": "Quitter",
-	"console_exit_message": "Quitter Punktfunk ?",
+	"console_exit_message": "Quitter Lilynk ?",
 	"console_exit_title": "Quitter",
 	"console_hosts_added": "Hôte ajouté : {address}",
 	"console_hosts_saved": "Hôte enregistré : {host}",
@@ -239,7 +239,7 @@
 			"n=other": "{count} autres appareils"
 		}
 	}],
-	"console_pad_none_detail": "Punktfunk ne transmet que ce que le système voit comme une manette ou un joystick ; une manette derrière un adaptateur ou un hub peut apparaître comme l’adaptateur, ou pas du tout.",
+	"console_pad_none_detail": "Lilynk ne transmet que ce que le système voit comme une manette ou un joystick ; une manette derrière un adaptateur ou un hub peut apparaître comme l’adaptateur, ou pas du tout.",
 	"console_pad_grants_detail": "Une DualSense ou une Steam Controller 2 filaire a besoin d’un accès USB avant de pouvoir être capturée, et une Steam Controller 2 en Bluetooth a besoin de l’accès Bluetooth pour être vue.",
 	"console_pad_grants_detail_open": "{button} affiche la liste des accès et un test haptique.",
 	"console_pad_test_controller": "Tester la manette",
@@ -326,7 +326,7 @@
 	"console_webos_decoder_failed": "Le décodeur vidéo a échoué — session terminée",
 	"console_overlay_present_frames": "affichage : {frames} images, {missed} manquées",
 	"console_overlay_holding_keyframe": "en attente d’une image clé",
-	"console_switch_applet_mode": "Ouvert depuis l’Album, Punktfunk dispose de peu de mémoire et peut se fermer — maintenez {button} en lançant un jeu pour l’ouvrir avec toute la mémoire.",
+	"console_switch_applet_mode": "Ouvert depuis l’Album, Lilynk dispose de peu de mémoire et peut se fermer — maintenez {button} en lançant un jeu pour l’ouvrir avec toute la mémoire.",
 	"console_pad_fallback_name": "Manette",
 	"console_pad_player": "Joueur {number}"
 }

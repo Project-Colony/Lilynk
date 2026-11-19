@@ -243,7 +243,7 @@ final class DemoScene {
     }
 
     private func drawHeader(_ ctx: CGContext) {
-        text(ctx, "punktfunk demo host", at: CGPoint(x: 64, y: 84), size: 30, bold: true, color: white(0.92))
+        text(ctx, "lilynk demo host", at: CGPoint(x: 64, y: 84), size: 30, bold: true, color: white(0.92))
         text(
             ctx, "\(clock.string(from: Date()))   frame \(frame)",
             at: CGPoint(x: canvas.width - 64, y: 84), size: 30, color: white(0.7), anchor: .right)

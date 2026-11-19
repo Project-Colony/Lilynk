@@ -497,13 +497,9 @@ mod tests {
         );
         // The Bluetooth text fills both keys.
         let plist = &files[3].1;
+        assert_eq!(plist.matches("Bluetooth lets Lilynk").count(), 2, "{plist}");
         assert_eq!(
-            plist.matches("Bluetooth lets Punktfunk").count(),
-            2,
-            "{plist}"
-        );
-        assert_eq!(
-            plist.matches("Bluetooth lässt Punktfunk").count(),
+            plist.matches("Bluetooth lässt Lilynk").count(),
             2,
             "{plist}"
         );

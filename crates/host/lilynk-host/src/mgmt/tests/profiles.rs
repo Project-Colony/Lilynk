@@ -667,7 +667,7 @@ async fn a_lock_sets_its_list_and_pin_in_one_step() {
     assert_eq!(devices[0]["kind"], "added");
 }
 
-/// The console locks a profile, sets and clears its PIN, puts paired devices on its list, Punktfunk
+/// The console locks a profile, sets and clears its PIN, puts paired devices on its list, Lilynk
 /// or Moonlight, signs them out and unlocks it; the file holds the PIN's hash, never the PIN.
 #[tokio::test]
 async fn the_console_locks_a_profile_for_the_devices_it_chooses() {

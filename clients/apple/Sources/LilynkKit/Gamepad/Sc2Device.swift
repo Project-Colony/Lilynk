@@ -6,7 +6,7 @@
 // The GATT service is Valve's CUSTOM vendor service, NOT standard HID-over-GATT (0x1812) —
 // which is exactly why a third-party app may read it raw: iOS keeps its own 0x1812 binding (the
 // lizard-mode keyboard/mouse) while we open a second handle to the vendor service, the same
-// coexistence Steam Link relies on. The full report rides the punktfunk wire verbatim
+// coexistence Steam Link relies on. The full report rides the lilynk wire verbatim
 // (`LilynkConnection.sendHidReport` → the host's as-is virtual 28DE:1302 pad); the parser
 // here extracts only what the client itself consumes — the button word for the typed mirror +
 // exit chord, and sticks/triggers for the degrade path.
@@ -191,7 +191,7 @@ enum Sc2Device {
     static let btnLB: UInt32 = 0x0008_0000
     static let btnRPadClick: UInt32 = 0x0040_0000
 
-    /// Wire mapping: SC2 button bit → punktfunk `GamepadWire` bit, the inverse of the host's
+    /// Wire mapping: SC2 button bit → lilynk `GamepadWire` bit, the inverse of the host's
     /// typed-fallback mapping (`triton_proto::from_gamepad`): paddles R4/L4/R5/L5 =
     /// PADDLE1/2/3/4, QAM = MISC1, right-pad click = the touchpad wire bit. Same pairs, same
     /// order, as Android's `Sc2Device.WIRE_MAP`.
@@ -279,7 +279,7 @@ enum Sc2Device {
 
     /// Incoming (up-path): a GATT characteristic VALUE is the raw payload with NO HID report-id
     /// byte, so re-prepend `0x45` for state-sized (≥ 40 B) payloads — the wire then carries the
-    /// same id-first framing as USB, which is punktfunk's contract (the host's virtual pad does
+    /// same id-first framing as USB, which is lilynk's contract (the host's virtual pad does
     /// the rest; no 0x45→0x42 rewrite and no 54-byte zero-pad — those belong to a
     /// synthetic-USB queue contract, not ours). Short payloads (battery/status) pass through
     /// unmodified. Observed live rate ~66 Hz, len 45.

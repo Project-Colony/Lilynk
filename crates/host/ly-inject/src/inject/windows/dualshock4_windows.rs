@@ -41,7 +41,7 @@ impl Ds4WinPad {
                 // Composite USB device (headset audio on 0-2); the HID interface is 3.
                 usb_mi: Some(3),
                 bluetooth: false,
-                description: "Punktfunk Virtual DualShock 4",
+                description: "Lilynk Virtual DualShock 4",
                 enumerator: "VID_054C&PID_09CC&MI_03",
                 property: None,
             },
@@ -84,7 +84,7 @@ impl PadProto for Ds4WinProto {
     type State = DsState;
     const LABEL: &'static str = "DualShock 4/Windows";
     const DEVICE: &'static str = "DualShock 4";
-    const CREATE_HINT: &'static str = " (install/repair: run the Punktfunk installer again)";
+    const CREATE_HINT: &'static str = " (install/repair: run the Lilynk installer again)";
 
     fn open(&mut self, idx: u8) -> Result<Ds4WinPad> {
         let p = Ds4WinPad::open(idx)?;

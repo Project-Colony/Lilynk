@@ -491,10 +491,10 @@ impl Inner {
         session::write_unit_files(seat, Own::Owner, passwd, &self.state, token, None, &browser)
     }
 
-    /// Writes `token` as the seat's token file, for the box's client to present: the `punktfunk`
+    /// Writes `token` as the seat's token file, for the box's client to present: the `lilynk`
     /// user's when there is one.
     fn write_token(&self, seat: &Seat, token: &str) -> Result<(), BackendError> {
-        let door = accounts::lookup("punktfunk")?;
+        let door = accounts::lookup("lilynk")?;
         shared::write_host_token(
             &self.state,
             &seat.id,
@@ -574,7 +574,7 @@ pub fn owner_at_desk(account: &str) -> bool {
 }
 
 impl LinuxBackend {
-    /// `box_dir` is the door's directory, `/var/lib/punktfunk`; `state` is [`STATE_DIR`].
+    /// `box_dir` is the door's directory, `/var/lib/lilynk`; `state` is [`STATE_DIR`].
     /// Creates the directories seats live in and starts the thread that keeps trust copies and
     /// the games ACL current.
     pub fn open(
@@ -1200,7 +1200,7 @@ impl PlatformBackend for LinuxBackend {
     }
 
     /// A root-owned copy of the certificate the seat's host serves, for the service to pin: from
-    /// `~/.config/punktfunk`, or for a person's row from the row's own config directory. Either
+    /// `~/.config/lilynk`, or for a person's row from the row's own config directory. Either
     /// is a user's, which root doesn't own, so the copy is taken through directory handles and
     /// never waits on what is there ([`shared::copy_pin`]).
     fn host_config_dir(&self, seat: &Seat) -> Option<PathBuf> {
@@ -1945,13 +1945,13 @@ mod tests {
     #[test]
     fn doctor_reads_the_programs_systemd_would_run() {
         let show = "LoadState=loaded\n\
-            ExecStart={ path=/nix/store/abc-seats/libexec/punktfunk/seat-session ; argv[]=/nix/store/abc-seats/libexec/punktfunk/seat-session ; ignore_errors=no }\n\
-            ExecStopPost={ path=/nix/store/abc-seats/libexec/punktfunk/seat-reap ; argv[]=x %i ; ignore_errors=no }\n";
+            ExecStart={ path=/nix/store/abc-seats/libexec/lilynk/seat-session ; argv[]=/nix/store/abc-seats/libexec/lilynk/seat-session ; ignore_errors=no }\n\
+            ExecStopPost={ path=/nix/store/abc-seats/libexec/lilynk/seat-reap ; argv[]=x %i ; ignore_errors=no }\n";
         assert_eq!(
             super::exec_paths(show),
             [
-                std::path::PathBuf::from("/nix/store/abc-seats/libexec/punktfunk/seat-session"),
-                std::path::PathBuf::from("/nix/store/abc-seats/libexec/punktfunk/seat-reap"),
+                std::path::PathBuf::from("/nix/store/abc-seats/libexec/lilynk/seat-session"),
+                std::path::PathBuf::from("/nix/store/abc-seats/libexec/lilynk/seat-reap"),
             ]
         );
         assert!(super::exec_paths("LoadState=not-found\nExecStart=\n").is_empty());

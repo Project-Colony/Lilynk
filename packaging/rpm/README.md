@@ -7,7 +7,7 @@ builds and publishes on every push to `main` (a rolling `<next-minor>-0.ciN.g<sh
 is derived from the latest stable tag by `scripts/ci/ly-version.sh` — to the `*-canary`
 groups) and on `vX.Y.Z` tags (a clean `X.Y.Z-1` to the base groups, plus attached to the unified
 Gitea Release) — separate repos, so a stable box never jumps to a canary build (see
-[Release Channels](https://punktfunk.unom.io/docs/channels)). The `baseurl` below subscribes to the
+[Release Channels](https://project-colony.github.io/Lilynk/docs/channels)). The `baseurl` below subscribes to the
 `bazzite` stable group; use `bazzite-canary` for the latest main builds. The RPM is built in the
 Fedora 43 image (`ci/fedora-rpm.Dockerfile`) so its auto-generated library Requires
 match Bazzite's sonames; the NVIDIA driver lib (`libcuda.so.1`) is
@@ -21,8 +21,8 @@ paths — same spec (`lilynk.spec`) — just self-hosted in Gitea instead of COP
 
 The user-facing walkthrough — the `.repo` file (same shape for the `fedora-NN` and `bazzite`
 baseurl groups) and the install command — lives on the docs pages
-([Fedora](https://docs.punktfunk.unom.io/docs/fedora) /
-[Bazzite](https://docs.punktfunk.unom.io/docs/bazzite), where the sysext, not layering, is the
+([Fedora](https://project-colony.github.io/Lilynk/docs/fedora) /
+[Bazzite](https://project-colony.github.io/Lilynk/docs/bazzite), where the sysext, not layering, is the
 supported default), stated once so it can't drift (see "Where facts live" in
 [`CONTRIBUTING.md`](../../CONTRIBUTING.md)). Packager notes: packages are GPG-signed
 (`gpgcheck=1`, the packages@unom.io key) AND the repo metadata is Gitea-signed
@@ -61,7 +61,7 @@ gpg --batch --gen-key <<EOF
 %no-protection
 Key-Type: eddsa
 Key-Curve: ed25519
-Name-Real: punktfunk packages
+Name-Real: lilynk packages
 Name-Email: packages@unom.io
 Expire-Date: 0
 %commit
@@ -91,8 +91,8 @@ during a rotation `FEED_KEY` holds both public keys, the new one first, until ev
 sealed with the new key.
 
 First-run setup and updates are on the docs pages
-([Fedora](https://docs.punktfunk.unom.io/docs/fedora) /
-[Bazzite](https://docs.punktfunk.unom.io/docs/bazzite), where the sysext rather than layering is the
+([Fedora](https://project-colony.github.io/Lilynk/docs/fedora) /
+[Bazzite](https://project-colony.github.io/Lilynk/docs/bazzite), where the sysext rather than layering is the
 supported default). Layered packages are re-resolved against their repos on every `rpm-ostree
 upgrade`, so a box tracks new builds automatically.
 
@@ -123,7 +123,7 @@ spec defaults).
 The **client** builds for aarch64; the **host** does not (its encode stack is NVENC/QSV/AMF, all
 x86). `PF_WITHOUT_HOST=1` drops the host binary, the tray, the headless-session data, the
 firewalld services and the main package's `%files`, leaving exactly one RPM: `lilynk-client`.
-Omitting the main `%files` is what keeps rpm from emitting an empty `punktfunk` next to it.
+Omitting the main `%files` is what keeps rpm from emitting an empty `lilynk` next to it.
 
 This is **not** a cross-compile — `%build` runs cargo for the host architecture, so run it on an
 arm64 machine (or an emulated arm64 container, which is very slow):

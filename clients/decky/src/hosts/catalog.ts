@@ -1,6 +1,6 @@
 // Which paired hosts have which Steam titles — what the Play-from menu on a game page lists.
 //
-// The source is `punktfunk library <host> --json`, asked of every paired host that is
+// The source is `lilynk library <host> --json`, asked of every paired host that is
 // answering. Each answer is reduced to the set of Steam appids (the `steam:<appid>` ids; the
 // other stores have no Steam page to appear on) and cached per host record in
 // storage, so a host that is asleep right now still offers the titles it had; the launch wakes
@@ -19,7 +19,7 @@ export interface LibrarySnapshot {
   steamAppIds: number[];
 }
 
-const KEY_PREFIX = "punktfunk:library:";
+const KEY_PREFIX = "lilynk:library:";
 const snapshots = new Map<string, LibrarySnapshot>();
 let hydrated = false;
 const changed = signal<void>(undefined);

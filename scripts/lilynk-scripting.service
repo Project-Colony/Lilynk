@@ -1,7 +1,7 @@
-# punktfunk plugin/script runner — systemd USER unit (bun runtime, ON BY DEFAULT, opt-out).
+# lilynk plugin/script runner — systemd USER unit (bun runtime, ON BY DEFAULT, opt-out).
 #
-# Runs the operator's automation under supervision: loose files in ~/.config/punktfunk/scripts/ and
-# installed `lilynk-plugin-*` packages under ~/.config/punktfunk/plugins/. Each unit is an Effect
+# Runs the operator's automation under supervision: loose files in ~/.config/lilynk/scripts/ and
+# installed `lilynk-plugin-*` packages under ~/.config/lilynk/plugins/. Each unit is an Effect
 # fiber (a plugin restarts on failure with capped-jittered backoff; a bare script is one-shot).
 # SIGTERM interrupts the whole tree STRUCTURALLY, so every plugin's scoped finalizers run before
 # exit (clean deregister / preset release) — hence the generous stop timeout below.
@@ -18,12 +18,12 @@
 # (`mask`, not `disable` — a plain disable cannot remove a symlink that lives in /etc or /usr.)
 #
 # Auto-wired like the console: a plugin's connect() reads the host's SCOPED plugin token + identity
-# cert from ~/.config/punktfunk/{plugin-token,cert.pem} (written by the host's `serve`) — no env
+# cert from ~/.config/lilynk/{plugin-token,cert.pem} (written by the host's `serve`) — no env
 # editing. The plugin token authorizes the plugin surface but not hook registration or pairing
 # administration; a script that needs the admin surface sets LILYNK_MGMT_TOKEN explicitly.
 [Unit]
-Description=punktfunk plugin/script runner
-Documentation=https://git.unom.io/unom/punktfunk
+Description=lilynk plugin/script runner
+Documentation=https://github.com/Project-Colony/Lilynk
 # Plugins talk to the host's loopback mgmt API; order after it. Soft (ordering only, no Requires):
 # the runner supervises each unit with backoff, so a plugin started before the host simply retries.
 After=lilynk-host.service
@@ -33,7 +33,7 @@ Type=simple
 ExecStart=/usr/bin/lilynk-scripting
 # `+` runs outside the namespace: the plugin-run and plugin-state binds below need both
 # directories, and inside the read-only home nothing can create them.
-ExecStartPre=+/bin/mkdir -p -m 0700 %h/.config/punktfunk/plugin-run %h/.config/punktfunk/plugin-state
+ExecStartPre=+/bin/mkdir -p -m 0700 %h/.config/lilynk/plugin-run %h/.config/lilynk/plugin-state
 Restart=on-failure
 RestartSec=2
 # 78 is the runner refusing to run a plugin without the sandbox this box can't build
@@ -76,12 +76,12 @@ NoNewPrivileges=yes
 PrivateTmp=no
 ProtectSystem=strict
 ProtectHome=tmpfs
-InaccessiblePaths=-%h/.config/punktfunk/mgmt-token -%h/.config/punktfunk/key.pem
-InaccessiblePaths=-%h/.config/punktfunk/native-key.pem -%h/.config/punktfunk/person-token
+InaccessiblePaths=-%h/.config/lilynk/mgmt-token -%h/.config/lilynk/key.pem
+InaccessiblePaths=-%h/.config/lilynk/native-key.pem -%h/.config/lilynk/person-token
 # Writable: the installed packages (the runner refreshes their shared SDK with `bun install` on
 # every start) and the one directory a plugin may persist into. '-' on both — neither exists until
 # the first plugin is installed.
-BindPaths=-%h/.config/punktfunk/plugins -%h/.config/punktfunk/plugin-state
+BindPaths=-%h/.config/lilynk/plugins -%h/.config/lilynk/plugin-state
 # bun's package cache ($BUN_INSTALL). Only the SDK refresh writes here, and it fails soft without
 # it — but soft means plugins silently keep an old SDK across host upgrades.
 BindPaths=-%h/.bun
@@ -89,14 +89,14 @@ BindPaths=-%h/.bun
 # token, and the TLS pin (native-cert.pem after the identity split, cert.pem before it — a host has
 # one or both). mgmt-endpoint carries the port the host REALLY bound; without it a moved listener
 # leaves every plugin dialling 47990 forever.
-BindReadOnlyPaths=-%h/.config/punktfunk/scripts -%h/.config/punktfunk/ingest
-BindReadOnlyPaths=-%h/.config/punktfunk/plugin-token -%h/.config/punktfunk/mgmt-endpoint
-BindReadOnlyPaths=-%h/.config/punktfunk/native-cert.pem -%h/.config/punktfunk/cert.pem
+BindReadOnlyPaths=-%h/.config/lilynk/scripts -%h/.config/lilynk/ingest
+BindReadOnlyPaths=-%h/.config/lilynk/plugin-token -%h/.config/lilynk/mgmt-endpoint
+BindReadOnlyPaths=-%h/.config/lilynk/native-cert.pem -%h/.config/lilynk/cert.pem
 # What the supervisor hands each sandbox: per-plugin tokens and grants. A directory bind keeps the
 # host's atomic replacements visible; a file bind would pin the deleted inode.
-BindReadOnlyPaths=%h/.config/punktfunk/plugin-run
+BindReadOnlyPaths=%h/.config/lilynk/plugin-run
 # ProtectHome empties /run/user too. %t is where the host publishes its live-stream marker
-# (punktfunk/stream, which scripts source) and where the session bus and compositor sockets live.
+# (lilynk/stream, which scripts source) and where the session bus and compositor sockets live.
 BindPaths=%t
 # What the plugins read in the home — manifest paths and folder grants — the host writes into
 # lilynk-scripting.service.d/50-plugin-roots.conf. bwrap binds from this unit's view, so a

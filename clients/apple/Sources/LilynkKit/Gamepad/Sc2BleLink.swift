@@ -532,7 +532,7 @@ extension Sc2BleLink: CBPeripheralDelegate {
                 }
             }
             // The 0x47 timestamp char is deliberately NOT subscribed — nothing rides it that the
-            // punktfunk wire needs (the gyro streams inside the same 0x45 report once enabled).
+            // lilynk wire needs (the gyro streams inside the same 0x45 report once enabled).
         }
         // The on-device census (expected: 17 chars — 1× 0x0a report, 6× 0x12 read+notify,
         // 10× 0x0e read+write+writeNoResp) + the MTU sanity line CoreBluetooth negotiated.

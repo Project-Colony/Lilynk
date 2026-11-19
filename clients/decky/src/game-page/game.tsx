@@ -20,7 +20,7 @@ export function streamFrom(host: HostView, game: Game): void {
   void startGameStream(host, game.appId, game.title, game.iconHash);
 }
 
-/** The Punktfunk lens mark: the logo's two overlapping circles in the brand violets, the lighter
+/** The Lilynk lens mark: the logo's two overlapping circles in the brand violets, the lighter
  *  one behind. A surface that paints itself violet overrides `--pf-back` / `--pf-deep`, because the
  *  deep circle is the same violet as the Play button's focus fill and would vanish on it. */
 export const LilynkMark: FC<{ size?: number }> = ({ size = 22 }) => (

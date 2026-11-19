@@ -384,7 +384,7 @@ fn file_name(label: &str) -> String {
         .collect();
     let trimmed = cleaned.trim().trim_end_matches('.').to_string();
     if trimmed.is_empty() {
-        "Punktfunk".to_string()
+        "Lilynk".to_string()
     } else {
         trimmed
     }
@@ -453,7 +453,7 @@ mod tests {
         assert_eq!(file_name("Desk: Work/Play"), "Desk- Work-Play");
         assert_eq!(file_name("Desk\u{1}"), "Desk-");
         assert_eq!(file_name("Trailing."), "Trailing");
-        assert_eq!(file_name("   "), "Punktfunk");
+        assert_eq!(file_name("   "), "Lilynk");
         assert!(file_name(&"x".repeat(300)).len() <= 64);
     }
 }

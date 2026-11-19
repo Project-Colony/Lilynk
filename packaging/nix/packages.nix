@@ -1,6 +1,6 @@
-# punktfunk Nix packages — built with crane (github:ipetkov/crane).
+# lilynk Nix packages — built with crane (github:ipetkov/crane).
 #
-# The host and client mirror the RPM's `punktfunk` / `lilynk-client` split (packaging/rpm/
+# The host and client mirror the RPM's `lilynk` / `lilynk-client` split (packaging/rpm/
 # lilynk.spec) so a headless streaming host never drags in the GTK client closure:
 #
 #   * lilynk-host   — the streaming host + status tray (lilynk-host, lilynk-tray).
@@ -120,7 +120,7 @@ let
   };
 
   meta = {
-    homepage = "https://git.unom.io/unom/punktfunk";
+    homepage = "https://github.com/Project-Colony/Lilynk";
     license = lib.licenses.gpl3Plus;
     platforms = [ "x86_64-linux" ]; # NVENC desktop host; the RPM's ExclusiveArch also lists aarch64
     maintainers = [ ];
@@ -143,7 +143,7 @@ let
       # `tls` — nothing to link (no buildInputs) and no GPU driver runpath (it never dlopens
       # libcuda/EGL/vulkan).
       meta = meta // {
-        description = "punktfunk host status tray (Linux StatusNotifierItem)";
+        description = "lilynk host status tray (Linux StatusNotifierItem)";
         mainProgram = "lilynk-tray";
       };
     }
@@ -192,7 +192,7 @@ in
         # host by that path. The NixOS module adds its own settings as a drop-in.
         install -Dm0644 scripts/lilynk-host.service "$out/lib/systemd/user/lilynk-host.service"
         substituteInPlace "$out/lib/systemd/user/lilynk-host.service" \
-          --replace-fail "%h/punktfunk/target/release/lilynk-host" "$out/bin/lilynk-host"
+          --replace-fail "%h/lilynk/target/release/lilynk-host" "$out/bin/lilynk-host"
 
         # udev: /dev/uinput + /dev/uhid (virtual gamepads) + the vhci sysfs perms for the virtual Deck.
         install -Dm0644 scripts/60-lilynk.rules "$out/lib/udev/rules.d/60-lilynk.rules"
@@ -288,38 +288,38 @@ in
       # Nothing links libpam, so a `buildInputs` entry never reaches RUNPATH: add it by hand, and
       # assert the soname resolves. A miss refuses every adopt of an existing account.
       postFixup = ''
-        patchelf --add-rpath "${linux-pam}/lib" "$out/libexec/punktfunk/lilynk-seats"
+        patchelf --add-rpath "${linux-pam}/lib" "$out/libexec/lilynk/lilynk-seats"
         ok=""
-        for d in $(patchelf --print-rpath "$out/libexec/punktfunk/lilynk-seats" | tr : ' '); do
+        for d in $(patchelf --print-rpath "$out/libexec/lilynk/lilynk-seats" | tr : ' '); do
           [ -e "$d/libpam.so.0" ] && ok=1
         done
         [ -n "$ok" ] || { echo "lilynk-seats: libpam.so.0 unresolvable from RUNPATH"; exit 1; }
       '';
 
       postInstall = ''
-        install -d "$out/libexec/punktfunk"
-        mv "$out/bin/lilynk-seats" "$out/libexec/punktfunk/"
+        install -d "$out/libexec/lilynk"
+        mv "$out/bin/lilynk-seats" "$out/libexec/lilynk/"
         rmdir "$out/bin"
         for f in seat-session seat-reap; do
-          install -Dm0755 "packaging/linux/$f" "$out/libexec/punktfunk/$f"
+          install -Dm0755 "packaging/linux/$f" "$out/libexec/lilynk/$f"
         done
         for f in lilynk-seats.service lilynk-seat@.service; do
           install -Dm0644 "packaging/linux/$f" "$out/lib/systemd/system/$f"
           substituteInPlace "$out/lib/systemd/system/$f" \
-            --replace-fail /usr/libexec/punktfunk "$out/libexec/punktfunk"
+            --replace-fail /usr/libexec/lilynk "$out/libexec/lilynk"
         done
         install -Dm0644 packaging/linux/lilynk-seats.tmpfiles "$out/lib/tmpfiles.d/lilynk-seats.conf"
         # A seat's pads: the rule runs `lilynk-seats fence` from this store path.
         install -Dm0644 packaging/linux/65-lilynk-seats.rules "$out/lib/udev/rules.d/65-lilynk-seats.rules"
         substituteInPlace "$out/lib/udev/rules.d/65-lilynk-seats.rules" \
-          --replace-fail /usr/libexec/punktfunk "$out/libexec/punktfunk"
-        install -Dm0755 packaging/linux/door-helper "$out/libexec/punktfunk/door-helper"
-        substituteInPlace "$out/libexec/punktfunk/door-helper" \
-          --replace-fail /usr/libexec/punktfunk "$out/libexec/punktfunk"
+          --replace-fail /usr/libexec/lilynk "$out/libexec/lilynk"
+        install -Dm0755 packaging/linux/door-helper "$out/libexec/lilynk/door-helper"
+        substituteInPlace "$out/libexec/lilynk/door-helper" \
+          --replace-fail /usr/libexec/lilynk "$out/libexec/lilynk"
         for f in lilynk-door.service lilynk-door-on@.service lilynk-door-off@.service; do
           install -Dm0644 "packaging/linux/$f" "$out/lib/systemd/system/$f"
           substituteInPlace "$out/lib/systemd/system/$f" \
-            --replace-fail /usr/libexec/punktfunk "$out/libexec/punktfunk"
+            --replace-fail /usr/libexec/lilynk "$out/libexec/lilynk"
         done
         install -Dm0644 packaging/linux/lilynk-web-door.service \
           "$out/lib/systemd/system/lilynk-web-door.service"
@@ -328,14 +328,14 @@ in
         # seat-session seeds the portal grant and the virtual speaker from these two files. They
         # live in the package, not the host's, so the store path does not depend on the host build.
         for f in kde-authorized lilynk-sink.conf; do
-          install -Dm0644 "scripts/headless/$f" "$out/share/punktfunk/headless/$f"
+          install -Dm0644 "scripts/headless/$f" "$out/share/lilynk/headless/$f"
         done
-        substituteInPlace "$out/libexec/punktfunk/seat-session" \
-          --replace-fail /usr/share/punktfunk/headless "$out/share/punktfunk/headless"
+        substituteInPlace "$out/libexec/lilynk/seat-session" \
+          --replace-fail /usr/share/lilynk/headless "$out/share/lilynk/headless"
       '';
 
       meta = meta // {
-        description = "punktfunk seat supervisor (a user, a session and a host per profile)";
+        description = "lilynk seat supervisor (a user, a session and a host per profile)";
       };
     }
   );
@@ -538,14 +538,14 @@ in
     dontFixup = true;
 
     meta = meta // {
-      description = "punktfunk management web console (Nitro SSR on bun + React)";
+      description = "lilynk management web console (Nitro SSR on bun + React)";
       mainProgram = "lilynk-web-server";
     };
   };
 
   # --- plugin/script runner (lilynk-scripting) --------------------------------------------------
-  # The host's automation runner: the `@punktfunk/host` SDK's `lilynk-scripting` CLI (built on
-  # Effect), which discovers ~/.config/punktfunk/{scripts,plugins} and supervises each unit as an
+  # The host's automation runner: the `@lilynk/host` SDK's `lilynk-scripting` CLI (built on
+  # Effect), which discovers ~/.config/lilynk/{scripts,plugins} and supervises each unit as an
   # Effect fiber. It runs on `bun` (it import()s the operator's `.ts` plugin files, which only bun
   # can do). Mirrors the Debian lilynk-scripting .deb / the RPM's `--with scripting` subpackage,
   # which the host package Recommends. Its systemd --user unit ships here too.
@@ -563,7 +563,7 @@ in
 
     # Same bun2nix wiring as lilynk-web, against sdk/bun.lock's generated sdk/bun.nix (kept in
     # step by the `bun2nix` devDependency's `prepare` script — `prepare`, not `postinstall`,
-    # because sdk/ is the PUBLISHED @punktfunk/host package and a postinstall would then run on
+    # because sdk/ is the PUBLISHED @lilynk/host package and a postinstall would then run on
     # every consumer's install). No aggregate deps hash to bump.
     bunDeps = bun2nix.fetchBunDeps { bunNix = src + "/sdk/bun.nix"; };
     bunRoot = "sdk";
@@ -611,7 +611,7 @@ in
     dontFixup = true;
 
     meta = meta // {
-      description = "punktfunk plugin/script runner (Effect SDK on bun)";
+      description = "lilynk plugin/script runner (Effect SDK on bun)";
       mainProgram = "lilynk-scripting";
       # The runner is built from sdk/, which keeps its own license.
       license = with lib.licenses; [

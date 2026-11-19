@@ -19,7 +19,7 @@
 #   winget    -> brings up the winget REST source on :3240; catalogue shipped by
 #                windows-host.yml on stable tags.
 #
-# Dispatched by unom/infra scripts/deploy-all.sh: `dispatch-and-wait.sh punktfunk
+# Dispatched by unom/infra scripts/deploy-all.sh: `dispatch-and-wait.sh lilynk
 # deploy-services.yml`. Uses the same secret set docker.yml/flatpak.yml already rely on:
 # DEPLOY_HOST/USER/PORT/SSH_KEY (the unom-ci-deploy key) + REGISTRY_TOKEN (docs pull).
 name: deploy-services

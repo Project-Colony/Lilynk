@@ -108,7 +108,7 @@ impl Executor<'_> {
         match action {
             StepAction::Run(cmd) => {
                 // Group changes apply only after re-login; the outro must say so. The
-                // SteamOS build joins input and punktfunk itself, and its own notice is captured.
+                // SteamOS build joins input and lilynk itself, and its own notice is captured.
                 if cmd.contains("usermod -aG")
                     || cmd.contains("add-user-to-input-group")
                     || cmd.contains("steamdeck/install.sh")
@@ -202,7 +202,7 @@ impl Executor<'_> {
     /// mints `native-cert.pem` on its first start, after the unit enable returns, so this
     /// waits for the file. Delete-then-add so a re-minted identity replaces the old trust.
     fn trust_cert(&self, facts: &Facts, outcome: &Outcome) -> Result<bool, Failed> {
-        let cert = self.paths.config.join("punktfunk/native-cert.pem");
+        let cert = self.paths.config.join("lilynk/native-cert.pem");
         let db = self.paths.home.join(".pki/nssdb");
         let shown = |p: &std::path::Path| p.display().to_string().replace('\\', "/");
         let db_arg = format!("sql:{}", shown(&db));
@@ -266,7 +266,7 @@ impl Executor<'_> {
     /// The console salts and hashes this line the first time it signs someone in, and the file
     /// then holds only the hash; writing a fresh line back here is how the password is reset.
     fn web_password(&self, password: &str) {
-        let path = self.paths.config.join("punktfunk/web-password");
+        let path = self.paths.config.join("lilynk/web-password");
         let shown = path.display().to_string().replace('\\', "/");
         if self.opts.dry {
             self.ui.ok(&format!("would write your password to {shown}"));
@@ -332,7 +332,7 @@ impl Executor<'_> {
     }
 
     /// apt will not walk back to a lower candidate, so name the exact version. After the repo
-    /// rewrite the target channel is the only punktfunk source, so madison's first row is it.
+    /// rewrite the target channel is the only lilynk source, so madison's first row is it.
     fn apt_switch(&self, pkgs: &[String], facts: &Facts, choices: &Choices) -> Result<(), Failed> {
         let mut pins = String::new();
         for pkg in pkgs {

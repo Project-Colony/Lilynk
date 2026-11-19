@@ -1,7 +1,7 @@
 # The capability-carrying encode worker (design/gpu-priority-capability-worker.md): PyroWave
 # sessions, and the zero-copy import/convert worker for NVENC captures.
 #
-# 🛑 This is a SEPARATE BINARY on purpose, and it must stay one. It is the only Punktfunk file that
+# 🛑 This is a SEPARATE BINARY on purpose, and it must stay one. It is the only Lilynk file that
 # may carry `cap_sys_nice=ep`; `lilynk-host` carries no capability on any channel, ever, because
 # a capped process cannot be identified by KWin (`cap_ptrace_access_check` refuses
 # `/proc/<pid>/exe` to a reader whose effective set is not a superset of the target's PERMITTED
@@ -17,7 +17,7 @@ version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license = "GPL-3.0-or-later"
-description = "punktfunk encode worker: owns the priority-elevated Vulkan devices (PyroWave, NVENC convert) so the host never carries a capability."
+description = "lilynk encode worker: owns the priority-elevated Vulkan devices (PyroWave, NVENC convert) so the host never carries a capability."
 publish = false
 
 [[bin]]

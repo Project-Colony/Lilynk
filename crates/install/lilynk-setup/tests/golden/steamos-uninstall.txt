@@ -1,9 +1,9 @@
-==> Detected steamos → on-device build (guide: https://docs.punktfunk.unom.io/docs/steamos-host)
-==> Uninstalling the host (https://docs.punktfunk.unom.io/docs/uninstall)
+==> Detected steamos → on-device build (guide: https://project-colony.github.io/Lilynk/docs/steamos-host)
+==> Uninstalling the host (https://project-colony.github.io/Lilynk/docs/uninstall)
   + systemctl --user disable --now lilynk-host lilynk-web lilynk-scripting 2>/dev/null || true
   + systemctl --user disable --now lilynk-rebuild-check 2>/dev/null || true
-  !! The on-device build has no uninstall script — the build container, the files under your home and the root-owned tuning come off by hand: https://docs.punktfunk.unom.io/docs/uninstall#steamos--steam-deck-host-on-device-build
+  !! The on-device build has no uninstall script — the build container, the files under your home and the root-owned tuning come off by hand: https://project-colony.github.io/Lilynk/docs/uninstall#steamos--steam-deck-host-on-device-build
 
-  Removed. Kept for a reinstall: ~/.config/punktfunk, the punktfunk, lilynk-door and lilynk-update
-  groups, and your firewall rules.
-  The one-command cleanups for each are on https://docs.punktfunk.unom.io/docs/uninstall#linux-hosts
+  Removed. Kept for a reinstall: ~/.config/lilynk, the lilynk, lilynk-door and lilynk-update groups,
+  and your firewall rules.
+  The one-command cleanups for each are on https://project-colony.github.io/Lilynk/docs/uninstall#linux-hosts

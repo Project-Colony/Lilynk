@@ -1,6 +1,6 @@
 clients/linux/src/cli.rs	Couldn't {verb} {addr}:{port} — it names {} saved hosts. Name one by its fingerprint:
-clients/linux/src/cli.rs	Punktfunk added to the Omarchy menu (Super+Space) — it follows your saved hosts from here
-clients/linux/src/cli.rs	Punktfunk removed from the Omarchy menu
+clients/linux/src/cli.rs	Lilynk added to the Omarchy menu (Super+Space) — it follows your saved hosts from here
+clients/linux/src/cli.rs	Lilynk removed from the Omarchy menu
 clients/linux/src/desktop/shortcuts.rs	HOME isn't set
 clients/linux/src/settings/pages/controllers.rs	Steam Controller 2
 clients/linux/src/settings/pages/display.rs	Vulkan Video

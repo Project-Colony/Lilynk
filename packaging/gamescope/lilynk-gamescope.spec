@@ -1,4 +1,4 @@
-# lilynk-gamescope — gamescope carrying punktfunk's capture patches, installed under its own
+# lilynk-gamescope — gamescope carrying lilynk's capture patches, installed under its own
 # name so it sits BESIDE the distro's gamescope (Game Mode keeps using that one).
 #
 # This spec REPACKS a binary that was already built, rather than building gamescope itself: the
@@ -13,11 +13,11 @@
 Name:           lilynk-gamescope
 Version:        %{ly_version}
 Release:        %{pf_release}%{?dist}
-Summary:        gamescope with punktfunk's PipeWire capture patches (HDR, cursor, overlay, virtual-display modes)
+Summary:        gamescope with lilynk's PipeWire capture patches (HDR, cursor, overlay, virtual-display modes)
 
 # gamescope is BSD-2-Clause; our patches are contributed under the same terms.
 License:        BSD-2-Clause
-URL:            https://git.unom.io/unom/punktfunk
+URL:            https://github.com/Project-Colony/Lilynk
 Source0:        lilynk-gamescope
 # The Vulkan WSI layer built from the same tree at the same rev as the compositor above. A game
 # nested under gamescope gets its HDR10 swapchain from this layer and from nothing else, and a layer
@@ -44,7 +44,7 @@ Recommends:     lilynk-host
 %global debug_package %{nil}
 
 %description
-gamescope built from the upstream revision punktfunk pins, plus the patches in
+gamescope built from the upstream revision lilynk pins, plus the patches in
 packaging/gamescope/patches:
 
   * 10-bit BT.2020/PQ capture formats on the PipeWire node, so an HDR game reaches a capture
@@ -59,7 +59,7 @@ packaging/gamescope/patches:
     stream, so the fps/stats readout is visible to someone watching remotely.
 
 Installed as /usr/bin/lilynk-gamescope, with its own gamescopereaper and its matching Vulkan
-WSI layer under /usr/lib/punktfunk. The layer carries its own name and its own enable variable, so it sits beside
+WSI layer under /usr/lib/lilynk. The layer carries its own name and its own enable variable, so it sits beside
 the one your gamescope package installs rather than replacing it, and only sessions lilynk-host
 starts switch to it. Your system gamescope is untouched.
 
@@ -71,15 +71,15 @@ starts switch to it. Your system gamescope is untouched.
 
 %install
 install -Dm0755 %{SOURCE0} %{buildroot}%{_bindir}/lilynk-gamescope
-install -Dm0755 %{SOURCE3} %{buildroot}/usr/lib/punktfunk/gamescope/gamescopereaper
+install -Dm0755 %{SOURCE3} %{buildroot}/usr/lib/lilynk/gamescope/gamescopereaper
 
 # /usr/lib, spelled literally rather than %{_libdir}, which is /usr/lib64 here. The layer's manifest
-# carries an ABSOLUTE library_path baked in at build time (/usr/lib/punktfunk/...), so this path and
+# carries an ABSOLUTE library_path baked in at build time (/usr/lib/lilynk/...), so this path and
 # that string have to agree or the loader finds a manifest pointing at nothing. Nothing links this
 # .so by soname — the Vulkan loader dlopens it by that absolute path — so there is no multilib
 # question to answer, and a private vendor directory is where it belongs.
-install -Dm0755 %{SOURCE1} %{buildroot}/usr/lib/punktfunk/libVkLayer_LILYNK_gamescope_wsi.so
-install -Dm0644 %{SOURCE2} %{buildroot}/usr/lib/punktfunk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json
+install -Dm0755 %{SOURCE1} %{buildroot}/usr/lib/lilynk/libVkLayer_LILYNK_gamescope_wsi.so
+install -Dm0644 %{SOURCE2} %{buildroot}/usr/lib/lilynk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json
 
 %check
 # The marker is the host's entire capability probe (`gamescope_patch_level()`): a binary that lost
@@ -96,7 +96,7 @@ install -Dm0644 %{SOURCE2} %{buildroot}/usr/lib/punktfunk/vulkan/implicit_layer.
 # (%{_libdir} on a multilib box, a renamed .so) produces a package that installs cleanly and then
 # does nothing at all — the loader reads a manifest, finds no library, and moves on in silence.
 LAYER_LIB="$(grep -o '"library_path"[[:space:]]*:[[:space:]]*"[^"]*"' \
-  %{buildroot}/usr/lib/punktfunk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json \
+  %{buildroot}/usr/lib/lilynk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json \
   | sed 's/.*"\(\/[^"]*\)".*/\1/')"
 [ -f "%{buildroot}${LAYER_LIB}" ] || {
   echo "lilynk-gamescope: the layer manifest points at ${LAYER_LIB}, which this package does" >&2
@@ -106,9 +106,9 @@ LAYER_LIB="$(grep -o '"library_path"[[:space:]]*:[[:space:]]*"[^"]*"' \
 
 %files
 %{_bindir}/lilynk-gamescope
-/usr/lib/punktfunk/gamescope/gamescopereaper
-/usr/lib/punktfunk/libVkLayer_LILYNK_gamescope_wsi.so
-/usr/lib/punktfunk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json
+/usr/lib/lilynk/gamescope/gamescopereaper
+/usr/lib/lilynk/libVkLayer_LILYNK_gamescope_wsi.so
+/usr/lib/lilynk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json
 
 %changelog
 # Generated per build; see the git history for the patch set's own changes.

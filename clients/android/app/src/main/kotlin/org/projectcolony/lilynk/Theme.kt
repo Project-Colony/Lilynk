@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-// punktfunk brand violets (from the app icon: #6C5BF3 / #A79FF8 / #D2C9FB on a #16132A indigo).
+// lilynk brand violets (from the app icon: #6C5BF3 / #A79FF8 / #D2C9FB on a #16132A indigo).
 // Used as the fallback dark scheme on pre-Android-12 devices; on 12+ we defer to Material You.
 // `internal` (not private) so the CI screenshot tests can force the deterministic brand palette —
 // Material You dynamic colour has no wallpaper to seed from under the Robolectric JVM renderer.
@@ -39,7 +39,7 @@ internal val BrandDark = darkColorScheme(
 /**
  * App theme — always dark (a streaming client reads best on a dark canvas, and the immersive
  * stream view assumes it), but uses **Material You** dynamic colour on Android 12+ so the UI
- * harmonises with the user's wallpaper, falling back to the punktfunk brand violets below that.
+ * harmonises with the user's wallpaper, falling back to the lilynk brand violets below that.
  */
 @Composable
 fun LilynkTheme(content: @Composable () -> Unit) {

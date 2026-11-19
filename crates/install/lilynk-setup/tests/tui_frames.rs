@@ -422,7 +422,7 @@ fn the_screens_read_their_words_from_the_messages() {
         "Shared clipboard",
         "Third-party clients",
         "nothing runs until you confirm",
-        "Joins the punktfunk group",
+        "Joins the lilynk group",
         "Use the generated password",
         "asks for a password",
         "Where should the web console be reachable?",

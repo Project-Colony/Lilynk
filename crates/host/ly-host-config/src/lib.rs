@@ -305,7 +305,7 @@ pub struct HostConfig {
     /// instead of a uhid pad. **Default OFF**. Handed to every seat in [`seat_defaults`].
     pub dualsense_usbip: bool,
     /// `LILYNK_GAMESCOPE_HDR` — allow HDR on gamescope. The host probes the
-    /// punktfunk build (`packaging/gamescope`) and stays SDR if missing; this only
+    /// lilynk build (`packaging/gamescope`) and stays SDR if missing; this only
     /// decides whether HDR is *attempted*. **Default ON**, matching `LILYNK_10BIT`.
     pub gamescope_hdr: bool,
     /// `LILYNK_GAMESCOPE_SDR_NITS` — starting SDR luminance inside the PQ container
@@ -543,7 +543,7 @@ fn encoder_pref(raw: Option<String>) -> String {
     let pref = raw.unwrap_or_default().to_ascii_lowercase();
     if cfg!(windows) && matches!(pref.as_str(), "sw" | "software" | "openh264") {
         eprintln!(
-            "punktfunk: LILYNK_ENCODER={pref:?} — Windows has no software encoder since the \
+            "lilynk: LILYNK_ENCODER={pref:?} — Windows has no software encoder since the \
              driver took over encoding; using auto"
         );
         return "auto".into();

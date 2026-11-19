@@ -1,12 +1,12 @@
-# Punktfunk winget REST source
+# Lilynk winget REST source
 
 A self-hosted [winget REST source](https://github.com/microsoft/winget-cli-restsource) serving the
-Punktfunk Windows host, so users can install and upgrade with `winget` instead of downloading a
+Lilynk Windows host, so users can install and upgrade with `winget` instead of downloading a
 `setup.exe` by hand.
 
 ```powershell
 # one-time, from an ELEVATED prompt (winget requires admin to add a source)
-winget source add -n punktfunk https://winget.punktfunk.unom.io -t Microsoft.Rest
+winget source add -n lilynk https://winget.punktfunk.unom.io -t Microsoft.Rest
 
 winget install Lilynk.LilynkHost                 # silent, wizard defaults
 winget install Lilynk.LilynkHost --interactive   # the full wizard

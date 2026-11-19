@@ -216,7 +216,7 @@ fn ask_feature(h: HANDLE, expect_pad_index: u32) -> Result<u32> {
     bail!(
         "this HID collection carries no channel proof (feature 0x{:02x}: no; Deck command: {}; \
          numbered command: {}) — the driver predates the proof (reinstall: run the \
-         Punktfunk installer again)",
+         Lilynk installer again)",
         HID_FEATURE_REPORT_CHANNEL_PROOF,
         if set_ok {
             "no matching reply"
@@ -513,7 +513,7 @@ fn ask_hid(h: HANDLE) -> Result<ChannelProof> {
         let end = buf.iter().position(|&c| c == 0).unwrap_or(buf.len());
         bail!(
             "this HID collection's serial is {:?}, not a channel proof — an old driver is installed \
-             (reinstall: run the Punktfunk installer again)",
+             (reinstall: run the Lilynk installer again)",
             String::from_utf16_lossy(&buf[..end])
         );
     }

@@ -1,15 +1,15 @@
-# punktfunk seat supervisor: runs a user, a session and a host per seat for the box's host.
+# lilynk seat supervisor: runs a user, a session and a host per seat for the box's host.
 #
 # Root, because it creates users and starts units. Seats are units of their own, so restarting or
 # stopping this service leaves them running; the next start reads their state back from systemd.
-# The socket answers root and the punktfunk user only.
+# The socket answers root and the lilynk user only.
 #
 # No ProtectSystem=: useradd writes /etc/passwd, /etc/shadow and /etc/group.
 [Unit]
-Description=punktfunk seat supervisor
+Description=lilynk seat supervisor
 After=local-fs.target systemd-logind.service
 Wants=systemd-logind.service
-# The owner's host reads its contract from /run/punktfunk/seats, which this writes at start. A
+# The owner's host reads its contract from /run/lilynk/seats, which this writes at start. A
 # login waits for systemd-user-sessions; a lingering user's manager waits for this through
 # lilynk-seats-user.conf.
 Before=systemd-user-sessions.service
@@ -21,14 +21,14 @@ Type=notify
 TimeoutStartSec=90
 # The door's directory, whose files the trust copies follow. The supervisor's own state, the
 # ledger included, is /var/lib/lilynk-seats.
-Environment=LILYNK_CONFIG_DIR=/var/lib/punktfunk
-ExecStart=/usr/libexec/punktfunk/lilynk-seats serve --socket /run/punktfunk/seats.sock
+Environment=LILYNK_CONFIG_DIR=/var/lib/lilynk
+ExecStart=/usr/libexec/lilynk/lilynk-seats serve --socket /run/lilynk/seats.sock
 # A seat's blocking uinput reads sit in this process until answered; the stop signal would
 # strand them in the kernel. This answers them first.
-ExecStop=-/usr/libexec/punktfunk/lilynk-seats drain
+ExecStop=-/usr/libexec/lilynk/lilynk-seats drain
 # No seat attaches while the supervisor is down, so its stop opens the vhci gate once no seat
 # holds a port, and gives the box's hidraw nodes back their distro modes.
-ExecStopPost=-/usr/libexec/punktfunk/lilynk-seats ungate
+ExecStopPost=-/usr/libexec/lilynk/lilynk-seats ungate
 Restart=on-failure
 RestartSec=2
 # A relayed pad's fds wait here across a restart, so an update keeps a seat's controllers.

@@ -16,7 +16,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { UI_DIR } from "./ui-forward.js";
 
-/** A plugin's `punktfunk` block — the half of it a sandbox is built from. */
+/** A plugin's `lilynk` block — the half of it a sandbox is built from. */
 export interface PluginManifest {
 	schema?: number;
 	id?: string;
@@ -32,13 +32,13 @@ export interface PluginManifest {
 /** An id names the plugin's state dir and socket: one lowercase path component. */
 const PLUGIN_ID = /^[a-z0-9][a-z0-9-]{0,63}$/;
 
-/** Read `package.json`'s `punktfunk` block; `undefined` unless `schema` is 1 and the id is valid. */
+/** Read `package.json`'s `lilynk` block; `undefined` unless `schema` is 1 and the id is valid. */
 export const readManifest = (packageDir: string): PluginManifest | undefined => {
 	try {
 		const pkg = JSON.parse(
 			fs.readFileSync(path.join(packageDir, "package.json"), "utf8"),
-		) as { punktfunk?: PluginManifest };
-		const m = pkg.punktfunk;
+		) as { lilynk?: PluginManifest };
+		const m = pkg.lilynk;
 		return m && m.schema === 1 && typeof m.id === "string" && PLUGIN_ID.test(m.id)
 			? m
 			: undefined;
@@ -208,10 +208,10 @@ export const bwrapArgv = (
 	argv.push(
 		"--bind",
 		paths.stateDir,
-		path.join("/run/punktfunk/plugin-state", path.basename(paths.stateDir)),
+		path.join("/run/lilynk/plugin-state", path.basename(paths.stateDir)),
 	);
-	argv.push("--ro-bind", paths.tokenFile, "/run/punktfunk/plugin-token");
-	argv.push("--bind", paths.socket, "/run/punktfunk/host.sock");
+	argv.push("--ro-bind", paths.tokenFile, "/run/lilynk/plugin-token");
+	argv.push("--bind", paths.socket, "/run/lilynk/host.sock");
 	// Its loopback is its own, so its UI listens where the runner can forward to.
 	if (paths.ui) {
 		argv.push("--bind", paths.ui.dir, UI_DIR);
@@ -377,7 +377,7 @@ const TMP_SOCKETS = [
  * A root no manifest or grant may bind: the host's processes, devices, the session bus and
  * runtime sockets, `/tmp` itself and a desktop's sockets there (`TMP_SOCKETS`), the home or
  * anything above it, keys, credential stores (`SECRETS`) or a parent of one, and the host's config
- * dir (`configDir`, and `~/.config/punktfunk*` wherever the config lives) or anything above it,
+ * dir (`configDir`, and `~/.config/lilynk*` wherever the config lives) or anything above it,
  * which holds every plugin's token. A read-write bind (`write`) also may not hold what the session
  * runs (`STARTUP`) or a parent of one, and one not below `/tmp` needs the owner's grant
  * (`operator`): a manifest's `writes` there waits for the owner's yes. Checked on the path and on
@@ -418,7 +418,7 @@ export const refusedRoot = (
 			p === "/" ||
 			above(h) ||
 			above(c) ||
-			above(path.join(h, ".config", "punktfunk")) ||
+			above(path.join(h, ".config", "lilynk")) ||
 			under(c) ||
 			["/proc", "/sys", "/dev"].some(under) ||
 			(under("/run") && !p.startsWith("/run/media/")) ||
@@ -427,7 +427,7 @@ export const refusedRoot = (
 			tmps.some(tmpSocket) ||
 			(write && STARTUP.some(near)) ||
 			(write && !operator && !tmps.some(under)) ||
-			p.startsWith(path.join(h, ".config", "punktfunk"))
+			p.startsWith(path.join(h, ".config", "lilynk"))
 		);
 	};
 	// Every spelling of every side: on Fedora Atomic `/home` is a link to `/var/home`.
@@ -506,10 +506,10 @@ export const sandboxEnv = (
 	HOME: home,
 	// sbin: Debian ships VirtualHere's client there. The system profile is NixOS's /usr/bin.
 	PATH: "/usr/bin:/bin:/usr/local/bin:/usr/sbin:/sbin:/run/current-system/sw/bin",
-	LILYNK_CONFIG_DIR: "/run/punktfunk",
+	LILYNK_CONFIG_DIR: "/run/lilynk",
 	// Reached through the supervisor's socket, so plain HTTP with no credential of its own.
-	LILYNK_MGMT_URL: "http://punktfunk.host",
-	LILYNK_MGMT_UNIX: "/run/punktfunk/host.sock",
+	LILYNK_MGMT_URL: "http://lilynk.host",
+	LILYNK_MGMT_UNIX: "/run/lilynk/host.sock",
 	...extra,
 });
 
@@ -571,7 +571,7 @@ export const pastaArgv = (pid: number, pidFile: string, ports: readonly number[]
 
 /**
  * The TCP ports on this computer the operator granted `id`, from `plugin-run/plugin-grants.json`.
- * Anything that is no port, and every port of Punktfunk's own (47980–48010, which trust a
+ * Anything that is no port, and every port of Lilynk's own (47980–48010, which trust a
  * loopback caller), is dropped: the host refuses those too.
  */
 export const grantedPorts = (configDir: string, id: string): number[] => {
@@ -700,7 +700,7 @@ export const sandboxProbe = (
 		// The host binary beside the runner is the AppContainer's door; the installer puts both.
 		return fs.existsSync(hostExe())
 			? { ok: true }
-			: { ok: false, reason: `${hostExe()} is missing — reinstall punktfunk, or set LILYNK_PLUGIN_SANDBOX=off` };
+			: { ok: false, reason: `${hostExe()} is missing — reinstall lilynk, or set LILYNK_PLUGIN_SANDBOX=off` };
 	}
 	if (platform !== "linux") {
 		return { ok: false, reason: "sandboxing is Linux-only here" };

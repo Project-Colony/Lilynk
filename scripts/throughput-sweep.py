@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Sweep punktfunk's data plane across a ladder of target bitrates.
+"""Sweep lilynk's data plane across a ladder of target bitrates.
 
 The probe pauses video and sends synthetic FEC filler over the real encrypted UDP
 path, separating host send drops from packets lost after send. Rising `host_drop`
@@ -168,7 +168,7 @@ def verdict(rows: list[dict]) -> str:
             f"link_loss dominates at the top ({ll:.1f}% vs host_drop {hd:.1f}%): "
             "the LINK or CLIENT recv path caps here. Cross-check with "
             "`iperf3 -u -b <peak+50%>M` between the boxes — if iperf also caps, "
-            "it's the link/OS, not punktfunk; if iperf is clean, it's the client "
+            "it's the link/OS, not lilynk; if iperf is clean, it's the client "
             "recv buffer (8 MB) / recv CPU.")
     else:
         lines.append("Loss stayed low but delivered plateaued below target — "
@@ -230,8 +230,8 @@ def self_test() -> int:
 
 
 def main() -> int:
-    p = argparse.ArgumentParser(add_help=True, description="punktfunk throughput sweep")
-    p.add_argument("host", nargs="?", help="HOST[:PORT] of the punktfunk host")
+    p = argparse.ArgumentParser(add_help=True, description="lilynk throughput sweep")
+    p.add_argument("host", nargs="?", help="HOST[:PORT] of the lilynk host")
     p.add_argument("--pin")
     p.add_argument("--mode")
     p.add_argument("--ladder", default=DEFAULT_LADDER)

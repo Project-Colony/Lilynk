@@ -11,7 +11,7 @@ import { ensureGamepadUiShortcut } from "./steam/shortcuts";
 import { PluginErrorBoundary } from "./ui/boundary";
 
 export default definePlugin(() => {
-  // Ensure the visible, stateless "Punktfunk" library entry (opens the gamepad UI / console
+  // Ensure the visible, stateless "Lilynk" library entry (opens the gamepad UI / console
   // home) exists and is repointed to the current plugin dir — also installs the native-touch
   // controller config. Fire-and-forget: cosmetic library upkeep must never block plugin load.
   void ensureGamepadUiShortcut();
@@ -31,7 +31,7 @@ export default definePlugin(() => {
     // Equals plugin.json "name": Decky finds the plugin by it, not by the lowercase folder, and
     // shows it in its list and as the panel's title. No `titleView`: Decky's title bar already
     // carries Steam's title class, and nesting that class shifts the name and shadows the back button.
-    name: "Punktfunk",
+    name: "Lilynk",
     content: (
       <PluginErrorBoundary>
         <QamPanel />

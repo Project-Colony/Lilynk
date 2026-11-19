@@ -30,7 +30,7 @@ const HELPER_UNIT_PATH: &str = "/usr/lib/systemd/system/lilynk-client-update.ser
 const HELPER_RESULT: &str = "/var/lib/lilynk-update/client-update-result.json";
 
 /// Pacman full-sysupgrade hatch (root-owned). Shared with the host: one box, one answer.
-const PACMAN_OPTIN_CONF: &str = "/etc/punktfunk/update.conf";
+const PACMAN_OPTIN_CONF: &str = "/etc/lilynk/update.conf";
 
 /// Mirrors `packaging/linux/49-lilynk-client-update.rules`.
 const OPT_IN_GROUP: &str = "lilynk-update";

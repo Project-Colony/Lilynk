@@ -1,4 +1,4 @@
-//! `%ProgramData%\punktfunk\host.env`: loading it into the service, writing its default, and
+//! `%ProgramData%\lilynk\host.env`: loading it into the service, writing its default, and
 //! the line edits `service install` makes.
 
 use super::*;
@@ -70,7 +70,7 @@ pub(super) fn ensure_default_host_env() -> Result<()> {
         name_web_console_bind(&path);
         return Ok(());
     }
-    let default = "# punktfunk host configuration (read by the Windows service).\n\
+    let default = "# lilynk host configuration (read by the Windows service).\n\
         # KEY=VALUE per line; '#' comments. Restart the service after editing:\n\
         #   lilynk-host service stop && lilynk-host service start\n\
         \n\
@@ -98,7 +98,7 @@ pub(super) fn ensure_default_host_env() -> Result<()> {
         # Force a specific render GPU by name substring (multi-GPU boxes only):\n\
         # LILYNK_RENDER_ADAPTER=4090\n\
         \n\
-        # The name this host shows up under in Moonlight and the Punktfunk clients\n\
+        # The name this host shows up under in Moonlight and the Lilynk clients\n\
         # (default: the machine's own computer name):\n\
         # LILYNK_HOST_NAME=Living Room\n";
     // DACL-locked: host.env is the SYSTEM service's environment and launched command line.

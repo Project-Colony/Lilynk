@@ -440,7 +440,7 @@ impl Unit {
     }
 }
 
-/// Systemd user units the Linux packages install (`scripts/punktfunk-*.service`): the host,
+/// Systemd user units the Linux packages install (`scripts/lilynk-*.service`): the host,
 /// then its companions.
 #[cfg(target_os = "linux")]
 pub const UNITS: [(&str, Unit); 3] = [
@@ -564,7 +564,7 @@ mod tests {
         let s: Summary = serde_json::from_str(json).expect("unknown fields are ignored");
         assert_eq!(
             TrayStatus::Running(s).headline(),
-            "Punktfunk host 0.5.1 — idle"
+            "Lilynk host 0.5.1 — idle"
         );
     }
 
@@ -572,11 +572,11 @@ mod tests {
     fn headline_shows_session_and_reason() {
         assert_eq!(
             TrayStatus::Running(summary(true)).headline(),
-            "Punktfunk host 0.5.1 — streaming 2560×1440@120"
+            "Lilynk host 0.5.1 — streaming 2560×1440@120"
         );
         assert_eq!(
             TrayStatus::Running(summary(false)).headline(),
-            "Punktfunk host 0.5.1 — idle"
+            "Lilynk host 0.5.1 — idle"
         );
         assert!(TrayStatus::Error("exit code 3".into())
             .headline()
@@ -593,10 +593,7 @@ mod tests {
         s.video_streaming = false;
         let st = TrayStatus::Running(s);
         assert!(st.is_streaming());
-        assert_eq!(
-            st.headline(),
-            "Punktfunk host 0.5.1 — streaming 2560×1440@120"
-        );
+        assert_eq!(st.headline(), "Lilynk host 0.5.1 — streaming 2560×1440@120");
         assert!(!TrayStatus::Running(summary(false)).is_streaming());
     }
 

@@ -1,6 +1,6 @@
 // Bridge to the Python backend (main.py) + shared types.
 //
-// The calls under "The CLI shells" are thin shells over the headless `punktfunk` CLI, so their
+// The calls under "The CLI shells" are thin shells over the headless `lilynk` CLI, so their
 // types are the CLI's JSON shapes rather than anything this plugin invents. The plugin never
 // models the client's stores itself: it would drift from them with every field the client adds.
 
@@ -13,7 +13,7 @@ export interface Preset {
 }
 
 /**
- * A host answering on mDNS right now (`punktfunk discover --json`).
+ * A host answering on mDNS right now (`lilynk discover --json`).
  *
  * `saved`/`paired` are annotated BY THE CLI against the saved-hosts store — fingerprint first,
  * address second. The plugin does not join the two lists itself; that rule living in one place
@@ -35,7 +35,7 @@ export interface DiscoveredHost {
 }
 
 /**
- * A host in the shared saved-hosts store (`punktfunk hosts list --probe --json`) — the same
+ * A host in the shared saved-hosts store (`lilynk hosts list --probe --json`) — the same
  * `client-known-hosts.json` the desktop client owns.
  *
  * `online` comes from a mDNS-INDEPENDENT probe, so a host reached over Tailscale/VPN is not
@@ -100,7 +100,7 @@ export interface PairResult extends CliResult {
 }
 
 /**
- * One title of a host's library (`punktfunk library <ref> --json`). `id` is store-qualified —
+ * One title of a host's library (`lilynk library <ref> --json`). `id` is store-qualified —
  * `steam:570`, `custom:…` — and is the handle a launch names; the Steam ones are what the game
  * page matches against Steam's own appids.
  */
@@ -114,7 +114,7 @@ export interface LibraryResult extends CliResult {
   games?: LibraryGame[];
 }
 
-/** One profile on a host, from `punktfunk profiles <ref> --json`. */
+/** One profile on a host, from `lilynk profiles <ref> --json`. */
 export interface HostProfile {
   id: string;
   display_name: string;
@@ -230,7 +230,7 @@ export const library = callable<[ref: string], LibraryResult>("library");
 
 export const profiles = callable<[ref: string], ProfilesResult>("profiles");
 
-/** One action the host lets this Deck run (`punktfunk actions <ref> --json`). */
+/** One action the host lets this Deck run (`lilynk actions <ref> --json`). */
 export interface HostAction {
   id: string; // `power.sleep`, `power.reboot`, …; a later host may add more
   label: string; // the CLI's words, for an id this plugin has none for
@@ -254,7 +254,7 @@ export const runAction = callable<
  *  MAC is known. */
 export const wake = callable<[ref: string], CliResult>("wake");
 
-/** One row of the host's Screen section (`punktfunk screen <ref> --json`), as data to word. */
+/** One row of the host's Screen section (`lilynk screen <ref> --json`), as data to word. */
 export interface ScreenRow {
   kind: "role" | "monitor" | "own"; // `own`: a host without roles
   id: string; // `only` | `main` | `second`, a connector, or `own`
@@ -304,7 +304,7 @@ export interface GameArt {
   hero_type?: string;
   logo?: string;
   logo_type?: string;
-  /** The icon's bytes (`jpg` from Steam's cache or CDN, `png` for the Punktfunk fallback). */
+  /** The icon's bytes (`jpg` from Steam's cache or CDN, `png` for the Lilynk fallback). */
   icon?: string;
   icon_type?: string;
   /** A ready file for SetShortcutIcon — only set for the PNG fallback. */
@@ -334,7 +334,7 @@ export const streamRunning = callable<[], { running: boolean }>("stream_running"
 export const hostAction = callable<[action: string], { ok: boolean; error?: string }>(
   "host_action",
 );
-// End a title this device launched on the host (`punktfunk end-game`). `ok` when it is gone;
+// End a title this device launched on the host (`lilynk end-game`). `ok` when it is gone;
 // `notice` is the CLI's sentence either way.
 export const endGame = callable<
   [ref: string, gameId: string],

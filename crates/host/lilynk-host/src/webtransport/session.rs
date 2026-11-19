@@ -604,7 +604,7 @@ mod tests {
         let mut s = serving(np.clone());
         s.plane.origins = vec!["https://play.example.com".into()];
         np.add("Enrico's browser", "aa11").unwrap();
-        np.remember_origin("aa11", "https://web.punktfunk.io");
+        np.remember_origin("aa11", "https://web.lilynk.example");
         let cap = |o: String| o.chars().take(Via::ORIGIN_CAP).collect::<String>();
         let cut = cap(format!("https://play.{}.example", "a".repeat(200)));
         let cut_local = cap(format!(
@@ -628,7 +628,7 @@ mod tests {
             "http://localhost:5173",
             "file://",
             "https://play.example.com",
-            "https://web.punktfunk.io",
+            "https://web.lilynk.example",
         ] {
             assert!(!strict(Some(familiar)), "{familiar}");
         }
@@ -971,7 +971,7 @@ mod tests {
         let (ended, said) = tokio::join!(session, read);
         assert!(ended.is_err(), "the session is refused");
         assert_eq!(said.code, RejectReason::SeatUnavailable.close_code());
-        assert_eq!(said.reason, "Open this profile from the Punktfunk app.");
+        assert_eq!(said.reason, "Open this profile from the Lilynk app.");
         assert_eq!(said.reason_id, "close_unlock_from_browser");
         assert!(sup.asked().is_empty(), "nothing asked of the supervisor");
     }

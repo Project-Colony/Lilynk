@@ -439,7 +439,7 @@ fn restored_pins(
 fn saved_path() -> Result<std::path::PathBuf> {
     let base = std::env::var_os("LOCALAPPDATA").context("LOCALAPPDATA unset")?;
     Ok(std::path::PathBuf::from(base)
-        .join("punktfunk")
+        .join("lilynk")
         .join("voice-route.saved"))
 }
 

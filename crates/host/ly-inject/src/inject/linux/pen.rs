@@ -1,4 +1,4 @@
-//! Virtual tablet ("Punktfunk Pen"): a uinput stylus with pressure, tilt, barrel
+//! Virtual tablet ("Lilynk Pen"): a uinput stylus with pressure, tilt, barrel
 //! roll, hover distance, eraser, and barrel buttons.
 //!
 //! Compositors have no virtual-tablet protocol; they consume evdev tablets via
@@ -53,7 +53,7 @@ fn tool_key(tool: PenTool) -> u16 {
 }
 
 /// The tablet's name, as a compositor announces it.
-pub(crate) const PEN_NAME: &str = "Punktfunk Pen";
+pub(crate) const PEN_NAME: &str = "Lilynk Pen";
 
 /// Per-session uinput tablet.
 pub struct VirtualPen {
@@ -139,7 +139,7 @@ impl VirtualPen {
             version: 1,
         };
         dev.create(id, PEN_NAME.as_bytes(), 0)?;
-        tracing::info!("virtual tablet created (Punktfunk Pen, uinput)");
+        tracing::info!("virtual tablet created (Lilynk Pen, uinput)");
 
         Ok(VirtualPen {
             dev,

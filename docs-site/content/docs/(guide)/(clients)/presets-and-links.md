@@ -5,7 +5,7 @@ description: How settings presets override your client defaults per host or per 
 
 A settings preset is a named set of stream settings you attach to a host, a game or one connect. A
 `punktfunk://` link starts a stream you already set up, from a shortcut, a script or a browser.
-Both live in the Punktfunk apps, not in the host's web console.
+Both live in the Lilynk apps, not in the host's web console.
 
 ## What a preset is
 
@@ -14,7 +14,7 @@ later changes to them. Changing a row pins it, even to the value the default has
 **Reset** makes it follow the default again.
 
 Presets stay on the device that made them; nothing syncs them. Linux keeps them in
-`~/.config/punktfunk/client-presets.json`, Windows in `%APPDATA%\punktfunk\client-presets.json`, the
+`~/.config/lilynk/client-presets.json`, Windows in `%APPDATA%\lilynk\client-presets.json`, the
 Apple and Android apps in their own storage.
 
 ## Creating and editing one
@@ -141,12 +141,12 @@ record id, `host=` and, once pinned, `fp=`, so it survives an address change or 
 
 ## Starting a game from a frontend
 
-On Android, a game frontend that lists a folder of files can start a game through a `.punktfunk`
+On Android, a game frontend that lists a folder of files can start a game through a `.lilynk`
 launcher file.
 
 1. On a game, open **Details…** (long-press it in the library, or its card in the controller
    interface) and choose **Save launcher file…**. Save it into the folder the frontend scans.
-2. Have the frontend open `.punktfunk` files with this activity and the file's URI:
+2. Have the frontend open `.lilynk` files with this activity and the file's URI:
 
    ```text
    am start -n org.projectcolony.lilynk/org.projectcolony.lilynk.MainActivity -a android.intent.action.VIEW -d <file URI>
@@ -155,11 +155,11 @@ launcher file.
 A launcher file is the game's link on one line, as **Copy link** gives it, so a text editor can
 make one too. The rules above apply: a link to a host you haven't paired shows a notice.
 
-From a script, use the [`punktfunk` command](/docs/clients#scripting-the-punktfunk-cli):
+From a script, use the [`lilynk` command](/docs/clients#scripting-the-lilynk-cli):
 
 ```bash
-punktfunk presets list
-punktfunk open --yes 'punktfunk://connect/Desk?preset=Work'
+lilynk presets list
+lilynk open --yes 'punktfunk://connect/Desk?preset=Work'
 ```
 
 `--yes` answers the confirmation a name or address raises.

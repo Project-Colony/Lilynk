@@ -1,7 +1,7 @@
 //! What an installed plugin declares about itself: the paths it reads, whether it needs the
 //! network, and the commands the host may run on its behalf.
 //!
-//! The manifest is a `punktfunk` block in the package's own `package.json`, so it is part of the
+//! The manifest is a `lilynk` block in the package's own `package.json`, so it is part of the
 //! reviewed, hash-pinned tarball rather than something a running plugin can choose. It is the only
 //! source of a plugin-owned command: the host builds every argv from a template here, with the
 //! parameters validated per launch, instead of running a string the plugin answers with.
@@ -52,7 +52,7 @@ pub enum ParamKind {
     Args,
 }
 
-/// A plugin's `punktfunk` block.
+/// A plugin's `lilynk` block.
 #[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq)]
 pub struct PluginManifest {
     /// Must be 1. A later schema is refused rather than guessed at.
@@ -105,7 +105,7 @@ impl PluginManifest {
     /// Every root the runner binds for this plugin, and whether it binds it writable: its
     /// declared `reads`, a declared write that binds with no grant (under `/tmp`), and the
     /// operator's grants. Each passes the runner's own refusal ([`AccessStore::may_bind`]), so a
-    /// manifest that names `~/.config/punktfunk` reaches nothing there, and none is a share. A
+    /// manifest that names `~/.config/lilynk` reaches nothing there, and none is a share. A
     /// `files` root is the runner's alone: a path below it is not the plugin's to hand a launch.
     ///
     /// A package cannot know where someone keeps their ROMs or installs their games, so the
@@ -532,13 +532,13 @@ pub fn for_provider(id: &str) -> Option<PluginManifest> {
 
 /// The provider id package `pkg` declares in `plugins`, read before an uninstall takes its
 /// files away. A bare name is the runner's first-party shorthand: `playnite` is
-/// `@punktfunk/plugin-playnite`.
+/// `@lilynk/plugin-playnite`.
 pub fn id_of_package(plugins: &Path, pkg: &str) -> Option<String> {
     let pkg = match pkg.trim() {
         p if p.starts_with('@') || p.contains('/') || p.starts_with("lilynk-plugin-") => {
             p.to_string()
         }
-        bare => format!("@punktfunk/plugin-{bare}"),
+        bare => format!("@lilynk/plugin-{bare}"),
     };
     read_package(&plugins.join("node_modules").join(pkg))
         .map(|m| m.id)
@@ -581,13 +581,13 @@ fn package_dirs(root: &Path) -> Vec<PathBuf> {
 #[derive(Deserialize)]
 struct PackageJson {
     #[serde(default)]
-    punktfunk: Option<PluginManifest>,
+    lilynk: Option<PluginManifest>,
 }
 
 fn read_package(dir: &Path) -> Option<PluginManifest> {
     let text = std::fs::read_to_string(dir.join("package.json")).ok()?;
     match serde_json::from_str::<PackageJson>(&text) {
-        Ok(pkg) => pkg.punktfunk,
+        Ok(pkg) => pkg.lilynk,
         Err(e) => {
             tracing::warn!(package = %dir.display(), error = %e, "plugin manifest: unreadable");
             None
@@ -612,7 +612,7 @@ mod manifest_tests {
     fn package(modules: &Path, name: &str, id: &str) {
         let dir = modules.join(name);
         std::fs::create_dir_all(&dir).unwrap();
-        let body = serde_json::json!({ "name": name, "punktfunk": { "schema": 1, "id": id } });
+        let body = serde_json::json!({ "name": name, "lilynk": { "schema": 1, "id": id } });
         std::fs::write(dir.join("package.json"), body.to_string()).unwrap();
     }
 
@@ -621,13 +621,13 @@ mod manifest_tests {
         let tmp = tempfile::tempdir().unwrap();
         let plugins = tmp.path();
         let modules = plugins.join("node_modules");
-        package(&modules, "@punktfunk/plugin-steam", "steam");
-        package(&modules, "@punktfunk/plugin-kit", "kit-library");
+        package(&modules, "@lilynk/plugin-steam", "steam");
+        package(&modules, "@lilynk/plugin-kit", "kit-library");
         package(&modules, "plugin-twin-a", "twin");
         package(&modules, "plugin-twin-b", "twin");
         package(&modules, "plugin-bad", "../plugins");
         let deps = serde_json::json!({ "dependencies": {
-            "@punktfunk/plugin-steam": "0.2.2",
+            "@lilynk/plugin-steam": "0.2.2",
             "plugin-twin-a": "1", "plugin-twin-b": "1", "plugin-bad": "1",
         }});
         std::fs::write(plugins.join("package.json"), deps.to_string()).unwrap();
@@ -649,10 +649,10 @@ mod manifest_tests {
         let config = tmp.path();
         let plugins = config.join("plugins");
         let modules = plugins.join("node_modules");
-        package(&modules, "@punktfunk/plugin-steam", "steam");
-        package(&modules, "@punktfunk/plugin-planted", "planted");
+        package(&modules, "@lilynk/plugin-steam", "steam");
+        package(&modules, "@lilynk/plugin-planted", "planted");
         let deps = serde_json::json!({ "dependencies": {
-            "@punktfunk/plugin-steam": "1", "@punktfunk/plugin-planted": "1",
+            "@lilynk/plugin-steam": "1", "@lilynk/plugin-planted": "1",
         }});
         std::fs::write(plugins.join("package.json"), deps.to_string()).unwrap();
         let ids = |config: &Path| {
@@ -662,17 +662,17 @@ mod manifest_tests {
                 .collect::<Vec<_>>()
         };
         assert!(ids(config).is_empty(), "nothing is theirs yet");
-        mark_person(config, "@punktfunk/plugin-steam", true).unwrap();
+        mark_person(config, "@lilynk/plugin-steam", true).unwrap();
         assert_eq!(ids(config), ["steam"]);
         let list = config.join("plugin-run").join(PERSON_PLUGINS);
         assert_eq!(
             std::fs::read_to_string(&list).unwrap(),
-            r#"["@punktfunk/plugin-steam"]"#
+            r#"["@lilynk/plugin-steam"]"#
         );
-        mark_person(config, "@punktfunk/plugin-steam", false).unwrap();
+        mark_person(config, "@lilynk/plugin-steam", false).unwrap();
         assert!(ids(config).is_empty());
         // A mark of a package that isn't a top-level install counts for nothing.
-        mark_person(config, "@punktfunk/plugin-kit", true).unwrap();
+        mark_person(config, "@lilynk/plugin-kit", true).unwrap();
         std::fs::remove_file(plugins.join("package.json")).unwrap();
         assert!(ids(config).is_empty());
     }
@@ -682,11 +682,11 @@ mod manifest_tests {
     fn a_package_id_is_read_from_the_dir_given() {
         let tmp = tempfile::tempdir().unwrap();
         let modules = tmp.path().join("node_modules");
-        package(&modules, "@punktfunk/plugin-steam", "steam");
+        package(&modules, "@lilynk/plugin-steam", "steam");
         package(&modules, "lilynk-plugin-x", "x-games");
         for (pkg, id) in [
             ("steam", Some("steam")),
-            ("@punktfunk/plugin-steam", Some("steam")),
+            ("@lilynk/plugin-steam", Some("steam")),
             ("lilynk-plugin-x", Some("x-games")),
             ("missing", None),
         ] {
@@ -732,10 +732,10 @@ mod manifest_tests {
         let Some(home) = home_dir() else { return };
         let tmp = tempfile::tempdir().unwrap();
         let games = tmp.path().canonicalize().unwrap();
-        let m = manifest(&["~/.config/punktfunk", "~/.ssh", games.to_str().unwrap()]);
-        assert!(!m.confines(&home.join(".config/punktfunk/mgmt-token")));
+        let m = manifest(&["~/.config/lilynk", "~/.ssh", games.to_str().unwrap()]);
+        assert!(!m.confines(&home.join(".config/lilynk/mgmt-token")));
         assert!(m
-            .reaches(&home.join(".config/punktfunk/mgmt-token"), false)
+            .reaches(&home.join(".config/lilynk/mgmt-token"), false)
             .is_none());
         assert!(!m.confines(&home.join(".ssh/id_ed25519")));
         assert!(m.reaches(&games.join("x.sav"), false).is_some());
@@ -883,13 +883,13 @@ mod manifest_tests {
 
     #[test]
     fn a_package_block_round_trips() {
-        let json = r#"{"name":"@punktfunk/plugin-bottles","punktfunk":{
+        let json = r#"{"name":"@lilynk/plugin-bottles","lilynk":{
             "schema":1,"id":"bottles","reads":["~/.local/share/bottles"],"network":false,
             "exec":{"run":{"exe":"flatpak","args":["run","com.usebottles.bottles","-b","{bottle}"],
                            "params":{"bottle":"name"}}}}}"#;
         let m: PluginManifest = serde_json::from_str::<PackageJson>(json)
             .unwrap()
-            .punktfunk
+            .lilynk
             .unwrap();
         assert_eq!(m.id, "bottles");
         assert_eq!(m.exec["run"].exe, "flatpak");

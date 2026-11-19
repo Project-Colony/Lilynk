@@ -83,7 +83,7 @@ export function selfSigned(name: string): { cert: string; key: string } {
 	};
 }
 
-const { cert, key } = selfSigned("punktfunk test seat");
+const { cert, key } = selfSigned("lilynk test seat");
 export const PIN = createHash("sha256")
 	.update(new X509Certificate(cert).raw)
 	.digest("hex");
@@ -163,7 +163,7 @@ export const seat = Bun.serve({
 			return Response.json(
 				{
 					code: "person_session_ended",
-					error: "Your Punktfunk session ended.",
+					error: "Your Lilynk session ended.",
 				},
 				{ status: 401 },
 			);

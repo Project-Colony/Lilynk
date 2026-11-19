@@ -1,4 +1,4 @@
-# punktfunk — Apple client (macOS · iOS · iPadOS · tvOS · visionOS)
+# lilynk — Apple client (macOS · iOS · iPadOS · tvOS · visionOS)
 
 One SwiftUI codebase for Mac, iPhone, iPad, Apple TV and Apple Vision Pro. Networking and protocol — QUIC control
 plane, UDP data plane, FEC, AES-GCM, Opus, cert pinning — are the shared Rust `lilynk-core`,
@@ -8,7 +8,7 @@ input, UI.
 `LilynkKit` is the reusable library (the C-ABI wrapper, the two presenters, input and gamepad
 capture, discovery); `LilynkClient` is the app, including the gamepad UI a connected controller
 swaps the whole home for. What the app can do for a user is
-[the docs site](https://docs.punktfunk.unom.io/docs/install-client)'s job, not this file's.
+[the docs site](https://project-colony.github.io/Lilynk/docs/install-client)'s job, not this file's.
 
 ## Build, run, test
 

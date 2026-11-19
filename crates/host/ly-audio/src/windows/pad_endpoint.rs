@@ -44,7 +44,7 @@ use windows::Win32::UI::Shell::PropertiesSystem::IPropertyStore;
 /// or games never match the endpoint to the pad.
 pub const PFDS_TAG: u32 = 0x5046_4453;
 /// Creation DeviceDesc. The INF overwrites it; [`PAD_INDEX_VALUE`] is the durable marker.
-const DEVNODE_DESC: &str = "Punktfunk Pad Audio";
+const DEVNODE_DESC: &str = "Lilynk Pad Audio";
 /// Adapter half of the endpoint's name, and the devnode FriendlyName it is rebuilt from.
 const DEVICE_NAME: &str = "DualSense Wireless Controller";
 const SSS_HWID: &str = "ROOT\\SteamStreamingSpeakers";

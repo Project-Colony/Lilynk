@@ -15,7 +15,6 @@ may do; this page only gets them to the host. To share your screen with them onc
 | A PC, Mac or Steam Deck with Steam | [Porthole](#porthole): nothing to set up on your router |
 | A phone, tablet, Apple TV, or no Steam | [Tailscale machine sharing](#tailscale) |
 | Anything, and you run your own router | [Port forwarding](#port-forwarding): not recommended, the only path that exposes the host to the internet |
-| A browser, with nothing to install | [The browser client from outside your network](/docs/browser-client#from-outside-your-network) |
 
 The paths on this page open one port: UDP `9777` carries the stream, video and audio included. With
 [seats](/docs/profiles#what-a-seat-can-do) on, open UDP `9779`–`9782` too: a host that places
@@ -30,7 +29,7 @@ Steam friends, behind any router.
 2. You create a lobby and share UDP `9777`, without remapping. Add TCP `47990` if the
    friend should browse your game library.
 3. The friend joins with your share code or from the friends list, accepts the ports, and adds
-   `127.0.0.1:9777` as a host in their Punktfunk client.
+   `127.0.0.1:9777` as a host in their Lilynk client.
 4. [Admit them as a guest](#admit-them-as-a-guest).
 
 ## Tailscale

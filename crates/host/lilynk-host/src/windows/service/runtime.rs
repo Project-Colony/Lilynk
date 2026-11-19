@@ -169,7 +169,7 @@ pub(super) fn run_service() -> Result<()> {
         .set_service_status(running.clone())
         .context("set RUNNING")?;
     tracing::info!(
-        "punktfunk service started — supervising the host (active console session) and the web \
+        "lilynk service started — supervising the host (active console session) and the web \
          console (session 0)"
     );
 

@@ -38,7 +38,7 @@ const writePkg = (dir: string, name: string, version: string) => {
 describe("reconcileSharedSdk", () => {
 	test("a refresh that failed is not repeated on the next start", () => {
 		const dir = tmp("sdk-refresh");
-		writePkg(dir, "@punktfunk/host", "0.0.1");
+		writePkg(dir, "@lilynk/host", "0.0.1");
 		// A dependency bun can't resolve offline makes the install fail fast.
 		fs.writeFileSync(
 			path.join(dir, "package.json"),
@@ -61,7 +61,7 @@ describe("reconcileSharedSdk", () => {
 
 	test("does not refresh without a first-party registry", () => {
 		const dir = tmp("sdk-no-registry");
-		writePkg(dir, "@punktfunk/host", "0.0.1");
+		writePkg(dir, "@lilynk/host", "0.0.1");
 		const lines: string[] = [];
 		reconcileSharedSdk(dir, (l) => lines.push(l));
 		expect(lines).toEqual([]);
@@ -72,7 +72,7 @@ describe("resolvePackage", () => {
 	test("refuses first-party names: this build has no plugin registry", () => {
 		expect(REGISTRY).toBe("");
 		expect(() => resolvePackage("playnite")).toThrow(/no plugin registry/);
-		expect(() => resolvePackage("@punktfunk/plugin-playnite")).toThrow(/no plugin registry/);
+		expect(() => resolvePackage("@lilynk/plugin-playnite")).toThrow(/no plugin registry/);
 	});
 
 	test("refuses public-registry names without allowPublicRegistry", () => {
@@ -108,7 +108,7 @@ describe("ensureBunfig", () => {
 		ensureBunfig(dir);
 		const toml = fs.readFileSync(path.join(dir, "bunfig.toml"), "utf8");
 		expect(toml).toContain("[install.scopes]");
-		expect(toml).toContain(`"@punktfunk" = "${BLOCKED_REGISTRY}"`);
+		expect(toml).toContain(`"@lilynk" = "${BLOCKED_REGISTRY}"`);
 		expect(BLOCKED_REGISTRY).toMatch(/^https:\/\/[^/]+\.invalid\/$/);
 	});
 
@@ -152,13 +152,13 @@ describe("listInstalled", () => {
 	test("finds both scoped and unscoped plugins with versions, ignoring other packages", () => {
 		const dir = tmp("list-mixed");
 		writePkg(dir, "lilynk-plugin-custom", "1.2.3");
-		writePkg(dir, path.join("@punktfunk", "plugin-playnite"), "0.2.0");
+		writePkg(dir, path.join("@lilynk", "plugin-playnite"), "0.2.0");
 		writePkg(dir, "effect", "4.0.0"); // an ordinary dep — must not be listed
-		writePkg(dir, path.join("@punktfunk", "host"), "0.1.1"); // scoped non-plugin — ignored
+		writePkg(dir, path.join("@lilynk", "host"), "0.1.1"); // scoped non-plugin — ignored
 
 		const found = listInstalled(dir);
 		expect(found).toEqual([
-			{ pkg: "@punktfunk/plugin-playnite", version: "0.2.0" },
+			{ pkg: "@lilynk/plugin-playnite", version: "0.2.0" },
 			{ pkg: "lilynk-plugin-custom", version: "1.2.3" },
 		]);
 	});
@@ -173,10 +173,10 @@ describe("listInstalled", () => {
 		]);
 	});
 
-	test("finds plugins in ANY scope, not just @punktfunk", () => {
+	test("finds plugins in ANY scope, not just @lilynk", () => {
 		// Plugin-store catalog entries must be scoped so the scope can map to that entry's
 		// registry, so a third-party plugin necessarily arrives as `@their-scope/plugin-*`.
-		// Discovery limited to @punktfunk would let it install and then never run.
+		// Discovery limited to @lilynk would let it install and then never run.
 		const dir = tmp("list-foreign-scope");
 		writePkg(dir, path.join("@retro-hub", "plugin-x"), "1.0.0");
 		writePkg(dir, path.join("@retro-hub", "helper"), "1.0.0"); // scoped non-plugin — ignored
@@ -191,7 +191,7 @@ describe("ensureBunfig with extra scopes", () => {
 		const dir = tmp("bunfig-extra");
 		ensureBunfig(dir, { "@retro-hub": "https://retro.example/npm/" });
 		const out = read(dir);
-		expect(out).toContain(`"@punktfunk" = "${BLOCKED_REGISTRY}"`);
+		expect(out).toContain(`"@lilynk" = "${BLOCKED_REGISTRY}"`);
 		expect(out).toContain('"@retro-hub" = "https://retro.example/npm/"');
 	});
 
@@ -205,7 +205,7 @@ describe("ensureBunfig with extra scopes", () => {
 		const out = read(dir);
 		expect(out).toContain('"@retro-hub" = "https://new.example/npm/"');
 		expect(out).not.toContain("old.example");
-		expect(out).toContain(`"@punktfunk" = "${BLOCKED_REGISTRY}"`);
+		expect(out).toContain(`"@lilynk" = "${BLOCKED_REGISTRY}"`);
 	});
 
 	test("preserves unrelated scopes already in the file", () => {
@@ -244,7 +244,7 @@ describe("ensurePluginsDir", () => {
 
 	test("never overwrites an existing package.json", () => {
 		const dir = tmp("ensure-keep");
-		const manifest = '{"dependencies":{"@punktfunk/plugin-playnite":"0.3.0"}}';
+		const manifest = '{"dependencies":{"@lilynk/plugin-playnite":"0.3.0"}}';
 		fs.writeFileSync(path.join(dir, "package.json"), manifest);
 		ensurePluginsDir(dir);
 		expect(fs.readFileSync(path.join(dir, "package.json"), "utf8")).toBe(manifest);
@@ -269,8 +269,8 @@ describe("stripGroupWrite", () => {
 		"clears group/world write on the tree a umask-002 install left behind",
 		() => {
 			const dir = tmp("strip-go-w");
-			writePkg(dir, "@punktfunk/plugin-x", "1.0.0");
-			const pkgDir = path.join(dir, "node_modules", "@punktfunk", "plugin-x");
+			writePkg(dir, "@lilynk/plugin-x", "1.0.0");
+			const pkgDir = path.join(dir, "node_modules", "@lilynk", "plugin-x");
 			const entry = path.join(pkgDir, "index.js");
 			fs.writeFileSync(entry, "export default {};\n");
 			fs.chmodSync(entry, 0o664);

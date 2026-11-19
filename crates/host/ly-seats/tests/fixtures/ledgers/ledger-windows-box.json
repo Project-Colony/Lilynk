@@ -12,7 +12,7 @@
       "autostart": false,
       "runtime": {
         "state": "failed",
-        "detail": "Punktfunk didn't start on the seat. The seat's log has the cause.",
+        "detail": "Lilynk didn't start on the seat. The seat's log has the cause.",
         "detail_id": "seatline_host_failed"
       },
       "fingerprint": "a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0"

@@ -1,4 +1,4 @@
-// Custom Nitro server entry for the punktfunk web console.
+// Custom Nitro server entry for the lilynk web console.
 //
 // It is the stock Nitro `bun` preset entry
 // (node_modules/nitropack/dist/presets/bun/runtime/bun.mjs) plus **TLS**, so the console is served
@@ -104,14 +104,14 @@ const tls =
 const secureFlag = /^(1|true)$/i.test(process.env.LILYNK_UI_SECURE ?? "");
 if (Boolean(certPath) !== Boolean(keyPath)) {
 	console.error(
-		`punktfunk web console: only ${certPath ? "LILYNK_UI_TLS_CERT" : "LILYNK_UI_TLS_KEY"} is set — ` +
+		`lilynk web console: only ${certPath ? "LILYNK_UI_TLS_CERT" : "LILYNK_UI_TLS_KEY"} is set — ` +
 			"TLS needs BOTH. Refusing to start rather than serve the login password in the clear.",
 	);
 	process.exit(1);
 }
 if (!tls && secureFlag) {
 	console.error(
-		"punktfunk web console: LILYNK_UI_SECURE is set but TLS is not configured. The session " +
+		"lilynk web console: LILYNK_UI_SECURE is set but TLS is not configured. The session " +
 			"cookie would be marked Secure and dropped by the browser over http://, so login could " +
 			"never stick. Refusing to start — set LILYNK_UI_TLS_CERT/_KEY, or unset LILYNK_UI_SECURE.",
 	);
@@ -189,7 +189,7 @@ const listenerOptions = (lane) => ({
 const consolePort = Number(process.env.NITRO_PORT || process.env.PORT || 3000);
 const server = Bun.serve({ ...listenerOptions("console"), port: consolePort });
 console.log(
-	`punktfunk web console listening on ${server.url} (tls=${!!tls}, bind=${bind})`,
+	`lilynk web console listening on ${server.url} (tls=${!!tls}, bind=${bind})`,
 );
 // Name the bind out loud on a loopback listener. A console that answers only here looks exactly
 // like one that is down when you try it from another device, and this line is the difference
@@ -197,7 +197,7 @@ console.log(
 // (server/util/pluginOrigin.ts), which decides whether Settings shows the network notice.
 if (/^(127\.|::1$|localhost$)/.test(bind)) {
 	console.log(
-		"punktfunk web console: this machine only. To reach it from your network, put " +
+		"lilynk web console: this machine only. To reach it from your network, put " +
 			"LILYNK_UI_BIND=0.0.0.0 in host.env and restart the console.",
 	);
 }
@@ -226,12 +226,12 @@ try {
 	// object, so one stamp is correct for both.
 	process.env.LILYNK_UI_SCHEME_ACTIVE = tls ? "https" : "http";
 	console.log(
-		`punktfunk plugin-UI origin listening on ${pluginServer.url} (tls=${!!tls})`,
+		`lilynk plugin-UI origin listening on ${pluginServer.url} (tls=${!!tls})`,
 	);
 } catch (e) {
 	delete process.env.LILYNK_UI_PLUGIN_PORT_ACTIVE;
 	console.error(
-		`punktfunk web console: could not bind the plugin-UI origin on port ${pluginPort} ` +
+		`lilynk web console: could not bind the plugin-UI origin on port ${pluginPort} ` +
 			`(${e?.message ?? e}). Plugin UIs are DISABLED until this is resolved — they are ` +
 			"deliberately not served on the console's own origin, because a plugin sharing that " +
 			"origin can act as the logged-in operator. Set LILYNK_UI_PLUGIN_PORT to a free port.",

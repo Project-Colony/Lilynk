@@ -1,4 +1,4 @@
-# Punktfunk
+# Lilynk
 
 The words the code, the docs and the console use for who owns what.
 

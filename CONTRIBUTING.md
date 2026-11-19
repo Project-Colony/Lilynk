@@ -1,17 +1,19 @@
-# Contributing to Punktfunk
+# Contributing to Lilynk
 
-Thanks for your interest in contributing! Building, testing and sending a change are in the
-[developer docs](https://docs.punktfunk.unom.io/docs/developers). The short version:
+Building, testing and sending a change are in the
+[developer docs](https://project-colony.github.io/Lilynk/docs/developers). Until the docs site is
+published, the same pages are in `docs-site/content/docs/developers/`.
 
-- **Discuss features first.** Talk a new feature or design through with the maintainer, on
-  [Discord](https://discord.gg/wzEGg9y45z) or as an idea on
-  [improve unom](https://improve.unom.io/p/punktfunk), before you open an issue or a pull
-  request. Bugs go on improve unom too. Security reports go to security@punktfunk.com
-  ([SECURITY.md](SECURITY.md)).
-- **Enable the hooks** once per clone: `git config core.hooksPath scripts/git-hooks`
-  ([what they run](https://docs.punktfunk.unom.io/docs/developers/contributing#git-hooks)).
-- **Run the full pass** before you push, plus the
-  [checks for what you touched](https://docs.punktfunk.unom.io/docs/developers/testing):
+- Discuss a new feature or design with the maintainer before you open a pull request, on
+  [Discord](https://discord.gg/tvFApEEVfj) or as a
+  [GitHub issue](https://github.com/Project-Colony/Lilynk/issues). Bugs go on GitHub issues too.
+  Report a security problem privately through the
+  [advisory form](https://github.com/Project-Colony/Lilynk/security/advisories/new), not in an
+  issue ([SECURITY.md](SECURITY.md)).
+- Enable the hooks once per clone with `git config core.hooksPath scripts/git-hooks`
+  ([what they run](https://project-colony.github.io/Lilynk/docs/developers/contributing#git-hooks)).
+- Run the full pass before you push, plus the
+  [checks for what you touched](https://project-colony.github.io/Lilynk/docs/developers/testing):
 
   ```sh
   cargo fmt --all --check
@@ -19,13 +21,11 @@ Thanks for your interest in contributing! Building, testing and sending a change
   cargo test  --workspace --locked
   ```
 
-- **Open the pull request as a draft** (`WIP:` title prefix). CI lanes, the `ci:*` labels and the
-  generated files CI checks:
-  [Contributing](https://docs.punktfunk.unom.io/docs/developers/contributing#open-a-pull-request).
-- **Update the docs page that owns a fact** in the same pull request:
-  [where facts live](https://docs.punktfunk.unom.io/docs/developers/contributing#docs).
-- **Commits, comments, error messages and the changelog** follow
-  [docs/writing.md](docs/writing.md).
+- Open the pull request as a draft. The generated files to keep current are in
+  [Contributing](https://project-colony.github.io/Lilynk/docs/developers/contributing#generated-files).
+- Update the docs page that owns a fact in the same pull request
+  ([where facts live](https://project-colony.github.io/Lilynk/docs/developers/contributing#docs)).
+- Commits, comments, error messages and the changelog follow [docs/writing.md](docs/writing.md).
 
 ## Licensing of contributions (inbound = outbound)
 

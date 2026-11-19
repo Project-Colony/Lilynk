@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# punktfunk — Steam Deck HOST installer (stream FROM the Deck to other devices).
+# lilynk — Steam Deck HOST installer (stream FROM the Deck to other devices).
 #
 # SteamOS is an immutable, read-only Arch base, so the host can't be a system package. Instead we
 # build it natively inside a Debian-trixie distrobox — the binary then runs natively on SteamOS —
@@ -14,7 +14,7 @@
 #   bash scripts/steamdeck/install.sh --open          # trusted LAN: accept unpaired clients (TOFU)
 #   bash scripts/steamdeck/install.sh --no-web        # skip the management web console
 #   bash scripts/steamdeck/install.sh --web-bind=127.0.0.1  # console on this Deck only (default: your network)
-#   LILYNK_SRC=~/src/punktfunk bash scripts/steamdeck/install.sh   # source elsewhere
+#   LILYNK_SRC=~/src/lilynk bash scripts/steamdeck/install.sh   # source elsewhere
 #
 set -euo pipefail
 # shellcheck source-path=SCRIPTDIR source=lib.sh
@@ -43,7 +43,7 @@ for arg in "$@"; do
         *) die "unknown option: $arg (try --help)" ;;
     esac
 done
-CONFIG="$HOME/.config/punktfunk"
+CONFIG="$HOME/.config/lilynk"
 # Set when this run does something that only a fresh login picks up (input-group add, first-time
 # KWin .desktop grant). Drives the loud "reboot before streaming" note in the summary.
 NEED_RELOGIN=0
@@ -55,7 +55,7 @@ case "${ID:-}${ID_LIKE:-}" in
     *steamos*|*arch*) ok "SteamOS / Arch base detected (${PRETTY_NAME:-unknown})" ;;
     *) warn "This installer targets SteamOS; '${PRETTY_NAME:-unknown}' may differ — on a normal distro use the apt/rpm packages instead." ;;
 esac
-[ -d "$SRC/crates/host/lilynk-host" ] || die "no punktfunk source at $SRC. Clone or rsync it there first, or pass --src=DIR (see scripts/steamdeck/README.md)."
+[ -d "$SRC/crates/host/lilynk-host" ] || die "no lilynk source at $SRC. Clone or rsync it there first, or pass --src=DIR (see scripts/steamdeck/README.md)."
 ok "source: $SRC"
 if ! have distrobox; then
     die "distrobox not found. Install it once (no root needed):
@@ -139,7 +139,7 @@ cd '$SRC' && cargo build -r -p lilynk-host -p lilynk-encode-worker -p lilynk-sea
 MISSING="$({ ldd "$BIN" 2>/dev/null || true; } | awk '/not found/ {print $1}' | sort -u | tr '\n' ' ')"
 [ -z "$MISSING" ] || die "the host built, but SteamOS cannot load it. Missing: $MISSING
      That is a library the build box has and SteamOS does not. Nothing was installed — please
-     report it with 'cat /etc/os-release': https://punktfunk.unom.io/community#bugs"
+     report it with 'cat /etc/os-release': https://github.com/Project-Colony/Lilynk/issues"
 ok "host binary: $BIN"
 # Not fatal if it is missing — an absent worker just means the in-process encoder at default GPU
 # priority.
@@ -206,7 +206,7 @@ mkdir -p "$CONFIG"
 chmod 700 "$CONFIG" 2>/dev/null || true
 if [ ! -f "$CONFIG/host.env" ]; then
     cat > "$CONFIG/host.env" <<'EOF'
-# punktfunk Steam Deck host config (sourced by the lilynk-host user service).
+# lilynk Steam Deck host config (sourced by the lilynk-host user service).
 # Auto encoder: Vulkan Video (or VAAPI fallback) on the Deck's AMD GPU, NVENC on NVIDIA.
 LILYNK_ENCODER=auto
 # Van Gogh (LCD/OLED Deck) RADV still gates VK_KHR_video_encode_* behind this perftest flag;
@@ -306,15 +306,15 @@ elif [ "$WITH_WEB" = 1 ] && [ -f "$CONFIG/web.env" ]; then
 fi
 
 # --- 3b. HDR gamescope (lilynk-gamescope, best-effort) ------------------
-# Stock gamescope offers only 8-bit capture, so Game Mode streams SDR. The punktfunk build adds
+# Stock gamescope offers only 8-bit capture, so Game Mode streams SDR. The lilynk build adds
 # the 10-bit BT.2020 PQ formats, and the host attempts HDR by default the moment it is present
 # (LILYNK_GAMESCOPE_HDR=0 forces SDR). Best-effort by design: on any failure this warns and
 # the host streams SDR — see build-gamescope.sh, which also wires LILYNK_GAMESCOPE_BIN into
 # host.env only while the binary provably runs on SteamOS.
 LILYNK_SRC="$SRC" LILYNK_BOX="$BOX" bash "$SRC/scripts/steamdeck/build-gamescope.sh"
 
-# --- 4. system tuning (needs sudo: UDP buffers + udev rule + vhci-hcd + input/punktfunk groups) -----
-log "System tuning (UDP buffers + gamepad rules + vhci-hcd + input/punktfunk groups)"
+# --- 4. system tuning (needs sudo: UDP buffers + udev rule + vhci-hcd + input/lilynk groups) -----
+log "System tuning (UDP buffers + gamepad rules + vhci-hcd + input/lilynk groups)"
 # sudo was acquired up front in preflight (SUDO_OK) so this never stalls behind the long build; a
 # skip here (no password / no TTY) was already reported loudly there.
 if [ "$SUDO_OK" = 1 ]; then
@@ -322,17 +322,17 @@ if [ "$SUDO_OK" = 1 ]; then
     [ "$WITH_WEB" = 0 ] || door_install
 else
     warn "no usable sudo — SKIPPED system tuning. Gamepad passthrough + clean streaming need root (udev"
-    warn "rule, 'input' + 'punktfunk' groups, vhci-hcd, UDP buffers) — there is no user-space way to do these."
+    warn "rule, 'input' + 'lilynk' groups, vhci-hcd, UDP buffers) — there is no user-space way to do these."
     warn "A stock SteamOS 'deck' account has NO password, so sudo can't work until you set one:"
     warn "  passwd            # set a sudo password once, then re-run this script"
     warn "Or apply it by hand (then reboot):"
     warn "  sudo install -m644 $SRC/scripts/60-lilynk.rules /etc/udev/rules.d/ &&"
     warn "  sudo install -m644 $SRC/scripts/lilynk-modules.conf /etc/modules-load.d/lilynk.conf &&"
-    warn "  sudo groupadd --system punktfunk;"
-    warn "  sudo usermod -aG input,punktfunk $USER &&"
+    warn "  sudo groupadd --system lilynk;"
+    warn "  sudo usermod -aG input,lilynk $USER &&"
     warn "  sudo install -m644 $SRC/scripts/99-lilynk-net.conf /etc/sysctl.d/ &&"
     warn "  sudo sysctl --system && sudo udevadm control --reload-rules && sudo udevadm trigger"
-    warn "('punktfunk' owns the usbip vhci nodes the native Steam Deck pad attaches through — without"
+    warn "('lilynk' owns the usbip vhci nodes the native Steam Deck pad attaches through — without"
     warn " it the pad silently never appears. Omit it if you do not want that pad.)"
 fi
 
@@ -362,9 +362,9 @@ if [ "$WITH_WEB" = 1 ]; then
     # No HOST/NITRO_HOST in the export below: web.env is sourced first and carries LILYNK_UI_BIND,
     # which the server prefers — an export here would silently out-rank the file the operator edits.
     cat > "$UNITS/lilynk-web.service" <<EOF
-# Generated by scripts/steamdeck/install.sh — punktfunk web console (bun in the '$BOX' distrobox).
+# Generated by scripts/steamdeck/install.sh — lilynk web console (bun in the '$BOX' distrobox).
 [Unit]
-Description=punktfunk management web console
+Description=lilynk management web console
 After=lilynk-host.service
 
 [Service]
@@ -393,7 +393,7 @@ ok "lilynk-scripting.service (started on a first install; a re-run leaves it as 
 cat > "$UNITS/lilynk-rebuild-check.service" <<EOF
 # Generated by scripts/steamdeck/install.sh — rebuild the host if a SteamOS update broke its libs.
 [Unit]
-Description=punktfunk SteamOS post-update rebuild check
+Description=lilynk SteamOS post-update rebuild check
 Before=lilynk-host.service
 
 [Service]
@@ -436,7 +436,7 @@ fi
 # --- 6. summary ------------------------------------------------------------
 IP="$(ip -4 route get 1.1.1.1 2>/dev/null | sed -n 's/.* src \([0-9.]*\).*/\1/p' | head -1 || true)"
 echo
-log "Done — punktfunk host is running on this Steam Deck"
+log "Done — lilynk host is running on this Steam Deck"
 echo "  • Host status:   systemctl --user status lilynk-host"
 if [ "$WITH_WEB" = 1 ]; then
     case "$WEB_BIND" in

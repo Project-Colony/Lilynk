@@ -72,4 +72,4 @@ The host has a stable certificate; each side pins the other's fingerprint. Someo
 gets one online guess and nothing to attack offline. If a host's fingerprint changes, the client
 refuses it and asks you to pair again. To run without pairing on a
 fully trusted network, see [Security → Pairing policy](/docs/security#pairing-policy-open-hosts-and-trust-on-first-use).
-To pair from a script, use [`punktfunk pair`](/docs/clients#scripting-the-punktfunk-cli).
+To pair from a script, use [`lilynk pair`](/docs/clients#scripting-the-lilynk-cli).

@@ -155,7 +155,7 @@ mod tests {
             "version": "0.23.0",
             "notes_url": "https://github.com/Project-Colony/Lilynk/releases/tag/v0.23.0",
             "windows_host": {
-                "url": "https://github.com/Project-Colony/Lilynk/releases/download/v0.23.0/punktfunk-host-setup-0.23.0.exe",
+                "url": "https://github.com/Project-Colony/Lilynk/releases/download/v0.23.0/lilynk-host-setup-0.23.0.exe",
                 "sha256": "aa".repeat(32),
                 "authenticode_sha256": ["bb".repeat(32)],
                 "authenticode_subject": "Example Publisher",

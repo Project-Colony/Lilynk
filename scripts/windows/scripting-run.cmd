@@ -1,13 +1,13 @@
 @echo off
-rem punktfunk plugin/script runner launcher - the action the LilynkScripting scheduled task runs.
+rem lilynk plugin/script runner launcher - the action the LilynkScripting scheduled task runs.
 rem
 rem OPT-IN: the installer registers that task DISABLED (the runner is inert until you add automation).
 rem Enable it once you have scripts/plugins:  Enable-ScheduledTask -TaskName LilynkScripting
 rem
 rem Lays out next to the installed payload: {app}\scripting\scripting-run.cmd + runner-cli.js and
 rem {app}\bun\bun.exe (so %~dp0 = {app}\scripting\). The runner discovers the operator's units under
-rem %ProgramData%\punktfunk\{scripts,plugins}; a plugin's connect() auto-wires to the host's SCOPED
-rem plugin-token + identity cert in %ProgramData%\punktfunk\ (written by the host's `serve`). The
+rem %ProgramData%\lilynk\{scripts,plugins}; a plugin's connect() auto-wires to the host's SCOPED
+rem plugin-token + identity cert in %ProgramData%\lilynk\ (written by the host's `serve`). The
 rem task runs as NT AUTHORITY\LocalService - `plugins enable` grants it read on exactly those two
 rem files. No env editing.
 setlocal EnableExtensions
@@ -36,7 +36,7 @@ rem dir, so `type` it from any prompt. One previous run is kept as runner.log.1.
 rem writable (task started before `plugins enable` ever ran), start unlogged rather than not at all.
 rem ponytail: no size cap within one run - rotate on size if a chatty plugin ever fills a disk.
 rem A seat's runner logs into its seat's config dir, the one the runner itself reads.
-set "LOG=%ProgramData%\punktfunk\plugin-state\runner.log"
+set "LOG=%ProgramData%\lilynk\plugin-state\runner.log"
 if defined LILYNK_CONFIG_DIR set "LOG=%LILYNK_CONFIG_DIR%\plugin-state\runner.log"
 set "LOGGED="
 if exist "%LOG%" move /y "%LOG%" "%LOG%.1" >nul 2>&1

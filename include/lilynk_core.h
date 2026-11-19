@@ -1,4 +1,4 @@
-/* punktfunk C ABI — see crates/client/lilynk-ffi/src/lib.rs */
+/* lilynk C ABI — see crates/client/lilynk-ffi/src/lib.rs */
 
 #ifndef LILYNK_CORE_H
 #define LILYNK_CORE_H
@@ -677,7 +677,7 @@
 #define LILYNK_FLAG_SOF 4
 
 // Bandwidth-probe filler. Not decodable video — do not feed to the decoder.
-// Punktfunk only; GameStream never sets this bit.
+// Lilynk only; GameStream never sets this bit.
 #define LILYNK_FLAG_PROBE 8
 
 // `user_flags` bit, not a transport `flags` bit. Intra-refresh wave complete:
@@ -978,8 +978,8 @@
 // `design/pyrowave-codec-plan.md`). Deliberately absent from [`resolve_codec`]'s ladder:
 // selected only as the preference — the client's [`Hello::preferred_codec`], or the host's
 // Encoder pin for a client that names none. The bit means the bitstream of the vendored pin
-// (`crates/codec/pyrowave-sys/vendor/pyrowave/PUNKTFUNK-VENDOR.txt`); upstream has no version
-// field, so a bitstream-changing vendor bump bumps the punktfunk protocol instead.
+// (`crates/codec/pyrowave-sys/vendor/pyrowave/LILYNK-VENDOR.txt`); upstream has no version
+// field, so a bitstream-changing vendor bump bumps the lilynk protocol instead.
 #define LILYNK_CODEC_PYROWAVE 8
 
 // HEVC `chroma_format_idc` 4:2:0. Default when a peer omits [`Welcome::chroma_format`].

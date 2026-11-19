@@ -363,7 +363,7 @@ pub(super) fn spawn_planes(
     if source == Lilynk1Source::Synthetic && who.knobs.test_feedback {
         send_test_feedback(&conn);
     }
-    // `$XDG_RUNTIME_DIR/punktfunk/stream` while this session streams. Retracts on every exit.
+    // `$XDG_RUNTIME_DIR/lilynk/stream` while this session streams. Retracts on every exit.
     scope.hold(crate::stream_marker::announce(
         crate::stream_marker::StreamInfo {
             width: hello.mode.width,

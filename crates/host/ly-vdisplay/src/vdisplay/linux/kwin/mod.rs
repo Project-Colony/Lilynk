@@ -79,14 +79,14 @@ const REPAIRED_HINT: &str = "enabled it over output management";
 const WITHHELD: &str = "KWin does not expose zkde_screencast_unstable_v1 to this client";
 
 /// KWin exposes the created output to output-management as `Virtual-<name>`.
-const VOUT_NAME: &str = "punktfunk";
+const VOUT_NAME: &str = "lilynk";
 
 /// Bind cap, one below v6, which deprecates `created`: the node id is read from that event.
 const MAX_VERSION: u32 = 5;
 
 /// KWin virtual-display driver. A paired client's cert fingerprint (set before
 /// [`create`](VirtualDisplay::create)) yields a stable per-slot name
-/// (`Virtual-punktfunk-<id>`); KWin keys `kwinoutputconfig.json` by name, so reconnect
+/// (`Virtual-lilynk-<id>`); KWin keys `kwinoutputconfig.json` by name, so reconnect
 /// reapplies that client's scale/mode. Each `create` owns its own Wayland connection.
 #[derive(Default)]
 pub struct KwinDisplay {
@@ -284,12 +284,12 @@ impl VirtualDisplay for KwinDisplay {
     }
 
     fn create(&mut self, mode: Mode) -> Result<VirtualOutput> {
-        // One create at a time: a shared identity names every output `Virtual-punktfunk`, and
+        // One create at a time: a shared identity names every output `Virtual-lilynk`, and
         // resolving by name and size would otherwise hand a concurrent sibling's output to us.
         let _create = CREATE_LOCK.lock().unwrap_or_else(|e| e.into_inner());
         // Per-slot name: a resolved identity becomes `lilynk-<id>` (KWin exposes
-        // `Virtual-punktfunk-<id>` and keys config by name). Shared/anonymous stays
-        // `punktfunk`. Two concurrent sessions must not share one name.
+        // `Virtual-lilynk-<id>` and keys config by name). Shared/anonymous stays
+        // `lilynk`. Two concurrent sessions must not share one name.
         let slot = crate::identity::resolve_slot(
             self.client_fp,
             (mode.width, mode.height),
@@ -705,11 +705,11 @@ fn verify_or_reassert(
     }
 }
 
-/// Prefix every managed KWin output shares (`Virtual-punktfunk` / `Virtual-punktfunk-<id>`).
+/// Prefix every managed KWin output shares (`Virtual-lilynk` / `Virtual-lilynk-<id>`).
 /// Group membership is this prefix so we never thread the live set through the backend.
 /// Shared with [`crate::kwin::mgmt`]: a drift would let the in-process path disable
 /// a sibling session's output that the kscreen path spares.
-pub(crate) const MANAGED_PREFIX: &str = "Virtual-punktfunk";
+pub(crate) const MANAGED_PREFIX: &str = "Virtual-lilynk";
 
 #[derive(Default)]
 struct State {
@@ -1414,10 +1414,10 @@ mod tests {
     #[test]
     fn exclusive_disables_only_non_managed() {
         let enabled = [
-            "Virtual-punktfunk",   // base name (shared identity)
-            "Virtual-punktfunk-1", // client A's per-slot output
-            "Virtual-punktfunk-7", // client B's per-slot output
-            "eDP-1",               // a physical panel
+            "Virtual-lilynk",   // base name (shared identity)
+            "Virtual-lilynk-1", // client A's per-slot output
+            "Virtual-lilynk-7", // client B's per-slot output
+            "eDP-1",            // a physical panel
         ];
         let to_disable: Vec<&str> = enabled
             .iter()

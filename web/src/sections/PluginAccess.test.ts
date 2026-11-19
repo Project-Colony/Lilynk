@@ -34,8 +34,8 @@ test("Later forgets requests that are no longer pending", () => {
 });
 
 test("a request through a link names the folder it opens first, the link below", () => {
-	const target = "/home/u/.local/share/punktfunk/emulators/x/app";
-	const link = "/home/u/.local/share/punktfunk/plugins/p/state/x";
+	const target = "/home/u/.local/share/lilynk/emulators/x/app";
+	const link = "/home/u/.local/share/lilynk/plugins/p/state/x";
 	const access = {
 		plugin: "p",
 		grants: [],

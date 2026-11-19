@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# App Store screenshot driver for the Punktfunk Apple client.
+# App Store screenshot driver for the Lilynk Apple client.
 #
 # Launches the app in "shot mode" (LILYNK_SHOT_SCENE=<name> → one mock-populated screen,
 # full-bleed; see Sources/LilynkClient/Screenshots/) once per scene per device, and lets the OS
@@ -90,13 +90,13 @@ shoot_macos() {
   require_xcode
   # The app target, not the package's `LilynkClient` executable: that one records SDK 14 in
   # its binary, and macOS then draws it with the window chrome of that release.
-  log "macOS — building (xcodebuild Punktfunk)…"
+  log "macOS — building (xcodebuild Lilynk)…"
   local dd="${PF_SHOT_DERIVED_DATA:-$APPLE_DIR/.build/shots-macos}"
-  xcodebuild -project Lilynk.xcodeproj -scheme Punktfunk -configuration Debug \
+  xcodebuild -project Lilynk.xcodeproj -scheme Lilynk -configuration Debug \
     -destination platform=macOS -derivedDataPath "$dd" -skipMacroValidation \
     CODE_SIGNING_ALLOWED=NO build >/dev/null \
     || die "macOS: xcodebuild failed"
-  local bin="$dd/Build/Products/Debug/Punktfunk.app/Contents/MacOS/Punktfunk"
+  local bin="$dd/Build/Products/Debug/Lilynk.app/Contents/MacOS/Lilynk"
   [ -x "$bin" ] || die "build produced no $bin"
 
   for scene in "${SCENES[@]}"; do

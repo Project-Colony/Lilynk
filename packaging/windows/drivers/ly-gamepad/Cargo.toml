@@ -1,4 +1,4 @@
-# ly-gamepad - punktfunk virtual gamepads: ONE UMDF2 HID minidriver serving every pad identity
+# ly-gamepad - lilynk virtual gamepads: ONE UMDF2 HID minidriver serving every pad identity
 # (PlayStation, Steam, Switch, Xbox, 8BitDo, Hori). Named for the role, not for one of them.
 # A member of the in-tree drivers workspace (shares the vendored wdk-sys/wdk-build with the bindgen pin
 # + the crt-static .cargo/config), built from source per release like ly-vdisplay.
@@ -8,7 +8,7 @@ edition.workspace = true
 version.workspace = true
 license.workspace = true
 publish = false
-description = "punktfunk virtual DualSense / DualShock 4 UMDF2 HID minidriver"
+description = "lilynk virtual DualSense / DualShock 4 UMDF2 HID minidriver"
 
 [package.metadata.wdk.driver-model]
 driver-type = "UMDF"

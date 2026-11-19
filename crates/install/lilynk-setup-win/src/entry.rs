@@ -26,7 +26,7 @@ pub fn run() -> std::process::ExitCode {
         return code;
     }
 
-    const USAGE: &str = "punktfunk setup wizard\n\n\
+    const USAGE: &str = "lilynk setup wizard\n\n\
         usage: lilynk-host-setup-<ver>.exe [/VERYSILENT] [/LOG=<file>] [/MERGETASKS=...]\n\
                lilynk-setup-win --demo <preset>\n\
                lilynk-setup-win /VERYSILENT [/LOG=<file>] (--dry-run | --demo <preset>)\n\

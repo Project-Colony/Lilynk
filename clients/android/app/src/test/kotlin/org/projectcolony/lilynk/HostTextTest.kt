@@ -142,7 +142,7 @@ class HostTextTest {
         assertEquals("This host doesn't support it", action("host_power_not_supported_here").reason(res))
         assertEquals("The host's English.", action("from_a_newer_host").reason(res))
         assertEquals("The host's English.", action("").reason(res))
-        assertEquals("Restart Punktfunk", action("", "host.restart").text(res))
+        assertEquals("Restart Lilynk", action("", "host.restart").text(res))
         assertEquals("Next monitor", action("", "display.next").text(res))
     }
 

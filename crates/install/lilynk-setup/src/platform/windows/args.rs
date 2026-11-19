@@ -140,13 +140,13 @@ mod tests {
             "/SUPPRESSMSGBOXES",
             "/NORESTART",
             "/SP-",
-            r"/LOG=C:\ProgramData\punktfunk\logs\update-0.36.0.log",
+            r"/LOG=C:\ProgramData\lilynk\logs\update-0.36.0.log",
         ]);
         assert_eq!(a.silence, Silence::VerySilent);
         assert!(a.suppress_msgboxes);
         assert_eq!(
             a.log.unwrap().to_str().unwrap(),
-            r"C:\ProgramData\punktfunk\logs\update-0.36.0.log"
+            r"C:\ProgramData\lilynk\logs\update-0.36.0.log"
         );
         assert!(a.unknown.is_empty());
         assert!(a.rest.is_empty());

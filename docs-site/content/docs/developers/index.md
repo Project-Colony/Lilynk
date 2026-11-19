@@ -1,9 +1,9 @@
 ---
 title: Developers
-description: Build Punktfunk from a fresh clone, find your way around the code, test a change and get it merged.
+description: Build Lilynk from a fresh clone, find your way around the code, test a change and get it merged.
 ---
 
-Build Punktfunk from a fresh clone, find your way around the code, and get a change merged. To
+Build Lilynk from a fresh clone, find your way around the code, and get a change merged. To
 install and stream instead, start at the [Quick start](/docs/quickstart).
 
 ## First build
@@ -12,7 +12,7 @@ On Ubuntu 26.04 with [rustup](https://rustup.rs) and the
 [workspace packages](/docs/developers/build-from-source#workspace-prerequisites):
 
 ```sh
-git clone https://git.unom.io/unom/punktfunk.git && cd punktfunk
+git clone https://github.com/Project-Colony/Lilynk.git lilynk && cd lilynk
 cargo build --workspace --locked
 cargo test --workspace --locked
 ```

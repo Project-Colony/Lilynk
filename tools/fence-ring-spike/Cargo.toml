@@ -13,7 +13,7 @@ edition = "2024"
 rust-version = "1.85"
 license = "GPL-3.0-or-later"
 authors = ["Lilynk"]
-repository = "https://git.unom.io/unom/punktfunk"
+repository = "https://github.com/Project-Colony/Lilynk"
 publish = false
 
 [target.'cfg(target_os = "windows")'.dependencies]

@@ -344,12 +344,12 @@ pub fn pairing_refused() -> bool {
 pub const PERSON_TOKEN: &str = "person-token";
 
 /// The seat supervisor's pad broker: a seat host asks here for the pads it cannot make itself.
-pub const PADS_SOCKET: &str = "/run/punktfunk/pads.sock";
+pub const PADS_SOCKET: &str = "/run/lilynk/pads.sock";
 
 /// The supervisor's uinput proxy for `account`, a CUSE device under `/dev`; the seat's unit
 /// binds it over `/dev/uinput`. Sysfs names it with `!` for each `/`.
 pub fn uinput_devname(account: &str) -> String {
-    format!("punktfunk/uinput-{account}")
+    format!("lilynk/uinput-{account}")
 }
 
 #[cfg(test)]

@@ -72,7 +72,7 @@ pub struct TargetInventory {
     pub friendly: String,
     /// Maps to the PnP instance id (`monitor_devnode`).
     pub monitor_device_path: String,
-    /// Ours (the `PNK` EDID manufacturer) — the connector class cannot tell.
+    /// Ours (the `LYK` EDID manufacturer) — the connector class cannot tell.
     pub ours: bool,
     /// Empty when inactive (no source).
     pub gdi_name: String,

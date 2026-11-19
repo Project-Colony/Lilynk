@@ -1,6 +1,6 @@
 ---
 title: Management API
-description: Drive a Punktfunk host over its HTTPS management API — credentials, a first call, the event stream, the TypeScript SDK and the OpenAPI spec.
+description: Drive a Lilynk host over its HTTPS management API — credentials, a first call, the event stream, the TypeScript SDK and the OpenAPI spec.
 ---
 
 Every host serves a REST API that the web console, `lilynk-host ctl`, the tray and plugins all
@@ -17,7 +17,7 @@ use. This page gets you a first authenticated call and shows where the full refe
 - On every start the host writes the URL it bound to `<config>/mgmt-endpoint`, as
   `LILYNK_MGMT_URL=https://127.0.0.1:<port>`. Read that instead of assuming 47990.
 
-`<config>` is `~/.config/punktfunk` on Linux and `%ProgramData%\punktfunk` on Windows
+`<config>` is `~/.config/lilynk` on Linux and `%ProgramData%\lilynk` on Windows
 (`LILYNK_CONFIG_DIR` overrides it).
 
 ## Credentials
@@ -51,15 +51,15 @@ also carries `code`, naming the host message `apierr_<code>`, and the `params` i
 On the host, as the user that runs it:
 
 ```sh
-. ~/.config/punktfunk/mgmt-endpoint   # sets LILYNK_MGMT_URL
-. ~/.config/punktfunk/mgmt-token      # sets LILYNK_MGMT_TOKEN
+. ~/.config/lilynk/mgmt-endpoint   # sets LILYNK_MGMT_URL
+. ~/.config/lilynk/mgmt-token      # sets LILYNK_MGMT_TOKEN
 curl -k -H "Authorization: Bearer $LILYNK_MGMT_TOKEN" "$LILYNK_MGMT_URL/api/v1/status"
 ```
 
 On Windows, from an elevated PowerShell:
 
 ```powershell
-$t = (Get-Content "$env:ProgramData\punktfunk\mgmt-token") -replace '^LILYNK_MGMT_TOKEN=', ''
+$t = (Get-Content "$env:ProgramData\lilynk\mgmt-token") -replace '^LILYNK_MGMT_TOKEN=', ''
 curl.exe -k -H "Authorization: Bearer $t" https://127.0.0.1:47990/api/v1/status
 ```
 
@@ -76,17 +76,17 @@ catalogue, the frame format, resume with `Last-Event-ID`, and the `?kinds=` filt
 
 ## TypeScript SDK
 
-`@punktfunk/host` is a typed client for every endpoint plus the event stream, with reconnect and
-resume. It lives in [`sdk/`](https://git.unom.io/unom/punktfunk/src/branch/main/sdk) and is
+`@lilynk/host` is a typed client for every endpoint plus the event stream, with reconnect and
+resume. It lives in [`sdk/`](https://github.com/Project-Colony/Lilynk/blob/main/sdk) and is
 published to the unom npm registry:
 
 ```sh
-echo '@punktfunk:registry=https://git.unom.io/api/packages/unom/npm/' >> .npmrc
-bun add @punktfunk/host effect     # or: npm i @punktfunk/host effect
+echo '@lilynk:registry=https://git.unom.io/api/packages/unom/npm/' >> .npmrc
+bun add @lilynk/host effect     # or: npm i @lilynk/host effect
 ```
 
 ```ts
-import { connect } from "@punktfunk/host";
+import { connect } from "@lilynk/host";
 
 const pf = await connect();
 const host = await pf.api.getHostInfo();
@@ -118,12 +118,12 @@ Three entry points:
 
 | Import | For |
 |---|---|
-| `@punktfunk/host` | Promise API: `connect()`, `pf.api.*`, `pf.events.on()`, `pf.request()` for an untyped call |
-| `@punktfunk/host/effect` | The same as Effect services, `Stream` events and typed errors |
-| `@punktfunk/host/core` | The Effect surface without Node, for a browser; `deviceKey()` signs in with a paired key |
+| `@lilynk/host` | Promise API: `connect()`, `pf.api.*`, `pf.events.on()`, `pf.request()` for an untyped call |
+| `@lilynk/host/effect` | The same as Effect services, `Stream` events and typed errors |
+| `@lilynk/host/core` | The Effect surface without Node, for a browser; `deviceKey()` signs in with a paired key |
 
 Runnable examples, from a one-screen event tail to a USB passthrough script:
-[`sdk/examples`](https://git.unom.io/unom/punktfunk/src/branch/main/sdk/examples). Run one from
+[`sdk/examples`](https://github.com/Project-Colony/Lilynk/blob/main/sdk/examples). Run one from
 `sdk/` with `bun install && bun examples/tail-events.ts`. To keep code running on the host, package
 it as a plugin ([Writing plugins](/docs/developers/writing-plugins)) or start the script from your
 own systemd unit or scheduled task.
@@ -131,7 +131,7 @@ own systemd unit or scheduled task.
 ## Reference
 
 - [`/api`](/api) on this site: the interactive reference, built from
-  [`api/openapi.json`](https://git.unom.io/unom/punktfunk/src/branch/main/api/openapi.json).
+  [`api/openapi.json`](https://github.com/Project-Colony/Lilynk/blob/main/api/openapi.json).
 - On a running host: `/api/docs` (the same reference) and `/api/v1/openapi.json` (the spec).
 - `lilynk-host openapi` prints the spec of that binary.
 

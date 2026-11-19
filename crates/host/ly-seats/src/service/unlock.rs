@@ -5,7 +5,7 @@
 //! A password goes through the attempt limits and the PAM child outside `ops`, then everything it
 //! rested on is read again under `ops`, where a stopped session is started through the same path
 //! as a `start` and the device is let on once it runs. A key proof costs its device's allowance
-//! alone and never reaches PAM. Every unlock writes one `punktfunk::audit` line; nothing in it,
+//! alone and never reaches PAM. Every unlock writes one `lilynk::audit` line; nothing in it,
 //! or in any other line, carries the secret.
 
 use super::{not_found, SeatService};
@@ -323,7 +323,7 @@ impl<B: PlatformBackend> SeatService<B> {
         Ok(CommandResult::Devices { devices })
     }
 
-    /// Writes `line`, [`Self::audit_line`]'s, to the journal under `punktfunk::audit`.
+    /// Writes `line`, [`Self::audit_line`]'s, to the journal under `lilynk::audit`.
     fn audit(
         &self,
         id: &SeatId,
@@ -332,7 +332,7 @@ impl<B: PlatformBackend> SeatService<B> {
         answer: &Result<CommandResult, ApiError>,
     ) {
         let line = self.audit_line(id, device, proof, answer);
-        tracing::info!(target: "punktfunk::audit", "seat unlock {line}");
+        tracing::info!(target: "lilynk::audit", "seat unlock {line}");
     }
 
     /// What the audit line of an unlock of `id` by `device` with a `proof` kind says once it

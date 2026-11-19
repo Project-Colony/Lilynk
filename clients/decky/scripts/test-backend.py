@@ -305,14 +305,14 @@ check("art: local cache is asked per-app dir first, flat file second", [
 ] == ["library_hero.jpg", "570_library_hero.jpg"])
 check("art: the per-app dir is keyed by appid",
       art._librarycache_candidates(570, "logo.png")[0].parent.name == "570")
-# The icon: without a hash nothing is fetched, but the Punktfunk icon stands in so the overlay
+# The icon: without a hash nothing is fetched, but the Lilynk icon stands in so the overlay
 # never shows a gray box — and with no plugin assets at all, icon_path is honestly empty.
 got = asyncio.run(main.Plugin().game_art(570, ""))
 check("art: no hash, no assets => no icon path", got["icon_path"] == "")
 Path("/tmp/pf-test-plugin/assets").mkdir(parents=True, exist_ok=True)
 Path("/tmp/pf-test-plugin/assets/icon.png").write_bytes(b"png")
 got = asyncio.run(main.Plugin().game_art(570, ""))
-check("art: no hash => the Punktfunk icon stands in", got["icon_path"].endswith("assets/icon.png") and got["icon_type"] == "png" and got["icon"] == "cG5n")
+check("art: no hash => the Lilynk icon stands in", got["icon_path"].endswith("assets/icon.png") and got["icon_type"] == "png" and got["icon"] == "cG5n")
 # save_icon: only a real PNG for a real appid is written, into the settings dir, as .png
 decky.DECKY_PLUGIN_SETTINGS_DIR = "/tmp/pf-test-settings"
 shutil.rmtree("/tmp/pf-test-settings", ignore_errors=True)
@@ -490,9 +490,9 @@ client._run_client = _real_run_client
 #
 # It edits a file holding HUNDREDS of other games' controller bindings, in place. Every
 # assertion below is about not touching them.
-empty = steam_input._upsert_configset_entry("", "punktfunk", "template", "lilynk.vdf")
+empty = steam_input._upsert_configset_entry("", "lilynk", "template", "lilynk.vdf")
 check("vdf: builds the skeleton when the file is new", '"controller_config"' in empty)
-check("vdf: the entry lands", '"punktfunk"' in empty and '"lilynk.vdf"' in empty)
+check("vdf: the entry lands", '"lilynk"' in empty and '"lilynk.vdf"' in empty)
 
 existing = (
     '"controller_config"\n'
@@ -503,21 +503,21 @@ existing = (
     "\t}\n"
     "}\n"
 )
-added = steam_input._upsert_configset_entry(existing, "punktfunk", "template", "lilynk.vdf")
+added = steam_input._upsert_configset_entry(existing, "lilynk", "template", "lilynk.vdf")
 check("vdf: an existing game's entry survives insertion", '"halflife2"' in added)
-check("vdf: ours is inserted", '"punktfunk"' in added)
+check("vdf: ours is inserted", '"lilynk"' in added)
 
 # Re-running must REPLACE our block, not accumulate a second one (this runs on every plugin
 # session gated only by a localStorage marker, so idempotence is the whole contract).
-twice = steam_input._upsert_configset_entry(added, "punktfunk", "template", "lilynk.vdf")
-check("vdf: idempotent", twice.count('"punktfunk"\n') == 1)
+twice = steam_input._upsert_configset_entry(added, "lilynk", "template", "lilynk.vdf")
+check("vdf: idempotent", twice.count('"lilynk"\n') == 1)
 check("vdf: neighbour still intact after the rewrite", '"halflife2"' in twice)
 
 # Steam keys non-Steam games by their LOWERCASE name, and files on disk may carry either case —
 # a case-sensitive match would append a duplicate the game never reads.
-mixed = existing.replace('"halflife2"', '"Punktfunk"')
-replaced = steam_input._upsert_configset_entry(mixed, "punktfunk", "template", "lilynk.vdf")
-check("vdf: matches an existing key case-insensitively", replaced.count("unktfunk\"\n") == 1)
+mixed = existing.replace('"halflife2"', '"Lilynk"')
+replaced = steam_input._upsert_configset_entry(mixed, "lilynk", "template", "lilynk.vdf")
+check("vdf: matches an existing key case-insensitively", replaced.lower().count("\"lilynk\"\n") == 1)
 
 # A game title is a quoted key one level into controller_config: a brace in it is text, a quote
 # or backslash is escaped, and a title equal to a nested key ("template") is its own entry.

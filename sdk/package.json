@@ -1,20 +1,20 @@
 {
-	"name": "@punktfunk/host",
+	"name": "@lilynk/host",
 	"version": "0.6.0",
-	"description": "TypeScript SDK for the punktfunk streaming host: typed management-API client + lifecycle event stream, built on Effect.",
+	"description": "TypeScript SDK for the lilynk streaming host: typed management-API client + lifecycle event stream, built on Effect.",
 	"type": "module",
 	"license": "MIT OR Apache-2.0",
-	"homepage": "https://git.unom.io/unom/punktfunk/src/branch/main/sdk",
+	"homepage": "https://github.com/Project-Colony/Lilynk/blob/main/sdk",
 	"repository": {
 		"type": "git",
-		"url": "https://git.unom.io/unom/punktfunk.git",
+		"url": "https://github.com/Project-Colony/Lilynk.git",
 		"directory": "sdk"
 	},
 	"bugs": {
-		"url": "https://punktfunk.unom.io/community#bugs"
+		"url": "https://github.com/Project-Colony/Lilynk/issues"
 	},
 	"keywords": [
-		"punktfunk",
+		"lilynk",
 		"game-streaming",
 		"automation",
 		"sdk",

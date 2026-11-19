@@ -1,4 +1,4 @@
-Keep the payload memory's Vulkan handles 64-bit on 32-bit targets — PUNKTFUNK LOCAL PATCH.
+Keep the payload memory's Vulkan handles 64-bit on 32-bit targets — LILYNK LOCAL PATCH.
 
 Not upstream; fixes patch 0011. A non-dispatchable handle (VkBuffer, VkImage) is a uint64_t when
 VK_USE_64_BIT_PTR_DEFINES is 0. 0011 carried the payload buffer and the three linear images
@@ -17,7 +17,7 @@ index bd610d651..7bd2608ee 100644
  	Util::set_thread_logging_interface(&null_logger);
  	if (!memory)
  		return PYROWAVE_ERROR_INVALID_ARGUMENT;
-+	// PUNKTFUNK (patch 0014): a non-dispatchable handle is a uint64_t on 32-bit targets, so it
++	// LILYNK (patch 0014): a non-dispatchable handle is a uint64_t on 32-bit targets, so it
 +	// goes to uint64_t directly and never through uintptr_t.
  	const uint64_t linear[3] = {
 -		uint64_t(uintptr_t(memory->linear[0])),
@@ -39,7 +39,7 @@ index 4b15cfe34..b4cc1e214 100644
 @@ -1044,7 +1044,8 @@ void Decoder::Impl::check_linear_texture_support()
  }
 
- // PUNKTFUNK (patch 0011): see Decoder::set_payload_memory. On failure the decoder keeps no
+ // LILYNK (patch 0011): see Decoder::set_payload_memory. On failure the decoder keeps no
 -// caller handle and rebuilds its own payload on the next decode.
 +// caller handle and rebuilds its own payload on the next decode. Patch 0014: each handle
 +// goes from uint64_t straight to its type, so a 32-bit target keeps all 64 bits.

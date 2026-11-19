@@ -95,7 +95,7 @@ pub(crate) struct SwDeviceProfile<'a> {
     /// The `SWD\<enumerator>\<instance>` namespace. hidclass names the HID child after it, so a
     /// pad Steam must recognise carries its VID/PID here (`VID_054C&PID_0CE6&MI_03`,
     /// `VID_045E&PID_0B13`): Steam merges a pad's views by that token in the path, and under
-    /// `punktfunk` it would list the same pad twice.
+    /// `lilynk` it would list the same pad twice.
     pub enumerator: &'a str,
     /// A binary device property the driver reads at `EvtDeviceAdd`: `(fmtid, pid, bytes)`.
     pub property: Option<(u128, u32, &'a [u8])>,

@@ -16,7 +16,7 @@ import { AboutSection, UpdateSection } from "./UpdateSection";
 const LilynkSection: FC = () => {
   const [gamePageStream, setGamePageStream] = useState(gamePageStreamEnabled);
   return (
-    <PanelSection title="Punktfunk">
+    <PanelSection title="Lilynk">
       <PanelSectionRow>
         <ButtonItem layout="below" description={t("decky_open_app_hint")} onClick={() => void launchGamepadUi()}>
           <FaTv style={{ marginRight: "0.5em" }} />

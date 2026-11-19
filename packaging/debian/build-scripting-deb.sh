@@ -29,7 +29,7 @@ SHAREDIR="$STAGE/usr/share/$PKG"
 DOCDIR="$STAGE/usr/share/doc/$PKG"
 
 # --- build the runner bundle -------------------------------------------------
-# One self-contained JS: `bun build --target=bun` inlines effect + the @punktfunk/host SDK; the
+# One self-contained JS: `bun build --target=bun` inlines effect + the @lilynk/host SDK; the
 # runner's dynamic `import()` of the operator's plugin files is left as a runtime import (bun keeps
 # unresolvable dynamic specifiers external). `--ignore-scripts` on install: nothing needs a
 # postinstall, and `prepare` only regenerates bun.nix (bun2nix), which this build has no use for.
@@ -65,8 +65,8 @@ install -Dm0644 sdk/README.md  "$DOCDIR/README.md"
 
 cat > "$DOCDIR/copyright" <<EOF
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: punktfunk
-Source: https://git.unom.io/unom/punktfunk
+Upstream-Name: lilynk
+Source: https://github.com/Project-Colony/Lilynk
 
 Files: *
 Copyright: punktfunk contributors
@@ -90,10 +90,10 @@ Installed-Size: $INSTALLED_KB
 Section: net
 Priority: optional
 Depends: bubblewrap, passt, util-linux, lilynk-bun (= $VERSION)
-Homepage: https://git.unom.io/unom/punktfunk
-Description: punktfunk plugin/script runner (Effect SDK on bun)
- Runs a punktfunk host's automation: loose scripts in ~/.config/punktfunk/scripts and installed
- lilynk-plugin-* packages under ~/.config/punktfunk/plugins, each supervised (Effect fibers with
+Homepage: https://github.com/Project-Colony/Lilynk
+Description: lilynk plugin/script runner (Effect SDK on bun)
+ Runs a lilynk host's automation: loose scripts in ~/.config/lilynk/scripts and installed
+ lilynk-plugin-* packages under ~/.config/lilynk/plugins, each supervised (Effect fibers with
  capped-jittered restart; SIGTERM shuts the whole tree down structurally so plugin finalizers run).
  Runs on the bun from lilynk-bun (no system nodejs/bun dependency).
  .
@@ -126,8 +126,8 @@ if [ "$1" = "configure" ]; then
     fi
     echo "lilynk-scripting installed and enabled for all users."
     echo "It runs your automation — game-library sources, scripts in"
-    echo "    ~/.config/punktfunk/scripts/  (loose .ts/.js files)"
-    echo "and plugins under ~/.config/punktfunk/plugins/."
+    echo "    ~/.config/lilynk/scripts/  (loose .ts/.js files)"
+    echo "and plugins under ~/.config/lilynk/plugins/."
     echo "It starts with your next login; start it now with:"
     echo "    systemctl --user start lilynk-scripting"
     echo "Don't want it? systemctl --user mask lilynk-scripting"

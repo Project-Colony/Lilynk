@@ -3,7 +3,7 @@
 	"console_error_connect_failed_detail": "Verbindung fehlgeschlagen: {reason}",
 	"console_error_host_closed": "Der Host hat die Verbindung getrennt.",
 	"console_exit_confirm": "Beenden",
-	"console_exit_message": "Punktfunk beenden?",
+	"console_exit_message": "Lilynk beenden?",
 	"console_exit_title": "Beenden",
 	"console_hosts_added": "{address} hinzugefügt",
 	"console_hosts_saved": "{host} gespeichert",
@@ -251,7 +251,7 @@
 			}
 		}
 	],
-	"console_pad_none_detail": "Punktfunk leitet nur weiter, was das System als Controller oder Joystick erkennt; einer hinter einem Adapter oder Hub erscheint vielleicht als der Adapter oder gar nicht.",
+	"console_pad_none_detail": "Lilynk leitet nur weiter, was das System als Controller oder Joystick erkennt; einer hinter einem Adapter oder Hub erscheint vielleicht als der Adapter oder gar nicht.",
 	"console_pad_grants_detail": "Ein per Kabel verbundener DualSense oder Steam Controller 2 braucht USB-Zugriff, bevor er erfasst werden kann, und ein Steam Controller 2 über Bluetooth braucht Bluetooth-Zugriff, um überhaupt sichtbar zu sein.",
 	"console_pad_grants_detail_open": "{button} zeigt die Freigaben und einen Haptiktest.",
 	"console_pad_test_controller": "Controller testen",
@@ -338,7 +338,7 @@
 	"console_webos_decoder_failed": "Videodecoder ausgefallen – Sitzung beendet",
 	"console_overlay_present_frames": "Ausgabe: {frames} Frames, {missed} verpasst",
 	"console_overlay_holding_keyframe": "wartet auf einen Keyframe",
-	"console_switch_applet_mode": "Aus dem Album geöffnet hat Punktfunk wenig Speicher und kann sich beenden – halte beim Starten eines Spiels {button} gedrückt, um es mit vollem Speicher zu öffnen.",
+	"console_switch_applet_mode": "Aus dem Album geöffnet hat Lilynk wenig Speicher und kann sich beenden – halte beim Starten eines Spiels {button} gedrückt, um es mit vollem Speicher zu öffnen.",
 	"console_pad_fallback_name": "Controller",
 	"console_pad_player": "Spieler {number}"
 }

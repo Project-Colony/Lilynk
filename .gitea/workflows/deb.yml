@@ -1,4 +1,4 @@
-# Build the punktfunk .debs and publish them to Gitea's Debian package registry, so Debian and
+# Build the lilynk .debs and publish them to Gitea's Debian package registry, so Debian and
 # Ubuntu boxes get new builds via `apt update && apt upgrade`. Five jobs; the four builders all
 # publish to the same apt distribution/component, and the fifth checks the result:
 #
@@ -259,7 +259,7 @@ jobs:
           git config --global --add safe.directory "$PWD"
           # FOUR binaries ship in the client .deb, so all four are built here: the GTK shell,
           # lilynk-client-session (the Vulkan/Skia streamer the shell execs for a connect),
-          # lilynk-cli (the headless `punktfunk` front-end), and ly-update (the root helper
+          # lilynk-cli (the headless `lilynk` front-end), and ly-update (the root helper
           # behind `lilynk-client --apply-update`). build-client-deb.sh installs all four and
           # builds only when one is missing, so a restored target must be built first. The HOST
           # is built separately in the build-publish-host job (Ubuntu 24.04 image).
@@ -574,7 +574,7 @@ jobs:
 
       # Only the channel is used here. The package version is the gamescope upstream version + our
       # patch level, which build-gamescope-deb.sh derives itself; this package moves on its own
-      # cadence, not the punktfunk version line.
+      # cadence, not the lilynk version line.
       - name: Channel
         run: |
           git config --global --add safe.directory "$PWD"

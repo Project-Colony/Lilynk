@@ -14,7 +14,7 @@ use std::path::{Component, Path, PathBuf};
 
 pub const LEDGER_FILE: &str = "ledger.json";
 
-/// `seats` under the host config dir: `%ProgramData%\punktfunk\seats` for the SYSTEM service.
+/// `seats` under the host config dir: `%ProgramData%\lilynk\seats` for the SYSTEM service.
 #[cfg(not(target_os = "linux"))]
 pub fn default_root() -> PathBuf {
     ly_paths::config_dir().join("seats")

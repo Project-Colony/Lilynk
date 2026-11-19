@@ -46,7 +46,7 @@ impl ScWinPad {
                 // Mouse and keyboard on interfaces 0 and 1; Steam claims the controller on 2.
                 usb_mi: Some(2),
                 bluetooth: false,
-                description: "Punktfunk Virtual Steam Controller (2015)",
+                description: "Lilynk Virtual Steam Controller (2015)",
                 // Steam merges a pad's HID views by the USB interface token in the instance path.
                 enumerator: "VID_28DE&PID_1102&MI_02",
                 property: Some((
@@ -106,7 +106,7 @@ impl PadProto for ScWinProto {
     type State = ScState;
     const LABEL: &'static str = "Steam Controller/Windows";
     const DEVICE: &'static str = "Steam Controller";
-    const CREATE_HINT: &'static str = " (install/repair: run the Punktfunk installer again)";
+    const CREATE_HINT: &'static str = " (install/repair: run the Lilynk installer again)";
 
     fn open(&mut self, idx: u8) -> Result<ScWinPad> {
         let identity = crate::triton_proto::identity_for(idx);

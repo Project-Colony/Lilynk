@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Launch headless Sway on an NVIDIA box for punktfunk capture.
+# Launch headless Sway on an NVIDIA box for lilynk capture.
 #
 # Runs on the user's *shared* session bus (NOT a private dbus-run-session) so that the
-# ScreenCast portal (xdg-desktop-portal-wlr) and the punktfunk host share one bus. After this
+# ScreenCast portal (xdg-desktop-portal-wlr) and the lilynk host share one bus. After this
 # is up, run `prepare-session.sh` from a second shell to set the mode + portal env.
 #
 # Prereqs (see design/linux-setup.md / scripts/bootstrap-ubuntu.sh):

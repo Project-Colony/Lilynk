@@ -392,7 +392,7 @@ mfxU32 LoaderCtxVPL::GetSearchPathsLegacy(std::list<STRING_TYPE> &searchDirs) {
     STRING_TYPE msdkPath;
 
     // punktfunk: no HKCU dispatcher key. Only the machine's names a runtime
-    // folder (PUNKTFUNK-VENDOR.txt).
+    // folder (LILYNK-VENDOR.txt).
 
     // get path via dispatcher regkey - HKLM
     msdkPath.clear();
@@ -510,7 +510,7 @@ mfxStatus LoaderCtxVPL::BuildListOfCandidateLibs() {
     }
 
     // punktfunk: no PATH search. A SYSTEM process loads every candidate, and a
-    // standard user may write a folder on the machine PATH (PUNKTFUNK-VENDOR.txt).
+    // standard user may write a folder on the machine PATH (LILYNK-VENDOR.txt).
 
     // fourth priority: ONEVPL_SEARCH_PATH environment variable
     searchDirList.clear();

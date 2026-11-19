@@ -1,6 +1,6 @@
 [package]
 name = "lilynk-ffi"
-description = "punktfunk's stable C ABI over lilynk-core, plus the demo-mode loopback host"
+description = "lilynk's stable C ABI over lilynk-core, plus the demo-mode loopback host"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true

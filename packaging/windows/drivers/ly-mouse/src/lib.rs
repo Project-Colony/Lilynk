@@ -1,4 +1,4 @@
-//! punktfunk virtual HID mouse + keyboard — UMDF2 HID minidriver, identity PF:MO (obviously
+//! lilynk virtual HID mouse + keyboard — UMDF2 HID minidriver, identity PF:MO (obviously
 //! virtual).
 //!
 //! A resident pointer keeps `SM_MOUSEPRESENT` true, so DWM draws the cursor on a headless host.
@@ -303,12 +303,12 @@ fn on_get_string(request: &Request) -> NTSTATUS {
     };
     let (_, string_id) = string_request_id(&bytes);
     let s: String = match string_id {
-        0 | 0x000E => "Punktfunk".into(),
+        0 | 0x000E => "Lilynk".into(),
         // The SERIAL carries the channel proof (`HidD_GetSerialNumberString` works on a zero-access
         // handle). Safe HERE: nothing reads the virtual mouse's serial, whereas the pads' serials
         // are what SDL and Steam dedup controllers on.
         2 | 0x0010 => ChannelProof::new(CHANNEL.index(), std::process::id()).to_hid_string(),
-        _ => "Punktfunk Virtual Mouse".into(),
+        _ => "Lilynk Virtual Mouse".into(),
     };
     request.copy_utf16z_to_output(&s)
 }

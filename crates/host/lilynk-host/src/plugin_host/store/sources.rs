@@ -138,7 +138,7 @@ pub(crate) fn remove(name: &str) -> Result<bool> {
 
 fn save(list: Vec<Source>) -> Result<()> {
     let dir = ly_paths::config_dir();
-    ly_paths::create_private_dir(&dir).context("create the punktfunk config dir")?;
+    ly_paths::create_private_dir(&dir).context("create the lilynk config dir")?;
     let file = SourcesFile {
         schema: 1,
         sources: list,

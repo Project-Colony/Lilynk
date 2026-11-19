@@ -718,8 +718,8 @@ pub fn openapi_json() -> String {
 #[derive(OpenApi)]
 #[openapi(
     info(
-        title = "punktfunk management API",
-        description = "Control-plane API for managing a punktfunk streaming host: host \
+        title = "lilynk management API",
+        description = "Control-plane API for managing a lilynk streaming host: host \
                        capabilities, runtime status, paired clients, the pairing PIN flow, \
                        and session control. Authentication: HTTP bearer token, enforced on \
                        every route except `/api/v1/health` when the host is started with a \

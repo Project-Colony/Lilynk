@@ -41,8 +41,8 @@ if [ "$#" -gt 0 ]; then SCENES=("$@"); else SCENES=(hosts settings trust pair ad
 # the first entry is what the `lastConnected` host sort orders by.
 WORK="$(mktemp -d)"
 export HOME="$WORK"
-mkdir -p "$HOME/.config/punktfunk"
-cat >"$HOME/.config/punktfunk/client-known-hosts.json" <<'JSON'
+mkdir -p "$HOME/.config/lilynk"
+cat >"$HOME/.config/lilynk/client-known-hosts.json" <<'JSON'
 {
   "hosts": [
     { "name": "Living Room PC", "addr": "192.168.1.42", "port": 9777,

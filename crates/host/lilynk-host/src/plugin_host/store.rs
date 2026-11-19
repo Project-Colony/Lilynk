@@ -57,7 +57,7 @@ fn top_level_deps(dir: &Path) -> Option<Vec<String>> {
 
 /// Same conventions as the runner: unscoped `lilynk-plugin-*`, and any
 /// scope's `plugin-*`. When [`top_level_deps`] exists, only those names —
-/// otherwise a plugin's library (`@punktfunk/plugin-kit`) looks installed.
+/// otherwise a plugin's library (`@lilynk/plugin-kit`) looks installed.
 /// No readable `package.json` falls back to the convention.
 pub(crate) fn installed_packages(dir: &Path) -> Vec<InstalledPkg> {
     let modules = dir.join("node_modules");
@@ -453,28 +453,25 @@ mod tests {
     #[test]
     fn scans_both_conventions_and_any_scope() {
         let dir = tempfile::tempdir().unwrap();
-        touch_pkg(dir.path(), "@punktfunk/plugin-rom-manager", "0.3.0");
+        touch_pkg(dir.path(), "@lilynk/plugin-rom-manager", "0.3.0");
         // Any scope's `plugin-*` must be found; catalog entries are required to
-        // be scoped, so limiting discovery to `@punktfunk` would hide externals.
+        // be scoped, so limiting discovery to `@lilynk` would hide externals.
         touch_pkg(dir.path(), "@retro-hub/plugin-x", "1.0.0");
         touch_pkg(dir.path(), "lilynk-plugin-legacy", "0.1.0");
         touch_pkg(dir.path(), "effect", "4.0.0");
-        touch_pkg(dir.path(), "@punktfunk/host", "0.1.2");
+        touch_pkg(dir.path(), "@lilynk/host", "0.1.2");
 
         let found = installed_packages(dir.path());
         let names: Vec<&str> = found.iter().map(|p| p.pkg.as_str()).collect();
-        assert!(
-            names.contains(&"@punktfunk/plugin-rom-manager"),
-            "{names:?}"
-        );
+        assert!(names.contains(&"@lilynk/plugin-rom-manager"), "{names:?}");
         assert!(names.contains(&"@retro-hub/plugin-x"), "{names:?}");
         assert!(names.contains(&"lilynk-plugin-legacy"), "{names:?}");
         assert!(!names.contains(&"effect"), "{names:?}");
-        assert!(!names.contains(&"@punktfunk/host"), "{names:?}");
+        assert!(!names.contains(&"@lilynk/host"), "{names:?}");
         assert_eq!(
             found
                 .iter()
-                .find(|p| p.pkg == "@punktfunk/plugin-rom-manager")
+                .find(|p| p.pkg == "@lilynk/plugin-rom-manager")
                 .unwrap()
                 .version
                 .as_deref(),
@@ -491,19 +488,19 @@ mod tests {
     #[test]
     fn transitive_plugin_named_dependencies_are_not_installed_plugins() {
         let dir = tempfile::tempdir().unwrap();
-        touch_pkg(dir.path(), "@punktfunk/plugin-rom-manager", "0.3.1");
-        touch_pkg(dir.path(), "@punktfunk/plugin-kit", "0.1.3");
-        touch_pkg(dir.path(), "@punktfunk/host", "0.1.2");
+        touch_pkg(dir.path(), "@lilynk/plugin-rom-manager", "0.3.1");
+        touch_pkg(dir.path(), "@lilynk/plugin-kit", "0.1.3");
+        touch_pkg(dir.path(), "@lilynk/host", "0.1.2");
         std::fs::write(
             dir.path().join("package.json"),
-            r#"{"dependencies":{"@punktfunk/plugin-rom-manager":"^0.3.1"}}"#,
+            r#"{"dependencies":{"@lilynk/plugin-rom-manager":"^0.3.1"}}"#,
         )
         .unwrap();
 
         let found = installed_packages(dir.path());
         assert_eq!(
             found.iter().map(|p| p.pkg.as_str()).collect::<Vec<_>>(),
-            vec!["@punktfunk/plugin-rom-manager"],
+            vec!["@lilynk/plugin-rom-manager"],
             "only the top-level install counts"
         );
     }
@@ -543,8 +540,8 @@ mod tests {
     #[test]
     fn seeding_never_touches_an_existing_package_json() {
         let dir = tempfile::tempdir().unwrap();
-        touch_pkg(dir.path(), "@punktfunk/plugin-rom-manager", "0.3.1");
-        let manifest = r#"{"dependencies":{"@punktfunk/plugin-rom-manager":"0.3.1"}}"#;
+        touch_pkg(dir.path(), "@lilynk/plugin-rom-manager", "0.3.1");
+        let manifest = r#"{"dependencies":{"@lilynk/plugin-rom-manager":"0.3.1"}}"#;
         std::fs::write(dir.path().join("package.json"), manifest).unwrap();
         ensure_plugin_root(dir.path()).unwrap();
         assert_eq!(
@@ -567,7 +564,7 @@ mod tests {
     #[test]
     fn capturing_ancestor_looks_strictly_upwards() {
         let dir = tempfile::tempdir().unwrap();
-        let plugins = dir.path().join("config/punktfunk/plugins");
+        let plugins = dir.path().join("config/lilynk/plugins");
         std::fs::create_dir_all(&plugins).unwrap();
         std::fs::write(dir.path().join("package.json"), "{}").unwrap();
         assert_eq!(
@@ -591,7 +588,7 @@ mod tests {
     #[test]
     fn an_emptied_dependency_list_means_nothing_is_installed() {
         let dir = tempfile::tempdir().unwrap();
-        touch_pkg(dir.path(), "@punktfunk/plugin-kit", "0.1.3"); // leftover transitive
+        touch_pkg(dir.path(), "@lilynk/plugin-kit", "0.1.3"); // leftover transitive
         std::fs::write(dir.path().join("package.json"), r#"{"name":"plugins"}"#).unwrap();
         assert!(installed_packages(dir.path()).is_empty());
 
@@ -605,11 +602,11 @@ mod tests {
 
     #[test]
     fn uninstall_target_must_be_a_plugin_package() {
-        assert!(valid_installed_pkg("@punktfunk/plugin-rom-manager").is_ok());
+        assert!(valid_installed_pkg("@lilynk/plugin-rom-manager").is_ok());
         assert!(valid_installed_pkg("@retro-hub/plugin-x").is_ok());
         assert!(valid_installed_pkg("lilynk-plugin-legacy").is_ok());
         assert!(valid_installed_pkg("effect").is_err());
-        assert!(valid_installed_pkg("@punktfunk/host").is_err());
+        assert!(valid_installed_pkg("@lilynk/host").is_err());
         assert!(valid_installed_pkg("../../etc").is_err());
         assert!(valid_installed_pkg("").is_err());
     }
@@ -628,18 +625,18 @@ mod tests {
 
         ensure_bunfig_scope(
             dir.path(),
-            "@punktfunk",
+            "@lilynk",
             "https://git.unom.io/api/packages/unom/npm/",
         )
         .unwrap();
-        assert!(read().contains("@punktfunk"));
+        assert!(read().contains("@lilynk"));
         assert!(read().contains("@retro-hub"));
 
         ensure_bunfig_scope(dir.path(), "@retro-hub", "https://new.example/npm/").unwrap();
         assert_eq!(read().matches("@retro-hub").count(), 1);
         assert!(read().contains("https://new.example/npm/"));
         assert!(!read().contains("retro.example"));
-        assert!(read().contains("@punktfunk"), "unrelated scope survives");
+        assert!(read().contains("@lilynk"), "unrelated scope survives");
     }
 
     #[test]
@@ -690,30 +687,30 @@ mod tests {
         }
     }
 
-    /// [`valid_installed_pkg`] accepts `@punktfunk/plugin-kit`. Uninstall must
+    /// [`valid_installed_pkg`] accepts `@lilynk/plugin-kit`. Uninstall must
     /// also require membership in [`installed_packages`].
     #[test]
     fn name_shape_alone_does_not_protect_a_plugins_framework() {
         assert!(
-            valid_installed_pkg("@punktfunk/plugin-kit").is_ok(),
+            valid_installed_pkg("@lilynk/plugin-kit").is_ok(),
             "shape check passes plugin-kit — the handler must additionally require that the \
              package is a top-level install"
         );
 
         let dir = tempfile::tempdir().unwrap();
-        touch_pkg(dir.path(), "@punktfunk/plugin-rom-manager", "0.3.1");
-        touch_pkg(dir.path(), "@punktfunk/plugin-kit", "0.1.3");
+        touch_pkg(dir.path(), "@lilynk/plugin-rom-manager", "0.3.1");
+        touch_pkg(dir.path(), "@lilynk/plugin-kit", "0.1.3");
         std::fs::write(
             dir.path().join("package.json"),
-            r#"{"dependencies":{"@punktfunk/plugin-rom-manager":"0.3.1"}}"#,
+            r#"{"dependencies":{"@lilynk/plugin-rom-manager":"0.3.1"}}"#,
         )
         .unwrap();
         let installed = installed_packages(dir.path());
         assert!(installed
             .iter()
-            .any(|p| p.pkg == "@punktfunk/plugin-rom-manager"));
+            .any(|p| p.pkg == "@lilynk/plugin-rom-manager"));
         assert!(
-            !installed.iter().any(|p| p.pkg == "@punktfunk/plugin-kit"),
+            !installed.iter().any(|p| p.pkg == "@lilynk/plugin-kit"),
             "the framework is not an installed plugin, so uninstall must refuse it"
         );
     }
@@ -721,7 +718,7 @@ mod tests {
     #[test]
     fn plugin_id_derivation() {
         assert_eq!(
-            plugin_id_for_pkg("@punktfunk/plugin-rom-manager").as_deref(),
+            plugin_id_for_pkg("@lilynk/plugin-rom-manager").as_deref(),
             Some("rom-manager")
         );
         assert_eq!(

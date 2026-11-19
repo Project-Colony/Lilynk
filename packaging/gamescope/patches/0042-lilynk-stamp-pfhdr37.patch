@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: unom <packages@unom.io>
 Date: Sun, 15 Nov 2026 21:50:38 +0000
-Subject: [PATCH 42/42] punktfunk: stamp pfhdr37
+Subject: [PATCH 42/42] lilynk: stamp pfhdr37
 
 A host passes -r with a fraction only to a gamescope that reads one: an
 older one refuses the argument and does not start. The level tells the

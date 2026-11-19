@@ -165,7 +165,7 @@ export async function applyUpdate(
           // The name Decky uninstalls before extracting the new zip — it locates the folder by
           // matching plugin.json "name", so this must equal THIS build's plugin.json name (the
           // brand-cased one), not the lowercase on-disk dir.
-          "Punktfunk",
+          "Lilynk",
           plugin.latest,
           plugin.hash,
           INSTALL_TYPE_UPDATE,

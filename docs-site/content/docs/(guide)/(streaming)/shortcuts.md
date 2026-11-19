@@ -51,7 +51,7 @@ On an iPad, ⌘⎋ and every ⌃⌥⇧ shortcut work while input is captured.
 the host too, with no permission to grant.
 
 **Android:** Android keeps **Alt+Tab**, the **Windows** key and the **Language** key for itself.
-To send them, turn on **Punktfunk keyboard shortcuts** under Android's Accessibility settings;
+To send them, turn on **Lilynk keyboard shortcuts** under Android's Accessibility settings;
 the app offers this at launch when a keyboard is attached, and under **Settings → Input →
 Keyboard shortcuts**. On Android 13 and newer a build from outside the Play Store first needs
 **Allow restricted settings** on the app's info page. Without the service, **Alt+`** stands in
@@ -115,12 +115,12 @@ default:
 | Apple TV | tvOS keeps it | On |
 
 If Steam or the Xbox Game Bar on your own device also watches the guide button, both react; turn
-that off on your device. On macOS and iOS 27 and newer, add Punktfunk to **Home Button Overrides**
-in the system's game controller settings; while the system keeps the button, Punktfunk's
+that off on your device. On macOS and iOS 27 and newer, add Lilynk to **Home Button Overrides**
+in the system's game controller settings; while the system keeps the button, Lilynk's
 **Controllers** settings link there. The dial's **Guide button** and **Quick access menu** buttons
 press the host's pad for you. **Quick access menu** needs Steam on the host: it presses the pad's
 own button where the virtual pad has one, and Guide with A on every other pad. On a Deck, the
-Punktfunk panel's **Host menus** buttons do the same ([Steam Deck](/docs/steam-deck)).
+Lilynk panel's **Host menus** buttons do the same ([Steam Deck](/docs/steam-deck)).
 
 ### TV remotes
 

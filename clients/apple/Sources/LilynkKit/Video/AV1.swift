@@ -1,6 +1,6 @@
 // AV1 (low-overhead OBU bitstream) → CoreMedia plumbing — the AV1 sibling of AnnexB.swift.
 //
-// The punktfunk host emits AV1 access units as low-overhead temporal units (the raw encoder
+// The lilynk host emits AV1 access units as low-overhead temporal units (the raw encoder
 // output every other client feeds ffmpeg): a temporal-delimiter OBU, then — on every keyframe,
 // per the same in-band-config policy as the NAL codecs — a sequence-header OBU, then the frame
 // OBUs. VideoToolbox instead wants the ISOBMFF 'av01' flavor: a CMVideoFormatDescription

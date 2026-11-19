@@ -15,7 +15,7 @@ VERSION="${1:?usage: gen-sbom.sh VERSION [OUTPUT]}"
 OUT="${2:-lilynk-${VERSION}.cdx.json}"
 TMP="${OUT}.syft.tmp"
 
-syft scan "dir:." --source-name punktfunk --source-version "$VERSION" \
+syft scan "dir:." --source-name lilynk --source-version "$VERSION" \
   -o "cyclonedx-json=$TMP" -q
 
 OUT="$OUT" TMP="$TMP" python3 - <<'PY'

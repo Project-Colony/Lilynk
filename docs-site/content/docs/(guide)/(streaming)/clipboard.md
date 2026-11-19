@@ -53,7 +53,7 @@ A `LILYNK_CLIPBOARD` line in `host.env` overrides step 1 and locks it in the con
   sent. On Linux that takes a manager that marks copies the KDE way, such as KeePassXC. The host
   doesn't filter, so a password copied on the host reaches your client.
 - **No client sends files yet**, so **Text** and **Text and files** behave the same.
-- **Moonlight has no clipboard.** It exists only in Punktfunk sessions.
+- **Moonlight has no clipboard.** It exists only in Lilynk sessions.
 
 A Linux host needs a desktop that offers a clipboard to it: `ext-data-control-v1` (KWin, Sway,
 Hyprland, niri, Umbriel and other wlroots compositors) or GNOME's remote-desktop clipboard. A

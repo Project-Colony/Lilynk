@@ -8,9 +8,9 @@ client that can't connect needs [Pairing](/docs/pairing).
 
 | Host | Password file | Restart the console |
 |---|---|---|
-| Linux packages, NixOS | `~/.config/punktfunk/web-password` | `systemctl --user restart lilynk-web` |
-| SteamOS | `~/.config/punktfunk/web.env` | `systemctl --user restart lilynk-web` |
-| Windows | `%ProgramData%\punktfunk\web-password` | `lilynk-host service restart`, elevated |
+| Linux packages, NixOS | `~/.config/lilynk/web-password` | `systemctl --user restart lilynk-web` |
+| SteamOS | `~/.config/lilynk/web.env` | `systemctl --user restart lilynk-web` |
+| Windows | `%ProgramData%\lilynk\web-password` | `lilynk-host service restart`, elevated |
 
 ## Read it
 
@@ -18,8 +18,8 @@ The file holds the password in clear text until your first sign-in. After that t
 only a salted hash, and you [reset it](#reset-it) instead.
 
 ```sh
-sed -n 's/^LILYNK_UI_PASSWORD=//p' ~/.config/punktfunk/web-password   # Linux
-sed -n 's/^LILYNK_UI_PASSWORD=//p' ~/.config/punktfunk/web.env        # SteamOS
+sed -n 's/^LILYNK_UI_PASSWORD=//p' ~/.config/lilynk/web-password   # Linux
+sed -n 's/^LILYNK_UI_PASSWORD=//p' ~/.config/lilynk/web.env        # SteamOS
 ```
 
 On Windows, from an elevated PowerShell (the file is readable by Administrators only):
@@ -34,8 +34,8 @@ Write a `LILYNK_UI_PASSWORD=<new-password>` line into the file and restart the c
 sign-in hashes it and signs every other session out.
 
 ```sh
-printf 'LILYNK_UI_PASSWORD=%s\n' 'new-password' > ~/.config/punktfunk/web-password
-chmod 600 ~/.config/punktfunk/web-password
+printf 'LILYNK_UI_PASSWORD=%s\n' 'new-password' > ~/.config/lilynk/web-password
+chmod 600 ~/.config/lilynk/web-password
 systemctl --user restart lilynk-web
 ```
 
@@ -43,7 +43,7 @@ systemctl --user restart lilynk-web
 - Windows, from an elevated PowerShell:
 
   ```powershell
-  notepad "$env:ProgramData\punktfunk\web-password"   # add LILYNK_UI_PASSWORD=<new-password>
+  notepad "$env:ProgramData\lilynk\web-password"   # add LILYNK_UI_PASSWORD=<new-password>
   lilynk-host service restart
   ```
 

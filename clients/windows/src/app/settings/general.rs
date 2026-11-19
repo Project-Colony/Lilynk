@@ -76,7 +76,7 @@ pub(super) fn general_section(cx: &Cx) -> Vec<View> {
     // Explorer hands a URL to the default browser; best-effort, like About's log folder.
     let stats_docs_button = button(client::player_stats_docs_link()).on_click(|| {
         let _ = std::process::Command::new("explorer.exe")
-            .arg("https://docs.punktfunk.unom.io/docs/stats")
+            .arg("https://project-colony.github.io/Lilynk/docs/stats")
             .spawn();
     });
 

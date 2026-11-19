@@ -1,15 +1,15 @@
 [Desktop Entry]
 Type=Application
-Name=Punktfunk
-Name[de]=Punktfunk
-Name[es]=Punktfunk
-Name[fr]=Punktfunk
-Comment=Stream a remote Punktfunk host
+Name=Lilynk
+Name[de]=Lilynk
+Name[es]=Lilynk
+Name[fr]=Lilynk
+Comment=Stream a remote Lilynk host
 Comment[de]=Von einem entfernten Lilynk-Host streamen
-Comment[es]=Transmite desde un host Punktfunk remoto
-Comment[fr]=Jouer en streaming depuis un hôte Punktfunk distant
-Comment[it]=Streaming da un host Punktfunk remoto
-Comment[pt_BR]=Transmita de um host remoto do Punktfunk
+Comment[es]=Transmite desde un host Lilynk remoto
+Comment[fr]=Jouer en streaming depuis un hôte Lilynk distant
+Comment[it]=Streaming da un host Lilynk remoto
+Comment[pt_BR]=Transmita de um host remoto do Lilynk
 Exec=lilynk-client %u
 Icon=org.projectcolony.lilynk
 Terminal=false

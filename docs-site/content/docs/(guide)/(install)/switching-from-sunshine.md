@@ -1,17 +1,17 @@
 ---
 title: Switching from Sunshine, Apollo or Vibeshine
-description: Run Punktfunk next to your existing Sunshine-family host while you try it — one port to move — then what maps to what, and how to migrate for good.
+description: Run Lilynk next to your existing Sunshine-family host while you try it — one port to move — then what maps to what, and how to migrate for good.
 ---
 
-Try Punktfunk next to Sunshine or one of its forks (Apollo, Vibeshine, …), then move over for
+Try Lilynk next to Sunshine or one of its forks (Apollo, Vibeshine, …), then move over for
 good.
 
 ## Can I keep Sunshine installed while I try it?
 
-**Yes, with one port moved.** Both want **TCP 47990**: Sunshine for its web UI, Punktfunk for its
+**Yes, with one port moved.** Both want **TCP 47990**: Sunshine for its web UI, Lilynk for its
 management API. Whichever starts first gets it, so a shared box works until one boot it doesn't.
-Move Punktfunk's in `host.env` (`~/.config/punktfunk/host.env`, on Windows
-`%ProgramData%\punktfunk\host.env`):
+Move Lilynk's in `host.env` (`~/.config/lilynk/host.env`, on Windows
+`%ProgramData%\lilynk\host.env`):
 
 ```sh
 LILYNK_MGMT_BIND=0.0.0.0:47991
@@ -26,11 +26,11 @@ when they find another host running or set to start on its own.
 - On a Linux firewall, also allow the new port (`lilynk-native` opens 47990):
   [Ports & firewall](/docs/ports). On Windows, `lilynk-host service install` re-creates the
   host's firewall rule for the port in `host.env`.
-- **Windows:** while streaming, Punktfunk turns your other displays off, and an Apollo virtual
+- **Windows:** while streaming, Lilynk turns your other displays off, and an Apollo virtual
   display counts as one. In the console, set **Displays** → **Your monitors while streaming** to
   **Stay on** ([Virtual displays](/docs/virtual-displays)).
 - **Leave Moonlight compatibility off** while both are installed. GameStream uses the same fixed
-  ports as Sunshine, so only one of them can serve Moonlight. Try Punktfunk with a
+  ports as Sunshine, so only one of them can serve Moonlight. Try Lilynk with a
   [native client](/docs/install-client) meanwhile.
 
 To see what is installed and who holds the port:
@@ -45,7 +45,7 @@ Running both is fine for a trial. If something acts up, stop the other host firs
 
 ## What maps to what
 
-| In Sunshine / Apollo | In Punktfunk |
+| In Sunshine / Apollo | In Lilynk |
 |---|---|
 | Web UI on 47990 | [Web console](/docs/web-console) on 47992 |
 | PIN pairing | PIN pairing, or **Approve** in the console with no PIN ([Pairing](/docs/pairing)) |
@@ -59,7 +59,7 @@ Running both is fine for a trial. If something acts up, stop the other host firs
 
 ## Migrating for good
 
-1. **Install** Punktfunk ([Install the Host](/docs/install)) and move the port as above. Pair a
+1. **Install** Lilynk ([Install the Host](/docs/install)) and move the port as above. Pair a
    native client and stream for a while.
 2. **Bring your library over:** install the [plugin](/docs/plugins) for each launcher you had in
    `apps.json`, and add anything custom on the console's **Library** page.
@@ -67,7 +67,7 @@ Running both is fine for a trial. If something acts up, stop the other host firs
    `sc stop SunshineService` and its uninstaller on Windows. On Windows also remove its virtual
    display driver.
 4. **Turn on Moonlight compatibility** if you still use Moonlight clients
-   ([Moonlight](/docs/moonlight)). They pair again, with Punktfunk this time.
+   ([Moonlight](/docs/moonlight)). They pair again, with Lilynk this time.
 5. **Undo the port move** if you like: delete the `LILYNK_MGMT_BIND` line and restart the host.
 
 Something not behaving?

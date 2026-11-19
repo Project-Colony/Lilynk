@@ -13,7 +13,7 @@ use crate::update::{self, detect};
 
 /// On a door, the owner's host's answer to a packaged install's update call. polkit lets only
 /// the operator's `lilynk-update` group start the root helper, and the door runs as
-/// `punktfunk`. `None` keeps the call on the door: a Deck build, or no owner's host running.
+/// `lilynk`. `None` keeps the call on the door: a Deck build, or no owner's host running.
 async fn owner_answer(
     st: &MgmtState,
     method: &str,

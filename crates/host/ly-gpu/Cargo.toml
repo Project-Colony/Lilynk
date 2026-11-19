@@ -6,7 +6,7 @@ name = "ly-gpu"
 version.workspace = true
 edition.workspace = true
 license = "GPL-3.0-or-later"
-description = "punktfunk host GPU vendor/adapter enumeration, selection preference, and active-session accounting."
+description = "lilynk host GPU vendor/adapter enumeration, selection preference, and active-session accounting."
 publish = false
 
 [dependencies]

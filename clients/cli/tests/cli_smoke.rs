@@ -1,4 +1,4 @@
-//! Runs the REAL `punktfunk` binary and pins its contract: help goes to stdout and exits 0,
+//! Runs the REAL `lilynk` binary and pins its contract: help goes to stdout and exits 0,
 //! an unknown verb refuses on stderr with the not-found code, and the store verbs work
 //! against a scratch config dir.
 //!
@@ -10,21 +10,21 @@
 
 use std::process::Command;
 
-fn punktfunk(args: &[&str]) -> std::process::Output {
+fn lilynk(args: &[&str]) -> std::process::Output {
     Command::new(env!("CARGO_BIN_EXE_lilynk"))
         .args(args)
         .output()
-        .expect("run punktfunk")
+        .expect("run lilynk")
 }
 
 #[test]
 fn bare_and_help_print_the_overview_on_stdout() {
     for args in [&[][..], &["help"][..], &["--help"][..], &["-h"][..]] {
-        let out = punktfunk(args);
+        let out = lilynk(args);
         assert!(out.status.success(), "{args:?} must exit 0");
         let stdout = String::from_utf8_lossy(&out.stdout);
         assert!(
-            stdout.contains("punktfunk pair"),
+            stdout.contains("lilynk pair"),
             "{args:?} overview lists the verbs"
         );
         assert!(
@@ -41,7 +41,7 @@ fn per_verb_help_answers_both_spellings() {
         &["launch", "--help"][..],
         &["launch", "-h"][..],
     ] {
-        let out = punktfunk(args);
+        let out = lilynk(args);
         assert!(out.status.success(), "{args:?} must exit 0");
         let stdout = String::from_utf8_lossy(&out.stdout);
         assert!(
@@ -59,9 +59,9 @@ fn per_verb_help_answers_both_spellings() {
 fn default_host_is_set_read_and_cleared() {
     let home = std::env::temp_dir().join(format!("pf-cli-default-host-{}", std::process::id()));
     let store = home.join(if cfg!(windows) {
-        "punktfunk"
+        "lilynk"
     } else {
-        ".config/punktfunk"
+        ".config/lilynk"
     });
     std::fs::create_dir_all(&store).expect("scratch config dir");
     std::fs::write(
@@ -77,7 +77,7 @@ fn default_host_is_set_read_and_cleared() {
             .env(if cfg!(windows) { "APPDATA" } else { "HOME" }, &home)
             .env("LILYNK_CONFIG_DIR", &store)
             .output()
-            .expect("run punktfunk")
+            .expect("run lilynk")
     };
 
     // One paired host derives, with nothing written.
@@ -118,9 +118,9 @@ fn forgetting_a_host_clears_its_default_and_cached_catalog() {
     let store = home.join("config");
     let fp = "ab".repeat(32);
     let catalog = if cfg!(windows) {
-        home.join("punktfunk/cache/library")
+        home.join("lilynk/cache/library")
     } else {
-        home.join("punktfunk/library")
+        home.join("lilynk/library")
     };
     std::fs::create_dir_all(&store).expect("scratch config dir");
     std::fs::create_dir_all(&catalog).expect("scratch cache dir");
@@ -144,7 +144,7 @@ fn forgetting_a_host_clears_its_default_and_cached_catalog() {
         .env("XDG_CACHE_HOME", &home)
         .env("LOCALAPPDATA", &home)
         .output()
-        .expect("run punktfunk");
+        .expect("run lilynk");
     assert!(
         out.status.success(),
         "{}",
@@ -169,11 +169,11 @@ fn hosts_added_by_eight_processes_at_once_all_land() {
                 .args(["hosts", "add", &format!("10.0.0.{n}")])
                 .env("LILYNK_CONFIG_DIR", &store)
                 .spawn()
-                .expect("run punktfunk")
+                .expect("run lilynk")
         })
         .collect();
     for mut add in adds {
-        assert!(add.wait().expect("wait for punktfunk").success());
+        assert!(add.wait().expect("wait for lilynk").success());
     }
     let saved = std::fs::read_to_string(store.join("client-known-hosts.json")).expect("the store");
     assert_eq!(saved.matches("\"addr\"").count(), 8, "{saved}");
@@ -183,18 +183,18 @@ fn hosts_added_by_eight_processes_at_once_all_land() {
 
 #[test]
 fn version_prints_the_crate_version() {
-    let out = punktfunk(&["--version"]);
+    let out = lilynk(&["--version"]);
     assert!(out.status.success());
     assert!(String::from_utf8_lossy(&out.stdout).contains(env!("CARGO_PKG_VERSION")));
 }
 
 #[test]
 fn unknown_verbs_refuse_with_the_not_found_code() {
-    let out = punktfunk(&["frobnicate"]);
+    let out = lilynk(&["frobnicate"]);
     assert_eq!(out.status.code(), Some(5), "unknown verb exits 5");
     assert!(String::from_utf8_lossy(&out.stderr).contains("unknown command"));
 
-    let out = punktfunk(&["help", "frobnicate"]);
+    let out = lilynk(&["help", "frobnicate"]);
     assert_eq!(out.status.code(), Some(5), "unknown help topic exits 5");
 }
 
@@ -202,7 +202,7 @@ fn unknown_verbs_refuse_with_the_not_found_code() {
 /// stderr, and the exit code stays 5.
 #[test]
 fn an_unknown_verb_under_json_names_itself_on_stdout() {
-    let out = punktfunk(&["frobnicate", "--json"]);
+    let out = lilynk(&["frobnicate", "--json"]);
     assert_eq!(out.status.code(), Some(5));
     assert!(String::from_utf8_lossy(&out.stderr).contains("unknown command"));
     let got: serde_json::Value = serde_json::from_slice(&out.stdout).expect("one JSON object");
@@ -210,7 +210,7 @@ fn an_unknown_verb_under_json_names_itself_on_stdout() {
         got,
         serde_json::json!({"ok": false, "error": "unknown-command"})
     );
-    assert!(punktfunk(&["frobnicate"]).stdout.is_empty());
+    assert!(lilynk(&["frobnicate"]).stdout.is_empty());
 }
 
 /// `discover` and `launch --request-access` document themselves. Help only — the verbs
@@ -221,13 +221,13 @@ fn an_unknown_verb_under_json_names_itself_on_stdout() {
 /// enough, `discover` is a verb with help rather than an unknown word.
 #[test]
 fn the_request_access_surfaces_document_themselves() {
-    let out = punktfunk(&["help", "discover"]);
+    let out = lilynk(&["help", "discover"]);
     assert!(out.status.success(), "discover has its own help topic");
     let stdout = String::from_utf8_lossy(&out.stdout);
     assert!(stdout.contains("--timeout"), "discover documents --timeout");
     assert!(stdout.contains("--json"), "discover documents --json");
 
-    let out = punktfunk(&["launch", "--help"]);
+    let out = lilynk(&["launch", "--help"]);
     assert!(String::from_utf8_lossy(&out.stdout).contains("--request-access"));
 }
 
@@ -241,7 +241,7 @@ fn scratch_store(tag: &str, known_hosts: &str) -> std::path::PathBuf {
     store
 }
 
-/// `punktfunk` against `store`, with every cache dir inside it too.
+/// `lilynk` against `store`, with every cache dir inside it too.
 fn lilynk_in(store: &std::path::Path, args: &[&str]) -> std::process::Output {
     Command::new(env!("CARGO_BIN_EXE_lilynk"))
         .args(args)
@@ -249,7 +249,7 @@ fn lilynk_in(store: &std::path::Path, args: &[&str]) -> std::process::Output {
         .env("XDG_CACHE_HOME", store)
         .env("LOCALAPPDATA", store)
         .output()
-        .expect("run punktfunk")
+        .expect("run lilynk")
 }
 
 fn stdout_of(out: &std::process::Output) -> String {
@@ -373,7 +373,7 @@ fn hosts_add_reports_what_it_did() {
     assert!(stderr_of(&out).contains("--fp takes the host's 64-hex-digit fingerprint"));
     let out = say(&["hosts", "add"]);
     assert_eq!(out.status.code(), Some(5));
-    assert!(stderr_of(&out).contains("usage: punktfunk hosts add"));
+    assert!(stderr_of(&out).contains("usage: lilynk hosts add"));
     std::fs::remove_dir_all(&store).ok();
 }
 
@@ -435,7 +435,7 @@ fn hosts_refuses_what_it_cannot_resolve() {
     let store = scratch_store("refuse", TWO_HOSTS);
     for (args, said) in [
         (&["hosts", "frob"][..], "unknown hosts command \"frob\""),
-        (&["hosts", "forget"][..], "usage: punktfunk hosts forget"),
+        (&["hosts", "forget"][..], "usage: lilynk hosts forget"),
     ] {
         let out = lilynk_in(&store, args);
         assert_eq!(out.status.code(), Some(5), "{args:?}");
@@ -465,7 +465,7 @@ fn the_probe_verbs_refuse_before_they_dial() {
         let out = lilynk_in(&store, &[verb]);
         assert_eq!(out.status.code(), Some(5), "{verb}");
         assert!(
-            stderr_of(&out).contains(&format!("usage: punktfunk {verb} <host-ref>")),
+            stderr_of(&out).contains(&format!("usage: lilynk {verb} <host-ref>")),
             "{verb}: {}",
             stderr_of(&out)
         );
@@ -489,7 +489,7 @@ fn hosts_add_without_a_config_dir_fails_to_save() {
         .env_remove("HOME")
         .env_remove("APPDATA")
         .output()
-        .expect("run punktfunk");
+        .expect("run lilynk");
     assert_eq!(out.status.code(), Some(2), "{}", stderr_of(&out));
     assert!(
         stderr_of(&out).starts_with("saving: "),

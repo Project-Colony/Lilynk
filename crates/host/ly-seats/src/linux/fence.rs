@@ -315,7 +315,7 @@ fn hid_phys(uevent: &str) -> Option<String> {
         .map(str::to_owned)
 }
 
-/// The account in a uinput proxy's devpath, `/devices/virtual/cuse/punktfunk!uinput-<account>`,
+/// The account in a uinput proxy's devpath, `/devices/virtual/cuse/lilynk!uinput-<account>`,
 /// when it is a plain user name. Sysfs spells the devname's `/` as `!`.
 fn account_of_proxy(devpath: &str) -> Option<String> {
     let name = devpath.strip_prefix("/devices/virtual/cuse/")?;
@@ -340,17 +340,14 @@ mod tests {
     fn a_uinput_proxy_names_its_seat() {
         let cuse = "/devices/virtual/cuse/";
         assert_eq!(
-            account_of_proxy(&format!("{cuse}punktfunk!uinput-pf-seat-2")),
+            account_of_proxy(&format!("{cuse}lilynk!uinput-pf-seat-2")),
             Some("pf-seat-2".into())
         );
-        assert_eq!(account_of_proxy(&format!("{cuse}punktfunk!uinput-")), None);
-        assert_eq!(
-            account_of_proxy(&format!("{cuse}punktfunk!uinput-a!b")),
-            None
-        );
+        assert_eq!(account_of_proxy(&format!("{cuse}lilynk!uinput-")), None);
+        assert_eq!(account_of_proxy(&format!("{cuse}lilynk!uinput-a!b")), None);
         assert_eq!(account_of_proxy(&format!("{cuse}fuse-thing")), None);
         assert_eq!(
-            account_of_proxy("/devices/virtual/misc/punktfunk!uinput-pf-seat-2"),
+            account_of_proxy("/devices/virtual/misc/lilynk!uinput-pf-seat-2"),
             None
         );
     }
@@ -358,7 +355,7 @@ mod tests {
     #[test]
     fn a_hid_devices_uevent_names_its_phys() {
         let uevent = "DRIVER=playstation\nHID_ID=0003:0000054C:00000CE6\n\
-                      HID_NAME=Punktfunk DualSense 0\nHID_PHYS=lilynk-seat:pf-seat-1/dualsense/0\n\
+                      HID_NAME=Lilynk DualSense 0\nHID_PHYS=lilynk-seat:pf-seat-1/dualsense/0\n\
                       HID_UNIQ=lilynk-ds-0\nMODALIAS=hid:b0003g0001v0000054Cp00000CE6\n";
         assert_eq!(
             hid_phys(uevent).as_deref(),

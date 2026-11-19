@@ -1,16 +1,10 @@
 ---
 title: Omarchy
-description: Install the Punktfunk host on Omarchy 4.x — the Arch repo, then one setup command for the firewall, autostart, the app menu and the bar widget.
+description: Install the Lilynk host on Omarchy 4.x from the Arch packages you build, then wire up the firewall, autostart, the app menu and the bar widget with one setup command.
 ---
 
 Install the host on **Omarchy 4.x** and wire it into the desktop with one command. Omarchy is Arch
-underneath, so the repo and packages are the [Arch](/docs/arch) ones; only the install line and
-the desktop wiring differ.
-
-**One command instead?** The [guided installer](/docs/install#guided-install-preview) (preview)
-runs every step below, `lilynk-omarchy setup` included:
-
-<Installer />
+underneath, so the packages are the [Arch](/docs/arch) ones; only the desktop wiring differs.
 
 ## 1. GPU driver
 
@@ -21,21 +15,18 @@ the Mesa stack you already have.
 
 <Install platform="omarchy" />
 
-<Callout type="warn">
-Run `pacman -Sy`, then `pacman -S`, as shown. Omarchy aborts any `pacman -Syu <package>`
-(*"Woah partner…"*) and installs nothing, because system upgrades go through `omarchy update`.
-</Callout>
-
-The last line, `lilynk-omarchy setup`, does the rest. Each step is safe to re-run:
+Build and install the packages as on [Arch, step 2](/docs/arch#2-install-the-host), and install
+`lilynk-client` with them. Then run `lilynk-omarchy setup`, which does the rest. Each step is safe
+to re-run:
 
 | Step | What it does |
 | --- | --- |
-| **Groups** | Adds you to `input` (virtual gamepads) and `punktfunk` (the virtual Steam Deck pad). Restart the computer before streaming. |
+| **Groups** | Adds you to `input` (virtual gamepads) and `lilynk` (the virtual Steam Deck pad). Restart the computer before streaming. |
 | **Autostart** | Enables `lilynk-host` and `lilynk-web` as user services that start at login. |
 | **Firewall** | Opens the host's ufw profiles to your local networks (`192.168.0.0/16`, `10.0.0.0/8`, `172.16.0.0/12`), Tailscale's `tailscale0` and NetBird's `wt0`, plus a management port moved off 47990. |
 | **Browser trust** | Trusts the console's certificate in Chromium, so it opens without a warning. |
-| **App menu** | Adds **Punktfunk Web Console** to Apps (`Super`+`Space`), already signed in, plus a **Punktfunk Host** submenu. |
-| **Bar widget** | A Punktfunk widget in the bar. It replaces the tray icon. |
+| **App menu** | Adds **Lilynk Web Console** to Apps (`Super`+`Space`), already signed in, plus a **Lilynk Host** submenu. |
+| **Bar widget** | A Lilynk widget in the bar. It replaces the tray icon. |
 | **Toasts** | Pairing requests (with **Approve** / **Deny**) and stream start/stop as Omarchy notifications. |
 | **Idle** | Keeps the screen awake while a stream runs, then restores your setting. |
 | **Theme** | The web console and the Linux client follow `omarchy-theme-set`. |
@@ -47,7 +38,7 @@ To skip a part, pass `--groups=0`, `--cert=0`, `--toasts=0`, `--idle-guard=0`, `
 
 ## 3. Pair
 
-Open **Punktfunk Web Console** from Apps and [pair your first device](/docs/web-console#arm-pairing).
+Open **Lilynk Web Console** from Apps and [pair your first device](/docs/web-console#arm-pairing).
 From a terminal instead:
 
 ```sh
@@ -56,7 +47,7 @@ lilynk-host ctl pending       # devices waiting, with name and fingerprint tail
 lilynk-host ctl approve 1
 ```
 
-The **Punktfunk Host** submenu has the same actions. Every verb: [`ctl`](/docs/host-cli#ctl).
+The **Lilynk Host** submenu has the same actions. Every verb: [`ctl`](/docs/host-cli#ctl).
 
 ## Dedicated display or This screen
 
@@ -65,14 +56,14 @@ The **Punktfunk Host** submenu has the same actions. Every verb: [`ctl`](/docs/h
 | **Dedicated display** *(default)* | A virtual display at the client's size and refresh. |
 | **This screen** | This box's primary monitor, untouched. |
 
-Pick one from **Punktfunk Host** in Apps, from the bar widget's **Display** tab, or with
+Pick one from **Lilynk Host** in Apps, from the bar widget's **Display** tab, or with
 `lilynk-omarchy mode dedicated` / `mode mirror` (`mode --status` shows the current one).
 Switching restarts a running host and ends its stream. **This screen** is the
 [Streamed screen](/docs/stream-a-monitor) setting.
 
 ## The bar widget
 
-Click the Punktfunk mark for a panel with five tabs: **Overview**, **Pair**, **Devices**,
+Click the Lilynk mark for a panel with five tabs: **Overview**, **Pair**, **Devices**,
 **Display** and **Stats**. A waiting device opens **Pair**. Right-click the mark to stop a live
 session, or to open the web console when nothing is streaming.
 
@@ -80,17 +71,18 @@ Keys: `1`–`5` or `h` / `l` switch tabs, `j` / `k` move, Enter activates, Esc c
 
 ## Updating
 
-`omarchy update` updates Punktfunk with the rest of the system, after its snapper snapshot. A
-rollback reverts the binaries only; your pairings and `~/.config/punktfunk` stay.
+`omarchy update` leaves the packages you built alone. Update them as on
+[Arch](/docs/arch#2-install-the-host). A snapper rollback reverts the binaries only; your pairings
+and `~/.config/lilynk` stay.
 
 ## Next to Sunshine
 
 Omarchy can install Sunshine as a service. Both hosts want TCP 47990, and GameStream uses exactly
 Sunshine's ports.
 
-- The guided installer moves Punktfunk's management API to 47991 when Sunshine, Apollo or
+- The guided installer moves Lilynk's management API to 47991 when Sunshine, Apollo or
   Vibeshine is running or enabled, and `setup` opens that port. By hand: add
-  `LILYNK_MGMT_BIND=0.0.0.0:47991` to `~/.config/punktfunk/host.env`, then re-run
+  `LILYNK_MGMT_BIND=0.0.0.0:47991` to `~/.config/lilynk/host.env`, then re-run
   `lilynk-omarchy setup`.
 - Leave GameStream off while Sunshine runs; only one host can bind those ports.
 
@@ -99,25 +91,23 @@ To switch for good, run `omarchy remove service sunshine`. See
 
 ## Moonlight (GameStream)
 
-Punktfunk's own clients don't need it. For stock [Moonlight](/docs/moonlight) on a trusted LAN,
-choose **Punktfunk Host** → **GameStream** in Apps: it turns on the console's **GameStream**
-setting, restarts the host and opens the ufw profile. Enter the PIN a Moonlight client shows with **Punktfunk Host** →
+Lilynk's own clients don't need it. For stock [Moonlight](/docs/moonlight) on a trusted LAN,
+choose **Lilynk Host** → **GameStream** in Apps: it turns on the console's **GameStream**
+setting, restarts the host and opens the ufw profile. Enter the PIN a Moonlight client shows with **Lilynk Host** →
 **Moonlight PIN**.
 
 ## This box as a client
 
-The install line includes `lilynk-client`. It follows the Omarchy theme live; turn that off with
+`lilynk-client` follows the Omarchy theme live; turn that off with
 **Follow system theme** in its preferences or in the game console's settings. **Hosts in the
-Omarchy menu** in preferences (or `lilynk-client --omarchy-menu on`) adds a **Punktfunk**
+Omarchy menu** in preferences (or `lilynk-client --omarchy-menu on`) adds a **Lilynk**
 submenu with a connect row per saved host, a wake row where the MAC is known, and the game
 console. `setup` turns it on for you.
 
 ## Good to know
 
-- **Your own hooks.** If `~/.config/punktfunk/hooks.json` already exists, `setup` prints the toast
+- **Your own hooks.** If `~/.config/lilynk/hooks.json` already exists, `setup` prints the toast
   and idle entries for you to add instead of editing it.
-- **Snapshot mirror.** Omarchy pins Arch packages to a snapshot. If pacman reports an unsatisfiable
-  dependency, wait for the next `omarchy update`.
 - **Disk encryption.** Omarchy encrypts the disk by default, so a
   [Wake-on-LAN](/docs/wake-on-lan) cold boot stops at the passphrase. Suspend the box instead.
 
@@ -163,4 +153,4 @@ sudo pacman -R lilynk-host lilynk-web lilynk-scripting lilynk-client   # the one
 ```
 
 `remove` undoes every `setup` step and restores the tray icon and the screen-share picker. Your
-groups, pairings and `~/.config/punktfunk` stay; [Uninstall](/docs/uninstall) clears them.
+groups, pairings and `~/.config/lilynk` stay; [Uninstall](/docs/uninstall) clears them.

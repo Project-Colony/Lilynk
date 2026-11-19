@@ -681,7 +681,7 @@ pub fn reclaim_topology_journal() {
 pub fn reclaim_topology_journal() {}
 
 /// Warn once at startup when this box will need managed takeover but the user
-/// is not in the `punktfunk` group the helper gates on — the one prerequisite
+/// is not in the `lilynk` group the helper gates on — the one prerequisite
 /// that fails silently mid-stream. Gated so a box that never attempts takeover
 /// stays quiet. Call once at `serve` startup.
 #[cfg(target_os = "linux")]
@@ -692,7 +692,7 @@ pub fn preflight_takeover_privilege() {
 #[cfg(not(target_os = "linux"))]
 pub fn preflight_takeover_privilege() {}
 
-/// Why the `punktfunk`-group prerequisite does not apply. Each variant alone
+/// Why the `lilynk`-group prerequisite does not apply. Each variant alone
 /// makes the group irrelevant — do not nag — but keep `why` so a diagnostics
 /// UI can name which gate, not hide the row.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

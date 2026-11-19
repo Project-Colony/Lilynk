@@ -32,8 +32,8 @@ warns once: continue. Sign in with the console password:
 
 | Host | Password |
 |---|---|
-| Linux | The one you typed in the guided installer, or print the generated one: `sed -n 's/^LILYNK_UI_PASSWORD=//p' ~/.config/punktfunk/web-password` |
-| SteamOS | `sed -n 's/^LILYNK_UI_PASSWORD=//p' ~/.config/punktfunk/web.env` |
+| Linux | The one you typed in the guided installer, or print the generated one: `sed -n 's/^LILYNK_UI_PASSWORD=//p' ~/.config/lilynk/web-password` |
+| SteamOS | `sed -n 's/^LILYNK_UI_PASSWORD=//p' ~/.config/lilynk/web.env` |
 | Windows | The one you set in the installer, or from an elevated PowerShell: `lilynk-host web password` |
 
 Read it before you sign in: the console then stores only a hash. Lost it?

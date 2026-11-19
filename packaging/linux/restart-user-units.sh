@@ -1,5 +1,5 @@
 #!/bin/sh
-# Restart the running punktfunk services after a package update. try-restart leaves a stopped or
+# Restart the running lilynk services after a package update. try-restart leaves a stopped or
 # opted-out service stopped. Under the in-console updater the host restarts its own three once
 # lilynk-update.service returns. Always exits 0 — a restart must never fail the transaction.
 # The unit table: check-packaging-policy.py holds every other updater to these two lines. This is

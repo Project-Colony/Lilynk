@@ -1,5 +1,5 @@
-# ufw application profile for the punktfunk host — installed to
-# /etc/ufw/applications.d/punktfunk by the .deb and the Arch/CachyOS package.
+# ufw application profile for the lilynk host — installed to
+# /etc/ufw/applications.d/lilynk by the .deb and the Arch/CachyOS package.
 #
 # This is the ufw analogue of the firewalld service definitions
 # (lilynk-native.xml / lilynk-gamestream.xml): it turns opening the host's
@@ -8,7 +8,7 @@
 # reads this directory on every command, so no reload is needed after the
 # package drops the file — just:
 #
-#     sudo ufw allow lilynk-native        # the secure native punktfunk host (the default)
+#     sudo ufw allow lilynk-native        # the secure native lilynk host (the default)
 #     sudo ufw allow lilynk-gamestream    # add GameStream/Moonlight compat (opt-in)
 #     sudo ufw allow lilynk-web           # reach the web console from the LAN (if lilynk-web is installed)
 #     sudo ufw app info lilynk-native     # show what a profile opens
@@ -22,12 +22,12 @@
 # 9783-9786/udp the same seats' browser streaming.
 
 [lilynk-native]
-title=punktfunk host (native punktfunk/2)
+title=lilynk host (native punktfunk/2)
 description=punktfunk/2 native streaming: QUIC control plane + browser streaming + seats + mDNS auto-discovery + mgmt/library API (HTTPS + mTLS)
 ports=9777/udp|9778:9786/udp|5353/udp|47990/tcp
 
 [lilynk-gamestream]
-title=punktfunk host (GameStream/Moonlight)
+title=lilynk host (GameStream/Moonlight)
 description=GameStream/Moonlight compatibility ports (opt-in, trusted LAN only)
 ports=47984,47989,48010/tcp|47998:48000/udp|5353/udp
 
@@ -47,6 +47,6 @@ ports=47984,47989,48010/tcp|47998:48000/udp|5353/udp
 # policy is the boundary — but still the same SITE, so the login session still reaches it. It is
 # login-gated exactly like the console, and only needed for plugins that ship a UI.
 [lilynk-web]
-title=punktfunk web console
-description=The optional punktfunk management web console (HTTPS, login-gated) reachable from the LAN, plus the separate-origin port its plugin UIs are served on
+title=lilynk web console
+description=The optional lilynk management web console (HTTPS, login-gated) reachable from the LAN, plus the separate-origin port its plugin UIs are served on
 ports=47992,47993/tcp

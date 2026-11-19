@@ -24,8 +24,8 @@ fn main() {
             .set_icon_with_id(icon, "1")
             // UAC names the installer by FileDescription (and by signtool's /d, which the
             // packers read from here).
-            .set("FileDescription", "Punktfunk Setup")
-            .set("ProductName", "Punktfunk")
+            .set("FileDescription", "Lilynk Setup")
+            .set("ProductName", "Lilynk")
             .set("CompanyName", "Lilynk")
             .compile()
             .expect("embed the icon resource");

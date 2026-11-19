@@ -1,6 +1,6 @@
 [package]
 name = "lilynk-client-android"
-description = "punktfunk Android client — JNI bridge ('nativecore') over lilynk-core (Rust-heavy client model)"
+description = "lilynk Android client — JNI bridge ('nativecore') over lilynk-core (Rust-heavy client model)"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true

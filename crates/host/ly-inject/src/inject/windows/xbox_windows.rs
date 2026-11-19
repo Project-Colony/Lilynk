@@ -54,7 +54,7 @@ impl WinXboxIdentity {
             instance_prefix: "pf_xbox",
             hwid: "pf_xboxwireless",
             usb_vid_pid: "VID_045E&PID_0B13",
-            description: "Punktfunk Virtual Xbox Wireless Controller",
+            description: "Lilynk Virtual Xbox Wireless Controller",
         }
     }
 
@@ -67,7 +67,7 @@ impl WinXboxIdentity {
             instance_prefix: "pf_xbox_ones",
             hwid: "pf_xboxones",
             usb_vid_pid: "VID_045E&PID_02FD",
-            description: "Punktfunk Virtual Xbox One S Controller",
+            description: "Lilynk Virtual Xbox One S Controller",
         }
     }
 
@@ -81,7 +81,7 @@ impl WinXboxIdentity {
             instance_prefix: "pf_xbox_elite",
             hwid: "pf_xboxelite",
             usb_vid_pid: "VID_045E&PID_0B22",
-            description: "Punktfunk Virtual Xbox Elite Wireless Controller Series 2",
+            description: "Lilynk Virtual Xbox Elite Wireless Controller Series 2",
         }
     }
 }
@@ -187,7 +187,7 @@ impl XboxWinPad {
                 bluetooth: false,
                 description: id.description,
                 // The HID child becomes `HID\VID_045E&PID_…&IG_00`: Steam merges a pad's views by
-                // the VID/PID in its path, and under `punktfunk` it would list one Xbox pad twice.
+                // the VID/PID in its path, and under `lilynk` it would list one Xbox pad twice.
                 enumerator: id.usb_vid_pid,
                 property: None,
             },
@@ -267,7 +267,7 @@ impl PadProto for XboxWinProto {
     type State = XboxState;
     const LABEL: &'static str = "Xbox Wireless/Windows";
     const DEVICE: &'static str = "Xbox Wireless Controller";
-    const CREATE_HINT: &'static str = " (install/repair: run the Punktfunk installer again)";
+    const CREATE_HINT: &'static str = " (install/repair: run the Lilynk installer again)";
 
     fn open(&mut self, idx: u8) -> Result<XboxWinPad> {
         let p = XboxWinPad::open(idx, self.identity)?;

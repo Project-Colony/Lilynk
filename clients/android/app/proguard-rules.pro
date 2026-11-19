@@ -1,4 +1,4 @@
-# Punktfunk ProGuard Rules
+# Lilynk ProGuard Rules
 
 # Keep the Native Bridge and its methods for JNI
 -keep class org.projectcolony.lilynk.kit.NativeBridge { *; }

@@ -52,7 +52,7 @@ impl WinDsIdentity {
             // software-enumerated devnode. `hwid_matches_inf` pins it.
             hwid: "pf_dualsense",
             usb_vid_pid: "VID_054C&PID_0CE6",
-            description: "Punktfunk Virtual DualSense",
+            description: "Lilynk Virtual DualSense",
             enumerator: "VID_054C&PID_0CE6&MI_03",
         }
     }
@@ -63,7 +63,7 @@ impl WinDsIdentity {
             instance_prefix: "pf_edge",
             hwid: "pf_dualsenseedge",
             usb_vid_pid: "VID_054C&PID_0DF2",
-            description: "Punktfunk Virtual DualSense Edge",
+            description: "Lilynk Virtual DualSense Edge",
             enumerator: "VID_054C&PID_0DF2&MI_03",
         }
     }
@@ -132,7 +132,7 @@ impl PadProto for DsWinProto {
     type State = DsState;
     const LABEL: &'static str = "DualSense/Windows";
     const DEVICE: &'static str = "DualSense";
-    const CREATE_HINT: &'static str = " (install/repair: run the Punktfunk installer again)";
+    const CREATE_HINT: &'static str = " (install/repair: run the Lilynk installer again)";
 
     fn open(&mut self, idx: u8) -> Result<DsWinPad> {
         let p = DsWinPad::open(idx, &WinDsIdentity::dualsense())?;
@@ -194,8 +194,8 @@ pub fn deck_spike_hold(index: u8, secs: u64) -> Result<()> {
         // hidapi parses MI_ from the child hwids; absent = interface 0, Steam wants 2.
         usb_mi: Some(2),
         bluetooth: false,
-        description: "Punktfunk Virtual Steam Deck (spike)",
-        enumerator: "punktfunk",
+        description: "Lilynk Virtual Steam Deck (spike)",
+        enumerator: "lilynk",
         property: None,
     })?;
     // Same devnode-proved delivery as a session pad — a bring-up tool must not fall back

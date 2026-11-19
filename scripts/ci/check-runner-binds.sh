@@ -18,7 +18,7 @@ names=$(grep -rhoE 'path\.join\((configDir\(\)|configDir|config), "[^"]+"' sdk/s
 
 rc=0
 for n in $names; do
-	grep -q "punktfunk/$n" "$UNIT" || {
+	grep -q "lilynk/$n" "$UNIT" || {
 		echo "$UNIT: the runner reads \$config/$n and this unit never binds it"
 		rc=1
 	}

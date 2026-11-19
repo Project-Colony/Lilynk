@@ -12,14 +12,14 @@
 # path. A client-only box — a Steam Deck, a handheld — must be able to install this without
 # pulling in the host.
 [Unit]
-Description=punktfunk client update (root helper)
+Description=lilynk client update (root helper)
 # Network is a hard prerequisite for every leg (package manager).
 Wants=network-online.target
 After=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/libexec/punktfunk/ly-update apply-client
+ExecStart=/usr/libexec/lilynk/ly-update apply-client
 # /var/lib/lilynk-update, root's, 0755 so the client reads the result.
 StateDirectory=lilynk-update
 # The helper drives the distro package manager, which needs the real system — no sandboxing

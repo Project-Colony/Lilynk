@@ -84,7 +84,7 @@ impl DriverAttach {
                         driver = self.driver,
                         driver_proto,
                         host_proto = ly_driver_proto::gamepad::GAMEPAD_PROTO_VERSION,
-                        "gamepad driver/host protocol mismatch — update the drivers: run the Punktfunk installer again"
+                        "gamepad driver/host protocol mismatch — update the drivers: run the Lilynk installer again"
                     );
                 }
                 self.check_pad(driver_rev);
@@ -165,7 +165,7 @@ fn diagnose_blocking(
 ) {
     let store = match driver_store_has(inf) {
         Some(true) => "driver package present in the driver store",
-        Some(false) => "driver package NOT in the driver store — run the Punktfunk installer again",
+        Some(false) => "driver package NOT in the driver store — run the Lilynk installer again",
         None => "driver store could not be queried (pnputil failed or still enumerating)",
     };
     let devnode = match &instance_id {
@@ -182,7 +182,7 @@ fn diagnose_blocking(
         driver_log,
         "gamepad driver has not attached to the shared section — the virtual pad exists but no \
          driver is serving it (games will not see it); an old (pre-sealed-channel) driver also \
-         reads as not-attached: update by running the Punktfunk installer again \
+         reads as not-attached: update by running the Lilynk installer again \
          (driver_log is only written by debug driver builds, or with the PFXUSB_DEBUG_LOG / \
          PFGAMEPAD_DEBUG_LOG / PFMOUSE_DEBUG_LOG system env var set + the device restarted)"
     );

@@ -7,7 +7,7 @@
       "type": "library",
       "name": "pyrowave",
       "version": "c0b997f84ced7bd827ca737aa5145f4ec811de8d",
-      "description": "GPU wavelet codec, vendored at crates/codec/pyrowave-sys/vendor/pyrowave (pruned tree) with local patches from crates/codec/pyrowave-sys/patches/; commits recorded in vendor/pyrowave/PUNKTFUNK-VENDOR.txt",
+      "description": "GPU wavelet codec, vendored at crates/codec/pyrowave-sys/vendor/pyrowave (pruned tree) with local patches from crates/codec/pyrowave-sys/patches/; commits recorded in vendor/pyrowave/LILYNK-VENDOR.txt",
       "licenses": [
         {
           "license": {

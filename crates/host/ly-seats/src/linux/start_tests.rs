@@ -431,7 +431,7 @@ fn a_made_seat_s_cold_and_warm_start_run_exactly_these() {
     ];
     let up = [
         SHOW,
-        "getent passwd punktfunk",
+        "getent passwd lilynk",
         "getent passwd",
         "systemctl daemon-reload",
         "systemctl stop user@UID.service",
@@ -448,20 +448,20 @@ fn a_made_seat_s_cold_and_warm_start_run_exactly_these() {
     let binds = format!(
         "[Service]\n\
          TemporaryFileSystem=/run/media:ro\n\
-         BindPaths=<state>/games:/run/media/punktfunk/games\n\
+         BindPaths=<state>/games:/run/media/lilynk/games\n\
          BindPaths={seat_dir}/compatdata:<state>/games/steamapps/compatdata\n\
          BindPaths={seat_dir}/shadercache:<state>/games/steamapps/shadercache\n\
          BindPaths={seat_dir}/downloading:<state>/games/steamapps/downloading\n\
-         BindPaths={seat_dir}/compatdata:/run/media/punktfunk/games/steamapps/compatdata\n\
-         BindPaths={seat_dir}/shadercache:/run/media/punktfunk/games/steamapps/shadercache\n\
-         BindPaths={seat_dir}/downloading:/run/media/punktfunk/games/steamapps/downloading\n\
-         BindPaths=-/dev/punktfunk/uinput-pf-seat-7:/dev/uinput\n"
+         BindPaths={seat_dir}/compatdata:/run/media/lilynk/games/steamapps/compatdata\n\
+         BindPaths={seat_dir}/shadercache:/run/media/lilynk/games/steamapps/shadercache\n\
+         BindPaths={seat_dir}/downloading:/run/media/lilynk/games/steamapps/downloading\n\
+         BindPaths=-/dev/lilynk/uinput-pf-seat-7:/dev/uinput\n"
     );
     let manager = binds.replacen("[Service]\n", "", 1);
     let env = format!(
         "LILYNK_SEAT_SESSION=\"1\"\n\
          LILYNK_SEAT_ID=\"{id}\"\n\
-         LILYNK_CONFIG_DIR=\"{seat_dir}/home/.config/punktfunk\"\n\
+         LILYNK_CONFIG_DIR=\"{seat_dir}/home/.config/lilynk\"\n\
          LILYNK_TRUST_DIR=\"<state>/trust/{id}\"\n\
          LILYNK_PAIRING=\"refused\"\n\
          LILYNK_LIBRARY_DIR=\"<state>/trust/{id}\"\n\
@@ -476,7 +476,7 @@ fn a_made_seat_s_cold_and_warm_start_run_exactly_these() {
     assert_eq!(
         files,
         [
-            ("/run/punktfunk/seats/pf-seat-7.env".into(), 0o600, env),
+            ("/run/lilynk/seats/pf-seat-7.env".into(), 0o600, env),
             (
                 "/run/systemd/system/lilynk-seat@pf-seat-7.service.d/binds.conf".into(),
                 0o644,
@@ -522,7 +522,7 @@ fn the_owner_s_cold_and_warm_start_run_exactly_these() {
         "getent group lilynk-door",
         "loginctl list-sessions --no-legend",
     ];
-    let first_files = ["getent passwd punktfunk", "systemctl daemon-reload"];
+    let first_files = ["getent passwd lilynk", "systemctl daemon-reload"];
     let ended = [
         SHOW,
         SHOW,
@@ -531,7 +531,7 @@ fn the_owner_s_cold_and_warm_start_run_exactly_these() {
     ];
     let up = [
         SHOW,
-        "getent passwd punktfunk",
+        "getent passwd lilynk",
         "systemctl reset-failed lilynk-seat@ACCOUNT.service",
         "systemctl start lilynk-seat@ACCOUNT.service",
     ];
@@ -557,7 +557,7 @@ fn the_owner_s_cold_and_warm_start_run_exactly_these() {
     assert_eq!(
         files,
         [
-            ("/run/punktfunk/seats/pfowner.env".into(), 0o640, env),
+            ("/run/lilynk/seats/pfowner.env".into(), 0o640, env),
             (
                 "/run/systemd/system/lilynk-seat@pfowner.service.d/class.conf".into(),
                 0o644,
@@ -605,7 +605,7 @@ fn a_person_s_cold_start_runs_exactly_these() {
         "getent passwd ACCOUNT",
         "loginctl list-sessions --no-legend",
         SHOW,
-        "getent passwd punktfunk",
+        "getent passwd lilynk",
         "systemctl reset-failed lilynk-seat@ACCOUNT.service",
         "systemctl start lilynk-seat@ACCOUNT.service",
         SHOW,
@@ -634,7 +634,7 @@ fn a_person_s_cold_start_runs_exactly_these() {
     );
     assert_eq!(
         files,
-        [("/run/punktfunk/seats/pfperson.env".into(), 0o600, env)]
+        [("/run/lilynk/seats/pfperson.env".into(), 0o600, env)]
     );
 }
 
@@ -673,7 +673,7 @@ fn a_person_s_password_start_runs_exactly_these() {
         "getent passwd ACCOUNT",
         "loginctl list-sessions --no-legend",
         SHOW,
-        "getent passwd punktfunk",
+        "getent passwd lilynk",
         "systemctl daemon-reload",
         "systemctl reset-failed lilynk-seat@ACCOUNT.service",
         "systemctl start lilynk-seat@ACCOUNT.service",
@@ -1058,7 +1058,7 @@ fn the_owner_row_is_tracked_after_a_supervisor_restart() {
     clear_run("pfowner", OWNER_UID);
 
     let prepare = ["getent passwd ACCOUNT", "getent group lilynk-door"];
-    let first_files = ["getent passwd punktfunk", "systemctl daemon-reload"];
+    let first_files = ["getent passwd lilynk", "systemctl daemon-reload"];
     let restart = ["getent passwd ACCOUNT", RESTART_HOST];
     let expected_cold = [&prepare[..], &first_files, &restart].concat();
     assert_eq!(cold, expect(&expected_cold, "pfowner", OWNER_UID));
@@ -1121,7 +1121,7 @@ fn the_owner_s_start_at_the_desk_starts_its_own_host() {
     let expected = [
         "getent passwd ACCOUNT",
         "getent group lilynk-door",
-        "getent passwd punktfunk",
+        "getent passwd lilynk",
         "systemctl daemon-reload",
         SESSIONS,
         SHOW_SESSION,

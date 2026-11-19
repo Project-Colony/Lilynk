@@ -14,7 +14,7 @@ $ErrorActionPreference = 'Stop'
 $repo = Split-Path (Split-Path $PSScriptRoot)
 $web  = Join-Path $repo 'web'
 $bun  = 'C:\Users\Public\bun\bin\bun.exe'
-$app  = 'C:\Program Files\punktfunk'
+$app  = 'C:\Program Files\lilynk'
 if (-not (Test-Path $bun)) { throw "bun not found at $bun" }
 
 Set-Location $web
@@ -66,5 +66,5 @@ if ($body -match '<html|<!DOCTYPE html') {
 } elseif ($body -match 'Cannot find module|ResolveMessage') {
   Write-Error "BROKEN - /login answered with a bun module-resolution error, i.e. .output is inconsistent: $body"
 } else {
-  Write-Warning "console swapped but /login did not serve HTML yet - check %ProgramData%\punktfunk\logs\web.log. Last body: $body"
+  Write-Warning "console swapped but /login did not serve HTML yet - check %ProgramData%\lilynk\logs\web.log. Last body: $body"
 }

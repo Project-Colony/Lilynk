@@ -26,8 +26,8 @@ use ly_driver_proto::gamepad::mark_ps_seat;
 pub(crate) fn identity(index: u8, gamepad_only: bool) -> crate::uhid_abi::Identity {
     crate::uhid_abi::Identity {
         bus: crate::uhid_abi::BUS_USB,
-        name: crate::uhid_abi::pad_name(format!("Punktfunk DualShock 4 {index}"), gamepad_only),
-        phys: format!("punktfunk/dualshock4/{index}"),
+        name: crate::uhid_abi::pad_name(format!("Lilynk DualShock 4 {index}"), gamepad_only),
+        phys: format!("lilynk/dualshock4/{index}"),
         uniq: format!("lilynk-ds4-{index}"),
         rdesc: DS4_RDESC,
         vendor: DS4_VENDOR as u32,

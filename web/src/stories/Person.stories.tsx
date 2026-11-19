@@ -491,13 +491,13 @@ const EMULATORS: EmulatorStatus[] = [
 	{
 		id: "rpcs3",
 		name: "RPCS3",
-		home: "/home/anna/.local/share/punktfunk/emulators/rpcs3",
+		home: "/home/anna/.local/share/lilynk/emulators/rpcs3",
 		platforms: ["PS3"],
 		offered: true,
 		detected: [],
 		managed: {
 			channel: "stable",
-			exe: "/home/anna/.local/share/punktfunk/emulators/rpcs3/rpcs3",
+			exe: "/home/anna/.local/share/lilynk/emulators/rpcs3/rpcs3",
 			installed_at: "2026-11-01T10:00:00Z",
 			version: "0.0.34",
 		},
@@ -505,7 +505,7 @@ const EMULATORS: EmulatorStatus[] = [
 	{
 		id: "pcsx2",
 		name: "PCSX2",
-		home: "/home/anna/.local/share/punktfunk/emulators/pcsx2",
+		home: "/home/anna/.local/share/lilynk/emulators/pcsx2",
 		platforms: ["PS2"],
 		offered: true,
 		detected: [],
@@ -513,7 +513,7 @@ const EMULATORS: EmulatorStatus[] = [
 	{
 		id: "dolphin",
 		name: "Dolphin",
-		home: "/home/anna/.local/share/punktfunk/emulators/dolphin",
+		home: "/home/anna/.local/share/lilynk/emulators/dolphin",
 		platforms: ["GameCube", "Wii"],
 		offered: true,
 		detected: [{ exe: "/usr/bin/dolphin-emu", kind: "system" }],
@@ -691,7 +691,7 @@ const plugin = (
 	extra: Partial<CatalogEntry> = {},
 ): CatalogEntry => ({
 	id,
-	pkg: `@punktfunk/plugin-${id}`,
+	pkg: `@lilynk/plugin-${id}`,
 	title,
 	description: `${title}, from the unom catalog.`,
 	icon: "gamepad-2",
@@ -720,7 +720,7 @@ const CATALOG: CatalogResponse = {
 
 const INSTALLED: InstalledView[] = [
 	{
-		pkg: "@punktfunk/plugin-heroic",
+		pkg: "@lilynk/plugin-heroic",
 		title: "Heroic",
 		version: "0.2.0",
 		tier: "verified",
@@ -776,7 +776,7 @@ export const TicketRefused = closed("refused");
 export const TicketWait = closed("wait");
 /** Her session expired, or her seat host ended it. */
 export const SessionEnded = closed("ended");
-/** Punktfunk stopped on her computer while the console was open. */
+/** Lilynk stopped on her computer while the console was open. */
 export const SeatStopped = closed("stopped");
 /** After Sign out. */
 export const SignedOut = closed("signed-out");

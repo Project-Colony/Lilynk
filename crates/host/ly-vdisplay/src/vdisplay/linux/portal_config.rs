@@ -20,12 +20,12 @@ pub(crate) enum Block<'a> {
     Hyprlang(&'a str),
 }
 
-/// Marker beside a key we took over: `# punktfunk: previous <key> = <value>`.
+/// Marker beside a key we took over: `# lilynk: previous <key> = <value>`.
 ///
 /// In the file, not a sidecar: it must survive SIGKILL, a reboot that empties
 /// `$XDG_RUNTIME_DIR`, and an uninstall that leaves the config, and it must be
 /// in the same atomic write as the change. A sidecar fails all four.
-const PRIOR: &str = "# punktfunk: previous";
+const PRIOR: &str = "# lilynk: previous";
 const PRIOR_NONE: &str = "(none)";
 
 /// `$XDG_CONFIG_HOME`, else `$HOME/.config`: where xdpw and xdph read their config.
@@ -391,9 +391,8 @@ mod tests {
             out.contains("[somethingelse]\nkeep=me"),
             "user content kept"
         );
-        assert!(out.contains(
-            "[screencast]\n# punktfunk: previous chooser_cmd = (none)\nchooser_cmd=cat x"
-        ));
+        assert!(out
+            .contains("[screencast]\n# lilynk: previous chooser_cmd = (none)\nchooser_cmd=cat x"));
     }
 
     #[test]
@@ -403,7 +402,7 @@ mod tests {
         assert!(out.contains("chooser_cmd=NEW"));
         // OLD may live only on the restore marker, not as a live assignment.
         assert!(!out.lines().any(|l| l.trim() == "chooser_cmd=OLD"));
-        assert!(out.contains("# punktfunk: previous chooser_cmd = OLD"));
+        assert!(out.contains("# lilynk: previous chooser_cmd = OLD"));
         assert!(out.contains("chooser_type=simple"), "sibling key kept");
         assert!(out.contains("output_name=DP-1"), "sibling key kept");
     }
@@ -434,7 +433,7 @@ mod tests {
         assert!(!out
             .lines()
             .any(|l| l.trim() == "custom_picker_binary = OLD"));
-        assert!(out.contains("# punktfunk: previous custom_picker_binary = OLD"));
+        assert!(out.contains("# lilynk: previous custom_picker_binary = OLD"));
         assert!(
             out.contains("allow_token_by_default = true"),
             "sibling kept"
@@ -481,7 +480,7 @@ mod tests {
     fn an_empty_file_yields_just_the_block() {
         assert_eq!(
             upsert("", Block::Ini("screencast"), "k", "v"),
-            "[screencast]\n# punktfunk: previous k = (none)\nk=v\n"
+            "[screencast]\n# lilynk: previous k = (none)\nk=v\n"
         );
     }
 
@@ -658,7 +657,7 @@ mod io_tests {
         assert!(ensure_key(&p, Block::Ini("screencast"), "chooser_cmd", "cat x").expect("write"));
         assert_eq!(
             std::fs::read_to_string(&p).expect("created"),
-            "[screencast]\n# punktfunk: previous chooser_cmd = (none)\nchooser_cmd=cat x\n"
+            "[screencast]\n# lilynk: previous chooser_cmd = (none)\nchooser_cmd=cat x\n"
         );
         assert!(!backup_of(&p).exists());
     }
@@ -843,7 +842,7 @@ mod io_tests {
         );
         assert_eq!(
             std::fs::read_to_string(&real).expect("target created"),
-            "[screencast]\n# punktfunk: previous chooser_cmd = (none)\nchooser_cmd=cat x\n"
+            "[screencast]\n# lilynk: previous chooser_cmd = (none)\nchooser_cmd=cat x\n"
         );
     }
 }

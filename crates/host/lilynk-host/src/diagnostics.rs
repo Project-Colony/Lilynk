@@ -74,7 +74,7 @@ impl Severity {
 }
 
 /// Operator action. Copy-paste only: the host is unprivileged and does not run the command.
-/// Joining `punktfunk` is opt-in — write on the vhci `attach` node materialises arbitrary USB.
+/// Joining `lilynk` is opt-in — write on the vhci `attach` node materialises arbitrary USB.
 #[derive(Serialize, Deserialize, ToSchema, Clone, Debug, PartialEq, Eq)]
 pub struct Remedy {
     /// English fallback. The console overrides it by check id.

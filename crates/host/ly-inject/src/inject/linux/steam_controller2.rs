@@ -24,8 +24,8 @@ use lilynk_core::quic::{HidOutput, RichInput, HID_RAW_FEATURE, HID_RAW_OUTPUT};
 pub(crate) fn identity(index: u8) -> crate::uhid_abi::Identity {
     crate::uhid_abi::Identity {
         bus: crate::uhid_abi::BUS_USB,
-        name: format!("Punktfunk Steam Controller 2 {index}"),
-        phys: format!("punktfunk/triton/{index}"),
+        name: format!("Lilynk Steam Controller 2 {index}"),
+        phys: format!("lilynk/triton/{index}"),
         uniq: format!("lilynk-triton-{index}"),
         rdesc: TRITON_RDESC,
         vendor: TRITON_VENDOR,
@@ -50,7 +50,7 @@ pub struct TritonPad {
 }
 
 impl TritonPad {
-    /// Steam matches VID/PID, not the product string; the name keeps the Punktfunk prefix
+    /// Steam matches VID/PID, not the product string; the name keeps the Lilynk prefix
     /// every virtual pad uses.
     pub fn open(index: u8) -> Result<TritonPad> {
         let dev = UhidDevice::open_kind(

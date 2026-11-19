@@ -1390,7 +1390,7 @@ mod tests {
                     ..Default::default()
                 }),
                 run: None,
-                webhook: Some("https://ha.local/api/webhook/punktfunk".into()),
+                webhook: Some("https://ha.local/api/webhook/lilynk".into()),
                 timeout_s: 30,
                 debounce_ms: 500,
                 hold: false,

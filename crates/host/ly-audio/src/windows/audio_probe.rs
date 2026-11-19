@@ -24,7 +24,7 @@ use wasapi::{Direction, SampleType, StreamMode, WaveFormat};
 /// outlive the product.
 pub const PROBE_MARKER: &str = "LilynkAudioProbe";
 /// Device Manager name until the INF install overwrites it.
-const PROBE_DESC: &str = "Punktfunk Audio Probe";
+const PROBE_DESC: &str = "Lilynk Audio Probe";
 const ENDPOINT_WAIT: Duration = Duration::from_secs(15);
 /// Tone renders at `pad_capture::TONE_AMP`; autoconvert may attenuate. Above this is signal.
 const SIGNAL_FLOOR: f32 = 0.05;
@@ -237,7 +237,7 @@ fn probe_sink(keep: bool) -> Result<()> {
     if peak > SIGNAL_FLOOR {
         println!(
             "  VERDICT: PASS (S2) — default-routed audio reaches the minted Speakers instance \
-             and its WASAPI loopback carries it; \"Punktfunk Speakers\" can be the canonical \
+             and its WASAPI loopback carries it; \"Lilynk Speakers\" can be the canonical \
              client-only sink."
         );
     } else {

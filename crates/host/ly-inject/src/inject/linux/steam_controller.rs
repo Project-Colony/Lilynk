@@ -57,8 +57,8 @@ pub(crate) fn identity(index: u8, model: SteamModel) -> crate::uhid_abi::Identit
     };
     crate::uhid_abi::Identity {
         bus: crate::uhid_abi::BUS_USB,
-        name: format!("Punktfunk {name} {index}"),
-        phys: format!("punktfunk/{phys}/{index}"),
+        name: format!("Lilynk {name} {index}"),
+        phys: format!("lilynk/{phys}/{index}"),
         uniq: format!("lilynk-{uniq}-{index}"),
         rdesc: STEAMDECK_RDESC,
         vendor: STEAM_VENDOR,

@@ -1,4 +1,4 @@
-// Captured Steam Controller 2 pads: the glue between a transport link and the punktfunk wire.
+// Captured Steam Controller 2 pads: the glue between a transport link and the lilynk wire.
 // Exactly one transport runs (`startTransport`): `Sc2UsbLink` for a wired pad or a Puck (macOS
 // only), else `Sc2BleLink`. Running both would double-feed a pad that is charging and paired.
 // A 2015 pad (`Sc1Device`), on a Mac's USB or on Bluetooth, rides the same path as

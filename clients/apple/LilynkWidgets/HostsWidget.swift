@@ -129,7 +129,7 @@ private struct MediumHostsView: View {
             EmptyHostView()
         } else {
             VStack(alignment: .leading, spacing: 8) {
-                Text("Punktfunk")
+                Text("Lilynk")
                     .font(.caption).bold()
                     .foregroundStyle(Color.brand)
                 ForEach(hosts.prefix(4)) { host in
@@ -172,7 +172,7 @@ private struct RectangularHostView: View {
     var body: some View {
         HStack {
             Image(systemName: "play.tv.fill")
-            Text(host?.displayName ?? "Punktfunk")
+            Text(host?.displayName ?? "Lilynk")
                 .lineLimit(1)
         }
         .widgetURL(host.map(connectURL))

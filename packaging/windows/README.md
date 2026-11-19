@@ -1,6 +1,6 @@
 # Windows host packaging — the signed installer
 
-A one-file, signed `setup.exe` for the punktfunk streaming **host** on Windows, published to Gitea's
+A one-file, signed `setup.exe` for the lilynk streaming **host** on Windows, published to Gitea's
 generic package registry (`lilynk-host-windows`) by `.gitea/workflows/windows-host.yml`.
 
 > The installer is the `crates/install/lilynk-setup-win` engine exe, packed by
@@ -50,14 +50,14 @@ The installer is deliberately thin: the real install logic lives in `lilynk-host
 in PowerShell — `service install` (SCM registration, firewall rules, the default `host.env`, the
 SYSTEM→interactive-session supervisor; `service.rs`), `driver install [--gamepad]` and `web setup`
 (driver/console provisioning; `windows/install.rs`). The installer lays the exe into
-`C:\Program Files\punktfunk\` and calls those subcommands elevated. Keeping the logic in the compiled
+`C:\Program Files\lilynk\` and calls those subcommands elevated. Keeping the logic in the compiled
 exe — not a `.ps1` *file* PowerShell reads in the machine codepage — is the fix for the ANSI-codepage
 parse breakage that silently failed installs on non-English boxes.
 
 ## What the installer does
 
 The task list, the silent-install flags and the uninstall behaviour are on the
-[docs site](https://docs.punktfunk.unom.io/docs/windows-host). Three decisions behind them belong
+[docs site](https://project-colony.github.io/Lilynk/docs/windows-host). Three decisions behind them belong
 here, because nothing else records them:
 
 - **Upgrades never overwrite `host.env`.** A default is written only if absent, and a hand-edited
@@ -69,7 +69,7 @@ here, because nothing else records them:
   ly-vdisplay, so a partial install is better than none.
 - **A VB-CABLE from an older install is deliberately not removed.** It is a third-party shared
   component the user may rely on elsewhere; its own uninstaller is `VBCABLE_Setup_x64.exe -u -h`.
-  `%ProgramData%\punktfunk` is left in place too, so a reinstall keeps the console password.
+  `%ProgramData%\lilynk` is left in place too, so a reinstall keeps the console password.
 
 Wizard branding assets are generated **and committed** by `branding/gen-branding.ps1` from the
 canonical brand geometry in `web/src/components/brand-mark.tsx`. Re-run it only on a brand change.
@@ -200,7 +200,7 @@ publisher an admin can allowlist, and continuity across releases. `driver instal
 entirely — including the pile left by the per-build-cert era.
 
 > ⚠️ **The private key is now worth stealing.** It is trusted as a machine **root** on every
-> punktfunk box, with code-signing EKU and no practical revocation path (nobody removes a stale
+> lilynk box, with code-signing EKU and no practical revocation path (nobody removes a stale
 > root, and self-signed roots aren't in any CRL users honour). Keep it in the CI secret and nowhere
 > else — not on a dev laptop. This is the trade for stability, and the reason attestation signing
 > (which chains to Microsoft and needs no root import at all) remains the real fix.
@@ -249,7 +249,7 @@ path below is the maintainer's test box — substitute your own `lilynk-probe.ex
 # Recover a WEDGED driver. Symptom: every session fails with
 #   create virtual output: ly-vdisplay ADD ...: DeviceIoControl(0x222400): Element nicht gefunden (0x80070490)
 # i.e. ERROR_NOT_FOUND — sustained ADD/REMOVE churn exhausted the IddCx monitor slots (ghost
-# "Generic Monitor (Punktfunk)" nodes pile up, target_ids climb). A host restart's CLEAR_ALL does NOT
+# "Generic Monitor (Lilynk)" nodes pile up, target_ids climb). A host restart's CLEAR_ALL does NOT
 # fix it; the driver instance must be reloaded. This clears the ghosts + cycles the adapter (no reboot —
 # this box boots to Proxmox).
 powershell -ExecutionPolicy Bypass -File reset-ly-vdisplay.ps1 -Verify -Probe C:\t-goal1\debug\lilynk-probe.exe
@@ -279,7 +279,7 @@ pwsh -File packaging\windows\pack-host-installer.ps1 -Version 0.0.0-dev -TargetD
 ## Release
 
 Push a `vX.Y.Z` tag — one tag releases every platform (see
-[Release Channels](https://punktfunk.unom.io/docs/channels)). The workflow builds, signs, and
+[Release Channels](https://project-colony.github.io/Lilynk/docs/channels)). The workflow builds, signs, and
 publishes `lilynk-host-setup-X.Y.Z.exe` (no `.cer` — Azure signing is publicly trusted, and mode 2
 or 3 would be needed to emit one), refreshes the stable `latest/`
 alias, and attaches the installer to the unified Gitea Release. Main pushes publish rolling

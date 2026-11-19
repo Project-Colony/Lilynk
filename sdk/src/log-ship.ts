@@ -4,7 +4,7 @@
 // bun process) or in a child process of it, so its output is that process's stdout and the host's
 // `tracing` ring — the thing `GET /api/v1/logs` and the console's Logs page serve — never sees a
 // byte of it. Reading it otherwise means `journalctl --user -u lilynk-scripting` on Linux or
-// `%ProgramData%\punktfunk\plugin-state\runner.log` on Windows (`scripting-run.cmd` tees there,
+// `%ProgramData%\lilynk\plugin-state\runner.log` on Windows (`scripting-run.cmd` tees there,
 // because THIS door needs the very connection whose failure you'd be reading about). Both need
 // shell access on the host box, which is the exact thing the console exists to avoid.
 //

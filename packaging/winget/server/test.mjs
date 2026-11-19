@@ -43,9 +43,9 @@ const post = (p, body) =>
 
 // ── /manifestSearch ─────────────────────────────────────────────────────────────────────────────
 {
-  const res = await post("manifestSearch", { Query: { KeyWord: "punktfunk", MatchType: "Substring" } });
+  const res = await post("manifestSearch", { Query: { KeyWord: "lilynk", MatchType: "Substring" } });
   const body = await res.json();
-  check("search substring 'punktfunk': 200", res.status === 200, `got ${res.status}`);
+  check("search substring 'lilynk': 200", res.status === 200, `got ${res.status}`);
   check("search: Data is a non-empty array", Array.isArray(body.Data) && body.Data.length > 0);
   const hit = body.Data?.[0];
   check("search: PackageIdentifier present", hit?.PackageIdentifier === "Lilynk.LilynkHost");

@@ -20,7 +20,7 @@ const UPDATER_ARGS: [&str; 5] = [
     "/SUPPRESSMSGBOXES",
     "/NORESTART",
     "/SP-",
-    r"/LOG=C:\ProgramData\punktfunk\logs\update-0.36.0.log",
+    r"/LOG=C:\ProgramData\lilynk\logs\update-0.36.0.log",
 ];
 
 fn args(list: &[&str]) -> InnoArgs {
@@ -124,7 +124,7 @@ fn golden_silent_uninstall() {
     assert_eq!(outcome, Ok(()));
     golden("win-silent-uninstall", &text);
     assert!(text.contains("service uninstall"));
-    assert!(text.contains("punktfunk was removed"));
+    assert!(text.contains("lilynk was removed"));
 }
 
 // D5's tolerance rule end to end: a flag a future updater might pass warns and the run

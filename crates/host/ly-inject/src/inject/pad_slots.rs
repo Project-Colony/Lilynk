@@ -67,7 +67,7 @@ impl PadCreateFault {
                 " — the pad was removed: it did not carry this host's session id, so every \
                  session on the box could have seen and opened it. The retry makes a new one. If \
                  every retry fails, PnP or a driver stacked on the pad drops the property; \
-                 reinstalling the punktfunk drivers does not set it."
+                 reinstalling the lilynk drivers does not set it."
             }
         }
     }

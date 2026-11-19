@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# lilynk-omarchy — wire a punktfunk host into an Omarchy 4.x box, the Omarchy way.
+# lilynk-omarchy — wire a lilynk host into an Omarchy 4.x box, the Omarchy way.
 #
 #   lilynk-omarchy setup        enable, open the firewall, add the console to the app menu
 #   lilynk-omarchy remove       reverse every one of those, leaving nothing behind
@@ -23,13 +23,13 @@
 set -euo pipefail
 
 readonly TAG="lilynk-omarchy"        # ufw comment tag: how `remove` finds our rules
-# "Web" is load-bearing: the CLIENT package installs a launcher entry named "Punktfunk Console"
+# "Web" is load-bearing: the CLIENT package installs a launcher entry named "Lilynk Console"
 # (the controller couch shell), so on a box with both, the old name meant two identical rows.
 # Prose everywhere already calls this thing the web console; now the launcher agrees.
-readonly WEBAPP="Punktfunk Web Console"
-readonly WEBAPP_OLD="Punktfunk Console"   # pre-rename installs; setup migrates, remove cleans
-readonly HOOKS_SRC="/usr/share/punktfunk/omarchy"
-readonly HOST_ENV="${XDG_CONFIG_HOME:-$HOME/.config}/punktfunk/host.env"
+readonly WEBAPP="Lilynk Web Console"
+readonly WEBAPP_OLD="Lilynk Console"   # pre-rename installs; setup migrates, remove cleans
+readonly HOOKS_SRC="/usr/share/lilynk/omarchy"
+readonly HOST_ENV="${XDG_CONFIG_HOME:-$HOME/.config}/lilynk/host.env"
 readonly DROPIN_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user/lilynk-host.service.d"
 readonly DROPIN="$DROPIN_DIR/desktop-session.conf"
 
@@ -127,8 +127,8 @@ moved_mgmt_port() {  # moved_mgmt_port <host.env>
 
 open_firewall() {
   have ufw || { warn "ufw is not installed — nothing to open"; return 0; }
-  [[ -r /etc/ufw/applications.d/punktfunk ]] || {
-    warn "the punktfunk ufw profiles are missing (is lilynk-host installed from the package?)"
+  [[ -r /etc/ufw/applications.d/lilynk ]] || {
+    warn "the lilynk ufw profiles are missing (is lilynk-host installed from the package?)"
     return 0
   }
   local profiles=(lilynk-native)
@@ -170,7 +170,7 @@ close_firewall() {
     while read -r src; do ufw_unrule "$src" port "$mgmt" proto tcp; done < <(lan_sources)
   fi
   sudo ufw reload >/dev/null 2>&1 || true
-  ok "ufw: punktfunk rules removed"
+  ok "ufw: lilynk rules removed"
 }
 
 # ── setup ──────────────────────────────────────────────────────────────────────────────────────
@@ -178,7 +178,7 @@ close_firewall() {
 setup_groups() {
   step "Groups"
   local relogin=0
-  for g in input punktfunk; do
+  for g in input lilynk; do
     getent group "$g" >/dev/null 2>&1 || { warn "group '$g' does not exist — skipping"; continue; }
     if id -nG "$USER" | tr ' ' '\n' | grep -qx "$g"; then
       ok "already in '$g'"
@@ -219,8 +219,8 @@ setup_units() {
   # CLAIM, because "it restarts with your session" is the kind of promise that gets discovered to be
   # false at the worst moment.
   mkdir -p "$DROPIN_DIR"
-  if [[ -r /usr/share/punktfunk/lilynk-host-desktop-session.conf ]]; then
-    install -Dm0644 /usr/share/punktfunk/lilynk-host-desktop-session.conf "$DROPIN"
+  if [[ -r /usr/share/lilynk/lilynk-host-desktop-session.conf ]]; then
+    install -Dm0644 /usr/share/lilynk/lilynk-host-desktop-session.conf "$DROPIN"
     if session_is_systemd_managed; then
       ok "bound lilynk-host to graphical-session.target — it restarts with your session"
     else
@@ -268,7 +268,7 @@ setup_units() {
 readonly NSSDB="$HOME/.pki/nssdb"
 readonly CERT_NICK="lilynk-console"
 
-console_cert() { printf '%s/punktfunk/native-cert.pem' "${XDG_CONFIG_HOME:-$HOME/.config}"; }
+console_cert() { printf '%s/lilynk/native-cert.pem' "${XDG_CONFIG_HOME:-$HOME/.config}"; }
 
 setup_cert_trust() {
   step "Browser trust"
@@ -341,7 +341,7 @@ setup_webapp() {
       sed -i "s|^Exec=.*|Exec=sh -c 'omarchy-launch-webapp \"\$(lilynk-host ctl console-url \|\| echo https://127.0.0.1:47992)\"'|" "$entry"
       sed -i "s|^Icon=.*|Icon=$icon|" "$entry"
       grep -q '^Icon=' "$entry" || printf 'Icon=%s\n' "$icon" >> "$entry"
-      ok "the console entry opens already logged in, with the Punktfunk mark"
+      ok "the console entry opens already logged in, with the Lilynk mark"
     fi
   else
     warn "could not add the webapp — add it by hand from the Omarchy menu if you want it"
@@ -352,20 +352,20 @@ setup_webapp() {
 # ── the Omarchy menu (Super+Space) ─────────────────────────────────────────────────────────────
 #
 # The rows we add, as JSONC lines. Dotted ids define the tree: `lilynk-host` is the
-# admin submenu (the client owns `punktfunk`). `when` hides a row the box cannot honour.
+# admin submenu (the client owns `lilynk`). `when` hides a row the box cannot honour.
 # A function, not a `readonly` computed at load time: the rest of this script resolves config paths
 # where they are USED (see `write_hooks`), and a load-time constant silently ignores an
 # `XDG_CONFIG_HOME` set afterwards — which is exactly how the self-check ended up editing the real
 # config of the machine running it instead of its own scratch directory.
 menu_file() { printf '%s/omarchy/extensions/omarchy-menu.jsonc' "${XDG_CONFIG_HOME:-$HOME/.config}"; }
-readonly MENU_BEGIN="// >>> punktfunk (managed by lilynk-omarchy — do not edit between these markers)"
-readonly MENU_END="// <<< punktfunk"
+readonly MENU_BEGIN="// >>> lilynk (managed by lilynk-omarchy — do not edit between these markers)"
+readonly MENU_END="// <<< lilynk"
 
-# Host rows live under `lilynk-host`; the client owns `punktfunk`. Dedicated /
+# Host rows live under `lilynk-host`; the client owns `lilynk`. Dedicated /
 # This screen check `mode --status`. New rows take no aliases.
 menu_rows() {
   cat <<'EOF'
-  "lilynk-host": {"icon":"󰒋","label":"Punktfunk Host","aliases":["streaming","hosting"]},
+  "lilynk-host": {"icon":"󰒋","label":"Lilynk Host","aliases":["streaming","hosting"]},
   "lilynk-host.console": {"icon":"󰖟","label":"Open web console","description":"Pairing, devices, settings — opens already logged in","action":"sh -c 'omarchy-launch-webapp \"$(lilynk-host ctl console-url || echo https://127.0.0.1:47992)\"'"},
   "lilynk-host.dedicated": {"icon":"󰍹","label":"Dedicated display","description":"Stream a virtual display at the client's size","checked":"lilynk-omarchy mode --status | grep -qx dedicated","action":"lilynk-omarchy mode dedicated"},
   "lilynk-host.mirror": {"icon":"󰹑","label":"This screen","description":"Stream the primary monitor on this box","checked":"lilynk-omarchy mode --status | grep -qx mirror","action":"lilynk-omarchy mode mirror"},
@@ -464,7 +464,7 @@ setup_menu() {
   if menu_is_valid "$tmp.2" && grep -q '"lilynk-host.console"' "$tmp.2"; then
     mv -f "$tmp.2" "$MENU_FILE"
     rm -f "$tmp"
-    ok "host actions in the Omarchy menu (Super+Space → Punktfunk Host)"
+    ok "host actions in the Omarchy menu (Super+Space → Lilynk Host)"
   else
     rm -f "$tmp" "$tmp.2"
     bad "the menu edit would not have parsed — your file is untouched"
@@ -489,7 +489,7 @@ remove_menu() {
 # `omarchy plugin add` clones into — so the package ships the files as data and this step copies
 # them there. Installing into /usr/share/omarchy/shell/plugins instead would drop unowned files
 # inside omarchy's own package: the exact "exists in filesystem" abort on its next upgrade.
-plugin_dest() { printf '%s/omarchy/plugins/punktfunk' "${XDG_CONFIG_HOME:-$HOME/.config}"; }
+plugin_dest() { printf '%s/omarchy/plugins/lilynk' "${XDG_CONFIG_HOME:-$HOME/.config}"; }
 # Outside a session shell the omarchy tools need OMARCHY_PATH (measured on 4.0.1).
 om() { OMARCHY_PATH="${OMARCHY_PATH:-/usr/share/omarchy}" omarchy "$@"; }
 
@@ -500,12 +500,12 @@ plugin_known() {
   om shell shell rescanPlugins >/dev/null 2>&1 || true
   local i
   for ((i = 0; i < 40; i++)); do
-    grep -q '^punktfunk ' <<<"$(om plugin list 2>/dev/null)" && return 0
+    grep -q '^lilynk ' <<<"$(om plugin list 2>/dev/null)" && return 0
     sleep 0.05
   done
   return 1
 }
-# The widget carries status, pairing and the console, so the tray would be a second punktfunk
+# The widget carries status, pairing and the console, so the tray would be a second lilynk
 # mark in the same bar. The host's tray_autostart setting owns the tray's autostart entry.
 hide_tray() {
   if lilynk-host settings set tray_autostart false >/dev/null 2>&1; then
@@ -528,18 +528,18 @@ setup_plugin() {
   install -m0644 -t "$dest" "$HOOKS_SRC"/plugin/manifest.json "$HOOKS_SRC"/plugin/*.qml \
     "$HOOKS_SRC"/plugin/Model.js "$HOOKS_SRC"/plugin/README.md
   # `omarchy plugin enable` wires it into shell.json and reloads the shell.
-  if plugin_known && om plugin enable punktfunk >/dev/null 2>&1; then
-    ok "widget installed and enabled — the Punktfunk mark appears in the bar"
+  if plugin_known && om plugin enable lilynk >/dev/null 2>&1; then
+    ok "widget installed and enabled — the Lilynk mark appears in the bar"
     hide_tray
   else
     ok "widget installed to $dest"
-    warn "could not enable it automatically — run: omarchy plugin enable punktfunk"
+    warn "could not enable it automatically — run: omarchy plugin enable lilynk"
   fi
 }
 
-# The CLIENT's side of the menu: connect/wake rows for saved hosts, "Open Punktfunk", the game
+# The CLIENT's side of the menu: connect/wake rows for saved hosts, "Open Lilynk", the game
 # console. The client owns the block (`--omarchy-menu`, its preferences switch mirrors it) and
-# merges into the same "punktfunk" submenu as ours — this step just turns it on where the client
+# merges into the same "lilynk" submenu as ours — this step just turns it on where the client
 # is installed, so one setup run delivers the whole menu, both directions.
 setup_client_menu() {
   have lilynk-client || return 0
@@ -556,13 +556,13 @@ remove_plugin() {
   restore_tray
   local dest; dest="$(plugin_dest)"
   # The manifest check keeps an rm -rf honest: only a directory that is actually our plugin goes.
-  [[ -d "$dest" ]] && grep -qs '"id": "punktfunk"' "$dest/manifest.json" || return 0
-  om plugin disable punktfunk >/dev/null 2>&1 || true
+  [[ -d "$dest" ]] && grep -qs '"id": "lilynk"' "$dest/manifest.json" || return 0
+  om plugin disable lilynk >/dev/null 2>&1 || true
   rm -rf "$dest"
   ok "bar widget removed"
 }
 
-# Hooks live in ~/.config/punktfunk/hooks.json — a LIST of {on, run} entries the host reads per
+# Hooks live in ~/.config/lilynk/hooks.json — a LIST of {on, run} entries the host reads per
 # event (automation.md). We write that file only when the operator has none: merging JSON in bash
 # would need jq and, worse, would edit a document that is theirs. If they already have hooks, we
 # print exactly what to add and let them own it.
@@ -589,7 +589,7 @@ write_hooks() {
   local blocks=() f
   for f in "$@"; do blocks+=("$($f)"); done
   local body; body="$(printf '%s\n' "${blocks[@]}" | sed '$ s/,[[:space:]]*$//')"
-  local file="${XDG_CONFIG_HOME:-$HOME/.config}/punktfunk/hooks.json"
+  local file="${XDG_CONFIG_HOME:-$HOME/.config}/lilynk/hooks.json"
   if [[ -s "$file" ]]; then
     warn "you already have $file — not touching it. Add these entries to its \"hooks\" list:"
     printf '%s\n' "$body" | sed 's/^/    /'
@@ -646,7 +646,7 @@ check_conflicts() {
   local mgmt
   mgmt=$(moved_mgmt_port "$HOST_ENV")
   if [[ -n "$mgmt" ]]; then
-    say "  Sunshine's web UI keeps TCP 47990; our management API is on $mgmt, so the punktfunk"
+    say "  Sunshine's web UI keeps TCP 47990; our management API is on $mgmt, so the lilynk"
     say "  client and the web console work with Sunshine running and untouched."
   else
     say "  Both want TCP 47990 (Sunshine's web UI, our management API), and whichever starts second"
@@ -659,10 +659,10 @@ check_conflicts() {
 
 cmd_setup() {
   require_omarchy
-  step "Punktfunk on Omarchy"
-  have lilynk-host || die "lilynk-host is not installed. Add the [punktfunk] repo and
+  step "Lilynk on Omarchy"
+  have lilynk-host || die "lilynk-host is not installed. Add the [lilynk] repo and
   sudo pacman -S lilynk-host lilynk-web
-then run this again. See https://punktfunk.com/docs/omarchy"
+then run this again. See https://project-colony.github.io/Lilynk/docs/omarchy"
   setup_groups
   setup_units
   step "Firewall"
@@ -720,7 +720,7 @@ cmd_remove() {
   remove_menu
   # Hooks: only remove a hooks.json that is entirely OURS. A file the operator has since edited is
   # theirs — deleting it would take their webhooks with it — so we say what to remove instead.
-  local hf="${XDG_CONFIG_HOME:-$HOME/.config}/punktfunk/hooks.json"
+  local hf="${XDG_CONFIG_HOME:-$HOME/.config}/lilynk/hooks.json"
   if [[ -f "$hf" ]]; then
     if ! grep -qv -e "$HOOKS_SRC" -e '^\s*[]{}[]' -e '"hooks"' "$hf"; then
       rm -f "$hf"; ok "notification and idle hooks removed"
@@ -736,21 +736,21 @@ cmd_remove() {
   # host leaves in the file (see ly-vdisplay's portal_config) — a plain awk edit, no host needed.
   restore_picker
   say ""
-  say "Your groups, your pairings and ~/.config/punktfunk are untouched — this removes the Omarchy"
-  say "wiring, not punktfunk. To go all the way: sudo pacman -R lilynk-host lilynk-web"
+  say "Your groups, your pairings and ~/.config/lilynk are untouched — this removes the Omarchy"
+  say "wiring, not lilynk. To go all the way: sudo pacman -R lilynk-host lilynk-web"
 }
 
 # Undo a leftover `custom_picker_binary` takeover in ~/.config/hypr/xdph.conf, using the
-# `# punktfunk: previous custom_picker_binary = <value>` marker the host writes beside it.
+# `# lilynk: previous custom_picker_binary = <value>` marker the host writes beside it.
 restore_picker() {
   local f="${XDG_CONFIG_HOME:-$HOME/.config}/hypr/xdph.conf"
   [[ -r "$f" ]] || return 0
-  grep -q '^\s*# punktfunk: previous custom_picker_binary =' "$f" || return 0
+  grep -q '^\s*# lilynk: previous custom_picker_binary =' "$f" || return 0
   local tmp; tmp="$(mktemp "${f}.lilynk-XXXXXX")"
   awk '
-    /^[[:space:]]*# punktfunk: previous custom_picker_binary =/ {
+    /^[[:space:]]*# lilynk: previous custom_picker_binary =/ {
       line = $0
-      sub(/^[[:space:]]*# punktfunk: previous custom_picker_binary =[[:space:]]*/, "", line)
+      sub(/^[[:space:]]*# lilynk: previous custom_picker_binary =[[:space:]]*/, "", line)
       prior = line
       match($0, /^[[:space:]]*/); indent = substr($0, 1, RLENGTH)
       next
@@ -771,7 +771,7 @@ cmd_status() {
   step "Status"
   local ver; ver="$(omarchy-version 2>/dev/null || true)"
   say "  Omarchy      ${ver:-unknown}"
-  say "  punktfunk    $(lilynk-host --version 2>/dev/null || echo 'not installed')"
+  say "  lilynk       $(lilynk-host --version 2>/dev/null || echo 'not installed')"
 
   systemctl --user is-active --quiet lilynk-host.service \
     && ok "host running" || bad "host not running (systemctl --user start lilynk-host)"
@@ -807,7 +807,7 @@ cmd_status() {
   if have ufw; then
     # `ufw status` needs root, and on a box where sudo asks for a password `sudo -n` simply fails.
     # Absence of OUTPUT must never be reported as absence of RULES: the first version of this said
-    # "no punktfunk rules (run: lilynk-omarchy setup)" immediately after setup had added six of
+    # "no lilynk rules (run: lilynk-omarchy setup)" immediately after setup had added six of
     # them, which sends an operator to re-run the thing that already worked.
     local ufw_out
     ufw_out="$(sudo -n ufw status 2>/dev/null)" || ufw_out=""
@@ -816,13 +816,13 @@ cmd_status() {
       # units and YOUR groups, and root has neither), so that advice would be a dead end.
       say "  ufw          (needs root to read — check with: sudo ufw status | grep $TAG)"
     elif grep -q "$TAG" <<<"$ufw_out"; then
-      ok "ufw: punktfunk rules present"
+      ok "ufw: lilynk rules present"
     else
-      warn "ufw: no punktfunk rules (run: lilynk-omarchy setup)"
+      warn "ufw: no lilynk rules (run: lilynk-omarchy setup)"
     fi
   fi
 
-  for g in input punktfunk; do
+  for g in input lilynk; do
     id -nG "$USER" | tr ' ' '\n' | grep -qx "$g" && ok "in group '$g'" || warn "not in group '$g'"
   done
 
@@ -853,11 +853,11 @@ cmd_status() {
 # ── capture mode / pairing TUIs (menu) ─────────────────────────────────────────────────────────
 
 display_settings_file() {
-  printf '%s/punktfunk/display-settings.json' "${XDG_CONFIG_HOME:-$HOME/.config}"
+  printf '%s/lilynk/display-settings.json' "${XDG_CONFIG_HOME:-$HOME/.config}"
 }
 
 host_env_file() {
-  printf '%s/punktfunk/host.env' "${XDG_CONFIG_HOME:-$HOME/.config}"
+  printf '%s/lilynk/host.env' "${XDG_CONFIG_HOME:-$HOME/.config}"
 }
 
 # Keep the floating TUI up so the last line is readable.
@@ -993,7 +993,7 @@ for line in sys.stdin:
     if "[" in s and s.rstrip().endswith("]"):
         tags = s[s.rfind("[") + 1 : s.rfind("]")]
     parts = [p.strip() for p in tags.split(",") if p.strip()]
-    if "punktfunk virtual display" in parts or "disabled" in parts:
+    if "lilynk virtual display" in parts or "disabled" in parts:
         continue
     physical.append(conn)
     if "primary" in parts:
@@ -1205,14 +1205,14 @@ case "${1:-}" in
   gamestream) cmd_gamestream ;;
   ""|-h|--help|help)
     cat <<'EOF'
-lilynk-omarchy — wire a punktfunk host into an Omarchy box
+lilynk-omarchy — wire a lilynk host into an Omarchy box
 
   lilynk-omarchy setup     groups, autostart, ufw, app-menu entry, optional toasts/idle/theme
   lilynk-omarchy remove    reverse all of it (pairings and config are left alone)
   lilynk-omarchy status    what is on and what to do next
   lilynk-omarchy mode      dedicated | mirror | --status
 
-Docs: https://punktfunk.com/docs/omarchy
+Docs: https://project-colony.github.io/Lilynk/docs/omarchy
 EOF
     ;;
   *) die "unknown command '$1' (try: setup | remove | status | mode)" ;;

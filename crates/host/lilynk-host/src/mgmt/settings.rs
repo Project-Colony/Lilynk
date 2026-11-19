@@ -98,7 +98,7 @@ pub(crate) struct HostSettingsState {
     /// Setting ids waiting for a restart.
     restart_pending: Vec<String>,
     /// The file an operator edits to pin a setting.
-    #[schema(example = "/home/me/.config/punktfunk/host.env")]
+    #[schema(example = "/home/me/.config/lilynk/host.env")]
     env_file: String,
 }
 
@@ -502,7 +502,7 @@ mod tests {
             row["title"] = "owner".into();
         }
         owner["restart_pending"] = serde_json::json!(["mdns", "idle_timeout_ms"]);
-        owner["env_file"] = "/home/me/.config/punktfunk/host.env".into();
+        owner["env_file"] = "/home/me/.config/lilynk/host.env".into();
         let merged = with_owner_rows(own, owner.to_string().as_bytes()).unwrap();
         let title = |id: &str| {
             merged["settings"]
@@ -519,6 +519,6 @@ mod tests {
             merged["restart_pending"],
             serde_json::json!(["idle_timeout_ms"])
         );
-        assert_eq!(merged["env_file"], "/home/me/.config/punktfunk/host.env");
+        assert_eq!(merged["env_file"], "/home/me/.config/lilynk/host.env");
     }
 }

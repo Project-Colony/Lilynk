@@ -10,6 +10,6 @@ Target = lilynk-scripting
 Target = lilynk-bun
 
 [Action]
-Description = Restarting the punktfunk services...
+Description = Restarting the lilynk services...
 When = PostTransaction
-Exec = /usr/lib/punktfunk/restart-user-units
+Exec = /usr/lib/lilynk/restart-user-units

@@ -39,8 +39,8 @@ few lines diverge where the German idiom does not carry.
 Everything asserted in the copy was checked against the source rather than the marketing site:
 
 - Hardware decode, HDR/4:4:4, controller and input support — the
-  [support matrix](https://docs.punktfunk.unom.io/docs/support-matrix) and
-  [client settings](https://docs.punktfunk.unom.io/docs/client-settings), which own those claims
+  [support matrix](https://project-colony.github.io/Lilynk/docs/support-matrix) and
+  [client settings](https://project-colony.github.io/Lilynk/docs/client-settings), which own those claims
 - Entitlements and their justifications — `Config/Lilynk.entitlements`,
   `Config/Lilynk-macOS.entitlements` (both carry detailed rationale comments)
 - Background audio mode and its 2.5.4 constraints — `Config/Info.plist`

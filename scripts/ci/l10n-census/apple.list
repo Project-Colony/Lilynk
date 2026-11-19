@@ -10,12 +10,12 @@ clients/apple/Sources/LilynkClient/Intents/SessionShortcuts.swift	End the {} str
 clients/apple/Sources/LilynkClient/Intents/SessionShortcuts.swift	Game ID
 clients/apple/Sources/LilynkClient/Intents/SessionShortcuts.swift	Game Library
 clients/apple/Sources/LilynkClient/Intents/SessionShortcuts.swift	Open Game Library
-clients/apple/Sources/LilynkClient/Intents/SessionShortcuts.swift	Open a host's game library in Punktfunk, without starting a stream.
+clients/apple/Sources/LilynkClient/Intents/SessionShortcuts.swift	Open a host's game library in Lilynk, without starting a stream.
 clients/apple/Sources/LilynkClient/Intents/SessionShortcuts.swift	Open {} library in {}
 clients/apple/Sources/LilynkClient/Intents/SessionShortcuts.swift	Optional store id like steam:570
 clients/apple/Sources/LilynkClient/Intents/SessionShortcuts.swift	Send a Wake-on-LAN magic packet to a host.
 clients/apple/Sources/LilynkClient/Intents/SessionShortcuts.swift	Show {} games in {}
-clients/apple/Sources/LilynkClient/Intents/SessionShortcuts.swift	Start a Punktfunk streaming session with a host.
+clients/apple/Sources/LilynkClient/Intents/SessionShortcuts.swift	Start a Lilynk streaming session with a host.
 clients/apple/Sources/LilynkClient/Intents/SessionShortcuts.swift	Stream {} with {}
 clients/apple/Sources/LilynkClient/Intents/SessionShortcuts.swift	Wake Host
 clients/apple/Sources/LilynkClient/Intents/SessionShortcuts.swift	Wake Host
@@ -81,8 +81,8 @@ clients/apple/Sources/LilynkClient/Screenshots/ShotGallery.swift	Starfall Vale: 
 clients/apple/Sources/LilynkClient/Screenshots/ShotGallery.swift	Studio PC
 clients/apple/Sources/LilynkClient/Screenshots/ShotGallery.swift	Studio PC
 clients/apple/Sources/LilynkClient/Screenshots/ShotGallery.swift	Studio PC
-clients/apple/Sources/LilynkClient/Session/DisplaySleepGuard.swift	Punktfunk streaming session
-clients/apple/Sources/LilynkClient/Session/DisplaySleepGuard.swift	Punktfunk streaming session
+clients/apple/Sources/LilynkClient/Session/DisplaySleepGuard.swift	Lilynk streaming session
+clients/apple/Sources/LilynkClient/Session/DisplaySleepGuard.swift	Lilynk streaming session
 clients/apple/Sources/LilynkClient/Settings/ControllerTestView.swift	Adaptive triggers
 clients/apple/Sources/LilynkClient/Settings/ControllerTestView.swift	Adaptive triggers need a DualSense.
 clients/apple/Sources/LilynkClient/Settings/ControllerTestView.swift	Apply to
@@ -103,7 +103,7 @@ clients/apple/Sources/LilynkKit/Connection/ClientTLS.swift	Couldn't build the cl
 clients/apple/Sources/LilynkKit/Connection/ClientTLS.swift	Couldn't load the client certificate
 clients/apple/Sources/LilynkKit/Connection/ClientTLS.swift	Couldn't load the client key: {}
 clients/apple/Sources/LilynkKit/Connection/ClientTLS.swift	SecIdentityCreateWithCertificate (OSStatus {})
-clients/apple/Sources/LilynkKit/Connection/HostDiscovery.swift	Punktfunk host
+clients/apple/Sources/LilynkKit/Connection/HostDiscovery.swift	Lilynk host
 clients/apple/Sources/LilynkKit/Connection/MgmtTransport.swift	User-Agent: lilynk-apple Accept: */*
 clients/apple/Sources/LilynkKit/Connection/ProfileUnlock.swift	Face ID
 clients/apple/Sources/LilynkKit/Connection/ProfileUnlock.swift	Optic ID
@@ -137,5 +137,5 @@ clients/apple/Sources/LilynkKit/Gamepad/Sc2UsbLink.swift	— not permitted (Inpu
 clients/apple/Sources/LilynkKit/Support/ClientLog.swift	{}; {}) — client log bundle
 clients/apple/Sources/LilynkKit/Support/ClientLog.swift	… {} older lines evicted from the ring …
 clients/apple/Sources/LilynkShared/ProfileEntity.swift	Settings Preset
-clients/apple/Sources/LilynkShared/SessionIntents.swift	End Punktfunk Stream
-clients/apple/Sources/LilynkShared/SessionIntents.swift	Ends the active Punktfunk streaming session.
+clients/apple/Sources/LilynkShared/SessionIntents.swift	End Lilynk Stream
+clients/apple/Sources/LilynkShared/SessionIntents.swift	Ends the active Lilynk streaming session.

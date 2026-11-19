@@ -9,7 +9,7 @@
 // helper takes the instance name as data: it refuses `on` while the door is on for someone else,
 // and `off` for anyone but the account the door is on for.
 //
-// The door runs as the `punktfunk` user and may start only the off template: it turns itself off
+// The door runs as the `lilynk` user and may start only the off template: it turns itself off
 // when its console asks, and never turns on.
 polkit.addRule(function (action, subject) {
     if (
@@ -25,7 +25,7 @@ polkit.addRule(function (action, subject) {
     if ((own("on") || own("off")) && subject.isInGroup("lilynk-update")) {
         return polkit.Result.YES;
     }
-    if (/^lilynk-door-off@[a-z0-9_.@-]+\.service$/.test(unit) && subject.user == "punktfunk") {
+    if (/^lilynk-door-off@[a-z0-9_.@-]+\.service$/.test(unit) && subject.user == "lilynk") {
         return polkit.Result.YES;
     }
 });
@@ -36,7 +36,7 @@ polkit.addRule(function (action, subject) {
 // on a seat, whose seatless session may not.
 polkit.addRule(function (action, subject) {
     if (
-        subject.user == "punktfunk" &&
+        subject.user == "lilynk" &&
         /^org\.freedesktop\.login1\.((power-off|reboot|suspend)(-multiple-sessions)?|inhibit-block-sleep)$/.test(action.id)
     ) {
         return polkit.Result.YES;

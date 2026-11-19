@@ -317,7 +317,7 @@ fn ticket_refused() -> Response {
     api_error_coded(
         StatusCode::UNAUTHORIZED,
         "person_ticket_refused",
-        "Your Punktfunk didn't open. Open it again from your desktop.",
+        "Your Lilynk didn't open. Open it again from your desktop.",
     )
 }
 
@@ -496,7 +496,7 @@ pub(crate) fn wait_a_minute() -> Response {
     api_error_coded(
         StatusCode::TOO_MANY_REQUESTS,
         "person_ticket_wait",
-        "Your Punktfunk didn't open after too many tries. Wait a minute, then open it again \
+        "Your Lilynk didn't open after too many tries. Wait a minute, then open it again \
          from your desktop.",
     )
 }
@@ -506,7 +506,7 @@ pub(crate) fn session_ended() -> Response {
     api_error_coded(
         StatusCode::UNAUTHORIZED,
         "person_session_ended",
-        "Your Punktfunk session ended. Open it again from your desktop.",
+        "Your Lilynk session ended. Open it again from your desktop.",
     )
 }
 

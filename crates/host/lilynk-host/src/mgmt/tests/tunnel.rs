@@ -415,7 +415,7 @@ async fn a_preflight_is_answered_and_never_allows_credentials() {
     let preflight = axum::http::Request::builder()
         .method("OPTIONS")
         .uri("/api/v1/library")
-        .header(header::ORIGIN, "https://web.punktfunk.io")
+        .header(header::ORIGIN, "https://web.lilynk.example")
         .header(header::ACCESS_CONTROL_REQUEST_METHOD, "GET")
         .header(header::ACCESS_CONTROL_REQUEST_HEADERS, "authorization")
         .body(Body::empty())
@@ -429,7 +429,7 @@ async fn a_preflight_is_answered_and_never_allows_credentials() {
     let h = res.headers();
     assert_eq!(
         h.get(header::ACCESS_CONTROL_ALLOW_ORIGIN).unwrap(),
-        "https://web.punktfunk.io"
+        "https://web.lilynk.example"
     );
     assert!(
         h.get(header::ACCESS_CONTROL_ALLOW_HEADERS)
@@ -446,8 +446,10 @@ async fn a_preflight_is_answered_and_never_allows_credentials() {
 
     // A real request carries the header too, or the browser discards the response it just got.
     let mut req = get_req("/api/v1/host");
-    req.headers_mut()
-        .insert(header::ORIGIN, "https://web.punktfunk.io".parse().unwrap());
+    req.headers_mut().insert(
+        header::ORIGIN,
+        "https://web.lilynk.example".parse().unwrap(),
+    );
     let res = app.clone().oneshot(req).await.unwrap();
     assert!(res
         .headers()
@@ -508,8 +510,10 @@ async fn a_host_with_no_browser_plane_stamps_nothing() {
 
     let app = test_app(test_state(), None);
     let mut req = get_req("/api/v1/host");
-    req.headers_mut()
-        .insert(header::ORIGIN, "https://web.punktfunk.io".parse().unwrap());
+    req.headers_mut().insert(
+        header::ORIGIN,
+        "https://web.lilynk.example".parse().unwrap(),
+    );
     let res = app.clone().oneshot(req).await.unwrap();
     assert!(res
         .headers()
@@ -520,7 +524,7 @@ async fn a_host_with_no_browser_plane_stamps_nothing() {
     let preflight = axum::http::Request::builder()
         .method("OPTIONS")
         .uri("/api/v1/library")
-        .header(header::ORIGIN, "https://web.punktfunk.io")
+        .header(header::ORIGIN, "https://web.lilynk.example")
         .header(header::ACCESS_CONTROL_REQUEST_METHOD, "GET")
         .body(Body::empty())
         .unwrap();

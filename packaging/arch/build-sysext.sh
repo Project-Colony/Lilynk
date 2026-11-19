@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Wrap a built punktfunk pacman package into a systemd-sysext image — the update-survivable way to
+# Wrap a built lilynk pacman package into a systemd-sysext image — the update-survivable way to
 # add it to an immutable Arch-derived distro (SteamOS 3): the .raw overlays /usr read-only from the
 # writable /var/lib/extensions/, so it persists across A/B OS updates with no `steamos-readonly
 # disable`. Works for either split package — on a Steam Deck you'd wrap the CLIENT. Needs
@@ -52,7 +52,7 @@ if [ -n "$GAMESCOPE" ] && [ "$NAME" != "lilynk-host" ]; then
 fi
 # The image name, which systemd-sysext requires extension-release.<name> to match.
 IMAGE="$NAME"
-[ "$NAME" = lilynk-host ] && IMAGE=punktfunk
+[ "$NAME" = lilynk-host ] && IMAGE=lilynk
 
 STAGE="$(mktemp -d)"
 trap 'rm -rf "$STAGE"' EXIT
@@ -102,7 +102,7 @@ rm -f "$OUT"
 mksquashfs "$STAGE" "$OUT" -all-root -noappend -quiet
 echo "built $OUT"
 echo "  install:  sudo cp $OUT /var/lib/extensions/ && sudo systemctl enable --now systemd-sysext"
-if [ "$IMAGE" = punktfunk ]; then
+if [ "$IMAGE" = lilynk ]; then
   echo "  replaces: /var/lib/extensions/lilynk-host.raw from an older build; delete it first"
 fi
 if [ "$NAME" = "lilynk-host" ]; then

@@ -15,7 +15,7 @@ import XCTest
 ///
 /// The mouse model is deliberately absent from the rule (and from its signature): the chords are
 /// forwarded under the desktop model too, as they are on the SDL clients. Gating it there would
-/// read as a broken client — ⌘Q would quit Punktfunk instead of reaching Hyprland.
+/// read as a broken client — ⌘Q would quit Lilynk instead of reaching Hyprland.
 final class CommandChordTests: XCTestCase {
     // kVK_ANSI_* — physical positions, layout-independent (the same constants the monitor uses).
     private let q: UInt16 = 12, w: UInt16 = 13, h: UInt16 = 4, m: UInt16 = 46

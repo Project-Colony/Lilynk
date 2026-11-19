@@ -12,7 +12,7 @@ const WSI_OFF_ENV: [(&str, &str); 2] = [
 ];
 
 /// Same tree/rev as `lilynk-gamescope`, own layer name — coexists with the distro's.
-const OUR_WSI_LAYER_DIR_DEFAULT: &str = "/usr/lib/punktfunk/vulkan/implicit_layer.d";
+const OUR_WSI_LAYER_DIR_DEFAULT: &str = "/usr/lib/lilynk/vulkan/implicit_layer.d";
 const OUR_WSI_LAYER_MANIFEST_NAME: &str = "lilynk_gamescope_wsi.json";
 
 /// FHS default; `LILYNK_GAMESCOPE_WSI_LAYER_DIR` for a store with no `/usr` (NixOS).

@@ -1,4 +1,4 @@
-//! The bring-up file log every punktfunk UMDF driver keeps, in one place.
+//! The bring-up file log every lilynk UMDF driver keeps, in one place.
 //!
 //! One copy serves every driver, so a hardening of the sink reaches all of them.
 //!

@@ -4,7 +4,7 @@ COPR builds the RPM from this git repo (no manual SRPM upload). Configure the pr
 once in the COPR web UI (or with `copr-cli`):
 
 **Project → New Build → SCM**
-- Clone URL:      `https://git.unom.io/unom/punktfunk`
+- Clone URL:      `https://github.com/Project-Colony/Lilynk`
 - Committish:     `main` (or a release tag)
 - Subdirectory:   *(repo root)*
 - Spec File:      `packaging/rpm/lilynk.spec`
@@ -22,11 +22,11 @@ once in the COPR web UI (or with `copr-cli`):
 `copr-cli` equivalent:
 
 ```sh
-copr-cli create punktfunk --chroot fedora-44-x86_64 \
+copr-cli create lilynk --chroot fedora-44-x86_64 \
   --repo 'https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$releasever.noarch.rpm' \
   --repo 'https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$releasever.noarch.rpm'
-copr-cli buildscm punktfunk \
-  --clone-url https://git.unom.io/unom/punktfunk \
+copr-cli buildscm lilynk \
+  --clone-url https://github.com/Project-Colony/Lilynk \
   --commit main --spec packaging/rpm/lilynk.spec --method rpkg
 ```
 
@@ -41,7 +41,7 @@ gated behind `%bcond_with web` and **OFF by default** — building (and now *run
 console needs `bun`, which COPR's mock chroot does not provide. The build env's bun is vendored into
 `lilynk-bun`, which `lilynk-web` and `lilynk-scripting` both require (the console serves
 HTTPS — HTTP/1.1 over TLS — via `Bun.serve`).
-A stock COPR build produces only `punktfunk` + `lilynk-client`.
+A stock COPR build produces only `lilynk` + `lilynk-client`.
 
 Two ways to get the console:
 - **Recommended:** build the RPMs `--with web` in an image that has `bun`

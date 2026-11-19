@@ -24,9 +24,9 @@ import kotlin.concurrent.thread
 private const val TAG = "LilynkIdentity"
 
 /** The delimiter the JNI uses to join the two PEMs; collision-free (PEM bodies never contain it). */
-private const val PEM_DELIM = "\n-----PUNKTFUNK-KEY-----\n"
+private const val PEM_DELIM = "\n-----LILYNK-KEY-----\n"
 
-/** This device's persistent punktfunk identity (presented to hosts via TLS client auth). */
+/** This device's persistent lilynk identity (presented to hosts via TLS client auth). */
 data class ClientIdentity(val certPem: String, val privateKeyPem: String)
 
 private const val CERT_BEGIN = "-----BEGIN CERTIFICATE-----"
@@ -62,7 +62,7 @@ sealed interface IdentityLoad {
 
 class IdentityUnrecoverableException(message: String, cause: Throwable?) : Exception(message, cause)
 
-/** Split the JNI's joined "<cert>\n-----PUNKTFUNK-KEY-----\n<key>" blob; `null` if malformed. */
+/** Split the JNI's joined "<cert>\n-----LILYNK-KEY-----\n<key>" blob; `null` if malformed. */
 fun splitGenerated(joined: String): ClientIdentity? {
     val i = joined.indexOf(PEM_DELIM)
     if (i < 0) return null

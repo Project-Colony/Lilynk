@@ -1,5 +1,5 @@
 ;/*++
-; punktfunk virtual HID mouse (absolute pointer) — UMDF2 HID minidriver INF.
+; lilynk virtual HID mouse (absolute pointer) — UMDF2 HID minidriver INF.
 ; Same skeleton as ly_gamepad.inx (the WDK vhidmini2 UMDF2 shape).
 ; Depends on MsHidUmdf.inf (build >= 22000).
 ; Install: devgen /add /hardwareid "root\ly_mouse"  (after pnputil /add-driver /install)
@@ -72,8 +72,8 @@ ServiceBinary="%13%\ly_mouse.dll"
 ly_mouse.dll
 
 [Strings]
-ProviderString     ="Punktfunk"
-ManufacturerString ="Punktfunk"
+ProviderString     ="Lilynk"
+ManufacturerString ="Lilynk"
 ClassName          ="HID device"
-Disk_Description   ="Punktfunk Mouse Installation Disk"
-DeviceDesc         ="Punktfunk Virtual Mouse"
+Disk_Description   ="Lilynk Mouse Installation Disk"
+DeviceDesc         ="Lilynk Virtual Mouse"

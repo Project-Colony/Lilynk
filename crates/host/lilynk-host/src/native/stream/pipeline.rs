@@ -1199,7 +1199,7 @@ mod tests {
         assert!(!is_permanent_build_error(
             "create virtual output: KWin created the virtual output disabled and refused to \
              stream it (stream_virtual_output failed: Não foi possível encontrar saída); enabled \
-             it over output management (head Virtual-punktfunk-a1b2) — the retry picks up the \
+             it over output management (head Virtual-lilynk-a1b2) — the retry picks up the \
              configuration KWin just persisted"
         ));
         assert!(!is_permanent_build_error(

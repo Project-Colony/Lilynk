@@ -1,5 +1,5 @@
 {
-  description = "punktfunk — low-latency desktop/game streaming host + native Linux client";
+  description = "lilynk — low-latency desktop/game streaming host + native Linux client";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";

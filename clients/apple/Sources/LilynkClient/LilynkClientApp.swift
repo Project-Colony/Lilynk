@@ -53,7 +53,7 @@ struct LilynkClientApp: App {
     }
 
     var body: some Scene {
-        WindowGroup("Punktfunk", id: Self.mainSceneID) {
+        WindowGroup("Lilynk", id: Self.mainSceneID) {
             // Pin the whole app's tint to the brand purple explicitly — the asset-catalog accent
             // resolution is environment/timing-sensitive and can fall back to system blue. Wraps the
             // screenshot harness too, so captured screens are on-brand.

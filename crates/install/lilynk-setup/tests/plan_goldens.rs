@@ -21,7 +21,7 @@ use lilynk_setup::report;
 use lilynk_setup::seam::{BasePaths, FakeRunner};
 use lilynk_setup::ui::Plain;
 
-/// Baseline: no punktfunk packages. Other presets overlay this so a golden names one change.
+/// Baseline: no lilynk packages. Other presets overlay this so a golden names one change.
 fn fresh(id: &str, family: Family) -> Facts {
     let docs = match family {
         Family::Apt if id == "ubuntu" => "ubuntu",
@@ -42,7 +42,7 @@ fn fresh(id: &str, family: Family) -> Facts {
         },
         family,
         omarchy: id == "omarchy",
-        docs_page: format!("https://docs.punktfunk.unom.io/docs/{docs}"),
+        docs_page: format!("https://project-colony.github.io/Lilynk/docs/{docs}"),
         host_punt: None,
         has_flatpak_client: false,
         legacy_flatpak_client: false,
@@ -461,8 +461,7 @@ fn a_couch_box_gets_the_client_as_a_flatpak() {
     );
     let cmds = plan_for(&fresh("bazzite", Family::Sysext), &both).commands();
     assert!(
-        cmds.iter()
-            .any(|c| c.contains("punktfunk-sysext.sh install")),
+        cmds.iter().any(|c| c.contains("lilynk-sysext.sh install")),
         "{cmds:?}"
     );
     assert!(
@@ -471,7 +470,7 @@ fn a_couch_box_gets_the_client_as_a_flatpak() {
     );
 }
 
-/// No punktfunk repo: client is still a flatpak plan. Host punt is `main`'s job.
+/// No lilynk repo: client is still a flatpak plan. Host punt is `main`'s job.
 #[test]
 fn an_unsupported_distro_still_installs_a_client() {
     let mut facts = fresh("voidlinux", Family::Flatpak);
@@ -837,7 +836,7 @@ fn trap_the_steamos_clone_tolerates_a_tree_that_is_already_there() {
         .iter()
         .find(|c| c.contains("git clone"))
         .expect("the clone command");
-    assert!(clone.starts_with("[ -d ~/punktfunk/.git ] ||"), "{clone}");
+    assert!(clone.starts_with("[ -d ~/lilynk/.git ] ||"), "{clone}");
 }
 
 /// The progress line captures the build's output, so the wait is announced before the script
@@ -963,7 +962,7 @@ fn trap_the_hand_off_can_be_declined() {
         "{cmds:?}"
     );
     assert!(
-        cmds.iter().any(|c| c.contains("usermod -aG punktfunk")),
+        cmds.iter().any(|c| c.contains("usermod -aG lilynk")),
         "{cmds:?}"
     );
 }
@@ -1202,7 +1201,7 @@ fn a_typed_console_password_is_written_but_never_echoed() {
         "the password reached the transcript:\n{text}"
     );
     assert!(
-        text.contains("would write your password to /box/config/punktfunk/web-password"),
+        text.contains("would write your password to /box/config/lilynk/web-password"),
         "the dry run does not say where the password goes:\n{text}"
     );
     let kinds: Vec<Phase> = plan_for(&facts, &pins())
@@ -1274,7 +1273,7 @@ fn the_password_file_is_written_owner_only() {
     };
     exec.execute(&plan, &facts, &choices).expect("one write");
 
-    let file = root.join("config/punktfunk/web-password");
+    let file = root.join("config/lilynk/web-password");
     assert_eq!(
         std::fs::read_to_string(&file).expect("the password file"),
         "LILYNK_UI_PASSWORD=correct-horse-battery\n"

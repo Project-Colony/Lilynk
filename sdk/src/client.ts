@@ -55,7 +55,7 @@ export interface LilynkHostService {
 		path: string,
 		body?: unknown,
 	) => Effect.Effect<unknown, RequestError>;
-	/** GET + schema-validate (the generated schemas from `@punktfunk/host/effect`'s `api`). */
+	/** GET + schema-validate (the generated schemas from `@lilynk/host/effect`'s `api`). */
 	readonly get: <A, I>(
 		path: string,
 		schema: S.Codec<A, I>,
@@ -78,7 +78,7 @@ export interface LilynkHostService {
 export class LilynkHost extends Context.Service<
 	LilynkHost,
 	LilynkHostService
->()("@punktfunk/host/LilynkHost") {}
+>()("@lilynk/host/LilynkHost") {}
 
 const toRequestError = (path: string, cause: unknown): RequestError => {
 	if (cause instanceof HttpStatusError) {
@@ -115,7 +115,7 @@ export const makeService = (cfg: Connection): LilynkHostService => {
 		);
 	const events = (opts?: EventStreamOptions) => {
 		const warn =
-			opts?.onWarning ?? ((m: string) => console.warn(`[punktfunk] ${m}`));
+			opts?.onWarning ?? ((m: string) => console.warn(`[lilynk] ${m}`));
 		// Drop-or-emit per frame, with the `warn` side effects in the drop arms. `Stream.filterMap`
 		// takes a `Filter`, so this flat-maps to `Stream.empty` (drop) / `Stream.succeed` (emit).
 		return eventsRaw(opts).pipe(

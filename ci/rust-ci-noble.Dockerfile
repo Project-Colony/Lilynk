@@ -1,4 +1,4 @@
-# LTS builder for the punktfunk HOST .deb — Ubuntu 24.04 (noble), the current Ubuntu LTS.
+# LTS builder for the lilynk HOST .deb — Ubuntu 24.04 (noble), the current Ubuntu LTS.
 #
 # WHY THIS EXISTS (see packaging/debian/README.md → "Ubuntu 24.04 LTS"):
 # The default builder (ci/rust-ci.Dockerfile) is Ubuntu 26.04, so the host .deb it produces bakes

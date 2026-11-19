@@ -6,7 +6,7 @@
 //
 // Blobs: the first two temporal units of an SVT-AV1 clip — a keyframe TU (temporal delimiter +
 // sequence header + frame) and a delta TU (temporal delimiter + frame), exactly the wire shape
-// the punktfunk host emits. Generated with:
+// the lilynk host emits. Generated with:
 //   ffmpeg -f lavfi -i testsrc2=size=320x180:rate=30 -frames:v 2 \
 //          -c:v libsvtav1 -preset 12 -crf 63 -g 30 -f obu out.obu
 // then split on the temporal-delimiter OBUs. 320×180 clears the hardware decoder's

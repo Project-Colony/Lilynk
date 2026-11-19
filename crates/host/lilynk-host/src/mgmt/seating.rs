@@ -132,7 +132,7 @@ async fn supervisor(command: Command) -> Result<CommandResult, Response> {
                 api_error_coded(
                     StatusCode::SERVICE_UNAVAILABLE,
                     "seat_supervisor_unreachable_restart",
-                    "Couldn't reach the seat supervisor. Restart the Punktfunk service, then try again.",
+                    "Couldn't reach the seat supervisor. Restart the Lilynk service, then try again.",
                 )
             } else {
                 api_error_coded(
@@ -292,7 +292,7 @@ pub(crate) struct DoorChange {
 /// Turn Reachable without logging in on or off
 ///
 /// Linux. On moves the box's host to a system service that runs from boot, places every connect
-/// on a seat of the box and keeps the box's files in `/var/lib/punktfunk`; the owner plays on a
+/// on a seat of the box and keeps the box's files in `/var/lib/lilynk`; the owner plays on a
 /// seat of their own. Off hands the door's own settings to the owner's host, then puts the files
 /// and the host back. The answer is 202 once the switch is
 /// queued: the console reloads and polls `GET /host`, whose `door` says which host answers. The

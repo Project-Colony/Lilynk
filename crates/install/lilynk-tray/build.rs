@@ -23,9 +23,9 @@ fn main() {
             println!("cargo:rerun-if-changed={path}");
             res.set_icon_with_id(path, id);
         }
-        // Task Manager / Explorer identity. Matches the host's "Punktfunk Host".
-        res.set("FileDescription", "Punktfunk Tray");
-        res.set("ProductName", "Punktfunk");
+        // Task Manager / Explorer identity. Matches the host's "Lilynk Host".
+        res.set("FileDescription", "Lilynk Tray");
+        res.set("ProductName", "Lilynk");
         res.set("CompanyName", "Lilynk");
         // PerMonitorV2. Without a DPI manifest the process is virtualized and GDI-stretches the menu.
         res.set_manifest(

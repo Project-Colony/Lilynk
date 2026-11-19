@@ -1,6 +1,6 @@
 [package]
 name = "lilynk-client-apple"
-description = "punktfunk Apple client's static library: the punktfunk C ABI plus the Skia console on Metal"
+description = "lilynk Apple client's static library: the lilynk C ABI plus the Skia console on Metal"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true

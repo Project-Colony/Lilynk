@@ -4,7 +4,7 @@
 import * as net from "node:net";
 
 /** Where the sandbox sees the runner's UI dir. */
-export const UI_DIR = "/run/punktfunk/ui";
+export const UI_DIR = "/run/lilynk/ui";
 export const UI_SOCKET = `${UI_DIR}/ui.sock`;
 
 export interface UiForward {
@@ -100,7 +100,7 @@ export const redirectUiServeToChannel = (pipe: string, id: string): void => {
 	}) as Serve;
 };
 
-const warn = (m: string) => console.warn(`[punktfunk] UI channel: ${m}`);
+const warn = (m: string) => console.warn(`[lilynk] UI channel: ${m}`);
 
 /** Connections a plugin keeps parked at the host; each one used is dialed again. */
 const PARKED = 4;
@@ -221,7 +221,7 @@ const respond = async (
 	let response: Response;
 	try {
 		response = await handle(
-			new Request(new URL(target, "http://punktfunk.plugin"), {
+			new Request(new URL(target, "http://lilynk.plugin"), {
 				method,
 				headers,
 				body: body.length > 0 ? new Uint8Array(body) : undefined,

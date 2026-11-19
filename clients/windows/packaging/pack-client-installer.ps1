@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Pack + sign the punktfunk Windows client as a lilynk-setup-client exe (the default download)
+  Pack + sign the lilynk Windows client as a lilynk-setup-client exe (the default download)
   and a portable .zip, from the layout pack-msix.ps1 already assembled.
 
 .DESCRIPTION
@@ -8,7 +8,7 @@
   three artifacts (.msix, setup.exe, portable .zip). Why the installer exists at all: the MSIX
   install shape (WindowsApps ACLs + alias-only activation) breaks Steam's non-Steam-game picker,
   the Steam overlay's injection, and Big Picture launching; the installer's stable
-  %LOCALAPPDATA%\Programs\Punktfunk path is what fixes all three.
+  %LOCALAPPDATA%\Programs\Lilynk path is what fixes all three.
 
   Steps:
     1. stage the runtime file set from -LayoutDir (drops AppxManifest.xml + the tile Assets),
@@ -81,7 +81,7 @@ Copy-Item $licSrc (Join-Path $stage 'licenses') -Recurse -Force
 
 # --- signing backend (signing.ps1: Azure, then MSIX_CERT_PFX_B64, then ephemeral) -------------
 $signing = Resolve-SigningMode -OutDir $OutDir -Publisher $Publisher `
-    -FriendlyName 'punktfunk client installer (self-signed)' `
+    -FriendlyName 'lilynk client installer (self-signed)' `
     -PfxBase64 $PfxBase64 -PfxPassword $PfxPassword -AzureEndpoint $AzureEndpoint -AzureAccount $AzureAccount `
     -AzureProfile $AzureProfile -AzureDlib $AzureDlib -RequireSignedCert $RequireSignedCert -NoSign:$NoSign
 

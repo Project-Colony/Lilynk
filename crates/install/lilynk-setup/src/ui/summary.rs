@@ -136,7 +136,7 @@ impl Screen {
                 .facts
                 .host_version
                 .clone()
-                .unwrap_or_else(|| "punktfunk".into());
+                .unwrap_or_else(|| "lilynk".into());
             let channel = self
                 .facts
                 .current_channel
@@ -419,13 +419,13 @@ mod tests {
             .plan()
             .commands()
             .iter()
-            .any(|c| c.contains("usermod -aG punktfunk")));
+            .any(|c| c.contains("usermod -aG lilynk")));
         s.set_bool(Field::Group, false);
         assert!(!s
             .plan()
             .commands()
             .iter()
-            .any(|c| c.contains("usermod -aG punktfunk")));
+            .any(|c| c.contains("usermod -aG lilynk")));
         assert!(s.choices.group_why.is_none());
     }
 

@@ -154,7 +154,7 @@ private struct RectangularLibraryView: View {
         HStack {
             Image(systemName: "square.grid.2x2.fill")
             VStack(alignment: .leading) {
-                Text(host?.displayName ?? "Punktfunk")
+                Text(host?.displayName ?? "Lilynk")
                     .lineLimit(1)
                 Text(L10n.appleWidgetLibraryLabel)
                     .font(.caption2)

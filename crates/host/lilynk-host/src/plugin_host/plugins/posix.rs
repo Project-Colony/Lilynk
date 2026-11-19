@@ -450,7 +450,7 @@ mod tests {
     /// Layouts the resolver must serve. Nix lands on `PATH` and nowhere else.
     #[test]
     fn runner_resolution_table() {
-        let beside = Path::new("/opt/punktfunk/bin");
+        let beside = Path::new("/opt/lilynk/bin");
         let nix = Path::new("/run/current-system/sw/bin");
         let home = Path::new("/home/deck");
 
@@ -590,7 +590,7 @@ mod tests {
             "Environment=LILYNK_CONFIG_DIR=/var/lib/lilynk-seats/seats/%i/config",
             "Environment=LILYNK_PERSON_PLUGINS=1",
             "TemporaryFileSystem=/var/lib/lilynk-seats:ro",
-            "InaccessiblePaths=-%h/.config/punktfunk",
+            "InaccessiblePaths=-%h/.config/lilynk",
             "ProtectHome=tmpfs",
         ] {
             assert!(TEMPLATE.lines().any(|l| l == line), "{line}");
@@ -602,7 +602,7 @@ mod tests {
         let desk = TEMPLATE
             .lines()
             .filter(|l| !l.starts_with('#'))
-            .any(|l| l.contains(".config/punktfunk/") || l.contains("lilynk-scripting.service"));
+            .any(|l| l.contains(".config/lilynk/") || l.contains("lilynk-scripting.service"));
         assert!(!desk, "the template names the person's own desk runner");
     }
 

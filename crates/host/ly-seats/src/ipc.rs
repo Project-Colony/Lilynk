@@ -43,7 +43,7 @@ pub enum Command {
     /// Whether seats are on, with what turning them on needs.
     Seating,
     /// Turn seats on. Remote Desktop stays reachable from this machine only unless
-    /// `allow_rdp_from_network`. `prepare` first installs what Windows lacks and punktfunk may
+    /// `allow_rdp_from_network`. `prepare` first installs what Windows lacks and lilynk may
     /// set up itself: the Session Host role and a licensing mode.
     Enable {
         allow_rdp_from_network: bool,

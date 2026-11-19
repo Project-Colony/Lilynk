@@ -75,13 +75,13 @@ pub fn letter(fill: Color, i: usize) -> EncodedImage {
     svg("0 0 579 136", LETTERS[i], fill)
 }
 
-/// `lilynk.ico` under `%LOCALAPPDATA%\punktfunk\setup-brand`, written once per run; a
+/// `lilynk.ico` under `%LOCALAPPDATA%\lilynk\setup-brand`, written once per run; a
 /// size mismatch rewrites so a re-baked icon lands. `None` (no icon) when staging failed.
 pub fn icon_path() -> Option<PathBuf> {
     static PATH: OnceLock<Option<PathBuf>> = OnceLock::new();
     PATH.get_or_init(|| {
         let dir = PathBuf::from(std::env::var_os("LOCALAPPDATA")?)
-            .join("punktfunk")
+            .join("lilynk")
             .join("setup-brand");
         std::fs::create_dir_all(&dir).ok()?;
         let path = dir.join("lilynk.ico");

@@ -1,5 +1,5 @@
-// Members of the `lilynk-update` group may START exactly one more unit: the punktfunk
-// root-helper oneshot that updates the punktfunk CLIENT packages (planning:
+// Members of the `lilynk-update` group may START exactly one more unit: the lilynk
+// root-helper oneshot that updates the lilynk CLIENT packages (planning:
 // host-update-from-web-console.md §7). Sibling of 49-lilynk-update.rules, which grants the
 // host's unit; the group is the same one, so a box that has opted in has opted in once.
 //
@@ -10,7 +10,7 @@
 //
 // Scope notes: `verb == "start"` keeps stop/restart/enable out of the grant, and the unit
 // name pin keeps every other unit out. The unit's ExecStart is fixed and parameterless, so
-// this grant authorizes "run the system's normal update for the punktfunk packages" and
+// this grant authorizes "run the system's normal update for the lilynk packages" and
 // nothing else.
 polkit.addRule(function (action, subject) {
     if (

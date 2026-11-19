@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Type-check and lint punktfunk's Windows-gated capture and display Rust from a dev box that is not
+# Type-check and lint lilynk's Windows-gated capture and display Rust from a dev box that is not
 # Windows.
 #
 #   scripts/xcheck.sh                    # clippy -D warnings — the default

@@ -35,7 +35,7 @@ internal fun putLinkOnClipboard(context: Context, url: String): Boolean {
     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
         ?: return false
     return runCatching {
-        clipboard.setPrimaryClip(ClipData.newPlainText("Punktfunk link", url))
+        clipboard.setPrimaryClip(ClipData.newPlainText("Lilynk link", url))
     }.isSuccess
 }
 
@@ -120,17 +120,17 @@ private fun squareIcon(art: Bitmap): Bitmap {
 
 /**
  * The local storage provider (AOSP main) appends a type's registered extension after
- * `.punktfunk` (text/plain → `.txt`); octet-stream gets none.
+ * `.lilynk` (text/plain → `.txt`); octet-stream gets none.
  */
 internal const val LAUNCHER_FILE_MIME = "application/octet-stream"
 
-/** `Halo: Reach` → `Halo Reach.punktfunk`: a name every SD-card file system takes. */
+/** `Halo: Reach` → `Halo Reach.lilynk`: a name every SD-card file system takes. */
 internal fun launcherFileName(title: String): String {
     val base = title.replace(Regex("[\\\\/:*?\"<>|\\p{Cntrl}]"), " ")
         .replace(Regex("\\s+"), " ")
         .trim()
         .trimEnd('.')
-    return "${base.ifEmpty { "Punktfunk" }}.punktfunk"
+    return "${base.ifEmpty { "Lilynk" }}.lilynk"
 }
 
 /** A launcher file is the link alone on one line: the format [linkFromLauncherFile] reads. */

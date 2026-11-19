@@ -65,12 +65,12 @@ installer_case bazzite2 'ID=bazzite\nID_LIKE="fedora"\nVERSION_ID=43\n' "$NOREPO
 installer_case nixos    'ID=nixos\n'                                   'docs/nixos'
 # SteamOS says ID_LIKE=arch, so it has to beat the arch test or a Deck gets pacman commands its
 # read-only /usr cannot run. The install is the on-device build, and a re-run must survive the
-# ~/punktfunk that the first one cloned.
-installer_case steamos  'ID=steamos\nID_LIKE=arch\n'                    'bash ~/punktfunk/scripts/steamdeck/install.sh'
-installer_case steamos2 'ID=steamos\nID_LIKE=arch\n'                    '[ -d ~/punktfunk/.git ] || git clone'
-# A Deck's channel is its checkout's branch: `stable` (moved at each release) unless asked.
-installer_case steamos3 'ID=steamos\nID_LIKE=arch\n'                    'git clone --branch stable'
-installer_case steamos-canary 'ID=steamos\nID_LIKE=arch\n'              'git clone --branch main' --channel canary
+# ~/lilynk that the first one cloned.
+installer_case steamos  'ID=steamos\nID_LIKE=arch\n'                    'bash ~/lilynk/scripts/steamdeck/install.sh'
+installer_case steamos2 'ID=steamos\nID_LIKE=arch\n'                    '[ -d ~/lilynk/.git ] || git clone'
+# A Deck clones main: the origin has no release branch yet, with or without --channel.
+installer_case steamos3 'ID=steamos\nID_LIKE=arch\n'                    'git clone https://github.com/Project-Colony/Lilynk ~/lilynk'
+installer_case steamos-canary 'ID=steamos\nID_LIKE=arch\n'              'git clone https://github.com/Project-Colony/Lilynk ~/lilynk' --channel canary
 installer_case holoiso  'ID=holoiso\nID_LIKE="steamos arch"\n'          'scripts/steamdeck/install.sh'
 installer_case gentoo   'ID=gentoo\n'                                  'build-from-source'
 # A client install would add the flatpak remote, or the family's repo, so it stops too.

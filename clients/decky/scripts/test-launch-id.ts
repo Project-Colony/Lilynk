@@ -68,9 +68,9 @@ for (const id of [
 for (const bin of [
   "/usr/bin/lilynk-client",
   "/home/deck/.local/bin/lilynk-client",
-  "/home/deck/.local/share/punktfunk/bin/lilynk-gtk",
+  "/home/deck/.local/share/lilynk/bin/lilynk-gtk",
   "/run/media/mmcblk0p1/apps/c++/client-1.2.3",
-  "/opt/punktfunk@1/bin/client",
+  "/opt/lilynk@1/bin/client",
 ]) {
   assert.equal(isSafeClientBin(bin), true, `real path refused: ${bin}`);
 }
@@ -109,7 +109,7 @@ console.log("launch id tests passed");
 
 // The options string: PF_REF first, the client path only when given, each extra in a fixed
 // order, and the wrapper behind %command% as a quoted argument.
-const runner = "/home/deck/homebrew/plugins/punktfunk/bin/lilynkrun.sh";
+const runner = "/home/deck/homebrew/plugins/lilynk/bin/lilynkrun.sh";
 const tail = `%command% "${runner}"`;
 const host = "11111111-2222-4333-8444-555555555555";
 assert.equal(launchOptions(host, runner, "", {}), `PF_REF=${host} ${tail}`, "plain stream");

@@ -485,7 +485,7 @@ public final class StreamLayerView: NSView {
     /// (±1 per notch → ×120, v120); a precise surface reports distance in points — DIP on
     /// the wire — and keeps its own `phase`/`momentumPhase` lifecycle. Signs pass through
     /// as-is, preserving the user's local natural-scrolling preference; the connection's
-    /// outbound seam applies the Punktfunk inversion setting on top. While the trackpad's
+    /// outbound seam applies the Lilynk inversion setting on top. While the trackpad's
     /// contacts reach the host's touchpad, the host makes their scroll (`TrackpadContactGate`).
     public override func scrollWheel(with event: NSEvent) {
         guard captured, let inputCapture else {

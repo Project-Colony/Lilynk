@@ -1,9 +1,9 @@
 ---
 title: Uninstalling
-description: Remove the Punktfunk host or a client for each install method, and clear what the removal leaves behind.
+description: Remove the Lilynk host or a client for each install method, and clear what the removal leaves behind.
 ---
 
-Remove Punktfunk the way you installed it, then clear what stays behind if you want a clean slate.
+Remove Lilynk the way you installed it, then clear what stays behind if you want a clean slate.
 
 - A Linux host from packages, the Bazzite sysext or NixOS: [Linux hosts](#linux-hosts), below.
 - A host built on a Steam Deck or another SteamOS box:
@@ -13,15 +13,15 @@ Remove Punktfunk the way you installed it, then clear what stays behind if you w
 - Plugins, on any host: [Plugins and the script runner](#plugins-and-the-script-runner), before
   you remove the host.
 
-Removal never deletes the config directory: `~/.config/punktfunk` on Linux, `%ProgramData%\punktfunk`
+Removal never deletes the config directory: `~/.config/lilynk` on Linux, `%ProgramData%\lilynk`
 for the Windows host. It holds the host's identity, paired devices, console password, `host.env`,
 library, logs and [plugins](/docs/plugins), so a reinstall picks up where you left off.
 
 ## Linux hosts
 
 The [guided installer](/docs/install#guided-install-preview) does steps 1 and 2 for apt, dnf,
-pacman and the Bazzite sysext: `sh install.sh --uninstall` (fetch it with
-`curl -fsSLO https://punktfunk.unom.io/install.sh`).
+pacman and the Bazzite sysext: `sh scripts/install.sh --uninstall` in a clone, with
+`LILYNK_SETUP_BIN` naming the `lilynk-setup` you built.
 
 With [Reachable without logging in](/docs/profiles#on-linux) or seat profiles set up, open
 **Profiles** in the console before step 1: turn **Reachable without logging in** off and remove the
@@ -44,7 +44,7 @@ seat profiles, which deletes their accounts.
    | Fedora (dnf) | `sudo dnf remove lilynk lilynk-web lilynk-scripting lilynk-client`, then `sudo rm -f /etc/yum.repos.d/lilynk.repo` |
    | Bazzite / Fedora Atomic, layered RPMs | `sudo rpm-ostree uninstall lilynk lilynk-web` (what `rpm-ostree status` lists), remove `/etc/yum.repos.d/lilynk.repo`, then reboot |
    | Bazzite sysext | [See below](#bazzite--fedora-atomic-systemd-sysext) |
-   | Arch / CachyOS (pacman) | `sudo pacman -Rns lilynk-host lilynk-web lilynk-scripting lilynk-client`, then delete the `[punktfunk]` (or `[lilynk-canary]`) section from `/etc/pacman.conf` |
+   | Arch / CachyOS (pacman) | `sudo pacman -Rns lilynk-host lilynk-web lilynk-scripting lilynk-client`, then delete the `[lilynk]` (or `[lilynk-canary]`) section from `/etc/pacman.conf` |
    | Omarchy | `lilynk-omarchy remove` first, then as Arch |
    | Steam Deck on-device build | [Uninstalling a SteamOS Host](/docs/uninstall-steamos) |
    | NixOS | [See below](#nixos) |
@@ -53,16 +53,16 @@ seat profiles, which deletes their accounts.
    packages create, lingering and the unit drop-ins:
 
    ```sh
-   rm -rf ~/.config/punktfunk ~/.config/systemd/user/punktfunk-*.service.d
+   rm -rf ~/.config/lilynk ~/.config/systemd/user/lilynk-*.service.d
    rm -f ~/.config/autostart/org.projectcolony.lilynk.tray.desktop
    sudo groupdel lilynk-update
    sudo groupdel lilynk-door
-   sudo gpasswd -d "$USER" punktfunk; sudo groupdel punktfunk
+   sudo gpasswd -d "$USER" lilynk; sudo groupdel lilynk
    sudo loginctl disable-linger "$USER"      # only if nothing else needs it
    ```
 
-   Drop the `punktfunk` group rather than keeping it: it can attach emulated USB devices. If
-   Reachable without logging in was on, run `sudo userdel punktfunk` first, or
+   Drop the `lilynk` group rather than keeping it: it can attach emulated USB devices. If
+   Reachable without logging in was on, run `sudo userdel lilynk` first, or
    `groupdel lilynk-door` refuses: the door's user holds that group. Seats leave a
    `lilynk-games` group: `sudo groupdel lilynk-games`.
 
@@ -100,9 +100,9 @@ The on-device build has no uninstall script; remove it by hand with
 ### NixOS
 
 Remove what you declared: the `services.lilynk.*` options, `lilynk.nixosModules.default` and
-the `punktfunk` flake input. Then `sudo nixos-rebuild switch`. The unit, udev rules, tuning,
+the `lilynk` flake input. Then `sudo nixos-rebuild switch`. The unit, udev rules, tuning,
 firewall ports and group memberships go with the generation; store paths stay until you
-garbage-collect, and `~/.config/punktfunk` stays regardless.
+garbage-collect, and `~/.config/lilynk` stays regardless.
 
 ## Plugins and the script runner
 
@@ -124,8 +124,8 @@ with the host packages; on Windows it goes with the host installer.
 
 - **On the host:** unpair the device in the [web console](/docs/web-console). It stops being
   trusted immediately.
-- **On a Linux or Windows client:** `punktfunk hosts forget <host>` drops one saved host;
-  `punktfunk reset` drops all of them and the stream settings but keeps the client's identity.
+- **On a Linux or Windows client:** `lilynk hosts forget <host>` drops one saved host;
+  `lilynk reset` drops all of them and the stream settings but keeps the client's identity.
   The Linux desktop app also takes `lilynk-client --forget-host <fingerprint|host[:port]>`.
 
 See [Pairing](/docs/pairing) for how the two halves fit.

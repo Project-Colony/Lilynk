@@ -25,8 +25,8 @@ uses an existing Linux account. On an existing Windows account it adds no emulat
 
 Add folders and servers on the console's **ROM Manager** page, under **Sources**. A server signs
 in with a code you approve in RomM. Without the console, write
-`plugin-state/rom-manager/config.json` in the config directory (`~/.config/punktfunk` or
-`%ProgramData%\punktfunk`):
+`plugin-state/rom-manager/config.json` in the config directory (`~/.config/lilynk` or
+`%ProgramData%\lilynk`):
 
 ```jsonc
 {
@@ -48,7 +48,7 @@ Mirrors your [Playnite](https://playnite.link) library; launching a title hands 
 Playnite. It has two parts, both on the Windows host:
 
 1. The plugin, from an elevated PowerShell: `lilynk-host plugins add playnite`.
-2. The **Punktfunk Sync** extension in Playnite: download `punktfunk-sync.pext` from the
+2. The **Lilynk Sync** extension in Playnite: download `punktfunk-sync.pext` from the
    [plugin's builds](https://git.unom.io/unom/punktfunk-plugin-playnite/actions), double-click it
    and restart Playnite.
 
@@ -61,7 +61,7 @@ library change. Filters are on that page. Details:
 Hands a physical USB device on your couch machine (a wheel, HOTAS, pedals, an arcade stick) to the
 host while you play, so the game sees the real device. It drives
 [VirtualHere](https://www.virtualhere.com/), a commercial product you buy and install yourself;
-Punktfunk bundles none of it and isn't affiliated with it.
+Lilynk bundles none of it and isn't affiliated with it.
 
 You need both halves of VirtualHere running first:
 
@@ -128,7 +128,7 @@ the game's config instead, or turn Steam Cloud off for that game. Details:
 
 Caps the game at the refresh rate the client streams at, through
 [RivaTuner Statistics Server](https://www.guru3d.com/download/rtss-rivatuner-statistics-server-download/),
-and puts your own limit back when the stream ends. RTSS is a separate download; Punktfunk bundles
+and puts your own limit back when the stream ends. RTSS is a separate download; Lilynk bundles
 none of it.
 
 1. Install RTSS and turn on **Start with Windows** in its main window. RTSS enforces the cap

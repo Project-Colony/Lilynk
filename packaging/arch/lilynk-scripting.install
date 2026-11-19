@@ -17,8 +17,8 @@ post_install() {
   _load_apparmor
   echo "lilynk-scripting installed and enabled for all users."
   echo "It runs your automation — game-library sources, scripts in"
-  echo "    ~/.config/punktfunk/scripts/  (loose .ts/.js files)"
-  echo "and plugins under ~/.config/punktfunk/plugins/."
+  echo "    ~/.config/lilynk/scripts/  (loose .ts/.js files)"
+  echo "and plugins under ~/.config/lilynk/plugins/."
   echo "It starts with your next login; start it now with:"
   echo "    systemctl --user start lilynk-scripting"
   echo "Don't want it? systemctl --user mask lilynk-scripting"

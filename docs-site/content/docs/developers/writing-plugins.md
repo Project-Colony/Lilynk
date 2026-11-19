@@ -1,6 +1,6 @@
 ---
 title: Writing plugins
-description: Build a host plugin with @punktfunk/plugin-kit — the manifest, the sandbox, a minimal library source, testing on a host and publishing to a catalog.
+description: Build a host plugin with @lilynk/plugin-kit — the manifest, the sandbox, a minimal library source, testing on a host and publishing to a catalog.
 ---
 
 A plugin is an npm package that the host's plugin runner loads and supervises. This page takes you
@@ -12,8 +12,8 @@ its own console page.
 ## How a plugin runs
 
 The runner (`lilynk-scripting`) starts every package listed in `<config>/plugins/package.json`
-whose name is `@<scope>/plugin-*` or `lilynk-plugin-*`. `<config>` is `~/.config/punktfunk` on
-Linux and `%ProgramData%\punktfunk` on Windows.
+whose name is `@<scope>/plugin-*` or `lilynk-plugin-*`. `<config>` is `~/.config/lilynk` on
+Linux and `%ProgramData%\lilynk` on Windows.
 
 - It imports the package's `module` (else `main`) entry. The default export must be a plugin
   definition.
@@ -35,7 +35,7 @@ Linux and `%ProgramData%\punktfunk` on Windows.
 
 ## The manifest
 
-Declare what the plugin needs in a `punktfunk` block in its `package.json`; the
+Declare what the plugin needs in a `lilynk` block in its `package.json`; the
 [minimal plugin](#a-minimal-library-plugin) below has one. It ships inside the reviewed tarball, so
 nothing the plugin does at runtime widens it. Without it, a plugin does not start.
 
@@ -51,7 +51,7 @@ nothing the plugin does at runtime widens it. Without it, a plugin does not star
 | `exec` | Named argv templates the host may run for this plugin's titles. |
 
 The sandbox never binds `/`, the home directory or its parents, `/proc`, `/sys`, `/dev`, `/run`
-(except `/run/media`), `~/.ssh`, `~/.gnupg` or `~/.config/punktfunk`. On Linux it never binds a
+(except `/run/media`), `~/.ssh`, `~/.gnupg` or `~/.config/lilynk`. On Linux it never binds a
 browser profile, keyring or cloud credential either, nor a parent of one: `~/.mozilla`,
 `~/.config/google-chrome`, `~/.var/app/org.mozilla.firefox`, `~/.local/share/keyrings`, `~/.aws`,
 `~/.kube` and the like, and so `~/.config`, `~/.local` and `~/.var/app` whole. On Windows the same
@@ -97,12 +97,12 @@ The answer for each is `granted`, `pending`, `denied` or `refused:<rule>`, under
 `127.0.0.1:8080`, which is where the plugin connects once the operator allows it. The host
 restarts the plugin on a yes. It refuses a port of its own (47980 to 48010), a plugin without
 `network`, and every port on Windows (`refused:unsupported`), where a plugin's network is as it
-was. `@punktfunk/plugin-kit` wraps this as `reachServer(url)`: it answers the address to dial
+was. `@lilynk/plugin-kit` wraps this as `reachServer(url)`: it answers the address to dial
 for a server the person configured, wherever that server runs.
 
 ## A minimal library plugin
 
-`@punktfunk/plugin-kit/library` supplies everything except the scan: the sync loop, file watching,
+`@lilynk/plugin-kit/library` supplies everything except the scan: the sync loop, file watching,
 the console settings form and the CLI. Four files:
 
 ```json title="package.json"
@@ -114,15 +114,15 @@ the console settings form and the CLI. Four files:
   "bin": { "lilynk-plugin-hello": "./dist/cli.js" },
   "files": ["dist"],
   "scripts": {
-    "build": "bun build src/index.ts src/cli.ts --target=bun --outdir dist --external effect --external '@punktfunk/*'",
+    "build": "bun build src/index.ts src/cli.ts --target=bun --outdir dist --external effect --external '@lilynk/*'",
     "test": "bun test"
   },
   "dependencies": {
-    "@punktfunk/host": "^0.6.0",
-    "@punktfunk/plugin-kit": "^0.15.0",
+    "@lilynk/host": "^0.6.0",
+    "@lilynk/plugin-kit": "^0.15.0",
     "effect": "4.0.1"
   },
-  "punktfunk": {
+  "lilynk": {
     "schema": 1,
     "id": "hello",
     "reads": ["~/.local/share/hello"],
@@ -138,7 +138,7 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { Effect, Schema } from "effect";
-import { defineLibraryPlugin } from "@punktfunk/plugin-kit/library";
+import { defineLibraryPlugin } from "@lilynk/plugin-kit/library";
 
 const dir = () => path.join(os.homedir(), ".local/share/hello");
 const db = () => path.join(dir(), "games.json");
@@ -171,12 +171,12 @@ import { plugin } from "./plugin.js";
 await plugin.cli();
 ```
 
-Before `bun install`, add `@punktfunk:registry=https://git.unom.io/api/packages/unom/npm/` to
+Before `bun install`, add `@lilynk:registry=https://git.unom.io/api/packages/unom/npm/` to
 `.npmrc`.
 
 The host lists each title as `hello:<external_id>`. Other `launch` kinds cover the common
 launchers; the table is on `LaunchSpec` in
-[`plugin-kit/src/wire.ts`](https://git.unom.io/unom/punktfunk/src/branch/main/plugin-kit/src/wire.ts).
+[`plugin-kit/src/wire.ts`](https://github.com/Project-Colony/Lilynk/blob/main/plugin-kit/src/wire.ts).
 Add `detect: { install_dir }` to a title whose launch hands off and exits, so the host can still
 tell when the game quits.
 
@@ -192,7 +192,7 @@ tell when the game quits.
 | Art or details for every game | `defineMetadataPlugin`; see [below](#a-source-of-art-and-details) |
 | Work before a game starts | `serveUi({ title, holds })`; see [below](#hold-a-launch) |
 | Titles that download before they play | `serveUi({ title, install })`; see [below](#install-a-title) |
-| Reacting to events only | `definePlugin({ name, main: async (pf) => … })` from `@punktfunk/host` |
+| Reacting to events only | `definePlugin({ name, main: async (pf) => … })` from `@lilynk/host` |
 
 Keep Effect values inside the plugin: the runner bundles its own copy of Effect, so the default
 export must be a plain async `main`. `definePluginKit` and `defineLibraryPlugin` build that for you.
@@ -200,7 +200,7 @@ export must be a plain async `main`. `definePluginKit` and `defineLibraryPlugin`
 A console page runs sandboxed, with an origin of its own: no cookies, `localStorage` or
 `indexedDB`, and no access to the console or another plugin's page. Its address carries its
 credential in the first path segment, so reach your API with relative URLs or through
-`resolvePluginBase()` from `@punktfunk/plugin-kit/react`, never a hand-written `/plugin-ui/<id>/`.
+`resolvePluginBase()` from `@lilynk/plugin-kit/react`, never a hand-written `/plugin-ui/<id>/`.
 Keep state in your plugin's backend, and don't send `fetch` with `credentials: "include"`.
 
 ## A tab on each game's page
@@ -210,7 +210,7 @@ game's page in the console. Pass `game` to `serveUi`:
 
 ```ts
 import { Effect, Schema } from "effect";
-import { handedPath, serveUi } from "@punktfunk/plugin-kit";
+import { handedPath, serveUi } from "@lilynk/plugin-kit";
 
 const Section = Schema.Struct({
   enabled: Schema.Boolean.annotate({ title: "Swap this game's files" }),
@@ -242,7 +242,7 @@ game. Write how to find a game and what to fetch for it; `defineMetadataPlugin` 
 
 ```ts
 import { Effect, Schema } from "effect";
-import { defineMetadataPlugin } from "@punktfunk/plugin-kit/metadata";
+import { defineMetadataPlugin } from "@lilynk/plugin-kit/metadata";
 
 export const plugin = defineMetadataPlugin({
   name: "covers",
@@ -353,7 +353,7 @@ beside the game folders themselves: one yes covers them all, and a host before 0
 pattern and prompts per folder.
 
 A plugin that doesn't use `defineLibraryPlugin` yields `requestAccess(paths, reason)` from
-`@punktfunk/plugin-kit`. A request only creates a pending row: the operator allows it on the
+`@lilynk/plugin-kit`. A request only creates a pending row: the operator allows it on the
 library source in the console, or with `lilynk-host plugins grant`. A grant restarts the plugin.
 Don't tell users to widen the runner unit or change ACLs by hand.
 
@@ -382,7 +382,7 @@ journalctl --user -u lilynk-scripting -f
 lilynk-host plugins remove @you/plugin-hello   # when you're done
 ```
 
-Any package outside the `@punktfunk` scope needs `--allow-public-registry`.
+Any package outside the `@lilynk` scope needs `--allow-public-registry`.
 
 Before a release, guard your title ids. With the previous version installed,
 `bun src/cli.ts parity --snapshot before.json` records what the host lists for your source;

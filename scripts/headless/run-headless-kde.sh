@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Headless KDE Plasma session for the punktfunk host (no KMS scanout → kwin --virtual).
+# Headless KDE Plasma session for the lilynk host (no KMS scanout → kwin --virtual).
 #
 # Brings up the full desktop, not just the compositor, and waits for it to be *actually
 # ready* before starting the portals/plasma — no blind `sleep`. A bare session is missing
@@ -141,7 +141,7 @@ if [[ ! -s "$DB" && -s "$SELF_DIR/kde-authorized" ]]; then
     echo "seeded RemoteDesktop grant: $DB"
 fi
 
-# Virtual "Punktfunk" speaker: a null sink (shipped next to this script) that the host captures +
+# Virtual "Lilynk" speaker: a null sink (shipped next to this script) that the host captures +
 # streams, set default so desktop audio goes there instead of a real/AirPlay device — a headless
 # host has no speakers, and on a LAN with AirPlay gear PipeWire otherwise picks a random HomePod.
 # pipewire reads its own config at start, so on FIRST install (config not yet present) restart it
@@ -150,7 +150,7 @@ fi
 PWSINK="$HOME/.config/pipewire/pipewire.conf.d/50-lilynk-sink.conf"
 if [[ ! -s "$PWSINK" && -s "$SELF_DIR/lilynk-sink.conf" ]]; then
     mkdir -p "$(dirname "$PWSINK")" && cp "$SELF_DIR/lilynk-sink.conf" "$PWSINK"
-    echo "installed Punktfunk virtual speaker → restarting pipewire to load it"
+    echo "installed Lilynk virtual speaker → restarting pipewire to load it"
     systemctl --user restart pipewire 2>/dev/null || true
 fi
 

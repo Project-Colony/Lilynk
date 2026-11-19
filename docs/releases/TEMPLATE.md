@@ -22,5 +22,5 @@ Wire-compatible with X.Y.x except where Before you update says otherwise.
 
 ## For developers
 
-Compat card: [CHANGELOG.md](https://git.unom.io/unom/punktfunk/src/tag/vX.Y.Z/CHANGELOG.md).
+Compat card: [CHANGELOG.md](https://github.com/Project-Colony/Lilynk/blob/vX.Y.Z/CHANGELOG.md).
 Deep dive: `git log vPREV..vX.Y.Z`

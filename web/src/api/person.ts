@@ -25,7 +25,7 @@ export const usePersonMe = (enabled = true) =>
 
 /**
  * Whether the person's own plugins have a page: their seat host's runner answers, installed, on a
- * desktop Punktfunk made and on their own account alike. `pending` until it answers.
+ * desktop Lilynk made and on their own account alike. `pending` until it answers.
  */
 export function usePersonPlugins(me: PersonMe | null): {
 	offered: boolean;

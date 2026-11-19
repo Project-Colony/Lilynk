@@ -70,7 +70,7 @@ test.skipIf(process.platform !== "linux")(
 			"package.json": JSON.stringify({
 				name: "lilynk-plugin-demo",
 				main: "index.js",
-				punktfunk: { schema: 1, id: "demo" },
+				lilynk: { schema: 1, id: "demo" },
 			}),
 			"index.js": "export default {};",
 		};

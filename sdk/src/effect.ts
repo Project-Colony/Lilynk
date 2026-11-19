@@ -1,9 +1,9 @@
-// `@punktfunk/host/effect` — the Effect-native surface (RFC §7): the `LilynkHost` service
+// `@lilynk/host/effect` — the Effect-native surface (RFC §7): the `LilynkHost` service
 // tag + live layer, the wire schemas, typed errors, and Stream accessors. The package root
-// (`@punktfunk/host`) is the Promise facade; this entry is for plugins and Effect programs.
+// (`@lilynk/host`) is the Promise facade; this entry is for plugins and Effect programs.
 //
 //   import { Effect, Stream } from "effect";
-//   import { LilynkHost, LilynkHostLive, events } from "@punktfunk/host/effect";
+//   import { LilynkHost, LilynkHostLive, events } from "@lilynk/host/effect";
 //
 //   const program = Effect.gen(function* () {
 //     yield* events().pipe(

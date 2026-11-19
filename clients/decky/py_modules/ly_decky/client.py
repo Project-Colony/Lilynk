@@ -6,7 +6,7 @@ which owns its identity, known hosts and settings, so no other module cares whic
 
 The CLI verbs (``discover``, ``hosts``, ``pair``, ``request_access``, ``device_code``,
 ``trust_host``, ``library``, ``profiles``, ``wake``, ``actions``, ``run_action``, ``screens``,
-``pick_screen``) build argv, run ``punktfunk``, and map its exit code to a stable error string.
+``pick_screen``) build argv, run ``lilynk``, and map its exit code to a stable error string.
 Nothing here parses the client's data files or re-implements a trust rule; the backend exists
 because Decky's frontend cannot spawn processes.
 """
@@ -49,7 +49,7 @@ _NATIVE_PREFIXES = (
     "/usr/bin",
     "/usr/local/bin",
     "/run/host/usr/bin",
-    "/var/lib/extensions/punktfunk/usr/bin",
+    "/var/lib/extensions/lilynk/usr/bin",
 )
 
 
@@ -356,7 +356,7 @@ def _pair_failure(rc: int, out: str, err: str, fallback: str) -> dict:
 
 
 async def discover() -> dict:
-    """The LAN's hosts (``punktfunk discover --json``): ``{ok, hosts: [{name, addr, port, fp,
+    """The LAN's hosts (``lilynk discover --json``): ``{ok, hosts: [{name, addr, port, fp,
     pair, id, mgmt, os, saved, paired}]}``. 12 s covers a cold flatpak start on top of the CLI's
     browse (``DISCOVER_DEFAULT_SECS``). A client with the verb never exits 5 from it, so 5 is
     ``client-outdated``."""
@@ -364,14 +364,14 @@ async def discover() -> dict:
 
 
 async def hosts() -> dict:
-    """The saved hosts (``punktfunk hosts list --probe --json``). ``--probe`` asks each host
+    """The saved hosts (``lilynk hosts list --probe --json``). ``--probe`` asks each host
     directly, so one on a routed network (Tailscale, VPN) reads online without an mDNS advert.
     Preset bindings and pinned cards come back resolved against the preset catalog."""
     return await _cli_json(["hosts", "list", "--probe", "--json"], timeout=30.0)
 
 
 async def pair(addr: str, port: int, pin: str, name: str) -> dict:
-    """The PIN ceremony (``punktfunk pair <addr:port> --pin - --name LABEL --json``).
+    """The PIN ceremony (``lilynk pair <addr:port> --pin - --name LABEL --json``).
 
     ``{ok: True, fp}``, or ``{ok: False, error, reject?}``: ``refused`` is a wrong PIN or a host
     that turned the device away (``reject`` is the host's token for why), ``unreachable`` a host
@@ -396,7 +396,7 @@ async def pair(addr: str, port: int, pin: str, name: str) -> dict:
 
 
 async def request_access(addr: str, port: int, name: str, fp: str) -> dict:
-    """No-PIN pairing (``punktfunk pair <addr:port> --request-access --name LABEL --fp HEX``).
+    """No-PIN pairing (``lilynk pair <addr:port> --request-access --name LABEL --fp HEX``).
 
     Waits for the host's operator (``REQUEST_ACCESS_TIMEOUT`` in ``ly_client_core``), pinned to
     ``fp``, the fingerprint the host advertised and :func:`trust_host` saved. Without it the CLI
@@ -422,7 +422,7 @@ async def request_access(addr: str, port: int, name: str, fp: str) -> dict:
 
 
 async def device_code() -> dict:
-    """This Deck's device code (``punktfunk device-code --json``): ``{ok, code}``. The host's
+    """This Deck's device code (``lilynk device-code --json``): ``{ok, code}``. The host's
     console shows the same code beside a request for access. A client without the verb answers
     ``client-outdated``, and the panel shows no code."""
     return await _cli_json(["device-code", "--json"])
@@ -430,7 +430,7 @@ async def device_code() -> dict:
 
 async def trust_host(addr: str, port: int, fp: str, name: str) -> dict:
     """Step 1 of request access: save the host pinned to the fingerprint it ADVERTISED, unpaired
-    (``punktfunk hosts add <addr:port> --fp <hex> --name <label>``).
+    (``lilynk hosts add <addr:port> --fp <hex> --name <label>``).
 
     The launch that follows pins the same fingerprint, so the wait for an operator cannot be
     answered by an impostor. Idempotent; a DIFFERENT fingerprint comes back ``refused`` and is
@@ -448,7 +448,7 @@ async def trust_host(addr: str, port: int, fp: str, name: str) -> dict:
 
 
 async def library(ref: str) -> dict:
-    """The host's games (``punktfunk library <host-ref> --json``): ``{ok, games: [{id, store,
+    """The host's games (``lilynk library <host-ref> --json``): ``{ok, games: [{id, store,
     title}]}``, ``id`` store-qualified (``steam:570``). Paired hosts only: a host with just a pinned
     fingerprint answers ``needs-pairing``, one that is off ``unreachable``. A ref starting with
     ``-`` is refused here, never handed to the CLI as a flag."""
@@ -459,7 +459,7 @@ async def library(ref: str) -> dict:
 
 
 async def profiles(ref: str) -> dict:
-    """Who plays on the host (``punktfunk profiles <host-ref> --json``): ``{ok, profiles: [{id,
+    """Who plays on the host (``lilynk profiles <host-ref> --json``): ``{ok, profiles: [{id,
     display_name, accent, owner, note, picture}], picked}``, a picture a data URL or null. A host
     without profiles answers ``unresolved``. A flag-shaped ref is refused, as in :func:`library`."""
     ref = str(ref).strip()
@@ -469,7 +469,7 @@ async def profiles(ref: str) -> dict:
 
 
 async def wake(ref: str) -> dict:
-    """Wake a saved host and wait for it (``punktfunk wake <host-ref> --wait``), which resends
+    """Wake a saved host and wait for it (``lilynk wake <host-ref> --wait``), which resends
     every ``WAKE_RESEND_SECS`` and gives up after ``WAKE_TIMEOUT_SECS`` (``ly_client_core``).
     ``{ok: True}`` once it answers; ``unresolved`` when no MAC is known, ``unreachable`` when it
     never came up. A flag-shaped ref is refused, as in :func:`library`."""
@@ -484,7 +484,7 @@ async def wake(ref: str) -> dict:
 
 
 async def actions(ref: str) -> dict:
-    """What the host lets this Deck run (``punktfunk actions <host-ref> --json``): ``{ok,
+    """What the host lets this Deck run (``lilynk actions <host-ref> --json``): ``{ok,
     actions: [{id, label, danger, available, unavailable_reason}]}``, granted rows only. A host
     that is off lists none. A flag-shaped ref is refused, as in :func:`library`."""
     ref = str(ref).strip()
@@ -497,7 +497,7 @@ _ACTION_ID = re.compile(r"[a-z0-9][a-z0-9._:-]{0,63}")
 
 
 async def run_action(ref: str, action_id: str) -> dict:
-    """Run one of the host's actions (``punktfunk actions <host-ref> --run ID``): ``{ok, notice}``,
+    """Run one of the host's actions (``lilynk actions <host-ref> --run ID``): ``{ok, notice}``,
     the notice the CLI's sentence either way. A flag-shaped ref or a malformed id is ``{ok:
     False, error: "unresolved"}`` with no notice, never handed to the CLI."""
     ref, action_id = str(ref).strip(), str(action_id).strip()
@@ -512,7 +512,7 @@ async def run_action(ref: str, action_id: str) -> dict:
 
 
 async def screens(ref: str) -> dict:
-    """The host's Screen section for this Deck (``punktfunk screen <host-ref> --json``): ``{ok,
+    """The host's Screen section for this Deck (``lilynk screen <host-ref> --json``): ``{ok,
     rows, note, preset, may_choose}``. A host that is off lists no rows. A flag-shaped ref is
     refused, as in :func:`library`."""
     ref = str(ref).strip()
@@ -522,7 +522,7 @@ async def screens(ref: str) -> dict:
 
 
 async def pick_screen(ref: str, row_id: str) -> dict:
-    """Make one row this Deck's screen (``punktfunk screen <host-ref> --pick ID --json``): the
+    """Make one row this Deck's screen (``lilynk screen <host-ref> --pick ID --json``): the
     rows read back, as :func:`screens`, else ``{ok: False, error, notice}`` with the CLI's
     sentence. A flag-shaped ref or id is ``unresolved`` with no notice, never handed to the CLI."""
     ref, row_id = str(ref).strip(), str(row_id).strip()

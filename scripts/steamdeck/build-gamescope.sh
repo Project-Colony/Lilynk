@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# punktfunk — build the HDR-capable `lilynk-gamescope` for a SteamOS host (called by
+# lilynk — build the HDR-capable `lilynk-gamescope` for a SteamOS host (called by
 # install.sh and update.sh; safe to run by hand).
 #
 # Stock gamescope offers no 10-bit PQ formats on its PipeWire capture node, so every session on
-# the gamescope backend stays 8-bit SDR. This builds gamescope + punktfunk's `pipewire-hdr`
+# the gamescope backend stays 8-bit SDR. This builds gamescope + lilynk's `pipewire-hdr`
 # patches (the ONE canonical recipe, packaging/gamescope/build-lilynk-gamescope.sh) inside the
 # same Debian-trixie distrobox the host is built in, installs it as
 # ~/.local/bin/lilynk-gamescope, and pins the host to it via LILYNK_GAMESCOPE_BIN in
@@ -26,11 +26,11 @@ log()  { printf '\033[1;36m==>\033[0m %s\n' "$*"; }
 ok()   { printf '\033[1;32m  ok\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m  !!\033[0m %s\n' "$*" >&2; }
 
-SRC="${LILYNK_SRC:-$HOME/punktfunk}"
+SRC="${LILYNK_SRC:-$HOME/lilynk}"
 BOX="${LILYNK_BOX:-pf2}"
 GS_BIN="$HOME/.local/bin/lilynk-gamescope"
-STAMP="$HOME/.local/share/punktfunk/gamescope.stamp"
-HOST_ENV="$HOME/.config/punktfunk/host.env"
+STAMP="$HOME/.local/share/lilynk/gamescope.stamp"
+HOST_ENV="$HOME/.config/lilynk/host.env"
 PKGDIR="$SRC/packaging/gamescope"
 
 # host.env may only name the binary while it verifiably works (see header). sed -i is fine: the

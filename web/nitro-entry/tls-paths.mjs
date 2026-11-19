@@ -7,7 +7,7 @@
 //                                     localhost, 127.0.0.1, ::1). This is what the native QUIC
 //                                     plane and the management API present, and what native
 //                                     clients pin.
-//   cert.pem / key.pem                the legacy RSA GameStream identity: CN=punktfunk and NO SAN
+//   cert.pem / key.pem                the legacy RSA GameStream identity: CN=lilynk and NO SAN
 //                                     at all (gamestream::cert::generate passes rcgen an empty SAN
 //                                     list), kept byte-stable because Moonlight pins it and the
 //                                     pairing hashes bind its X.509 signature bytes.
@@ -37,7 +37,7 @@ import { statSync } from "node:fs";
  * The directory prefix (separator included) of a path ending in `base`, or null if it does not.
  *
  * Deliberately NOT `node:path`: that resolves per-RUNTIME, so a POSIX build reads
- * `C:\ProgramData\punktfunk\cert.pem` as one long filename — and Windows, where the service
+ * `C:\ProgramData\lilynk\cert.pem` as one long filename — and Windows, where the service
  * supervisor hands us exactly that (windows/service/web.rs), is the platform CI can never exercise.
  * A suffix test gives the same answer everywhere. It also leaves the prefix VERBATIM, where
  * `join(dirname(p), …)` would normalise `/a/b/../cert.pem` to a different directory than the one

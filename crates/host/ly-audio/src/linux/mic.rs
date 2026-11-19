@@ -272,7 +272,7 @@ fn mic_pw_thread(
                 *pw::keys::MEDIA_TYPE        => "Audio",
                 *pw::keys::MEDIA_CLASS       => "Audio/Source",
                 *pw::keys::NODE_NAME         => node_name,
-                *pw::keys::NODE_DESCRIPTION  => "Punktfunk Remote Microphone",
+                *pw::keys::NODE_DESCRIPTION  => "Lilynk Remote Microphone",
                 // ~5 ms quantum (one Opus frame) so recorders get low-latency chunks.
                 *pw::keys::NODE_LATENCY      => "240/48000",
                 // Lose default-source election: a session claims the default

@@ -1,4 +1,4 @@
-# Flathub manifest for the punktfunk Linux client. The self-hosted build is
+# Flathub manifest for the lilynk Linux client. The self-hosted build is
 # packaging/flatpak/org.projectcolony.lilynk.yml; this one differs where Flathub requires it:
 # the source is a release tag, and Skia builds from source instead of a prebuilt archive.
 #
@@ -156,7 +156,7 @@ modules:
       - install -Dm644 LICENSE-MIT LICENSE-APACHE -t ${FLATPAK_DEST}/share/licenses/${FLATPAK_ID}
     sources:
       - type: git
-        url: https://git.unom.io/unom/punktfunk.git
+        url: https://github.com/Project-Colony/Lilynk.git
         tag: v0.44.1
         commit: 57d97448db16f12135aa1146e7b5bf51e6fb4462
       - cargo-sources.json

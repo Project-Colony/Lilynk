@@ -4,7 +4,7 @@
 // web console reverse-proxies to it and grows a nav entry. The plugin author writes zero human auth,
 // discovery, or TLS — all of that lives here.
 //
-//   import { definePlugin, servePluginUi } from "@punktfunk/host";
+//   import { definePlugin, servePluginUi } from "@lilynk/host";
 //
 //   export default definePlugin({
 //     name: "rom-manager",
@@ -27,7 +27,7 @@
 import { createHash, timingSafeEqual } from "node:crypto";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
-import type { Punktfunk } from "./index.js";
+import type { Lilynk } from "./index.js";
 
 /** How often the lease is renewed: the host's `LEASE_TTL` (plugin_host/registry.rs) outlasts two
  *  missed ticks. */
@@ -51,7 +51,7 @@ export interface PluginUiOptions {
 	 * the Library section's Game sources surface, not a sidebar item of its own. Every installed
 	 * scanner would otherwise add a sidebar item.
 	 *
-	 * `@punktfunk/plugin-kit`'s `defineLibraryPlugin` sets this for you. Set it by hand only if you
+	 * `@lilynk/plugin-kit`'s `defineLibraryPlugin` sets this for you. Set it by hand only if you
 	 * are building a library plugin without the kit — and omit it if your plugin wants a full page
 	 * despite also syncing a library (rom-manager does).
 	 */
@@ -73,7 +73,7 @@ export interface PluginUiOptions {
 	 * Stages this plugin holds, like `"game.launching"`. The host POSTs the event to `/__hold` and
 	 * waits for a 2xx, up to `holdTimeoutMs` (the host's `HOLD_DEFAULT_MS` when absent, at most
 	 * `HOLD_MAX_MS`; both in plugin_host/registry.rs). Needs `fetch` to answer `/__hold`;
-	 * `@punktfunk/plugin-kit`'s `serveUi({ holds })` does.
+	 * `@lilynk/plugin-kit`'s `serveUi({ holds })` does.
 	 */
 	holds?: readonly string[];
 	holdTimeoutMs?: number;
@@ -103,7 +103,7 @@ export interface PluginUiHandle {
 	close(): Promise<void>;
 }
 
-const warn = (m: string) => console.warn(`[punktfunk] servePluginUi: ${m}`);
+const warn = (m: string) => console.warn(`[lilynk] servePluginUi: ${m}`);
 
 /** A fresh per-boot secret: 32 random bytes as base64url (43 chars, `[A-Za-z0-9_-]`). */
 const mintSecret = (): string => {
@@ -134,7 +134,7 @@ const staticFile = (root: string, pathname: string): string | null => {
  * renewal loop keeps trying, so a momentarily-unreachable host doesn't take the plugin down).
  */
 export const servePluginUi = async (
-	pf: Punktfunk,
+	pf: Lilynk,
 	opts: PluginUiOptions,
 ): Promise<PluginUiHandle> => {
 	if (!/^[a-z][a-z0-9-]*$/.test(opts.id)) {

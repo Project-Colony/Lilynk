@@ -1,5 +1,5 @@
 # shellcheck shell=bash
-# Source before launching headless Sway / the punktfunk host on an NVIDIA VM:
+# Source before launching headless Sway / the lilynk host on an NVIDIA VM:
 #   source scripts/headless/env.sh
 # wlroots settings for a headless NVIDIA rig.
 

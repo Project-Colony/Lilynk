@@ -57,7 +57,7 @@ pub fn upgrade() -> WinFacts {
     WinFacts {
         installed: Some(WinInstall {
             version: Some("0.34.0".into()),
-            location: Some(r"C:\Program Files\punktfunk\".into()),
+            location: Some(r"C:\Program Files\lilynk\".into()),
         }),
         host_env_present: true,
         web_password_present: true,

@@ -549,8 +549,8 @@ pub fn build(
         let mut id = kind
             .uhid(index, gamepad_only)
             .ok_or_else(|| anyhow!("no table for the {} pad", kind.label()))?;
-        // The backend's own `punktfunk/<tag>/<index>`, under the seat's mark.
-        let own = id.phys.trim_start_matches("punktfunk/").to_owned();
+        // The backend's own `lilynk/<tag>/<index>`, under the seat's mark.
+        let own = id.phys.trim_start_matches("lilynk/").to_owned();
         id.phys = seat_phys(mark, &own);
         Brokered::Uhid(UhidDevice::open(&id.as_create2())?)
     };
@@ -952,9 +952,9 @@ mod tests {
             );
         }
         let ds = PadKind::DualSense.uhid(2, false).unwrap();
-        assert_eq!(ds.phys, "punktfunk/dualsense/2");
+        assert_eq!(ds.phys, "lilynk/dualsense/2");
         assert_eq!(
-            seat_phys("pf-seat-1", ds.phys.trim_start_matches("punktfunk/")),
+            seat_phys("pf-seat-1", ds.phys.trim_start_matches("lilynk/")),
             "lilynk-seat:pf-seat-1/dualsense/2"
         );
     }

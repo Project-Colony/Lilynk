@@ -1,4 +1,4 @@
-# CI builder for the punktfunk RPM. The Fedora version is parameterized so one Dockerfile
+# CI builder for the lilynk RPM. The Fedora version is parameterized so one Dockerfile
 # serves every target whose sonames must match: Fedora 43 == Bazzite's base (group "bazzite"),
 # Fedora 44 == the Fedora KDE spin (group "fedora-44"), Fedora 45 == Bazzite 45 and Fedora 45
 # (group "fedora-45"). The RPM's auto-generated library

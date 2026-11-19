@@ -54,7 +54,7 @@ afterAll(() => {
 describe("socketFetch", () => {
 	test("carries method, headers, body and the URL's host, and reads the JSON back", async () => {
 		const f = socketFetch(sock);
-		const resp = await f("http://punktfunk.host/echo?x=1", {
+		const resp = await f("http://lilynk.host/echo?x=1", {
 			method: "POST",
 			headers: { authorization: "Bearer t", "content-type": "application/json" },
 			body: JSON.stringify({ hello: 1 }),
@@ -66,17 +66,17 @@ describe("socketFetch", () => {
 
 	test("a 204 is a Response with no body, and a 404 keeps its error body", async () => {
 		const f = socketFetch(sock);
-		const empty = await f("http://punktfunk.host/empty");
+		const empty = await f("http://lilynk.host/empty");
 		expect(empty.status).toBe(204);
 		expect(empty.body).toBeNull();
-		const missing = await f("http://punktfunk.host/nowhere");
+		const missing = await f("http://lilynk.host/nowhere");
 		expect(missing.ok).toBe(false);
 		expect(await missing.json()).toEqual({ error: "no such path" });
 	});
 
 	test("a streamed body arrives as it is written, not at the end", async () => {
 		const f = socketFetch(sock);
-		const resp = await f("http://punktfunk.host/stream");
+		const resp = await f("http://lilynk.host/stream");
 		const reader = resp.body?.getReader();
 		if (!reader) throw new Error("no body");
 		const started = Date.now();
@@ -94,6 +94,6 @@ describe("socketFetch", () => {
 
 	test("a socket nobody serves rejects instead of hanging", async () => {
 		const f = socketFetch(path.join(dir, "nobody.sock"));
-		await expect(f("http://punktfunk.host/echo")).rejects.toThrow();
+		await expect(f("http://lilynk.host/echo")).rejects.toThrow();
 	});
 });

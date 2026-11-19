@@ -9,7 +9,7 @@ import { m } from "@/paraglide/messages";
  *
  * The host detects other Moonlight-compatible servers (Sunshine, Apollo, …) on the same machine at
  * startup and reports them in `GET /local/summary` as `conflicts`. It is the single most common
- * reason a Punktfunk host looks installed and working but no client can reach it — two servers
+ * reason a Lilynk host looks installed and working but no client can reach it — two servers
  * fighting over the same ports, with whichever won the bind answering the client.
  *
  * `conflicts` carries only servers that are running or set to start on their own; the host filters

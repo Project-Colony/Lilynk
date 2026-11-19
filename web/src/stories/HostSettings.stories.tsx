@@ -33,7 +33,7 @@ const row = (
 });
 
 const settings: HostSettingsState = {
-	env_file: "/home/me/.config/punktfunk/host.env",
+	env_file: "/home/me/.config/lilynk/host.env",
 	restart_pending: ["gamestream"],
 	settings: [
 		row({
@@ -142,7 +142,7 @@ function Live({ initial }: { initial: HostSettingsState }) {
 					names={state.settings.filter((r) => r.restart_pending).map(labelOf)}
 					action={{
 						id: "host.restart",
-						title: "Restart Punktfunk",
+						title: "Restart Lilynk",
 						group: "host",
 						danger: true,
 						available: true,

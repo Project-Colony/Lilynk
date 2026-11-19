@@ -105,7 +105,7 @@ pub(super) fn add_firewall_rules(allow_public: bool) {
     let udp = udp_ports(listen.native_port);
     let rules = [("TCP", "TCP", tcp.as_str()), ("UDP", "UDP", udp.as_str())];
     for (suffix, proto, ports) in rules {
-        let name = format!("Punktfunk {suffix}");
+        let name = format!("Lilynk {suffix}");
         let ok = run_netsh(&fw_add_rule_args(
             &name,
             proto,
@@ -127,9 +127,9 @@ pub(super) fn add_firewall_rules(allow_public: bool) {
     // Print only when scoping actually happened: with no exe path the rules are still wide open.
     if exe.is_some() {
         println!(
-            "Note: these rules are scoped to the punktfunk host executable, so they no longer open \
+            "Note: these rules are scoped to the lilynk host executable, so they no longer open \
              those ports to every program on this machine. Another mDNS/GameStream application \
-             that relied on punktfunk's rules to be reachable now needs a rule of its own."
+             that relied on lilynk's rules to be reachable now needs a rule of its own."
         );
     }
     if !allow_public {
@@ -143,7 +143,7 @@ pub(super) fn add_firewall_rules(allow_public: bool) {
 
 /// The any-UDP rule a host with a second video port needed. Video rides the native port, so
 /// [`remove_firewall_rules`] only deletes it.
-const FW_DATA_PLANE_RULE: &str = "Punktfunk UDP (data plane)";
+const FW_DATA_PLANE_RULE: &str = "Lilynk UDP (data plane)";
 
 pub(super) fn remove_firewall_rules() {
     let _ = run_quiet(
@@ -157,8 +157,8 @@ pub(super) fn remove_firewall_rules() {
         ],
     );
     for name in [
-        "Punktfunk TCP",
-        "Punktfunk UDP",
+        "Lilynk TCP",
+        "Lilynk UDP",
         FW_BROWSER_RULE,
         FW_GAMESTREAM_RULE,
     ] {
@@ -177,10 +177,10 @@ pub(super) fn remove_firewall_rules() {
 }
 
 /// The browser plane's UDP rule.
-const FW_BROWSER_RULE: &str = "Punktfunk Browser";
+const FW_BROWSER_RULE: &str = "Lilynk Browser";
 
 /// GameStream's TCP and UDP rules, under one name.
-const FW_GAMESTREAM_RULE: &str = "Punktfunk GameStream";
+const FW_GAMESTREAM_RULE: &str = "Lilynk GameStream";
 
 /// The rules the optional planes need while on: `(name, protocol, ports)`. The browser rule opens
 /// each seat's browser port too, beside its native port: a seat's plane follows the box's switch.
@@ -272,7 +272,7 @@ pub(super) fn warn_if_public_network() {
     if active_network_is_public() == Some(true) {
         tracing::warn!(
             "this machine's current network is classified Public (an untrusted-network profile), so \
-             punktfunk's streaming ports are firewalled off here and clients on this network can't \
+             lilynk's streaming ports are firewalled off here and clients on this network can't \
              reach the host. Fix: set the network to Private (Windows Settings > Network > \
              properties) — or, only for a network you trust, reinstall with the 'Allow connections \
              on Public networks' option."
@@ -290,9 +290,9 @@ mod firewall_tests {
     /// any unprivileged process can then bind those ports without a Windows prompt.
     #[test]
     fn fixed_port_rules_are_scoped_to_the_program_and_the_ports() {
-        let exe = Path::new(r"C:\Program Files\Punktfunk\lilynk-host.exe");
+        let exe = Path::new(r"C:\Program Files\Lilynk\lilynk-host.exe");
         let args = fw_add_rule_args(
-            "Punktfunk UDP",
+            "Lilynk UDP",
             "UDP",
             Some("47998-48010,9777,5353"),
             Some(exe),
@@ -337,7 +337,7 @@ mod firewall_tests {
     /// Missing executable → port-only rule, not no rule. A looser rule still streams; none is black.
     #[test]
     fn a_missing_program_falls_back_to_the_port_only_rule() {
-        let args = fw_add_rule_args("Punktfunk TCP", "TCP", Some("47990"), None, "profile=any");
+        let args = fw_add_rule_args("Lilynk TCP", "TCP", Some("47990"), None, "profile=any");
         assert!(!args.iter().any(|a| a.starts_with("program=")));
         assert!(args.contains(&"localport=47990".to_string()));
     }

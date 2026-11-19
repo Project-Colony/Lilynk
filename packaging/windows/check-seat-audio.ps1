@@ -49,7 +49,7 @@ Say "bound devnodes   : $(if ($bound) { $bound.Count } else { 'none' })"
 # --- 3. what the seats already minted -----------------------------------------------------------
 # Minted nodes carry the seat id in their description, which is the contract's isolation claim.
 $minted = @(Get-PnpDevice -Class MEDIA -ErrorAction SilentlyContinue |
-    Where-Object { $_.FriendlyName -like 'Punktfunk *' })
+    Where-Object { $_.FriendlyName -like 'Lilynk *' })
 foreach ($m in $minted) { Say ("  minted: {0} [{1}]" -f $m.FriendlyName, $m.Status) }
 
 # --- 4. render endpoints, as the box sees them --------------------------------------------------

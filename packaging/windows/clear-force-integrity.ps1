@@ -5,7 +5,7 @@
 # bit set, Windows Code Integrity refuses to load a binary whose signature doesn't chain to a Microsoft
 # root (errors 3004/3089) - so a SELF-SIGNED driver won't load. Clearing the bit (then re-signing) lets a
 # self-signed driver load under Secure Boot. This is the deterministic, idempotent step every
-# punktfunk driver build runs.
+# lilynk driver build runs.
 #
 # Order in the packaging flow: cargo build -> THIS -> signtool (sign .dll) -> Inf2Cat (.cat) -> sign .cat.
 # (Clearing AFTER signing would invalidate the signature; clear FIRST, then sign.)

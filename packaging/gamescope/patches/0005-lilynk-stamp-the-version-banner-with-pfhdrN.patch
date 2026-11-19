@@ -1,12 +1,12 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Enrico=20B=C3=BChler?= <enrico.buehler@unom.io>
 Date: Sat, 8 Aug 2026 13:17:37 +0000
-Subject: [PATCH 05/38] punktfunk: stamp the version banner with +pfhdrN
+Subject: [PATCH 05/38] lilynk: stamp the version banner with +pfhdrN
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-punktfunk decides a session's shape before the virtual display exists — the
+lilynk decides a session's shape before the virtual display exists — the
 bit depth in the Welcome (irrevocable; a PQ stream on an 8-bit encoder is a
 hard error), whether it must composite the cursor host-side before the encoder
 is even opened, and which flags the spawn has to carry. All of those have to be
@@ -34,7 +34,7 @@ index adeaa11b..2d737dbe 100644
  vcs_tag_cmd = ['git', 'describe', '--always', '--tags', '--dirty=+']
  vcs_tag = run_command(vcs_tag_cmd, check: false).stdout().strip()
 -version_tag = vcs_tag + ' (' + compiler_name + ' ' + compiler_version + ')'
-+# punktfunk carries patches on top of upstream; stamp the banner so a host can probe what this
++# lilynk carries patches on top of upstream; stamp the banner so a host can probe what this
 +# binary can do from `gamescope --version` alone, before it has to commit a session to it (the
 +# punktfunk/1 Welcome is irrevocable). The number is a monotonic PATCH-SET revision:
 +#   +pfhdr1 — 10-bit BT.2020/PQ capture formats on the PipeWire node

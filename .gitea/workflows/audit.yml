@@ -8,8 +8,8 @@
 #                   registry or git repository outside the allowlist fails. Duplicate versions
 #                   print as warnings.
 #   * bun audit   → each Bun-managed tree that ships or publishes: web (the mgmt console BFF —
-#                   login gate, session sealing, mgmt bearer token), sdk (@punktfunk/host),
-#                   plugin-kit (@punktfunk/plugin-kit).
+#                   login gate, session sealing, mgmt bearer token), sdk (@lilynk/host),
+#                   plugin-kit (@lilynk/plugin-kit).
 #   * pnpm audit  → clients/decky (the Steam Deck plugin).
 #   * docs-site   → scanned NON-blocking. Its `overrides` lift the chains fumadocs and @unom/ui
 #                   pull in (@ai-sdk/provider-utils, dompurify, undici), as web's do.

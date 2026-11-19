@@ -749,7 +749,7 @@ impl Component for Shell {
     }
 
     fn view(&self, _input: &ShellInput, cx: &mut ViewContext<'_, Self>) -> View {
-        cx.window_title("Punktfunk");
+        cx.window_title("Lilynk");
         // A floor under every layout: below it the header and cards would clip rather than
         // reflow (the pages adapt down to it).
         cx.window_visuals(
@@ -802,7 +802,7 @@ impl Component for Shell {
         let back = rules::back(&self.screen, self.dest, self.host_page.is_some(), hidden);
         let caption = TitleBar::new()
             .preferred_height(WindowTitleBarHeight::Tall)
-            .title("Punktfunk")
+            .title("Lilynk")
             .icon(Icon::image_data(EncodedImage::from_static(APP_ICON)))
             .is_back_button_visible(back.is_some())
             .is_back_button_enabled(true)
@@ -895,7 +895,7 @@ pub fn run(
     App::run_component_with_policy::<Shell>(
         ShellInput(ctx),
         WindowPolicy::new()
-            .title("Punktfunk")
+            .title("Lilynk")
             .client_size(WINDOW_W, WINDOW_H),
     )
 }

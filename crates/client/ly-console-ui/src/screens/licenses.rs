@@ -106,7 +106,7 @@ impl LicensesScreen {
                 });
             }
         };
-        push(Style::Title, &format!("Punktfunk {}", crate::VERSION));
+        push(Style::Title, &format!("Lilynk {}", crate::VERSION));
         push(Style::Body, ly_l10n::client::about_license_statement());
         push(Style::Body, "");
         push(Style::Heading, "GPL-3.0-or-later");

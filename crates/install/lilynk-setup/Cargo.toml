@@ -6,7 +6,7 @@ name = "lilynk-setup"
 version.workspace = true
 edition.workspace = true
 license = "GPL-3.0-or-later"
-description = "Guided punktfunk installer: probe the box, derive a plan, run it."
+description = "Guided lilynk installer: probe the box, derive a plan, run it."
 publish = false
 
 [dependencies]

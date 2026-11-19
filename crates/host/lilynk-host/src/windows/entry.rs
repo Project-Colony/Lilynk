@@ -134,7 +134,7 @@ pub(crate) fn print_usage() {
         \x20   lilynk-host service install    register an auto-start SYSTEM service + firewall rules\n\
         \x20   lilynk-host service uninstall  remove the service + firewall rules\n\
         \x20   lilynk-host service start|stop|restart|status\n\
-        \x20   config: %ProgramData%\\punktfunk\\host.env\n\
+        \x20   config: %ProgramData%\\lilynk\\host.env\n\
         \x20   lilynk-host hooks elevated on|off  let hooks and prep steps marked elevated run as\n\
         \x20                                     administrator (run it from an administrator prompt)\n\
         \nWINDOWS DIAGNOSTICS:\n\

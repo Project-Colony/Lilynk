@@ -1883,7 +1883,7 @@ pub fn detail(id: RowId, ctx: &Ctx) -> Cow<'static, str> {
         },
         RowId::AdvancedStats => two(
             m::player_advanced_stats_hint(),
-            m::player_advanced_stats_docs_hint("docs.punktfunk.unom.io/docs/stats"),
+            m::player_advanced_stats_docs_hint("project-colony.github.io/Lilynk/docs/stats"),
         ),
         RowId::Fullscreen => m::player_fullscreen_on_stream_hint().into(),
         RowId::FullscreenMode => match fullscreen_mode(ctx.settings) {

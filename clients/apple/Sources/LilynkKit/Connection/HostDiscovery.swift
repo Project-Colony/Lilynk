@@ -340,7 +340,7 @@ public final class HostDiscovery: ObservableObject {
     /// result at publish time, so a re-advertised host doesn't need a fresh resolve to be re-read.
     private func resolve(_ key: String, _ result: NWBrowser.Result) {
         // Resolve over IPv4 only: Network.framework prefers IPv6 (RFC 6724), and the host's OS
-        // mDNS responder often answers AAAA for its hostname even though the punktfunk host stack
+        // mDNS responder often answers AAAA for its hostname even though the lilynk host stack
         // (control QUIC + data UDP) binds IPv4 sockets exclusively — a v6-resolved address would
         // produce a host card whose connect always fails in the Rust core (`host:port` parse).
         // Same policy as the Android/desktop clients; lift when the stack speaks IPv6.
@@ -483,7 +483,7 @@ public final class HostDiscovery: ObservableObject {
 
     private static func instanceName(_ endpoint: NWEndpoint) -> String {
         if case let .service(name, _, _, _) = endpoint { return name }
-        return "Punktfunk host"
+        return "Lilynk host"
     }
 
     private static func entry(_ txt: NWTXTRecord, _ field: String) -> String? {

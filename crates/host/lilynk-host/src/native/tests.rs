@@ -201,7 +201,7 @@ fn an_umbriel_ipc_mismatch_reaches_the_client_in_words() {
     let said = setup_failed_sentence(&buried)
         .expect("a mismatch has words for the user")
         .text;
-    assert!(said.contains("Update Punktfunk"), "{said}");
+    assert!(said.contains("Update Lilynk"), "{said}");
     assert!(said.len() <= lilynk_core::quic::REFUSED_REASON_MAX);
 }
 
@@ -2786,7 +2786,7 @@ fn a_person_s_own_account_opens_only_on_the_supervisor_s_word() {
             0,
             closed(
                 SeatUnavailable,
-                "This profile needs its account password. Update Punktfunk on this device.",
+                "This profile needs its account password. Update Lilynk on this device.",
             ),
         ),
         (
@@ -3248,7 +3248,7 @@ fn a_locked_profile_opens_with_its_pin() {
             closed(ProfileLocked, ""),
             closed(
                 SeatUnavailable,
-                "This profile needs its PIN. Update Punktfunk on this device."
+                "This profile needs its PIN. Update Lilynk on this device."
             ),
             closed(
                 ProfileLocked,

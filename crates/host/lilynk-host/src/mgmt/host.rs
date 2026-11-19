@@ -452,7 +452,7 @@ pub(crate) struct SessionRow {
     /// Where the session is. `streaming` for most of its life; `ending` once a stop, a
     /// game exit or the client's close has been seen and the row is about to go.
     phase: crate::lifecycle::Phase,
-    /// The punktfunk protocol the session speaks. Absent on the compat plane.
+    /// The lilynk protocol the session speaks. Absent on the compat plane.
     // `value_type`: an `Option<u8>` alone generates as `never` in the SDK.
     #[schema(value_type = u32, required = false)]
     #[serde(skip_serializing_if = "Option::is_none")]

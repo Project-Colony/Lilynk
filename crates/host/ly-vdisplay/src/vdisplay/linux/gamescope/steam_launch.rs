@@ -471,7 +471,7 @@ mod tests {
                     lilynk-gamescope.service/sub\n";
         assert!(cgroup_names_unit(ours, SESSION_UNIT));
         // A prefix of another unit's name is not that unit.
-        assert!(!cgroup_names_unit(ours, "punktfunk"));
+        assert!(!cgroup_names_unit(ours, "lilynk"));
     }
 
     #[test]

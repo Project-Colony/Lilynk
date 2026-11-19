@@ -56,7 +56,7 @@ absent on Moonlight.
 desktop stream with no game, or when the session outlives its game. Dim the lights on
 `game.running`, when the game's process runs; send "ready" on `game.window`, when its window is on
 screen, which can be half a minute later on a cold Proton prefix. `game.window` doesn't fire on
-KWin without its window-list permission or on GNOME without the Punktfunk extension.
+KWin without its window-list permission or on GNOME without the Lilynk extension.
 
 [Scripts](/docs/automation#commands) read `PF_EVENT_GAME_TITLE`, `PF_EVENT_GAME_APP` and, on
 `game.exited`, `PF_EVENT_REASON`: `exited` when the player quit, `terminated` when the host closed
@@ -76,7 +76,7 @@ A `{"kind":"ctl.resync"}` line means events were missed: re-read the state you n
 To read Server-Sent Events directly, call the management API on the host with its token:
 
 ```sh
-. ~/.config/punktfunk/mgmt-token   # sets LILYNK_MGMT_TOKEN
+. ~/.config/lilynk/mgmt-token   # sets LILYNK_MGMT_TOKEN
 curl -Nk -H "Authorization: Bearer $LILYNK_MGMT_TOKEN" \
   "https://127.0.0.1:47990/api/v1/events?kinds=pairing.*,stream.*"
 ```

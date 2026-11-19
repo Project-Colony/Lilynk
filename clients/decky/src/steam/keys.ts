@@ -6,26 +6,26 @@ import { keys, read, write } from "../lib/storage";
 
 // The hidden stream shortcut's appId. The oldest key, so a one-shortcut install migrates into the
 // stream role.
-export const STORAGE_KEY_STREAM = "punktfunk:shortcutAppId";
-export const STORAGE_KEY_UI = "punktfunk:uiAppId";
+export const STORAGE_KEY_STREAM = "lilynk:shortcutAppId";
+export const STORAGE_KEY_UI = "lilynk:uiAppId";
 // The shortcut the most recent launch ran under, generic or per-game: the one Force-stop ends.
-export const STORAGE_KEY_LAST_LAUNCH = "punktfunk:lastLaunchAppId";
+export const STORAGE_KEY_LAST_LAUNCH = "lilynk:lastLaunchAppId";
 /** `{ref, gameId, title}` of the last game-page stream: what the panel's End game ends. */
-export const STORAGE_KEY_LAST_GAME = "punktfunk:lastGameStream";
-// `punktfunk:gameShortcut:<steam appid>` → the per-game shortcut's appId.
-const GAME_KEY_PREFIX = "punktfunk:gameShortcut:";
+export const STORAGE_KEY_LAST_GAME = "lilynk:lastGameStream";
+// `lilynk:gameShortcut:<steam appid>` → the per-game shortcut's appId.
+const GAME_KEY_PREFIX = "lilynk:gameShortcut:";
 
 // The native-touch layout marker. Steam keys a layout by shortcut name: one marker covers both
 // fixed roles, and each per-game name gets its own under the prefix.
-export const CONFIG_KEY = "punktfunk:controllerConfig";
-export const GAME_CONFIG_PREFIX = "punktfunk:controllerConfig:";
+export const CONFIG_KEY = "lilynk:controllerConfig";
+export const GAME_CONFIG_PREFIX = "lilynk:controllerConfig:";
 
 export function artKey(appId: number): string {
-  return `punktfunk:shortcutArt:${appId}`;
+  return `lilynk:shortcutArt:${appId}`;
 }
 
 export function gameArtKey(shortcutAppId: number): string {
-  return `punktfunk:gameArt:${shortcutAppId}`;
+  return `lilynk:gameArt:${shortcutAppId}`;
 }
 
 export function gameKey(steamAppId: number): string {

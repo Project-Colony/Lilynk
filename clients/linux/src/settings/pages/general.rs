@@ -287,12 +287,12 @@ fn start_in_subtitle(store: &Store) -> String {
 fn docs_row() -> adw::ActionRow {
     let row = adw::ActionRow::builder()
         .title(client::player_stats_docs_link())
-        .subtitle("docs.punktfunk.unom.io/docs/stats")
+        .subtitle("project-colony.github.io/Lilynk/docs/stats")
         .activatable(true)
         .build();
     row.add_suffix(&gtk::Image::from_icon_name("adw-external-link-symbolic"));
     row.connect_activated(|_| {
-        gtk::UriLauncher::new("https://docs.punktfunk.unom.io/docs/stats").launch(
+        gtk::UriLauncher::new("https://project-colony.github.io/Lilynk/docs/stats").launch(
             None::<&gtk::Window>,
             gtk::gio::Cancellable::NONE,
             |_| {},

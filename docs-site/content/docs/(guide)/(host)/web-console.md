@@ -1,6 +1,6 @@
 ---
 title: The Web Console
-description: Open the Punktfunk web console, sign in, arm pairing, and find your way around its pages.
+description: Open the Lilynk web console, sign in, arm pairing, and find your way around its pages.
 ---
 
 The web console is where you run your host from a browser: pairing, displays, the game library,

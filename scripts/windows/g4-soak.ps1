@@ -60,12 +60,12 @@ $root = 'C:\Users\Public'
 $log = "$root\live-g4-$Tag.log"
 $statusPath = "$root\g4-$Tag-status.jsonl"
 $statePath = "$root\g4-$Tag.state"
-$hostLog = 'C:\ProgramData\punktfunk\logs\host.log'
-$envPath = 'C:\ProgramData\punktfunk\host.env'
+$hostLog = 'C:\ProgramData\lilynk\logs\host.log'
+$envPath = 'C:\ProgramData\lilynk\host.env'
 $envBak = "$root\g4-$Tag-host.env.bak"
 $client = "$root\lilynk-native\target\release\lilynk-session.exe"
 $furmark = 'C:\Program Files\Geeks3D\FurMark2_x64\furmark.exe'
-$profiles = Join-Path $env:APPDATA 'punktfunk\client-profiles.json'
+$profiles = Join-Path $env:APPDATA 'lilynk\client-profiles.json'
 $profilesBak = "$root\g4-$Tag-client-profiles.bak"
 $unlockTask = "pf-g4-unlock-$Tag"
 $wakeTask = "pf-g4-wake-$Tag"
@@ -107,7 +107,7 @@ function Test-SecureDesktop {
 }
 
 function Get-MgmtToken {
-  (Get-Content -Raw 'C:\ProgramData\punktfunk\mgmt-token').Trim() -replace '^[A-Z_]+=', ''
+  (Get-Content -Raw 'C:\ProgramData\lilynk\mgmt-token').Trim() -replace '^[A-Z_]+=', ''
 }
 
 # GET one management endpoint, timed. `ms` is the whole round trip - criterion 5's number.
@@ -314,7 +314,7 @@ foreach ($p in $client, $envPath, $hostLog) {
 }
 $token = Get-MgmtToken
 if ((Get-Mgmt '/api/v1/status' $token).http -ne 200) { Say 'PREFLIGHT-FAILED mgmt api not answering'; exit 1 }
-Say "preflight ok host=$((Get-Item 'C:\Program Files\punktfunk\lilynk-host.exe').LastWriteTime) free_gb=$([int]((Get-PSDrive C).Free/1GB))"
+Say "preflight ok host=$((Get-Item 'C:\Program Files\lilynk\lilynk-host.exe').LastWriteTime) free_gb=$([int]((Get-PSDrive C).Free/1GB))"
 
 # The client profile catalog gives each reconnect its mode; the resize leg drives the window.
 if (Test-Path $profiles) { Copy-Item $profiles $profilesBak -Force } else { '{"version":1,"profiles":[]}' | Set-Content $profiles }
@@ -359,7 +359,7 @@ $poller = Start-Job -ScriptBlock {
   }
 } -ArgumentList 'https://127.0.0.1:47990/api/v1/status', $token, $statusPath
 
-$cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 'C:\ProgramData\punktfunk\cert.pem'
+$cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 'C:\ProgramData\lilynk\cert.pem'
 $fp = $cert.GetCertHashString('SHA256').ToLower()
 # ~18 s per cycle goes on the bring-up wait and the inter-cycle pause; take it off the
 # streaming window so 100 cycles still fit inside $Minutes of wall clock.

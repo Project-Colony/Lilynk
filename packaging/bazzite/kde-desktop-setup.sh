@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# One-shot setup so the punktfunk host can INJECT INPUT while streaming the Bazzite KDE *Desktop*
+# One-shot setup so the lilynk host can INJECT INPUT while streaming the Bazzite KDE *Desktop*
 # session. Run ONCE as the streaming user (no root needed). Gaming Mode (gamescope) needs none of
 # this — it auto-attaches. Idempotent: safe to re-run.
 #
-#   bash /usr/share/punktfunk/bazzite/kde-desktop-setup.sh
+#   bash /usr/share/lilynk/bazzite/kde-desktop-setup.sh
 #
 # The VIRTUAL OUTPUT (video) needs no setup: the host package ships org.projectcolony.lilynk.host.desktop,
 # whose X-KDE-Wayland-Interfaces grants the host KWin's restricted zkde_screencast protocol (and two
@@ -17,10 +17,10 @@
 # headless host can't answer. That's what this script seeds.
 set -euo pipefail
 
-GRANT_SRC="${LILYNK_GRANT_SRC:-/usr/share/punktfunk/headless/kde-authorized}"
+GRANT_SRC="${LILYNK_GRANT_SRC:-/usr/share/lilynk/headless/kde-authorized}"
 GRANT_DST="$HOME/.local/share/flatpak/db/kde-authorized"
 
-echo "punktfunk: KDE Desktop-mode input setup"
+echo "lilynk: KDE Desktop-mode input setup"
 
 # RemoteDesktop portal grant for headless libei input (never clobber an existing one).
 if [[ -s "$GRANT_DST" ]]; then
@@ -37,5 +37,5 @@ else
     echo "  WARN: grant source not found at $GRANT_SRC — input will need a manual portal approval" >&2
 fi
 
-echo "punktfunk: done. On a fresh host install, log out + back into the KDE Desktop session once"
+echo "lilynk: done. On a fresh host install, log out + back into the KDE Desktop session once"
 echo "          (so KWin authorizes the host's virtual output), then connect a client in Desktop Mode."

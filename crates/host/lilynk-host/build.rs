@@ -33,8 +33,8 @@ fn main() {
         println!("cargo:rerun-if-changed={icon}");
         winresource::WindowsResource::new()
             .set_icon_with_id(icon, "1")
-            .set("FileDescription", "Punktfunk Host")
-            .set("ProductName", "Punktfunk")
+            .set("FileDescription", "Lilynk Host")
+            .set("ProductName", "Lilynk")
             .set("CompanyName", "Lilynk")
             .set_manifest(MANIFEST)
             .compile()

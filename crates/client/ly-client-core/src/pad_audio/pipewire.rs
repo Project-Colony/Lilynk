@@ -722,7 +722,7 @@ fn pad_pw_thread(
         *pw::keys::MEDIA_CATEGORY   => "Playback",
         *pw::keys::MEDIA_ROLE       => "Game",
         *pw::keys::NODE_NAME        => "lilynk-pad-audio",
-        *pw::keys::NODE_DESCRIPTION => "Punktfunk Pad Audio",
+        *pw::keys::NODE_DESCRIPTION => "Lilynk Pad Audio",
         // ~5 ms quantum (one haptics Opus frame) keeps felt latency small.
         *pw::keys::NODE_LATENCY     => "240/48000",
         "target.object"             => target.as_str(),

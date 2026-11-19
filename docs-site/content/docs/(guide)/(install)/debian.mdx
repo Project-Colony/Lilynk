@@ -1,18 +1,12 @@
 ---
 title: Debian
-description: Install the Punktfunk host on Debian 13 or newer with apt, including LMDE 7.
+description: Build the Lilynk host packages on Debian 13 or newer, including LMDE 7, and install them with apt.
 ---
 
 Install the host on **Debian 13 ("trixie") or newer** and **LMDE 7**. Debian 12 is too old for the
-package; [build from source](/docs/developers/build-from-source) there, or upgrade. Your desktop
-decides what can stream: GNOME and Sway can, KDE streams at up to 60 Hz, and Cinnamon needs
-[gamescope](#cinnamon-linux-mint-and-lmde)
+package: upgrade first. Your desktop decides what can stream: GNOME and Sway can, KDE streams at up
+to 60 Hz, and Cinnamon needs [gamescope](#cinnamon-linux-mint-and-lmde)
 ([Requirements](/docs/requirements#the-floor-for-a-working-host)).
-
-**One command instead?** The [guided installer](/docs/install#guided-install-preview) (preview)
-does steps 2 to 4 and warns when step 1 is missing:
-
-<Installer />
 
 ## 1. GPU driver
 
@@ -31,13 +25,10 @@ does steps 2 to 4 and warns when step 1 is missing:
 
 ## 2. Install the host
 
-Add the repo and install the host, the console and the plugin runner. It's the same repo Ubuntu
-uses:
-
 <Install platform="debian" />
 
-`sudo apt upgrade` updates it from then on and restarts the running services, or let the
-[console update it](/docs/updating).
+Build and install the packages as on [Ubuntu, step 2](/docs/ubuntu#2-install-the-host): the
+commands and the update are the same on Debian.
 
 ## 3. Let it use your controllers
 
@@ -45,7 +36,7 @@ Join the groups, then **restart the computer**:
 
 ```sh
 sudo usermod -aG input "$USER"       # virtual gamepads
-sudo usermod -aG punktfunk "$USER"   # virtual Steam Deck controller
+sudo usermod -aG lilynk "$USER"   # virtual Steam Deck controller
 ```
 
 ## 4. Start it
@@ -64,11 +55,12 @@ a device.
 
 ## Cinnamon, Linux Mint and LMDE
 
-Cinnamon can't give the host a virtual display, so stream games through gamescope instead:
+Cinnamon can't give the host a virtual display, so stream games through gamescope instead. Build
+and install `lilynk-gamescope` with `packaging/gamescope/build-lilynk-gamescope.sh` in the clone
+(its header lists what it needs), then:
 
 ```sh
-sudo apt install lilynk-gamescope
-echo 'LILYNK_COMPOSITOR=gamescope' >> ~/.config/punktfunk/host.env
+echo 'LILYNK_COMPOSITOR=gamescope' >> ~/.config/lilynk/host.env
 systemctl --user restart lilynk-host
 ```
 
@@ -80,5 +72,5 @@ Mint 22 can't host at all ([why](/docs/requirements#cinnamon-linux-mint-and-lmde
 - Your desktop: [GNOME](/docs/gnome), [Sway](/docs/sway), [KDE](/docs/kde),
   [gamescope](/docs/gamescope).
 - Stream with nobody logged in: [Running as a service](/docs/running-as-a-service).
-- Streaming *to* a Debian box: the Linux client isn't packaged for Debian, so use the
-  [Flatpak](/docs/install-client#linux-desktop-flatpak).
+- Streaming *to* a Debian box: check what the Linux client needs to build first
+  ([Build from source → Linux client](/docs/developers/build-from-source#linux-client)).

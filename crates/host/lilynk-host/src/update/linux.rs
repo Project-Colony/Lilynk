@@ -24,7 +24,7 @@ const HELPER_RESULT: &str = "/var/lib/lilynk-update/update-result.json";
 const UNIT_PATH: &str = "/usr/lib/systemd/system/lilynk-update.service";
 
 /// Pacman full-sysupgrade opt-in. Root-owned.
-const PACMAN_OPTIN_CONF: &str = "/etc/punktfunk/update.conf";
+const PACMAN_OPTIN_CONF: &str = "/etc/lilynk/update.conf";
 
 /// Cap on one helper run. `pacman -Syu` on a stale box is slow; a stuck manager must still error.
 const HELPER_TIMEOUT: Duration = Duration::from_secs(30 * 60);
@@ -166,7 +166,7 @@ pub(super) fn run_apply_steamos(
     stage: &dyn Fn(&'static str),
 ) -> Result<(), (&'static str, String)> {
     let home = std::env::var("HOME").map_err(|_| ("applying", "no $HOME".to_string()))?;
-    let script = std::path::Path::new(&home).join("punktfunk/scripts/steamdeck/update.sh");
+    let script = std::path::Path::new(&home).join("lilynk/scripts/steamdeck/update.sh");
     if !script.exists() {
         return Err((
             "applying",

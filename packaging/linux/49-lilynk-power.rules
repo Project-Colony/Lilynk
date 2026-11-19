@@ -1,4 +1,4 @@
-// Members of the `punktfunk` group may power the box off, restart it, or put it to sleep even when
+// Members of the `lilynk` group may power the box off, restart it, or put it to sleep even when
 // the box has no ACTIVE LOCAL SESSION — which is exactly the state a display-manager takeover
 // leaves it in for the length of a stream.
 //
@@ -34,7 +34,7 @@ polkit.addRule(function (action, subject) {
         (action.id == "org.freedesktop.login1.power-off" ||
             action.id == "org.freedesktop.login1.reboot" ||
             action.id == "org.freedesktop.login1.suspend") &&
-        subject.isInGroup("punktfunk")
+        subject.isInGroup("lilynk")
     ) {
         return polkit.Result.YES;
     }

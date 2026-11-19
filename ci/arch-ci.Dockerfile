@@ -23,7 +23,7 @@ FROM docker.io/library/archlinux:base-devel
 # deps (second list) — both copied verbatim from what arch.yml installed in-job, where
 # they now no-op as `--needed` guards.
 # vulkan-headers rides the first list only because arch.yml's copy does; the package it actually
-# serves is the gamescope companion (packaging/gamescope/PKGBUILD makedepends). punktfunk itself
+# serves is the gamescope companion (packaging/gamescope/PKGBUILD makedepends). lilynk itself
 # needs no system Vulkan headers — pyrowave-sys bindgens its own vendored copy and ash dlopens the
 # loader — but arch.yml builds gamescope with `makepkg -d`, so an absent makedepend would not be
 # reported as a missing dependency, only as a compile failure. Keep it.

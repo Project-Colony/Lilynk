@@ -18,12 +18,12 @@ turns, you want [take-turns profiles](/docs/profiles#on-windows) instead, on any
 | Licences | A Remote Desktop Services CAL for every player: [Microsoft's rules](https://learn.microsoft.com/windows-server/remote/remote-desktop-services/rds-client-access-license). Windows runs 120 days without a licence server. After that, seats sign in only with CALs from [one](https://learn.microsoft.com/windows-server/remote/remote-desktop-services/rds-activate-license-server). **Doctor** counts the days down. |
 | Steam | Installed in its usual folder, `C:\Program Files (x86)\Steam`, and opened once. Seats get their sound from it, and their Steam games. |
 
-Each seat is a Windows account of its own, `pf_seat1` to `pf_seat4`, made and managed by Punktfunk.
+Each seat is a Windows account of its own, `pf_seat1` to `pf_seat4`, made and managed by Lilynk.
 Nobody signs in to those accounts by hand.
 
 A seat can sign in to an account this PC already has instead: one of its standard accounts, with
 its own Steam and saves. Under **Add profile**, pick **Own desktop**, then **Existing account**,
-the account and its Windows password. Sign the account out first. Punktfunk keeps the password
+the account and its Windows password. Sign the account out first. Lilynk keeps the password
 sealed on this PC.
 
 - While it's a seat, nobody signs in to that account at the PC. The seat doesn't start while
@@ -76,21 +76,21 @@ On **Profiles**, a seat's card has **Start**, **Stop** and **End session**. A se
 stops after **Stop an idle seat after** under **Host** → **Seats**. The rest a seat shares with
 Linux seats is under [What a seat can do](/docs/profiles#what-a-seat-can-do).
 
-A seat's player opens their own Punktfunk from the seat's desktop with the tray's **Open
-console**. On its **Plugins** page they install plugins from the Punktfunk store and turn them on.
+A seat's player opens their own Lilynk from the seat's desktop with the tray's **Open
+console**. On its **Plugins** page they install plugins from the Lilynk store and turn them on.
 Those run as the seat's account, each in its own sandbox, while the seat runs. On a seat on an
 existing account only the player installs them.
 
 ## Steam on a seat
 
 Steam runs once per Windows PC under its usual name, and a second start closes the first. So each
-seat gets a copy of the PC's Steam of its own, and Punktfunk points every usual way of opening
+seat gets a copy of the PC's Steam of its own, and Lilynk points every usual way of opening
 Steam on a seat at that copy:
 
 - the shared **Steam** icon on the desktop and in the Start menu,
 - `steam://` links, such as a game's desktop shortcut,
 - **Run Steam when my computer starts** in the seat's Steam,
-- games started from Punktfunk's library.
+- games started from Lilynk's library.
 
 While seats are on, the shared Steam icons start `lilynk-tray.exe --steam`, which opens the
 seat's copy on a seat and the PC's own Steam for everyone else. Turning seats off puts them back.
@@ -118,7 +118,7 @@ says **Needs Windows Server**, and turning seats on answers `Playing at the same
 Server — this is a desktop edition of Windows. To take turns, add an Own account profile instead.`
 
 Windows 11's [terms](https://www.microsoft.com/en-us/useterms) license it "for use by one person at
-a time", so concurrent seats there break them. Punktfunk doesn't include, install or recommend a
+a time", so concurrent seats there break them. Lilynk doesn't include, install or recommend a
 Remote Desktop wrapper such as TermWrap. On a PC that already has one, seats turn on with this
 warning and without support: `A Remote Desktop wrapper lets this desktop edition of Windows run
 concurrent seats. Only Windows Server is supported for that. To take turns instead, add an Own
@@ -128,7 +128,7 @@ account profile.`
 
 **Profiles** shows the doctor's verdict under the cards. Press **Doctor** for every check, the PC's
 first and then one group per seat, each with the next move. A seat's own log is
-`C:\ProgramData\punktfunk\seats\hosts\<seat id>\host.log`, readable by Administrators.
+`C:\ProgramData\lilynk\seats\hosts\<seat id>\host.log`, readable by Administrators.
 
 ### The console doesn't open from another computer
 
@@ -175,7 +175,7 @@ pick the profile.
 ### Steam closes on another seat
 
 That Steam was started as the PC's own, from `steam.exe` itself. Start Steam from the **Steam**
-icon on the desktop or in the Start menu, or from Punktfunk's library.
+icon on the desktop or in the Start menu, or from Lilynk's library.
 
 ### A game loses its controller when someone else switches apps
 
@@ -218,7 +218,7 @@ Install Steam, open it once, then stop and start the seat.
 
 ### Seats stream without a picture
 
-Windows' own Remote Desktop display driver is newer than Punktfunk's. Update Punktfunk.
+Windows' own Remote Desktop display driver is newer than Lilynk's. Update Lilynk.
 
 ### Remote Desktop's days without a licence server are over
 
@@ -228,6 +228,6 @@ player: [Activate the Remote Desktop Services license server](https://learn.micr
 ## Turn seats off
 
 Untick **Seats are on** under **Profiles** → **Seats**. Every seat stops and Remote Desktop goes
-back to how it was. Uninstalling Punktfunk does the same. A seat account and its files go when you
+back to how it was. Uninstalling Lilynk does the same. A seat account and its files go when you
 remove its profile. A profile on an existing account gives that account back instead: the account,
 its files and its Steam copy stay.

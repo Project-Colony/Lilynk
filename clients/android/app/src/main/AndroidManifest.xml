@@ -111,7 +111,7 @@
                  URL carries only REFERENCES to things that exist here (a host record, a settings
                  preset, a library id) — never resolution/bitrate/codec values, and never a
                  pairing route; MainActivity's router enforces the rest. BROWSABLE is what lets a
-                 browser hand it over (behind its own "Open Punktfunk?" prompt).
+                 browser hand it over (behind its own "Open Lilynk?" prompt).
                  NOTE: launchMode deliberately stays `standard` and the configChanges set above is
                  untouched — its `keyboard` entry is what keeps an SC2 claim from killing a running
                  stream, and neither has anything to gain from this filter. -->

@@ -32,7 +32,7 @@ object ConnectErrors {
             else -> R.string.android_error_connect_check_address
         }
 
-    /** The host's typed rejection reasons — identical wording across every punktfunk client. */
+    /** The host's typed rejection reasons — identical wording across every lilynk client. */
     @StringRes
     private fun shared(token: String): Int? = when (token) {
         "not-armed" -> R.string.reject_not_armed

@@ -160,7 +160,7 @@ test("a refused grant relays the host's code and params with its English", async
 test("grants only a confirmed path the value holds, at its access, and reads no plugin", async () => {
 	const confirmed: HandedPath[] = [
 		{ path: "/games/new", write: true },
-		{ path: "/home/u/.local/share/punktfunk/emulators/x/app", write: true },
+		{ path: "/home/u/.local/share/lilynk/emulators/x/app", write: true },
 	];
 	const res = await save("/api/plugin-config/demo", " /games/new ", "typed", {
 		grant: confirmed,

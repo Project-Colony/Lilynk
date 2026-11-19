@@ -491,8 +491,8 @@ impl Device {
             usb_vid_pid: Some("VID_5046&PID_5450"),
             usb_mi: None,
             bluetooth: false,
-            description: "Punktfunk Virtual Touchpad",
-            enumerator: "punktfunk",
+            description: "Lilynk Virtual Touchpad",
+            enumerator: "lilynk",
             property: None,
         })
         .context("create the ly_touchpad devnode")?;

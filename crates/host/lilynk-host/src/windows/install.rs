@@ -377,7 +377,7 @@ fn remove_pad_devnodes() {
         }
     }
     // The desk's own controllers keep their console tag until their next start; a box that
-    // loses punktfunk must not keep hiding them from a later console session.
+    // loses lilynk must not keep hiding them from a later console session.
     ly_inject::desk_fence::clear();
 }
 
@@ -402,23 +402,23 @@ fn driver_uninstall(args: &[String]) -> Result<()> {
     Ok(())
 }
 
-/// Host-minted "Punktfunk Speakers"/"Punktfunk Microphone" and per-pad DualSense speaker
+/// Host-minted "Lilynk Speakers"/"Lilynk Microphone" and per-pad DualSense speaker
 /// endpoints. Run after `service uninstall`: a live host re-mints them on the next wiring pass.
 ///
 /// Does not remove Steam's streaming-audio drivers. Marker-matched in `audio::devnode_cleanup`.
 fn uninstall_audio_devices() -> Result<()> {
     match crate::audio::devnode_cleanup::purge() {
         Ok(r) if r.devnodes == 0 && r.devnode_failures == 0 => {
-            println!("no punktfunk audio devices to remove")
+            println!("no lilynk audio devices to remove")
         }
         Ok(r) => {
             println!(
-                "removed {} punktfunk audio device(s), {} endpoint record(s)",
+                "removed {} lilynk audio device(s), {} endpoint record(s)",
                 r.devnodes, r.endpoint_records
             );
             if r.devnode_failures > 0 {
                 eprintln!(
-                    "warning: {} punktfunk audio device(s) could not be removed — they can be \
+                    "warning: {} lilynk audio device(s) could not be removed — they can be \
                      deleted from Device Manager (View ▸ Show hidden devices)",
                     r.devnode_failures
                 );
@@ -430,7 +430,7 @@ fn uninstall_audio_devices() -> Result<()> {
 }
 
 fn uninstall_ly_vdisplay() -> Result<()> {
-    // ROOT nodes first; leaving them is a ghost "punktfunk virtual display" in Device Manager.
+    // ROOT nodes first; leaving them is a ghost "lilynk virtual display" in Device Manager.
     for id in ly_vdisplay_instance_ids() {
         match remove_device(&id) {
             Ok(()) => println!("removed device node {id}"),
@@ -463,7 +463,7 @@ fn ly_vdisplay_instance_ids() -> Vec<String> {
     let mut ids = Vec::new();
     for block in out.split("\r\n\r\n").flat_map(|b| b.split("\n\n")) {
         let lo = block.to_ascii_lowercase();
-        if !lo.contains("ly_vdisplay") && !lo.contains("punktfunk virtual display") {
+        if !lo.contains("ly_vdisplay") && !lo.contains("lilynk virtual display") {
             continue;
         }
         let Some(first) = block.lines().find(|l| !l.trim().is_empty()) else {
@@ -481,7 +481,7 @@ fn ly_vdisplay_instance_ids() -> Vec<String> {
     ids
 }
 
-/// Pad instance IDs (`SWD\PUNKTFUNK\…`), including phantoms (`/enum-devices` lists disconnected
+/// Pad instance IDs (`SWD\LILYNK\…`), including phantoms (`/enum-devices` lists disconnected
 /// nodes). Same VALUE-side parse as [`ly_vdisplay_instance_ids`]. No `/class`: HIDClass + System.
 fn pad_instance_ids() -> Vec<String> {
     let out = run_capture("pnputil", &["/enum-devices"]);
@@ -495,9 +495,9 @@ fn pad_instance_ids() -> Vec<String> {
         };
         let id = value.trim();
         // Pads enumerate under their USB interface id (`SWD\VID_…&MI_03\PF_…`), the rest
-        // under `punktfunk`.
+        // under `lilynk`.
         let up = id.to_ascii_uppercase();
-        let ours = up.starts_with("SWD\\PUNKTFUNK\\")
+        let ours = up.starts_with("SWD\\LILYNK\\")
             || (up.starts_with("SWD\\VID_") && up.contains("\\PF_"));
         if ours && !id.contains(' ') {
             ids.push(id.to_string());
@@ -584,7 +584,7 @@ fn ly_vdisplay_present() -> bool {
         &["/enum-devices", "/connected", "/class", "Display"],
     )
     .to_ascii_lowercase();
-    lo.contains("ly_vdisplay") || lo.contains("punktfunk virtual display")
+    lo.contains("ly_vdisplay") || lo.contains("lilynk virtual display")
 }
 
 /// INF `Class` + `ClassGuid` so the node matches the shipped driver; fallback is Display.
@@ -729,8 +729,8 @@ fn web_setup(args: &[String]) -> Result<()> {
         );
     }
     for (name, port) in [
-        ("Punktfunk web console (TCP 47992)", "47992"),
-        ("Punktfunk plugin UIs (TCP 47993)", "47993"),
+        ("Lilynk web console (TCP 47992)", "47992"),
+        ("Lilynk plugin UIs (TCP 47993)", "47993"),
     ] {
         run_quiet(
             "netsh",
@@ -871,11 +871,7 @@ mod tests {
             pad_install_problems(&staged, &other, &[]).is_empty(),
             "other packages"
         );
-        let live =
-            pad_install_problems(&staged, &[gp("new")], &["SWD\\PUNKTFUNK\\PF_PAD_0".into()]);
-        assert_eq!(
-            live,
-            ["pad devnode SWD\\PUNKTFUNK\\PF_PAD_0 is still present"]
-        );
+        let live = pad_install_problems(&staged, &[gp("new")], &["SWD\\LILYNK\\PF_PAD_0".into()]);
+        assert_eq!(live, ["pad devnode SWD\\LILYNK\\PF_PAD_0 is still present"]);
     }
 }

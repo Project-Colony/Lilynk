@@ -61,7 +61,7 @@ export type HostApi = {
 
 /**
  * The `HttpClient` the generated client runs on: base URL, the credential, and the connection's
- * fetch. Platform-neutral — this is what `@punktfunk/host/core` hands a browser.
+ * fetch. Platform-neutral — this is what `@lilynk/host/core` hands a browser.
  *
  * The credential is attached effectfully because a device key may have to run an exchange to
  * produce one, and re-earned once on a 401 because such a token lapses. A static bearer cannot

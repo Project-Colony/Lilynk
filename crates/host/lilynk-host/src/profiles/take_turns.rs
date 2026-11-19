@@ -215,7 +215,7 @@ pub(crate) struct LocalAccount {
 
 /// Whether a new profile may bind `account`, an enabled local account: one account, one profile.
 /// A seats ledger row holds it by name, an adopted row by SID too, and a take-turns profile by
-/// a name in `bound`. punktfunk's own seat accounts stay out when the ledger didn't load.
+/// a name in `bound`. lilynk's own seat accounts stay out when the ledger didn't load.
 pub(crate) fn bindable(
     account: &LocalAccount,
     ledger: &[ly_seats::Seat],
@@ -229,7 +229,7 @@ pub(crate) fn bindable(
         })
 }
 
-/// punktfunk's own seat accounts by name, `pf_seat<n>` on Windows.
+/// lilynk's own seat accounts by name, `pf_seat<n>` on Windows.
 fn is_seat_account(name: &str) -> bool {
     let n = name.to_ascii_lowercase();
     n.starts_with("pf_seat") || n.starts_with("pf-seat")

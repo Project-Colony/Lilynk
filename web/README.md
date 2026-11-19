@@ -1,6 +1,6 @@
-# punktfunk web — management console
+# lilynk web — management console
 
-The browser UI for the punktfunk host's **management REST API** (`crates/host/lilynk-host/src/mgmt.rs`,
+The browser UI for the lilynk host's **management REST API** (`crates/host/lilynk-host/src/mgmt.rs`,
 OpenAPI at `api/openapi.json`). It shows live status, host capabilities, paired
 clients, the pairing-PIN flow, and session controls.
 
@@ -54,8 +54,8 @@ bun run build             # → .output/  (Nitro `bun` preset + our Bun.serve TL
 PORT=47992 HOST=0.0.0.0 \
   LILYNK_UI_PASSWORD=… LILYNK_MGMT_TOKEN=… \
   LILYNK_MGMT_URL=https://127.0.0.1:47990 \
-  LILYNK_UI_TLS_CERT=~/.config/punktfunk/cert.pem \
-  LILYNK_UI_TLS_KEY=~/.config/punktfunk/key.pem LILYNK_UI_SECURE=1 \
+  LILYNK_UI_TLS_CERT=~/.config/lilynk/cert.pem \
+  LILYNK_UI_TLS_KEY=~/.config/lilynk/key.pem LILYNK_UI_SECURE=1 \
   bun run start           # = bun run .output/server/index.mjs
 # LILYNK_UI_TLS_* unset ⇒ plain HTTP (local dev); both set ⇒ HTTPS (HTTP/1.1 over TLS).
 # Naming cert.pem/key.pem serves native-cert.pem/native-key.pem instead when both sit beside them
@@ -118,7 +118,7 @@ src/
   routes/            file-based routes (index=dashboard, host, clients, pairing, settings)
   components/
     app-shell.tsx    sidebar nav (brand lens + wordmark) + language switcher
-    brand-mark/wordmark/logo.tsx   punktfunk lens mark + wordmark (shared with the site/docs)
+    brand-mark/wordmark/logo.tsx   lilynk lens mark + wordmark (shared with the site/docs)
     ui/              @unom/ui-backed primitives (button, input, label, card; badge/table/skeleton)
     query-state.tsx  loading/error wrapper (401 → the session is gone, re-login)
   api/

@@ -336,7 +336,7 @@ pub fn note_hdr_capture_failed(source: HdrSource) {
             HdrSource::VirtualOutput => tracing::warn!(
                 "HDR capture negotiation failed on the virtual output — this host will offer SDR \
                  for virtual outputs until a gamescope display is torn down or the host restarts \
-                 (gamescope: is the spawned build punktfunk's? see packaging/gamescope)"
+                 (gamescope: is the spawned build lilynk's? see packaging/gamescope)"
             ),
         }
     }

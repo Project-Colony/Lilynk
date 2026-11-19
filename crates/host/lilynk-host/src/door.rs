@@ -105,12 +105,12 @@ fn missing(kind: InstallKind) -> ApiError {
         InstallKind::Pacman => package("sudo pacman -S lilynk-seats"),
         InstallKind::RpmOstree => ApiError::coded(
             "door_missing_package_rpm_ostree",
-            "This install is missing the lilynk-seats package. Update Punktfunk, then \
-             restart: sudo /usr/share/punktfunk/update-lilynk.sh",
+            "This install is missing the lilynk-seats package. Update Lilynk, then \
+             restart: sudo /usr/share/lilynk/update-lilynk.sh",
         ),
         InstallKind::Sysext => ApiError::coded(
             "door_missing_sysext",
-            "This image doesn't include it yet. Update Punktfunk: sudo lilynk-sysext update",
+            "This image doesn't include it yet. Update Lilynk: sudo lilynk-sysext update",
         ),
         InstallKind::Nix => ApiError::coded(
             "door_missing_nix",
@@ -119,13 +119,13 @@ fn missing(kind: InstallKind) -> ApiError {
         ),
         InstallKind::SteamosSource => ApiError::coded(
             "door_missing_steamos",
-            "This Deck hasn't set it up yet. Run bash ~/punktfunk/scripts/steamdeck/update.sh \
+            "This Deck hasn't set it up yet. Run bash ~/lilynk/scripts/steamdeck/update.sh \
              in Konsole and enter your password.",
         ),
         InstallKind::Source | InstallKind::Flatpak | InstallKind::WindowsInstaller => {
             ApiError::coded(
                 "door_missing_build",
-                "This build doesn't include it. Install Punktfunk from a package to use it.",
+                "This build doesn't include it. Install Lilynk from a package to use it.",
             )
         }
     }
@@ -297,7 +297,7 @@ mod linux {
                 ApiError::coded(
                     "door_deck_stale",
                     "This Deck's seats are on an older build than its host. Run bash \
-                     ~/punktfunk/scripts/steamdeck/update.sh in Konsole and enter your password, \
+                     ~/lilynk/scripts/steamdeck/update.sh in Konsole and enter your password, \
                      then turn this on.",
                 ),
             ));

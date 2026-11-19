@@ -1,4 +1,4 @@
-# `lilynk-gamescope` — nixpkgs' gamescope carrying punktfunk's `pipewire-hdr` patches, exposed
+# `lilynk-gamescope` — nixpkgs' gamescope carrying lilynk's `pipewire-hdr` patches, exposed
 # under its own name so it sits BESIDE the system gamescope instead of replacing it.
 #
 # An override rather than a from-scratch derivation on purpose: gamescope vendors wlroots,
@@ -135,7 +135,7 @@ unwrapped.overrideAttrs (old: {
   # The layer is not dressing: a game nested under this compositor gets its HDR10 swapchain from it
   # or from nowhere, and a layer built for a DIFFERENT gamescope makes the compositor reject the
   # client's swapchain_feedback and kills every Vulkan client. So it travels with the binary it was
-  # built against. It is renamed and re-homed under $out/lib/punktfunk, with its own enable
+  # built against. It is renamed and re-homed under $out/lib/lilynk, with its own enable
   # variable, so it sits beside the system gamescope's layer rather than shadowing it — the Vulkan
   # loader deduplicates implicit layers by name, so two of the same name would be a coin toss.
   #
@@ -151,7 +151,7 @@ unwrapped.overrideAttrs (old: {
     cp "$layerSo" "$TMPDIR/pf-layer.so"
     ${python3}/bin/python3 ${manifestRewriter} \
       "$layerJson" "$TMPDIR/pf-layer.json" \
-      "$out/lib/punktfunk/libVkLayer_LILYNK_gamescope_wsi.so"
+      "$out/lib/lilynk/libVkLayer_LILYNK_gamescope_wsi.so"
 
     # gamescope's own default_extras_install.sh lays the reshade shaders and textures down under
     # read-only DIRECTORIES (mode 555). `rm` needs write permission on the CONTAINING directory,
@@ -174,9 +174,9 @@ unwrapped.overrideAttrs (old: {
     mv $out/bin/gamescope $out/bin/lilynk-gamescope
 
     install -Dm0755 "$TMPDIR/pf-layer.so" \
-      "$out/lib/punktfunk/libVkLayer_LILYNK_gamescope_wsi.so"
+      "$out/lib/lilynk/libVkLayer_LILYNK_gamescope_wsi.so"
     install -Dm0644 "$TMPDIR/pf-layer.json" \
-      "$out/lib/punktfunk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json"
+      "$out/lib/lilynk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json"
   '';
 
   doInstallCheck = true;
@@ -220,14 +220,14 @@ unwrapped.overrideAttrs (old: {
     # path that does not exist is the worst shape of this bug: the loader reads it, finds nothing,
     # and carries on silently, so the box looks healthy and every game renders SDR.
     lib=$(sed -n 's/.*"library_path"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' \
-      $out/lib/punktfunk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json)
+      $out/lib/lilynk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json)
     [ -f "$lib" ] \
       || { echo "lilynk-gamescope: the layer manifest points at $lib, which is not installed"; exit 1; }
     runHook postInstallCheck
   '';
 
   meta = (old.meta or { }) // {
-    description = "gamescope with 10-bit BT.2020/PQ PipeWire capture, for punktfunk HDR streaming";
+    description = "gamescope with 10-bit BT.2020/PQ PipeWire capture, for lilynk HDR streaming";
     mainProgram = "lilynk-gamescope";
   };
 })

@@ -1,6 +1,6 @@
 //
 //  LaunchHoldView.swift
-//  Punktfunk
+//  Lilynk
 //
 //  The launch hold: the picked title's cover leaves its shelf tile and holds the screen until
 //  the game is actually up.

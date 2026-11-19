@@ -37,7 +37,7 @@ Say "OS        : $($os.Caption) (build $($os.BuildNumber), ProductType $($os.Pro
 Say "TermService DLL : $serviceDll"
 if ($os.ProductType -eq 1 -and (Split-Path -Leaf "$serviceDll") -eq 'termsrv.dll') {
     Write-Warning ("client SKU: Windows serves one session at a time here, so concurrent seats " +
-        "need Windows Server plus an RDS CAL per seat. See https://docs.punktfunk.unom.io/docs/developers/multi-seat-contract.")
+        "need Windows Server plus an RDS CAL per seat. See https://project-colony.github.io/Lilynk/docs/developers/multi-seat-contract.")
 }
 
 # --- 2. is the seats package even installed? ----------------------------------------------------
@@ -96,7 +96,7 @@ foreach ($d in $seats) {
            catch { '<unknown>' }
     $rank = try { (Get-PnpDeviceProperty -InstanceId $d.InstanceId -KeyName 'DEVPKEY_Device_DriverRank' -EA Stop).Data }
             catch { $null }
-    $ours = $d.FriendlyName -like '*Punktfunk*'
+    $ours = $d.FriendlyName -like '*Lilynk*'
     if (-not $ours) { $bad += $d }
     $rankHex = if ($null -ne $rank) { '0x{0:X8}' -f [uint32]$rank } else { 'n/a' }
     Say ("  {0}`n    driver={1} inf={2} rank={3} {4}" -f

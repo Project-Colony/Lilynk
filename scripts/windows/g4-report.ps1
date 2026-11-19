@@ -14,7 +14,7 @@
 #>
 param(
   [string]$Tag = 'g4n',
-  [string]$HostLog = 'C:\ProgramData\punktfunk\logs\host.log',
+  [string]$HostLog = 'C:\ProgramData\lilynk\logs\host.log',
   # Where the soak's logs live. Point it at a copied-off directory to cut a run elsewhere.
   [string]$Root = 'C:\Users\Public',
   # Gaps this long or longer are criterion 1's subject (ms).

@@ -166,7 +166,7 @@ mod tests {
         use ly_client_core::trust::{KnownHost, KnownHosts, Settings};
 
         let home = std::env::temp_dir().join(format!("pf-spawn-test-{}", std::process::id()));
-        let cfg = home.join(".config/punktfunk");
+        let cfg = home.join(".config/lilynk");
         std::fs::create_dir_all(&cfg).unwrap();
         // SAFETY: the only env-mutating test in this binary (see the doc above — one test, one
         // directory, deliberately not split). Parallel tests may `getenv` concurrently; glibc

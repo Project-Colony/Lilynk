@@ -8,7 +8,7 @@ version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license = "GPL-3.0-or-later"
-description = "punktfunk host video encode: NVENC/VAAPI/AMF/QSV/Vulkan-Video/PyroWave/openh264 backends behind one Encoder trait."
+description = "lilynk host video encode: NVENC/VAAPI/AMF/QSV/Vulkan-Video/PyroWave/openh264 backends behind one Encoder trait."
 publish = false
 
 [dependencies]

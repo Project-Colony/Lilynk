@@ -1,42 +1,43 @@
 ---
 title: Install the Host
-description: Pick the system you stream from. Each guide is one page with the install command, the groups to join, and how to start the host.
+description: Pick the system you stream from. Each guide is one page with the build, the groups to join, and how to start the host.
 ---
 
 import { Cards, Card } from 'fumadocs-ui/components/card'
 
-Install the host on the PC you stream *from*. Pick your system:
+Install the host on the PC you stream *from*. Lilynk publishes no packages or releases yet, so
+each guide builds the host from a clone ([Build from source](/docs/developers/build-from-source)).
+Pick your system:
 
 <Cards>
-  <Card title="Ubuntu 26.04+" href="/docs/ubuntu" description="apt: add the repo, install host, console and plugin runner." />
-  <Card title="Debian 13+ (and LMDE)" href="/docs/debian" description="The same apt repo as Ubuntu." />
-  <Card title="Fedora 43+" href="/docs/fedora" description="dnf: add the RPM repo, install host, console and plugin runner." />
-  <Card title="Arch / CachyOS" href="/docs/arch" description="pacman: a signed binary repo, then one full -Syu." />
-  <Card title="Omarchy" href="/docs/omarchy" description="The Arch repo, plus one setup command for ufw, autostart and the app menu." />
-  <Card title="Bazzite / Fedora Atomic" href="/docs/bazzite" description="A systemd sysext: no layering, no reboot." />
+  <Card title="Ubuntu 26.04+" href="/docs/ubuntu" description="Build the host, console and plugin runner as .deb packages, then install them with apt." />
+  <Card title="Debian 13+ (and LMDE)" href="/docs/debian" description="The same .deb build as Ubuntu." />
+  <Card title="Fedora 43+" href="/docs/fedora" description="Build the RPMs, then install them with dnf." />
+  <Card title="Arch / CachyOS" href="/docs/arch" description="Build the packages with the PKGBUILD, then install them with pacman." />
+  <Card title="Omarchy" href="/docs/omarchy" description="The Arch packages, plus one setup command for ufw, autostart and the app menu." />
+  <Card title="Bazzite / Fedora Atomic" href="/docs/bazzite" description="A systemd sysext built from the RPMs: no layering, no reboot." />
   <Card title="SteamOS (Steam Deck as host)" href="/docs/steamos-host" description="One script, built on the device." />
-  <Card title="NixOS" href="/docs/nixos" description="A flake input and a NixOS module, with a binary cache." />
-  <Card title="Windows 11" href="/docs/windows-host" description="winget or a signed installer." />
+  <Card title="NixOS" href="/docs/nixos" description="A flake input and a NixOS module, built on your machine." />
+  <Card title="Windows 11" href="/docs/windows-host" description="A setup you pack yourself, with its own virtual display and gamepad drivers." />
 </Cards>
 
 Streaming *to* a device instead? That's a client: [Install a Client](/docs/install-client).
 
 ## Guided install (preview)
 
-On Linux, one command does what the pages above walk you through. It detects your distro, adds the
-repo, installs the host, joins the groups, opens the firewall if you run one, starts the host and
-the console, and tells you how to pair:
+On Linux, the guided installer wires up a host you have already built and installed. Build it in a
+clone and run the `scripts/install.sh` stub on it:
 
 <Installer />
 
-To read what runs first:
+It goes on only where `lilynk-host`, `lilynk-web-server` and `lilynk-scripting` are already on your
+`PATH` and no Lilynk repo is configured. It then joins the groups, opens the firewall if you run
+one, starts the host and the console, and tells you how to pair. Anywhere else it stops and points
+to [Build from source](/docs/developers/build-from-source).
 
-<Installer inspect />
-
-The script downloads the `lilynk-setup` installer for your architecture (x86_64 or aarch64),
-checks its sha256 and runs it. In a terminal it shows one screen with every choice filled in:
-press Enter to install, or edit a row. It then asks for a console password and where the console
-should listen. Without a terminal it takes the defaults.
+In a terminal it shows one screen with every choice filled in: press Enter to install, or edit a
+row. It then asks for a console password and where the console should listen. Without a terminal it
+takes the defaults.
 
 It covers Ubuntu, Debian, Fedora, Arch and its derivatives, Bazzite / Fedora Atomic and SteamOS.
 On SteamOS it hands over to the on-device build. For NixOS and Windows it points you to their
@@ -44,17 +45,17 @@ pages. It doesn't install GPU drivers: it warns when an NVIDIA GPU has no workin
 Sunshine, Apollo or Vibeshine is running, it moves the management API off their port. Re-running
 it is safe.
 
-Pass flags after `sh -s --` at the end of the one-liner, for example `… | sh -s -- --yes`.
+Pass flags after `install.sh`, for example `… sh scripts/install.sh --yes`.
 Each option also has an environment twin (`1` or `0` for on/off options). `--help` lists them all.
 
 | Flag | Environment | What it does |
 |---|---|---|
 | `-y`, `--yes` | `LILYNK_INSTALL_YES=1` | No questions: take every default |
-| `--host`, `--client` | | What to install (default: host). `--client` alone installs only the client, as a Flatpak where your distro has no Punktfunk repo |
-| `--channel stable\|canary` | `LILYNK_INSTALL_CHANNEL` | Package channel. On an installed box this switches channel; without it the box keeps its current one ([Release Channels](/docs/channels)) |
+| `--host`, `--client` | | What to set up (default: host) |
+| `--channel stable\|canary` | `LILYNK_INSTALL_CHANNEL` | Release channel. Leave it off: the repository has only `main` ([Release Channels](/docs/channels)) |
 | `--gamestream` / `--no-gamestream` | `LILYNK_INSTALL_GAMESTREAM` | [Moonlight](/docs/moonlight) compatibility (default off) |
 | `--clipboard` / `--no-clipboard` | `LILYNK_INSTALL_CLIPBOARD` | [Shared clipboard](/docs/clipboard) (default on) |
-| `--lilynk-group` / `--no-lilynk-group` | `LILYNK_INSTALL_LILYNK_GROUP` | Join the `punktfunk` group for the virtual Steam Deck controller (default on) |
+| `--lilynk-group` / `--no-lilynk-group` | `LILYNK_INSTALL_LILYNK_GROUP` | Join the `lilynk` group for the virtual Steam Deck controller (default on) |
 | `--linger` / `--no-linger` | `LILYNK_INSTALL_LINGER` | Start at boot with nobody logged in (default on for Bazzite, Nobara, Game Mode boxes and runs without a graphical session) |
 | `--console-cert` / `--no-console-cert` | `LILYNK_INSTALL_CONSOLE_CERT` | Trust the console's certificate in this box's browser (default on when a desktop is installed) |
 | `--web-bind lan\|localhost\|ADDR` | `LILYNK_INSTALL_WEB_BIND` | Where the console listens (default `lan`). Written to `host.env` as [`LILYNK_UI_BIND`](/docs/configuration) |
@@ -64,7 +65,7 @@ Each option also has an environment twin (`1` or `0` for on/off options). `--hel
 | `--no-start` | | Install and configure, but don't start the services |
 | `--dry-run` | `LILYNK_INSTALL_DRY_RUN=1` | Print every command, change nothing |
 | `--demo PRESET` | | Walk the whole flow against a canned machine, change nothing |
-| `--uninstall` | | Stop the services and remove the packages and repo. Your config stays |
+| `--uninstall` | | Stop the services and remove the packages. Your config stays |
 | `-v`, `--verbose` | | Echo every command instead of one progress line |
 
 ## Good to know
@@ -74,14 +75,11 @@ Each option also has an environment twin (`1` or `0` for on/off options). `--hel
 - **Sunshine, Apollo or Vibeshine installed?** They can run side by side with one port moved:
   [Switching from Sunshine](/docs/switching-from-sunshine). `lilynk-host detect-conflicts`
   lists what it finds.
-- **Three packages.** `lilynk-host` (`punktfunk` on Fedora) is the host, `lilynk-web` the
+- **Three packages.** `lilynk-host` (`lilynk` on Fedora) is the host, `lilynk-web` the
   browser console, `lilynk-scripting` the plugin runner that fills your
   [game library](/docs/game-library).
 - **Status icon.** The host starts its tray icon at your next log-in. Turn that off with **Start
   at log-in** in the icon's menu, under **Host** → **System** → **Tray autostart** in the
   console, or in your desktop's startup settings. GNOME shows it only with the AppIndicator
   extension.
-- **Stable by default.** Every guide uses the stable channel. The latest `main` build is
-  [canary](/docs/channels).
 - **Updating and removing:** [Updating the Host](/docs/updating), [Uninstall](/docs/uninstall).
-- **No package for your system?** [Build from source](/docs/developers/build-from-source).

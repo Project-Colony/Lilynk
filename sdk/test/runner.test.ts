@@ -95,29 +95,29 @@ describe("discovery", () => {
 		expect(logs.join("\n")).toContain("evil.ts");
 	});
 
-	test("discovers scoped @punktfunk/plugin-* packages (not other scoped pkgs)", () => {
+	test("discovers scoped @lilynk/plugin-* packages (not other scoped pkgs)", () => {
 		const d = mkdirs("discover-scoped");
 		write(
-			path.join(d.pluginsDir, "node_modules", "@punktfunk", "plugin-y", "package.json"),
-			JSON.stringify({ name: "@punktfunk/plugin-y", module: "dist/index.js" }),
+			path.join(d.pluginsDir, "node_modules", "@lilynk", "plugin-y", "package.json"),
+			JSON.stringify({ name: "@lilynk/plugin-y", module: "dist/index.js" }),
 		);
 		write(
-			path.join(d.pluginsDir, "node_modules", "@punktfunk", "plugin-y", "dist", "index.js"),
+			path.join(d.pluginsDir, "node_modules", "@lilynk", "plugin-y", "dist", "index.js"),
 			"export default { name: 'y', main: async () => {} };",
 		);
 		// A non-plugin scoped package (e.g. the SDK itself) is ignored.
 		write(
-			path.join(d.pluginsDir, "node_modules", "@punktfunk", "host", "package.json"),
-			JSON.stringify({ name: "@punktfunk/host" }),
+			path.join(d.pluginsDir, "node_modules", "@lilynk", "host", "package.json"),
+			JSON.stringify({ name: "@lilynk/host" }),
 		);
 		const units = discoverUnits(d);
-		expect(units.map((u) => u.name)).toEqual(["@punktfunk/plugin-y"]);
+		expect(units.map((u) => u.name)).toEqual(["@lilynk/plugin-y"]);
 	});
 
-	test("discovers plugins in ANY scope, not just @punktfunk", () => {
+	test("discovers plugins in ANY scope, not just @lilynk", () => {
 		// Plugin-store catalog entries must be scoped so the scope can map to that entry's
 		// registry, so a third-party plugin necessarily arrives under its own scope. Discovery
-		// limited to @punktfunk would let it install and then never run.
+		// limited to @lilynk would let it install and then never run.
 		const d = mkdirs("discover-foreign-scope");
 		write(
 			path.join(d.pluginsDir, "node_modules", "@retro-hub", "plugin-z", "package.json"),
@@ -131,25 +131,25 @@ describe("discovery", () => {
 	});
 
 	test("a plugin's LIBRARY is not a unit — top-level dependencies win", () => {
-		// `@punktfunk/plugin-kit` is the framework kit-built plugins depend on. It matches the
+		// `@lilynk/plugin-kit` is the framework kit-built plugins depend on. It matches the
 		// `plugin-*` convention exactly and lands in node_modules transitively, so a
 		// convention-only scan would import and run the framework as if it were a plugin.
 		const d = mkdirs("discover-toplevel");
 		for (const name of ["plugin-real", "plugin-kit"]) {
 			write(
-				path.join(d.pluginsDir, "node_modules", "@punktfunk", name, "package.json"),
-				JSON.stringify({ name: `@punktfunk/${name}`, main: "index.js" }),
+				path.join(d.pluginsDir, "node_modules", "@lilynk", name, "package.json"),
+				JSON.stringify({ name: `@lilynk/${name}`, main: "index.js" }),
 			);
 			write(
-				path.join(d.pluginsDir, "node_modules", "@punktfunk", name, "index.js"),
+				path.join(d.pluginsDir, "node_modules", "@lilynk", name, "index.js"),
 				"export default { name: 'p', main: async () => {} };",
 			);
 		}
 		write(
 			path.join(d.pluginsDir, "package.json"),
-			JSON.stringify({ dependencies: { "@punktfunk/plugin-real": "^1.0.0" } }),
+			JSON.stringify({ dependencies: { "@lilynk/plugin-real": "^1.0.0" } }),
 		);
-		expect(discoverUnits(d).map((u) => u.name)).toEqual(["@punktfunk/plugin-real"]);
+		expect(discoverUnits(d).map((u) => u.name)).toEqual(["@lilynk/plugin-real"]);
 	});
 
 	test("no package.json at all falls back to the naming convention", () => {
@@ -173,11 +173,11 @@ describe("discovery", () => {
 		// plugin.
 		const d = mkdirs("discover-emptied");
 		write(
-			path.join(d.pluginsDir, "node_modules", "@punktfunk", "plugin-kit", "package.json"),
-			JSON.stringify({ name: "@punktfunk/plugin-kit", main: "index.js" }),
+			path.join(d.pluginsDir, "node_modules", "@lilynk", "plugin-kit", "package.json"),
+			JSON.stringify({ name: "@lilynk/plugin-kit", main: "index.js" }),
 		);
 		write(
-			path.join(d.pluginsDir, "node_modules", "@punktfunk", "plugin-kit", "index.js"),
+			path.join(d.pluginsDir, "node_modules", "@lilynk", "plugin-kit", "index.js"),
 			"export default {};",
 		);
 		write(path.join(d.pluginsDir, "package.json"), JSON.stringify({ name: "plugins" }));
@@ -195,15 +195,15 @@ describe("discovery", () => {
 		write(path.join(d.scriptsDir, "mine.ts"), "export {};");
 		for (const name of ["plugin-theirs", "plugin-planted"]) {
 			write(
-				path.join(d.pluginsDir, "node_modules", "@punktfunk", name, "package.json"),
-				JSON.stringify({ name: `@punktfunk/${name}`, main: "index.js" }),
+				path.join(d.pluginsDir, "node_modules", "@lilynk", name, "package.json"),
+				JSON.stringify({ name: `@lilynk/${name}`, main: "index.js" }),
 			);
-			write(path.join(d.pluginsDir, "node_modules", "@punktfunk", name, "index.js"), "");
+			write(path.join(d.pluginsDir, "node_modules", "@lilynk", name, "index.js"), "");
 		}
 		write(
 			path.join(d.pluginsDir, "package.json"),
 			JSON.stringify({
-				dependencies: { "@punktfunk/plugin-theirs": "1", "@punktfunk/plugin-planted": "1" },
+				dependencies: { "@lilynk/plugin-theirs": "1", "@lilynk/plugin-planted": "1" },
 			}),
 		);
 		const person = { ...d, configDir: d.dir, personOnly: true };
@@ -212,13 +212,13 @@ describe("discovery", () => {
 		expect(logs.join("\n")).toContain("plugin-planted: its person didn't install it");
 		write(
 			path.join(d.dir, "plugin-run", "person-plugins.json"),
-			JSON.stringify(["@punktfunk/plugin-theirs"]),
+			JSON.stringify(["@lilynk/plugin-theirs"]),
 		);
-		expect(discoverUnits(person).map((u) => u.name)).toEqual(["@punktfunk/plugin-theirs"]);
+		expect(discoverUnits(person).map((u) => u.name)).toEqual(["@lilynk/plugin-theirs"]);
 		expect(discoverUnits(d).map((u) => u.name)).toEqual([
 			"mine",
-			"@punktfunk/plugin-planted",
-			"@punktfunk/plugin-theirs",
+			"@lilynk/plugin-planted",
+			"@lilynk/plugin-theirs",
 		]);
 	});
 });
@@ -327,7 +327,7 @@ describe("spawnAgainIfKilled (the ACL read's guard against a misfired timeout)",
 });
 
 describe("windowsSddlUnsafeReason (the sshd rule's Windows half, pure)", () => {
-	// What a file under the host's ACL'd %ProgramData%\punktfunk actually looks like: owned by
+	// What a file under the host's ACL'd %ProgramData%\lilynk actually looks like: owned by
 	// Administrators, protected DACL, admin/SYSTEM/OWNER-RIGHTS full + Users read-execute.
 	const LOCKED =
 		"O:BAG:SYD:PAI(A;;FA;;;SY)(A;;FA;;;BA)(A;;FA;;;OW)(A;;0x1200a9;;;BU)";
@@ -483,7 +483,7 @@ describe("supervision", () => {
 			JSON.stringify({
 				name: "lilynk-plugin-lonely",
 				main: "index.ts",
-				punktfunk: { schema: 1, id: "lonely" },
+				lilynk: { schema: 1, id: "lonely" },
 			}),
 		);
 		// Each run is a fresh process: a module-level counter would start at zero every time.
@@ -545,7 +545,7 @@ describe("supervision", () => {
 				JSON.stringify({
 					name: `lilynk-plugin-${id}`,
 					main: "index.js",
-					punktfunk: { schema: 1, id },
+					lilynk: { schema: 1, id },
 				}),
 			);
 			write(path.join(pkg, "index.js"), "export default {};");
@@ -660,7 +660,7 @@ describe("supervision", () => {
 			JSON.stringify({
 				name: "lilynk-plugin-demo",
 				main: "index.js",
-				punktfunk: { schema: 1, id: "demo" },
+				lilynk: { schema: 1, id: "demo" },
 			}),
 		);
 		write(path.join(pkg, "index.js"), "export default {};");
@@ -818,7 +818,7 @@ describe("supervision", () => {
 		const fiber = Effect.runFork(
 			superviseUnit(
 				{
-					name: "@punktfunk/plugin-boxed",
+					name: "@lilynk/plugin-boxed",
 					file: path.join(d.pluginsDir, "index.js"),
 					packageDir: d.pluginsDir,
 					manifest: { schema: 1, id: "boxed" },
@@ -927,7 +927,7 @@ describe("a Windows plugin child's way to the host", () => {
 	test("a container keeps its pipe, and its page goes over it", () => {
 		const env = containerEnv(unit, {}, () => true);
 		expect(env.LILYNK_MGMT_UNIX).toBe(pipeName("steam", process.env.LILYNK_SEAT_ID));
-		expect(env.LILYNK_MGMT_URL).toBe("http://punktfunk.host");
+		expect(env.LILYNK_MGMT_URL).toBe("http://lilynk.host");
 		expect(env.LILYNK_UI_CHANNEL).toBe("steam");
 		expect(containerEnv(unit, {}, () => false).LILYNK_MGMT_UNIX).toBeUndefined();
 	});

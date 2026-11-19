@@ -11,7 +11,7 @@ version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license = "GPL-3.0-or-later"
-description = "punktfunk host virtual-display orchestration: per-compositor Linux backends + the Windows IddCx driver backend behind one VirtualDisplay trait."
+description = "lilynk host virtual-display orchestration: per-compositor Linux backends + the Windows IddCx driver backend behind one VirtualDisplay trait."
 publish = false
 
 [dependencies]

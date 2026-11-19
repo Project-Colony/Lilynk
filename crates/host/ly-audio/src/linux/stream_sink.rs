@@ -64,7 +64,7 @@ pub(super) static SOURCE: DefaultClaim = DefaultClaim {
 enum Restore {
     /// Re-set the saved pre-claim JSON (`{"name":"..."}`).
     Value(String),
-    /// No pre-claim preference, or the saved one was a stale punktfunk claim.
+    /// No pre-claim preference, or the saved one was a stale lilynk claim.
     Delete,
 }
 
@@ -95,7 +95,7 @@ impl Ledger {
         }
     }
 
-    /// Remember the elected node the first claim found. A stale punktfunk
+    /// Remember the elected node the first claim found. A stale lilynk
     /// name (crash leftover) is not an output; the last real one stands.
     fn note_host(&mut self, effective: Option<&str>, ours: &str) {
         if let Some(name) = effective.and_then(json_name).filter(|n| !n.contains(ours)) {
@@ -412,7 +412,7 @@ mod tests {
         assert_eq!(l.on_release("a"), Some(Release::Restore(Restore::Delete)));
     }
 
-    /// The host output is the elected sink's bare name; a stale punktfunk
+    /// The host output is the elected sink's bare name; a stale lilynk
     /// election or a missing key keeps the last real one.
     #[test]
     fn host_output_is_the_elected_sink_name() {

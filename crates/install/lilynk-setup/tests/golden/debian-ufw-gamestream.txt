@@ -1,6 +1,6 @@
-==> Detected debian → apt (guide: https://docs.punktfunk.unom.io/docs/debian)
+==> Detected debian → apt (guide: https://project-colony.github.io/Lilynk/docs/debian)
 ==> Choices (nothing below has run yet)
-  Full controller (joins the punktfunk group — grants usbip attach): yes
+  Full controller (joins the lilynk group — grants usbip attach): yes
   Third-party clients (Moonlight, Artemis): yes
   Shared clipboard: yes
   Start at boot with nobody logged in: no
@@ -14,25 +14,25 @@
 ==> Checking for Sunshine / Apollo / Vibeshine
   ok No conflicting game-streaming host detected.
 ==> Options (each one can be changed later)
-  ok would set LILYNK_UI_BIND=0.0.0.0 in /box/config/punktfunk/host.env
-  ok would set gamestream=true in /box/config/punktfunk/host-settings.json
-  ok would set clipboard="files" in /box/config/punktfunk/host-settings.json
+  ok would set LILYNK_UI_BIND=0.0.0.0 in /box/config/lilynk/host.env
+  ok would set gamestream=true in /box/config/lilynk/host-settings.json
+  ok would set clipboard="files" in /box/config/lilynk/host-settings.json
 ==> Controller access
   + sudo usermod -aG input "$USER"
-  + sudo usermod -aG punktfunk "$USER"
+  + sudo usermod -aG lilynk "$USER"
 ==> Firewall
   + sudo ufw allow lilynk-native
   + sudo ufw allow lilynk-web
   + sudo ufw allow lilynk-gamestream
 ==> Starting the host and the web console
   + systemctl --user enable --now lilynk-host lilynk-web
-  + certutil -A -d sql:/box/home/.pki/nssdb -n lilynk-console -t P,, -i /box/config/punktfunk/native-cert.pem
+  + certutil -A -d sql:/box/home/.pki/nssdb -n lilynk-console -t P,, -i /box/config/lilynk/native-cert.pem
 ==> Checking
 
   Done. Next: let a device in.
-  On the device you play on, open Punktfunk and pick this host. Approve it in the notification on this device, or in the web console.
+  On the device you play on, open Lilynk and pick this host. Approve it in the notification on this device, or in the web console.
   Web console: https://192.168.1.10:47992  (its certificate is this host's own)
-  Password — this prints it, until you first sign in: sed -n 's/^LILYNK_UI_PASSWORD=//p' ~/.config/punktfunk/web-password
+  Password — this prints it, until you first sign in: sed -n 's/^LILYNK_UI_PASSWORD=//p' ~/.config/lilynk/web-password
   Group changes apply after a restart of this device (controllers won't work until then).
-  https://docs.punktfunk.unom.io/docs/troubleshooting · https://docs.punktfunk.unom.io/docs/debian
+  https://project-colony.github.io/Lilynk/docs/troubleshooting · https://project-colony.github.io/Lilynk/docs/debian
 

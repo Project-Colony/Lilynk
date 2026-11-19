@@ -190,7 +190,7 @@ fn install(plugins: &std::path::Path, id: &str, reads: &str) {
     let name = format!("plugin-{id}");
     let dir = plugins.join("node_modules").join(&name);
     std::fs::create_dir_all(&dir).unwrap();
-    let body = json!({"name": name, "punktfunk": {"schema": 1, "id": id, "reads": [reads]}});
+    let body = json!({"name": name, "lilynk": {"schema": 1, "id": id, "reads": [reads]}});
     std::fs::write(dir.join("package.json"), body.to_string()).unwrap();
     let deps_file = plugins.join("package.json");
     let mut deps: serde_json::Value = std::fs::read_to_string(&deps_file)
@@ -372,7 +372,7 @@ async fn a_person_s_own_store_answers_their_lane_alone() {
         (
             Method::POST,
             "/api/v1/store/uninstall",
-            json!({"pkg": "@punktfunk/plugin-none"}),
+            json!({"pkg": "@lilynk/plugin-none"}),
         ),
         (Method::POST, "/api/v1/store/runtime", json!({})),
     ];

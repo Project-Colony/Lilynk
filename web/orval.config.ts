@@ -4,7 +4,7 @@ import { defineConfig } from "orval";
 // Regenerate after any management-API change: `bun run api:gen` (the Rust side writes
 // api/openapi.json with `cargo run -p lilynk-host -- openapi > api/openapi.json`).
 export default defineConfig({
-	punktfunk: {
+	lilynk: {
 		input: {
 			target: "../api/openapi.json",
 		},

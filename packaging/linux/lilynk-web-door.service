@@ -1,10 +1,10 @@
-# punktfunk management web console for the door: the user unit of the same name
+# lilynk management web console for the door: the user unit of the same name
 # (scripts/lilynk-web.service) as a system service, pointed at the door's files and port.
 #
 # The user's own console stands down while this runs: the runtime directory below is what its
 # ConditionPathExists= looks for. Same port, same certificate, same password.
 [Unit]
-Description=punktfunk management web console (the door's)
+Description=lilynk management web console (the door's)
 After=lilynk-door.service
 Wants=lilynk-door.service
 # Off without the owner record or while an off holds it, as the door is.
@@ -14,23 +14,23 @@ StartLimitIntervalSec=0
 
 [Service]
 Type=simple
-User=punktfunk
+User=lilynk
 Group=lilynk-door
 RuntimeDirectory=lilynk-web-door
-Environment=LILYNK_CONFIG_DIR=/var/lib/punktfunk
+Environment=LILYNK_CONFIG_DIR=/var/lib/lilynk
 Environment=PORT=47992
-Environment=LILYNK_UI_TLS_CERT=/var/lib/punktfunk/cert.pem
-Environment=LILYNK_UI_TLS_KEY=/var/lib/punktfunk/key.pem
+Environment=LILYNK_UI_TLS_CERT=/var/lib/lilynk/cert.pem
+Environment=LILYNK_UI_TLS_KEY=/var/lib/lilynk/key.pem
 Environment=LILYNK_UI_SECURE=1
 # The door writes these on its first start; the console can't serve without them, so wait.
-ExecStartPre=/bin/sh -c 'until [ -s /var/lib/punktfunk/mgmt-token ] && [ -s /var/lib/punktfunk/native-key.pem ]; do sleep 1; done'
+ExecStartPre=/bin/sh -c 'until [ -s /var/lib/lilynk/mgmt-token ] && [ -s /var/lib/lilynk/native-key.pem ]; do sleep 1; done'
 # The owner's console bind, which door-helper copies with the ports. Without it the console
 # answers on every interface.
 EnvironmentFile=-/var/lib/lilynk-seats/host.env
 # The door's own files, which the console reads itself and which win any key they share with the
 # file above. Never EnvironmentFile=: systemd reads that as root and follows a link, and the
 # door's account owns this folder.
-Environment=LILYNK_ENV_FILES=/var/lib/punktfunk/mgmt-token:/var/lib/punktfunk/web-password:/var/lib/punktfunk/mgmt-endpoint
+Environment=LILYNK_ENV_FILES=/var/lib/lilynk/mgmt-token:/var/lib/lilynk/web-password:/var/lib/lilynk/mgmt-endpoint
 ExecStart=/usr/bin/lilynk-web-server
 Restart=always
 RestartSec=2

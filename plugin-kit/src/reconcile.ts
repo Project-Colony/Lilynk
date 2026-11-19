@@ -109,7 +109,7 @@ export interface RunningAccepted {
 export class ProviderClient extends Context.Service<
 	ProviderClient,
 	ProviderClientService
->()("@punktfunk/plugin-kit/ProviderClient") {
+>()("@lilynk/plugin-kit/ProviderClient") {
 	static readonly layer: Layer.Layer<ProviderClient, never, HostClient> =
 		Layer.effect(ProviderClient)(
 			Effect.gen(function* () {

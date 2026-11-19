@@ -252,7 +252,7 @@ const catalogEntry = (
 ) =>
 	({
 		id: "steam",
-		pkg: "@punktfunk/plugin-steam",
+		pkg: "@lilynk/plugin-steam",
 		title: "Steam",
 		description: "Steam library scanner",
 		author: "unom",
@@ -360,7 +360,7 @@ export const SourcesWithPlugins: Story = {
 			]}
 			running={new Set(["steam"])}
 			available={[
-				catalogEntry({ pkg: "@punktfunk/plugin-heroic", title: "Heroic" }),
+				catalogEntry({ pkg: "@lilynk/plugin-heroic", title: "Heroic" }),
 			]}
 		/>
 	),
@@ -399,12 +399,12 @@ export const SourcesEmptyWithDetected: Story = {
 			available={[
 				catalogEntry({ detected: true }),
 				catalogEntry({
-					pkg: "@punktfunk/plugin-lutris",
+					pkg: "@lilynk/plugin-lutris",
 					title: "Lutris",
 					detected: true,
 				}),
 				catalogEntry({
-					pkg: "@punktfunk/plugin-heroic",
+					pkg: "@lilynk/plugin-heroic",
 					title: "Heroic",
 					detected: false,
 				}),
@@ -435,7 +435,7 @@ export const Migration: Story = {
 						origin: "builtin",
 					},
 					entry: catalogEntry({
-						pkg: "@punktfunk/plugin-lutris",
+						pkg: "@lilynk/plugin-lutris",
 						id: "lutris",
 						title: "Lutris",
 					}),

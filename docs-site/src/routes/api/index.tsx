@@ -13,18 +13,18 @@ export const Route = createFileRoute('/api/')({
   component: ApiReference,
   head: () => ({
     meta: [
-      { title: 'Punktfunk — Management API Reference' },
+      { title: 'Lilynk — Management API Reference' },
       {
         name: 'description',
         content:
-          'Interactive reference for the Punktfunk host management REST API (OpenAPI).',
+          'Interactive reference for the Lilynk host management REST API (OpenAPI).',
       },
     ],
     links: [{ rel: 'stylesheet', href: scalarCss }],
   }),
 })
 
-// The full Punktfunk theme rolled out onto Scalar — the same dark-violet (and
+// The full Lilynk theme rolled out onto Scalar — the same dark-violet (and
 // light-lavender) product chrome as the docs/management console.
 //
 // IMPORTANT: Scalar toggles `.light-mode` / `.dark-mode` on `document.body`,
@@ -191,7 +191,7 @@ function ApiReference() {
       url: '/openapi.json',
       darkMode: isDark,
       hideDarkModeToggle: true,
-      metaData: { title: 'Punktfunk Management API' },
+      metaData: { title: 'Lilynk Management API' },
       hideDownloadButton: false,
       customCss: SCALAR_CSS,
     }),
@@ -200,13 +200,13 @@ function ApiReference() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      {/* Slim branded bar so the reference stays inside the Punktfunk identity
+      {/* Slim branded bar so the reference stays inside the Lilynk identity
           and links back into the docs. */}
       <header className="flex h-14 shrink-0 items-center justify-between border-b border-fd-border px-4 md:px-6">
         <Link
           to="/docs/$"
           params={{ _splat: '' }}
-          aria-label="Punktfunk documentation"
+          aria-label="Lilynk documentation"
           className="flex items-center gap-2 no-underline"
         >
           <BrandMark className="size-6" />

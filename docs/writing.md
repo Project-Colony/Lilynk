@@ -1,4 +1,4 @@
-# Punktfunk writing standards
+# Lilynk writing standards
 
 House style for **commits**, **changelogs**, **comments**, and the **text a person reads**.
 `scripts/ci/check-writing.sh` fails a PR that breaks the caps below.
@@ -307,7 +307,7 @@ press its power button.` + `Docs ↗`
 |---|---|---|
 | Guide | Sets up a host or streams. Knows no Linux. | One task per page. Numbered steps, happy path first. |
 | Reference | Looks up one setting, flag, port or platform. | Tables. Dense is fine. |
-| Developers | Changes or extends Punktfunk. | Commands that work from a fresh clone. |
+| Developers | Changes or extends Lilynk. | Commands that work from a fresh clone. |
 
 - Open with one sentence: what the reader gets from this page. Never `This page describes`.
 - Say what to do. Add why only when skipping the step breaks something, in one clause.

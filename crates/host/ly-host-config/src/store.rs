@@ -281,7 +281,7 @@ fn read_file(path: &Path) -> std::io::Result<Map<String, Value>> {
 fn load_file(path: &Path) -> Map<String, Value> {
     read_file(path).unwrap_or_else(|e| {
         warn_once(format!(
-            "punktfunk: {}: {e} — using env and defaults",
+            "lilynk: {}: {e} — using env and defaults",
             path.display()
         ));
         Map::new()
@@ -317,7 +317,7 @@ pub(crate) fn resolve(
                 Ok(v) => Some(v),
                 Err(reason) => {
                     warn_once(format!(
-                        "punktfunk: host-settings.json {}: {reason} — ignoring it",
+                        "lilynk: host-settings.json {}: {reason} — ignoring it",
                         s.id
                     ));
                     None
@@ -352,10 +352,7 @@ fn from_env(
         match s.parse_env(&raw) {
             Ok(Some(v)) => return Some((s.env, v)),
             Ok(None) => {}
-            Err(reason) => warn_once(format!(
-                "punktfunk: {}={raw:?}: {reason} — ignoring it",
-                s.env
-            )),
+            Err(reason) => warn_once(format!("lilynk: {}={raw:?}: {reason} — ignoring it", s.env)),
         }
     }
     for alias in s.aliases {
@@ -368,7 +365,7 @@ fn from_env(
             },
         };
         warn_once(format!(
-            "punktfunk: {} is an old name — set {} instead",
+            "lilynk: {} is an old name — set {} instead",
             alias.name, s.env
         ));
         return Some((alias.name, v));

@@ -362,7 +362,7 @@ fn connect_spawn(
                         st.call(desktop::desktop_trust_saved_failed(format!("{e:#}")));
                     }
                     // The child presented its first frame — its window is up, so the
-                    // shell yields: one visible Punktfunk window at a time. Every exit
+                    // shell yields: one visible Lilynk window at a time. Every exit
                     // path restores it (the `Exited` handling above).
                     crate::shell_window::hide();
                     ss.call(Screen::Stream);

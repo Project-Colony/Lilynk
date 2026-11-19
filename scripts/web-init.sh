@@ -1,5 +1,5 @@
 #!/bin/sh
-# Pre-start for the punktfunk web console (run by lilynk-web-init.service as the user):
+# Pre-start for the lilynk web console (run by lilynk-web-init.service as the user):
 #
 #   1. generate the login password once, in the streaming user's config dir, and surface it to
 #      the journal;
@@ -8,13 +8,13 @@
 #   3. wait for the host's first-run artifacts, so the console is not started before the files it
 #      cannot start without exist.
 #
-# The mgmt token is NOT created here — the host owns it (~/.config/punktfunk/mgmt-token); this
+# The mgmt token is NOT created here — the host owns it (~/.config/lilynk/mgmt-token); this
 # script only waits for it.
 #
 # Usage: web-init.sh [WAIT_SECONDS]   (default 30; the CI gate passes a small value)
 set -eu
 
-DIR="${XDG_CONFIG_HOME:-$HOME/.config}/punktfunk"
+DIR="${XDG_CONFIG_HOME:-$HOME/.config}/lilynk"
 mkdir -p "$DIR"
 chmod 700 "$DIR" 2>/dev/null || true
 PWFILE="$DIR/web-password"
@@ -32,7 +32,7 @@ if [ ! -s "$PWFILE" ]; then
     # `systemd-journal` groups — so printing it would publish a 0600 secret to every member of
     # them, permanently. Point at the file instead: it is 0600, and it stays readable only by
     # the user who owns the console.
-    echo "punktfunk web console login password generated."
+    echo "lilynk web console login password generated."
     echo "Read it NOW, before your first sign-in:  sed -n 's/^LILYNK_UI_PASSWORD=//p' $PWFILE"
     echo "(then open https://<host-ip>:47992 and log in — the console stores a hash after that)"
 fi

@@ -49,8 +49,8 @@ pub(crate) fn identity(index: u8, half: Option<Half>) -> crate::uhid_abi::Identi
     };
     crate::uhid_abi::Identity {
         bus,
-        name: format!("Punktfunk {name} {index}"),
-        phys: format!("punktfunk/{tag}/{index}"),
+        name: format!("Lilynk {name} {index}"),
+        phys: format!("lilynk/{tag}/{index}"),
         uniq: format!("lilynk-{tag}-{index}"),
         rdesc: &wire::RDESC,
         vendor: SWITCH_VENDOR,

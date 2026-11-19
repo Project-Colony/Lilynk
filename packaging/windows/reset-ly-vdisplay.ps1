@@ -1,29 +1,29 @@
 #requires -Version 5.1
 <#
 .SYNOPSIS
-  Recover the ly-vdisplay (punktfunk) virtual-display driver after it WEDGES under rapid ADD/REMOVE
+  Recover the ly-vdisplay (lilynk) virtual-display driver after it WEDGES under rapid ADD/REMOVE
   churn - no reboot. The dev-iteration counterpart to redeploy-ly-vdisplay.ps1.
 
 .DESCRIPTION
-  Ghost "Generic Monitor (Punktfunk)" device nodes each pin one of IddCx's ~16 monitor slots; once
+  Ghost "Generic Monitor (Lilynk)" device nodes each pin one of IddCx's ~16 monitor slots; once
   they pile up, IOCTL_ADD returns 0x80070490 ERROR_NOT_FOUND and every session fails to create a
   virtual output. A host restart's IOCTL_CLEAR_ALL departs only that host's live monitors; it
   removes no ghost node.
 
   Steps (run ELEVATED):
     1. Stop the host service (it holds the driver's control device).
-    2. pnputil /remove-device the GHOST (Status != OK = not-present) punktfunk virtual-monitor nodes
+    2. pnputil /remove-device the GHOST (Status != OK = not-present) lilynk virtual-monitor nodes
        that accumulated - the root of the slot exhaustion.
-    3. Disable + Enable the ly-vdisplay adapter (ROOT\DISPLAY\*, "Punktfunk Virtual Display") to
+    3. Disable + Enable the ly-vdisplay adapter (ROOT\DISPLAY\*, "Lilynk Virtual Display") to
        reload the IddCx driver instance and reset its monitor list. (Restart-PnpDevice does NOT exist
        on this box's PowerShell, so we disable+enable explicitly.)
     4. Restart the host service.
   Avoids a reboot on purpose (this box boots to Proxmox).
 
 .PARAMETER Service     Host service name. Default LilynkHost.
-.PARAMETER AdapterName FriendlyName substring of the IddCx adapter to cycle. Default "Punktfunk
+.PARAMETER AdapterName FriendlyName substring of the IddCx adapter to cycle. Default "Lilynk
                        Virtual Display" (NOT SudoVDA's "SudoMaker Virtual Display Adapter").
-.PARAMETER GhostMatch  FriendlyName substring of the virtual monitors to reap. Default "Punktfunk".
+.PARAMETER GhostMatch  FriendlyName substring of the virtual monitors to reap. Default "Lilynk".
 .PARAMETER KeepGhosts  Skip the ghost-node cleanup; only cycle the adapter.
 .PARAMETER NoHost      Don't stop/start the host service (just reset the driver) - used by
                        redeploy-ly-vdisplay.ps1, which manages the service itself.
@@ -39,8 +39,8 @@
 [CmdletBinding()]
 param(
     [string]$Service     = 'LilynkHost',
-    [string]$AdapterName = 'Punktfunk Virtual Display',
-    [string]$GhostMatch  = 'Punktfunk',
+    [string]$AdapterName = 'Lilynk Virtual Display',
+    [string]$GhostMatch  = 'Lilynk',
     [switch]$KeepGhosts,
     [switch]$NoHost,
     [switch]$Verify,
@@ -62,7 +62,7 @@ if (-not $NoHost -and $hostWasRunning) {
     Start-Sleep -Seconds 2
 }
 
-# 2) Reap the ghost (not-present) punktfunk virtual-monitor device nodes.
+# 2) Reap the ghost (not-present) lilynk virtual-monitor device nodes.
 if (-not $KeepGhosts) {
     $ghosts = Get-PnpDevice -Class Monitor -ErrorAction SilentlyContinue |
         Where-Object { $_.Status -ne 'OK' -and $_.FriendlyName -match $GhostMatch }
@@ -113,7 +113,7 @@ if ($Verify) {
         Write-Warning "-Verify: lilynk-probe.exe not found (pass -Probe <path>); skipping verification."
     }
     else {
-        $log = Join-Path $env:ProgramData 'punktfunk\logs\host.log'
+        $log = Join-Path $env:ProgramData 'lilynk\logs\host.log'
         Write-Host "==> verifying with $Probe"
         & $Probe *> $null
         Start-Sleep -Seconds 2

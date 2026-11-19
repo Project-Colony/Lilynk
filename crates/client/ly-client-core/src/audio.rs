@@ -280,7 +280,7 @@ fn pw_thread(
         *pw::keys::MEDIA_CATEGORY   => "Playback",
         *pw::keys::MEDIA_ROLE       => "Game",
         *pw::keys::NODE_NAME        => "lilynk-client",
-        *pw::keys::NODE_DESCRIPTION => "Punktfunk Stream",
+        *pw::keys::NODE_DESCRIPTION => "Lilynk Stream",
     };
     props.insert(*pw::keys::NODE_LATENCY, node_latency.as_str());
     // Settings speaker pick; unset/empty = PipeWire's default routing.
@@ -637,7 +637,7 @@ fn mic_thread(
         *pw::keys::MEDIA_CATEGORY   => "Capture",
         *pw::keys::MEDIA_ROLE       => "Communication",
         *pw::keys::NODE_NAME        => "lilynk-mic-capture",
-        *pw::keys::NODE_DESCRIPTION => "Punktfunk Microphone",
+        *pw::keys::NODE_DESCRIPTION => "Lilynk Microphone",
         // One 10 ms mic frame. Without it the stream inherits the graph quantum (often
         // 1024–2048), so capture arrives in 21–43 ms bursts that sit ahead of the encoder.
         *pw::keys::NODE_LATENCY     => "480/48000",

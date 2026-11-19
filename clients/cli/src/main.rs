@@ -1,4 +1,4 @@
-//! `punktfunk` — the headless client CLI (design/client-architecture-split.md §4).
+//! `lilynk` — the headless client CLI (design/client-architecture-split.md §4).
 //!
 //! One console-subsystem binary over the same brain the GUI shells use, so a script gets the
 //! same behaviour a click does — including wake-then-connect, which the Linux shell's
@@ -10,7 +10,7 @@
 //! Existing surfaces are a frozen compatibility contract and are NOT replaced by this: the
 //! Linux shell keeps its headless flags (Decky invokes them), and `lilynk-probe` stays the
 //! diagnostics tool. This is the door new consumers should use — the Playnite importer shells
-//! to `punktfunk library <host> --json`.
+//! to `lilynk library <host> --json`.
 //!
 //! Exit codes extend the session binary's: 0 ok, 2 connect failed, 3 trust rejected,
 //! 4 renderer failed, 5 could not resolve what was asked for, 6 refused because it needs a
@@ -57,46 +57,46 @@ mod cli {
     }
 
     const USAGE: &str = "\
-punktfunk — the Punktfunk client, headless
+lilynk — the Lilynk client, headless
 
-  punktfunk discover [--json] [--timeout SECS]
-  punktfunk pair <host[:port]> [--pin -] [--name LABEL] [--json]
-  punktfunk hosts list [--probe] [--json]
-  punktfunk hosts add <host[:port]> [--name LABEL] [--fp HEX]
-  punktfunk hosts forget <host-ref>
-  punktfunk default-host [<host-ref>] [--clear]
-  punktfunk wake <host-ref> [--wait]
-  punktfunk library [<host-ref>] [--json]
-  punktfunk end-game [<host-ref>] --game ID
-  punktfunk actions [<host-ref>] [--json] [--run ID]
-  punktfunk screen [<host-ref>] [--json] [--pick ID]
-  punktfunk launch [<host-ref>] [--game ID] [--preset REF] [--as PROFILE]
+  lilynk discover [--json] [--timeout SECS]
+  lilynk pair <host[:port]> [--pin -] [--name LABEL] [--json]
+  lilynk hosts list [--probe] [--json]
+  lilynk hosts add <host[:port]> [--name LABEL] [--fp HEX]
+  lilynk hosts forget <host-ref>
+  lilynk default-host [<host-ref>] [--clear]
+  lilynk wake <host-ref> [--wait]
+  lilynk library [<host-ref>] [--json]
+  lilynk end-game [<host-ref>] --game ID
+  lilynk actions [<host-ref>] [--json] [--run ID]
+  lilynk screen [<host-ref>] [--json] [--pick ID]
+  lilynk launch [<host-ref>] [--game ID] [--preset REF] [--as PROFILE]
                                 [--request-access] [--exec] [--fullscreen]
-  punktfunk profiles <host-ref> [--json] [--pick PROFILE | --clear]
-  punktfunk open <punktfunk://…> [--yes]
-  punktfunk reachable <host-ref>
-  punktfunk speed-test <host-ref>
-  punktfunk network-check <host-ref> [--json]
-  punktfunk presets list [--json]
-  punktfunk device-code [--json]
-  punktfunk reset
+  lilynk profiles <host-ref> [--json] [--pick PROFILE | --clear]
+  lilynk open <punktfunk://…> [--yes]
+  lilynk reachable <host-ref>
+  lilynk speed-test <host-ref>
+  lilynk network-check <host-ref> [--json]
+  lilynk presets list [--json]
+  lilynk device-code [--json]
+  lilynk reset
 
 A <host-ref> is a saved host's id, its name, or an address — the same reference a
 punktfunk:// link takes. Where it is optional, leaving it out means the default host.
 Exit codes: 0 ok, 2 connect, 3 trust, 4 renderer, 5 not found, 6 needs a person.
 
-\"punktfunk help <command>\" (or any command with --help) explains that command.";
+\"lilynk help <command>\" (or any command with --help) explains that command.";
 
-    /// The long help for one verb — `punktfunk help <verb>`, or `--help` after the verb.
+    /// The long help for one verb — `lilynk help <verb>`, or `--help` after the verb.
     /// Each entry documents its flags and the behaviour a script would need to know
     /// (what goes to stdout vs stderr, and which exit codes mean what).
     fn verb_help(verb: &str) -> Option<&'static str> {
         Some(match verb {
             "discover" => {
                 "\
-punktfunk discover [--json] [--timeout SECS] — browse the LAN for hosts
+lilynk discover [--json] [--timeout SECS] — browse the LAN for hosts
 
-Listens for Punktfunk hosts advertising over mDNS and prints what answered:
+Listens for Lilynk hosts advertising over mDNS and prints what answered:
 name TAB addr:port TAB saved|new TAB paired|unpaired. `saved` means this
 device already has a record for it, matched by fingerprint first and address
 second — the same rule every other surface joins the two lists by.
@@ -108,11 +108,11 @@ second — the same rule every other surface joins the two lists by.
 
 Nothing answering is an answer, not a failure: an empty list exits 0. A host
 mDNS never sees (Tailscale, another subnet) will not appear here — save it by
-address with `punktfunk hosts add` and it shows in `hosts list --probe`."
+address with `lilynk hosts add` and it shows in `hosts list --probe`."
             }
             "pair" => {
                 "\
-punktfunk pair <host[:port]> [--json] — enrol this device with a host (PIN ceremony)
+lilynk pair <host[:port]> [--json] — enrol this device with a host (PIN ceremony)
 
   --pin -       read the PIN from stdin (one line). Without it the command asks,
                 and refuses (exit 6) when there is no terminal to ask on
@@ -139,14 +139,14 @@ success; exit 3 if the host refuses or the PIN is wrong."
             }
             "hosts" => {
                 "\
-punktfunk hosts — the saved-hosts store (shared with the desktop client)
+lilynk hosts — the saved-hosts store (shared with the desktop client)
 
-  punktfunk hosts list [--probe] [--json]
+  lilynk hosts list [--probe] [--json]
       Every saved host, name TAB addr:port TAB paired/trusted TAB state.
       --probe asks each host directly (no mDNS, so routed/VPN hosts answer
       too); --json emits one object with per-host detail, presets included.
 
-  punktfunk hosts add <host[:port]> [--name LABEL] [--fp HEX]
+  lilynk hosts add <host[:port]> [--name LABEL] [--fp HEX]
       Save a host by address — the door for a box mDNS never sees (Tailscale,
       another subnet). Without --fp it is a placeholder to pair later; with a
       64-hex fingerprint it is pinned immediately (still unpaired).
@@ -158,14 +158,14 @@ punktfunk hosts — the saved-hosts store (shared with the desktop client)
       A different fingerprint for an address already saved is kept as a second
       host there (the other OS of a dual-boot box); `hosts forget` removes one.
 
-  punktfunk hosts forget <host-ref>
+  lilynk hosts forget <host-ref>
       Remove a saved host with its pinned fingerprint and cached game list,
       and stop opening on it by default. A later connect must pair or trust
       it again."
             }
             "default-host" => {
                 "\
-punktfunk default-host [<host-ref>] [--clear] — the host a bare launch opens on
+lilynk default-host [<host-ref>] [--clear] — the host a bare launch opens on
 
 Prints `name TAB addr:port TAB explicit|derived`, or `none`. With a <host-ref> it
 points the setting at that host and prints the record it wrote; with --clear it
@@ -177,12 +177,12 @@ explicitly matters once a second host is paired — a derived default is dropped
 an explicit one survives. An unpaired host is refused (exit 6): a launch cannot pair,
 so the setting would never resolve.
 
-Every client reads this: `punktfunk launch` and `library` with no <host-ref>, and the
+Every client reads this: `lilynk launch` and `library` with no <host-ref>, and the
 console, desktop and mobile shells at startup, subject to their Start in setting."
             }
             "wake" => {
                 "\
-punktfunk wake <host-ref> [--wait] — Wake-on-LAN
+lilynk wake <host-ref> [--wait] — Wake-on-LAN
 
 Sends a magic packet to a saved host's MAC (learned from its advert while it
 was awake; exit 5 if none is known yet). With --wait, keeps sending every 6 s
@@ -191,18 +191,18 @@ answers — the same cadence every graphical shell uses."
             }
             "library" => {
                 "\
-punktfunk library [<host-ref>] [--json] — the host's game library
+lilynk library [<host-ref>] [--json] — the host's game library
 
 TSV on stdout by default (id TAB store TAB title), one game per line; --json
 emits {\"games\":[…]} for tools — the Playnite importer shells to exactly
 this. Needs a paired host (exit 6 otherwise).
 
-With no <host-ref> it asks the default host (`punktfunk default-host`), and
+With no <host-ref> it asks the default host (`lilynk default-host`), and
 exits 5 when there is none."
             }
             "end-game" => {
                 "\
-punktfunk end-game [<host-ref>] --game ID — end a title this device launched
+lilynk end-game [<host-ref>] --game ID — end a title this device launched
 
 Asks the host to close the game, live stream included. The host ends only a
 title this device launched; one another device started stays up. Prints the
@@ -214,7 +214,7 @@ device's access expired, 2 when the host couldn't be asked or is too old,
             }
             "actions" => {
                 "\
-punktfunk actions [<host-ref>] [--json] [--run ID] — the host's own actions
+lilynk actions [<host-ref>] [--json] [--run ID] — the host's own actions
 
 Lists what the host lets this device run — sleep, restart, shut down, … — as
 id TAB label TAB available (or the host's reason it can't now). --json emits
@@ -228,7 +228,7 @@ none. Needs a paired host (exit 6 otherwise).
             }
             "screen" => {
                 "\
-punktfunk screen [<host-ref>] [--json] [--pick ID] — this device's host screen
+lilynk screen [<host-ref>] [--json] [--pick ID] — this device's host screen
 
 Lists the host card's Screen section as id TAB label TAB detail TAB why it is
 greyed or what it does, with `*` on what a connect gets now: the roles `only`,
@@ -247,20 +247,20 @@ An unreachable host lists none. Needs a paired host (exit 6 otherwise).
             }
             "launch" => {
                 "\
-punktfunk launch [<host-ref>] [--game ID] [--preset REF] [--as PROFILE]
+lilynk launch [<host-ref>] [--game ID] [--preset REF] [--as PROFILE]
                               [--request-access] [--exec] [--fullscreen]
 
 Start a stream — waking the host first if it is asleep and its MAC is known.
 The stream runs in the lilynk-session renderer; this command supervises it
 and relays its lifecycle to stderr. With no <host-ref> it streams the default
-host (`punktfunk default-host`), and exits 5 when there is none.
+host (`lilynk default-host`), and exits 5 when there is none.
 
   --game ID      ask the host to launch this library title into the stream
   --preset REF   use a preset (id or name) for this connect only;
                  without it the host's own binding applies
   --as PROFILE   play as this profile (id or name) for this connect only;
                  without it the profile saved for this host applies
-                 (`punktfunk profiles`), else the host's default
+                 (`lilynk profiles`), else the host's default
   --fullscreen   start the stream window fullscreen
   --exec         become the session process instead of supervising it — the
                  gamescope-wrapper mode, where the launched process must BE
@@ -272,7 +272,7 @@ host (`punktfunk default-host`), and exits 5 when there is none.
                  admits it and the stream starts by itself; the host is
                  recorded as paired once that happens, so later streams are
                  silent. Needs the host's fingerprint pinned already
-                 (`punktfunk hosts add <addr> --fp <hex>`), and cannot be
+                 (`lilynk hosts add <addr> --fp <hex>`), and cannot be
                  combined with --exec — under --exec there is no process
                  left to record the approval.
 
@@ -281,7 +281,7 @@ trusts this device (re-pair), 4 the renderer could not start."
             }
             "profiles" => {
                 "\
-punktfunk profiles <host-ref> [--json] [--pick PROFILE | --clear]
+lilynk profiles <host-ref> [--json] [--pick PROFILE | --clear]
 
 Who plays on the host: id TAB name TAB a note (`Steam sign-in once`, `In use
 by Ben's Apple TV`), with `*` on the profile this device plays as there.
@@ -291,18 +291,18 @@ by Ben's Apple TV`), with `*` on the profile this device plays as there.
   --clear         forget the pick; the host's default applies again
 
 Exit 5 when the host has no such profile, or no profiles at all; 6 when it
-isn't paired. Without a <host-ref> and without --pick, `punktfunk profiles`
+isn't paired. Without a <host-ref> and without --pick, `lilynk profiles`
 lists settings presets, as it did before presets were renamed."
             }
             "open" => {
                 "\
-punktfunk open <punktfunk://…> — follow a punktfunk:// link, headless
+lilynk open <punktfunk://…> — follow a punktfunk:// link, headless
 
 Same parser and same refusal rules as clicking the link in a shell: a
 contradicted fingerprint refuses and says so, an ambiguous name refuses
 rather than guessing, and an unknown host is never trusted from a URL —
 that is a decision for a person, at a surface that can show the fingerprint
-(exit 6 points at `punktfunk pair`). --exec as in launch.
+(exit 6 points at `lilynk pair`). --exec as in launch.
 
 A link that names its host by the stable record id opens straight away. One
 that names it by label or address is a guess anything could make, so it asks
@@ -311,7 +311,7 @@ rather than opening unasked."
             }
             "reachable" => {
                 "\
-punktfunk reachable <host-ref> — one bounded reachability probe
+lilynk reachable <host-ref> — one bounded reachability probe
 
 Asks the host directly (no mDNS), so routed/VPN hosts answer too. The
 reference may be an unsaved address — this verb answers \"can I reach it\",
@@ -319,7 +319,7 @@ not \"do I know it\". Exit 0 reachable, 2 not; one line either way."
             }
             "network-check" => {
                 "\
-punktfunk network-check <host-ref> [--json] — what the path to a host does
+lilynk network-check <host-ref> [--json] — what the path to a host does
 
 Opens a diagnostic session that streams nothing, runs the speed test, two
 bursty legs at the clean round's rate and a slow round, reads both ends'
@@ -329,7 +329,7 @@ Exit 0 when the check ran, whatever it found."
             }
             "speed-test" => {
                 "\
-punktfunk speed-test <host-ref> [--json] — measure the real data plane
+lilynk speed-test <host-ref> [--json] — measure the real data plane
 
 Runs the host's bandwidth probe over an actual session connect and prints the
 measured throughput, loss, and the bitrate it recommends. Deliberately does
@@ -339,17 +339,17 @@ rewriting settings would be exactly the surprise that rule exists to prevent."
             }
             "presets" => {
                 "\
-punktfunk presets list [--json] — the stream presets on this device
+lilynk presets list [--json] — the stream presets on this device
 
 One line per preset: id TAB name TAB how many settings it overrides.
 Presets are created and edited in the desktop client; a connect uses one via
-`punktfunk launch --preset` or a punktfunk:// link that names it.
-`punktfunk profiles` with no host is the old spelling; its --json keeps the
+`lilynk launch --preset` or a punktfunk:// link that names it.
+`lilynk profiles` with no host is the old spelling; its --json keeps the
 `profiles` key."
             }
             "device-code" => {
                 "\
-punktfunk device-code [--json] — the code that names this device to a host
+lilynk device-code [--json] — the code that names this device to a host
 
 Prints sixteen hex digits in four groups, the start of this device's
 fingerprint. While `pair --request-access` waits, the host's console shows
@@ -361,7 +361,7 @@ A first run makes this device's identity, as a request would."
             }
             "reset" => {
                 "\
-punktfunk reset — forget every saved host and reset stream settings
+lilynk reset — forget every saved host and reset stream settings
 
 Asks for confirmation, and refuses (exit 6) when there is no terminal to ask
 on. This device's identity keypair is deliberately kept, so hosts that knew
@@ -430,7 +430,7 @@ from the config directory for a true factory reset."
 
     /// Resolve a host reference the way every other surface does: stable id, then a unique
     /// name, then `addr[:port]` (design/client-deep-links.md §2). Sharing `resolve_host` is
-    /// what keeps `punktfunk launch desk` and `punktfunk://connect/desk` from disagreeing.
+    /// what keeps `lilynk launch desk` and `punktfunk://connect/desk` from disagreeing.
     ///
     /// [`HostResolution::Confirm`] — a guessable reference — is accepted WITHOUT a prompt here,
     /// and only here: this reference is an argument the user typed in their own terminal, so
@@ -451,7 +451,7 @@ from the config directory for a true factory reset."
             }
             HostResolution::Unknown { addr, port, .. } => {
                 eprintln!(
-                    "{addr}:{port} isn't a saved host — pair it first (punktfunk pair {addr}:{port})"
+                    "{addr}:{port} isn't a saved host — pair it first (lilynk pair {addr}:{port})"
                 );
                 Err(NEEDS_INTERACTION)
             }
@@ -480,7 +480,7 @@ from the config directory for a true factory reset."
             Some(i) => Ok((known, i)),
             None => {
                 eprintln!("usage: {usage}");
-                eprintln!("no default host is set — see `punktfunk default-host`");
+                eprintln!("no default host is set — see `lilynk default-host`");
                 Err(UNRESOLVED)
             }
         }
@@ -542,7 +542,7 @@ from the config directory for a true factory reset."
         };
         let rest: Vec<String> = args[1..].to_vec();
         // `--help`/`-h` after any verb prints that verb's help — before dispatch, so a verb
-        // never mistakes the flag for its subject (`punktfunk pair -h` must not dial "-h").
+        // never mistakes the flag for its subject (`lilynk pair -h` must not dial "-h").
         if rest.iter().any(|a| a == "--help" || a == "-h") {
             println!("{}", verb_help(&verb).unwrap_or(USAGE));
             return OK;
@@ -587,7 +587,7 @@ from the config directory for a true factory reset."
                 },
             },
             "--version" | "version" => {
-                println!("punktfunk {}", env!("CARGO_PKG_VERSION"));
+                println!("lilynk {}", env!("CARGO_PKG_VERSION"));
                 OK
             }
             other => {
@@ -712,7 +712,7 @@ from the config directory for a true factory reset."
     /// `--request-access` pairs with no PIN once the host's operator approves.
     fn pair(args: &[String]) -> u8 {
         let Some(target) = positional(args, 0) else {
-            eprintln!("usage: punktfunk pair <host[:port]> [--pin - | --request-access]");
+            eprintln!("usage: lilynk pair <host[:port]> [--pin - | --request-access]");
             return UNRESOLVED;
         };
         let (addr, port) = split_host_port(&target);
@@ -779,7 +779,7 @@ from the config directory for a true factory reset."
         let Some(pin) = access_pin(&KnownHosts::load(), fp.as_deref(), addr, port) else {
             eprintln!(
                 "no fingerprint for {addr}: pass --fp HEX from the host's console, or pair \
-                 with its PIN — punktfunk pair {addr}"
+                 with its PIN — lilynk pair {addr}"
             );
             return UNRESOLVED;
         };
@@ -968,7 +968,7 @@ from the config directory for a true factory reset."
     /// `hosts add <host[:port]> [--name LABEL] [--fp HEX]`: save a host without dialing it.
     fn hosts_add(args: &[String]) -> u8 {
         let Some(target) = positional(args, 1) else {
-            eprintln!("usage: punktfunk hosts add <host[:port]> [--name LABEL] [--fp HEX]");
+            eprintln!("usage: lilynk hosts add <host[:port]> [--name LABEL] [--fp HEX]");
             return UNRESOLVED;
         };
         let (addr, port) = split_host_port(&target);
@@ -1035,7 +1035,7 @@ from the config directory for a true factory reset."
     /// `hosts forget <host-ref>`: drop a saved host and what is keyed on it.
     fn hosts_forget(args: &[String]) -> u8 {
         let Some(reference) = positional(args, 1) else {
-            eprintln!("usage: punktfunk hosts forget <host-ref>");
+            eprintln!("usage: lilynk hosts forget <host-ref>");
             return UNRESOLVED;
         };
         // Resolved in the store as it is under its lock; a refusal keeps its code.
@@ -1063,7 +1063,7 @@ from the config directory for a true factory reset."
     /// every second, `WAKE_TIMEOUT_SECS` budget).
     fn wake(args: &[String]) -> u8 {
         let Some(reference) = positional(args, 0) else {
-            eprintln!("usage: punktfunk wake <host-ref> [--wait]");
+            eprintln!("usage: lilynk wake <host-ref> [--wait]");
             return UNRESOLVED;
         };
         let (known, i) = match resolve(&reference) {
@@ -1074,7 +1074,7 @@ from the config directory for a true factory reset."
         if host.mac.is_empty() {
             // A MAC is learned from the host's mDNS advert, never from a connect, so the message
             // names `discover` rather than "connect to it once".
-            eprintln!("no Wake-on-LAN address known for {} — run `punktfunk discover` while it's awake (the Deck panel does this every time it opens) so the client learns it from the host's advert", shown(&host.name));
+            eprintln!("no Wake-on-LAN address known for {} — run `lilynk discover` while it's awake (the Deck panel does this every time it opens) so the client learns it from the host's advert", shown(&host.name));
             return UNRESOLVED;
         }
         if !has(args, "--wait") {
@@ -1107,7 +1107,7 @@ from the config directory for a true factory reset."
     /// Decky's existing consumer parses; `--json` is the door for tools (the Playnite importer
     /// shells to exactly this).
     fn library_cmd(args: &[String]) -> u8 {
-        let (known, i) = match resolve_or_default(args, "punktfunk library [<host-ref>] [--json]") {
+        let (known, i) = match resolve_or_default(args, "lilynk library [<host-ref>] [--json]") {
             Ok(v) => v,
             Err(code) => return code,
         };
@@ -1122,7 +1122,7 @@ from the config directory for a true factory reset."
         let pin = trust::parse_hex32(&host.fp_hex);
         if pin.is_none() {
             eprintln!(
-                "{} isn't paired yet — punktfunk pair {}",
+                "{} isn't paired yet — lilynk pair {}",
                 shown(&host.name),
                 shown(&host.addr)
             );
@@ -1165,7 +1165,7 @@ from the config directory for a true factory reset."
 
     /// `end-game [<host-ref>] --game ID` — close a title this device launched on the host.
     fn end_game_cmd(args: &[String]) -> u8 {
-        let usage = "punktfunk end-game [<host-ref>] --game ID";
+        let usage = "lilynk end-game [<host-ref>] --game ID";
         let Some(game) = value(args, "--game") else {
             eprintln!("usage: {usage}");
             return UNRESOLVED;
@@ -1177,7 +1177,7 @@ from the config directory for a true factory reset."
         let host = &known.hosts[i];
         let Some(pin) = trust::parse_hex32(&host.fp_hex) else {
             eprintln!(
-                "{} isn't paired yet — punktfunk pair {}",
+                "{} isn't paired yet — lilynk pair {}",
                 shown(&host.name),
                 shown(&host.addr)
             );
@@ -1210,7 +1210,7 @@ from the config directory for a true factory reset."
     /// `actions [<host-ref>] [--json] [--run ID]` — the host's actions this device may run
     /// (sleep, restart, …), or `--run` one. The list is empty on any miss, as in every host menu.
     fn actions_cmd(args: &[String]) -> u8 {
-        let usage = "punktfunk actions [<host-ref>] [--json] [--run ID]";
+        let usage = "lilynk actions [<host-ref>] [--json] [--run ID]";
         let (known, i) = match resolve_or_default(args, usage) {
             Ok(v) => v,
             Err(code) => return code,
@@ -1218,7 +1218,7 @@ from the config directory for a true factory reset."
         let host = &known.hosts[i];
         let Some(pin) = trust::parse_hex32(&host.fp_hex) else {
             eprintln!(
-                "{} isn't paired yet — punktfunk pair {}",
+                "{} isn't paired yet — lilynk pair {}",
                 shown(&host.name),
                 shown(&host.addr)
             );
@@ -1292,7 +1292,7 @@ from the config directory for a true factory reset."
     /// host's preset when that pins the screen, or `--pick` one row. A host that doesn't
     /// answer lists none, as in every host menu.
     fn screen_cmd(args: &[String]) -> u8 {
-        let usage = "punktfunk screen [<host-ref>] [--json] [--pick ID]";
+        let usage = "lilynk screen [<host-ref>] [--json] [--pick ID]";
         let (known, i) = match resolve_or_default(args, usage) {
             Ok(v) => v,
             Err(code) => return code,
@@ -1300,7 +1300,7 @@ from the config directory for a true factory reset."
         let host = &known.hosts[i];
         let Some(pin) = trust::parse_hex32(&host.fp_hex) else {
             eprintln!(
-                "{} isn't paired yet — punktfunk pair {}",
+                "{} isn't paired yet — lilynk pair {}",
                 shown(&host.name),
                 shown(&host.addr)
             );
@@ -1460,7 +1460,7 @@ from the config directory for a true factory reset."
             );
             return UNRESOLVED;
         }
-        let usage = "punktfunk launch [<host-ref>] [--game ID] [--preset REF] [--exec]";
+        let usage = "lilynk launch [<host-ref>] [--game ID] [--preset REF] [--exec]";
         let (known, i) = match resolve_or_default(args, usage) {
             Ok(v) => v,
             Err(code) => return code,
@@ -1488,7 +1488,7 @@ from the config directory for a true factory reset."
     fn list_profiles(host: &KnownHost) -> Result<Option<Vec<ListedProfile>>, u8> {
         let Some(pin) = trust::parse_hex32(&host.fp_hex) else {
             eprintln!(
-                "{} isn't paired yet — punktfunk pair {}",
+                "{} isn't paired yet — lilynk pair {}",
                 shown(&host.name),
                 shown(&host.addr)
             );
@@ -1547,7 +1547,7 @@ from the config directory for a true factory reset."
 
     /// `profiles <host-ref>` — who plays on the host, and which of them this device plays as.
     fn profiles_cmd(args: &[String]) -> u8 {
-        let usage = "punktfunk profiles <host-ref> [--json] [--pick PROFILE | --clear]";
+        let usage = "lilynk profiles <host-ref> [--json] [--pick PROFILE | --clear]";
         let (known, i) = match resolve_or_default(args, usage) {
             Ok(v) => v,
             Err(code) => return code,
@@ -1625,7 +1625,7 @@ from the config directory for a true factory reset."
     /// same connect path as a card click; what changes is only where the notices go.
     fn open(args: &[String]) -> u8 {
         let Some(url) = positional(args, 0) else {
-            eprintln!("usage: punktfunk open <punktfunk://…>");
+            eprintln!("usage: lilynk open <punktfunk://…>");
             return UNRESOLVED;
         };
         let link = match deeplink::parse(&url) {
@@ -1674,7 +1674,7 @@ from the config directory for a true factory reset."
             // surface that can show them the fingerprint.
             Ok(PlanOutcome::ConfirmUnknown(u)) => {
                 eprintln!(
-                    "{} isn't paired with this device — punktfunk pair {}:{}",
+                    "{} isn't paired with this device — lilynk pair {}:{}",
                     shown(&u.name.unwrap_or_else(|| u.addr.clone())),
                     shown(&u.addr),
                     u.port
@@ -1682,7 +1682,7 @@ from the config directory for a true factory reset."
                 NEEDS_INTERACTION
             }
             Ok(PlanOutcome::Unsupported(route)) => {
-                eprintln!("punktfunk can't open \"{}\" links yet", route.as_str());
+                eprintln!("lilynk can't open \"{}\" links yet", route.as_str());
                 UNRESOLVED
             }
             Err(e) => {
@@ -1702,7 +1702,7 @@ from the config directory for a true factory reset."
     fn run_plan(plan: ConnectPlan, exec: bool, persist_paired: bool) -> u8 {
         let Some(fp) = plan.host.pin() else {
             eprintln!(
-                "{} has no pinned fingerprint — punktfunk pair {}",
+                "{} has no pinned fingerprint — lilynk pair {}",
                 shown(&plan.host.name),
                 shown(&plan.host.addr)
             );
@@ -1791,7 +1791,7 @@ from the config directory for a true factory reset."
     /// `reachable <host-ref>` — one bounded, mDNS-independent probe. Exit 0 = reachable.
     fn reachable(args: &[String]) -> u8 {
         let Some(reference) = positional(args, 0) else {
-            eprintln!("usage: punktfunk reachable <host-ref>");
+            eprintln!("usage: lilynk reachable <host-ref>");
             return UNRESOLVED;
         };
         // An address that isn't saved is still a legitimate thing to probe — this verb answers
@@ -1829,7 +1829,7 @@ from the config directory for a true factory reset."
         probe_only: bool,
     ) -> Result<lilynk_core::client::NativeClient, u8> {
         let Some(reference) = positional(args, 0) else {
-            eprintln!("usage: punktfunk {verb} <host-ref>");
+            eprintln!("usage: lilynk {verb} <host-ref>");
             return Err(UNRESOLVED);
         };
         let (known, i) = resolve(&reference)?;
@@ -2318,7 +2318,7 @@ from the config directory for a true factory reset."
             ] {
                 let h = verb_help(verb).unwrap_or_else(|| panic!("no help for {verb}"));
                 assert!(
-                    h.starts_with(&format!("punktfunk {verb}")),
+                    h.starts_with(&format!("lilynk {verb}")),
                     "help for {verb} must lead with its own invocation"
                 );
                 assert!(USAGE.contains(verb), "USAGE must advertise {verb}");
@@ -2803,6 +2803,6 @@ fn main() -> std::process::ExitCode {
 /// Keeps `cargo build --workspace` green on macOS, where the client is clients/apple.
 #[cfg(not(any(target_os = "linux", windows)))]
 fn main() {
-    eprintln!("punktfunk runs on Linux and Windows — the macOS client lives in clients/apple");
+    eprintln!("lilynk runs on Linux and Windows — the macOS client lives in clients/apple");
     std::process::exit(2);
 }

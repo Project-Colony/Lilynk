@@ -221,7 +221,7 @@ impl Rows {
             #[cfg(windows)]
             (true, false) => {
                 self.inhibit =
-                    ly_frame::session_tuning::SystemWakeRequest::new("punktfunk downloading a game")
+                    ly_frame::session_tuning::SystemWakeRequest::new("lilynk downloading a game")
             }
             (false, true) => self.inhibit = None,
             _ => {}

@@ -1,7 +1,7 @@
 //! A seat's systemd unit: its environment file, its bind-mount drop-in and its state.
 //!
 //! `lilynk-seat@<user>.service` runs the seat's user in a logind session. The supervisor
-//! writes its files under `/run` before each start: `punktfunk/seats/<user>.env`, the seat
+//! writes its files under `/run` before each start: `lilynk/seats/<user>.env`, the seat
 //! contract the host reads plus its management token; a drop-in that binds the seat's private
 //! `compatdata`, `shadercache` and `downloading` over the shared games folder's, shows it the
 //! owner's libraries, hides the box's mounted drives and binds the supervisor's uinput proxy
@@ -18,7 +18,7 @@ use std::io::Write as _;
 use std::path::{Path, PathBuf};
 
 /// Where each seat's environment file lives.
-pub(super) const ENV_DIR: &str = "/run/punktfunk/seats";
+pub(super) const ENV_DIR: &str = "/run/lilynk/seats";
 /// Where the supervisor's transient unit drop-ins live.
 pub(super) const DROPIN_ROOT: &str = "/run/systemd/system";
 
@@ -28,9 +28,9 @@ pub(super) const PRIVATE_DIRS: [&str; 3] = ["compatdata", "shadercache", "downlo
 /// What a seat's Steam runs in place of [`UPDATE_HELPERS`]. They escalate through pkexec, which
 /// fails (exit 127) in a seat's session, and Steam's first-run setup stops on that failure. A seat
 /// never updates the box, so each answers "nothing to do": 7 from `steamos-update`, else 0.
-pub(super) const NO_UPDATE: &str = "/run/punktfunk/seat-no-update";
+pub(super) const NO_UPDATE: &str = "/run/lilynk/seat-no-update";
 const NO_UPDATE_SCRIPT: &str = "#!/bin/sh\n\
-# A punktfunk seat never updates the box's OS or firmware.\n\
+# A lilynk seat never updates the box's OS or firmware.\n\
 if [ \"${0##*/}\" = steamos-update ]; then\n\
     case \" $* \" in *\" --supports-duplicate-detection \"*) exit 0 ;; esac\n\
     exit 7\n\
@@ -135,7 +135,7 @@ pub(super) fn render_env(
             rows.push(("LILYNK_SEAT_OWN_ACCOUNT", "1".to_owned()));
             Some(shared::person_config_dir(state, &seat.id))
         }
-        Own::Seat => Some(home.join(".config/punktfunk")),
+        Own::Seat => Some(home.join(".config/lilynk")),
     };
     if let Some(config) = config {
         rows.push(("LILYNK_CONFIG_DIR", config.to_string_lossy().into_owned()));
@@ -809,7 +809,7 @@ mod tests {
             text,
             "LILYNK_SEAT_SESSION=\"1\"\n\
              LILYNK_SEAT_ID=\"0123456789abcdef0123456789abcdef\"\n\
-             LILYNK_CONFIG_DIR=\"/var/lib/lilynk-seats/seats/0123456789abcdef0123456789abcdef/home/.config/punktfunk\"\n\
+             LILYNK_CONFIG_DIR=\"/var/lib/lilynk-seats/seats/0123456789abcdef0123456789abcdef/home/.config/lilynk\"\n\
              LILYNK_TRUST_DIR=\"/var/lib/lilynk-seats/trust/0123456789abcdef0123456789abcdef\"\n\
              LILYNK_PAIRING=\"refused\"\n\
              LILYNK_LIBRARY_DIR=\"/var/lib/lilynk-seats/trust/0123456789abcdef0123456789abcdef\"\n\
@@ -939,14 +939,14 @@ mod tests {
             render_binds(Path::new("/var/lib/lilynk-seats"), &id, "pf-seat-1", None),
             "[Service]\n\
              TemporaryFileSystem=/run/media:ro\n\
-             BindPaths=/var/lib/lilynk-seats/games:/run/media/punktfunk/games\n\
+             BindPaths=/var/lib/lilynk-seats/games:/run/media/lilynk/games\n\
              BindPaths=/var/lib/lilynk-seats/seats/0123456789abcdef0123456789abcdef/compatdata:/var/lib/lilynk-seats/games/steamapps/compatdata\n\
              BindPaths=/var/lib/lilynk-seats/seats/0123456789abcdef0123456789abcdef/shadercache:/var/lib/lilynk-seats/games/steamapps/shadercache\n\
              BindPaths=/var/lib/lilynk-seats/seats/0123456789abcdef0123456789abcdef/downloading:/var/lib/lilynk-seats/games/steamapps/downloading\n\
-             BindPaths=/var/lib/lilynk-seats/seats/0123456789abcdef0123456789abcdef/compatdata:/run/media/punktfunk/games/steamapps/compatdata\n\
-             BindPaths=/var/lib/lilynk-seats/seats/0123456789abcdef0123456789abcdef/shadercache:/run/media/punktfunk/games/steamapps/shadercache\n\
-             BindPaths=/var/lib/lilynk-seats/seats/0123456789abcdef0123456789abcdef/downloading:/run/media/punktfunk/games/steamapps/downloading\n\
-             BindPaths=-/dev/punktfunk/uinput-pf-seat-1:/dev/uinput\n"
+             BindPaths=/var/lib/lilynk-seats/seats/0123456789abcdef0123456789abcdef/compatdata:/run/media/lilynk/games/steamapps/compatdata\n\
+             BindPaths=/var/lib/lilynk-seats/seats/0123456789abcdef0123456789abcdef/shadercache:/run/media/lilynk/games/steamapps/shadercache\n\
+             BindPaths=/var/lib/lilynk-seats/seats/0123456789abcdef0123456789abcdef/downloading:/run/media/lilynk/games/steamapps/downloading\n\
+             BindPaths=-/dev/lilynk/uinput-pf-seat-1:/dev/uinput\n"
         );
     }
 
@@ -960,14 +960,14 @@ mod tests {
             ExecStopPost=-+/usr/bin/nsenter -t 1 -m -- /usr/bin/umount -l /stage\n\
             InaccessiblePaths=\"-/a\"\n\
             BindPaths=/stage:/seat/libraries/k/steamapps\n";
-        let updates = "[Service]\nBindReadOnlyPaths=/run/punktfunk/seat-no-update:/usr/bin/x\n";
+        let updates = "[Service]\nBindReadOnlyPaths=/run/lilynk/seat-no-update:/usr/bin/x\n";
         assert_eq!(
             render_manager(&[binds, updates]),
             "[Service]\n\
              TemporaryFileSystem=/run/media:ro\n\
              InaccessiblePaths=\"-/a\"\n\
              BindPaths=/stage:/seat/libraries/k/steamapps\n\
-             BindReadOnlyPaths=/run/punktfunk/seat-no-update:/usr/bin/x\n"
+             BindReadOnlyPaths=/run/lilynk/seat-no-update:/usr/bin/x\n"
         );
         assert_eq!(
             manager_dropin(951),
@@ -981,8 +981,8 @@ mod tests {
         assert_eq!(
             render_updates(|p| p.starts_with("/usr/bin/steamos-polkit-helpers")).unwrap(),
             "[Service]\n\
-             BindReadOnlyPaths=/run/punktfunk/seat-no-update:/usr/bin/steamos-polkit-helpers/steamos-update\n\
-             BindReadOnlyPaths=/run/punktfunk/seat-no-update:/usr/bin/steamos-polkit-helpers/jupiter-biosupdate\n"
+             BindReadOnlyPaths=/run/lilynk/seat-no-update:/usr/bin/steamos-polkit-helpers/steamos-update\n\
+             BindReadOnlyPaths=/run/lilynk/seat-no-update:/usr/bin/steamos-polkit-helpers/jupiter-biosupdate\n"
         );
     }
 

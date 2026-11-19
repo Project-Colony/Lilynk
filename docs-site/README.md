@@ -1,6 +1,6 @@
 # lilynk-docs
 
-The Punktfunk documentation site: [Fumadocs](https://fumadocs.dev) on
+The Lilynk documentation site: [Fumadocs](https://fumadocs.dev) on
 [TanStack Start](https://tanstack.com/start) (Vite + Nitro/bun preset).
 
 Content lives in [`content/docs/`](content/docs) as `.md`/`.mdx`. This site is the source of truth

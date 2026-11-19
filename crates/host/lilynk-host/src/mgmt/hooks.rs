@@ -135,7 +135,7 @@ mod tests {
                 "hmac_secret_file": file});
             serde_json::from_value(serde_json::json!({ "hooks": [hook] })).unwrap()
         };
-        let secret = with(Some(r"C:\ProgramData\punktfunk\mgmt-token"));
+        let secret = with(Some(r"C:\ProgramData\lilynk\mgmt-token"));
         assert!(refuses_secret_file(true, AuthLane::Person, &secret));
         assert!(!refuses_secret_file(true, AuthLane::Admin, &secret));
         assert!(!refuses_secret_file(false, AuthLane::Person, &secret));

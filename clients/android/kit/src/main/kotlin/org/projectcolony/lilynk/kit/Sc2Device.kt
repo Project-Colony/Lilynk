@@ -226,7 +226,7 @@ object Sc2Device {
 
     const val LIZARD_REFRESH_MS = 3000L
 
-    /** Wire mapping: SC2 button bit → punktfunk `Gamepad.BTN_*`, the inverse of the host's
+    /** Wire mapping: SC2 button bit → lilynk `Gamepad.BTN_*`, the inverse of the host's
      *  typed-fallback mapping (`triton_proto::from_gamepad`): paddles R4/L4/R5/L5 =
      *  PADDLE1/2/3/4, QAM = MISC1, right-pad click = the touchpad wire bit. */
     private val WIRE_MAP = intArrayOf(

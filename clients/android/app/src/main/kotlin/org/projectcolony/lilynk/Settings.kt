@@ -455,7 +455,7 @@ private fun probeDisplay(context: Context, secondScreen: Boolean = true): Displa
                 context.getSystemService(DisplayManager::class.java)
                     ?.getDisplay(Display.DEFAULT_DISPLAY)
             }.getOrNull().also {
-                if (it != null) Log.i("punktfunk", "display probe: context unattached — using DEFAULT_DISPLAY")
+                if (it != null) Log.i("lilynk", "display probe: context unattached — using DEFAULT_DISPLAY")
             }
         )?.let { if (secondScreen) pictureDisplay(context, it) else it }
 
@@ -662,7 +662,7 @@ fun displayHdr(context: Context): DisplayHdr {
     val display = probeDisplay(context)
     if (display == null) {
         // Its own line, so the log tells this apart from a display that lists no HDR.
-        Log.w("punktfunk", "display HDR probe: no display reachable — advertising SDR")
+        Log.w("lilynk", "display HDR probe: no display reachable — advertising SDR")
         return DisplayHdr.None
     }
     val types = buildSet {
@@ -688,7 +688,7 @@ fun displayHdr(context: Context): DisplayHdr {
         null
     }
     val verdict = displayHdr(hdr10, headroom)
-    Log.i("punktfunk", "display HDR types=$types headroom=${headroom ?: "n/a"} → $verdict")
+    Log.i("lilynk", "display HDR types=$types headroom=${headroom ?: "n/a"} → $verdict")
     return verdict
 }
 

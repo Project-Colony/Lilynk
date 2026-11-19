@@ -1,4 +1,4 @@
-//! Virtual touchpad ("Punktfunk Touchpad"): a per-session uinput clickpad that libinput turns
+//! Virtual touchpad ("Lilynk Touchpad"): a per-session uinput clickpad that libinput turns
 //! into pointer motion, scrolling, gestures and clicks under the compositor's own touchpad
 //! settings. Gated like the pen: `/dev/uinput` opens, the node is not a seat proxy, and
 //! `LILYNK_TOUCHPAD` is not off. The handshake excludes gamescope.
@@ -264,8 +264,8 @@ impl VirtualTouchpad {
             product: 0x5054, // "PT"
             version: 1,
         };
-        dev.create(id, b"Punktfunk Touchpad", 0)?;
-        tracing::info!("virtual touchpad created (Punktfunk Touchpad, uinput)");
+        dev.create(id, b"Lilynk Touchpad", 0)?;
+        tracing::info!("virtual touchpad created (Lilynk Touchpad, uinput)");
         Ok(VirtualTouchpad {
             dev,
             enc: Encoder::default(),

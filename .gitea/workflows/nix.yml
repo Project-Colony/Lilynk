@@ -33,7 +33,7 @@
 #   * vm    — `checks.<system>.nixos-vm` boots the module with the real packages and checks the
 #             user units run. It builds the host, so it runs on labelled pull requests only.
 #
-#   * cache — builds the Rust packages + gamescope, publishes every punktfunk store path to
+#   * cache — builds the Rust packages + gamescope, publishes every lilynk store path to
 #             https://nix.unom.io, then moves a channel branch to the published commit:
 #               `v*` tag                     → nix-stable
 #               nightly, or dispatch on main → nix-canary (the nightly skips a commit it has)
@@ -360,7 +360,7 @@ jobs:
             "$NIX" flake update nixpkgs || echo "::warning::nixpkgs did not update; publishing the current lock"
             if ! git diff --quiet flake.lock; then
               day="$(node -p 'new Date(JSON.parse(require("fs").readFileSync("flake.lock")).nodes.nixpkgs.locked.lastModified * 1e3).toISOString().slice(0, 10)')"
-              git -c user.name="punktfunk CI" -c user.email=ci@noreply.git.unom.io commit -q flake.lock \
+              git -c user.name="lilynk CI" -c user.email=ci@noreply.git.unom.io commit -q flake.lock \
                 -m "chore(nix): bump nixpkgs to nixos-unstable $day" -m "[skip ci]"
             fi
           fi
@@ -426,9 +426,9 @@ jobs:
           #    is our binaries plus stock nixpkgs (gtk4, glibc, …), and every stock path is
           #    already on cache.nixos.org, served by a real CDN. Mirroring them onto unom-1 would
           #    cost disk and home-to-cloud bandwidth to serve a WORSE copy of what users already
-          #    have. Nothing in nixpkgs is named punktfunk, so the name filter is exact.
+          #    have. Nothing in nixpkgs is named lilynk, so the name filter is exact.
           paths="$("$NIX" path-info -r $PKGS | grep -- '-lilynk' || true)"
-          [ -n "$paths" ] || { echo "::error::no punktfunk store paths in the closure — the name filter is broken"; exit 1; }
+          [ -n "$paths" ] || { echo "::error::no lilynk store paths in the closure — the name filter is broken"; exit 1; }
           echo "$paths"
           # The filter is a string match, so it would fail SILENTLY if a pname ever changed — and
           # the package most likely to drift is gamescope, the most expensive one to lose. Assert

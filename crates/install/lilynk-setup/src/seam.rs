@@ -64,12 +64,12 @@ impl BasePaths {
 
     /// Path is reported verbatim in dry-run output.
     pub fn host_env(&self) -> PathBuf {
-        self.config.join("punktfunk/host.env")
+        self.config.join("lilynk/host.env")
     }
 
     /// The host's settings store; the web console edits the same file.
     pub fn host_settings(&self) -> PathBuf {
-        self.config.join("punktfunk/host-settings.json")
+        self.config.join("lilynk/host-settings.json")
     }
 
     pub fn read(&self, path: &Path) -> Option<String> {

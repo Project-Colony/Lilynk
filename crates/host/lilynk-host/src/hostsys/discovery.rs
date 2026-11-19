@@ -1,4 +1,4 @@
-//! Native punktfunk mDNS advert; [`crate::gamestream::mdns`] is the GameStream analogue.
+//! Native lilynk mDNS advert; [`crate::gamestream::mdns`] is the GameStream analogue.
 //!
 //! Type **`_punktfunk._udp.local.`** (UDP: the protocol is QUIC). Port is the QUIC
 //! control/data port a client `--connect`s. TXT:
@@ -13,7 +13,7 @@
 //! - `mgmt` — management API TCP port when served; omitted otherwise.
 //! - `mac` — wake-capable NIC MAC(s), comma-separated, routed NIC first; omitted when none.
 //! - `os` — OS identity chain (`linux/fedora/bazzite`; [`crate::osinfo`]).
-//! - `wire` — the punktfunk protocols this host answers, comma-separated (`2`).
+//! - `wire` — the lilynk protocols this host answers, comma-separated (`2`).
 //! - `addr` — IPv4 this advert was registered for. The resolved A-set is a union polluted by
 //!   other per-interface responders; the picker uses this as a tie-break.
 //!
@@ -185,7 +185,7 @@ pub fn advertise_native(
         port,
         host = %host_name,
         pair = if require_pairing { "required" } else { "optional" },
-        "native punktfunk mDNS advertising"
+        "native lilynk mDNS advertising"
     );
     advertise_live(NATIVE_SERVICE, move |addrs| {
         let ip = addrs[0];

@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Generate the stable punktfunk driver code-signing certificate.
+  Generate the stable lilynk driver code-signing certificate.
 
 .DESCRIPTION
   Produces a self-signed code-signing cert (CN=lilynk-driver) and writes the two values that
@@ -136,7 +136,7 @@ $pwPath  = Join-Path $OutDir 'DRIVER_CERT_PASSWORD.txt'
 [IO.File]::WriteAllText($pwPath,  $pw)
 
 Write-Output ''
-Write-Output '================ punktfunk driver signing cert ================'
+Write-Output '================ lilynk driver signing cert ================'
 Write-Output ''
 Write-Output "  THUMBPRINT (public - this is the only value to share):"
 Write-Output "      $($cert.Thumbprint)"

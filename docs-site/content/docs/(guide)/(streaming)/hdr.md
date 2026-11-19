@@ -74,7 +74,7 @@ and HDR in Game Mode again, whichever of the two it started in.
 ### Linux + GNOME
 
 GNOME HDR reaches [Moonlight](/docs/moonlight) only, by mirroring a real monitor (GNOME 50+).
-A Punktfunk app connecting to a GNOME host gets SDR.
+A Lilynk app connecting to a GNOME host gets SDR.
 
 1. Add `LILYNK_VIDEO_SOURCE=portal` to [`host.env`](/docs/configuration) and restart the host.
 2. Put the monitor in HDR mode in GNOME **Settings → Displays**.
@@ -98,7 +98,7 @@ to set on the host.
 ### Other Linux desktops
 
 SDR. KDE and GNOME's virtual displays capture 8-bit, and so does streaming a physical monitor
-on KDE to a Punktfunk app. No setting changes this.
+on KDE to a Lilynk app. No setting changes this.
 
 On Sway and scroll, streaming a physical monitor is HDR when that monitor is in HDR mode, as on
 Hyprland. Their virtual displays are SDR.
@@ -161,7 +161,7 @@ and the GameStream side can do HDR. The service reads `host.env` and your shell 
 first, or the answers describe your shell:
 
 ```bash
-set -a; . ~/.config/punktfunk/host.env; set +a
+set -a; . ~/.config/lilynk/host.env; set +a
 lilynk-host hdr-probe
 ```
 
@@ -182,7 +182,7 @@ HDR: nothing is missing. Otherwise the first `false` among `host_wants_10bit`,
 
 The log says `HDR capture negotiation failed`. After that the host offers SDR: on gamescope until
 that display closes, on the GNOME monitor mirror until the host restarts. Fix the cause (usually
-a gamescope that isn't the Punktfunk build, or a monitor out of HDR mode), then reconnect or
+a gamescope that isn't the Lilynk build, or a monitor out of HDR mode), then reconnect or
 restart.
 
 ### A Vulkan game on Windows says HDR isn't supported

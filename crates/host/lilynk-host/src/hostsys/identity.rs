@@ -103,7 +103,7 @@ fn generate() -> Result<(String, String)> {
     let mut params = rcgen::CertificateParams::new(sans).context("cert params")?;
     params
         .distinguished_name
-        .push(rcgen::DnType::CommonName, "punktfunk");
+        .push(rcgen::DnType::CommonName, "lilynk");
     // Fixed 2020–2040 window, matching the legacy identity: no clock-skew
     // surprises, and clients pin the fingerprint rather than check validity.
     params.not_before = rcgen::date_time_ymd(2020, 1, 1);

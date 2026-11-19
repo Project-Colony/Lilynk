@@ -1,6 +1,6 @@
 ---
 title: Host CLI
-description: Every lilynk-host command and flag you would run by hand, plus where the client's punktfunk command is documented.
+description: Every lilynk-host command and flag you would run by hand, plus where the client's lilynk command is documented.
 ---
 
 Look up a `lilynk-host` command or flag here. Most behaviour comes from
@@ -63,7 +63,7 @@ The management API is HTTPS and listens on every interface by default. Off loopb
 paired devices the status, the library and the host actions their
 [access level](/docs/access-levels) allows. Every admin action needs the token in
 `mgmt-token` and works from loopback only. The host writes that file on first start into its
-config directory (`~/.config/punktfunk`, or `%ProgramData%\punktfunk` on Windows); the console,
+config directory (`~/.config/lilynk`, or `%ProgramData%\lilynk` on Windows); the console,
 `ctl` and the tray read it. Every endpoint is in the [API Reference](/api).
 
 ## `ctl`
@@ -199,7 +199,7 @@ lilynk-host service start | stop | restart | status | uninstall
 
 | Subcommand or option | What it does |
 |---|---|
-| `install` | Registers the auto-start `LilynkHost` service, adds the firewall rules, and writes `%ProgramData%\punktfunk\host.env` if missing. Re-run it to change an option. |
+| `install` | Registers the auto-start `LilynkHost` service, adds the firewall rules, and writes `%ProgramData%\lilynk\host.env` if missing. Re-run it to change an option. |
 | `--gamestream=on\|off` | The GameStream setting, as in the console. |
 | `--allow-public-network[=on\|off]` | Also open the ports on networks Windows calls **Public**. Default: Private and Domain only; left out, the previous choice stays. |
 | `--mgmt-bind=IP:PORT` | Sets `LILYNK_MGMT_BIND` and opens that port. |
@@ -258,7 +258,7 @@ Kwin:
   DP-2            2560x1440@144 at +1920,+0  scale 1  ACME 27  [PINNED]
 ```
 
-Tags: `primary`, `disabled`, `punktfunk virtual display` (one of the host's own), `PINNED` (the
+Tags: `primary`, `disabled`, `lilynk virtual display` (one of the host's own), `PINNED` (the
 current pick).
 
 `lilynk-host mirror-test --monitor <CONNECTOR> [--seconds N] [--cpu]` captures that monitor with
@@ -302,12 +302,12 @@ path) and, on a dual-GPU box, the encoding vendor (`intel`, `nvidia` or `amd`).
 
 Lists Sunshine, Apollo and other Moonlight-compatible hosts installed on this machine. It exits
 **1** when one runs or starts on its own, **0** otherwise, so scripts can gate on it. Running
-one beside Punktfunk is unsupported: they fight over ports and the virtual display. `serve` runs
+one beside Lilynk is unsupported: they fight over ports and the virtual display. `serve` runs
 the same check at startup. See
 [Troubleshooting](/docs/troubleshooting-connect#another-streaming-host-sunshine-apollo--is-installed).
 
-## The client's `punktfunk` command
+## The client's `lilynk` command
 
-The machine you stream *to* has its own command, `punktfunk`. Its verbs and exit codes are on
-[Clients → the `punktfunk` CLI](/docs/clients#scripting-the-punktfunk-cli); `punktfunk wake` is on
+The machine you stream *to* has its own command, `lilynk`. Its verbs and exit codes are on
+[Clients → the `lilynk` CLI](/docs/clients#scripting-the-lilynk-cli); `lilynk wake` is on
 [Wake on LAN](/docs/wake-on-lan#from-the-command-line).

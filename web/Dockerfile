@@ -1,4 +1,4 @@
-# punktfunk management console — TanStack Start built with Bun, served by the Nitro `bun`
+# lilynk management console — TanStack Start built with Bun, served by the Nitro `bun`
 # preset bundle. Build context is the REPO ROOT: orval reads ../api/openapi.json and Paraglide
 # reads ../l10n/messages, both relative to web/:
 #

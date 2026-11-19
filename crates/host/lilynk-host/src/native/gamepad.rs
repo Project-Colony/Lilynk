@@ -221,7 +221,7 @@ fn warn_if_ds_inhibit_storm(chosen: GamepadPref) {
          every open/close of this pad's hidraw, the scan is denied at hundreds of AVCs/sec, and \
          setroubleshootd can amplify that into a box-wide stall that starves the stream. Install \
          the shipped SELinux drop-in (`sudo lilynk-sysext reapply`, or `sudo semodule -i \
-         /usr/share/punktfunk/selinux/lilynk-ds-inhibit.cil`) — harmless if already installed. \
+         /usr/share/lilynk/selinux/lilynk-ds-inhibit.cil`) — harmless if already installed. \
          Masking setroubleshootd (`sudo systemctl mask --now setroubleshootd`) hardens the box \
          against any audit flood. Details: packaging/bazzite/README.md."
     );

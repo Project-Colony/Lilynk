@@ -85,7 +85,7 @@ pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeTake
 }
 
 /// `NativeBridge.nativeGenerateIdentity(): String` — mint a fresh persistent self-signed identity.
-/// Returns `"<certPem>\n-----PUNKTFUNK-KEY-----\n<keyPem>"`, or `""` on failure (logged). Kotlin
+/// Returns `"<certPem>\n-----LILYNK-KEY-----\n<keyPem>"`, or `""` on failure (logged). Kotlin
 /// persists it (Keystore-wrapped) and only calls this again when the store is genuinely empty.
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeGenerateIdentity<
@@ -95,7 +95,7 @@ pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeGene
     _this: JObject<'local>,
 ) -> JString<'local> {
     let out = match lilynk_core::quic::endpoint::generate_identity() {
-        Ok((cert, key)) => format!("{cert}\n-----PUNKTFUNK-KEY-----\n{key}"),
+        Ok((cert, key)) => format!("{cert}\n-----LILYNK-KEY-----\n{key}"),
         Err(e) => {
             log::error!("nativeGenerateIdentity failed: {e}");
             String::new()

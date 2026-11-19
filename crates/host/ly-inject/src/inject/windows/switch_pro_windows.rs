@@ -54,7 +54,7 @@ impl SwitchWinPad {
                 // A wired Pro Controller is a single-interface HID device.
                 usb_mi: None,
                 bluetooth: false,
-                description: "Punktfunk Virtual Pro Controller",
+                description: "Lilynk Virtual Pro Controller",
                 enumerator: "VID_057E&PID_2009",
                 property: None,
             },
@@ -84,7 +84,7 @@ impl SwitchWinPad {
                 usb_vid_pid: Some(&vid_pid),
                 usb_mi: None,
                 bluetooth: true,
-                description: &format!("Punktfunk Virtual Joy-Con ({side})"),
+                description: &format!("Lilynk Virtual Joy-Con ({side})"),
                 enumerator: &vid_pid,
                 property: None,
             },
@@ -142,7 +142,7 @@ impl PadProto for SwitchWinProto {
     type State = SwitchState;
     const LABEL: &'static str = "Switch Pro/Windows";
     const DEVICE: &'static str = "Switch Pro Controller";
-    const CREATE_HINT: &'static str = " (install/repair: run the Punktfunk installer again)";
+    const CREATE_HINT: &'static str = " (install/repair: run the Lilynk installer again)";
 
     fn open(&mut self, idx: u8) -> Result<SwitchWinPad> {
         let p = SwitchWinPad::open_pro(idx)?;
@@ -192,7 +192,7 @@ impl PadProto for JoyConWinProto {
     type State = SwitchState;
     const LABEL: &'static str = "Joy-Con pair/Windows";
     const DEVICE: &'static str = "Joy-Con pair";
-    const CREATE_HINT: &'static str = " (install/repair: run the Punktfunk installer again)";
+    const CREATE_HINT: &'static str = " (install/repair: run the Lilynk installer again)";
 
     fn open(&mut self, idx: u8) -> Result<JoyConWinPair> {
         let pair = JoyConWinPair {

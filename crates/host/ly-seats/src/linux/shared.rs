@@ -16,7 +16,7 @@
 //!   every profile's layer, the plugins' grants and the firmware they staged. The door serves it
 //!   to every client, and each seat's trust copy takes it from here.
 //! - `seats/hosts/<id>/mgmt-token` is the token the box presents to that seat host's loopback
-//!   API. It belongs to the `punktfunk` user, not the seat group: every seat user is a member.
+//!   API. It belongs to the `lilynk` user, not the seat group: every seat user is a member.
 
 use super::accounts::{is_ordinary, Passwd};
 use super::session::PRIVATE_DIRS;
@@ -141,10 +141,10 @@ pub(super) fn host_dir(state: &Path, id: &SeatId) -> PathBuf {
     hosts_dir(state).join(id.as_str())
 }
 
-/// The owner of a seat's token file: the `punktfunk` user's `(uid, gid)` when it exists, else
+/// The owner of a seat's token file: the `lilynk` user's `(uid, gid)` when it exists, else
 /// root, so the box host reads it as itself and no seat user can.
-pub(super) fn token_owner(punktfunk: Option<&Passwd>) -> (u32, u32) {
-    punktfunk.map_or((0, 0), |user| (user.uid, user.gid))
+pub(super) fn token_owner(lilynk: Option<&Passwd>) -> (u32, u32) {
+    lilynk.map_or((0, 0), |user| (user.uid, user.gid))
 }
 
 /// Writes `line` as the seat's token file, `0600` in a `0700` directory, both owned by `owner`.
@@ -603,7 +603,7 @@ pub(super) fn pin_dir(state: &Path, id: &SeatId) -> PathBuf {
 /// while the host has none. `home` is a seat user's or the owner's, so it goes through
 /// [`safe_open`].
 pub(super) fn copy_pin(home: &Path, dst: &Path) -> std::io::Result<()> {
-    copy_cert(home, &[".config", "punktfunk"], dst)
+    copy_cert(home, &[".config", "lilynk"], dst)
 }
 
 /// [`copy_pin`] for a person's row, whose host keeps its identity in the row's own
@@ -919,7 +919,7 @@ pub(super) fn refresh_box_library(
     reader: Reader,
 ) -> Result<bool, BackendError> {
     let io = |what: &str, e| io_err("box_library", what, e);
-    let config = safe_open::dir(home).and_then(|at| safe_open::walk(at, &[".config", "punktfunk"]));
+    let config = safe_open::dir(home).and_then(|at| safe_open::walk(at, &[".config", "lilynk"]));
     let src = match config {
         Ok(Some(src)) => src,
         Ok(None) => return Ok(false),
@@ -1811,7 +1811,7 @@ mod tests {
             listed,
             [
                 steam.to_string_lossy().into_owned(),
-                "/run/media/punktfunk/games".to_owned(),
+                "/run/media/lilynk/games".to_owned(),
             ]
         );
         std::fs::write(&file, "steam's own").unwrap();
@@ -1920,7 +1920,7 @@ mod tests {
     fn the_box_library_follows_the_owner_into_each_seat() {
         let temp = tempfile::tempdir().unwrap();
         let (home, state) = (temp.path().join("home"), temp.path().join("state"));
-        let config = home.join(".config/punktfunk");
+        let config = home.join(".config/lilynk");
         std::fs::create_dir_all(config.join("library-metadata")).unwrap();
         std::fs::create_dir(&state).unwrap();
         std::fs::write(config.join("library.json"), r#"{"entries":[]}"#).unwrap();
@@ -2166,7 +2166,7 @@ mod tests {
             temp.path().join("state"),
             temp.path().join("box"),
         );
-        let layer = home.join(".config/punktfunk").join(LIBRARY_PROFILES);
+        let layer = home.join(".config/lilynk").join(LIBRARY_PROFILES);
         for dir in [
             layer.join(ANNA),
             layer.join(BEN),
@@ -2246,7 +2246,7 @@ mod tests {
             temp.path().join("state"),
             temp.path().join("box"),
         );
-        let layer = home.join(".config/punktfunk").join(LIBRARY_PROFILES);
+        let layer = home.join(".config/lilynk").join(LIBRARY_PROFILES);
         let (anna, secret) = (layer.join(ANNA), temp.path().join("secret"));
         for dir in [&anna, &state, &box_dir, &secret] {
             std::fs::create_dir_all(dir).unwrap();
@@ -2338,7 +2338,7 @@ mod tests {
             temp.path().join("state"),
             temp.path().join("box"),
         );
-        let config = home.join(".config/punktfunk");
+        let config = home.join(".config/lilynk");
         std::fs::create_dir_all(&config).unwrap();
         std::fs::create_dir_all(&state).unwrap();
         std::fs::create_dir_all(&box_dir).unwrap();
@@ -2375,7 +2375,7 @@ mod tests {
     fn the_box_library_survives_a_missing_home_and_refuses_a_link() {
         let temp = tempfile::tempdir().unwrap();
         let (home, state) = (temp.path().join("home"), temp.path().join("state"));
-        let config = home.join(".config/punktfunk");
+        let config = home.join(".config/lilynk");
         std::fs::create_dir_all(&config).unwrap();
         std::fs::create_dir(&state).unwrap();
         std::fs::write(config.join("library.json"), "{}").unwrap();
@@ -2404,7 +2404,7 @@ mod tests {
     fn a_bad_library_file_keeps_its_copy_and_the_rest_follow() {
         let temp = tempfile::tempdir().unwrap();
         let (home, state) = (temp.path().join("home"), temp.path().join("state"));
-        let config = home.join(".config/punktfunk");
+        let config = home.join(".config/lilynk");
         let run = config.join("plugin-run");
         std::fs::create_dir_all(&run).unwrap();
         std::fs::create_dir(&state).unwrap();
@@ -2488,11 +2488,11 @@ mod tests {
     #[test]
     fn the_token_belongs_to_the_lilynk_user_when_there_is_one() {
         let user = Passwd {
-            name: "punktfunk".into(),
+            name: "lilynk".into(),
             uid: 972,
             gid: 969,
             gecos: String::new(),
-            home: PathBuf::from("/var/lib/punktfunk"),
+            home: PathBuf::from("/var/lib/lilynk"),
         };
         assert_eq!(token_owner(Some(&user)), (972, 969));
         assert_eq!(token_owner(None), (0, 0));
@@ -2774,7 +2774,7 @@ mod tests {
         use super::super::safe_open::tests::{fifo, within};
         let temp = tempfile::tempdir().unwrap();
         let (home, pin) = (temp.path().join("home"), temp.path().join("pin"));
-        let config = home.join(".config/punktfunk");
+        let config = home.join(".config/lilynk");
         std::fs::create_dir_all(&config).unwrap();
         fifo(&config.join("native-cert.pem"));
         let (h, p) = (home.clone(), pin.clone());

@@ -24,7 +24,7 @@ param(
     [Parameter(Mandatory = $true)][string]$OutDir,
     [string]$TemplateDir = (Join-Path $PSScriptRoot '..\..\packaging\winget'),
     # Overridable so a fork/mirror can retarget without editing the templates.
-    [string]$UrlBase = 'https://git.unom.io/unom/punktfunk/releases/download'
+    [string]$UrlBase = 'https://github.com/Project-Colony/Lilynk/releases/download'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -58,7 +58,7 @@ foreach ($f in $files) {
     $text = [regex]::Replace($text, '(?m)^(\s*)InstallerSha256:.*$', "`${1}InstallerSha256: $sha")
     # The release-notes link is per-version and lives outside the anchored keys above.
     $text = [regex]::Replace($text, '(?m)^ReleaseNotesUrl:.*$',
-        "ReleaseNotesUrl: https://git.unom.io/unom/punktfunk/src/tag/v$Version/docs/releases/v$Version.md")
+        "ReleaseNotesUrl: https://github.com/Project-Colony/Lilynk/blob/v$Version/docs/releases/v$Version.md")
 
     $dest = Join-Path $OutDir $f
     # UTF-8 *without* BOM: winget's YAML parser rejects a BOM'd manifest.

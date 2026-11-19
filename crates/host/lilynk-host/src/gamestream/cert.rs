@@ -46,7 +46,7 @@ impl ServerIdentity {
                     .with_context(|| format!("write {}", key_path.display()))?;
                 ly_paths::write_secret_file(&cert_path, c.as_bytes())
                     .with_context(|| format!("write {}", cert_path.display()))?;
-                tracing::info!(path = %cert_path.display(), "generated punktfunk host certificate (RSA-2048, key 0600)");
+                tracing::info!(path = %cert_path.display(), "generated lilynk host certificate (RSA-2048, key 0600)");
                 (c, k)
             }
         };
@@ -88,7 +88,7 @@ fn generate() -> Result<(String, String)> {
     let mut params = rcgen::CertificateParams::new(Vec::<String>::new()).context("cert params")?;
     params
         .distinguished_name
-        .push(rcgen::DnType::CommonName, "punktfunk");
+        .push(rcgen::DnType::CommonName, "lilynk");
     params.not_before = rcgen::date_time_ymd(2020, 1, 1);
     params.not_after = rcgen::date_time_ymd(2040, 1, 1);
     let cert = params.self_signed(&key).context("self-sign cert")?;
@@ -221,7 +221,7 @@ mod tests {
         let mut server = ServerConnection::new(server_cfg).expect("server conn");
         let mut client = ClientConnection::new(
             Arc::new(client_cfg),
-            ServerName::try_from("punktfunk").unwrap(),
+            ServerName::try_from("lilynk").unwrap(),
         )
         .expect("client conn");
         pump(&mut client, &mut server);

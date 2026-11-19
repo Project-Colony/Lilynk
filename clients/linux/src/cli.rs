@@ -21,7 +21,7 @@ pub fn arg_flag(flag: &str) -> bool {
 /// A positional `punktfunk://` (or the `pf://` input alias) anywhere in argv — the deep-link
 /// door (design/client-deep-links.md §4.1). It is positional, not a flag, because that is what
 /// `Exec=lilynk-client %u` hands us, what a `.desktop` shortcut embeds, and what a browser's
-/// "Open Punktfunk?" prompt ends up invoking. Validation happens later, in the shared parser —
+/// "Open Lilynk?" prompt ends up invoking. Validation happens later, in the shared parser —
 /// this only decides whether argv contains something addressed to us.
 pub fn deep_link_arg() -> Option<String> {
     std::env::args()
@@ -248,7 +248,7 @@ impl Selector {
     }
 }
 
-/// `--omarchy-menu on|off|sync` — Punktfunk's rows in the Omarchy menu (Super+Space): a root
+/// `--omarchy-menu on|off|sync` — Lilynk's rows in the Omarchy menu (Super+Space): a root
 /// submenu, open/console rows, and one connect row per saved host, kept in sync by every
 /// binary that changes the store. `on` is the consent step (mirroring `lilynk-omarchy
 /// setup` on the host side); `off` removes exactly our block; `sync` rewrites it now.
@@ -264,11 +264,11 @@ fn headless_omarchy_menu(verb: &str) -> glib::ExitCode {
     };
     match verb {
         "on" => match menu::enable() {
-            Ok(()) => done("Punktfunk added to the Omarchy menu (Super+Space) — it follows your saved hosts from here"),
+            Ok(()) => done("Lilynk added to the Omarchy menu (Super+Space) — it follows your saved hosts from here"),
             Err(e) => failed(e),
         },
         "off" => match menu::disable() {
-            Ok(()) => done("Punktfunk removed from the Omarchy menu"),
+            Ok(()) => done("Lilynk removed from the Omarchy menu"),
             Err(e) => failed(e),
         },
         "sync" => {

@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::seam::{BasePaths, CommandRunner, Env};
 
-pub const DOCS: &str = "https://docs.punktfunk.unom.io/docs";
+pub const DOCS: &str = "https://project-colony.github.io/Lilynk/docs";
 
 /// User-scope client id when the family has no native package.
 pub const FLATPAK_APP: &str = "org.projectcolony.lilynk";
@@ -349,7 +349,7 @@ impl Facts {
             has_omarchy_bin: run.which("lilynk-omarchy"),
             has_ujust: run.which("ujust"),
             in_input_group: groups.iter().any(|g| g == "input"),
-            in_lilynk_group: groups.iter().any(|g| g == "punktfunk"),
+            in_lilynk_group: groups.iter().any(|g| g == "lilynk"),
             has_input_group: run
                 .probe("getent", &["group", "input"])
                 .is_some_and(|o| o.ok()),
@@ -363,7 +363,7 @@ impl Facts {
                 .lines()
                 .any(|l| l.starts_with("lilynk-web.service")),
             web_password_present: ["web-password", "web.env"].iter().any(|f| {
-                std::fs::metadata(paths.config.join("punktfunk").join(f)).is_ok_and(|m| m.len() > 0)
+                std::fs::metadata(paths.config.join("lilynk").join(f)).is_ok_and(|m| m.len() > 0)
             }),
             web_bind: env_line(&paths.host_env(), "LILYNK_UI_BIND"),
             mgmt_bind: env_line(&paths.host_env(), "LILYNK_MGMT_BIND"),

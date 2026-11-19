@@ -5,7 +5,7 @@
   "plugins": [
     {
       "id": "rom-manager",
-      "pkg": "@punktfunk/plugin-rom-manager",
+      "pkg": "@lilynk/plugin-rom-manager",
       "registry": "https://git.unom.io/api/packages/unom/npm/",
       "title": "ROM Manager",
       "description": "Scans your ROM directories, maps them to emulators, fetches box art, and reconciles everything into the host game library as a provider. Includes a console-hosted web UI for mapping and cleanup.",
@@ -26,7 +26,7 @@
     },
     {
       "id": "playnite",
-      "pkg": "@punktfunk/plugin-playnite",
+      "pkg": "@lilynk/plugin-playnite",
       "registry": "https://git.unom.io/api/packages/unom/npm/",
       "title": "Playnite",
       "description": "Bridges your Playnite library on Windows into the host game library, keeping installed games, metadata, and launch commands in sync as a library provider.",

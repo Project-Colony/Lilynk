@@ -56,7 +56,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		AA0000000000000000000001 /* Punktfunk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Punktfunk.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA0000000000000000000001 /* Lilynk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lilynk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB0000000000000000000001 /* Lilynk-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lilynk-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC0000000000000000000001 /* Lilynk-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lilynk-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2955697300948B9009F939C /* LilynkWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LilynkWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -162,7 +162,7 @@
 		AA0000000000000000000008 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AA0000000000000000000001 /* Punktfunk.app */,
+				AA0000000000000000000001 /* Lilynk.app */,
 				BB0000000000000000000001 /* Lilynk-iOS.app */,
 				CC0000000000000000000001 /* Lilynk-tvOS.app */,
 				E2955697300948B9009F939C /* LilynkWidgetsExtension.appex */,
@@ -182,9 +182,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		AA0000000000000000000009 /* Punktfunk */ = {
+		AA0000000000000000000009 /* Lilynk */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AA000000000000000000000A /* Build configuration list for PBXNativeTarget "Punktfunk" */;
+			buildConfigurationList = AA000000000000000000000A /* Build configuration list for PBXNativeTarget "Lilynk" */;
 			buildPhases = (
 				AA000000000000000000000B /* Sources */,
 				AA0000000000000000000004 /* Frameworks */,
@@ -198,14 +198,14 @@
 				AA0000000000000000000002 /* App */,
 				AA0000000000000000000003 /* Sources/LilynkClient */,
 			);
-			name = Punktfunk;
+			name = Lilynk;
 			packageProductDependencies = (
 				AA0000000000000000000006 /* LilynkKit */,
 				EE0000000000000000000002 /* Glur */,
 				EE0000000000000000000003 /* GlurBackdrop */,
 			);
-			productName = Punktfunk;
-			productReference = AA0000000000000000000001 /* Punktfunk.app */;
+			productName = Lilynk;
+			productReference = AA0000000000000000000001 /* Lilynk.app */;
 			productType = "com.apple.product-type.application";
 		};
 		BB0000000000000000000009 /* Lilynk-iOS */ = {
@@ -304,7 +304,7 @@
 					};
 				};
 			};
-			buildConfigurationList = AA000000000000000000000E /* Build configuration list for PBXProject "Punktfunk" */;
+			buildConfigurationList = AA000000000000000000000E /* Build configuration list for PBXProject "Lilynk" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -322,7 +322,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				AA0000000000000000000009 /* Punktfunk */,
+				AA0000000000000000000009 /* Lilynk */,
 				BB0000000000000000000009 /* Lilynk-iOS */,
 				CC0000000000000000000009 /* Lilynk-tvOS */,
 				E2955696300948B9009F939C /* LilynkWidgetsExtension */,
@@ -533,13 +533,13 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Config/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Punktfunk;
+				INFOPLIST_KEY_CFBundleDisplayName = Lilynk;
 				INFOPLIST_KEY_GCSupportsControllerUserInteraction = YES;
 				INFOPLIST_KEY_GCSupportsGameMode = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Punktfunk connects directly to your Punktfunk host on the local network to stream video, audio, and input.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Your microphone is streamed to the connected Punktfunk host, where it appears as a virtual microphone.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Lilynk connects directly to your Lilynk host on the local network to stream video, audio, and input.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Your microphone is streamed to the connected Lilynk host, where it appears as a virtual microphone.";
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -570,13 +570,13 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Config/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Punktfunk;
+				INFOPLIST_KEY_CFBundleDisplayName = Lilynk;
 				INFOPLIST_KEY_GCSupportsControllerUserInteraction = YES;
 				INFOPLIST_KEY_GCSupportsGameMode = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Punktfunk connects directly to your Punktfunk host on the local network to stream video, audio, and input.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Your microphone is streamed to the connected Punktfunk host, where it appears as a virtual microphone.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Lilynk connects directly to your Lilynk host on the local network to stream video, audio, and input.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Your microphone is streamed to the connected Lilynk host, where it appears as a virtual microphone.";
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -608,13 +608,13 @@
 				INFOPLIST_FILE = Config/Info.plist;
 				"INFOPLIST_FILE[sdk=xros*]" = "Config/Info-visionOS.plist";
 				"INFOPLIST_FILE[sdk=xrsimulator*]" = "Config/Info-visionOS.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = Punktfunk;
+				INFOPLIST_KEY_CFBundleDisplayName = Lilynk;
 				INFOPLIST_KEY_GCSupportsControllerUserInteraction = YES;
 				INFOPLIST_KEY_GCSupportsGameMode = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Face ID opens your own account on a host without its password.";
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Punktfunk connects directly to your Punktfunk host on the local network to stream video, audio, and input.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Your microphone is streamed to the connected Punktfunk host, where it appears as a virtual microphone.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Lilynk connects directly to your Lilynk host on the local network to stream video, audio, and input.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Your microphone is streamed to the connected Lilynk host, where it appears as a virtual microphone.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -655,13 +655,13 @@
 				INFOPLIST_FILE = Config/Info.plist;
 				"INFOPLIST_FILE[sdk=xros*]" = "Config/Info-visionOS.plist";
 				"INFOPLIST_FILE[sdk=xrsimulator*]" = "Config/Info-visionOS.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = Punktfunk;
+				INFOPLIST_KEY_CFBundleDisplayName = Lilynk;
 				INFOPLIST_KEY_GCSupportsControllerUserInteraction = YES;
 				INFOPLIST_KEY_GCSupportsGameMode = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Face ID opens your own account on a host without its password.";
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Punktfunk connects directly to your Punktfunk host on the local network to stream video, audio, and input.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Your microphone is streamed to the connected Punktfunk host, where it appears as a virtual microphone.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Lilynk connects directly to your Lilynk host on the local network to stream video, audio, and input.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Your microphone is streamed to the connected Lilynk host, where it appears as a virtual microphone.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -697,9 +697,9 @@
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Config/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Punktfunk;
+				INFOPLIST_KEY_CFBundleDisplayName = Lilynk;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Punktfunk connects directly to your Punktfunk host on the local network to stream video, audio, and input.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Lilynk connects directly to your Lilynk host on the local network to stream video, audio, and input.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -727,9 +727,9 @@
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Config/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Punktfunk;
+				INFOPLIST_KEY_CFBundleDisplayName = Lilynk;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Punktfunk connects directly to your Punktfunk host on the local network to stream video, audio, and input.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Lilynk connects directly to your Lilynk host on the local network to stream video, audio, and input.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -841,7 +841,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		AA000000000000000000000A /* Build configuration list for PBXNativeTarget "Punktfunk" */ = {
+		AA000000000000000000000A /* Build configuration list for PBXNativeTarget "Lilynk" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AA0000000000000000000012 /* Debug */,
@@ -850,7 +850,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		AA000000000000000000000E /* Build configuration list for PBXProject "Punktfunk" */ = {
+		AA000000000000000000000E /* Build configuration list for PBXProject "Lilynk" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AA0000000000000000000010 /* Debug */,

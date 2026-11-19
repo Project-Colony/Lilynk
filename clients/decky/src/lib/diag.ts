@@ -10,9 +10,9 @@ declare global {
 
 let lastDiag = "";
 
-/** Storage key `punktfunk:diagVerbose` set to "1" traces every render step instead of changes. */
+/** Storage key `lilynk:diagVerbose` set to "1" traces every render step instead of changes. */
 export function verbose(): boolean {
-  return read("punktfunk:diagVerbose") === "1";
+  return read("lilynk:diagVerbose") === "1";
 }
 
 export function diag(msg: string): void {
@@ -21,7 +21,7 @@ export function diag(msg: string): void {
   }
   lastDiag = msg;
   const line = `${new Date().toISOString().slice(11, 19)} ${msg}`;
-  console.warn(`punktfunk: ${msg}`);
+  console.warn(`lilynk: ${msg}`);
   try {
     (window.__lilynkDiag ??= []).push(line);
     if (window.__lilynkDiag.length > 60) {

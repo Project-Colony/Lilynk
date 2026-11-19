@@ -118,11 +118,11 @@ mod tests {
 
     #[test]
     fn a_long_path_breaks_at_the_limit_after_the_words_before_it() {
-        let lines = wrap(r"Folder C:\Users\田中\AppData\Local\Punktfunk", 20);
+        let lines = wrap(r"Folder C:\Users\田中\AppData\Local\Lilynk", 20);
         assert_eq!(lines[0], r"Folder C:\Users\田中");
         assert_eq!(
             lines.concat().replace(' ', ""),
-            r"FolderC:\Users\田中\AppData\Local\Punktfunk"
+            r"FolderC:\Users\田中\AppData\Local\Lilynk"
         );
         for line in &lines {
             assert!(measure_text_width(line) <= 20, "{line:?}");

@@ -1,5 +1,5 @@
 ;/*++
-; punktfunk virtual Precision Touchpad - UMDF2 HID minidriver INF.
+; lilynk virtual Precision Touchpad - UMDF2 HID minidriver INF.
 ; Same skeleton as ly_mouse.inx (the WDK vhidmini2 UMDF2 shape).
 ; Depends on MsHidUmdf.inf (build >= 22000).
 ;--*/
@@ -68,8 +68,8 @@ ServiceBinary="%13%\ly_touchpad.dll"
 ly_touchpad.dll
 
 [Strings]
-ProviderString     ="Punktfunk"
-ManufacturerString ="Punktfunk"
+ProviderString     ="Lilynk"
+ManufacturerString ="Lilynk"
 ClassName          ="HID device"
-Disk_Description   ="Punktfunk Touchpad Installation Disk"
-DeviceDesc         ="Punktfunk Virtual Touchpad"
+Disk_Description   ="Lilynk Touchpad Installation Disk"
+DeviceDesc         ="Lilynk Virtual Touchpad"

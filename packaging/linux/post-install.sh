@@ -1,11 +1,11 @@
 #!/bin/sh
 # The host state every lilynk-host install shares, run as root once the payload is in place:
 # by the deb postinst, pacman's post_install and post_upgrade, rpm's %post and lilynk-sysext's
-# post_merge. Installed as /usr/libexec/punktfunk/post-install (/usr/lib/punktfunk on Arch).
+# post_merge. Installed as /usr/libexec/lilynk/post-install (/usr/lib/lilynk on Arch).
 # Capabilities and the first-run hints stay with each format. Every step is best-effort and the
 # script exits 0: nothing here may fail an install.
 
-# First: 60-lilynk.rules chgrp's the vhci nodes to 'punktfunk'.
+# First: 60-lilynk.rules chgrp's the vhci nodes to 'lilynk'.
 systemd-sysusers lilynk.conf >/dev/null 2>&1 || true
 # /dev/uinput and /dev/uhid pick up the rule without a reboot (a no-op in a container).
 udevadm control --reload-rules 2>/dev/null || true
@@ -19,7 +19,7 @@ fi
 # steamos-manager boxes: Valve's ds_inhibit walks /proc on every open of our virtual DualSense's
 # hidraw, SELinux denies it at hundreds of AVCs a second and setroubleshootd turns that into a
 # box-wide stall. Keyed on the module name, so rename the .cil when its rules change.
-CIL=/usr/share/punktfunk/selinux/lilynk-ds-inhibit.cil
+CIL=/usr/share/lilynk/selinux/lilynk-ds-inhibit.cil
 if command -v semodule >/dev/null 2>&1 && [ -e /usr/lib/steamos-manager ] && [ -f "$CIL" ] &&
    ! semodule -l 2>/dev/null | grep -qx lilynk-ds-inhibit; then
     echo "installing SELinux drop-in 'lilynk-ds-inhibit' (silences the steamos-manager ds_inhibit audit flood)…"
@@ -34,7 +34,7 @@ if command -v ufw >/dev/null 2>&1 &&
    ufw status verbose 2>/dev/null | grep -q 'lilynk-web' &&
    ! ufw status verbose 2>/dev/null | grep -q '47993'; then
     echo ""
-    echo "punktfunk: your ufw rule for 'lilynk-web' predates TCP 47993 (plugin UIs, served"
+    echo "lilynk: your ufw rule for 'lilynk-web' predates TCP 47993 (plugin UIs, served"
     echo "  from their own origin). Plugin interfaces will not load in the console until:"
     echo "    sudo ufw app update lilynk-web && sudo ufw reload"
 fi
@@ -42,7 +42,7 @@ if command -v ufw >/dev/null 2>&1 &&
    ufw status verbose 2>/dev/null | grep -q 'lilynk-native' &&
    ! ufw status verbose 2>/dev/null | grep -q '9778'; then
     echo ""
-    echo "punktfunk: your ufw rule for 'lilynk-native' predates UDP 9778 (browser streaming)."
+    echo "lilynk: your ufw rule for 'lilynk-native' predates UDP 9778 (browser streaming)."
     echo "  A browser cannot connect to this host until:"
     echo "    sudo ufw app update lilynk-native && sudo ufw reload"
 fi
@@ -52,7 +52,7 @@ if command -v firewall-cmd >/dev/null 2>&1 &&
    firewall-cmd --query-service=lilynk-web >/dev/null 2>&1 &&
    ! firewall-cmd --info-service=lilynk-web 2>/dev/null | grep -q '47993'; then
     echo ""
-    echo "punktfunk: the lilynk-web firewalld service now also covers TCP 47993 (plugin UIs)."
+    echo "lilynk: the lilynk-web firewalld service now also covers TCP 47993 (plugin UIs)."
     echo "  Plugin interfaces will not load in the console until:  sudo firewall-cmd --reload"
 fi
 if command -v firewall-cmd >/dev/null 2>&1 &&
@@ -60,7 +60,7 @@ if command -v firewall-cmd >/dev/null 2>&1 &&
    firewall-cmd --query-service=lilynk-native >/dev/null 2>&1 &&
    ! firewall-cmd --info-service=lilynk-native 2>/dev/null | grep -q '9778'; then
     echo ""
-    echo "punktfunk: the lilynk-native firewalld service now also covers UDP 9778 (browser"
+    echo "lilynk: the lilynk-native firewalld service now also covers UDP 9778 (browser"
     echo "  streaming). A browser cannot connect to this host until:  sudo firewall-cmd --reload"
 fi
 
@@ -68,10 +68,10 @@ fi
 # included. Keep that script in /etc with a unit that fetches the new base's image at boot.
 MARKER=/usr/lib/extension-release.d/extension-release.lilynk
 if [ -x /usr/bin/lilynk-sysext ] && grep -qs '^VERSION_ID=' "$MARKER"; then
-    install -Dm0755 /usr/bin/lilynk-sysext /etc/punktfunk/lilynk-sysext || true
+    install -Dm0755 /usr/bin/lilynk-sysext /etc/lilynk/lilynk-sysext || true
     cat > /etc/systemd/system/lilynk-sysext-rebase.service <<'EOF'
 [Unit]
-Description=Punktfunk host: fetch the sysext for a rebased OS
+Description=Lilynk host: fetch the sysext for a rebased OS
 ConditionPathExists=/var/lib/extensions/lilynk.raw
 ConditionPathExists=!/usr/lib/extension-release.d/extension-release.lilynk
 Wants=network-online.target
@@ -79,7 +79,7 @@ After=network-online.target systemd-sysext.service firewalld.service
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash /etc/punktfunk/lilynk-sysext update
+ExecStart=/bin/bash /etc/lilynk/lilynk-sysext update
 TimeoutStartSec=20min
 Restart=on-failure
 RestartSec=2min

@@ -3,7 +3,7 @@
 Upstream gamescope's built-in PipeWire node is SDR-only: `build_format_params()` offers `BGRx`
 and `NV12`, and `paint_pipewire()` hardcodes a Gamma-2.2 composite with the SDR screenshot LUT
 set. An HDR game therefore reaches every capture consumer already tone-mapped down — which is
-why the punktfunk gamescope backend has always streamed 8-bit, even though games *can* render
+why the lilynk gamescope backend has always streamed 8-bit, even though games *can* render
 HDR on a headless gamescope today (`--hdr-enabled --hdr-debug-force-support`).
 
 The patches here add the missing half, and nothing else. See
@@ -69,7 +69,7 @@ report 2026-08-08: "gamescope only shows 60hz and there's no other option".
 ### Why the cursor patch matters more than it looks
 
 gamescope keeps the pointer out of its PipeWire node — it lives on a hardware plane for scanout —
-so punktfunk has always reconstructed it from XFixes and blended it into every frame host-side.
+so lilynk has always reconstructed it from XFixes and blended it into every frame host-side.
 That blend is what forces the encode path onto its compute colour-conversion arm: the zero-copy
 RGB-direct encode source (`VK_VALVE_video_encode_rgb_conversion`) hands the captured buffer to a
 fixed-function front end with no blend stage. Painting the cursor into the node removes the reason
@@ -118,7 +118,7 @@ cursor, the heaviest paint path we ship.
 
 ## Why the marker exists
 
-punktfunk decides a session's shape **before** the virtual display exists: the bit depth at
+lilynk decides a session's shape **before** the virtual display exists: the bit depth at
 handshake time (irrevocable — a PQ stream handed to an 8-bit encoder is a deliberate hard error),
 and whether the host must composite the cursor before the encoder is even opened. Both answers
 must therefore be static properties of the resolved binary, not optimistic negotiations. The host
@@ -232,7 +232,7 @@ with the pin; each names its release tag beside the commit.
 Build into a staging directory on Linux. The system gamescope and file capabilities stay untouched:
 
 ```sh
-PF=/absolute/path/to/punktfunk
+PF=/absolute/path/to/lilynk
 STAGE="$PWD/gamescope-stage"
 bash "$PF/packaging/gamescope/build-lilynk-gamescope.sh" \
     --destdir "$STAGE" --prefix /usr --jobs "$(nproc)"
@@ -270,7 +270,7 @@ we pin, so it can come up short. `xorg-x11-server-Xwayland-devel` is the one tha
 nor a xserver.wrap file was found`, several minutes into an otherwise clean run. If a different
 one surfaces, meson names it — install and re-run with `--srcdir` so the clone is not repeated.
 
-⚠️ `libstdc++-static` is a **punktfunk** requirement, not gamescope's, so no builddep will ever pull
+⚠️ `libstdc++-static` is a **lilynk** requirement, not gamescope's, so no builddep will ever pull
 it: the build script links the C++ runtime statically on purpose (see the long comment beside
 `LDFLAGS` in `build-lilynk-gamescope.sh`). Without it meson fails at configure with a message
 that names neither the flag nor the package (2026-08-10, Fedora 44):
@@ -333,7 +333,7 @@ finishes in a fraction of a second. gamescope starts its child through `gamescop
 staged one goes on `PATH`.
 
 ```sh
-PATH="$STAGE/usr/lib/punktfunk/gamescope:$PATH" \
+PATH="$STAGE/usr/lib/lilynk/gamescope:$PATH" \
 python3 - "$STAGE/usr/bin/lilynk-gamescope" <<'PY'
 import os
 import subprocess

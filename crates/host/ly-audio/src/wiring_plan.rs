@@ -175,7 +175,7 @@ pub fn virtual_capture(lname: &str) -> bool {
         || lname.contains("steam streaming")
         || lname.contains("voicemeeter")
         || lname.contains("virtual")
-        || lname.contains("punktfunk")
+        || lname.contains("lilynk")
 }
 
 /// First real capture endpoint (skip `avoid_id` and every [`virtual_capture`]).
@@ -187,13 +187,13 @@ pub fn real_capture<'a>(captures: &'a [Endpoint], avoid_id: Option<&str>) -> Opt
 }
 
 /// Known-virtual render. A name without these markers is real hardware. Our own endpoints read
-/// "Punktfunk …" once their devnode name holds.
+/// "Lilynk …" once their devnode name holds.
 fn virtualish(lname: &str) -> bool {
     lname.contains("virtual")
         || lname.contains("cable")
         || lname.contains("steam streaming")
         || lname.contains("voicemeeter")
-        || lname.contains("punktfunk")
+        || lname.contains("lilynk")
 }
 
 /// Whether this render id is a pad-audio endpoint the provisioner minted.
@@ -1010,7 +1010,7 @@ mod tests {
     #[test]
     fn recording_hygiene_picks_the_real_microphone() {
         let captures = [
-            ep("Microphone (2- Punktfunk)"),
+            ep("Microphone (2- Lilynk)"),
             ep("CABLE Output (VB-Audio Virtual Cable)"),
             ep("Microphone (Steam Streaming Microphone)"),
             ep("VoiceMeeter Output (VB-Audio VoiceMeeter VAIO)"),
@@ -1055,8 +1055,8 @@ mod tests {
     #[test]
     fn our_named_endpoints_are_never_real_hardware() {
         let renders = [
-            ep("Punktfunk Speakers (Punktfunk)"),
-            ep("Punktfunk Microphone (2- Punktfunk)"),
+            ep("Lilynk Speakers (Lilynk)"),
+            ep("Lilynk Microphone (2- Lilynk)"),
             ep("Speakers (Realtek HD Audio)"),
         ];
         let w = plan(&renders, &[], None, true, &[], &MintedIds::default());

@@ -31,7 +31,7 @@ private func loadStoredHost(_ id: UUID) -> StoredHost? {
 struct ConnectToHostIntent: AppIntent {
     static let title: LocalizedStringResource = LocalizedStringResource("apple_intent_connect_title", defaultValue: "Connect to Host")
     static let description = IntentDescription(
-        LocalizedStringResource("apple_intent_connect_desc", defaultValue: "Start a Punktfunk streaming session with a host."))
+        LocalizedStringResource("apple_intent_connect_desc", defaultValue: "Start a Lilynk streaming session with a host."))
     static let openAppWhenRun = true
 
     @Parameter(title: LocalizedStringResource("apple_intent_param_host", defaultValue: "Host")) var host: HostEntity
@@ -63,7 +63,7 @@ struct OpenLibraryIntent: AppIntent {
     static let description = IntentDescription(
         LocalizedStringResource(
             "apple_intent_open_library_desc",
-            defaultValue: "Open a host's game library in Punktfunk, without starting a stream."))
+            defaultValue: "Open a host's game library in Lilynk, without starting a stream."))
     static let openAppWhenRun = true
 
     @Parameter(title: LocalizedStringResource("apple_intent_param_host", defaultValue: "Host")) var host: HostEntity

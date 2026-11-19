@@ -1,5 +1,5 @@
 {
-  "$comment": "Single source for the install/port facts that used to drift across four surfaces (docs-and-onboarding-overhaul WP1). Consumers: docs-site install pages (<Install platform=…/> and <Ports/> in docs-site/src/components/platforms.tsx, reading the byte-identical snapshot docs-site/src/data/platforms.json that check-docs-drift.sh gates), the website download page (WP3), the guided install script (WP4). A port number, repo URL or install command lives HERE and nowhere else — pages quote it, they don't restate it. `install` is the shell snippet that puts the package on the box (lines, in order); `url` is a download/store link — the canonical download when a platform ships one, with or without an `install` snippet beside it; `floor` is the one-line minimum system that platform's package runs on, as a person reads it — the download page quotes it under every install action. Validated by scripts/ci/check-docs-drift.sh (parse + snapshot sync; ponytail: cross-check against code literals when a consumer exists).",
+  "$comment": "Single source for the install and port facts. Consumers: the docs-site components in docs-site/src/components/platforms.tsx (<Install platform=…/>, <Installer/>, <Ports/>), which read the byte-identical snapshot docs-site/src/data/platforms.json, and crates/install/lilynk-setup, which embeds this file for its install lines and floors. A port number, repo URL or install command lives here and nowhere else; pages quote it and do not restate it. `install` is the shell snippet that puts the host on the box, one line per entry, in order. `floor` is the one-line minimum system for that platform, as a person reads it. scripts/ci/check-docs-drift.sh checks that this file parses and that the snapshot matches it.",
 
   "ports": {
     "mgmt": {
@@ -36,7 +36,7 @@
       "tcp": [47984, 47989, 48010],
       "udp": [47998, 47999, 48000],
       "what": "GameStream/Moonlight-compat planes (opt-in, LILYNK_GAMESTREAM=1)",
-      "conflict": "Sunshine / Apollo / Vibeshine bind these same fixed ports and advertise the same mDNS name — run only one GameStream host at a time, or keep punktfunk native-only."
+      "conflict": "Sunshine / Apollo / Vibeshine bind these same fixed ports and advertise the same mDNS name — run only one GameStream host at a time, or keep lilynk native-only."
     }
   },
 
@@ -48,16 +48,12 @@
   },
 
   "installer": {
-    "$comment": "The guided Linux installer (WP4, preview). Canonical URL is the website's /install.sh, a redirect to the raw script on main so it's versioned with the code it installs; the docs hub and the download page quote these lines.",
+    "$comment": "The guided Linux installer (preview). No download of it is published: fromSource builds lilynk-setup in a clone and runs the scripts/install.sh stub on it, as the stub's --help says. The docs hub quotes these lines.",
     "status": "preview",
-    "url": "https://punktfunk.unom.io/install.sh",
-    "source": "https://git.unom.io/unom/punktfunk/raw/branch/main/scripts/install.sh",
-    "oneLiner": "curl -fsSL https://punktfunk.unom.io/install.sh | sh",
-    "canaryOneLiner": "curl -fsSL https://punktfunk.unom.io/install.sh | sh -s -- --channel canary",
-    "inspectFirst": [
-      "curl -fsSLO https://punktfunk.unom.io/install.sh",
-      "less install.sh",
-      "sh install.sh"
+    "source": "https://raw.githubusercontent.com/Project-Colony/Lilynk/main/scripts/install.sh",
+    "fromSource": [
+      "cargo build --release -p lilynk-setup",
+      "LILYNK_SETUP_BIN=target/release/lilynk-setup sh scripts/install.sh"
     ],
     "docs": "/docs/install#guided-install-preview"
   },
@@ -97,7 +93,7 @@
       "install": [
         "curl -fsS https://git.unom.io/api/packages/unom/arch/repository.key | sudo pacman-key --add -",
         "sudo pacman-key --lsign-key E0CA04465C99C936E0B0C6510A317015A34DDD69",
-        "grep -q '^\\[punktfunk\\]' /etc/pacman.conf || printf '\\n[punktfunk]\\nServer = https://git.unom.io/api/packages/unom/arch/$repo/$arch\\n' | sudo tee -a /etc/pacman.conf >/dev/null",
+        "grep -q '^\\[lilynk\\]' /etc/pacman.conf || printf '\\n[lilynk]\\nServer = https://git.unom.io/api/packages/unom/arch/$repo/$arch\\n' | sudo tee -a /etc/pacman.conf >/dev/null",
         "sudo pacman -Syu lilynk-host lilynk-web lilynk-scripting"
       ]
     },
@@ -113,7 +109,7 @@
       "install": [
         "curl -fsS https://git.unom.io/api/packages/unom/arch/repository.key | sudo pacman-key --add -",
         "sudo pacman-key --lsign-key E0CA04465C99C936E0B0C6510A317015A34DDD69",
-        "grep -q '^\\[punktfunk\\]' /etc/pacman.conf || printf '\\n[punktfunk]\\nServer = https://git.unom.io/api/packages/unom/arch/$repo/$arch\\n' | sudo tee -a /etc/pacman.conf >/dev/null",
+        "grep -q '^\\[lilynk\\]' /etc/pacman.conf || printf '\\n[lilynk]\\nServer = https://git.unom.io/api/packages/unom/arch/$repo/$arch\\n' | sudo tee -a /etc/pacman.conf >/dev/null",
         "sudo pacman -Sy",
         "sudo pacman -S lilynk-host lilynk-web lilynk-scripting lilynk-client",
         "lilynk-omarchy setup"
@@ -129,8 +125,8 @@
       "repo": "https://git.unom.io/api/packages/unom/rpm/fedora-44",
       "install": [
         "sudo tee /etc/yum.repos.d/lilynk.repo >/dev/null <<'REPO'",
-        "[punktfunk]",
-        "name=punktfunk",
+        "[lilynk]",
+        "name=lilynk",
         "# fedora-44 on Fedora 44; bazzite on Fedora 43 (a plain Fedora 43 build of the same package)",
         "baseurl=https://git.unom.io/api/packages/unom/rpm/fedora-44",
         "enabled=1",
@@ -150,8 +146,8 @@
       "docs": "/docs/bazzite",
       "floor": "Current Bazzite; Fedora Atomic 43 or newer",
       "install": [
-        "curl -fsSLO https://git.unom.io/unom/punktfunk/raw/branch/main/packaging/bazzite/punktfunk-sysext.sh",
-        "sudo bash punktfunk-sysext.sh install"
+        "curl -fsSLO https://raw.githubusercontent.com/Project-Colony/Lilynk/main/packaging/bazzite/lilynk-sysext.sh",
+        "sudo bash lilynk-sysext.sh install"
       ]
     },
     {
@@ -162,7 +158,7 @@
       "docs": "/docs/nixos",
       "floor": "NixOS with flakes",
       "install": [
-        "# flake input: inputs.lilynk.url = \"git+https://git.unom.io/unom/punktfunk?ref=nix-stable\";",
+        "# flake input: inputs.lilynk.url = \"git+https://github.com/Project-Colony/Lilynk\";",
         "# then: imports = [ lilynk.nixosModules.default ]; services.lilynk.host.enable = true;"
       ]
     },
@@ -174,8 +170,8 @@
       "docs": "/docs/steamos-host",
       "floor": "SteamOS 3",
       "install": [
-        "git clone --branch stable https://github.com/Project-Colony/Lilynk ~/punktfunk",
-        "bash ~/punktfunk/scripts/steamdeck/install.sh"
+        "git clone https://github.com/Project-Colony/Lilynk ~/lilynk",
+        "bash ~/lilynk/scripts/steamdeck/install.sh"
       ]
     },
     {
@@ -185,9 +181,7 @@
       "packageManager": "installer",
       "docs": "/docs/windows-host",
       "floor": "Windows 11 22H2 (build 22621) or newer, x64",
-      "url": "https://git.unom.io/api/packages/unom/generic/punktfunk-host-windows/latest/punktfunk-host-setup.exe",
       "install": [
-        "winget source add -n punktfunk https://winget.punktfunk.unom.io -t Microsoft.Rest",
         "winget install Lilynk.LilynkHost"
       ]
     },
@@ -216,13 +210,7 @@
       "installs": "client",
       "packageManager": "installer",
       "docs": "/docs/install-client#windows",
-      "floor": "Windows 10 or newer, x64 and Arm64",
-      "url": "https://git.unom.io/api/packages/unom/generic/punktfunk-client-windows/latest/punktfunk-client-setup_x64.exe",
-      "urlArm64": "https://git.unom.io/api/packages/unom/generic/punktfunk-client-windows/latest/punktfunk-client-setup_arm64.exe",
-      "install": [
-        "curl.exe -LO https://git.unom.io/api/packages/unom/generic/punktfunk-client-windows/latest/punktfunk-client-setup_x64.exe",
-        ".\\punktfunk-client-setup_x64.exe"
-      ]
+      "floor": "Windows 10 or newer, x64 and Arm64"
     },
     {
       "id": "macos-client",
@@ -230,8 +218,7 @@
       "installs": "client",
       "packageManager": "dmg",
       "docs": "/docs/install-client#macos",
-      "floor": "macOS 14 or newer",
-      "url": "https://git.unom.io/unom/punktfunk/releases"
+      "floor": "macOS 14 or newer"
     },
     {
       "id": "apple-client",
@@ -239,9 +226,7 @@
       "installs": "client",
       "packageManager": "appstore",
       "docs": "/docs/install-client#ios-ipados-apple-tv",
-      "floor": "iOS, iPadOS and tvOS 17 or newer",
-      "url": "https://apps.apple.com/app/id6779991756",
-      "testflight": "https://testflight.apple.com/join/Qr7uSemk"
+      "floor": "iOS, iPadOS and tvOS 17 or newer"
     },
     {
       "id": "android-client",
@@ -249,9 +234,7 @@
       "installs": "client",
       "packageManager": "play",
       "docs": "/docs/install-client#android",
-      "floor": "Android 9 or newer",
-      "url": "https://play.google.com/store/apps/details?id=io.unom.punktfunk",
-      "apk": "https://git.unom.io/api/packages/unom/generic/punktfunk-android/latest/punktfunk-android.apk"
+      "floor": "Android 9 or newer"
     }
   ]
 }

@@ -137,10 +137,10 @@ mod tests {
     #[test]
     fn maps_a_prefix_in_either_mode() {
         for share in [Share::Shared, Share::Private] {
-            let f = memfd(b"punktfunk");
+            let f = memfd(b"lilynk");
             let map = ReadMap::new(f.as_fd(), 4, share).expect("map");
             drop(f);
-            assert_eq!(map.bytes(), b"punk");
+            assert_eq!(map.bytes(), b"lily");
         }
     }
 
@@ -150,7 +150,7 @@ mod tests {
     fn the_bracket_is_best_effort_on_a_non_dmabuf() {
         assert_eq!(DMA_BUF_IOCTL_SYNC, 0x4008_6200);
         assert_eq!(DMA_BUF_SYNC_END, 4);
-        let f = memfd(b"punktfunk");
+        let f = memfd(b"lilynk");
         let _read = CpuRead::begin(f.as_fd());
     }
 

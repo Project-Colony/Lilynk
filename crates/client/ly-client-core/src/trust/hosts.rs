@@ -959,7 +959,7 @@ fn apply_advert(
 /// `addr:port`, and keep the advert's address as a place [`probe_known`](super::probe_known)
 /// asks. No-op, and no disk write, when nothing changed — call it on every discovery tick.
 ///
-/// Mints no record ids: `punktfunk discover` calls this, and hands none out.
+/// Mints no record ids: `lilynk discover` calls this, and hands none out.
 pub fn learn_from_advert(fp_hex: &str, addr: &str, port: u16, advert: &DiscoveredHost) {
     let Ok(path) = KnownHosts::path() else {
         return;

@@ -185,7 +185,7 @@ mod tests {
         for name in [
             "",
             ".",
-            "web.punktfunk.io",
+            "web.lilynk.example",
             "evil.example",
             "local.evil.example",
             "evil.notinternal",

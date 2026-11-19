@@ -63,7 +63,7 @@ impl TritonWinPad {
                 // VID/PID only. If Steam balks, A/B `Some(0)` (Deck needed `Some(2)`).
                 usb_mi: None,
                 bluetooth: false,
-                description: "Punktfunk Virtual Steam Controller",
+                description: "Lilynk Virtual Steam Controller",
                 // Steam merges a pad's HID views by the VID/PID token in the instance path.
                 enumerator: "VID_28DE&PID_1302",
                 property: Some((
@@ -147,7 +147,7 @@ impl PadProto for TritonWinProto {
     type State = TritonState;
     const LABEL: &'static str = "Steam Controller 2/Windows";
     const DEVICE: &'static str = "Steam Controller 2";
-    const CREATE_HINT: &'static str = " (install/repair: run the Punktfunk installer again)";
+    const CREATE_HINT: &'static str = " (install/repair: run the Lilynk installer again)";
 
     fn open(&mut self, idx: u8) -> Result<TritonWinPad> {
         let identity = crate::triton_proto::identity_for(idx);

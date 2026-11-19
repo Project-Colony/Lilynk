@@ -48,8 +48,8 @@ impl DeckWinPad {
                 // token, hidapi reports interface 0, and Steam never claims the pad.
                 usb_mi: Some(2),
                 bluetooth: false,
-                description: "Punktfunk Virtual Steam Deck",
-                enumerator: "punktfunk",
+                description: "Lilynk Virtual Steam Deck",
+                enumerator: "lilynk",
                 property: None,
             },
         )?;
@@ -88,7 +88,7 @@ impl PadProto for DeckWinProto {
     type State = SteamState;
     const LABEL: &'static str = "Steam Deck/Windows";
     const DEVICE: &'static str = "Steam Deck";
-    const CREATE_HINT: &'static str = " (install/repair: run the Punktfunk installer again)";
+    const CREATE_HINT: &'static str = " (install/repair: run the Lilynk installer again)";
 
     fn open(&mut self, idx: u8) -> Result<DeckWinPad> {
         let p = DeckWinPad::open(idx)?;

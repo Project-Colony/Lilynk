@@ -101,7 +101,7 @@ class ShotLanguageRule : org.junit.rules.ExternalResource() {
     }
 }
 
-/** Forces the deterministic punktfunk brand scheme (see Theme.kt) instead of dynamic colour. */
+/** Forces the deterministic lilynk brand scheme (see Theme.kt) instead of dynamic colour. */
 @Composable
 internal fun ShotTheme(content: @Composable () -> Unit) {
     MaterialTheme(colorScheme = BrandDark, content = content)

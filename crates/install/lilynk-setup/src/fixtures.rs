@@ -51,7 +51,7 @@ pub(crate) fn fresh_facts(id: &str, family: Family) -> Facts {
     }
 }
 
-/// A Win11 x64 box with nothing punktfunk on it and no known network.
+/// A Win11 x64 box with nothing lilynk on it and no known network.
 pub(crate) fn fresh_win() -> WinFacts {
     WinFacts {
         os_build: 26200,
@@ -78,7 +78,7 @@ pub(crate) fn upgrade_win() -> WinFacts {
     WinFacts {
         installed: Some(WinInstall {
             version: Some("0.34.0".into()),
-            location: Some(r"C:\Program Files\punktfunk\".into()),
+            location: Some(r"C:\Program Files\lilynk\".into()),
         }),
         host_env_present: true,
         web_password_present: true,

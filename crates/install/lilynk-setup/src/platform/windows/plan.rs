@@ -20,10 +20,10 @@ use crate::plan::Level;
 
 /// Default without `/DIR`. `ly-update-check` classifies by this path; a different
 /// dir silently downgrades the box to notify-only updates.
-pub const DEFAULT_HOST_DIR: &str = r"C:\Program Files\punktfunk";
+pub const DEFAULT_HOST_DIR: &str = r"C:\Program Files\lilynk";
 
 /// Rendered, not resolved: the executor expands the per-user profile path.
-pub const DEFAULT_CLIENT_DIR: &str = r"%LocalAppData%\Programs\Punktfunk";
+pub const DEFAULT_CLIENT_DIR: &str = r"%LocalAppData%\Programs\Lilynk";
 
 /// Client ARP key: Inno's `<AppId>_is1`, the key an Inno-installed client already holds.
 pub const CLIENT_ARP_KEY: &str = r"HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{52464E61-68A1-4621-B6B3-5B8BBB823D1A}_is1";
@@ -37,13 +37,13 @@ pub const MIN_HOST_BUILD: u32 = 22621;
 /// `desktop_icon` is recorded nowhere on the box, and a link that was never made is a no-op.
 const CLIENT_LINKS: [&str; 3] = [
     r"<start menu>\Lilynk.lnk",
-    r"<start menu>\Punktfunk Console.lnk",
+    r"<start menu>\Lilynk Console.lnk",
     r"<desktop>\Lilynk.lnk",
 ];
 
 /// The host's one link, in every user's Start menu: the tray, which starts a stopped host
 /// behind one UAC prompt. No desktop link.
-const HOST_LINK: &str = r"<common start menu>\Punktfunk Host.lnk";
+const HOST_LINK: &str = r"<common start menu>\Lilynk Host.lnk";
 
 /// Anything in `{app}` that can hold the tree open. Install stops them to replace the files,
 /// uninstall to delete them.
@@ -303,7 +303,7 @@ fn host_install(facts: &WinFacts, choices: &WinChoices) -> WinPlan {
         t::setup_win_phase_register_uninstaller(),
         vec![WinAction::ArpRegister {
             key: super::HOST_ARP_KEY.into(),
-            display_name: "Punktfunk Host".into(),
+            display_name: "Lilynk Host".into(),
             version: "<version>".into(),
             location: app.clone(),
         }],
@@ -465,7 +465,7 @@ fn registry_steps(facts: &WinFacts, choices: &WinChoices, app: &str) -> Vec<WinA
         "/t",
         "REG_SZ",
         "/d",
-        "Punktfunk",
+        "Lilynk",
         "/f",
     ]));
     steps.push(run(&[
@@ -613,7 +613,7 @@ fn host_uninstall(facts: &WinFacts, choices: &WinChoices) -> WinPlan {
                 "firewall",
                 "delete",
                 "rule",
-                "name=punktfunk seat listener (TCP)",
+                "name=lilynk seat listener (TCP)",
             ]),
             run_lenient(&[
                 "netsh",
@@ -621,13 +621,13 @@ fn host_uninstall(facts: &WinFacts, choices: &WinChoices) -> WinPlan {
                 "firewall",
                 "delete",
                 "rule",
-                "name=punktfunk seat listener (UDP)",
+                "name=lilynk seat listener (UDP)",
             ]),
             WinAction::RemoveFiles {
-                dir: r"%SystemRoot%\System32\punktfunk".into(),
+                dir: r"%SystemRoot%\System32\lilynk".into(),
             },
             WinAction::RemoveFiles {
-                dir: r"%SystemRoot%\SysWOW64\punktfunk".into(),
+                dir: r"%SystemRoot%\SysWOW64\lilynk".into(),
             },
             run_lenient(&["schtasks", "/End", "/TN", "LilynkWeb"]),
             run_lenient(&["schtasks", "/Delete", "/TN", "LilynkWeb", "/F"]),
@@ -642,7 +642,7 @@ fn host_uninstall(facts: &WinFacts, choices: &WinChoices) -> WinPlan {
                 "firewall",
                 "delete",
                 "rule",
-                "name=Punktfunk web console (TCP 47992)",
+                "name=Lilynk web console (TCP 47992)",
             ]),
             run_lenient(&[
                 "netsh",
@@ -650,7 +650,7 @@ fn host_uninstall(facts: &WinFacts, choices: &WinChoices) -> WinPlan {
                 "firewall",
                 "delete",
                 "rule",
-                "name=Punktfunk plugin UIs (TCP 47993)",
+                "name=Lilynk plugin UIs (TCP 47993)",
             ]),
             WinAction::PathRemove {
                 machine: true,
@@ -727,7 +727,7 @@ fn client_install(facts: &WinFacts, choices: &WinChoices) -> WinPlan {
             "/t",
             "REG_SZ",
             "/d",
-            "URL:Punktfunk stream link",
+            "URL:Lilynk stream link",
             "/f",
         ]),
         run(&[
@@ -805,7 +805,7 @@ fn client_install(facts: &WinFacts, choices: &WinChoices) -> WinPlan {
         t::setup_win_phase_register_uninstaller(),
         vec![WinAction::ArpRegister {
             key: CLIENT_ARP_KEY.into(),
-            display_name: "Punktfunk".into(),
+            display_name: "Lilynk".into(),
             version: "<version>".into(),
             location: app,
         }],

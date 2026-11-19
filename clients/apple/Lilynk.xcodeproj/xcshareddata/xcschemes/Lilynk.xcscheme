@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "AA0000000000000000000009"
-               BuildableName = "Punktfunk.app"
-               BlueprintName = "Punktfunk"
+               BuildableName = "Lilynk.app"
+               BlueprintName = "Lilynk"
                ReferencedContainer = "container:Lilynk.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -44,8 +44,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "AA0000000000000000000009"
-            BuildableName = "Punktfunk.app"
-            BlueprintName = "Punktfunk"
+            BuildableName = "Lilynk.app"
+            BlueprintName = "Lilynk"
             ReferencedContainer = "container:Lilynk.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -61,8 +61,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "AA0000000000000000000009"
-            BuildableName = "Punktfunk.app"
-            BlueprintName = "Punktfunk"
+            BuildableName = "Lilynk.app"
+            BlueprintName = "Lilynk"
             ReferencedContainer = "container:Lilynk.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

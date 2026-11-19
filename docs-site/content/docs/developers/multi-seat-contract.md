@@ -1,6 +1,6 @@
 ---
 title: Multi-seat contract
-description: The rules between a Punktfunk host and its seat supervisor — the control channel, the environment a seat host starts with, the Windows connector reservation, and on Linux the door, the owner's row and a seat on a person's own account.
+description: The rules between a Lilynk host and its seat supervisor — the control channel, the environment a seat host starts with, the Windows connector reservation, and on Linux the door, the owner's row and a seat on a person's own account.
 ---
 
 The rules between the host and its seat supervisor, which runs one host per seat so several people
@@ -18,9 +18,9 @@ half in one place, `ly_paths::seat` (`crates/host/ly-paths/src/seat.rs`).
 | | Windows | Linux |
 |---|---|---|
 | Runs as | The `LilynkHost` service, LocalSystem in session 0, beside the console host | The root daemon `lilynk-seats` (`lilynk-seats.service`) |
-| Endpoint | `\\.\pipe\lilynk-seats` | `/run/punktfunk/seats.sock`, `0660 root:lilynk-door` |
-| Who may connect | SYSTEM and Administrators; remote clients are refused | root and the `punktfunk` user, by the peer's credentials. Once the owner's row is adopted, the owner's uid too, for `install_flatpak` and `remove_flatpak` only |
-| Ledger | `%ProgramData%\punktfunk\seats\` | `/var/lib/lilynk-seats/seats/` |
+| Endpoint | `\\.\pipe\lilynk-seats` | `/run/lilynk/seats.sock`, `0660 root:lilynk-door` |
+| Who may connect | SYSTEM and Administrators; remote clients are refused | root and the `lilynk` user, by the peer's credentials. Once the owner's row is adopted, the owner's uid too, for `install_flatpak` and `remove_flatpak` only |
+| Ledger | `%ProgramData%\lilynk\seats\` | `/var/lib/lilynk-seats/seats/` |
 | The client waits | 60 s for `list`, 30 min for `enable` with `prepare`, 5 min for the rest | 30 min for a Flatpak change, 180 s for the rest, 30 s more for an `unlock` |
 
 Each connection carries one request, and at most eight are served at once. A frame is a four-byte
@@ -55,7 +55,7 @@ the same for sessions a seat's games left behind.
   now with the record; a change fails the seat with `rdp_pin_changed` until seats are turned
   off and on. The keeper's stderr goes to the seat's `host.log`.
 - **The seats group.** Every seat account is in the local group `lilynk-seats`, rejoined at
-  each start. The host denies that group on `%ProgramData%\punktfunk\ingest`, so a seat can't
+  each start. The host denies that group on `%ProgramData%\lilynk\ingest`, so a seat can't
   replace the owner's Playnite library. The doctor's `account` row reports the membership.
 - **Seats on and off.** Without the reservation marker below the ledger is still listed, and
   every start answers `seats_off`. [Turn seats on and off](#turn-seats-on-and-off) writes the marker.
@@ -99,7 +99,7 @@ standard account the box already has. The console asks for the second with `seat
 ## The reservation marker
 
 ```
-HKLM\SOFTWARE\Punktfunk\Seats
+HKLM\SOFTWARE\Lilynk\Seats
 ```
 
 The key's existence is the signal; its values are ignored. It splits the virtual-display
@@ -142,7 +142,7 @@ A failed check changes nothing: the answer is 200 with `enabled: false` and the 
    it starts.
 4. Adds the seat listener `lilynk-tcp`: a copy of `RDP-Tcp` on port 3390 whose sessions load
    `ly_seat_audio.dll`, with port 3390 blocked from every address but loopback. The x64 build goes
-   to `System32\punktfunk` and the x86 build to `SysWOW64\punktfunk`. Every seat start brings
+   to `System32\lilynk` and the x86 build to `SysWOW64\lilynk`. Every seat start brings
    them up to date. Not on ARM64.
 5. Records the Remote Desktop certificate, as `lilynk-seat-keeper trust --replace` does.
 
@@ -184,7 +184,7 @@ presents its own certificate and honours the box's pairings and grants.
 
 | Variable | Supervisor's value |
 |---|---|
-| `LILYNK_CONFIG_DIR` | A per-seat directory. Linux: the seat home's `.config/punktfunk`, `seats/<id>/config` on a person's row, unset on the owner's row |
+| `LILYNK_CONFIG_DIR` | A per-seat directory. Linux: the seat home's `.config/lilynk`, `seats/<id>/config` on a person's row, unset on the owner's row |
 | `LILYNK_MGMT_BIND` | `127.0.0.1:<per-seat port>` |
 | `LILYNK_NATIVE_PORT` | a per-seat port |
 | `LILYNK_HOST_NAME`, `LILYNK_GAMESTREAM` | the seat's name, and `0`. Unset on the Linux owner's row |
@@ -234,7 +234,7 @@ session by design, and display activation fails while its session is inactive.
   launches the box's titles as its own user, and answers every change to the box's library with
   409. Titles from sources
   that belong to one account (Playnite, Game Bar, Amazon, itch, Hydra) are left out. It runs the
-  box's emulators from `%ProgramData%\punktfunk\emulators` with the firmware the box's plugins
+  box's emulators from `%ProgramData%\lilynk\emulators` with the firmware the box's plugins
   staged. The box host tails each running seat's `game.*` into its own bus, with `seat` naming
   the profile: its plugins hear them, its hooks don't. A seat's held launch (below) runs the box
   host's plugins, which then release it. The box host's save and firmware routes take
@@ -321,8 +321,8 @@ session by design, and display activation fails while its session is inactive.
   watchdog, so no host reaps a neighbour's.
 - **Launches stay in its session.** Games, store launches and hook commands run as the signed-in
   user of the host's own Windows session, not the console's.
-- **Its audio devices are its own.** It mints `Punktfunk Speakers [seat <id>]` and
-  `Punktfunk Microphone [seat <id>]`, matches them by a marker derived from the seat id, and never
+- **Its audio devices are its own.** It mints `Lilynk Speakers [seat <id>]` and
+  `Lilynk Microphone [seat <id>]`, matches them by a marker derived from the seat id, and never
   adopts a neighbour's. It captures its own speakers and never changes the box's default playback
   or recording device.
 - **Its virtual mouse is its own.** The resident HID mouse that makes Windows draw a cursor into
@@ -364,7 +364,7 @@ session by design, and display activation fails while its session is inactive.
   endpoint inside audiodg writes what games render there into the ring, and the seat host streams
   it as pad audio. A seat on `RDP-Tcp` has no pad audio.
 - **Steam starts as the seat's copy.** Once the copy exists, each seat start writes the seat
-  account's `Software\Punktfunk\SeatSteam` (`Exe`, `Ipc` = `pfseat<seat id>`), a `steam://`
+  account's `Software\Lilynk\SeatSteam` (`Exe`, `Ipc` = `pfseat<seat id>`), a `steam://`
   handler in its classes hive (marker value `LilynkSeat`) and Steam's `Run` entry, all naming
   the copy under its IPC name. SYSTEM owns both keys; the seat may only read them. The box's
   public Desktop `Steam.lnk` and the shared Start menu's `Steam\Steam.lnk` start
@@ -390,7 +390,7 @@ entry and opens with the owner's lock, list and PIN. A take-turns profile keeps 
   placed or played, the door and a seat host alike. A wake, the picker (`enumerate`), a
   device's library read as a profile (`as=`, answered as an unknown id), the door's forwarding
   of a device's own play, and a GameStream launch or resume (as the owner) ask it too.
-  A session, Punktfunk or GameStream, whose device stops being admitted ends within a second.
+  A session, Lilynk or GameStream, whose device stops being admitted ends within a second.
   On a door a Moonlight device is paired with the owner's host: adding one to a list asks that
   host's `GET /clients`.
 - **A file that doesn't read.** Every profile is refused to every device, every edit is refused,
@@ -402,7 +402,7 @@ entry and opens with the owner's lock, list and PIN. A take-turns profile keeps 
   PIN or a new PIN puts it back. A device's waits live in memory; a profile's count is its
   `wrong_pins`, unix seconds, in the file, so a restart clears none. A try counts there before its hash runs and is taken back when right. A right PIN
   makes the device present, or `stay` when the message asks. Each try writes one line under
-  `punktfunk::audit`, never the PIN.
+  `lilynk::audit`, never the PIN.
 - **The key.** A right PIN that brings a key to enrol, as a password does, stores it in the
   device's entry's `keys`, under the profile id it was typed for; one the host can't verify with
   is left out. Profiles that share a lock keep a key each, at most 8 an entry, and a profile's
@@ -483,7 +483,7 @@ Remote Desktop included, so the build produces two packages from the same `.inx`
 
 | Package | Claims | Installed by |
 |---|---|---|
-| `ly_vdisplay.{inf,cat}` | the console display device, `Root\ly_vdisplay` | every punktfunk install |
+| `ly_vdisplay.{inf,cat}` | the console display device, `Root\ly_vdisplay` | every lilynk install |
 | `ly_vdisplay_seats.{inf,cat}` | `RdpIdd_IndirectDisplay` only | turning seats on, and a seat start when the store lacks the staged version |
 
 A machine that never turned seats on never claims the id.
@@ -496,7 +496,7 @@ Check it with at least one seat connected, since seat devnodes exist only while 
 powershell -File check-seat-display.ps1
 ```
 
-[`check-seat-display.ps1`](https://git.unom.io/unom/punktfunk/src/branch/main/packaging/windows/check-seat-display.ps1)
+[`check-seat-display.ps1`](https://github.com/Project-Colony/Lilynk/blob/main/packaging/windows/check-seat-display.ps1)
 reports the driver on each live seat display and exits 1 if any isn't ours or none is live. It
 warns when our driver date isn't newer than `rdpidd.inf`'s, and on a client edition.
 
@@ -513,7 +513,7 @@ streams video with no audio. Pad audio needs neither: it comes from the seat lis
 powershell -File check-seat-audio.ps1
 ```
 
-[`check-seat-audio.ps1`](https://git.unom.io/unom/punktfunk/src/branch/main/packaging/windows/check-seat-audio.ps1)
+[`check-seat-audio.ps1`](https://github.com/Project-Colony/Lilynk/blob/main/packaging/windows/check-seat-audio.ps1)
 exits 1 when neither is present. A virtual cable is no substitute: the host never picks one for
 desktop audio, `LILYNK_MIC_DEVICE` only pins the microphone, and a cable pinned with
 `LILYNK_LOOPBACK_DEVICE` is shared by every seat.
@@ -522,17 +522,17 @@ desktop audio, `LILYNK_MIC_DEVICE` only pins the microphone, and a cable pinned 
 
 On Linux the supervisor is the root daemon `lilynk-seats` (`lilynk-seats.service`), not part
 of the box host. Its state is `/var/lib/lilynk-seats`, root's alone; the paths below are under
-it. The box host's directory, `/var/lib/punktfunk`, is the door's; the daemon reads it for the
+it. The box host's directory, `/var/lib/lilynk`, is the door's; the daemon reads it for the
 trust copies. It starts one `lilynk-seat@<user>.service` per seat: a system-range user,
 `pf-seat-<n>`, with a logind session of its own, a headless compositor (`kwin_wayland`, else
-gamescope) and a stock `lilynk-host serve`, all run by `/usr/libexec/punktfunk/seat-session`.
+gamescope) and a stock `lilynk-host serve`, all run by `/usr/libexec/lilynk/seat-session`.
 `lilynk-seats doctor` checks systemd, logind, the groups, a GPU render node, a compositor and
 the installed unit.
 
 - **The package.** `lilynk-seats` is its own package. The host's rpm, deb and pacman packages
   depend on it at their own version, and it installs the units without enabling them. NixOS turns
   it on with `services.lilynk.seats.enable`. The SteamOS on-device build lays the same files out
-  under `/opt/punktfunk` and `/etc` (`scripts/steamdeck/door.sh`).
+  under `/opt/lilynk` and `/etc` (`scripts/steamdeck/door.sh`).
 - **The CLI.** `lilynk-seats list`, `create <name>`, `adopt-owner <user>`,
   `start|stop|delete <id>`, `doctor`, `seating`, `pads`, `lend <seat id> <key>` and
   `take-back <key>` send the [socket's](#the-supervisor) requests;
@@ -548,11 +548,11 @@ the installed unit.
 - **The user.** Its comment is `lilynk-seat=<id>`, and the daemon touches or deletes only an
   account whose comment matches exactly. The name is `pf-seat-1` to `pf-seat-4`; a create for
   any other is refused. The home is `seats/<id>/home`, mode `0700`. It joins `render` and
-  `lilynk-games`, the shared games folder's group, which the owner joins too. Never `punktfunk`,
+  `lilynk-games`, the shared games folder's group, which the owner joins too. Never `lilynk`,
   which may power the box off, nor `input`, which reads every input device on the box.
 - **The environment.** The [variables](#the-environment-a-seat-host-is-started-with) go into
-  `/run/punktfunk/seats/<user>.env` (root `0600`), which systemd reads as root. The seat's
-  `mgmt-token` is owned by the `punktfunk` user (root without one); every seat user shares
+  `/run/lilynk/seats/<user>.env` (root `0600`), which systemd reads as root. The seat's
+  `mgmt-token` is owned by the `lilynk` user (root without one); every seat user shares
   `lilynk-games`, so no secret relies on group read.
 - **The trust copy.** The seat reads `trust/<id>/`, not the box directory:
   `lilynk1-paired.json`, `profiles.json`, `display-settings.json` (from the library copy,
@@ -561,7 +561,7 @@ the installed unit.
   seconds of its change while the seat runs. The box's key never crosses. A seat other than the owner's also finds the box's library there, its
   `LILYNK_LIBRARY_DIR`.
 - **The box's library.** The owner's host writes the library; its plugins scan the owner's home.
-  From the owner's `~/.config/punktfunk` the daemon copies `library.json`, `library-hidden.json`,
+  From the owner's `~/.config/lilynk` the daemon copies `library.json`, `library-hidden.json`,
   `library-metadata.json`, `library-overrides.json`, `library-picks.json`, `library-scanners.json`
   and `library-metadata/` to `library/`, `root:lilynk-door` `0640`, within 2 seconds of a change,
   and from there into each seat's trust copy. Each profile's layer, `library-profiles/<profile id>/`
@@ -617,7 +617,7 @@ the installed unit.
   USB/IP socket it handed the seat. A stop of the owner's row ends neither: that account is a
   person's.
 - **Pads.** A seat user can't open `/dev/uinput` or `/dev/uhid`: they are the console user's. A
-  seat host that can't write the node asks the daemon's pad broker, `/run/punktfunk/pads.sock`,
+  seat host that can't write the node asks the daemon's pad broker, `/run/lilynk/pads.sock`,
   for a pad by kind (`ly_inject::pad_broker::Request`). The daemon builds it from its own tables,
   keeps the kernel fd and hands the seat one end of a relay socket: a uinput pad's relay carries
   the seat's `input_event` frames down and rumble back, and a uhid pad's carries the
@@ -625,14 +625,14 @@ the installed unit.
   daemon's. The pad lives until the seat hangs up. The socket admits a running seat's user only
   (the owner's row included), eight pads per seat. A box without the daemon gives a seat no pad.
 - **The fence.** The daemon stamps each pad's `phys` `lilynk-seat:…` and records the device in
-  `/run/punktfunk/pads/vouched`, root's alone. `65-lilynk-seats.rules` runs
+  `/run/lilynk/pads/vouched`, root's alone. `65-lilynk-seats.rules` runs
   `lilynk-seats fence` on every stamped `input` and `hidraw` node: a recorded device's node
   becomes that seat user's, `0600`, on a seat of its own, so neither the box's own Steam nor
   another seat sees it, and any other stamped node is root's. While the daemon runs, every other
   hidraw node keeps its group and seat0's ACL but loses `other` access.
 - **Lent controllers.** The operator lends a controller plugged into the box to a seat: the seat's
   ledger row keeps it, up to four, each key on one row. While a lend exists the daemon records it
-  under `/run/punktfunk/pads/lent/`, root's alone, one file per controller: the seat's user, or a
+  under `/run/lilynk/pads/lent/`, root's alone, one file per controller: the seat's user, or a
   mark for parked. A record goes live before the seat's unit starts and parks when the seat
   stops or fails; a deleted row gives the controller back to the desk. The key is the
   controller's vendor, product and serial, found in any port, or its vendor, product and USB port
@@ -661,7 +661,7 @@ the installed unit.
   isn't a game controller; taking back an unplugged one works. Where the host can't lend, `GET`
   answers `supported: false`.
 - **`/dev/uinput`.** Before a seat's unit starts, the daemon serves it a CUSE device,
-  `/dev/punktfunk/uinput-<user>` (the user's, `0600`), and the unit binds it over `/dev/uinput`
+  `/dev/lilynk/uinput-<user>` (the user's, `0600`), and the unit binds it over `/dev/uinput`
   for the seat's Steam Input. Each open is one real uinput device the daemon makes, 16 per seat.
   Only gamepad capabilities pass: `EV_SYN`, `EV_KEY` for joystick and gamepad buttons,
   `BTN_DPAD_*` and `BTN_TRIGGER_HAPPY*`, `EV_ABS` without pressure, tilt, tool or multitouch axes,
@@ -672,7 +672,7 @@ the installed unit.
   sends a `Serve` with the pad kind, and the client pad's identity for a Steam Controller, whose
   serial passes as 1–16 letters and digits. The daemon starts a pad server,
   `lilynk-seats serve-usb`, which answers every descriptor and control transfer from
-  `ly-inject`'s tables, records the vhci port in `/run/punktfunk/pads/vhci/<port>` and writes
+  `ly-inject`'s tables, records the vhci port in `/run/lilynk/pads/vhci/<port>` and writes
   `attach`, four ports per seat. The seat gets one end of a relay and sends only input reports,
   by interface. Closing the relay ends the pad server and the device.
 - **Game Mode.** The seat host keeps the seat's mode, `desktop` or `game`, in `seat-session` in
@@ -682,16 +682,16 @@ the installed unit.
   on the seat's `PATH`, call it too. A switch never reaches the box's login. On the owner's row
   only the headless host plays the seat's mode; the owner's own host at the desk leaves Game Mode,
   its bus name and its gamescope to the box. A seat never updates the box: the supervisor binds
-  `/run/punktfunk/seat-no-update` over each of `steamos-polkit-helpers/steamos-update`,
+  `/run/lilynk/seat-no-update` over each of `steamos-polkit-helpers/steamos-update`,
   `steamos-polkit-helpers/jupiter-biosupdate` and `jupiter-initial-firmware-update` the box has.
 
 ### The owner's row and the door
 
 On a box with [**Reachable without logging in**](/docs/profiles#on-linux) on, the box's own host
-is the door: `lilynk-host serve --door`, run as the `punktfunk` user by
-`lilynk-door.service` with `LILYNK_CONFIG_DIR=/var/lib/punktfunk`. It advertises, pairs,
+is the door: `lilynk-host serve --door`, run as the `lilynk` user by
+`lilynk-door.service` with `LILYNK_CONFIG_DIR=/var/lib/lilynk`. It advertises, pairs,
 serves the management API and places every connect, and opens no display, capture, input or
-audio device. Its primary group is `lilynk-door`, its own: it is not in `punktfunk`, which owns
+audio device. Its primary group is `lilynk-door`, its own: it is not in `lilynk`, which owns
 the usbip attach nodes and passes `ly-dm-helper`. The seat socket and the box's library copy are
 that group's. `door-helper ports` and `on` move an account with any other primary group into it.
 A connect is answered with a `Redirect` to a seat, or refused with
@@ -769,7 +769,7 @@ never keeps the door on. Deleting the row never removes the account or its home.
 ports from the same pools, and the door places the owner profile and the profiles that share the
 owner's desktop on it. Its [environment](#the-environment-a-seat-host-is-started-with) leaves out
 `LILYNK_CONFIG_DIR`, `LILYNK_LIBRARY_DIR`, `LILYNK_HOST_NAME` and `LILYNK_GAMESTREAM`:
-the owner keeps `~/.config/punktfunk`, the library their plugins write, and their own settings. Its
+the owner keeps `~/.config/lilynk`, the library their plugins write, and their own settings. Its
 environment file has an ACL entry that lets the owner read it, so the owner's user `lilynk-host`
 moves to the row's ports at boot, logged in or not. The owner's own console,
 `lilynk-web.service`, doesn't start while that file exists: the door's console has the port. With
@@ -792,7 +792,7 @@ browsers. A seat host without Seat defaults follows its `LILYNK_WEBTRANSPORT*` v
   204 when the box is already so. The owner's host starts `lilynk-door-on@<user>.service`, the
   door `lilynk-door-off@<user>.service`; both run `door-helper`, which execs
   `lilynk-seats door on|off <user>`. It moves the box's files between the owner's
-  `~/.config/punktfunk` and `/var/lib/punktfunk`, reading and writing each as the owner or as the
+  `~/.config/lilynk` and `/var/lib/lilynk`, reading and writing each as the owner or as the
   door through `runuser`, and turns the units on or off.
   The console's `web-session-key` and `web-session-epoch` move with them (on SteamOS, its
   `LILYNK_UI_SECRET` line), so a signed-in console stays signed in. `on` also gives the door the
@@ -804,7 +804,7 @@ browsers. A seat host without Seat defaults follows its `LILYNK_WEBTRANSPORT*` v
   any but the one it names, which may have left the group since. A name whose account no longer
   exists names no one: a member's switch-on takes the door over, replacing the box's files with
   their own where they have the same file, and a switch-off for it leaves the box's files in
-  `/var/lib/punktfunk`. Only a `getent` miss on a box whose `passwd` sources are all local counts;
+  `/var/lib/lilynk`. Only a `getent` miss on a box whose `passwd` sources are all local counts;
   any other `getent` status, or a `passwd` source such as `sss` or `ldap`, refuses both. The
   owner's host applies the same rules before it starts a switch, so the console names the account
   the door is on for instead of asking. A switch it refuses or abandons sets
@@ -858,7 +858,7 @@ and it is a contract seat's host, not the owner's.
   `userdel`, no group, no mode or owner of the home, and the daemon writes nothing inside it.
   The row's files are under `/var/lib/lilynk-seats` and `/run`: its environment file stays
   root's, and the host keeps its identity in `seats/<id>/config`, the person's `0700`, not in
-  `~/.config/punktfunk`. A stop ends the row's unit and no other process of the user, their
+  `~/.config/lilynk`. A stop ends the row's unit and no other process of the user, their
   login and SSH included. A delete removes what the row made and gives the account back.
 - **The monitor wins.** While the person has a session on a seat, a start answers
   `account_at_desk`, and a running unit ends within 2 seconds of their login. Nothing takes the
@@ -873,7 +873,7 @@ and it is a contract seat's host, not the owner's.
   they switch it off; `seat-session` stops it with the seat. Nothing enables it, and its roots
   drop-in is in `$XDG_RUNTIME_DIR/systemd/user`, so nothing of it lands in their home. It reads
   the seat's config directory, sees none of `/var/lib/lilynk-seats` but what it binds and
-  none of `~/.config/punktfunk`, runs no loose script, and starts only the packages their
+  none of `~/.config/lilynk`, runs no loose script, and starts only the packages their
   session installed (`LILYNK_PERSON_PLUGINS=1`). Where AppArmor restricts user namespaces it
   runs under the profile `lilynk-scripting-seat`. The seat's host never names their own
   `lilynk-scripting`.
@@ -1040,10 +1040,10 @@ A refusal is `backend` with `<code>: <sentence>`, the sentence the person reads.
   list is rewritten on each change of who is admitted and checked every 2 seconds while the seat
   runs.
 - **The box pin.** The first challenge or key proof pins the SHA-256 of the door's
-  `/var/lib/punktfunk/native-cert.pem` in `box-pin`. While the certificate differs from it, every
+  `/var/lib/lilynk/native-cert.pem` in `box-pin`. While the certificate differs from it, every
   challenge and key proof is refused and `doctor` shows `box_pin` as an error; removing the file
   takes a new pin.
-- **The audit line.** Every `unlock` writes one journal line under the target `punktfunk::audit`:
+- **The audit line.** Every `unlock` writes one journal line under the target `lilynk::audit`:
   `seat`, `account`, `uid`, `device`, `proof`, `result`, `device_failures` and
   `account_failures`. Never the password.
 

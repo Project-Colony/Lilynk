@@ -60,7 +60,7 @@ impl ksni::Tray for HostTray {
     }
 
     fn title(&self) -> String {
-        "punktfunk host".into()
+        "lilynk host".into()
     }
 
     fn status(&self) -> ksni::Status {

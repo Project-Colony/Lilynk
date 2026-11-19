@@ -48,7 +48,7 @@ function mirrorLastPlayed(steamAppId: number, shortcutAppId: number): void {
     }
     to.rt_last_time_locally_played = played;
   } catch (e) {
-    console.warn("punktfunk: last-played not mirrored", e);
+    console.warn("lilynk: last-played not mirrored", e);
   }
 }
 
@@ -86,7 +86,7 @@ export function watchRunningStreams(): () => void {
     });
     return () => reg.unregister();
   } catch (e) {
-    console.warn("punktfunk: app lifetime feed unavailable", e);
+    console.warn("lilynk: app lifetime feed unavailable", e);
     return () => {};
   }
 }

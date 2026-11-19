@@ -1,5 +1,5 @@
 # shellcheck shell=bash
-# Shared Gitea Release helpers for the punktfunk CI workflows (Linux + macOS runners).
+# Shared Gitea Release helpers for the lilynk CI workflows (Linux + macOS runners).
 #
 # Source this file, then call ensure_release / upsert_asset. The bare asset POST returns 409
 # if an asset with the same name already exists, so re-running a workflow — or reusing the
@@ -15,7 +15,7 @@
 #
 # Env (Gitea Actions sets the first two automatically in every step):
 #   GITHUB_SERVER_URL   e.g. https://git.unom.io
-#   GITHUB_REPOSITORY   e.g. unom/punktfunk
+#   GITHUB_REPOSITORY   e.g. unom/lilynk
 #   GITEA_TOKEN         a PAT with repository (release) write scope — set from secrets.REGISTRY_TOKEN
 #                       (the same PAT the package uploads use; it must carry `write:repository`,
 #                       not only `write:package`, or the release-asset POST 403s)

@@ -1,10 +1,10 @@
-==> Detected omarchy → pacman (guide: https://docs.punktfunk.unom.io/docs/omarchy)
-==> Uninstalling the host (https://docs.punktfunk.unom.io/docs/uninstall)
+==> Detected omarchy → pacman (guide: https://project-colony.github.io/Lilynk/docs/omarchy)
+==> Uninstalling the host (https://project-colony.github.io/Lilynk/docs/uninstall)
   + systemctl --user disable --now lilynk-host lilynk-web lilynk-scripting 2>/dev/null || true
   + lilynk-omarchy remove
   + sudo pacman -Rns --noconfirm lilynk-host lilynk-web lilynk-scripting
-  + sudo sed -i '/^\[\(punktfunk\|lilynk-canary\)\]$/,/^Server = /d' /etc/pacman.conf
+  + sudo sed -i '/^\[\(lilynk\|lilynk-canary\)\]$/,/^Server = /d' /etc/pacman.conf
 
-  Removed. Kept for a reinstall: ~/.config/punktfunk, the punktfunk, lilynk-door and lilynk-update
-  groups, and your firewall rules.
-  The one-command cleanups for each are on https://docs.punktfunk.unom.io/docs/uninstall#linux-hosts
+  Removed. Kept for a reinstall: ~/.config/lilynk, the lilynk, lilynk-door and lilynk-update groups,
+  and your firewall rules.
+  The one-command cleanups for each are on https://project-colony.github.io/Lilynk/docs/uninstall#linux-hosts

@@ -14,7 +14,7 @@ every client's shortcut is in [Getting your input back](/docs/shortcuts#getting-
 
 ### My keyboard types the wrong characters (`#` comes out as `\`)
 
-The host session's keyboard layout doesn't match your keyboard. Punktfunk sends the key you press,
+The host session's keyboard layout doesn't match your keyboard. Lilynk sends the key you press,
 and the host's layout picks the character.
 
 - KDE, GNOME: set the layout in the desktop's keyboard settings.
@@ -56,12 +56,12 @@ sudo usermod -aG input "$USER"    # Bazzite: ujust add-user-to-input-group
 
 ### The pad works, but arrives as an Xbox 360 controller instead of a Steam Deck
 
-The virtual Steam Deck pad attaches through `vhci_hcd`, and only members of the `punktfunk` group may
+The virtual Steam Deck pad attaches through `vhci_hcd`, and only members of the `lilynk` group may
 attach it. The console's **Troubleshooting** page names what's missing under **USB/IP
 controllers**. Usually it's the group:
 
 ```sh
-sudo usermod -aG punktfunk "$USER"    # then restart the computer
+sudo usermod -aG lilynk "$USER"    # then restart the computer
 sudo modprobe vhci-hcd                # only if the check says the module isn't loaded
 ```
 
@@ -79,7 +79,7 @@ sudo systemctl mask --now setroubleshootd     # any host; nothing depends on it
 ```
 
 On a layered or bootc host, install the drop-in yourself:
-`sudo semodule -i /usr/share/punktfunk/selinux/lilynk-ds-inhibit.cil`. Setting the client's
+`sudo semodule -i /usr/share/lilynk/selinux/lilynk-ds-inhibit.cil`. Setting the client's
 **Controller type** to **Xbox 360** avoids it too, without adaptive triggers, lightbar and touchpad.
 
 ### A Steam Controller 2 is captured, but Steam's controller list stays empty
@@ -87,7 +87,7 @@ On a layered or bootc host, install the drop-in yourself:
 Only Steam reads this pad, through its `hidraw` node, so the pad does nothing until Steam can open
 it.
 
-- Windows host: run the Punktfunk installer again with **Controller drivers** on; it reinstalls
+- Windows host: run the Lilynk installer again with **Controller drivers** on; it reinstalls
   the gamepad driver.
 - Linux host: no `attached via usbip` in the host log means the pad never attached; fix
   [the Steam Deck pad](#the-pad-works-but-arrives-as-an-xbox-360-controller-instead-of-a-steam-deck)
@@ -124,7 +124,7 @@ Check these in order:
 
 ### A controller plugged into the PC shows up on a seat (Windows)
 
-Punktfunk marks every controller plugged into the PC for the console session, so seats don't
+Lilynk marks every controller plugged into the PC for the console session, so seats don't
 list it. If a seat still does, the host isn't running on the PC: restart it from the console.
 What Windows does past that mark is under
 [Seats](/docs/windows-seats#a-controller-plugged-into-the-pc-appears-on-a-seat).

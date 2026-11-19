@@ -180,9 +180,9 @@ impl Plan {
     pub(crate) fn from_entry(entry: &Entry, source: &str, verified: bool) -> Result<Plan> {
         let scope = scope_of(&entry.pkg).context("catalog entry package must be scoped")?;
         // The scope's registry lands in bunfig for every later install and the SDK refresh, so
-        // another source naming `@punktfunk` would redirect the official packages too.
-        if scope == "@punktfunk" && source != super::sources::OFFICIAL_NAME {
-            bail!("only the official source may install @punktfunk packages");
+        // another source naming `@lilynk` would redirect the official packages too.
+        if scope == "@lilynk" && source != super::sources::OFFICIAL_NAME {
+            bail!("only the official source may install @lilynk packages");
         }
         Ok(Plan {
             pkg: Some(entry.pkg.clone()),
@@ -454,7 +454,7 @@ fn run_install(id: &str, plan: Plan, plugin_tokens: &PluginTokens) -> Result<()>
         // unknown `-` flag; we still install an exact version either way.
         args.push("--exact".into());
     }
-    if !plan.spec.starts_with("@punktfunk/") {
+    if !plan.spec.starts_with("@lilynk/") {
         // The runner refuses non-Lilynk registries unless this flag is set.
         // Catalog add or raw-spec install already made that choice.
         args.push("--allow-public-registry".into());
@@ -477,7 +477,7 @@ fn run_install(id: &str, plan: Plan, plugin_tokens: &PluginTokens) -> Result<()>
         .or_else(|| added.first().map(|p| p.pkg.clone()))
         .context(
             "the install finished but no new plugin package appeared — is this package a \
-             punktfunk plugin? (it must be named `@scope/plugin-*` or `lilynk-plugin-*`)",
+             lilynk plugin? (it must be named `@scope/plugin-*` or `lilynk-plugin-*`)",
         )?;
     let installed = after.iter().find(|p| p.pkg == pkg).with_context(|| {
         // Runner succeeded but the package is missing. Name the capturing ancestor
@@ -510,7 +510,7 @@ fn run_install(id: &str, plan: Plan, plugin_tokens: &PluginTokens) -> Result<()>
         set_phase(id, "rolling back");
         // An update goes back to the version that was installed; only a first install is removed.
         if let Some(kept) = &kept {
-            let public = !plan.spec.starts_with("@punktfunk/");
+            let public = !plan.spec.starts_with("@lilynk/");
             match restore(id, &dir, &pkg, kept, public) {
                 Ok(()) => {
                     restart_runner(id);
@@ -906,25 +906,25 @@ mod tests {
     #[test]
     fn plan_from_entry_pins_version_registry_and_integrity() {
         let idx = super::super::index::Index::parse(
-            br#"{"schema":1,"plugins":[{"id":"rom-manager","pkg":"@punktfunk/plugin-rom-manager",
+            br#"{"schema":1,"plugins":[{"id":"rom-manager","pkg":"@lilynk/plugin-rom-manager",
                 "registry":"https://git.unom.io/api/packages/unom/npm/","title":"ROM",
                 "version":"0.3.0","integrity":"sha512-AAAA"}]}"#,
         )
         .unwrap();
         let plan =
             Plan::from_entry(&idx.plugins[0], super::super::sources::OFFICIAL_NAME, true).unwrap();
-        assert_eq!(plan.spec, "@punktfunk/plugin-rom-manager@0.3.0");
+        assert_eq!(plan.spec, "@lilynk/plugin-rom-manager@0.3.0");
         assert_eq!(plan.version.as_deref(), Some("0.3.0"));
         assert_eq!(plan.tier, Tier::Verified);
         assert_eq!(
             plan.registry.as_ref().unwrap().0,
-            "@punktfunk",
+            "@lilynk",
             "the scope drives the bunfig registry mapping"
         );
         assert_eq!(plan.integrity.as_deref(), Some("sha512-AAAA"));
 
         // Another source may not claim the official scope: its registry would serve every
-        // `@punktfunk` package from then on.
+        // `@lilynk` package from then on.
         assert!(Plan::from_entry(&idx.plugins[0], "retro-hub", false).is_err());
         let theirs = super::super::index::Index::parse(
             br#"{"schema":1,"plugins":[{"id":"hub","pkg":"@retro/plugin-hub",

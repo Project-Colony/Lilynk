@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Write a copy of a Cargo.lock with the microsoft/windows-rs git packages removed.
 
-The punktfunk workspace lockfile includes the windows-rs git dependencies — the whole
+The lilynk workspace lockfile includes the windows-rs git dependencies — the whole
 microsoft/windows-rs tree (windows-reactor and the `windows-*` crates, at the two git revs the
 root Cargo.toml pins), which members depend on only under cfg(windows). The flatpak
 builds ONLY the Linux binaries, which never compile them, but `flatpak-cargo-generator.py`

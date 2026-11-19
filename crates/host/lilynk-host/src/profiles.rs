@@ -209,7 +209,7 @@ pub struct ProfileCreate {
     #[serde(default)]
     pub windows_account: Option<String>,
     /// With `seat`, an account that already exists, which the seat runs on instead of one
-    /// punktfunk makes: a local Windows standard account on Windows Server, a person's own login
+    /// lilynk makes: a local Windows standard account on Windows Server, a person's own login
     /// on a Linux door.
     #[serde(default)]
     pub seat_account: Option<String>,

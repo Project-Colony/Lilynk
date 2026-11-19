@@ -22,7 +22,7 @@ use crate::seam::{BasePaths, CommandRunner, Output, RunFailed, Stdin};
 /// Demo mode's filesystem root.
 ///
 /// `SetEnv` and `SetSetting` steps write with `std::fs`, not a spawn, so a fake runner would still
-/// reach `~/.config/punktfunk`. `BasePaths` is the seam that covers filesystem reach.
+/// reach `~/.config/lilynk`. `BasePaths` is the seam that covers filesystem reach.
 pub fn sandbox_paths() -> BasePaths {
     let root = std::env::temp_dir().join(format!("lilynk-setup-demo-{}", std::process::id()));
     BasePaths::rooted(&root)
@@ -40,7 +40,7 @@ pub const PRESETS: [&str; 9] = [
     "unsupported-client",
 ];
 
-/// A box with nothing punktfunk on it — every preset is this with fields moved.
+/// A box with nothing lilynk on it — every preset is this with fields moved.
 fn box_of(id: &str, pretty: &str, version: &str, family: Family, docs: &str) -> Facts {
     Facts {
         os: OsRelease {
@@ -51,7 +51,7 @@ fn box_of(id: &str, pretty: &str, version: &str, family: Family, docs: &str) -> 
         },
         family,
         omarchy: id == "omarchy",
-        docs_page: format!("https://docs.punktfunk.unom.io/docs/{docs}"),
+        docs_page: format!("https://project-colony.github.io/Lilynk/docs/{docs}"),
         host_punt: None,
         rpm_group: (family == Family::Dnf).then(|| "fedora-44".to_string()),
         floor: None,
@@ -176,7 +176,7 @@ pub fn preset(name: &str) -> Option<Facts> {
             f.floor = crate::facts::floors(&f.os, Family::Apt).1;
             f
         }
-        // A distro with no punktfunk repo. The host punt stands; the client still installs.
+        // A distro with no lilynk repo. The host punt stands; the client still installs.
         "unsupported-client" => {
             let mut f = box_of("void", "Void Linux", "", Family::Flatpak, "install");
             f.host_punt = Some(crate::facts::Punt::Unsupported(f.os.pretty.clone()));
@@ -308,7 +308,7 @@ mod tests {
             sandbox.display()
         );
         if let Some(home) = std::env::var_os("HOME") {
-            let real = std::path::Path::new(&home).join(".config/punktfunk/host.env");
+            let real = std::path::Path::new(&home).join(".config/lilynk/host.env");
             assert_ne!(sandbox, real);
         }
     }

@@ -1,4 +1,4 @@
-//! The punktfunk mark: two discs and the lens where they overlap, on the theme's accent.
+//! The lilynk mark: two discs and the lens where they overlap, on the theme's accent.
 //!
 //! Geometry is the app icon's (`docs-site/src/components/BrandMark.tsx`): equal discs of
 //! radius a third of the box, centres offset by `(r, -r)`, and a highlight that is NOT their

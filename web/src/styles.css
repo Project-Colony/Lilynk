@@ -9,7 +9,7 @@
    Tailwind 4 scan so their utilities aren't purged. */
 @source "../node_modules/@unom/ui/dist/**/*.{js,mjs}";
 
-/* ── Punktfunk brand · violet product chrome ────────────────────────────────
+/* ── Lilynk brand · violet product chrome ────────────────────────────────
    Two themes on one violet identity: LIGHT (lavender docs surface — the same
    palette the design/Scalar reference uses: white bg, faint-violet cards/borders,
    #6c5bf3 brand) is the :root default; DARK (the violet-tinted app-icon chrome
@@ -36,7 +36,7 @@
 	   accent, which is what the literals below always were — with the violet baked in. */
 	--pf-page: #ffffff;
 
-	/* Brand — the violet lens mark (from the Punktfunk app icon). Ordered by distance
+	/* Brand — the violet lens mark (from the Lilynk app icon). Ordered by distance
 	   from the page, not by lightness: --pf-highlight carries the wordmark. */
 	--pf-brand: #6c5bf3; /* deep violet — primary on light */
 	--pf-brand-light: color-mix(in oklab, #6c5bf3 55%, var(--pf-tint-end));

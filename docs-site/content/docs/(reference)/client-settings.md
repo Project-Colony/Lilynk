@@ -1,9 +1,9 @@
 ---
 title: Client settings
-description: Every setting a Punktfunk client stores — what it does, what it defaults to, and which of them the host can overrule.
+description: Every setting a Lilynk client stores — what it does, what it defaults to, and which of them the host can overrule.
 ---
 
-Every setting a Punktfunk app keeps, with its default and the apps that offer it. The host's own
+Every setting a Lilynk app keeps, with its default and the apps that offer it. The host's own
 settings are on [Configuration](/docs/configuration).
 
 ## Where the settings live
@@ -11,7 +11,7 @@ settings are on [Configuration](/docs/configuration).
 The apps group settings under **Settings** as **General**, **Display**, **Input**, **Audio** and
 **Controllers**. Apple TV has no **Input** and gives **Quick actions** its own category. The
 controller interface (the console) has its own **Settings**, with the same five plus **Presets**
-and **About**. On a Steam Deck the console is the only settings screen: **Open Punktfunk** in the
+and **About**. On a Steam Deck the console is the only settings screen: **Open Lilynk** in the
 [Decky panel](/docs/steam-deck).
 
 ## Advanced settings
@@ -92,8 +92,8 @@ how a fresh install has it. Paired hosts and presets stay, and so does the host 
 It shows under the default settings only: while you edit a preset, each row resets on its own. The
 console offers it on Linux, Windows and the Steam Deck.
 
-Linux stores settings in `~/.config/punktfunk/client-gtk-settings.json`, shared with the console;
-Windows in `%APPDATA%\punktfunk\client-windows-settings.json`. Changes apply to the next session.
+Linux stores settings in `~/.config/lilynk/client-gtk-settings.json`, shared with the console;
+Windows in `%APPDATA%\lilynk\client-windows-settings.json`. Changes apply to the next session.
 
 Names below are the Linux app's. **All** means Linux, Windows, Mac, iPhone, iPad, Apple TV and
 Android. Most settings can differ per [preset](/docs/presets-and-links); the exceptions are
@@ -203,7 +203,7 @@ device's touch and remote controls. See [Changing a shortcut](/docs/shortcuts#ch
 
 | Setting | Default | What it does | Where |
 |---|---|---|---|
-| **Start in** | Host list | **Library** opens the default host's games; **Stream** connects to its desktop. With several paired hosts, set one with **Make default host** in its menu (Apple: **Default host** on the host page) or `punktfunk default-host`. | All |
+| **Start in** | Host list | **Library** opens the default host's games; **Stream** connects to its desktop. With several paired hosts, set one with **Make default host** in its menu (Apple: **Default host** on the host page) or `lilynk default-host`. | All |
 | **Auto-wake on connect** | On | Wakes a sleeping saved host with [Wake-on-LAN](/docs/wake-on-lan) and waits. Turn it off for hosts over a VPN. | All |
 | **Start streams fullscreen** | On | F11 or Alt+Enter leaves fullscreen. On Linux and a Mac, **Always** also keeps the app fullscreen. | Linux, Windows, Mac (Linux and Mac: **Fullscreen**: **Off**, **While streaming**, **Always**) |
 | **Stream in background** | Off | Audio and the connection stay live while you switch apps, for 10 minutes unless you pick another limit. | iPhone, iPad, Apple TV, Android phones |
@@ -228,7 +228,7 @@ device's touch and remote controls. See [Changing a shortcut](/docs/shortcuts#ch
 | Setting | Default | What it does | Where |
 |---|---|---|---|
 | **Statistics overlay** | Normal | **Off**, **Compact**, **Normal** or **Detailed**: the level a stream starts at. Change it live in-stream; see [Stats](/docs/stats). | All |
-| **Advanced statistics** | Off | Off shows the figures Moonlight's overlay also shows. On shows Punktfunk's capture-to-screen timings. | All |
+| **Advanced statistics** | Off | Off shows the figures Moonlight's overlay also shows. On shows Lilynk's capture-to-screen timings. | All |
 | **Statistics position** | Top left (Apple: top right) | The overlay's corner. | All |
 | **Statistics size** | 100 % | 75 % to 200 %, on top of your display's scaling. The overlay only. | All |
 | **Exit hint** | On | Shows how to leave for a few seconds when a stream starts. | All |

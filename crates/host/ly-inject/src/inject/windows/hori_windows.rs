@@ -36,7 +36,7 @@ impl HoriWinPad {
                 usb_vid_pid: Some("VID_0F0D&PID_01AB"),
                 usb_mi: None,
                 bluetooth: false,
-                description: "Punktfunk Virtual Wireless HORIPAD For Steam",
+                description: "Lilynk Virtual Wireless HORIPAD For Steam",
                 enumerator: "VID_0F0D&PID_01AB",
                 property: None,
             },
@@ -56,7 +56,7 @@ impl PadProto for HoriWinProto {
     type State = HoriState;
     const LABEL: &'static str = "HORIPAD/Windows";
     const DEVICE: &'static str = "HORIPAD for Steam";
-    const CREATE_HINT: &'static str = " (install/repair: run the Punktfunk installer again)";
+    const CREATE_HINT: &'static str = " (install/repair: run the Lilynk installer again)";
 
     fn open(&mut self, idx: u8) -> Result<HoriWinPad> {
         let p = HoriWinPad::open(idx)?;

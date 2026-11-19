@@ -453,7 +453,7 @@ class MainActivity : FragmentActivity() {
 
     /**
      * "Save launcher file", for both shells: the system's save dialog, then [url] written as a
-     * `.punktfunk` file a frontend lists and opens. [report] gets the line to show.
+     * `.lilynk` file a frontend lists and opens. [report] gets the line to show.
      */
     fun saveLauncherFile(title: String, url: String, report: (String) -> Unit) {
         launcherFileSave = url to report

@@ -27,7 +27,7 @@ it is on. A host holds up to 8 profiles, and two can't share a name.
 ## On Windows
 
 **Own account (take turns)** binds a profile to a Windows account on this PC. When someone picks it,
-Punktfunk brings that account to the screen and streams it, so each person has their own desktop,
+Lilynk brings that account to the screen and streams it, so each person has their own desktop,
 Steam and saves. One person streams at a time — picking another profile switches the PC to that
 account, the way Windows' own **Switch user** does. This needs no Windows Server, no Remote Desktop
 and no extra licence. To play at the same time instead, see [On Windows Server](#on-windows-server).
@@ -71,7 +71,7 @@ yours included.
    sudo usermod -aG lilynk-update $USER
    ```
 
-   On SteamOS, run `bash ~/punktfunk/scripts/steamdeck/update.sh` in Konsole instead and enter
+   On SteamOS, run `bash ~/lilynk/scripts/steamdeck/update.sh` in Konsole instead and enter
    your password: it sets the switch up and joins the group. Restart once after. On NixOS, set
    `services.lilynk.seats.enable = true`, rebuild and restart: the users in
    `services.lilynk.host.users` join the group.
@@ -82,7 +82,7 @@ yours included.
 What turning it on does:
 
 - **Files move.** The host's identity, pairings, profiles and the console password are copied
-  to `/var/lib/punktfunk`, owned by a `punktfunk` system user that runs the host from then on.
+  to `/var/lib/lilynk`, owned by a `lilynk` system user that runs the host from then on.
   Display settings and hooks stay yours. Paired clients keep working.
 - **You become a seat.** Your own desktop is the first seat, with your library, plugins and Steam.
 - **The monitor wins.** When you log in at the machine, the background session ends within a few
@@ -156,7 +156,7 @@ What can be given:
 - A controller's built-in keyboard and mouse emulation, a Steam Controller's desktop mode, is off
   for everyone while a profile has it.
 
-The client that shows the seat's picture never sees the controller. It can't open Punktfunk's menu
+The client that shows the seat's picture never sees the controller. It can't open Lilynk's menu
 or shortcuts in the stream, it isn't in the session's controller list or in **Diagnostics** →
 **Controllers**, and using it doesn't count as someone playing: a seat nobody streams still stops
 after **Stop an idle seat after**.
@@ -245,7 +245,7 @@ The controller interface asks on every connect instead:
 Elsewhere:
 
 - A [`punktfunk://` link's `as=`](/docs/presets-and-links) or the command line's
-  [`--as`](/docs/clients#scripting-the-punktfunk-cli) plays as a profile for one connect.
+  [`--as`](/docs/clients#scripting-the-lilynk-cli) plays as a profile for one connect.
 - The [Decky plugin](/docs/steam-deck) shows one chip per profile under the host.
 - [Moonlight](/docs/moonlight) and the other clients play as the owner.
 
@@ -256,7 +256,7 @@ stays its [access level](/docs/access-levels).
 ## Lock a profile
 
 A locked profile opens only on the devices you choose. On the profile's card, **Lock** it, then
-**Add a device** from the devices paired with this host, Punktfunk or
+**Add a device** from the devices paired with this host, Lilynk or
 [Moonlight](/docs/moonlight). Unlocking, giving it a PIN and adding a device ask for the console
 password.
 
@@ -267,7 +267,7 @@ password.
   every device's picker, and the right PIN puts that device on its list for the visit, or until
   you sign it out when the device stays signed in. A device with a fingerprint reader or face
   unlock can keep that instead, and opens the profile with it from then on. An app that can't
-  ask for a PIN yet says `This profile needs its PIN. Update Punktfunk on this device.`
+  ask for a PIN yet says `This profile needs its PIN. Update Lilynk on this device.`
 - Wrong PINs make a device wait, as a wrong account password does. Ten wrong PINs for one profile
   within 15 minutes, from any devices, stop PIN entry for it for a while. Each further round of
   ten doubles the wait, up to a day, until the right PIN or a new one; the devices on its list
@@ -277,7 +277,7 @@ password.
 - The devices on its list can hide a game from this profile's shelf with **Hide for Kid** in the
   game's menu, and bring it back from **Hidden for Kid**. The Linux and Windows apps and the
   controller interface offer it. Changing this profile's own games and game-exit choice waits
-  for the Punktfunk apps to offer it.
+  for the Lilynk apps to offer it.
 - Locking the owner profile also keeps Moonlight to the Moonlight devices on its list.
 - A profile that shares your desktop opens with your lock, your devices and your PIN: one
   desktop, one lock. A profile on its own Windows account (take turns) has a lock of its own.

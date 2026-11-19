@@ -14,7 +14,7 @@ _spec = importlib.util.spec_from_file_location(
 census = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(census)
 
-NAMES = census.name_pattern(["Punktfunk", "Steam Deck", "DualSense", "HEVC"])
+NAMES = census.name_pattern(["Lilynk", "Steam Deck", "DualSense", "HEVC"])
 
 
 def texts(src, lang):
@@ -43,7 +43,7 @@ class Rust(unittest.TestCase):
             let z = w.with_context(|| format!("Read the {path} file"))?;
             let v = o.expect("Value is present here");
             panic!("This never happens");
-            eprintln!("Usage: punktfunk now");
+            eprintln!("Usage: lilynk now");
             label("Connect to host");
         """
         self.assertEqual(texts(src, "rust"), ["Connect to host"])
@@ -146,11 +146,11 @@ class Prose(unittest.TestCase):
             self.assertTrue(self.check(t), t)
 
     def test_does_not_count(self):
-        for t in ["Settings", "org.projectcolony.lilynk", "/usr/bin/punktfunk", "--pin", "{} hosts",
+        for t in ["Settings", "org.projectcolony.lilynk", "/usr/bin/lilynk", "--pin", "{} hosts",
                   "Steam Deck", "DualSense", "player_stats_scale_pct", "open config file",
-                  "read body: {e}", "{}x{} @ {} fps", "C:\\Program Files\\Punktfunk",
-                  "https://docs.punktfunk.unom.io", "width=1920", ".row { color: red; }",
-                  "{\"label\": \"Open Punktfunk\"}", "HEVC (H.265)"]:
+                  "read body: {e}", "{}x{} @ {} fps", "C:\\Program Files\\Lilynk",
+                  "https://project-colony.github.io/Lilynk", "width=1920", ".row { color: red; }",
+                  "{\"label\": \"Open Lilynk\"}", "HEVC (H.265)"]:
             self.assertFalse(self.check(t), t)
 
 

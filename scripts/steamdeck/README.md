@@ -1,6 +1,6 @@
-# punktfunk host on a Steam Deck
+# lilynk host on a Steam Deck
 
-Run a punktfunk **host** on a Steam Deck — stream its Game Mode (or KDE desktop) *to* other devices.
+Run a lilynk **host** on a Steam Deck — stream its Game Mode (or KDE desktop) *to* other devices.
 (Streaming *to* a Deck is the client; use the Flatpak + [Decky plugin](../../clients/decky/) instead.)
 
 User-facing guide: **docs-site → "SteamOS (Host)"** (`docs-site/content/docs/(guide)/(install)/steamos-host.mdx`).
@@ -52,25 +52,25 @@ serving HTTPS (HTTP/1.1 over TLS) with the host's identity cert), so its service
 | `rebuild-check.sh` | The post-OS-update self-heal (run by `lilynk-rebuild-check.service` before the host at session start): `ldd`-probes the host binary **and the HDR gamescope** — milliseconds when healthy, a full `update.sh` rebuild only when a SteamOS update actually broke library links. |
 
 ```sh
-git clone --branch stable https://git.unom.io/unom/punktfunk ~/punktfunk   # --branch main: canary
-bash ~/punktfunk/scripts/steamdeck/install.sh            # PIN pairing required (secure default)
-bash ~/punktfunk/scripts/steamdeck/install.sh --open     # trusted LAN: accept unpaired clients
-bash ~/punktfunk/scripts/steamdeck/install.sh --no-web   # host only, no web console
-bash ~/punktfunk/scripts/steamdeck/install.sh --gamestream     # also serve stock Moonlight (trusted LAN)
-bash ~/punktfunk/scripts/steamdeck/update.sh --pull      # pull the followed branch, rebuild
+git clone --branch stable https://github.com/Project-Colony/Lilynk ~/lilynk   # --branch main: canary
+bash ~/lilynk/scripts/steamdeck/install.sh            # PIN pairing required (secure default)
+bash ~/lilynk/scripts/steamdeck/install.sh --open     # trusted LAN: accept unpaired clients
+bash ~/lilynk/scripts/steamdeck/install.sh --no-web   # host only, no web console
+bash ~/lilynk/scripts/steamdeck/install.sh --gamestream     # also serve stock Moonlight (trusted LAN)
+bash ~/lilynk/scripts/steamdeck/update.sh --pull      # pull the followed branch, rebuild
 ```
 
 Note: the Deck install matches a bare `serve` — native-only, PIN pairing required. `--gamestream` and
 `--no-gamestream` set the console's **GameStream** setting; change it later under Host → Settings.
 
-Env overrides: `LILYNK_SRC` (source dir, default `~/punktfunk`), `LILYNK_BOX` (container name,
+Env overrides: `LILYNK_SRC` (source dir, default `~/lilynk`), `LILYNK_BOX` (container name,
 default `pf2`), `LILYNK_MGMT_PORT` (writes `LILYNK_MGMT_BIND` to `host.env`; default 47990),
 `LILYNK_WEB_PORT` (47992).
 
 ## What gets installed
 
-- **Binary:** `~/punktfunk/target-steamos/release/lilynk-host` (built in `pf2`, run natively).
-- **Config:** `~/.config/punktfunk/host.env` (encoder/compositor) and `web.env` (generated web login
+- **Binary:** `~/lilynk/target-steamos/release/lilynk-host` (built in `pf2`, run natively).
+- **Config:** `~/.config/lilynk/host.env` (encoder/compositor) and `web.env` (generated web login
   password + session secret). Trust material (`cert.pem`, `mgmt-token`, `lilynk1-paired.json`) lives
   here too and persists across updates.
 - **Services:** `~/.config/systemd/user/lilynk-host.service` — `scripts/lilynk-host.service`
@@ -87,7 +87,7 @@ default `pf2`), `LILYNK_MGMT_PORT` (writes `LILYNK_MGMT_BIND` to `host.env`; def
   `~/.local/lib/lilynk-scripting/`, bundle in `~/.local/share/lilynk-scripting/`.
 - **Status tray:** `~/.local/bin/lilynk-tray`, started at login by
   `~/.config/autostart/org.projectcolony.lilynk.tray.desktop`, which the host writes from its **Tray
-  autostart** setting; the **Punktfunk Host** launcher in
+  autostart** setting; the **Lilynk Host** launcher in
   `~/.local/share/applications/`, and its icons under `~/.local/share/icons/hicolor/`.
 - **HDR gamescope:** `~/.local/bin/lilynk-gamescope` (gamescope + the `pipewire-hdr` patches,
   built in `pf2`, run natively — it does **not** replace the system gamescope; only the sessions
@@ -101,20 +101,20 @@ default `pf2`), `LILYNK_MGMT_PORT` (writes `LILYNK_MGMT_BIND` to `host.env`; def
   `/etc/systemd/system/user@.service.d/50-lilynk-nice.conf` (nice-limit headroom for the host's
   data-plane threads), `/etc/udev/rules.d/60-lilynk.rules` (`uinput`/`uhid` access),
   `/etc/modules-load.d/lilynk.conf` (`vhci-hcd` for the native Deck pad), `$USER` in the `input`
-  group **and in `punktfunk`** — the latter created from `packaging/linux/lilynk.sysusers` (the
+  group **and in `lilynk`** — the latter created from `packaging/linux/lilynk.sysusers` (the
   file the packages ship) if missing, because the udev rule `chgrp`s the vhci `attach`/`detach`
   nodes to it and a rule that names a nonexistent group fails silently, leaving the native Deck pad
   unable to attach. It is separate from `input` on purpose: writing `attach` materialises an
-  arbitrary emulated USB device. Drop it with `sudo gpasswd -d "$USER" punktfunk` if you would
+  arbitrary emulated USB device. Drop it with `sudo gpasswd -d "$USER" lilynk` if you would
   rather stream without that pad.
   Plus `/etc/atomic-update.conf.d/lilynk.conf`, which registers the four files on
   SteamOS's atomic-update keep list so A/B OS updates carry them over (verified: without it an
   update silently strips them — pads degrade to Xbox 360, buffers drop to 208 KB).
 
 - **Reachable without logging in (sudo, with the web console):** the seat supervisor and the
-  door's helpers under `/opt/punktfunk/libexec` (root's), the host, console and plugin runner the
-  door and seats run in `/opt/punktfunk/host` (yours, so a rebuild refreshes it), their units in
-  `/etc/systemd/system`, the seats' runner unit in `/etc/systemd/user`, the polkit, udev and tmpfiles files in `/etc`, and `/var/lib/punktfunk`
+  door's helpers under `/opt/lilynk/libexec` (root's), the host, console and plugin runner the
+  door and seats run in `/opt/lilynk/host` (yours, so a rebuild refreshes it), their units in
+  `/etc/systemd/system`, the seats' runner unit in `/etc/systemd/user`, the polkit, udev and tmpfiles files in `/etc`, and `/var/lib/lilynk`
   and `/var/lib/lilynk-seats` bind-mounted from `/home/.steamos/offload/var/lib`: the var
   partition is 256 MB and holds every seat's home. `$USER` joins `lilynk-update`, the group
   that may start the switch. Off until it's ticked under **Profiles**.
@@ -136,10 +136,10 @@ host advertises over mDNS as `_punktfunk._udp`, so clients discover it automatic
 - **First build is slow** (~20 min with the HDR gamescope, + ~1 GB toolchain/image). Incremental afterwards.
 - **No passwordless sudo** → the installer skips the sysctl/udev/group steps with a warning; high
   bitrates will drop packets until you apply `99-lilynk-net.conf` and join `input` (and
-  `punktfunk`, for the native Deck pad) yourself. The script prints the exact commands.
+  `lilynk`, for the native Deck pad) yourself. The script prints the exact commands.
 - **Installed before 0.25.0?** `web.env` was written at the ambient umask, i.e. world-readable, so
   the console password and session secret leaked to every local account. `install.sh`/`update.sh`
-  now tighten `~/.config/punktfunk` to `0700` and `web.env` to `0600` on every run and say so —
+  now tighten `~/.config/lilynk` to `0700` and `web.env` to `0600` on every run and say so —
   but reset the password afterwards, because a chmod does not un-leak a read secret: put a
   `LILYNK_UI_PASSWORD=<new>` line in `web.env` and `systemctl --user restart lilynk-web`.
 - **Game Mode auto-suspend** drops the host off the network on idle — disable it (Settings → Power)

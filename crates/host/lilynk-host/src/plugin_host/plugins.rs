@@ -1,11 +1,11 @@
 //! `lilynk-host plugins …` — install plugins and turn the runner on or off.
 //!
 //! Package ops (`add`/`remove`/`list`) go to the bun runner (`sdk/src/plugins.ts`):
-//! this binary locates it; it owns the vendored bun, `@punktfunk` scope, and plugins dir.
+//! this binary locates it; it owns the vendored bun, `@lilynk` scope, and plugins dir.
 //! Service ops (`enable`/`disable`/`status`) run here — `systemctl --user` or the
 //! `LilynkScripting` scheduled task — so they work without the runner package.
 //!
-//! Windows: `add`, `remove`, `enable` and `disable` need elevation (`%ProgramData%\punktfunk`
+//! Windows: `add`, `remove`, `enable` and `disable` need elevation (`%ProgramData%\lilynk`
 //! is ACL'd; the task is admin-owned). Refuse unelevated rather than a bare EACCES from `bun add`.
 //!
 //! The task runs as `NT AUTHORITY\LocalService`, not SYSTEM. `enable` converges the
@@ -226,7 +226,7 @@ fn grant(plugin: Option<&str>, dir: Option<&str>, flags: &[String]) -> Result<()
         bail!("usage: lilynk-host plugins grant <plugin> <dir> [--write]");
     };
     // A port on this computer, spelled as its request spells it. The operator's own hand: only
-    // Punktfunk's own range is refused, whatever port the API was moved to.
+    // Lilynk's own range is refused, whatever port the API was moved to.
     if let Some(port) = access::port_of(dir) {
         if !cfg!(target_os = "linux") {
             bail!("a port on this computer is granted on a Linux host only");
@@ -974,9 +974,9 @@ mod tests {
             (&["ls", "x"], true, &[]),
             (&["remove", "playnite"], false, &["playnite"]),
             (
-                &["rm", "a", "@punktfunk/plugin-b"],
+                &["rm", "a", "@lilynk/plugin-b"],
                 false,
-                &["a", "@punktfunk/plugin-b"],
+                &["a", "@lilynk/plugin-b"],
             ),
             (&["uninstall", "a"], false, &["a"]),
             (&["remove"], false, &[]),

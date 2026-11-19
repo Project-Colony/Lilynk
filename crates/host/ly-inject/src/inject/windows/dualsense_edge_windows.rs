@@ -20,7 +20,7 @@ impl PadProto for DsEdgeWinProto {
     type State = DsState;
     const LABEL: &'static str = "DualSense Edge/Windows";
     const DEVICE: &'static str = "DualSense Edge";
-    const CREATE_HINT: &'static str = " (install/repair: run the Punktfunk installer again)";
+    const CREATE_HINT: &'static str = " (install/repair: run the Lilynk installer again)";
 
     fn open(&mut self, idx: u8) -> Result<DsWinPad> {
         let p = DsWinPad::open(idx, &WinDsIdentity::dualsense_edge())?;

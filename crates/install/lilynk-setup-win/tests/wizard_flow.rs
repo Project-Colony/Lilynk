@@ -249,7 +249,7 @@ impl Wiz {
 fn the_fresh_host_demo_walks_welcome_to_done_through_the_fake_executor() {
     let mut wiz = Wiz::open("win11-fresh");
     assert!(
-        wiz.has_text("Punktfunk"),
+        wiz.has_text("Lilynk"),
         "the Welcome sentence names the product"
     );
     assert!(wiz.has_text("Recommended") && wiz.has_text("Custom"));

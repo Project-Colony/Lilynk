@@ -8,7 +8,7 @@ with a wavelet transform in Vulkan compute ([upstream](https://github.com/Themai
 It encodes and decodes in a fraction of a millisecond, and pays for that with far more bandwidth
 than HEVC or AV1.
 
-Punktfunk never picks it for you. It runs when you choose it on the client and the host supports
+Lilynk never picks it for you. It runs when you choose it on the client and the host supports
 it; otherwise the session uses the normal codecs. Setting the host's **Encoder** to **PyroWave**
 chooses it for every client whose **Video codec** is on automatic and that can decode it.
 
@@ -52,7 +52,7 @@ fork's codec setting.
 ## Bits per pixel
 
 PyroWave has no quality setting of its own: its encoder fills each frame's byte budget exactly.
-Punktfunk sets that budget in **bits per pixel**, so one number means the same picture at every
+Lilynk sets that budget in **bits per pixel**, so one number means the same picture at every
 resolution and frame rate.
 
 Set it on the client under **PyroWave quality**, 0.5 to 2, shown as the rate it needs at your

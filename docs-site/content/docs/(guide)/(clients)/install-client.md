@@ -1,165 +1,106 @@
 ---
 title: Install a Client
-description: Install, update and remove the Punktfunk app on the device you stream to — Linux, Steam Deck, Windows, macOS, iPhone, iPad, Apple TV, Vision Pro, Android or an LG TV.
+description: Build, install and update the Lilynk app on the device you stream to, on Linux, Steam Deck, Windows, macOS, iPhone, iPad, Apple TV, Vision Pro or Android.
 ---
 
-Install the Punktfunk app on the device you stream *to*, then [pair](/docs/pairing) it with your
+Install the Lilynk app on the device you stream *to*, then [pair](/docs/pairing) it with your
 host once. To pick between the apps, see [Clients](/docs/clients).
 
-These links are the **stable** channel. For builds of `main`, see [Release Channels](/docs/channels).
+Lilynk publishes no app builds yet: no store listing, package or download. Build the client for
+your device from a clone ([Build from source](/docs/developers/build-from-source)). The apps
+punktfunk publishes speak punktfunk's protocol and don't connect to a Lilynk host.
 
 ## Pick your device
 
 | Device | Install |
 |--------|---------|
-| Linux desktop or laptop | [Flatpak](#linux-desktop-flatpak), or the apt, dnf or pacman package |
-| Steam Deck | [Decky plugin and Flatpak](/docs/steam-deck) |
+| Linux desktop or laptop | [Your build, or a package you build](#linux-desktop-flatpak) |
+| Steam Deck | [Decky plugin and the Linux client](/docs/steam-deck) |
 | Windows 10 or 11 (x64, Arm64) | [Installer](#windows) |
-| Mac (macOS 14+) | [`.dmg`](#macos) |
-| iPhone, iPad, Apple TV (17+), Apple Vision Pro | [App Store](#ios-ipados-apple-tv) |
-| Android 9+ phone or TV | [Google Play or APK](#android) |
-| LG webOS TV (webOS 5+) | [Homebrew Channel](#lg-webos-tv-community) |
-| Samsung TV (2024+) | [Samsung TV](/docs/samsung-tv) (preview) |
-| A browser | [Browser client](/docs/browser-client) (preview) |
+| Mac (macOS 14+) | [Xcode build](#macos) |
+| iPhone, iPad, Apple TV (17+), Apple Vision Pro | [Xcode build](#ios-ipados-apple-tv) |
+| Android 9+ phone or TV | [APK](#android) |
 | Anything else | [Moonlight](/docs/moonlight) |
 
-## Linux desktop (Flatpak)
+## Linux desktop [#linux-desktop-flatpak]
 
-Works on any distro with Flatpak:
+Build the client from a clone
+([Build from source → Linux client](/docs/developers/build-from-source#linux-client)). For your
+package manager, build the `lilynk-client` package instead:
 
-```sh
-flatpak install --user https://flatpak.unom.io/io.unom.punktfunk.flatpakref
-flatpak run org.projectcolony.lilynk
-```
-
-To use your package manager instead, add the Punktfunk repo from your distro's guide, then:
-
-| Distro | Install |
+| Distro | Package build |
 |--------|---------|
-| Ubuntu 26.04 or newer | `sudo apt install lilynk-client` ([packaging/debian](https://git.unom.io/unom/punktfunk/src/branch/main/packaging/debian/README.md)) |
-| Fedora 43 or newer | `sudo dnf install lilynk-client` ([Fedora](/docs/fedora)) |
-| Arch | `sudo pacman -Syu lilynk-client` ([Arch Linux](/docs/arch)) |
-| Bazzite, Fedora Atomic | Use the Flatpak. Layering with `rpm-ostree install lilynk-client` slows every OS update ([Bazzite](/docs/bazzite)). |
+| Ubuntu 26.04 or newer | `packaging/debian/build-client-deb.sh` with `VERSION` set as on [Ubuntu](/docs/ubuntu#2-install-the-host), then `sudo apt install ./dist/lilynk-client_*.deb` |
+| Fedora 43 or newer | The RPM build on [Fedora](/docs/fedora#2-install-the-host) also writes `lilynk-client` |
+| Arch | The `PKGBUILD` on [Arch Linux](/docs/arch#2-install-the-host) also builds `lilynk-client` |
 
-On Ubuntu 24.04, Debian and older distros the client package can't install: use the Flatpak.
-
-Open **Punktfunk** from your app menu, or **Punktfunk Console** for the controller interface. Every
-package, the Flatpak included, also installs the [`punktfunk` command](/docs/clients#scripting-the-punktfunk-cli)
+The package adds **Lilynk** to your app menu, and **Lilynk Console** for the controller interface.
+Every client package also installs the [`lilynk` command](/docs/clients#scripting-the-lilynk-cli)
 for scripts.
 
 ## Windows
 
-1. Download the installer. In PowerShell:
-
-   ```powershell
-   curl.exe -LO https://git.unom.io/api/packages/unom/generic/punktfunk-client-windows/latest/punktfunk-client-setup_x64.exe
-   ```
-
-   On an Arm device, use `_arm64` in place of `_x64`. The file is also on every
-   [release](https://git.unom.io/unom/punktfunk/releases).
-2. Run it. No admin prompt: it installs to `%LOCALAPPDATA%\Programs\Punktfunk`, registers
-   `punktfunk://` links, puts `punktfunk` on your PATH and fetches the Windows App Runtime if it's
+1. Build the client and its installer from a clone
+   ([Build from source → Windows host and client](/docs/developers/build-from-source#windows-host-and-client)).
+2. Run it. No admin prompt: it installs to `%LOCALAPPDATA%\Programs\Lilynk`, registers
+   `punktfunk://` links, puts `lilynk` on your PATH and fetches the Windows App Runtime if it's
    missing.
-3. Open **Punktfunk** from the Start menu, or **Punktfunk Console** for the controller interface
+3. Open **Lilynk** from the Start menu, or **Lilynk Console** for the controller interface
    (x64 only: the Arm64 build has no console yet).
 
 **Steam overlay and Big Picture.** In Steam, **Add a Non-Steam Game** and browse to
-`%LOCALAPPDATA%\Programs\Punktfunk\lilynk-client.exe` (or `lilynk-console.exe`).
+`%LOCALAPPDATA%\Programs\Lilynk\lilynk-client.exe` (or `lilynk-console.exe`).
 
-**Portable zip and MSIX.** The same build ships as
-`…/latest/lilynk-client-windows_x64-portable.zip` (unzip and run `lilynk-client.exe`; no
-links, no PATH entry) and `…/latest/lilynk-client-windows_x64.msix`
-(`Add-AppxPackage .\lilynk-client-windows_x64.msix`). Both need the
-[Windows App Runtime 2.x](https://learn.microsoft.com/windows/apps/windows-app-sdk/downloads). The
-MSIX can't be added to Steam.
+**Portable zip and MSIX.** The same build also packs as
+`lilynk-client-windows_x64-portable.zip` (unzip and run `lilynk-client.exe`; no links, no PATH
+entry) and `lilynk-client-windows_x64.msix` (`Add-AppxPackage .\lilynk-client-windows_x64.msix`).
+Both need the [Windows App Runtime 2.x](https://learn.microsoft.com/windows/apps/windows-app-sdk/downloads).
+The MSIX can't be added to Steam.
 
 ## macOS
 
-1. Download `Lilynk-<version>.dmg` from the [releases page](https://git.unom.io/unom/punktfunk/releases).
-2. Open it and drag **Punktfunk** to **Applications**.
-
-The Mac app is also in the [TestFlight beta](https://testflight.apple.com/join/Qr7uSemk).
+1. Build the app from a clone with Xcode
+   ([Build from source → Apple client](/docs/developers/build-from-source#apple-client)).
+2. Drag **Lilynk** to **Applications**.
 
 ## iOS, iPadOS, Apple TV
 
-**[Get Punktfunk on the App Store](https://apps.apple.com/app/id6779991756)**. One app covers
-iPhone, iPad, Apple TV and Apple Vision Pro.
-
-For beta builds, install Apple's [TestFlight](https://apps.apple.com/app/testflight/id899247664)
-app, then [join the Punktfunk beta](https://testflight.apple.com/join/Qr7uSemk).
-
-Each [release](https://git.unom.io/unom/punktfunk/releases) also carries `Lilynk-<version>.ipa`
-for sideloading with AltStore, SideStore or Sideloadly. Wake-on-LAN and the widget's host list need
-the App Store build.
+Build the app from a clone with Xcode
+([Build from source → Apple client](/docs/developers/build-from-source#apple-client)). One app
+covers iPhone, iPad, Apple TV and Apple Vision Pro. A build sideloaded with AltStore, SideStore or
+Sideloadly has no Wake-on-LAN and no host list in the widget.
 
 ## Android
 
-**[Get Punktfunk on Google Play](https://play.google.com/store/apps/details?id=io.unom.punktfunk)**.
-The same app runs on phones, tablets and Android TV.
-
-To skip Play, install the signed APK:
-
-```text
-https://git.unom.io/api/packages/unom/generic/punktfunk-android/latest/punktfunk-android.apk
-```
-
-For canary builds, join the beta from the app's Play listing (open testing, anyone can join), or
-use `canary` in place of `latest` in the APK link.
+Build the APK from a clone
+([Build from source → Android client](/docs/developers/build-from-source#android-client)) and
+install it. The same app runs on phones, tablets and Android TV.
 
 ## LG webOS TV [#lg-webos-tv-community]
 
-1. Turn on Developer Mode on the TV and install the [Homebrew Channel](https://www.webosbrew.org/)
-   ([guide](https://www.webosbrew.org/guide/getting-started.html)).
-2. In the Homebrew Channel, pick **Punktfunk** and install it. Or download the latest `.ipk` from
-   the [client-webos releases](https://github.com/punktfunk/client-webos/releases/latest) and
-   install it with `ares-install`.
-3. Open **Punktfunk** from the TV's launcher.
+The webOS app is punktfunk's ([punktfunk/client-webos](https://github.com/punktfunk/client-webos))
+and doesn't connect to a Lilynk host. Lilynk has no webOS client.
 
 ## Keeping a client up to date
 
 A client and a host don't need the same version. To update the host, see [Updating](/docs/updating).
+To update a client, `git pull` in the clone, build it again, and install the new build:
 
-| Client | Update |
+| Client | Install the new build |
 |---|---|
-| Flatpak | `flatpak update`, without `sudo`: `sudo` skips this install |
-| apt, dnf, pacman | Your normal system upgrade, or [`lilynk-client --apply-update`](#the-linux-client-can-update-itself) |
-| Fedora Atomic, layered | See below |
+| Linux package | Install the new package with your package manager |
 | Windows installer | Run the newer installer. Hosts and pairing are kept. |
 | Windows MSIX or portable | Add the newer `.msix`, or unzip the newer build over the old one. |
-| macOS `.dmg` | Drag the newer app over the old one |
-| iPhone, iPad, Apple TV | App Store, or TestFlight for the beta |
-| Android | Google Play. For the APK, install the newer one over it. |
-| Steam Deck (Decky) | The panel's update button: [Steam Deck → Updating](/docs/steam-deck#updating) |
-| LG webOS | The Homebrew Channel, or install the newer `.ipk` |
-
-**Fedora Atomic with a layered client.** `rpm-ostree upgrade` doesn't pick up a newer client while
-the base image is unchanged. Run this, then reboot:
-
-```sh
-sudo rpm-ostree refresh-md --force
-sudo rpm-ostree update --uninstall lilynk-client --install lilynk-client
-```
+| macOS | Drag the newer app over the old one |
+| iPhone, iPad, Apple TV | Install the newer app from Xcode |
+| Android | Install the newer APK over the old one |
+| Steam Deck (Decky) | [Steam Deck → Updating](/docs/steam-deck#updating) |
 
 **Moving from the MSIX to the installer.** Remove the MSIX first, then run the installer. The MSIX
 takes its saved hosts and pairing with it, so pair again once:
 
 ```powershell
 Get-AppxPackage org.projectcolony.lilynk | Remove-AppxPackage
-```
-
-### The Linux client can update itself
-
-```sh
-lilynk-client --check-update    # installed vs available on this box's channel
-lilynk-client --apply-update    # install it
-```
-
-`--check-update` exits **0** when up to date, **10** when an update is available, and **1** when it
-couldn't tell. Add `--json` for machine-readable output. `--apply-update` needs you in the
-`lilynk-update` group (no re-login needed):
-
-```sh
-sudo usermod -aG lilynk-update $USER
 ```
 
 ## Removing a client

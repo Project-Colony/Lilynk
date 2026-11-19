@@ -1310,13 +1310,10 @@ mod tests {
     fn embedded_fonts_load() {
         let fonts = build_fonts().expect("Geist faces load");
         for w in [W::Regular, W::Medium, W::SemiBold, W::Bold] {
-            assert!(fonts.measure("Punktfunk", w, 16.0) > 0.0);
+            assert!(fonts.measure("Lilynk", w, 16.0) > 0.0);
         }
         // Heavier faces are wider at the same size: four distinct faces, not one reused.
-        assert!(
-            fonts.measure("Punktfunk", W::Bold, 16.0)
-                > fonts.measure("Punktfunk", W::Regular, 16.0)
-        );
+        assert!(fonts.measure("Lilynk", W::Bold, 16.0) > fonts.measure("Lilynk", W::Regular, 16.0));
     }
 
     /// Latin and Cyrillic stay one Geist `draw_str`, at the width Geist alone gives.
@@ -1394,7 +1391,7 @@ mod tests {
         for fonts in [&mut shared, &mut separate] {
             fonts.add_fallback(&[TEST_FALLBACK]).unwrap();
         }
-        let text = "Punktfunk Ж \u{e58a} 日本 한국 ①";
+        let text = "Lilynk Ж \u{e58a} 日本 한국 ①";
         for w in [W::Regular, W::Bold] {
             for c in text.chars() {
                 let (a, b) = (shared.face_for(c, w), separate.face_for(c, w));

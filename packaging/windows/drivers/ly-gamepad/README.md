@@ -9,7 +9,7 @@
 
 A self-authored **Rust UMDF2 HID minidriver** that presents a virtual Sony **DualSense**
 (VID `054C` / PID `0CE6`) to Windows, so games drive adaptive triggers / lightbar / rumble —
-capabilities ViGEm structurally cannot deliver. It's how the punktfunk Windows host gives a client's
+capabilities ViGEm structurally cannot deliver. It's how the lilynk Windows host gives a client's
 DualSense a near-native feel with **no external gamepad dependencies** (no ViGEmBus).
 
 Shipping: the driver is one member of the in-tree driver workspace

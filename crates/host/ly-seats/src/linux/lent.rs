@@ -17,7 +17,7 @@ use std::os::unix::fs::MetadataExt as _;
 use std::path::{Path, PathBuf};
 use std::sync::{Mutex, MutexGuard};
 
-pub const DIR: &str = "/run/punktfunk/pads/lent";
+pub const DIR: &str = "/run/lilynk/pads/lent";
 const SYS: &str = "/sys";
 /// udev's database: `+input:inputN` holds an input device's properties.
 const UDEV_DATA: &str = "/run/udev/data";

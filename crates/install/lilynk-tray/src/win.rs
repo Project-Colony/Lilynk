@@ -118,12 +118,12 @@ fn to_wide(s: &str) -> Vec<u16> {
     std::ffi::OsStr::new(s).encode_wide().chain([0]).collect()
 }
 
-/// Append-only log for a windows-subsystem process (no stderr): `%LOCALAPPDATA%\punktfunk\tray.log`.
+/// Append-only log for a windows-subsystem process (no stderr): `%LOCALAPPDATA%\lilynk\tray.log`.
 fn log(msg: &str) {
     let Some(base) = std::env::var_os("LOCALAPPDATA") else {
         return;
     };
-    let dir = std::path::PathBuf::from(base).join("punktfunk");
+    let dir = std::path::PathBuf::from(base).join("lilynk");
     let _ = std::fs::create_dir_all(&dir);
     if let Ok(mut f) = std::fs::OpenOptions::new()
         .create(true)
@@ -234,7 +234,7 @@ pub fn run(args: crate::Args) -> anyhow::Result<()> {
         CreateWindowExW(
             WINDOW_EX_STYLE(0),
             w!("LilynkTrayWindow"),
-            w!("punktfunk tray"),
+            w!("lilynk tray"),
             WS_OVERLAPPED,
             0,
             0,
@@ -605,7 +605,7 @@ fn on_seat() -> bool {
     why != ERROR_FILE_NOT_FOUND
 }
 
-/// The console; on a seat the person's own Punktfunk, which `ctl console-url --open` opens.
+/// The console; on a seat the person's own Lilynk, which `ctl console-url --open` opens.
 fn open_console(hwnd: HWND) {
     if let Some(exe) = app().host_exe.as_ref().filter(|_| on_seat()) {
         use std::os::windows::process::CommandExt;
@@ -635,9 +635,7 @@ fn open_logs(hwnd: HWND) {
     let Some(base) = std::env::var_os("ProgramData") else {
         return;
     };
-    let dir = std::path::PathBuf::from(base)
-        .join("punktfunk")
-        .join("logs");
+    let dir = std::path::PathBuf::from(base).join("lilynk").join("logs");
     shell_open(hwnd, &dir.to_string_lossy());
 }
 

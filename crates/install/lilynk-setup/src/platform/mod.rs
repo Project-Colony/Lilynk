@@ -21,7 +21,7 @@ const PLATFORMS_JSON: &str = include_str!("../../../../../data/platforms.json");
 
 /// Removes the stable section, the canary section, or both.
 const PACMAN_RM_REPO: &str =
-    r"sudo sed -i '/^\[\(punktfunk\|lilynk-canary\)\]$/,/^Server = /d' /etc/pacman.conf";
+    r"sudo sed -i '/^\[\(lilynk\|lilynk-canary\)\]$/,/^Server = /d' /etc/pacman.conf";
 
 fn platforms() -> &'static serde_json::Value {
     static PARSED: OnceLock<serde_json::Value> = OnceLock::new();
@@ -286,8 +286,8 @@ impl PkgBackend for Pacman {
             .map(|line| {
                 Step::run(if choices.channel == Channel::Canary {
                     // Both the grep guard (escaped brackets) and the printf body name the repo.
-                    line.replace(r"punktfunk\]", r"lilynk-canary\]")
-                        .replace("[punktfunk]", "[lilynk-canary]")
+                    line.replace(r"lilynk\]", r"lilynk-canary\]")
+                        .replace("[lilynk]", "[lilynk-canary]")
                 } else {
                     line
                 })
@@ -357,7 +357,7 @@ impl PkgBackend for Pacman {
         let text = paths.read(&paths.etc("pacman.conf"))?;
         if text.lines().any(|l| l.trim_end() == "[lilynk-canary]") {
             Some(Channel::Canary)
-        } else if text.lines().any(|l| l.trim_end() == "[punktfunk]") {
+        } else if text.lines().any(|l| l.trim_end() == "[lilynk]") {
             Some(Channel::Stable)
         } else {
             None
@@ -466,15 +466,12 @@ impl PkgBackend for Steamos {
         let (build, clone) = lines
             .split_last()
             .expect("steamos entry has an install line");
-        // `git clone` into an existing ~/punktfunk fails, and a re-run is documented as safe.
+        // `git clone` into an existing ~/lilynk fails, and a re-run is documented as safe.
         // Whatever tree is there is the one to build; `update.sh --pull` is what moves it.
-        let branch = format!("--branch {}", steamos_branch(choices.channel));
+        // The clone takes the remote's default branch, `main`, whatever the channel.
         let mut steps: Vec<Step> = clone
             .iter()
-            .map(|line| {
-                let line = line.replace("--branch stable", &branch);
-                Step::run(format!("[ -d ~/punktfunk/.git ] || {line}"))
-            })
+            .map(|line| Step::run(format!("[ -d ~/lilynk/.git ] || {line}")))
             .collect();
         steps.extend(steamos_build(build, choices));
         steps
@@ -487,11 +484,9 @@ impl PkgBackend for Steamos {
         let build = lines.last().expect("steamos entry has an install line");
         let branch = steamos_branch(choices.channel);
         let mut steps = vec![
-            Step::run("git -C ~/punktfunk fetch origin"),
-            Step::run(format!("git -C ~/punktfunk checkout {branch}")),
-            Step::run(format!(
-                "git -C ~/punktfunk merge --ff-only origin/{branch}"
-            )),
+            Step::run("git -C ~/lilynk fetch origin"),
+            Step::run(format!("git -C ~/lilynk checkout {branch}")),
+            Step::run(format!("git -C ~/lilynk merge --ff-only origin/{branch}")),
         ];
         steps.extend(steamos_build(build, choices));
         steps
@@ -513,10 +508,10 @@ impl PkgBackend for Steamos {
         ]
     }
 
-    /// The branch `~/punktfunk` follows. `stable` is releases; any other tree pulls `main` or
+    /// The branch `~/lilynk` follows. `stable` is releases; any other tree pulls `main` or
     /// nothing, so it is canary. No checkout, no channel.
     fn current_channel(&self, paths: &BasePaths, _run: &dyn CommandRunner) -> Option<Channel> {
-        let head = paths.read(&paths.home.join("punktfunk/.git/HEAD"))?;
+        let head = paths.read(&paths.home.join("lilynk/.git/HEAD"))?;
         Some(if head.trim() == "ref: refs/heads/stable" {
             Channel::Stable
         } else {
@@ -698,8 +693,8 @@ mod tests {
         assert_eq!(lines.len(), 2, "clone the source, run the on-device build");
         assert!(lines[0].starts_with("git clone"), "{:?}", lines[0]);
         assert!(
-            lines[0].contains("--branch stable"),
-            "canary swaps this for main: {:?}",
+            !lines[0].contains("--branch"),
+            "the clone follows the remote's default branch: {:?}",
             lines[0]
         );
         assert!(
@@ -719,7 +714,7 @@ mod tests {
             None,
             "no checkout yet"
         );
-        let git = paths.home.join("punktfunk/.git");
+        let git = paths.home.join("lilynk/.git");
         std::fs::create_dir_all(&git).unwrap();
         for (head, channel) in [
             ("ref: refs/heads/stable\n", Channel::Stable),

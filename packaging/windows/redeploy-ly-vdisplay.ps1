@@ -1,7 +1,7 @@
 #requires -Version 5.1
 <#
 .SYNOPSIS
-  One-shot DEV redeploy of the ly-vdisplay (punktfunk) virtual-display driver on the test box:
+  One-shot DEV redeploy of the ly-vdisplay (lilynk) virtual-display driver on the test box:
   (optional) build -> stop host -> stage+sign+install -> reload the adapter -> start host.
 
 .DESCRIPTION

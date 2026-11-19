@@ -1,10 +1,10 @@
-# punktfunk on NixOS / Nix
+# lilynk on NixOS / Nix
 
 The repo's `flake.nix` builds the host and the Linux client reproducibly, ships a NixOS module that
 wires up everything the RPM and deb do, and carries a dev shell with the pinned toolchain.
 
 Using it — adding the cache, importing the module, enabling the host — is
-[the docs site](https://docs.punktfunk.unom.io/docs/nixos)'s job, and every option is declared with
+[the docs site](https://project-colony.github.io/Lilynk/docs/nixos)'s job, and every option is declared with
 its own `description` in [`nixos-module.nix`](nixos-module.nix). This file is what neither of those
 can hold: how the packages are built, and the traps.
 
@@ -29,8 +29,8 @@ host runs on NVIDIA, AMD/Intel or software.
 
 ## Binary cache
 
-CI publishes every punktfunk package to `https://nix.unom.io`. Without it, `nix build` here compiles
-the whole Rust workspace *and* gamescope from source — about an hour. Only punktfunk's own store
+CI publishes every lilynk package to `https://nix.unom.io`. Without it, `nix build` here compiles
+the whole Rust workspace *and* gamescope from source — about an hour. Only lilynk's own store
 paths are published; everything else is stock nixpkgs from `cache.nixos.org`, so adding the
 substituter costs nothing on unrelated builds.
 
@@ -40,8 +40,8 @@ commits CI published. Each channel is a branch that CI moves only after a publis
 
 | Flake input | Moves on |
 | --- | --- |
-| `git+https://git.unom.io/unom/punktfunk?ref=nix-stable` | each `v*` release tag |
-| `git+https://git.unom.io/unom/punktfunk?ref=nix-canary` | nightly when `main` moved, or a dispatch of `nix.yml` on `main` |
+| `git+https://github.com/Project-Colony/Lilynk?ref=nix-stable` | each `v*` release tag |
+| `git+https://github.com/Project-Colony/Lilynk?ref=nix-canary` | nightly when `main` moved, or a dispatch of `nix.yml` on `main` |
 | `…?ref=v<x.y.z>` | never; the tag is published too |
 
 A bare URL follows `main`, which is almost never the published commit.
@@ -55,7 +55,7 @@ older than yours leaves AMD and Intel with no EGL, Vulkan or VA-API. The cache h
 the nixpkgs in our `flake.lock`, so they hit it when your system's nixpkgs follows ours:
 
 ```nix
-inputs.nixpkgs.follows = "punktfunk/nixpkgs";
+inputs.nixpkgs.follows = "lilynk/nixpkgs";
 ```
 
 The canary nightly bumps that nixpkgs to the newest nixos-unstable and pushes the lock to `main` once
@@ -64,10 +64,10 @@ PipeWire or another dependency still miss. The web console and runner load no dr
 the cache either way. `packages.…` stay pinned for `nix build` and `nix run`.
 
 **`lilynk.inputs.nixpkgs.follows` turns the rest of the cache off.** Every store path is keyed by
-the exact inputs it was built from, so pointing punktfunk's nixpkgs at yours makes every path miss.
+the exact inputs it was built from, so pointing lilynk's nixpkgs at yours makes every path miss.
 It buys one shared nixpkgs in the closure instead of two.
 
-**Why not cachix.** Punktfunk self-hosts every other channel, and a Nix cache is static files behind
+**Why not cachix.** Lilynk self-hosts every other channel, and a Nix cache is static files behind
 a web server, so it rides the same box and deploy key as the rest. It speaks plain binary-cache
 protocol, so any nix client works with it.
 
@@ -224,7 +224,7 @@ publishing on. Until those exist the publish no-ops with a warning and `main` st
 
 ### Operational notes
 
-- Only punktfunk's own store paths are published. The publish asserts every built output matches
+- Only lilynk's own store paths are published. The publish asserts every built output matches
   that filter, so a future `pname` change fails the build instead of silently dropping a package.
 - `rsync` runs **without** `--delete` so a client mid-download is never pulled out from under, and
   NARs upload *before* narinfos — a narinfo whose NAR has not landed is a hard failure for whoever

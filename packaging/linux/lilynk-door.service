@@ -1,11 +1,11 @@
-# punktfunk door: the box's host as a system service, reachable without anyone logged in.
+# lilynk door: the box's host as a system service, reachable without anyone logged in.
 #
 # It advertises, pairs, serves the console's API and places every connect on a seat of the box
 # (lilynk-seats), the owner's included. It never opens a display or captures: the box's files
-# live in /var/lib/punktfunk, owned by the punktfunk user. Turned on and off with
+# live in /var/lib/lilynk, owned by the lilynk user. Turned on and off with
 # `door-helper on|off <user>` (lilynk-door-on@.service); not enabled by the package.
 [Unit]
-Description=punktfunk door (the box's host, reachable without logging in)
+Description=lilynk door (the box's host, reachable without logging in)
 After=network-online.target lilynk-seats.service
 Wants=network-online.target lilynk-seats.service
 # Off without the owner record, however the unit was enabled: door-helper writes it before the
@@ -18,17 +18,17 @@ StartLimitIntervalSec=0
 
 [Service]
 Type=simple
-User=punktfunk
-# Its own group: `punktfunk` owns the usbip attach nodes, which the door never opens.
+User=lilynk
+# Its own group: `lilynk` owns the usbip attach nodes, which the door never opens.
 Group=lilynk-door
-Environment=LILYNK_CONFIG_DIR=/var/lib/punktfunk
+Environment=LILYNK_CONFIG_DIR=/var/lib/lilynk
 # The box's library: the seat supervisor's copy of the owner's, which every client reads here.
 Environment=LILYNK_LIBRARY_DIR=/var/lib/lilynk-seats/library
 # The ports the owner moved in their host.env: door-helper copies them to the file below before
 # each start, so an update or a later edit reaches the door. `+` runs it as root, to read the
 # owner's file and keep the door's account in `lilynk-door`. That root line gets the file's
 # environment too, so the file sits where only root writes.
-ExecStartPre=+-/usr/libexec/punktfunk/door-helper ports
+ExecStartPre=+-/usr/libexec/lilynk/door-helper ports
 EnvironmentFile=-/var/lib/lilynk-seats/host.env
 ExecStart=/usr/bin/lilynk-host serve --door
 Restart=always

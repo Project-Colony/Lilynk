@@ -149,7 +149,7 @@ mod tests {
             r"\\?\UNC\nas\share\a.dll",
             Path::new(r"\\nas\share\a.dll")
         ));
-        assert!(!names(r"\\?\C:\ProgramData\punktfunk\native-key", path));
+        assert!(!names(r"\\?\C:\ProgramData\lilynk\native-key", path));
         assert!(!names(
             r"\\?\D:\Users\Player\AppData\Roaming\RetroArch\cores\snes9x_libretro.dll",
             path

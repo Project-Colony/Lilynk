@@ -38,7 +38,7 @@ export async function launchGamepadUi(): Promise<void> {
 /**
  * Stream `ref` fullscreen in Gaming Mode, optionally with a pinned card's preset. Encodes the
  * target into the STREAM shortcut's launch options — one hidden shortcut serves every host —
- * then RunGame. The plugin sends no wake packet: with the client's auto-wake on, `punktfunk
+ * then RunGame. The plugin sends no wake packet: with the client's auto-wake on, `lilynk
  * launch` wakes a sleeping host whose MAC is known and dials once it answers.
  */
 export async function launchStream(ref: string, opts: LaunchOpts = {}): Promise<void> {
@@ -50,7 +50,7 @@ export async function launchStream(ref: string, opts: LaunchOpts = {}): Promise<
 
 /**
  * Stream a Steam title from its own page: the same launch as `launchStream` with the game
- * named, but under the hidden per-game shortcut so Steam shows the game running, not Punktfunk.
+ * named, but under the hidden per-game shortcut so Steam shows the game running, not Lilynk.
  * `title` and `iconHash` come from Steam's overview of the game and only dress the shortcut.
  */
 export async function launchGameStream(

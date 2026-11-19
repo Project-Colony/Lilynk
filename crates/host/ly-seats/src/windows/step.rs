@@ -170,7 +170,7 @@ impl Fault {
                 "The seat's screen didn't start. The graphics card or the seat display driver failed its check."
             }
             Code::HostReadyTimeout | Code::HostExited => {
-                "Punktfunk didn't start on the seat. The seat's log has the cause."
+                "Lilynk didn't start on the seat. The seat's log has the cause."
             }
             Code::AccountNotOwned
             | Code::AccountIsAdministrator
@@ -228,7 +228,7 @@ impl Stage {
         match self {
             Self::SignIn => "signing in to the seat's Windows account",
             Self::Display => "checking the seat's screen and graphics card",
-            Self::Host => "starting Punktfunk on the seat",
+            Self::Host => "starting Lilynk on the seat",
         }
     }
 
@@ -670,7 +670,7 @@ impl State {
         } else if let Some(code) = probe.host {
             let delay = self.host_restart.failed(now);
             self.status = starting(format!(
-                "punktfunk stopped on the seat. Restarting it in {} s…",
+                "lilynk stopped on the seat. Restarting it in {} s…",
                 delay.as_secs()
             ));
             self.phase = Phase::HostDown { until: now + delay };
@@ -846,7 +846,7 @@ mod tests {
 
     const SIGN_IN: &str = "Windows didn't sign in to the seat's account.";
     const SCREEN: &str = "The seat's screen didn't start.";
-    const HOST: &str = "Punktfunk didn't start on the seat.";
+    const HOST: &str = "Lilynk didn't start on the seat.";
     const MESSAGE: &str = "the operator's message";
 
     /// Code, whether a retry is pointless, and how the console's sentence starts.
@@ -920,9 +920,9 @@ mod tests {
     };
     const SIGNING_IN: &str = "Signing in to the seat's Windows account…";
     const CHECKING: &str = "Checking the seat's screen and graphics card…";
-    const STARTING_HOST: &str = "Starting Punktfunk on the seat…";
+    const STARTING_HOST: &str = "Starting Lilynk on the seat…";
     const NO_SCREEN: &str = "The seat's screen didn't start. The graphics card or the seat display driver failed its check.";
-    const NO_HOST: &str = "Punktfunk didn't start on the seat. The seat's log has the cause.";
+    const NO_HOST: &str = "Lilynk didn't start on the seat. The seat's log has the cause.";
     const GATE_OUT_OF_TIME: &str =
         "same-session virtual-display quality gate did not finish within 60 seconds";
     const STOPPED_EARLY: (&str, &str) = ("seat_stopping", "seat stopped before startup completed");
@@ -1330,7 +1330,7 @@ mod tests {
         ] {
             let served = Duration::from_secs(served);
             assert_eq!(bench.later(served).see(host(3)), [Action::LogHostExit(3)]);
-            let detail = format!("punktfunk stopped on the seat. Restarting it in {secs} s…");
+            let detail = format!("lilynk stopped on the seat. Restarting it in {secs} s…");
             assert_eq!(
                 bare(bench.state.status()),
                 shows(RuntimeState::Starting, &detail)
@@ -1380,7 +1380,7 @@ mod tests {
         assert_eq!(bench.see(NOTHING), start_host());
         assert_eq!(bench.see(READY), []);
         assert_eq!(bench.see(host(3)), [Action::LogHostExit(3)]);
-        let detail = "punktfunk stopped on the seat. Restarting it in 1 s…";
+        let detail = "lilynk stopped on the seat. Restarting it in 1 s…";
         assert_eq!(
             bare(bench.state.status()),
             shows(RuntimeState::Starting, detail)
@@ -1714,7 +1714,7 @@ mod tests {
     fn a_start_out_of_time_reads_failed_from_every_stage() {
         const SIGN_IN: &str = "signing in to the seat's Windows account";
         const DISPLAY: &str = "checking the seat's screen and graphics card";
-        const HOST: &str = "starting Punktfunk on the seat";
+        const HOST: &str = "starting Lilynk on the seat";
         let rows = [
             (At::Fresh, SIGN_IN),
             (At::SigningIn, SIGN_IN),

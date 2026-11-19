@@ -64,7 +64,7 @@ fn meter_split_quad(
     Ok(())
 }
 
-/// Scripted stylus through [`PenTracker`](lilynk_core::quic::PenTracker) → the "Punktfunk Pen"
+/// Scripted stylus through [`PenTracker`](lilynk_core::quic::PenTracker) → the "Lilynk Pen"
 /// uinput tablet. No client.
 ///
 /// Hover in, tip down, sine stroke with pressure ramp + tilt, tip up, hover out.
@@ -347,7 +347,7 @@ pub fn list_monitors() -> Result<()> {
             tags.push("disabled");
         }
         if m.managed {
-            tags.push("punktfunk virtual display");
+            tags.push("lilynk virtual display");
         }
         if pinned
             .as_deref()
@@ -375,7 +375,7 @@ pub fn list_monitors() -> Result<()> {
 
 /// Virtual DualSense via UHID: Cross, left-stick sweep, print kernel HID output. No session.
 ///
-/// `evtest`, `/dev/input/by-id/*Punktfunk*`, `wpctl status`. `--edge` is 054C:0DF2 and
+/// `evtest`, `/dev/input/by-id/*Lilynk*`, `wpctl status`. `--edge` is 054C:0DF2 and
 /// cycles the four back paddles (`BTN_TRIGGER_HAPPY1..4` on kernel ≥ 7.2; older kernels:
 /// bind + hidraw byte 10).
 #[cfg(target_os = "linux")]
@@ -399,7 +399,7 @@ pub fn dualsense_test(args: &[String]) -> Result<()> {
         std::thread::sleep(Duration::from_millis(10));
     }
     println!(
-        "virtual {label} created — check `evtest`, `ls /dev/input/by-id/*Punktfunk*`, \
+        "virtual {label} created — check `evtest`, `ls /dev/input/by-id/*Lilynk*`, \
          `ls /sys/class/leds/`. Cycling Cross + sweeping LS for {secs}s."
     );
     let deadline = Instant::now() + Duration::from_secs(secs);
@@ -490,7 +490,7 @@ pub fn pad_usbip_test(args: &[String]) -> Result<()> {
 
     let _pad = ly_inject::dualsense_usbip::DualSenseUsbip::open(pad, false).context(
         "attach the usbip DualSense (is vhci_hcd loaded, and is \
-         /sys/devices/platform/vhci_hcd.0/attach writable by the `punktfunk` group?)",
+         /sys/devices/platform/vhci_hcd.0/attach writable by the `lilynk` group?)",
     )?;
     // 1.5 s: vhci enumerate + hid/snd bind + PipeWire; report before that looks like a miss.
     std::thread::sleep(Duration::from_millis(1500));

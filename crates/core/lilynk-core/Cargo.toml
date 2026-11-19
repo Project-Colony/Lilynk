@@ -1,6 +1,6 @@
 [package]
 name = "lilynk-core"
-description = "punktfunk shared protocol/transport/FEC core"
+description = "lilynk shared protocol/transport/FEC core"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true

@@ -4,16 +4,16 @@
 # (49-lilynk-update.rules) for members of the `lilynk-update` group. systemd gives us
 # single-flight (a second start while active fails) and journal capture for free; the helper
 # writes its machine-readable outcome to /var/lib/lilynk-update/update-result.json: a directory
-# only root writes, unlike /var/lib/punktfunk, which is the door's.
+# only root writes, unlike /var/lib/lilynk, which is the door's.
 [Unit]
-Description=punktfunk host update (root helper)
+Description=lilynk host update (root helper)
 # Network is a hard prerequisite for every leg (package manager / sysext feed).
 Wants=network-online.target
 After=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/libexec/punktfunk/ly-update apply
+ExecStart=/usr/libexec/lilynk/ly-update apply
 # /var/lib/lilynk-update, root's, 0755 so the host reads the result.
 StateDirectory=lilynk-update
 # The helper drives the distro package manager, which needs the real system — no sandboxing

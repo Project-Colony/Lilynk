@@ -187,13 +187,13 @@ web_init_case() {
         fail=1
     fi
 }
-seed_token() { printf 'LILYNK_MGMT_TOKEN=deadbeef\n' > "$1/punktfunk/mgmt-token"; }
+seed_token() { printf 'LILYNK_MGMT_TOKEN=deadbeef\n' > "$1/lilynk/mgmt-token"; }
 # $2 is the filename PREFIX: "native-" for the current identity, "" for the legacy pair.
-seed_pair() { printf 'cert\n' > "$1/punktfunk/$2cert.pem"; printf 'key\n' > "$1/punktfunk/$2key.pem"; }
+seed_pair() { printf 'cert\n' > "$1/lilynk/$2cert.pem"; printf 'key\n' > "$1/lilynk/$2key.pem"; }
 
 # A bare config dir: nothing the console needs. It must WAIT, then give up cleanly (exit 0, so the
 # console still starts and its Restart backstop takes over) — never fail the unit.
-mkdir -p "$wi/empty/punktfunk"
+mkdir -p "$wi/empty/lilynk"
 run_web_init 1 "$wi/empty"
 web_init_case "nothing written yet" wait
 case "$wi_out" in *'waiting for lilynk-host'*) ;; *)
@@ -205,14 +205,14 @@ esac
 # The host writes mgmt-token in `prepare_serve` and its identity cert later, in `host::serve`, so
 # a gate that waits for the token alone still hands the console a directory with no cert to
 # listen with. Token present, cert absent must still WAIT.
-mkdir -p "$wi/token-only/punktfunk"
+mkdir -p "$wi/token-only/lilynk"
 seed_token "$wi/token-only"
 run_web_init 1 "$wi/token-only"
 web_init_case "token written, identity cert not yet" wait
 
 # Everything present: return immediately, no sleeping. This is every start after the host's first
 # run, so it has to be free.
-mkdir -p "$wi/native/punktfunk"
+mkdir -p "$wi/native/lilynk"
 seed_token "$wi/native"
 seed_pair "$wi/native" native-
 run_web_init 30 "$wi/native"
@@ -222,7 +222,7 @@ web_init_case "token + native identity present" ready
 # A host that never took the identity split serves the LEGACY pair and has no native-*.pem at all
 # (crate::identity / web/nitro-entry/tls-paths.mjs). Waiting for a file it will never write would
 # stall the console on every upgraded box.
-mkdir -p "$wi/legacy/punktfunk"
+mkdir -p "$wi/legacy/lilynk"
 seed_token "$wi/legacy"
 seed_pair "$wi/legacy" ""
 run_web_init 30 "$wi/legacy"
@@ -230,7 +230,7 @@ web_init_case "token + legacy identity present" ready
 
 # The property the whole gate is for: it must NOTICE the files arriving and stop waiting, rather
 # than sleeping out its whole budget. Written in the host's real order (token, then cert).
-mkdir -p "$wi/late/punktfunk"
+mkdir -p "$wi/late/lilynk"
 (
     sleep 2
     seed_token "$wi/late"
@@ -247,7 +247,7 @@ fi
 #
 # web-init.sh names LILYNK_UI_BIND in host.env once. A missing line becomes the LAN default on
 # a fresh box and an upgrade alike, and a line the operator wrote is never touched.
-bind_of() { sed -n 's/^LILYNK_UI_BIND=//p' "$1/punktfunk/host.env" 2>/dev/null | tail -n1; }
+bind_of() { sed -n 's/^LILYNK_UI_BIND=//p' "$1/lilynk/host.env" 2>/dev/null | tail -n1; }
 bind_case() {
     _got=$(bind_of "$2")
     [ "$_got" = "$3" ] && return
@@ -255,28 +255,28 @@ bind_case() {
     fail=1
 }
 
-mkdir -p "$wi/bind-fresh/punktfunk"
+mkdir -p "$wi/bind-fresh/lilynk"
 seed_token "$wi/bind-fresh"
 seed_pair "$wi/bind-fresh" native-
 run_web_init 1 "$wi/bind-fresh"
 bind_case "fresh install" "$wi/bind-fresh" 0.0.0.0
 
-mkdir -p "$wi/bind-upgrade/punktfunk"
+mkdir -p "$wi/bind-upgrade/lilynk"
 seed_token "$wi/bind-upgrade"
 seed_pair "$wi/bind-upgrade" native-
-printf 'LILYNK_UI_PASSWORD=hunter2\n' > "$wi/bind-upgrade/punktfunk/web-password"
+printf 'LILYNK_UI_PASSWORD=hunter2\n' > "$wi/bind-upgrade/lilynk/web-password"
 run_web_init 1 "$wi/bind-upgrade"
 bind_case "upgrade" "$wi/bind-upgrade" 0.0.0.0
 
 # An operator's answer is never rewritten, and a second run never appends a second line.
-mkdir -p "$wi/bind-set/punktfunk"
+mkdir -p "$wi/bind-set/lilynk"
 seed_token "$wi/bind-set"
 seed_pair "$wi/bind-set" native-
-printf 'LILYNK_UI_BIND=100.64.0.3\n' > "$wi/bind-set/punktfunk/host.env"
+printf 'LILYNK_UI_BIND=100.64.0.3\n' > "$wi/bind-set/lilynk/host.env"
 run_web_init 1 "$wi/bind-set"
 run_web_init 1 "$wi/bind-set"
 bind_case "an existing line wins" "$wi/bind-set" 100.64.0.3
-_n=$(grep -c '^LILYNK_UI_BIND=' "$wi/bind-set/punktfunk/host.env")
+_n=$(grep -c '^LILYNK_UI_BIND=' "$wi/bind-set/lilynk/host.env")
 [ "$_n" = 1 ] || { echo "::error::web-init.sh wrote LILYNK_UI_BIND $_n times"; fail=1; }
 
 rm -rf "$wi"

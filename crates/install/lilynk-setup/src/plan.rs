@@ -71,7 +71,7 @@ pub enum StepAction {
     StartUnits {
         units: Vec<String>,
     },
-    /// Writes the console login password the user typed to `~/.config/punktfunk/web-password`,
+    /// Writes the console login password the user typed to `~/.config/lilynk/web-password`,
     /// 0600. The value stays in `Choices`: a plan is echoed, dry-run printed and pinned in
     /// goldens, and a password belongs in none of the three.
     WebPassword,
@@ -444,7 +444,7 @@ fn group_steps(facts: &Facts, choices: &Choices) -> Vec<Step> {
         if facts.in_lilynk_group {
             steps.push(Step::note(Level::Ok, t::setup_groups_lilynk_already()));
         } else {
-            steps.push(Step::run(r#"sudo usermod -aG punktfunk "$USER""#));
+            steps.push(Step::run(r#"sudo usermod -aG lilynk "$USER""#));
         }
     }
     steps

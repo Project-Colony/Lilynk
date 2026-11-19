@@ -1,8 +1,8 @@
-//! Punktfunk rows in the Omarchy menu (Super+Space).
+//! Lilynk rows in the Omarchy menu (Super+Space).
 //!
 //! One managed block in `~/.config/omarchy/extensions/omarchy-menu.jsonc`: a
-//! `punktfunk` submenu, Open, couch console, and a connect (and wake) row per
-//! saved host. The client owns the `"punktfunk"` root id; the host tool's rows sit
+//! `lilynk` submenu, Open, couch console, and a connect (and wake) row per
+//! saved host. The client owns the `"lilynk"` root id; the host tool's rows sit
 //! under `"lilynk-host"`.
 //!
 //! The menu cannot generate rows (`provider` is a map baked into the shell),
@@ -252,10 +252,10 @@ fn rows_for(known: &KnownHosts) -> String {
     // Client root. Host rows live under `lilynk-host` — do not merge connect
     // and administer into one submenu.
     out.push_str(
-        "  \"punktfunk\": {\"icon\":\"\u{f0379}\",\"label\":\"Punktfunk\",\"aliases\":[\"stream\",\"connect\"]},\n",
+        "  \"lilynk\": {\"icon\":\"\u{f0379}\",\"label\":\"Lilynk\",\"aliases\":[\"stream\",\"connect\"]},\n",
     );
     out.push_str(
-        "  \"lilynk.app\": {\"icon\":\"\u{f003b}\",\"label\":\"Open Punktfunk\",\"description\":\"Hosts, pairing, settings\",\"action\":\"uwsm-app -- lilynk-client\"},\n",
+        "  \"lilynk.app\": {\"icon\":\"\u{f003b}\",\"label\":\"Open Lilynk\",\"description\":\"Hosts, pairing, settings\",\"action\":\"uwsm-app -- lilynk-client\"},\n",
     );
     out.push_str(
         "  \"lilynk.couch\": {\"icon\":\"\u{f0eb5}\",\"label\":\"Game console\",\"description\":\"The couch UI — library, hosts, pairing\",\"action\":\"uwsm-app -- lilynk-client --browse\"},\n",
@@ -447,7 +447,7 @@ mod tests {
         let p = dir.join("omarchy-menu.jsonc");
         std::fs::write(&p, "{ this is not jsonc").unwrap();
         let before = std::fs::read_to_string(&p).unwrap();
-        assert!(write_rows(&p, Some("  \"punktfunk\": {},\n")).is_err());
+        assert!(write_rows(&p, Some("  \"lilynk\": {},\n")).is_err());
         assert_eq!(std::fs::read_to_string(&p).unwrap(), before, "untouched");
         let _ = std::fs::remove_dir_all(&dir);
     }

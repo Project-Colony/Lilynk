@@ -618,7 +618,7 @@ fun StreamScreen(
             onPage = { companionPick = it; CompanionMemory.keep(context, it) },
             header = PanelHeader(
                 title = listOfNotNull(hostRecord?.name, streamedGame?.title ?: session.launchHold?.game?.title)
-                    .joinToString(" · ").ifEmpty { "Punktfunk" },
+                    .joinToString(" · ").ifEmpty { "Lilynk" },
                 // The size that arrives: a host that scales sends less than its mode.
                 detail = requestedMode.takeIf { it.size >= 3 && it[0] > 0 }
                     ?.let { m ->
@@ -1049,7 +1049,7 @@ internal fun requestUsbCapture(
         override fun onReceive(c: Context?, intent: Intent?) {
             if (intent?.action != action) return
             val ok = intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)
-            if (ok) start(dev) else Log.i("punktfunk", "$label USB permission denied")
+            if (ok) start(dev) else Log.i("lilynk", "$label USB permission denied")
         }
     }
     ContextCompat.registerReceiver(

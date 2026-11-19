@@ -217,7 +217,7 @@ mod tests {
     }
 
     const ASUS: &str = r"\\?\DISPLAY#AUSAA02#5&1332526&0&UID4352#{guid}";
-    const OURS: &str = r"\\?\DISPLAY#PNK0000#5&1234abcd&0&UID259#{guid}";
+    const OURS: &str = r"\\?\DISPLAY#LYK0000#5&1234abcd&0&UID259#{guid}";
 
     fn stored(dark: &[&str]) -> Stored {
         Stored {

@@ -18,7 +18,7 @@ pub(crate) fn identity(index: u8) -> crate::uhid_abi::Identity {
     crate::uhid_abi::Identity {
         bus: BUS_USB,
         name: NAME.to_owned(),
-        phys: format!("punktfunk/horipad/{index}"),
+        phys: format!("lilynk/horipad/{index}"),
         uniq: format!("lilynk-horipad-{index}"),
         rdesc: &RDESC,
         vendor: VENDOR as u32,

@@ -1,7 +1,7 @@
 """Artwork for the Steam shortcuts: the plugin's own, and a game's own for its stream shortcut.
 
 A stream started from a game's page runs under a hidden shortcut named after the game, so the
-overlay, the "now playing" surfaces and friends see the game, not "Punktfunk", and the art has to
+overlay, the "now playing" surfaces and friends see the game, not "Lilynk", and the art has to
 match. Steam keeps every library image it has shown in ``appcache/librarycache``; what is not
 there is on the store CDN under the same file name. Art is cosmetic: a missing piece is omitted,
 never a failure, and no launch waits on it.
@@ -151,7 +151,7 @@ async def game_art(appid: int, icon_hash: str) -> dict:
         else:
             decky.logger.info("no icon for %s (hash %s)", appid, icon_hash[:8])
     if "icon" not in art:
-        # Never a gray box: the Punktfunk icon stands in when the game's own is nowhere.
+        # Never a gray box: the Lilynk icon stands in when the game's own is nowhere.
         fallback = Path(decky.DECKY_PLUGIN_DIR) / "assets" / "icon.png"
         try:
             art["icon"] = base64.b64encode(fallback.read_bytes()).decode()

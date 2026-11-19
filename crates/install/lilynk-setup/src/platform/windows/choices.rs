@@ -237,7 +237,7 @@ mod tests {
         assert!(c.install_hdr_layer);
         assert_eq!(
             c.dir.as_ref().unwrap().to_str().unwrap(),
-            r"C:\Program Files\punktfunk\"
+            r"C:\Program Files\lilynk\"
         );
     }
 
@@ -288,7 +288,7 @@ mod tests {
         assert!(warnings[0].starts_with("/DIR ignored"));
         assert_eq!(
             c.dir.as_ref().unwrap().to_str().unwrap(),
-            r"C:\Program Files\punktfunk\"
+            r"C:\Program Files\lilynk\"
         );
     }
 

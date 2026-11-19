@@ -523,7 +523,7 @@ mod tests {
     #[test]
     fn the_console_gets_non_ascii_text_as_utf16() {
         let mut pending = Vec::new();
-        let line = "install to C:\\Users\\田中\\Punktfunk 😀\n";
+        let line = "install to C:\\Users\\田中\\Lilynk 😀\n";
         assert_eq!(utf16_of(&mut pending, line.as_bytes()), utf16(line));
         assert!(pending.is_empty());
     }

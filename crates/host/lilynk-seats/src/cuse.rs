@@ -404,8 +404,8 @@ mod tests {
 
     #[test]
     fn the_init_reply_is_cuse_init_out_and_the_devname() {
-        let init = init_reply(1, 45, 4096, "punktfunk/uinput-pf-seat-1");
-        let info = b"DEVNAME=punktfunk/uinput-pf-seat-1\0";
+        let init = init_reply(1, 45, 4096, "lilynk/uinput-pf-seat-1");
+        let info = b"DEVNAME=lilynk/uinput-pf-seat-1\0";
         assert_eq!(init.len(), OUT_HEADER_LEN + 72 + info.len());
         let body = &init[OUT_HEADER_LEN..];
         assert_eq!(&body[..4], &le32(7), "major");

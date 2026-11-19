@@ -3,7 +3,7 @@
 //
 // WHY NOT URLSession. App Transport Security governs the URL loading system and, from iOS 17 /
 // macOS 14, exempts only "local" destinations — `.local` names, unqualified names, RFC1918 /
-// link-local IP literals. A Punktfunk host is self-signed by construction, so ATS refuses it at
+// link-local IP literals. A Lilynk host is self-signed by construction, so ATS refuses it at
 // every other address: a Tailscale peer (100.64/10 is CGNAT, not RFC1918), a WireGuard peer, a
 // public IP. No ATS key can say "any address the user typed", and turning ATS off app-wide would
 // also drop its TLS floor and cleartext block for the third-party cover-art fetches.

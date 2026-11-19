@@ -1,4 +1,4 @@
-Keep the decoder's plane views across frames — PUNKTFUNK LOCAL PATCH.
+Keep the decoder's plane views across frames — LILYNK LOCAL PATCH.
 
 Not upstream. pyrowave_decoder_decode_gpu_buffer() wrapped the three output
 images and created three views on every call. On the fragment path the views
@@ -20,7 +20,7 @@ index 28d6abd..b378680 100644
  		Fence fence;
  	} contexts[PYROWAVE_MAX_FRAME_CONTEXTS];
 +
-+	// PUNKTFUNK: plane views per output set the caller rotates through, wrapped once and
++	// LILYNK: plane views per output set the caller rotates through, wrapped once and
 +	// kept. Stable views keep Granite's framebuffer cache hitting; fresh ones made and
 +	// destroyed a framebuffer every frame. A set past the last slot replaces the oldest.
 +	struct CachedViews
@@ -38,7 +38,7 @@ index 28d6abd..b378680 100644
  	                                        active_block_mask, word_count);
  }
  
-+// PUNKTFUNK: the decoder's plane views for these planes, from the cache or wrapped now.
++// LILYNK: the decoder's plane views for these planes, from the cache or wrapped now.
 +static bool cached_decoder_views(pyrowave_decoder decoder, const pyrowave_gpu_buffers *buffers,
 +                                 ViewBuffers &views)
 +{

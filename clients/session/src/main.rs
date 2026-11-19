@@ -206,7 +206,7 @@ mod session_main {
     /// same known-hosts store `--connect` reads, so pairing here is exactly what makes the
     /// later stream connect silently.
     ///
-    /// Prints the same `paired {addr}:{port} fp=…` line as `punktfunk pair`; provisioning
+    /// Prints the same `paired {addr}:{port} fp=…` line as `lilynk pair`; provisioning
     /// scripts read it. Present in the `--no-default-features` build too: enrolment must not
     /// be the reason an embedded image has to pull in Skia.
     fn headless_pair(pin: &str) -> u8 {
@@ -726,7 +726,7 @@ mod session_main {
     /// The `vulkan video decode` line (ly-presenter's `video_decode_gate`, five conjuncts)
     /// only says Vulkan Video EXISTS on a device; this says whether the zero-copy pipeline
     /// can be BUILT on it — a different question. Verbatim on purpose: a diagnosis rests on
-    /// what the driver said, not on punktfunk's wording of it.
+    /// what the driver said, not on lilynk's wording of it.
     fn print_video_formats(a: &ly_presenter::vk::AdapterDecode) {
         use ly_presenter::vk::probe::{describe_create_flags, describe_usage};
         for p in &a.formats {
@@ -853,9 +853,7 @@ mod session_main {
         // Deprecated compatibility path: stdin only, so the PIN never enters process metadata.
         if let Some(pin_arg) = arg_value("--pair") {
             if pin_arg != "-" {
-                eprintln!(
-                    "lilynk-session pairing accepts only `--pair -`; prefer `punktfunk pair`"
-                );
+                eprintln!("lilynk-session pairing accepts only `--pair -`; prefer `lilynk pair`");
                 return exit::CONNECT_FAILED;
             }
             let mut pin = String::new();
@@ -916,7 +914,7 @@ mod session_main {
                  \x20      lilynk-session --browse [host[:port]] [--mgmt PORT] [--fullscreen] [--all-screens] [--json-status] [--until-no-controller]\n\
                  \x20      lilynk-session --pair - --connect host[:port] [--name LABEL]\n\
                  \n\
-                 Streams from a paired punktfunk host in a Vulkan window. --browse opens the\n\
+                 Streams from a paired lilynk host in a Vulkan window. --browse opens the\n\
                  gamepad console instead: bare --browse is the host list (discovery, PIN\n\
                  pairing, settings, wake-on-LAN); with a target it opens that host's game\n\
                  library; --until-no-controller returns once the last controller is gone\n\
@@ -1018,7 +1016,7 @@ mod session_main {
         let fullscreen = arg_flag("--fullscreen") || gaming_mode();
 
         let opts = ly_presenter::SessionOpts {
-            window_title: format!("Punktfunk · {title}"),
+            window_title: format!("Lilynk · {title}"),
             fullscreen,
             window_pos: window_pos(),
             stats_verbosity: stats_tier(&settings),

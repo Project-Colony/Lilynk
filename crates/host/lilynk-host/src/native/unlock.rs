@@ -31,11 +31,11 @@ type Words = (&'static str, &'static str);
 
 const FROM_A_BROWSER: Words = (
     "close_unlock_from_browser",
-    "Open this profile from the Punktfunk app.",
+    "Open this profile from the Lilynk app.",
 );
 const UPDATE: Words = (
     "close_unlock_update_app",
-    "This profile needs its account password. Update Punktfunk on this device.",
+    "This profile needs its account password. Update Lilynk on this device.",
 );
 const UNREADABLE: Words = (
     "close_unlock_unreadable",

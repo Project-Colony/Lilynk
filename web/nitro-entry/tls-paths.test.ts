@@ -5,7 +5,7 @@
 import { describe, expect, it } from "bun:test";
 import { resolveUiTlsPaths } from "./tls-paths.mjs";
 
-const DIR = "/home/you/.config/punktfunk";
+const DIR = "/home/you/.config/lilynk";
 const legacy = [`${DIR}/cert.pem`, `${DIR}/key.pem`] as const;
 const native = [`${DIR}/native-cert.pem`, `${DIR}/native-key.pem`] as const;
 /** `exists` over a fixed set of usable files on disk. */
@@ -42,7 +42,7 @@ describe("resolveUiTlsPaths", () => {
 	// node:path on a POSIX CI runner would read the whole thing as one filename and silently
 	// never swap.
 	it("resolves Windows paths without a win32 runtime", () => {
-		const win = ["C:\\ProgramData\\punktfunk", "D:\\pf"] as const;
+		const win = ["C:\\ProgramData\\lilynk", "D:\\pf"] as const;
 		for (const d of win) {
 			expect(
 				resolveUiTlsPaths(`${d}\\cert.pem`, `${d}\\key.pem`, () => true),

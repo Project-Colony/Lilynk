@@ -1,10 +1,10 @@
-# Publish the plugin framework (@punktfunk/plugin-kit) to the Gitea npm registry
+# Publish the plugin framework (@lilynk/plugin-kit) to the Gitea npm registry
 # (https://git.unom.io/api/packages/unom/npm/).
 #
 # Trigger: push a tag `plugin-kit-vX.Y.Z` (must equal plugin-kit/package.json "version"),
 # or run manually. Versions independently of the app's `v*` and the SDK's `sdk-v*` tags.
 #
-# The kit's devDependency on @punktfunk/host is `file:../sdk`, so the SDK's dist must be
+# The kit's devDependency on @lilynk/host is `file:../sdk`, so the SDK's dist must be
 # built BEFORE the kit's `bun install` copies it.
 #
 # Auth: REGISTRY_TOKEN — the same repo Actions secret sdk-publish.yml uses.
@@ -51,21 +51,21 @@ jobs:
         run: bash ../scripts/ci/retry.sh 3 bun install --frozen-lockfile --ignore-scripts
 
       # bun 1.3 symlinks each file of a `file:` dependency and, on a name clash, links it to
-      # itself, so `node_modules/@punktfunk/host/package.json` dangles and every `@punktfunk/host`
+      # itself, so `node_modules/@lilynk/host/package.json` dangles and every `@lilynk/host`
       # import reads as "cannot find module". bun 1.4.4 (this image) hardlinks the folder; the
       # step replaces the tree with a real copy only when the manifest does not resolve.
       - name: "Repair the file: dependency (bun 1.3 self-symlink)"
         working-directory: plugin-kit
         run: |
           # -f follows the link, so this is true only when the manifest actually resolves.
-          if test -f node_modules/@punktfunk/host/package.json; then
+          if test -f node_modules/@lilynk/host/package.json; then
             echo "bun linked it correctly — this step can go"
           else
-            rm -rf node_modules/@punktfunk/host
-            cp -R ../sdk node_modules/@punktfunk/host
+            rm -rf node_modules/@lilynk/host
+            cp -R ../sdk node_modules/@lilynk/host
           fi
-          test -f node_modules/@punktfunk/host/package.json
-          test -f node_modules/@punktfunk/host/dist/index.d.ts
+          test -f node_modules/@lilynk/host/package.json
+          test -f node_modules/@lilynk/host/dist/index.d.ts
 
       # Gated on plugin-kit's biome config, in the plugins' style (tabs, double quotes,
       # recommended rules).

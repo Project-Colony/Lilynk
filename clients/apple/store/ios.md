@@ -2,7 +2,7 @@
 
 Existing, unchanged:
 
-- **Name:** Punktfunk
+- **Name:** Lilynk
 - **Subtitle (DE):** Schnell, lokal & offen.
 
 Only the Promotional Text is new here. It is the one field that can be changed **without** a new
@@ -40,8 +40,7 @@ Kein Konto, keine Cloud, kein Umweg: punktfunk/1 fährt über QUIC direkt zu dei
 
 ## Promotional Text (EN) — max 170 characters
 
-### Primary (152)
-
+### Primary (151)
 ```
 New: per-host presets — set resolution, bitrate and audio once, then connect with one tap. Plus Live Activities, a Lock Screen widget, and Wake-on-LAN.
 ```
@@ -52,8 +51,7 @@ New: per-host presets — set resolution, bitrate and audio once, then connect w
 Your gaming PC on your iPhone, at your iPhone's exact resolution — no account, no cloud, just your network. Hardware decoding, HDR, and your DualSense in full.
 ```
 
-### Alternate B — leads on the DualSense (160)
-
+### Alternate B — leads on the DualSense (159)
 ```
 Your DualSense, in full: rumble, adaptive triggers, lightbar, touchpad and gyro all reach the game. Plus per-host presets and Wake-on-LAN from across the room.
 ```

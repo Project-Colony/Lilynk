@@ -11,7 +11,7 @@ its **Health checks** catch most setup problems and give the command that fixes 
 - [The Linux host service won't start](#the-linux-host-service-wont-start)
 - [`nvidia-smi` says it can't communicate with the driver](#nvidia-smi-says-it-cant-communicate-with-the-driver)
 - [`systemctl --user status lilynk-web`: unit not found](/docs/troubleshooting-startup#systemctl---user-status-lilynk-web-unit-not-found)
-- [pacman: database already registered](/docs/troubleshooting-startup#pacman-error-could-not-register-punktfunk-database-database-already-registered)
+- [pacman: database already registered](/docs/troubleshooting-startup#pacman-error-could-not-register-lilynk-database-database-already-registered)
 - [The desktop won't start, or "GPU … not supported by EGL"](/docs/troubleshooting-startup#the-desktop-wont-start-or-gpu--not-supported-by-egl)
 - [The session fails right after editing host.env](/docs/troubleshooting-startup#the-session-fails-right-after-editing-hostenv)
 - [The game library is empty and the plugin runner has stopped](/docs/plugins#plugins-cant-be-sandboxed-here)

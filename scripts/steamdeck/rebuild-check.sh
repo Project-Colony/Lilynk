@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# punktfunk — SteamOS post-OS-update self-heal (runs before lilynk-host at session start).
+# lilynk — SteamOS post-OS-update self-heal (runs before lilynk-host at session start).
 #
 # The host binary links SteamOS system libraries (PipeWire, libva, …). A SteamOS A/B
 # update that bumps a soname leaves the binary unable to load — a silently dead host until
@@ -34,7 +34,7 @@ fi
 # it (build-gamescope.sh wires that line only while the binary works) — a break here would not
 # just lose HDR, it would break gamescope session SPAWNING via the stale absolute override, so it
 # rebuilds with the same urgency as the host binary. No host.env pins nothing.
-GS_BIN="$(sed -n 's/^LILYNK_GAMESCOPE_BIN=//p' "$HOME/.config/punktfunk/host.env" 2>/dev/null | head -1 || true)"
+GS_BIN="$(sed -n 's/^LILYNK_GAMESCOPE_BIN=//p' "$HOME/.config/lilynk/host.env" 2>/dev/null | head -1 || true)"
 if [ -n "$GS_BIN" ]; then
     if [ ! -x "$GS_BIN" ] || ldd "$GS_BIN" 2>/dev/null | grep -q "not found"; then
         echo "lilynk-gamescope no longer loads after a SteamOS update — rebuilding it" >&2
@@ -52,7 +52,7 @@ fi
 
 # One attempt per source tree and OS version. When a rebuild cannot fix the breakage the next
 # boot builds the same unloadable binary again, and each attempt costs ~20 minutes.
-STAMP="$HOME/.cache/punktfunk/rebuild-attempt"
+STAMP="$HOME/.cache/lilynk/rebuild-attempt"
 ATTEMPT="$(git -C "$SRC" rev-parse HEAD 2>/dev/null || echo unknown)@$(. /etc/os-release 2>/dev/null; echo "${BUILD_ID:-${VERSION_ID:-unknown}}")"
 if [ "$(cat "$STAMP" 2>/dev/null || true)" = "$ATTEMPT" ]; then
     echo "the last rebuild at this source and SteamOS version did not fix it — not retrying" >&2

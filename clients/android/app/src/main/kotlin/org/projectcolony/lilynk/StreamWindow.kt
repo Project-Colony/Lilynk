@@ -155,11 +155,11 @@ internal class StreamWindow(
         val wm = wifiManager ?: return@run emptyList()
         buildList {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                wm.createWifiLock(WifiManager.WIFI_MODE_FULL_LOW_LATENCY, "punktfunk:stream-ll")
+                wm.createWifiLock(WifiManager.WIFI_MODE_FULL_LOW_LATENCY, "lilynk:stream-ll")
                     ?.let(::add)
             }
             @Suppress("DEPRECATION")
-            wm.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "punktfunk:stream-hp")
+            wm.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "lilynk:stream-hp")
                 ?.let(::add)
         }.onEach { it.setReferenceCounted(false) }
     }
@@ -243,7 +243,7 @@ internal class StreamWindow(
         // loud: a silent runCatching would leave power save on with nothing in the log.
         wifiLocks.forEach { lock ->
             runCatching { lock.acquire() }.onFailure { e ->
-                Log.w("punktfunk", "WifiLock acquire failed — power save stays ON: $lock", e)
+                Log.w("lilynk", "WifiLock acquire failed — power save stays ON: $lock", e)
             }
         }
         wifiHandler.post(pollWifiLink)

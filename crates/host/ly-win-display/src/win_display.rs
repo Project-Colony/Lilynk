@@ -918,11 +918,11 @@ pub fn count_other_active(keep: &[CcdTargetKey]) -> Option<u32> {
     )
 }
 
-/// EDID manufacturer id as it appears in the CCD path (`\\?\DISPLAY#PNK…`).
-/// Driver stamps `"PNK"` into EDID bytes 8-9 (`ly-vdisplay` `edid.rs`).
-const PF_EDID_MANUFACTURER: &str = "PNK";
+/// EDID manufacturer id as it appears in the CCD path (`\\?\DISPLAY#LYK…`).
+/// Driver stamps `"LYK"` into EDID bytes 8-9 (`ly-vdisplay` `edid.rs`).
+const PF_EDID_MANUFACTURER: &str = "LYK";
 
-/// True when the CCD monitor path is one of ours (`PNK` in the PnP id).
+/// True when the CCD monitor path is one of ours (`LYK` in the PnP id).
 /// Our IddCx target declares HDMI, so [`output_tech_class`] would count it
 /// as a physical panel and the dark-desk backstop would never fire. Unknown
 /// is not ours (do not adopt a third-party virtual display).
@@ -1960,7 +1960,7 @@ mod live_tests {
     #[test]
     fn our_own_virtual_display_is_never_an_external_physical() {
         assert!(super::is_our_virtual_display(
-            r"\\?\DISPLAY#PNK0000#5&1234abcd&0&UID257#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}"
+            r"\\?\DISPLAY#LYK0000#5&1234abcd&0&UID257#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}"
         ));
         // The OS is not consistent about the path's case.
         assert!(super::is_our_virtual_display(
@@ -1987,7 +1987,7 @@ mod live_tests {
             .collect();
         assert!(
             !ours.is_empty(),
-            "no punktfunk virtual display among the {} live target(s) — bring one up before \
+            "no lilynk virtual display among the {} live target(s) — bring one up before \
              running this, or the check below proves nothing",
             inv.len()
         );

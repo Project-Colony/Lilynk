@@ -587,7 +587,7 @@ pub(crate) fn gamescope_bin() -> &'static str {
         {
             tracing::info!(
                 bin = %path,
-                "gamescope: using the punktfunk build (10-bit HDR capture available)"
+                "gamescope: using the lilynk build (10-bit HDR capture available)"
             );
             return path;
         }
@@ -598,7 +598,7 @@ pub(crate) fn gamescope_bin() -> &'static str {
 
 /// Where our packages put `gamescopereaper`, which gamescope `execvp`s for every child it starts.
 /// The distro's gamescope owns `/usr/bin/gamescopereaper`, so ours stays out of `/usr/bin`.
-pub(super) const REAPER_DIR: &str = "/usr/lib/punktfunk/gamescope";
+pub(super) const REAPER_DIR: &str = "/usr/lib/lilynk/gamescope";
 
 /// `PATH` for a gamescope we start, [`REAPER_DIR`] first; `None` when no package installed it.
 pub(super) fn reaper_path_env() -> Option<String> {
@@ -692,7 +692,7 @@ fn gamescope_patch_level() -> u32 {
                 tracing::info!(
                     bin = %gamescope_bin(),
                     level,
-                    "gamescope carries the punktfunk patch set — HDR capture, and (level 2+) the \
+                    "gamescope carries the lilynk patch set — HDR capture, and (level 2+) the \
                      cursor composited into the capture stream"
                 );
             } else {

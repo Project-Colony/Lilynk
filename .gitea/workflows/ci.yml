@@ -1,4 +1,4 @@
-# CI for punktfunk (Gitea Actions). Linux jobs run on the `ubuntu-24.04` fleet label; the
+# CI for lilynk (Gitea Actions). Linux jobs run on the `ubuntu-24.04` fleet label; the
 # Rust job runs inside the prebuilt builder image (ci/rust-ci.Dockerfile — PipeWire, GL/GBM,
 # libcuda link stub, pinned-channel rustup) so the workspace links the
 # same libs as the dev boxes. Builder images come from the LAN registry on home-ci-core
@@ -658,9 +658,9 @@ jobs:
         working-directory: plugin-kit
         run: |
           bash ../scripts/ci/retry.sh 3 bun install --frozen-lockfile --ignore-scripts
-          if ! test -f node_modules/@punktfunk/host/package.json; then
-            rm -rf node_modules/@punktfunk/host
-            cp -R ../sdk node_modules/@punktfunk/host
+          if ! test -f node_modules/@lilynk/host/package.json; then
+            rm -rf node_modules/@lilynk/host
+            cp -R ../sdk node_modules/@lilynk/host
           fi
           bun run check
           bun run typecheck

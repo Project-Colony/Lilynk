@@ -1,7 +1,7 @@
 //! Streaming host: virtual display, capture, encode, then FEC + packetize + pace
 //! + send via `lilynk_core`. Input returns through the inject backends.
 //!
-//! `serve` is the secure default (native punktfunk + management API).
+//! `serve` is the secure default (native lilynk + management API).
 //! `--gamestream` is opt-in, trusted-LAN only. `lilynk1-host` is the native
 //! plane alone. `spike` writes encoded AUs to a file and loopbacks them through
 //! `lilynk_core`.
@@ -734,7 +734,7 @@ fn print_usage() {
         "lilynk-host — Linux streaming host
 
 USAGE:
-    lilynk-host serve [OPTIONS]            native punktfunk host + management REST API
+    lilynk-host serve [OPTIONS]            native lilynk host + management REST API
                                               (secure default; add --gamestream for Moonlight compat)
     lilynk-host ctl <VERB>                 operator control over the local management API —
                                               pairing, devices, sessions, `watch` (line-JSON for a
@@ -748,7 +748,7 @@ USAGE:
     lilynk-host openapi                    print the management API's OpenAPI document (codegen)
     lilynk-host library [art --clear]      print the game catalog as JSON; `art --clear` drops
                                               every cover the host fetched and cached on disk
-    lilynk-host lilynk1-host [OPTIONS]     native punktfunk host alone (tests and benches)
+    lilynk-host lilynk1-host [OPTIONS]     native lilynk host alone (tests and benches)
     lilynk-host probe-compositor           exit 0 iff the compositor is up + ready (bringup gate)
     lilynk-host list-monitors              list the host's physical monitors (Linux) — the
                                               connector names LILYNK_CAPTURE_MONITOR takes

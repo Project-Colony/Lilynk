@@ -1,4 +1,4 @@
-==> Detected debian → apt (guide: https://docs.punktfunk.unom.io/docs/debian)
+==> Detected debian → apt (guide: https://project-colony.github.io/Lilynk/docs/debian)
 ==> Choices (nothing below has run yet)
   Channel: stable
 ==> Installing: client (stable channel)
@@ -10,6 +10,6 @@
 ==> Checking
 
   Done. Next: let a device in.
-  Open Punktfunk on this device and pick your host — then approve this device in that host's web console.
-  https://docs.punktfunk.unom.io/docs/install-client · https://docs.punktfunk.unom.io/docs/pairing
+  Open Lilynk on this device and pick your host — then approve this device in that host's web console.
+  https://project-colony.github.io/Lilynk/docs/install-client · https://project-colony.github.io/Lilynk/docs/pairing
 

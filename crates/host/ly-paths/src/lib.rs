@@ -45,13 +45,13 @@ fn gamescope_ei_relay(runtime: Option<&str>, name: &str) -> PathBuf {
     }
 }
 
-/// `$XDG_DATA_HOME/punktfunk/seats` — the Steam homes Own Steam profiles kept. Path only.
+/// `$XDG_DATA_HOME/lilynk/seats` — the Steam homes Own Steam profiles kept. Path only.
 #[cfg(target_os = "linux")]
 pub fn seats_dir() -> PathBuf {
     data_dir().join("seats")
 }
 
-/// `$XDG_DATA_HOME/punktfunk/seats/<id>` — the Steam home a profile kept from playing as Own
+/// `$XDG_DATA_HOME/lilynk/seats/<id>` — the Steam home a profile kept from playing as Own
 /// Steam, which removing the profile with `erase` deletes. `id` is the profile id. Path only.
 #[cfg(target_os = "linux")]
 pub fn seat_home(id: &str) -> PathBuf {
@@ -95,19 +95,19 @@ fn replaced_on_disk(path: &std::path::Path, running: &std::fs::Metadata) -> bool
         .is_ok_and(|now| (now.dev(), now.ino()) == (running.dev(), running.ino()))
 }
 
-/// `$XDG_DATA_HOME/punktfunk`, else `~/.local/share/punktfunk`. Separate from
+/// `$XDG_DATA_HOME/lilynk`, else `~/.local/share/lilynk`. Separate from
 /// [`config_dir`]: it holds installs (a seat's Steam, managed emulators), and the plugin
 /// runner shares nothing under the config dir.
 #[cfg(not(target_os = "windows"))]
 pub fn data_dir() -> PathBuf {
-    xdg_home("XDG_DATA_HOME", ".local/share").join("punktfunk")
+    xdg_home("XDG_DATA_HOME", ".local/share").join("lilynk")
 }
 
-/// `$XDG_STATE_HOME/punktfunk`, else `~/.local/state/punktfunk`: what must outlive a crash and
+/// `$XDG_STATE_HOME/lilynk`, else `~/.local/state/lilynk`: what must outlive a crash and
 /// a reboot, such as the audio defaults a session claimed.
 #[cfg(not(target_os = "windows"))]
 pub fn state_dir() -> PathBuf {
-    xdg_home("XDG_STATE_HOME", ".local/state").join("punktfunk")
+    xdg_home("XDG_STATE_HOME", ".local/state").join("lilynk")
 }
 
 /// `$var` when it holds an absolute path, else `$HOME/<fallback>`, else `.`. The XDG
@@ -146,7 +146,7 @@ pub fn config_dir() -> PathBuf {
         .unwrap_or_else(|| PathBuf::from("."));
     #[cfg(not(target_os = "windows"))]
     let base = xdg_home("XDG_CONFIG_HOME", ".config");
-    base.join("punktfunk")
+    base.join("lilynk")
 }
 
 /// `lilynk-host serve` writes `LILYNK_MGMT_URL=https://127.0.0.1:<port>`
@@ -893,7 +893,7 @@ mod tests {
     fn a_seat_home_is_the_data_dir_plus_the_seat_id() {
         let seat = seat_home("cafe0123");
         assert!(
-            seat.ends_with("punktfunk/seats/cafe0123"),
+            seat.ends_with("lilynk/seats/cafe0123"),
             "{}",
             seat.display()
         );
@@ -1271,7 +1271,7 @@ mod tests {
     #[cfg(unix)]
     #[test]
     fn the_door_s_box_directory_is_the_one_private_dir_others_may_walk() {
-        let box_dir = PathBuf::from("/var/lib/punktfunk");
+        let box_dir = PathBuf::from("/var/lib/lilynk");
         assert_eq!(private_dir_mode(true, &box_dir, &box_dir), 0o711);
         assert_eq!(private_dir_mode(false, &box_dir, &box_dir), 0o700);
         assert_eq!(

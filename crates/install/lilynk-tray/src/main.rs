@@ -1,4 +1,4 @@
-//! Per-user system-tray companion for the punktfunk host.
+//! Per-user system-tray companion for the lilynk host.
 //!
 //! Icon and menu: running / stopped / degraded / failed, plus open-console,
 //! start/stop/restart (UAC per action on Windows; on Linux `systemctl --user` per

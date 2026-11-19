@@ -386,7 +386,7 @@ fn unknown_pin_error(v: &str) -> anyhow::Error {
             "LILYNK_COMPOSITOR='{v}' names no backend — Muffin has no virtual-output API and \
              'mutter' does not substitute for it (Muffin is a Mutter fork that serves none of \
              `RecordVirtual`). Use LILYNK_COMPOSITOR=gamescope. See \
-             https://docs.punktfunk.unom.io/docs/debian#cinnamon-linux-mint-and-lmde"
+             https://project-colony.github.io/Lilynk/docs/debian#cinnamon-linux-mint-and-lmde"
         );
     }
     anyhow::anyhow!("unknown LILYNK_COMPOSITOR '{v}' ({ACCEPTED})")
@@ -405,7 +405,7 @@ fn compositor_from_xdg(desktop: &str) -> Result<Compositor> {
             "Cinnamon (XDG_CURRENT_DESKTOP='{desktop}') has no virtual-output API — its \
              compositor Muffin serves no `RecordVirtual`. Set LILYNK_COMPOSITOR=gamescope in \
              host.env for a headless gamescope per connect. See \
-             https://docs.punktfunk.unom.io/docs/debian#cinnamon-linux-mint-and-lmde"
+             https://project-colony.github.io/Lilynk/docs/debian#cinnamon-linux-mint-and-lmde"
         )
     } else if desktop.contains("NIRI") {
         // Before GNOME: a niri session may advertise `niri:GNOME`.
@@ -1056,7 +1056,7 @@ mod kwin;
 #[path = "vdisplay/linux/kwin_windows.rs"]
 mod kwin_windows;
 
-// GNOME's window list from punktfunk's shell extension, for the launch window stage.
+// GNOME's window list from lilynk's shell extension, for the launch window stage.
 #[cfg(target_os = "linux")]
 #[path = "vdisplay/linux/gnome_windows.rs"]
 mod gnome_windows;

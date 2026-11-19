@@ -1,5 +1,5 @@
 ################################################################################
-# punktfunk — low-latency desktop/game streaming host (RPM for Fedora / Bazzite)
+# lilynk — low-latency desktop/game streaming host (RPM for Fedora / Bazzite)
 #
 # Builds `lilynk-host` from source with cargo and installs the binary, the
 # uinput udev rule (virtual gamepads), the systemd *user* unit, and the headless
@@ -17,8 +17,8 @@
 ################################################################################
 
 Name:           lilynk
-# Not the package name: the code and the other package formats read /usr/share/punktfunk.
-%global pf_datadir %{_datadir}/punktfunk
+# Not the package name: the code and the other package formats read /usr/share/lilynk.
+%global pf_datadir %{_datadir}/lilynk
 # Version/Release are overridable so CI can stamp a rolling snapshot: a canary main build passes
 #   --define "ly_version 0.3.0" --define "pf_release 0.ci42.gdeadbee"
 # (Release starting "0." sorts BEFORE the eventual "1" release; the canary base stays one minor
@@ -29,7 +29,7 @@ Release:        %{?pf_release}%{!?pf_release:1}%{?dist}
 Summary:        Low-latency desktop/game streaming host (Moonlight-compatible + punktfunk/2)
 
 License:        GPL-3.0-or-later
-URL:            https://git.unom.io/unom/punktfunk
+URL:            https://github.com/Project-Colony/Lilynk
 # COPR SCM builds provide the checkout; for a tarball build, drop a git archive here:
 Source0:        %{name}-%{version}.tar.gz
 
@@ -57,12 +57,12 @@ ExclusiveArch:  x86_64 aarch64
 # Debian lilynk-scripting .deb.
 %bcond_with scripting
 
-# The HOST half of this spec (the punktfunk package itself + the tray). ON by default, so an
+# The HOST half of this spec (the lilynk package itself + the tray). ON by default, so an
 # ordinary x86_64 build is unchanged. `--without host` drops the host binary, the tray, the
 # headless-session data, the firewalld services and the main %%files section entirely, leaving
 # only lilynk-client — which is what an aarch64 build produces, since the host's encode stack
 # (NVENC/QSV/AMF) is x86 and the client's is not. Omitting the main %%files is what stops rpm
-# from emitting an empty `punktfunk` package alongside the client.
+# from emitting an empty `lilynk` package alongside the client.
 %bcond_without host
 
 # Debug packages. ON by default (COPR). CI builds `--without debuginfo`: it publishes no
@@ -148,7 +148,7 @@ Recommends:     lilynk-scripting
 Requires:       lilynk-seats%{?_isa} = %{version}-%{release}
 
 %description
-punktfunk is a Linux-first, low-latency desktop and game streaming host. It speaks
+lilynk is a Linux-first, low-latency desktop and game streaming host. It speaks
 the Moonlight/GameStream protocol (pair a stock Moonlight client) and its own native
 punktfunk/2 protocol (GF(2^16) Leopard FEC + AES-GCM, mid-stream mode renegotiation,
 client microphone passthrough). Each session gets a virtual output at the client's
@@ -166,7 +166,7 @@ Recommends:     wireplumber
 Requires:       vulkan-loader
 
 %description client
-The native Linux client for punktfunk. Discovers hosts on the LAN (mDNS), trusts
+The native Linux client for lilynk. Discovers hosts on the LAN (mDNS), trusts
 them via certificate pinning with a SPAKE2 PIN pairing ceremony, and streams HEVC
 video (GF(2^16) Leopard FEC + AES-GCM over UDP, QUIC control plane) with Opus
 audio, microphone passthrough, and full gamepad support including DualSense
@@ -175,7 +175,7 @@ virtual output at exactly this client's resolution and refresh rate — no scali
 
 %if %{with host}
 %package seats
-Summary:        punktfunk seat supervisor (a user, a session and a host per profile)
+Summary:        lilynk seat supervisor (a user, a session and a host per profile)
 # What the supervisor and the door helper run: useradd/groupadd/usermod, runuser and setpriv,
 # setfacl, loginctl/systemctl, pkill in seat-session. The host requires this package at its own
 # version, so the two move together without a loop back.
@@ -187,20 +187,20 @@ Requires:       procps-ng
 
 %description seats
 The root daemon behind profile seats. Each seat is a system user with its own logind session,
-a headless desktop and a stock punktfunk host. The package also carries the door units, which
+a headless desktop and a stock lilynk host. The package also carries the door units, which
 keep the box reachable with nobody logged in. Installed but not enabled: the console turns seats
 and the door on. Stopping or restarting the daemon leaves running seats up.
 %endif
 
 %if %{with web}
 %package web
-Summary:        punktfunk management web console (Nitro SSR on bun + React)
+Summary:        lilynk management web console (Nitro SSR on bun + React)
 # Runtime is BUN (the console uses Nitro's `bun` preset + a Bun.serve TLS entry — node can't
 # run it), from lilynk-bun, pinned to this exact build. No system nodejs/bun dependency.
 Requires:       %{name}-bun%{?_isa} = %{version}-%{release}
 
 %description web
-The browser console for a punktfunk streaming host: status, paired devices, and the SPAKE2
+The browser console for a lilynk streaming host: status, paired devices, and the SPAKE2
 PIN pairing flow every client needs. Runs as a systemd --user service on port 3000 over HTTPS
 (HTTP/1.1 over TLS, with the host's own identity cert), login-gated (a password generated on first
 start), proxying the host's loopback HTTPS management API with a bearer token injected server-side
@@ -211,7 +211,7 @@ lilynk-bun. Enable with `systemctl --user enable --now lilynk-web`.
 
 %if %{with scripting}
 %package scripting
-Summary:        punktfunk plugin/script runner (Effect SDK on bun)
+Summary:        lilynk plugin/script runner (Effect SDK on bun)
 # Each plugin runs in its own bwrap sandbox; without it the runner starts no plugin at all.
 Requires:       bubblewrap
 # A network plugin's namespace comes from unshare, and pasta connects it.
@@ -225,8 +225,8 @@ Requires:       %{name}-bun%{?_isa} = %{version}-%{release}
 License:        MIT OR Apache-2.0
 
 %description scripting
-The plugin/script runner for a punktfunk streaming host: it discovers loose scripts under
-~/.config/punktfunk/scripts and installed lilynk-plugin-* packages under ~/.config/punktfunk/
+The plugin/script runner for a lilynk streaming host: it discovers loose scripts under
+~/.config/lilynk/scripts and installed lilynk-plugin-* packages under ~/.config/lilynk/
 plugins, and supervises each as an Effect fiber (capped-jittered restart; SIGTERM shuts the whole
 tree down structurally so plugin finalizers run). A plugin auto-wires to the host's mgmt token +
 identity cert on the same box — no env editing. Runs on the bun from lilynk-bun. ON BY
@@ -242,7 +242,7 @@ Summary:        Bun runtime for lilynk-web and lilynk-scripting
 # A private libexec dir, never on PATH, so it never collides with a system-wide bun. Arch-specific.
 
 %description bun
-The bun runtime the punktfunk web console and plugin runner run on, installed once at
+The bun runtime the lilynk web console and plugin runner run on, installed once at
 /usr/libexec/lilynk-bun/bun. It is not on PATH and does not replace a system-wide bun.
 %endif
 
@@ -378,19 +378,19 @@ install -Dm0644 scripts/alsa-ucm2/USB-Audio/conf.d/054c-0ce6.conf \
   %{buildroot}%{_datadir}/alsa/ucm2/USB-Audio/conf.d/054c-0ce6.conf
 install -Dm0644 scripts/alsa-ucm2/USB-Audio/conf.d/054c-0df2.conf \
   %{buildroot}%{_datadir}/alsa/ucm2/USB-Audio/conf.d/054c-0df2.conf
-install -Dm0644 scripts/alsa-ucm2/USB-Audio/Punktfunk/DualSense-PS5-Haptic.conf \
-  %{buildroot}%{_datadir}/alsa/ucm2/USB-Audio/Punktfunk/DualSense-PS5-Haptic.conf
-install -Dm0644 scripts/alsa-ucm2/USB-Audio/Punktfunk/DualSense-PS5-Haptic-HiFi.conf \
-  %{buildroot}%{_datadir}/alsa/ucm2/USB-Audio/Punktfunk/DualSense-PS5-Haptic-HiFi.conf
+install -Dm0644 scripts/alsa-ucm2/USB-Audio/Lilynk/DualSense-PS5-Haptic.conf \
+  %{buildroot}%{_datadir}/alsa/ucm2/USB-Audio/Lilynk/DualSense-PS5-Haptic.conf
+install -Dm0644 scripts/alsa-ucm2/USB-Audio/Lilynk/DualSense-PS5-Haptic-HiFi.conf \
+  %{buildroot}%{_datadir}/alsa/ucm2/USB-Audio/Lilynk/DualSense-PS5-Haptic-HiFi.conf
 
 # Managed gamescope takeover on DM-autologin boxes (Nobara's plasmalogin): a root helper + polkit
 # action let the host stop/restore the display manager for the stream without a hand-installed
 # polkit rule. The helper derives the DM unit itself — callers can't name arbitrary units.
-install -Dm0755 scripts/ly-dm-helper %{buildroot}%{_libexecdir}/punktfunk/ly-dm-helper
+install -Dm0755 scripts/ly-dm-helper %{buildroot}%{_libexecdir}/lilynk/ly-dm-helper
 install -Dm0644 scripts/org.projectcolony.lilynk.dm-helper.policy %{buildroot}%{_datadir}/polkit-1/actions/org.projectcolony.lilynk.dm-helper.policy
 # ...and the other half of stopping a display manager: with it stopped the box has no active local
 # session, so logind's own power actions fall to auth_admin_keep and Steam's power menu goes quiet
-# mid-stream. Scoped to the same (shipped-empty) punktfunk group the helper above gates on.
+# mid-stream. Scoped to the same (shipped-empty) lilynk group the helper above gates on.
 install -Dm0644 packaging/linux/49-lilynk-power.rules %{buildroot}%{_datadir}/polkit-1/rules.d/49-lilynk-power.rules
 
 # vhci-hcd autoload — the usbip transport that makes the virtual Steam Deck controller a
@@ -406,18 +406,18 @@ install -Dm0755 packaging/linux/90-lilynk-frame-adapter %{buildroot}%{_prefix}/l
 # Web-console-triggered updates (host-update-from-web-console.md §7): the dep-free root
 # helper + its oneshot system unit + the polkit rule scoping it to the (shipped-empty)
 # lilynk-update group. Also rides into the Bazzite sysext image via rpm2cpio.
-install -Dm0755 target/release/ly-update %{buildroot}%{_libexecdir}/punktfunk/ly-update
+install -Dm0755 target/release/ly-update %{buildroot}%{_libexecdir}/lilynk/ly-update
 install -Dm0644 packaging/linux/lilynk-update.service %{buildroot}%{_unitdir}/lilynk-update.service
 install -Dm0644 packaging/linux/49-lilynk-update.rules %{buildroot}%{_datadir}/polkit-1/rules.d/49-lilynk-update.rules
-install -Dm0755 packaging/linux/restart-user-units.sh %{buildroot}%{_libexecdir}/punktfunk/restart-user-units
+install -Dm0755 packaging/linux/restart-user-units.sh %{buildroot}%{_libexecdir}/lilynk/restart-user-units
 # The host state %%post shares with every other format, and the groups (rpm applies the file).
-install -Dm0755 packaging/linux/post-install.sh %{buildroot}%{_libexecdir}/punktfunk/post-install
+install -Dm0755 packaging/linux/post-install.sh %{buildroot}%{_libexecdir}/lilynk/post-install
 install -Dm0644 packaging/linux/lilynk.sysusers %{buildroot}%{_sysusersdir}/lilynk.conf
 
 # The seat supervisor: a root daemon and the helpers its units run. Installed, never enabled.
-install -Dm0755 target/release/lilynk-seats %{buildroot}%{_libexecdir}/punktfunk/lilynk-seats
+install -Dm0755 target/release/lilynk-seats %{buildroot}%{_libexecdir}/lilynk/lilynk-seats
 for f in seat-session seat-reap; do
-  install -Dm0755 packaging/linux/$f %{buildroot}%{_libexecdir}/punktfunk/$f
+  install -Dm0755 packaging/linux/$f %{buildroot}%{_libexecdir}/lilynk/$f
 done
 for f in lilynk-seats.service lilynk-seat@.service; do
   install -Dm0644 packaging/linux/$f %{buildroot}%{_unitdir}/$f
@@ -429,8 +429,8 @@ install -Dm0644 packaging/linux/lilynk-seats.tmpfiles %{buildroot}%{_tmpfilesdir
 # A seat's pads: udev hands each one to its seat's user alone.
 install -Dm0644 packaging/linux/65-lilynk-seats.rules %{buildroot}%{_udevrulesdir}/65-lilynk-seats.rules
 # The door: the box's host as a system service, and the root helper the console turns it on with.
-install -Dm0755 packaging/linux/door-helper %{buildroot}%{_libexecdir}/punktfunk/door-helper
-install -Dm0755 packaging/linux/door-remove.sh %{buildroot}%{_libexecdir}/punktfunk/door-remove
+install -Dm0755 packaging/linux/door-helper %{buildroot}%{_libexecdir}/lilynk/door-helper
+install -Dm0755 packaging/linux/door-remove.sh %{buildroot}%{_libexecdir}/lilynk/door-remove
 for f in lilynk-door.service lilynk-web-door.service lilynk-door-on@.service lilynk-door-off@.service; do
   install -Dm0644 packaging/linux/$f %{buildroot}%{_unitdir}/$f
 done
@@ -440,7 +440,7 @@ install -Dm0644 packaging/linux/49-lilynk-door.rules %{buildroot}%{_datadir}/pol
 install -Dm0644 scripts/lilynk-host.service %{buildroot}%{_userunitdir}/lilynk-host.service
 # The source unit's ExecStart points at the dev source tree; a packaged install has the binary at
 # %{_bindir}. Rewrite it so a fresh install (no hand-rolled unit) starts the installed binary.
-sed -i 's#%h/punktfunk/target/release/lilynk-host#%{_bindir}/lilynk-host#' %{buildroot}%{_userunitdir}/lilynk-host.service
+sed -i 's#%h/lilynk/target/release/lilynk-host#%{_bindir}/lilynk-host#' %{buildroot}%{_userunitdir}/lilynk-host.service
 # Optional drop-in for a DESKTOP-LOGIN host: binds the host to graphical-session.target so a
 # Plasma/GNOME restart restarts it instead of leaving it on a dead compositor connection. Shipped
 # under %{pf_datadir} (NOT as an active drop-in) because it is wrong for the appliance route —
@@ -457,7 +457,7 @@ printf 'dnf %{?pf_channel}%{!?pf_channel:stable}\n' > %{buildroot}%{pf_datadir}/
 # privileged screencast protocol it can bind. Repoint its ExecStart from the dev source tree to the
 # installed script. NOT enabled by default — only kwin-backend hosts (e.g. Fedora/Ubuntu KDE) need it.
 install -Dm0644 scripts/lilynk-kde-session.service %{buildroot}%{_userunitdir}/lilynk-kde-session.service
-sed -i 's#%h/punktfunk/scripts/headless/run-headless-kde.sh#%{pf_datadir}/headless/run-headless-kde.sh#' %{buildroot}%{_userunitdir}/lilynk-kde-session.service
+sed -i 's#%h/lilynk/scripts/headless/run-headless-kde.sh#%{pf_datadir}/headless/run-headless-kde.sh#' %{buildroot}%{_userunitdir}/lilynk-kde-session.service
 
 # KWin authorization for Desktop-mode (KWin) streaming: a non-launcher .desktop whose
 # X-KDE-Wayland-Interfaces grants the host the restricted zkde_screencast (virtual output) +
@@ -519,10 +519,10 @@ install -Dm0644 scripts/99-lilynk-client-net.conf \
 # runs): the same root helper the host subpackage ships, under the CLIENT's own paths. Separate
 # paths are not tidiness — rpm refuses two subpackages owning one file, and a client-only box
 # (a Deck, an aarch64 build with %%{without host}) must be able to install this on its own.
-install -Dm0755 target/release/ly-update %{buildroot}%{_libexecdir}/punktfunk/ly-update-client
+install -Dm0755 target/release/ly-update %{buildroot}%{_libexecdir}/lilynk/ly-update-client
 install -Dm0644 packaging/linux/lilynk-client-update.service \
                 %{buildroot}%{_unitdir}/lilynk-client-update.service
-sed -i 's#%{_libexecdir}/punktfunk/ly-update#%{_libexecdir}/punktfunk/ly-update-client#' \
+sed -i 's#%{_libexecdir}/lilynk/ly-update#%{_libexecdir}/lilynk/ly-update-client#' \
        %{buildroot}%{_unitdir}/lilynk-client-update.service
 install -Dm0644 packaging/linux/49-lilynk-client-update.rules \
                 %{buildroot}%{_datadir}/polkit-1/rules.d/49-lilynk-client-update.rules
@@ -542,7 +542,7 @@ install -Dm0755 scripts/headless/run-headless-kde.sh   %{buildroot}%{pf_datadir}
 install -Dm0755 scripts/headless/run-headless-sway.sh  %{buildroot}%{pf_datadir}/headless/run-headless-sway.sh
 # RemoteDesktop grant pre-seed for headless libei input (run-headless-kde.sh copies it in).
 install -Dm0644 scripts/headless/kde-authorized        %{buildroot}%{pf_datadir}/headless/kde-authorized
-# Virtual "Punktfunk" speaker (null sink the host captures/streams; run-headless-kde.sh installs it).
+# Virtual "Lilynk" speaker (null sink the host captures/streams; run-headless-kde.sh installs it).
 install -Dm0644 scripts/headless/lilynk-sink.conf   %{buildroot}%{pf_datadir}/headless/lilynk-sink.conf
 install -Dm0644 scripts/host.env.example               %{buildroot}%{pf_datadir}/host.env.example
 install -Dm0644 packaging/bazzite/host.env             %{buildroot}%{pf_datadir}/host.env.bazzite
@@ -559,10 +559,10 @@ install -Dm0755 packaging/bazzite/kde-desktop-setup.sh %{buildroot}%{pf_datadir}
 install -Dm0644 packaging/bazzite/lilynk-ds-inhibit.cil \
                 %{buildroot}%{pf_datadir}/selinux/lilynk-ds-inhibit.cil
 # Layered-update helper for rpm-ostree hosts: `rpm-ostree upgrade` only re-resolves layered
-# packages when the BASE changes, so a frozen Bazzite base pins punktfunk forever. The script
+# packages when the BASE changes, so a frozen Bazzite base pins lilynk forever. The script
 # forces a re-resolve of just this layer (--uninstall + --install of the same names in one
 # transaction). It is exactly the command ly-update-check hands an rpm-ostree host
-# (`sudo /usr/share/punktfunk/update-lilynk.sh`, crates/core/ly-update-check/src/detect.rs), so it
+# (`sudo /usr/share/lilynk/update-lilynk.sh`, crates/core/ly-update-check/src/detect.rs), so it
 # has to exist at that path — an ostree box has no repo checkout to run it from. It only shells
 # out to rpm-ostree/rpm/systemctl, so the installed copy is self-contained. Top level, not
 # bazzite/, because the hint (and any Fedora-Atomic host) names that path.
@@ -686,18 +686,18 @@ install -Dm0755 "$(command -v bun)" %{buildroot}%{_libexecdir}/lilynk-bun/bun
 %{_udevrulesdir}/60-lilynk.rules
 %{_datadir}/wireplumber/wireplumber.conf.d/60-lilynk-dualsense.conf
 # The DualSense UCM drop-in. Both directories are ours: alsa-ucm-conf ships neither
-# USB-Audio/conf.d nor USB-Audio/Punktfunk, so owning them collides with nothing.
+# USB-Audio/conf.d nor USB-Audio/Lilynk, so owning them collides with nothing.
 %dir %{_datadir}/alsa/ucm2/USB-Audio/conf.d
-%dir %{_datadir}/alsa/ucm2/USB-Audio/Punktfunk
+%dir %{_datadir}/alsa/ucm2/USB-Audio/Lilynk
 %{_datadir}/alsa/ucm2/USB-Audio/conf.d/054c-0ce6.conf
 %{_datadir}/alsa/ucm2/USB-Audio/conf.d/054c-0df2.conf
-%{_datadir}/alsa/ucm2/USB-Audio/Punktfunk/DualSense-PS5-Haptic.conf
-%{_datadir}/alsa/ucm2/USB-Audio/Punktfunk/DualSense-PS5-Haptic-HiFi.conf
-%dir %{_libexecdir}/punktfunk
-%{_libexecdir}/punktfunk/ly-dm-helper
-%{_libexecdir}/punktfunk/ly-update
-%{_libexecdir}/punktfunk/restart-user-units
-%{_libexecdir}/punktfunk/post-install
+%{_datadir}/alsa/ucm2/USB-Audio/Lilynk/DualSense-PS5-Haptic.conf
+%{_datadir}/alsa/ucm2/USB-Audio/Lilynk/DualSense-PS5-Haptic-HiFi.conf
+%dir %{_libexecdir}/lilynk
+%{_libexecdir}/lilynk/ly-dm-helper
+%{_libexecdir}/lilynk/ly-update
+%{_libexecdir}/lilynk/restart-user-units
+%{_libexecdir}/lilynk/post-install
 %{_sysusersdir}/lilynk.conf
 %{_unitdir}/lilynk-update.service
 %{_datadir}/polkit-1/rules.d/49-lilynk-update.rules
@@ -725,12 +725,12 @@ install -Dm0755 "$(command -v bun)" %{buildroot}%{_libexecdir}/lilynk-bun/bun
 %if %{with host}
 %files seats
 %license LICENSE LICENSE-MIT LICENSE-APACHE THIRD-PARTY-NOTICES.txt
-%dir %{_libexecdir}/punktfunk
-%{_libexecdir}/punktfunk/lilynk-seats
-%{_libexecdir}/punktfunk/seat-session
-%{_libexecdir}/punktfunk/seat-reap
-%{_libexecdir}/punktfunk/door-helper
-%{_libexecdir}/punktfunk/door-remove
+%dir %{_libexecdir}/lilynk
+%{_libexecdir}/lilynk/lilynk-seats
+%{_libexecdir}/lilynk/seat-session
+%{_libexecdir}/lilynk/seat-reap
+%{_libexecdir}/lilynk/door-helper
+%{_libexecdir}/lilynk/door-remove
 %{_unitdir}/lilynk-seats.service
 %{_unitdir}/lilynk-seat@.service
 %{_unitdir}/user@.service.d/50-lilynk-seats.conf
@@ -761,8 +761,8 @@ install -Dm0755 "$(command -v bun)" %{buildroot}%{_libexecdir}/lilynk-bun/bun
 %{_prefix}/lib/sysctl.d/99-lilynk-client-net.conf
 # Co-owned with the host subpackage (rpm allows that for DIRECTORIES, unlike files) so a
 # client-only install — the aarch64 `%%{without host}` build — still owns the dir it created.
-%dir %{_libexecdir}/punktfunk
-%{_libexecdir}/punktfunk/ly-update-client
+%dir %{_libexecdir}/lilynk
+%{_libexecdir}/lilynk/ly-update-client
 %{_unitdir}/lilynk-client-update.service
 %{_datadir}/polkit-1/rules.d/49-lilynk-client-update.rules
 %{_sysusersdir}/lilynk-client.conf
@@ -815,16 +815,16 @@ update-desktop-database %{_datadir}/applications >/dev/null 2>&1 || :
 
 %if %{with host}
 %post
-echo "punktfunk installed. Add yourself to the 'input' group (sudo usermod -aG input \$USER)"
+echo "lilynk installed. Add yourself to the 'input' group (sudo usermod -aG input \$USER)"
 # Naming only the usbip pad here is how a Nobara host shipped broken: its owner had no Deck pad, so
 # they correctly skipped this group — and then every managed gamescope takeover degraded silently,
 # because ly-dm-helper (which stops the display manager for the stream) gates on THIS membership.
-echo "ALSO join 'punktfunk' if this box streams Steam Gaming Mode (gamescope) or you want the"
-echo "virtual Steam Deck pad: sudo usermod -aG punktfunk \$USER   # then log out and back in"
+echo "ALSO join 'lilynk' if this box streams Steam Gaming Mode (gamescope) or you want the"
+echo "virtual Steam Deck pad: sudo usermod -aG lilynk \$USER   # then log out and back in"
 echo "  — it authorizes stopping the display manager for a managed gamescope session, and the"
 echo "    pad's usbip nodes; it can emulate arbitrary USB devices, so join it only on a box you trust."
 echo "then enable the host: systemctl --user enable --now lilynk-host"
-echo "Settings: the console (Host -> Settings). A line in ~/.config/punktfunk/host.env locks that setting there;"
+echo "Settings: the console (Host -> Settings). A line in ~/.config/lilynk/host.env locks that setting there;"
 echo "  annotated templates: %{pf_datadir}/host.env.{bazzite,kde,example}"
 # Fedora/RHEL run firewalld by default — point the way to the installed service definitions.
 if command -v firewall-cmd >/dev/null 2>&1; then
@@ -834,11 +834,11 @@ if command -v firewall-cmd >/dev/null 2>&1; then
 fi
 # Groups, udev, sysctl, the ds_inhibit SELinux module, the stale-firewall notes and the conflict
 # check: the steps every format shares (packaging/linux/post-install.sh).
-%{_libexecdir}/punktfunk/post-install
+%{_libexecdir}/lilynk/post-install
 
-# Any punktfunk server package update restarts the running services, once per transaction.
-%transfiletriggerin -- %{_bindir}/lilynk-host %{_libexecdir}/punktfunk/lilynk-seats %{_datadir}/lilynk-web %{_datadir}/lilynk-scripting %{_libexecdir}/lilynk-bun
-%{_libexecdir}/punktfunk/restart-user-units
+# Any lilynk server package update restarts the running services, once per transaction.
+%transfiletriggerin -- %{_bindir}/lilynk-host %{_libexecdir}/lilynk/lilynk-seats %{_datadir}/lilynk-web %{_datadir}/lilynk-scripting %{_libexecdir}/lilynk-bun
+%{_libexecdir}/lilynk/restart-user-units
 %endif
 
 %if %{with host}
@@ -847,7 +847,7 @@ fi
 # the door off for its owner or disables its units. The host's %%post makes the directories and
 # its file trigger restarts the daemon, which leaves running seats up.
 if [ "$1" -eq 0 ]; then
-    %{_libexecdir}/punktfunk/door-remove || :
+    %{_libexecdir}/lilynk/door-remove || :
 fi
 %endif
 
@@ -859,7 +859,7 @@ echo "A login password is generated on first start. Read it once, before you sig
 # From the 0600 file, NOT the journal: the journal is persistent and group-readable (adm /
 # systemd-journal on Debian-family), so telling people to fish a password out of it published the
 # secret to every member of those groups. The read works until the console hashes the line.
-echo "    sed -n 's/^LILYNK_UI_PASSWORD=//p' \${XDG_CONFIG_HOME:-\$HOME/.config}/punktfunk/web-password"
+echo "    sed -n 's/^LILYNK_UI_PASSWORD=//p' \${XDG_CONFIG_HOME:-\$HOME/.config}/lilynk/web-password"
 echo "After that the console keeps only a salted hash, so a forgotten password is reset: put a"
 echo "LILYNK_UI_PASSWORD=<your-password> line in that file and restart lilynk-web."
 echo "Then open https://<host-ip>:47992"
@@ -882,8 +882,8 @@ if command -v apparmor_parser >/dev/null 2>&1 && aa-enabled --quiet 2>/dev/null;
 fi
 echo "lilynk-scripting installed and enabled for all users."
 echo "It runs your automation — game-library sources, scripts in"
-echo "    ~/.config/punktfunk/scripts/  (loose .ts/.js files)"
-echo "and plugins under ~/.config/punktfunk/plugins/."
+echo "    ~/.config/lilynk/scripts/  (loose .ts/.js files)"
+echo "and plugins under ~/.config/lilynk/plugins/."
 echo "It starts with your next login; start it now with:"
 echo "    systemctl --user start lilynk-scripting"
 echo "Don't want it? systemctl --user mask lilynk-scripting"

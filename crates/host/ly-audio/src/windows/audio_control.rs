@@ -92,7 +92,7 @@ fn hidden_speakers() -> Option<Endpoint> {
     }
     let name = dev
         .get_friendlyname()
-        .unwrap_or_else(|_| "Punktfunk Speakers".to_string());
+        .unwrap_or_else(|_| "Lilynk Speakers".to_string());
     Some((name, id))
 }
 

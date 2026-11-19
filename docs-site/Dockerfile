@@ -1,4 +1,4 @@
-# punktfunk documentation site — Fumadocs on TanStack Start, built with Bun, served by
+# lilynk documentation site — Fumadocs on TanStack Start, built with Bun, served by
 # the Nitro `bun` preset bundle. Self-contained context:
 #
 #   docker build -t lilynk-docs docs-site

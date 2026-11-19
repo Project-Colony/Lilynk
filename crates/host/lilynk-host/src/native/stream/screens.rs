@@ -568,7 +568,7 @@ fn shares(first: lilynk_core::Mode, rest: &[lilynk_core::Mode]) -> (u16, Vec<u16
 /// first screen's, the same for this client every session.
 fn screen_identity(fp: Option<[u8; 32]>, index: u8) -> [u8; 32] {
     use sha2::Digest as _;
-    let mut seed = b"punktfunk screen".to_vec();
+    let mut seed = b"lilynk screen".to_vec();
     seed.extend_from_slice(&fp.unwrap_or_default());
     seed.push(index);
     sha2::Sha256::digest(&seed).into()

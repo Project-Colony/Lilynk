@@ -16,7 +16,7 @@ runs one. Install the host first: [Bazzite](/docs/bazzite) or [SteamOS (Host)](/
   ([KDE](/docs/kde#known-limits)); SteamOS 3.8 ships 6.4. Gaming Mode keeps your client's refresh
   rate.
 - Controllers, including a virtual Steam Deck pad when you are in the
-  [`punktfunk` group](#the-punktfunk-group).
+  [`lilynk` group](#the-lilynk-group).
 - With [`lilynk-gamescope`](#hdr-on-gamescope): HDR, the real resolution and refresh rate in
   Steam, the performance overlay, and your keyboard layout.
 
@@ -69,15 +69,15 @@ works while you stream. A reboot undoes it.
 
 If nothing lights the box's screen 25 seconds after the host hands it back, the host restarts the
 session, then the display manager. The display manager restart needs the
-[`punktfunk` group](#the-punktfunk-group). If both fail, the host runs
+[`lilynk` group](#the-lilynk-group). If both fail, the host runs
 `LILYNK_RECOVER_SESSION_CMD` when you set one.
 
-### The `punktfunk` group
+### The `lilynk` group
 
-Join the `punktfunk` group on any box you stream Gaming Mode from, then restart the computer:
+Join the `lilynk` group on any box you stream Gaming Mode from, then restart the computer:
 
 ```sh
-sudo usermod -aG punktfunk "$USER"
+sudo usermod -aG lilynk "$USER"
 ```
 
 Without it the virtual Steam Deck pad arrives as an Xbox 360 controller, and the host can't restart
@@ -100,13 +100,13 @@ Attach streams that screen, so it stays on.
 ## HDR on gamescope
 
 A stock gamescope captures 8-bit SDR: it tone-maps HDR games down, correctly, before the host sees
-them. A 10-bit HDR stream needs `lilynk-gamescope`, gamescope plus Punktfunk's capture
+them. A 10-bit HDR stream needs `lilynk-gamescope`, gamescope plus Lilynk's capture
 patches. The host packages install it under its own name; your Gaming Mode keeps the system
 gamescope.
 
 | System | How to get it |
 |---|---|
-| Bazzite, Fedora Atomic | In the Punktfunk sysext: `lilynk-sysext update`. |
+| Bazzite, Fedora Atomic | In the Lilynk sysext: `lilynk-sysext update`. |
 | Fedora, Nobara, other RPM systems | Installed with the host. If it's missing: `sudo dnf install lilynk-gamescope`. |
 | Debian 13, Ubuntu 26.04 | Installed with the host. If it's missing: `sudo apt install lilynk-gamescope`. |
 | Ubuntu 24.04 | Not available: its wayland is too old. Build from source or upgrade. |
@@ -116,7 +116,7 @@ gamescope.
 | Anything else | `bash packaging/gamescope/build-lilynk-gamescope.sh` in the source tree. |
 
 **Restart the host after installing it:** the host checks the gamescope binary once, at startup.
-The log then says `using the punktfunk build (10-bit HDR capture available)` instead of
+The log then says `using the lilynk build (10-bit HDR capture available)` instead of
 `gamescope has no +pfhdr marker`.
 
 HDR is on by default once the build is present; **Game Mode HDR** in the console
@@ -159,7 +159,7 @@ A file in `/etc/gamescope-session-plus/sessions.d/` overrides `GAMESCOPE_BIN` or
 
 ### The box's screen stays dark after a stream
 
-The hand-back failed. Join the [`punktfunk` group](#the-punktfunk-group), or set
+The hand-back failed. Join the [`lilynk` group](#the-lilynk-group), or set
 `LILYNK_RECOVER_SESSION_CMD`. To get the screen back now:
 `sudo systemctl restart display-manager.service`.
 
@@ -169,6 +169,6 @@ The session streamed the box's own screen at its own mode. Check
 `journalctl --user -u lilynk-host | grep 'gamescope sub-mode'`.
 
 1. Under **Displays**, click **Stream this monitor** on the streamed screen again to clear it.
-2. If `~/.config/punktfunk/host.env` sets `LILYNK_GAMESCOPE_ATTACH`, delete that line, and any
+2. If `~/.config/lilynk/host.env` sets `LILYNK_GAMESCOPE_ATTACH`, delete that line, and any
    `LILYNK_GAMESCOPE_NODE` line, then `systemctl --user restart lilynk-host`.
 3. If the log says `managed takeover unavailable`, the reason is on the same line.

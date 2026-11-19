@@ -363,14 +363,14 @@ fn an_update_is_only_ever_newer() {
 /// and a catalog source: the code of its host message `apierr_<code>`, and its English.
 pub(super) const REVIEWED_ONLY: (&str, &str) = (
     "plugin_own_account_unreviewed",
-    "Only plugins reviewed for the Punktfunk store install on a profile that uses an existing \
+    "Only plugins reviewed for the Lilynk store install on a profile that uses an existing \
      account, because they run as that person.",
 );
 
 /// What a Windows seat host answers its person for a plugin from outside the built-in source.
 const SEAT_REVIEWED_ONLY: (&str, &str) = (
     "plugin_seat_unreviewed",
-    "Only plugins reviewed for the Punktfunk store install from your own Punktfunk.",
+    "Only plugins reviewed for the Lilynk store install from your own Lilynk.",
 );
 
 /// Why a plan of `tier` doesn't install, if it doesn't: a person's own account takes reviewed
@@ -508,71 +508,70 @@ pub(crate) async fn install_plugin(
     Extension(lane): Extension<AuthLane>,
     ApiJson(req): ApiJson<InstallRequest>,
 ) -> Response {
-    let plan =
-        match (
-            req.source.as_deref(),
-            req.id.as_deref(),
-            req.spec.as_deref(),
-        ) {
-            (Some(source), Some(id), None) => {
-                let found = match blocking("plugin_store", {
-                    let (source, id) = (source.to_string(), id.to_string());
-                    move || store::find_entry(&source, &id)
-                })
-                .await
-                {
-                    Ok(f) => f,
-                    Err(e) => return e,
-                };
-                let Some((entry, verified)) = found else {
-                    return api_error(
-                        StatusCode::BAD_REQUEST,
-                        "no such plugin in that source's catalog",
-                    );
-                };
-                if let Some(why) = entry.incompatibility() {
-                    let refusal = match why {
-                        index::Incompatible::Platforms(list) => ApiError::coded(
-                            "plugin_needs_platform",
-                            format!(
-                                "This plugin can't run on this host — requires {}",
-                                list.join(", ")
-                            ),
-                        )
-                        .param("platforms", list.join(", ")),
-                        index::Incompatible::Host(min) => ApiError::coded(
-                            "plugin_needs_newer_host",
-                            format!(
-                            "This plugin can't run on this host — needs Punktfunk {min} or newer"
+    let plan = match (
+        req.source.as_deref(),
+        req.id.as_deref(),
+        req.spec.as_deref(),
+    ) {
+        (Some(source), Some(id), None) => {
+            let found = match blocking("plugin_store", {
+                let (source, id) = (source.to_string(), id.to_string());
+                move || store::find_entry(&source, &id)
+            })
+            .await
+            {
+                Ok(f) => f,
+                Err(e) => return e,
+            };
+            let Some((entry, verified)) = found else {
+                return api_error(
+                    StatusCode::BAD_REQUEST,
+                    "no such plugin in that source's catalog",
+                );
+            };
+            if let Some(why) = entry.incompatibility() {
+                let refusal = match why {
+                    index::Incompatible::Platforms(list) => ApiError::coded(
+                        "plugin_needs_platform",
+                        format!(
+                            "This plugin can't run on this host — requires {}",
+                            list.join(", ")
                         ),
-                        )
-                        .param("version", min),
-                    };
-                    return refusal.respond(StatusCode::BAD_REQUEST);
-                }
-                match jobs::Plan::from_entry(&entry, source, verified) {
-                    Ok(p) => p,
-                    Err(e) => return api_error(StatusCode::BAD_REQUEST, &format!("{e:#}")),
-                }
+                    )
+                    .param("platforms", list.join(", ")),
+                    index::Incompatible::Host(min) => ApiError::coded(
+                        "plugin_needs_newer_host",
+                        format!("This plugin can't run on this host — needs Lilynk {min} or newer"),
+                    )
+                    .param("version", min),
+                };
+                return refusal.respond(StatusCode::BAD_REQUEST);
             }
-            (None, None, Some(spec)) => {
-                if !req.accept_unverified {
-                    return api_error(
-                        StatusCode::BAD_REQUEST,
-                        "installing from a raw package spec runs unreviewed code with operator \
+            match jobs::Plan::from_entry(&entry, source, verified) {
+                Ok(p) => p,
+                Err(e) => return api_error(StatusCode::BAD_REQUEST, &format!("{e:#}")),
+            }
+        }
+        (None, None, Some(spec)) => {
+            if !req.accept_unverified {
+                return api_error(
+                    StatusCode::BAD_REQUEST,
+                    "installing from a raw package spec runs unreviewed code with operator \
                      privileges — set `accept_unverified` to confirm",
-                    );
-                }
-                match jobs::Plan::from_spec(spec) {
-                    Ok(p) => p,
-                    Err(e) => return api_error(StatusCode::BAD_REQUEST, &format!("{e:#}")),
-                }
+                );
             }
-            _ => return api_error(
+            match jobs::Plan::from_spec(spec) {
+                Ok(p) => p,
+                Err(e) => return api_error(StatusCode::BAD_REQUEST, &format!("{e:#}")),
+            }
+        }
+        _ => {
+            return api_error(
                 StatusCode::BAD_REQUEST,
                 "provide either {source, id} for a catalogued plugin or {spec} for a raw package",
-            ),
-        };
+            )
+        }
+    };
 
     let windows_seat = cfg!(windows) && ly_paths::seat::role().is_seat_host();
     let own = ly_paths::seat::own_account();
@@ -610,7 +609,7 @@ pub(crate) async fn uninstall_plugin(
     if let Err(e) = store::valid_installed_pkg(&req.pkg) {
         return api_error(StatusCode::BAD_REQUEST, &format!("{e:#}"));
     }
-    // `@scope/plugin-*` also matches `@punktfunk/plugin-kit`, a library plugins depend on.
+    // `@scope/plugin-*` also matches `@lilynk/plugin-kit`, a library plugins depend on.
     // Only a top-level install (`installed_packages`) may be removed.
     let pkg = req.pkg.clone();
     let known = match blocking("plugin_store", move || {

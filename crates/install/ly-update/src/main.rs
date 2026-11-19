@@ -11,7 +11,7 @@
 //!
 //! Result JSON is root-written and world-readable, in `/var/lib/lilynk-update/`, both
 //! units' `StateDirectory=`: a directory only root writes, never the door's
-//! `/var/lib/punktfunk`. stdout/stderr go to the unit journal.
+//! `/var/lib/lilynk`. stdout/stderr go to the unit journal.
 //!
 //! Design: `host-update-from-web-console.md`.
 
@@ -26,7 +26,7 @@ mod linux_main {
     use std::path::Path;
     use std::process::Command;
 
-    const PACMAN_OPTIN_CONF: &str = "/etc/punktfunk/update.conf";
+    const PACMAN_OPTIN_CONF: &str = "/etc/lilynk/update.conf";
 
     /// Which marker to read and which binary the post-install gate runs. Two units, two
     /// paths — one path owned by two packages is a hard conflict in deb, rpm, and pacman.
@@ -166,7 +166,7 @@ mod linux_main {
             .map(str::to_string)
             .collect();
         if pkgs.is_empty() {
-            return Err(format!("{what}: no installed punktfunk packages found"));
+            return Err(format!("{what}: no installed lilynk packages found"));
         }
         Ok(pkgs)
     }

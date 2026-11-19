@@ -1,4 +1,4 @@
-//! `ly_seat_audio.dll`: the audio endpoint enumerator of punktfunk's seat listener.
+//! `ly_seat_audio.dll`: the audio endpoint enumerator of lilynk's seat listener.
 //!
 //! Remote Desktop names it in the `lilynk-tcp` listener's `AudioEnumeratorDll`. Windows loads
 //! it into AudioEndpointBuilder, Audiosrv, audiodg and every process of a seat session that uses

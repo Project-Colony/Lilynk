@@ -342,7 +342,7 @@ impl AccountManager {
 }
 
 pub(super) fn marker(id: &SeatId) -> String {
-    format!("Punktfunk managed seat {id}")
+    format!("Lilynk managed seat {id}")
 }
 
 /// `account_not_owned` for `seat`. An adopted row's message is the console's sentence.
@@ -682,7 +682,7 @@ fn add_to_rdp_users(account: &str) -> WinResult<bool> {
 /// idempotent. `true`: this call added it.
 fn join_seats_group(account: &str) -> WinResult<bool> {
     let mut name = wide(SEATS_GROUP, "seats group")?;
-    let mut comment = wide("Punktfunk seat accounts", "seats group comment")?;
+    let mut comment = wide("Lilynk seat accounts", "seats group comment")?;
     let info = LOCALGROUP_INFO_1 {
         lgrpi1_name: PWSTR(name.as_mut_ptr()),
         lgrpi1_comment: PWSTR(comment.as_mut_ptr()),
@@ -704,7 +704,7 @@ fn join_seats_group(account: &str) -> WinResult<bool> {
 const PROFILE_UNLOAD: Duration = Duration::from_secs(5);
 /// The SIDs of made seat accounts deleted with their profile still on disk, one value each.
 /// Only [`delete_profile_later`] adds one, once the account is gone.
-const OWED_PROFILES: &str = r"SOFTWARE\Punktfunk\SeatProfiles";
+const OWED_PROFILES: &str = r"SOFTWARE\Lilynk\SeatProfiles";
 
 /// Removes the profile `sid` names and the seat's Steam copy inside it, as `userdel -r` takes a
 /// Linux seat's home. The delete retries while the hive unloads. `true` once no profile is left.
@@ -1184,7 +1184,7 @@ mod tests {
         let id = SeatId::parse("0123456789abcdef0123456789abcdef").unwrap();
         assert_eq!(
             marker(&id),
-            "Punktfunk managed seat 0123456789abcdef0123456789abcdef"
+            "Lilynk managed seat 0123456789abcdef0123456789abcdef"
         );
     }
 

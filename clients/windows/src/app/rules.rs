@@ -330,7 +330,7 @@ mod tests {
         let msg = deeplink::parse("punktfunk://pair").unwrap_err().message();
         assert_eq!(
             msg,
-            "Pairing can't be done from a link \u{2014} pair the host in Punktfunk first."
+            "Pairing can't be done from a link \u{2014} pair the host in Lilynk first."
         );
         for s in [
             Screen::Home,
@@ -346,7 +346,7 @@ mod tests {
         let msg = deeplink::parse("https://example.com")
             .unwrap_err()
             .message();
-        assert_eq!(msg, "That isn't a Punktfunk link.");
+        assert_eq!(msg, "That isn't a Lilynk link.");
         assert_eq!(
             gate_link("https://example.com", &Screen::Home, false),
             LinkGate::Refuse(msg)
@@ -379,13 +379,13 @@ mod tests {
             link_prompt("Desk", "192.168.1.5", None, None),
             "A link asks to connect to Desk (192.168.1.5).\n\nIt names the host by its label \
              or address, which anything that can open a link could guess. Shortcuts made in \
-             Punktfunk name the host's id and connect without asking."
+             Lilynk name the host's id and connect without asking."
         );
         assert_eq!(
             link_prompt("Desk", "192.168.1.5", Some("steam:570"), None),
             "A link asks to connect to Desk (192.168.1.5).\n\nIt also asks the host to launch \
              \u{201c}steam:570\u{201d}.\n\nIt names the host by its label or address, which \
-             anything that can open a link could guess. Shortcuts made in Punktfunk name the \
+             anything that can open a link could guess. Shortcuts made in Lilynk name the \
              host's id and connect without asking."
         );
         let set = ly_client_core::library::GameOverrides {

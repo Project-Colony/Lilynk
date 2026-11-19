@@ -49,7 +49,7 @@ impl EightBitDoWinPad {
                 usb_vid_pid: Some(&vid_pid),
                 usb_mi: None,
                 bluetooth: model.bluetooth(),
-                description: &format!("Punktfunk Virtual {}", model.name()),
+                description: &format!("Lilynk Virtual {}", model.name()),
                 enumerator: &vid_pid,
                 property: None,
             },
@@ -73,7 +73,7 @@ impl PadProto for EightBitDoWinProto {
     type State = EightBitDoState;
     const LABEL: &'static str = "8BitDo/Windows";
     const DEVICE: &'static str = "8BitDo";
-    const CREATE_HINT: &'static str = " (install/repair: run the Punktfunk installer again)";
+    const CREATE_HINT: &'static str = " (install/repair: run the Lilynk installer again)";
 
     fn open(&mut self, idx: u8) -> Result<EightBitDoWinPad> {
         let p = EightBitDoWinPad::open(self.model, idx)?;

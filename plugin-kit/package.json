@@ -1,20 +1,20 @@
 {
-	"name": "@punktfunk/plugin-kit",
+	"name": "@lilynk/plugin-kit",
 	"version": "0.15.0",
-	"description": "Effect-based framework for punktfunk plugins: lifecycle runtime, config/state, sync engine, UI serving, CLI scaffold, and browser helpers.",
+	"description": "Effect-based framework for lilynk plugins: lifecycle runtime, config/state, sync engine, UI serving, CLI scaffold, and browser helpers.",
 	"type": "module",
 	"license": "MIT OR Apache-2.0",
-	"homepage": "https://git.unom.io/unom/punktfunk/src/branch/main/plugin-kit",
+	"homepage": "https://github.com/Project-Colony/Lilynk/blob/main/plugin-kit",
 	"repository": {
 		"type": "git",
-		"url": "https://git.unom.io/unom/punktfunk.git",
+		"url": "https://github.com/Project-Colony/Lilynk.git",
 		"directory": "plugin-kit"
 	},
 	"bugs": {
-		"url": "https://punktfunk.unom.io/community#bugs"
+		"url": "https://github.com/Project-Colony/Lilynk/issues"
 	},
 	"keywords": [
-		"punktfunk",
+		"lilynk",
 		"plugin",
 		"framework",
 		"effect"
@@ -57,7 +57,7 @@
 	},
 	"peerDependencies": {
 		"effect": "^4.0.1",
-		"@punktfunk/host": "^0.4.0 || ^0.5.0 || ^0.6.0",
+		"@lilynk/host": "^0.4.0 || ^0.5.0 || ^0.6.0",
 		"react": "^19.2.0"
 	},
 	"peerDependenciesMeta": {
@@ -67,7 +67,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.15",
-		"@punktfunk/host": "file:../sdk",
+		"@lilynk/host": "file:../sdk",
 		"@types/bun": "^1.4.2",
 		"@types/react": "^19.3.0",
 		"effect": "4.0.1",

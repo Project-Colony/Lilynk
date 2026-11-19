@@ -30,7 +30,7 @@ const NOT_ALLOWED: Words = (
 );
 const PIN_UPDATE: Words = (
     "close_lock_pin_update",
-    "This profile needs its PIN. Update Punktfunk on this device.",
+    "This profile needs its PIN. Update Lilynk on this device.",
 );
 const PIN_WRONG: Words = ("close_lock_pin_wrong", "That isn't this profile's PIN.");
 const PIN_UNREADABLE: Words = (

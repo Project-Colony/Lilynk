@@ -64,15 +64,15 @@ install -Dm0755 "$WORKER_BIN"                       "$STAGE/usr/bin/lilynk-encod
 # Web-console-triggered updates (host-update-from-web-console.md §7): root helper + its
 # oneshot unit + the polkit rule scoping `systemctl start lilynk-update.service` to the
 # (shipped-empty) lilynk-update group. Opt-in = joining the group; postinst creates it.
-install -Dm0755 target/release/ly-update           "$STAGE/usr/libexec/punktfunk/ly-update"
+install -Dm0755 target/release/ly-update           "$STAGE/usr/libexec/lilynk/ly-update"
 install -Dm0644 packaging/linux/lilynk-update.service \
                                                    "$STAGE/usr/lib/systemd/system/lilynk-update.service"
 install -Dm0644 packaging/linux/49-lilynk-update.rules \
                                                    "$STAGE/usr/share/polkit-1/rules.d/49-lilynk-update.rules"
 # postinst runs this on configure and on the file trigger below (web, runner, bun).
-install -Dm0755 packaging/linux/restart-user-units.sh "$STAGE/usr/libexec/punktfunk/restart-user-units"
+install -Dm0755 packaging/linux/restart-user-units.sh "$STAGE/usr/libexec/lilynk/restart-user-units"
 # The host state postinst shares with every other format, and the groups it creates.
-install -Dm0755 packaging/linux/post-install.sh    "$STAGE/usr/libexec/punktfunk/post-install"
+install -Dm0755 packaging/linux/post-install.sh    "$STAGE/usr/libexec/lilynk/post-install"
 install -Dm0644 packaging/linux/lilynk.sysusers "$STAGE/usr/lib/sysusers.d/lilynk.conf"
 install -Dm0644 scripts/60-lilynk.rules         "$STAGE/usr/lib/udev/rules.d/60-lilynk.rules"
 install -Dm0644 scripts/60-lilynk-dualsense.conf "$STAGE/usr/share/wireplumber/wireplumber.conf.d/60-lilynk-dualsense.conf"
@@ -84,13 +84,13 @@ install -Dm0644 scripts/60-lilynk-dualsense.conf "$STAGE/usr/share/wireplumber/w
 # above rather than overlapping them: those hold the device open and keep it off the graph-driver
 # election, this decides which sinks the card offers in the first place. See scripts/alsa-ucm2/.
 for f in USB-Audio/conf.d/054c-0ce6.conf USB-Audio/conf.d/054c-0df2.conf \
-         USB-Audio/Punktfunk/DualSense-PS5-Haptic.conf \
-         USB-Audio/Punktfunk/DualSense-PS5-Haptic-HiFi.conf; do
+         USB-Audio/Lilynk/DualSense-PS5-Haptic.conf \
+         USB-Audio/Lilynk/DualSense-PS5-Haptic-HiFi.conf; do
   install -Dm0644 "scripts/alsa-ucm2/$f" "$STAGE/usr/share/alsa/ucm2/$f"
 done
 # Managed gamescope takeover on DM-autologin boxes: root helper + polkit action so the host can
 # stop/restore the display manager for the stream (the helper derives the DM unit itself).
-install -Dm0755 scripts/ly-dm-helper               "$STAGE/usr/libexec/punktfunk/ly-dm-helper"
+install -Dm0755 scripts/ly-dm-helper               "$STAGE/usr/libexec/lilynk/ly-dm-helper"
 install -Dm0644 scripts/org.projectcolony.lilynk.dm-helper.policy \
                                                    "$STAGE/usr/share/polkit-1/actions/org.projectcolony.lilynk.dm-helper.policy"
 # ...and the other half of stopping one: with the DM stopped the box has no active local session,
@@ -113,7 +113,7 @@ install -Dm0644 packaging/linux/50-lilynk-nice.conf \
 install -Dm0644 scripts/lilynk-host.service     "$STAGE/usr/lib/systemd/user/lilynk-host.service"
 # The source unit's ExecStart points at the dev source tree; a packaged install has the binary at
 # /usr/bin. Rewrite it so a fresh apt install (no hand-rolled unit) starts the installed binary.
-sed -i 's#%h/punktfunk/target/release/lilynk-host#/usr/bin/lilynk-host#' \
+sed -i 's#%h/lilynk/target/release/lilynk-host#/usr/bin/lilynk-host#' \
     "$STAGE/usr/lib/systemd/user/lilynk-host.service"
 # Optional drop-in for a DESKTOP-LOGIN host: binds the host to graphical-session.target so a
 # Plasma/GNOME restart restarts it instead of leaving it on a dead compositor connection. Shipped
@@ -123,18 +123,18 @@ install -Dm0644 scripts/lilynk-host-desktop-session.conf \
     "$STAGE/usr/share/lilynk-host/lilynk-host-desktop-session.conf"
 # Install-kind + channel marker, read by the host's update-check surface (planning:
 # host-update-from-web-console.md §4.1). ONE canonical path across all package formats —
-# /usr/share/punktfunk/, not this package's lilynk-host/ data dir. A canary version
+# /usr/share/lilynk/, not this package's lilynk-host/ data dir. A canary version
 # carries `~ciN`; anything else is stable.
 case "$VERSION" in
   *~ci*) _ly_update_channel=canary ;;
   *)     _ly_update_channel=stable ;;
 esac
 printf 'apt %s\n' "$_ly_update_channel" | \
-    install -Dm0644 /dev/stdin "$STAGE/usr/share/punktfunk/install-kind"
+    install -Dm0644 /dev/stdin "$STAGE/usr/share/lilynk/install-kind"
 # Optional headless KWin session unit (the kwin --virtual appliance), as the RPM/Arch ship.
 # Repoint its ExecStart from the dev source tree to the packaged script. NOT enabled by default.
 install -Dm0644 scripts/lilynk-kde-session.service "$STAGE/usr/lib/systemd/user/lilynk-kde-session.service"
-sed -i 's#%h/punktfunk/scripts/headless/run-headless-kde.sh#/usr/share/lilynk-host/headless/run-headless-kde.sh#' \
+sed -i 's#%h/lilynk/scripts/headless/run-headless-kde.sh#/usr/share/lilynk-host/headless/run-headless-kde.sh#' \
     "$STAGE/usr/lib/systemd/user/lilynk-kde-session.service"
 
 # KWin Desktop-mode authorization: non-launcher .desktop whose X-KDE-Wayland-Interfaces lets the
@@ -169,7 +169,7 @@ install -Dm0644 api/openapi.json              "$SHAREDIR/openapi.json"
 # enable command for whichever firewall is present. Debian ships none and Ubuntu's ufw is
 # installed-but-inactive, so these are a no-op until the admin turns a firewall on.
 install -Dm0644 packaging/linux/lilynk.ufw \
-                "$STAGE/etc/ufw/applications.d/punktfunk"
+                "$STAGE/etc/ufw/applications.d/lilynk"
 install -Dm0644 packaging/linux/lilynk-gamestream.xml \
                 "$STAGE/usr/lib/firewalld/services/lilynk-gamestream.xml"
 install -Dm0644 packaging/linux/lilynk-native.xml \
@@ -191,8 +191,8 @@ fi
 # Debian copyright + changelog (cheap, keeps the package well-formed).
 cat > "$DOCDIR/copyright" <<EOF
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: punktfunk
-Source: https://git.unom.io/unom/punktfunk
+Upstream-Name: lilynk
+Source: https://github.com/Project-Colony/Lilynk
 
 Files: *
 Copyright: unom and the punktfunk contributors
@@ -279,12 +279,12 @@ Maintainer: unom <packages@unom.io>
 Installed-Size: $INSTALLED_KB
 Section: net
 Priority: optional
-Homepage: https://git.unom.io/unom/punktfunk
+Homepage: https://github.com/Project-Colony/Lilynk
 Depends: $DEPENDS
 Recommends: $RECOMMENDS
 Suggests: $SUGGESTS
 Description: Low-latency desktop/game streaming host (Moonlight + punktfunk/2)
- punktfunk is a Linux-first, low-latency desktop and game streaming host. It speaks
+ lilynk is a Linux-first, low-latency desktop and game streaming host. It speaks
  the Moonlight/GameStream protocol (pair a stock Moonlight client) and its own native
  punktfunk/2 protocol (GF(2^16) Leopard FEC + AES-GCM, mid-stream mode renegotiation,
  client microphone passthrough). Each session gets a virtual output at the client's
@@ -346,11 +346,11 @@ if [ "$1" = "configure" ]; then
     # Naming only the usbip pad here is how a Nobara host shipped broken: its owner had no Deck
     # pad, so they correctly skipped this group — and then every managed gamescope takeover
     # degraded silently, because ly-dm-helper (which stops the display manager) gates on membership.
-    echo "ALSO join 'punktfunk' if this box streams Steam Gaming Mode (gamescope) or you want the"
-    echo "virtual Steam Deck pad: sudo usermod -aG punktfunk \"\$USER\"   # then log out and back in"
+    echo "ALSO join 'lilynk' if this box streams Steam Gaming Mode (gamescope) or you want the"
+    echo "virtual Steam Deck pad: sudo usermod -aG lilynk \"\$USER\"   # then log out and back in"
     echo "  — it authorizes stopping the display manager for a managed gamescope session, and the"
     echo "    pad's usbip nodes; it can emulate arbitrary USB devices, so join it only on a box you trust."
-    echo "Settings: the console (Host -> Settings). A line in ~/.config/punktfunk/host.env locks that setting there;"
+    echo "Settings: the console (Host -> Settings). A line in ~/.config/lilynk/host.env locks that setting there;"
     echo "  annotated templates: /usr/share/lilynk-host/host.env.{example,kde}"
     echo "Enable:  systemctl --user enable --now lilynk-host"
     # Debian ships no active firewall and Ubuntu's ufw is inactive by default; hint whichever is present.
@@ -363,10 +363,10 @@ if [ "$1" = "configure" ]; then
         echo "    (use lilynk-gamestream for the Moonlight-compat host)"
     fi
     # Groups, udev, sysctl, the stale-firewall notes and the conflict check.
-    /usr/libexec/punktfunk/post-install
+    /usr/libexec/lilynk/post-install
 fi
 # Restart the running services. configure restarts all three: dpkg may fold a pending trigger into it.
-case "$1" in configure|triggered) /usr/libexec/punktfunk/restart-user-units ;; esac
+case "$1" in configure|triggered) /usr/libexec/lilynk/restart-user-units ;; esac
 exit 0
 EOF
 chmod 0755 "$STAGE/DEBIAN/postinst"

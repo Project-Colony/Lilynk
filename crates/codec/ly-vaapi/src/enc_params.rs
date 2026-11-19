@@ -50,7 +50,7 @@ pub struct SessionParams {
     /// kept for fails to store.
     pub slots: u8,
     /// The reorder bound this stream actually uses. Zero for the low-delay P-only
-    /// shape every punktfunk host emits.
+    /// shape every lilynk host emits.
     pub max_num_reorder_frames: u32,
     pub initial_qp: u8,
     /// VBV depth in frames of bits. One holds picture size roughly constant and

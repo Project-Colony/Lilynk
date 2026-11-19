@@ -644,7 +644,7 @@ pub enum VhciVerdict {
 ///
 /// Probed whatever the Deck, SC2 and DualSense gates say: a client can always ask for a
 /// Switch 2 pad, which has no other USB transport.
-/// `60-lilynk.rules` `chgrp punktfunk` + `chmod 0660`, so only a process that actually
+/// `60-lilynk.rules` `chgrp lilynk` + `chmod 0660`, so only a process that actually
 /// carries the group gets `W_OK`.
 #[cfg(target_os = "linux")]
 pub fn vhci_probe() -> VhciVerdict {
@@ -1165,7 +1165,7 @@ pub mod gamepad {
         pub fn pump_rumble(&mut self, _send: impl FnMut(u16, u16, u16, u16, u16)) {}
     }
 }
-/// "Punktfunk Pen" uinput virtual tablet — per-session stylus the native pen plane injects
+/// "Lilynk Pen" uinput virtual tablet — per-session stylus the native pen plane injects
 /// through.
 #[cfg(target_os = "linux")]
 #[path = "inject/linux/pen.rs"]

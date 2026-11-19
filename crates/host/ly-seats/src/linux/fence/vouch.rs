@@ -15,7 +15,7 @@ use std::io::{self, ErrorKind, Write as _};
 use std::os::unix::fs::{DirBuilderExt as _, OpenOptionsExt as _, PermissionsExt as _};
 use std::path::{Path, PathBuf};
 
-pub const DIR: &str = "/run/punktfunk/pads/vouched";
+pub const DIR: &str = "/run/lilynk/pads/vouched";
 /// Where uinput and uhid put the devices they make, under sysfs.
 pub const UINPUT_DEVICES: &str = "devices/virtual/input";
 pub const UHID_DEVICES: &str = "devices/virtual/misc/uhid";

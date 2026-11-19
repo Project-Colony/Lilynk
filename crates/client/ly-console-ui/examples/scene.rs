@@ -335,7 +335,7 @@ mod scene {
 
         let sdl = sdl3::init()?;
         let video = sdl.video()?;
-        let mut builder = video.window("Punktfunk console", 1920, 1080);
+        let mut builder = video.window("Lilynk console", 1920, 1080);
         builder.position_centered().resizable().high_pixel_density();
         #[cfg(feature = "metal")]
         builder.metal_view();

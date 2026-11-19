@@ -1188,7 +1188,7 @@ fn launch_session(client: &str, unit_name: &str, mode: Mode, hdr: bool) -> Resul
     if wsi == WsiPlan::DistroDisabled {
         tracing::warn!(
             "gamescope: this box's VkLayer_FROG_gamescope_wsi was built for a different gamescope \
-             than the one we run, and no punktfunk layer is installed to use instead — disabling \
+             than the one we run, and no lilynk layer is installed to use instead — disabling \
              it for this session (DISABLE_GAMESCOPE_WSI=1, which the session script cannot clobber \
              the way it clobbers ENABLE_GAMESCOPE_WSI). Left enabled it rejects the client's \
              swapchain_feedback and every Vulkan client dies; Steam's own UI is not one, so what \

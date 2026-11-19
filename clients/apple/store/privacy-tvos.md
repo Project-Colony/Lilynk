@@ -10,8 +10,7 @@ the short form of [`privacy-app-addendum.md`](privacy-app-addendum.md): the app 
 so it says so, plus the controller and complaint line a standalone policy needs. Keep the two in
 step.
 
-## Deutsch (1136)
-
+## Deutsch (1150)
 ```
 Datenschutzerklärung für Punktfunk auf Apple TV
 
@@ -28,8 +27,7 @@ Da wir nichts über Sie speichern, gibt es bei uns nichts einzusehen, zu bericht
 Vollständige Fassung: unom.io/legal/privacy#punktfunk-apps. Stand: 5. November 2026
 ```
 
-## English (1029)
-
+## English (1043)
 ```
 Privacy Policy for Punktfunk on Apple TV
 

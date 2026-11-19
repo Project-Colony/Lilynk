@@ -63,8 +63,8 @@ impl DsUhidIdentity {
 pub(crate) fn identity(index: u8, id: &DsUhidIdentity, gamepad_only: bool) -> Identity {
     Identity {
         bus: crate::uhid_abi::BUS_USB,
-        name: crate::uhid_abi::pad_name(format!("Punktfunk {} {index}", id.name), gamepad_only),
-        phys: format!("punktfunk/{}/{index}", id.phys),
+        name: crate::uhid_abi::pad_name(format!("Lilynk {} {index}", id.name), gamepad_only),
+        phys: format!("lilynk/{}/{index}", id.phys),
         uniq: format!("lilynk-{}-{index}", id.slug),
         rdesc: id.rdesc,
         vendor: DS_VENDOR,
@@ -145,7 +145,7 @@ pub enum DsTransport {
     Uhid(DualSensePad),
 }
 
-/// Try usbip (`vhci_hcd` + `punktfunk` write on sysfs `attach`); else UHID.
+/// Try usbip (`vhci_hcd` + `lilynk` write on sysfs `attach`); else UHID.
 /// Opt-in: [`crate::dualsense_usbip::usbip_preferred`]. Either way a `gamepad_only` pad's
 /// touchpad moves no pointer.
 fn open_transport(idx: u8, gamepad_only: bool) -> Result<DsTransport> {
@@ -340,13 +340,13 @@ mod tests {
     #[test]
     fn only_a_gamepad_only_pad_is_marked() {
         let ds = DsUhidIdentity::dualsense();
-        assert_eq!(identity(0, &ds, false).name, "Punktfunk DualSense 0");
+        assert_eq!(identity(0, &ds, false).name, "Lilynk DualSense 0");
         assert_eq!(
             identity(0, &ds, true).name,
-            "Punktfunk DualSense 0 (gamepad only)"
+            "Lilynk DualSense 0 (gamepad only)"
         );
         let edge = identity(2, &DsUhidIdentity::dualsense_edge(), true).name;
-        assert_eq!(edge, "Punktfunk DualSense Edge 2 (gamepad only)");
+        assert_eq!(edge, "Lilynk DualSense Edge 2 (gamepad only)");
         assert_eq!(identity(1, &ds, true).phys, identity(1, &ds, false).phys);
     }
 
@@ -464,17 +464,17 @@ mod tests {
             let _ = pad1.write_state(&st);
             let hidraws = hidraw_devices();
             let has = |name: &str| hidraws.iter().any(|(n, _, _)| n == name);
-            if find_nodes("Punktfunk DualSense 0")
+            if find_nodes("Lilynk DualSense 0")
                 .iter()
                 .any(|(_, n)| has_ff(n))
-                && has("Punktfunk DualSense 0")
-                && has("Punktfunk DualSense 1")
+                && has("Lilynk DualSense 0")
+                && has("Lilynk DualSense 1")
             {
                 break;
             }
             std::thread::sleep(Duration::from_millis(4));
         }
-        let nodes = find_nodes("Punktfunk DualSense 0");
+        let nodes = find_nodes("Lilynk DualSense 0");
         assert!(
             !nodes.is_empty(),
             "hid-playstation did not bind the uhid device"
@@ -495,8 +495,8 @@ mod tests {
                 .unwrap_or_else(|| panic!("no hidraw for {name} in {hidraws:?}"))
         };
         assert_ne!(
-            uniq("Punktfunk DualSense 0"),
-            uniq("Punktfunk DualSense 1"),
+            uniq("Lilynk DualSense 0"),
+            uniq("Lilynk DualSense 1"),
             "pads share one pairing MAC — SDL/Steam will dedup them into one controller"
         );
 
@@ -515,7 +515,7 @@ mod tests {
 
         let hr = hidraws
             .iter()
-            .find(|(n, _, _)| n == "Punktfunk DualSense 0")
+            .find(|(n, _, _)| n == "Lilynk DualSense 0")
             .map(|(_, _, d)| d.clone())
             .unwrap();
         let mut rep = [0u8; 48];

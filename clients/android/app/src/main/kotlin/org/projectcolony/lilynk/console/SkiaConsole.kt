@@ -801,7 +801,7 @@ object SkiaConsole {
                 action.optJSONObject("Launch")?.let { onLaunch(it) }
                 action.optString("CopyText").takeIf { action.has("CopyText") }?.let { text ->
                     val cm = appContext?.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
-                    cm?.setPrimaryClip(ClipData.newPlainText("punktfunk", text))
+                    cm?.setPrimaryClip(ClipData.newPlainText("lilynk", text))
                 }
                 action.optJSONObject("PinShortcut")?.let(::pinShortcut)
                 action.optJSONObject("SaveLauncherFile")?.let { a ->

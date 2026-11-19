@@ -114,7 +114,7 @@ pub(crate) struct SignedInDevice {
     /// The name it paired with.
     name: String,
     kind: SignedInKind,
-    /// A Moonlight pairing rather than a Punktfunk one. Never on a person's own account.
+    /// A Moonlight pairing rather than a Lilynk one. Never on a person's own account.
     pub(super) moonlight: bool,
     /// When it first signed in, unix seconds.
     added_unix: i64,
@@ -192,7 +192,7 @@ pub(crate) struct SeatPublic {
     #[schema(required = false)]
     take_turns: bool,
     /// The account of a seat on an existing one, for the console's card and its Remove
-    /// sentence. Absent for an account punktfunk made, and to a paired device.
+    /// sentence. Absent for an account lilynk made, and to a paired device.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[schema(required = false)]
     account: Option<String>,
@@ -1478,7 +1478,7 @@ async fn create_take_turns(
 /// Windows accounts a new profile can bind to
 ///
 /// The enabled local Windows accounts on this PC that no profile holds: none a seat signs in to,
-/// none a take-turns profile uses, none of punktfunk's own seat accounts. Empty on every other
+/// none a take-turns profile uses, none of lilynk's own seat accounts. Empty on every other
 /// OS. The console's **Add profile** reads this for **Own account (take turns)** and for **Own
 /// desktop** on an existing account.
 #[utoipa::path(

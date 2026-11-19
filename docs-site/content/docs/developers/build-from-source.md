@@ -1,14 +1,14 @@
 ---
 title: Build from source
-description: Compile the Linux host when no package fits your release, and build every other part of Punktfunk from a clone.
+description: Compile the Linux host and every other part of Lilynk from a clone.
 ---
 
-Compile the Linux host yourself, or build a client, the web console, the docs site or the Windows
-drivers from a clone.
+Lilynk publishes no packages yet, so every part is built from a clone: the host, the clients, the
+web console, the docs site and the Windows drivers.
 
-For the host, the package repos are the supported path ([Install the host](/docs/install)). Build
-from source when no package fits your release, or to work on it. A source build gets no packaged
-service and no updates: you set up the service yourself.
+A bare `cargo build` of the host gets no packaged service: you set up the service yourself. To get
+the units, groups and firewall profiles, build the distribution packages as described in
+[Install the host](/docs/install).
 
 Rust comes from [rustup](https://rustup.rs). `rust-toolchain.toml` pins the version, and rustup
 installs it on the first build:
@@ -29,7 +29,7 @@ keyframe to recover from every lost frame.
 sudo apt install build-essential clang libclang-dev pkg-config cmake git curl \
   libpipewire-0.3-dev libopus-dev libwayland-dev libxkbcommon-dev libdrm-dev \
   libgl-dev libegl-dev libgbm-dev
-git clone https://git.unom.io/unom/punktfunk.git && cd punktfunk
+git clone https://github.com/Project-Colony/Lilynk.git lilynk && cd lilynk
 cargo build --release --locked -p lilynk-host -p lilynk-encode-worker \
   --features lilynk-host/nvenc,lilynk-host/vulkan-encode
 ```
@@ -40,7 +40,7 @@ cargo build --release --locked -p lilynk-host -p lilynk-encode-worker \
 sudo dnf install gcc gcc-c++ clang clang-devel cmake nasm git pkgconf-pkg-config \
   pipewire-devel wayland-devel libxkbcommon-devel opus-devel \
   mesa-libGL-devel mesa-libgbm-devel
-git clone https://git.unom.io/unom/punktfunk.git && cd punktfunk
+git clone https://github.com/Project-Colony/Lilynk.git lilynk && cd lilynk
 cargo build --release --locked -p lilynk-host -p lilynk-encode-worker \
   --features lilynk-host/nvenc,lilynk-host/vulkan-encode
 ```
@@ -56,14 +56,14 @@ The split `PKGBUILD` in `packaging/arch/` builds `lilynk-host`, `lilynk-client` 
 `lilynk-scripting` (both need `bun`):
 
 ```sh
-git clone https://git.unom.io/unom/punktfunk.git && cd punktfunk/packaging/arch
+git clone https://github.com/Project-Colony/Lilynk.git lilynk && cd lilynk/packaging/arch
 PF_SRCDIR="$(git rev-parse --show-toplevel)" makepkg -f --holdver   # builds the working tree
 sudo pacman -U lilynk-host-*.pkg.tar.zst
 ```
 
 NVENC and EGL come from `nvidia-utils`. On a builder without a GPU, link the CUDA stub first (the
 `PKGBUILD` header says how). Packager notes:
-[packaging/arch](https://git.unom.io/unom/punktfunk/src/branch/main/packaging/arch/README.md). For
+[packaging/arch](https://github.com/Project-Colony/Lilynk/blob/main/packaging/arch/README.md). For
 a SteamOS host use the [on-device installer](/docs/steamos-host) instead; it builds against the
 running OS.
 
@@ -81,7 +81,7 @@ The host finds `lilynk-encode-worker` beside itself and runs PyroWave and the NV
 convert there at raised GPU priority. Grant it the capability the packages grant:
 `sudo setcap cap_sys_nice=ep target/release/lilynk-encode-worker`.
 
-To run the host as a user service from a clone at `~/punktfunk`, copy
+To run the host as a user service from a clone at `~/lilynk`, copy
 `scripts/lilynk-host.service` to `~/.config/systemd/user/`, then:
 
 ```sh
@@ -112,7 +112,7 @@ target/release/lilynk-client
 
 It needs GTK 4.20+, libadwaita 1.8+ and SDL3. The shell starts `lilynk-session` from beside
 itself, so build both. More:
-[clients/linux](https://git.unom.io/unom/punktfunk/src/branch/main/clients/linux/README.md).
+[clients/linux](https://github.com/Project-Colony/Lilynk/blob/main/clients/linux/README.md).
 
 ## Windows host and client
 
@@ -131,8 +131,8 @@ cargo build --release -p lilynk-client-windows -p lilynk-client-session -p lilyn
 needs the tray, capture worker and seat keeper beside the host, with
 `pwsh -File packaging\windows\pack-host-installer.ps1 -Version 0.0.0-dev -TargetDir C:\t\release`
 (`-NoDriver` skips the driver build). More:
-[packaging/windows](https://git.unom.io/unom/punktfunk/src/branch/main/packaging/windows/README.md),
-[clients/windows](https://git.unom.io/unom/punktfunk/src/branch/main/clients/windows/README.md).
+[packaging/windows](https://github.com/Project-Colony/Lilynk/blob/main/packaging/windows/README.md),
+[clients/windows](https://github.com/Project-Colony/Lilynk/blob/main/clients/windows/README.md).
 
 ## Windows drivers
 
@@ -148,7 +148,7 @@ $env:Version_Number = '10.0.26100.0'
 `drivers-cargo.ps1` runs cargo through a short drive letter, because the CMake builds inside
 overflow `MAX_PATH`. To install a build on a test box, run `deploy-dev.ps1 -Install` from an
 elevated shell after stopping the host (`lilynk-host service stop`). Signing and the dev loop:
-[packaging/windows](https://git.unom.io/unom/punktfunk/src/branch/main/packaging/windows/README.md).
+[packaging/windows](https://github.com/Project-Colony/Lilynk/blob/main/packaging/windows/README.md).
 
 ## Apple client
 
@@ -161,7 +161,7 @@ cd clients/apple && open Lilynk.xcodeproj
 ```
 
 tvOS and visionOS slices build on a pinned nightly with `rust-src`; the script names it. More:
-[clients/apple](https://git.unom.io/unom/punktfunk/src/branch/main/clients/apple/README.md).
+[clients/apple](https://github.com/Project-Colony/Lilynk/blob/main/clients/apple/README.md).
 
 ## Android client
 
@@ -175,7 +175,7 @@ cd clients/android && ./gradlew :app:assembleDebug
 ```
 
 The APK lands in `app/build/outputs/apk/debug/`. More:
-[clients/android](https://git.unom.io/unom/punktfunk/src/branch/main/clients/android/README.md).
+[clients/android](https://github.com/Project-Colony/Lilynk/blob/main/clients/android/README.md).
 
 ## Steam Deck plugin
 
@@ -185,7 +185,7 @@ pnpm install && pnpm run package                # → out/lilynk-v<ver>.zip
 DECK=deck@<deck-ip> pnpm run deploy              # install on a Deck and restart the loader
 ```
 
-More: [clients/decky](https://git.unom.io/unom/punktfunk/src/branch/main/clients/decky/README.md).
+More: [clients/decky](https://github.com/Project-Colony/Lilynk/blob/main/clients/decky/README.md).
 
 ## Web console, runner and docs site
 
@@ -201,9 +201,9 @@ All three run on [Bun](https://bun.sh). Run `bun install` in the directory first
 The console's dev server sends every API call with `LILYNK_MGMT_TOKEN`: set it to the contents of
 the host's `mgmt-token` file, or every call fails. `LILYNK_MGMT_URL` points it at another host.
 More:
-[web](https://git.unom.io/unom/punktfunk/src/branch/main/web/README.md),
-[sdk](https://git.unom.io/unom/punktfunk/src/branch/main/sdk/README.md),
-[docs-site](https://git.unom.io/unom/punktfunk/src/branch/main/docs-site/README.md).
+[web](https://github.com/Project-Colony/Lilynk/blob/main/web/README.md),
+[sdk](https://github.com/Project-Colony/Lilynk/blob/main/sdk/README.md),
+[docs-site](https://github.com/Project-Colony/Lilynk/blob/main/docs-site/README.md).
 
 ## Client builds on 32-bit ARM
 

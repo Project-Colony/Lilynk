@@ -86,7 +86,7 @@ export const containerEnv = (
 		...(options.configDir ? { LILYNK_CONFIG_DIR: options.configDir } : {}),
 		...(id && pipe && exists(pipe)
 			? {
-					LILYNK_MGMT_URL: "http://punktfunk.host",
+					LILYNK_MGMT_URL: "http://lilynk.host",
 					LILYNK_MGMT_UNIX: pipe,
 					LILYNK_UI_CHANNEL: id,
 				}

@@ -1,4 +1,4 @@
-# Shared host<->driver binary contracts for punktfunk's Windows drivers (display, pads, mouse).
+# Shared host<->driver binary contracts for lilynk's Windows drivers (display, pads, mouse).
 #
 # Deliberately self-contained (no workspace-inherited dependencies, no Windows deps): this crate is a
 # path dependency of BOTH the host workspace (crates/host/lilynk-host) AND the out-of-workspace driver
@@ -12,7 +12,7 @@ version = "0.0.1"
 edition.workspace = true
 rust-version.workspace = true
 license = "GPL-3.0-or-later"
-description = "Shared host<->driver binary contracts for the punktfunk Windows drivers: virtual display (control IOCTLs, encode transport, cursor), gamepads and mouse."
+description = "Shared host<->driver binary contracts for the lilynk Windows drivers: virtual display (control IOCTLs, encode transport, cursor), gamepads and mouse."
 publish = false
 
 [dependencies]

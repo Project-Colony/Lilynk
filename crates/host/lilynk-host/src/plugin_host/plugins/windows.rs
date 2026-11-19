@@ -400,7 +400,7 @@ pub(super) fn powershell(command: &str) -> Result<()> {
         .context("run powershell")?;
     if !status.success() {
         bail!(
-            "the {TASK} scheduled task couldn't be changed — is punktfunk installed with the \
+            "the {TASK} scheduled task couldn't be changed — is lilynk installed with the \
              scripting component, and is this prompt elevated?"
         );
     }
@@ -430,7 +430,7 @@ pub(super) fn require_elevation(what: &str) -> Result<()> {
     }
     // ASCII only: the default Windows console codepage drops em-dashes and arrows.
     bail!(
-        "{what} needs administrator rights (the plugins directory under %ProgramData%\\punktfunk \
+        "{what} needs administrator rights (the plugins directory under %ProgramData%\\lilynk \
          and the runner task are admin-owned).\n\nOpen an elevated prompt: Start -> type \
          \"PowerShell\" -> right-click -> Run as administrator, then run this command again."
     )
@@ -505,7 +505,7 @@ pub(super) fn runner_command() -> Result<(std::path::PathBuf, Vec<String>)> {
     let runner = app.join("scripting").join("runner-cli.js");
     if !bun.exists() || !runner.exists() {
         bail!(
-            "the plugin runner isn't installed (looked for {} and {}) — reinstall punktfunk \
+            "the plugin runner isn't installed (looked for {} and {}) — reinstall lilynk \
              with the scripting component",
             bun.display(),
             runner.display()
@@ -1017,8 +1017,7 @@ pub(super) fn runtime_status() -> RuntimeStatus {
             running: false,
             unit: TASK,
             principal: None,
-            detail: "reinstall punktfunk with the scripting component to get the plugin runner"
-                .into(),
+            detail: "reinstall lilynk with the scripting component to get the plugin runner".into(),
         },
         Some(raw) => {
             let (state, principal) = raw.split_once('|').unwrap_or((raw, ""));

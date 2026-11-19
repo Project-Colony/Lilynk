@@ -489,7 +489,7 @@ async fn host_settings_show_the_owner_s_rows_beside_the_door_s() {
         "host/settings",
         200,
         serde_json::json!({"settings": [{"id": "idle_timeout_ms", "title": "owner"}],
-                           "restart_pending": [], "env_file": "/home/me/.config/punktfunk/host.env"}),
+                           "restart_pending": [], "env_file": "/home/me/.config/lilynk/host.env"}),
     );
     let app = admin_door(seats.clone());
     let (status, body) = send(&app, get_req("/api/v1/host/settings")).await;
@@ -503,7 +503,7 @@ async fn host_settings_show_the_owner_s_rows_beside_the_door_s() {
     assert!(rows
         .iter()
         .any(|r| r["id"] == "idle_timeout_ms" && r["title"] == "owner"));
-    assert_eq!(body["env_file"], "/home/me/.config/punktfunk/host.env");
+    assert_eq!(body["env_file"], "/home/me/.config/lilynk/host.env");
 }
 
 /// A door row the door won't take refuses the whole patch before the owner's host stores any.

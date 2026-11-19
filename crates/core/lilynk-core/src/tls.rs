@@ -181,7 +181,7 @@ mod tests {
     /// bytes stand in for DER here.
     fn verify(v: &PinVerify, cert_bytes: &[u8]) -> std::result::Result<(), rustls::Error> {
         let der = CertificateDer::from(cert_bytes.to_vec());
-        let name = ServerName::try_from("punktfunk").unwrap();
+        let name = ServerName::try_from("lilynk").unwrap();
         v.verify_server_cert(
             &der,
             &[],

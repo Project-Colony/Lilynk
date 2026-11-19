@@ -1,7 +1,7 @@
 // `lilynk-host plugins …` package operations, run on the vendored bun. The host CLI forwards
 // add/remove/list here (crates/host/lilynk-host/src/plugin_host/plugins.rs) and the runner-cli
 // exposes them as subcommands. Everything a plugin needs to be installed — the plugins dir, the
-// `@punktfunk` registry scope in bunfig.toml, and the right bun — is handled here, so the operator
+// `@lilynk` registry scope in bunfig.toml, and the right bun — is handled here, so the operator
 // types one line.
 import { createHash } from "node:crypto";
 import * as fs from "node:fs";
@@ -10,7 +10,7 @@ import { configDir } from "./config.js";
 import { SDK_VERSION } from "./version.js";
 
 /**
- * The `@punktfunk` package registry. Empty: this build has none, so first-party names are refused
+ * The `@lilynk` package registry. Empty: this build has none, so first-party names are refused
  * and the scope points at [`BLOCKED_REGISTRY`] instead of the public registry.
  */
 export const REGISTRY = "";
@@ -28,7 +28,7 @@ export const pluginsDirDefault = (): string => path.join(configDir(), "plugins")
 export interface ResolveOptions {
 	/**
 	 * Allow names that resolve on the PUBLIC npm registry (unscoped `lilynk-plugin-*`, foreign
-	 * scopes, arbitrary paths). Off by default: only the `@punktfunk` scope — pinned to the Gitea
+	 * scopes, arbitrary paths). Off by default: only the `@lilynk` scope — pinned to the Gitea
 	 * registry by [`ensureBunfig`] — installs without it, so a typo or a squatted look-alike
 	 * package can't silently pull operator-privileged code from npmjs.org (the CLI flag is
 	 * `--allow-public-registry`).
@@ -38,8 +38,8 @@ export interface ResolveOptions {
 
 /**
  * Resolve a friendly plugin name to its npm package. A bare first-party name maps into the
- * `@punktfunk` scope (`playnite` → `@punktfunk/plugin-playnite`, `rom-manager` →
- * `@punktfunk/plugin-rom-manager`); an `@punktfunk/…` name is used verbatim. Anything else —
+ * `@lilynk` scope (`playnite` → `@lilynk/plugin-playnite`, `rom-manager` →
+ * `@lilynk/plugin-rom-manager`); an `@lilynk/…` name is used verbatim. Anything else —
  * the unscoped `lilynk-plugin-…` convention, foreign scopes, registry paths — resolves on
  * the public registry and is refused unless [`ResolveOptions.allowPublicRegistry`] is set.
  */
@@ -50,12 +50,12 @@ export const resolvePackage = (
 	const n = name.trim();
 	if (!n) throw new Error("empty plugin name");
 	if (!n.startsWith("@") && !n.includes("/") && !n.startsWith("lilynk-plugin-")) {
-		return firstParty(`@punktfunk/plugin-${n}`); // bare first-party name
+		return firstParty(`@lilynk/plugin-${n}`); // bare first-party name
 	}
-	if (n.startsWith("@punktfunk/")) return firstParty(n); // first-party scope, pinned to our registry
+	if (n.startsWith("@lilynk/")) return firstParty(n); // first-party scope, pinned to our registry
 	if (!opts.allowPublicRegistry) {
 		throw new Error(
-			`'${n}' would install from the PUBLIC npm registry, not Punktfunk's. Plugins run ` +
+			`'${n}' would install from the PUBLIC npm registry, not Lilynk's. Plugins run ` +
 				"with operator privileges - install only code you trust. If you mean it, re-run " +
 				"with --allow-public-registry.",
 		);
@@ -74,8 +74,8 @@ const firstParty = (pkg: string): string => {
 	return pkg;
 };
 
-/** Does this resolved package name install from Punktfunk's own (Gitea) registry? */
-const isFirstParty = (pkg: string): boolean => pkg.startsWith("@punktfunk/");
+/** Does this resolved package name install from Lilynk's own (Gitea) registry? */
+const isFirstParty = (pkg: string): boolean => pkg.startsWith("@lilynk/");
 
 /**
  * Create the plugins dir (and parents) if needed, and make it bun's install ROOT. On Windows the
@@ -102,7 +102,7 @@ export const ensurePluginsDir = (dir = pluginsDirDefault()): string => {
 
 /**
  * Ensure `<dir>/bunfig.toml` maps every scope we need to its registry, so `bun add` resolves
- * plugins from the right place. `@punktfunk` → Punktfunk's own registry is always mapped;
+ * plugins from the right place. `@lilynk` → Lilynk's own registry is always mapped;
  * `extraScopes` adds others — a plugin-store catalog entry carries its own registry, and the scope
  * is what binds a package name to it (design D8, which is why catalog entries must be scoped).
  *
@@ -115,7 +115,7 @@ export const ensureBunfig = (
 ): void => {
 	const file = path.join(dir, "bunfig.toml");
 	const wanted: Record<string, string> = {
-		"@punktfunk": REGISTRY || BLOCKED_REGISTRY,
+		"@lilynk": REGISTRY || BLOCKED_REGISTRY,
 		...extraScopes,
 	};
 	let existing = "";
@@ -249,7 +249,7 @@ export const installedSdkVersion = (
 		const manifest = path.join(
 			dir,
 			"node_modules",
-			"@punktfunk",
+			"@lilynk",
 			"host",
 			"package.json",
 		);
@@ -306,7 +306,7 @@ export const movedPins = (dir: string, before: string, after: string): string[] 
 };
 
 /**
- * Bring the plugins tree's `@punktfunk/host` up to the version THIS runner was built from.
+ * Bring the plugins tree's `@lilynk/host` up to the version THIS runner was built from.
  *
  * **Why this exists.** The SDK is the seam every plugin registers through, but each plugin resolves
  * it from the plugins tree, and `bun.lock` pins it to an exact version with an integrity hash. No
@@ -314,7 +314,7 @@ export const movedPins = (dir: string, before: string, after: string): string[] 
  * newer release all leave the SDK where it is, because the plugin's range is already satisfied.
  * Only deleting the lockfile moves it, and a fix that needs an ssh session is not shipped.
  *
- * **Why the whole lockfile.** A targeted `bun add @punktfunk/host@<v>` at the root does NOT work
+ * **Why the whole lockfile.** A targeted `bun add @lilynk/host@<v>` at the root does NOT work
  * while a plugin declares the SDK in its own `dependencies`: bun honours that locked resolution
  * and gives the plugin a private nested copy, which then SHADOWS the root. A lockless resolve
  * hoists one copy for everyone.
@@ -348,7 +348,7 @@ export const reconcileSharedSdk = (
 	const lock = path.join(dir, "bun.lock");
 	const backup = `${lock}.pf-bak`;
 	log(
-		`[plugins] @punktfunk/host ${have} installed, this host ships ${SDK_VERSION} — refreshing`,
+		`[plugins] @lilynk/host ${have} installed, this host ships ${SDK_VERSION} — refreshing`,
 	);
 	const modules = path.join(dir, "node_modules");
 	const kept = `${modules}.pf-bak`;
@@ -389,10 +389,10 @@ export const reconcileSharedSdk = (
 		if (fs.existsSync(backup)) fs.rmSync(backup);
 		fs.rmSync(kept, { recursive: true, force: true });
 		fs.rmSync(marker, { force: true });
-		log(`[plugins] @punktfunk/host is now ${SDK_VERSION}`);
+		log(`[plugins] @lilynk/host is now ${SDK_VERSION}`);
 	} catch (e) {
 		log(
-			`[plugins] WARNING: @punktfunk/host refresh (${
+			`[plugins] WARNING: @lilynk/host refresh (${
 				e instanceof Error ? e.message : e
 			}) — plugins keep running against ${have}`,
 		);
@@ -429,7 +429,7 @@ export const addPlugins = (names: string[], opts: PkgOpts = {}): void => {
 	for (const pkg of pkgs.filter((p) => !isFirstParty(p))) {
 		log(
 			`[plugins] WARNING: ${pkg} installs from the public npm registry - it is not ` +
-				"published by Punktfunk. It will run with operator privileges.",
+				"published by Lilynk. It will run with operator privileges.",
 		);
 	}
 	runBun("add", pkgs, opts);
@@ -445,7 +445,7 @@ export const removePlugins = (names: string[], opts: PkgOpts = {}): void =>
 	);
 
 export interface InstalledPlugin {
-	/** npm package name, e.g. `@punktfunk/plugin-playnite` or `lilynk-plugin-foo`. */
+	/** npm package name, e.g. `@lilynk/plugin-playnite` or `lilynk-plugin-foo`. */
 	pkg: string;
 	/** Installed version from the package's package.json, if readable. */
 	version?: string;
@@ -453,7 +453,7 @@ export interface InstalledPlugin {
 
 /**
  * Enumerate installed plugin packages under `<dir>/node_modules` — the unscoped convention
- * (`lilynk-plugin-*`) and **any** scope's `plugin-*` (`@punktfunk/plugin-rom-manager`,
+ * (`lilynk-plugin-*`) and **any** scope's `plugin-*` (`@lilynk/plugin-rom-manager`,
  * `@retro-hub/plugin-x`). Follows the naming convention of `discoverUnits` (discover.ts), but
  * lists every match, whether or not it is a top-level dependency of the plugins dir.
  */

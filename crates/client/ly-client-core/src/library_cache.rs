@@ -50,8 +50,8 @@ pub fn overrides(fp_hex: &str, profile: Option<&str>, game: &str) -> Option<Game
     load(fp_hex, profile)?.overrides(game)
 }
 
-/// One resolution for every client-side cache: `$XDG_CACHE_HOME/punktfunk/<name>`,
-/// or `%LOCALAPPDATA%\punktfunk\cache\<name>`. `None` when neither the cache dir
+/// One resolution for every client-side cache: `$XDG_CACHE_HOME/lilynk/<name>`,
+/// or `%LOCALAPPDATA%\lilynk\cache\<name>`. `None` when neither the cache dir
 /// nor a home is named — the caller then runs uncached rather than picking `.`.
 pub(crate) fn cache_subdir(name: &str) -> Option<PathBuf> {
     #[cfg(windows)]
@@ -59,17 +59,12 @@ pub(crate) fn cache_subdir(name: &str) -> Option<PathBuf> {
         let local = std::env::var("LOCALAPPDATA")
             .ok()
             .filter(|s| !s.is_empty())?;
-        Some(
-            PathBuf::from(local)
-                .join("punktfunk")
-                .join("cache")
-                .join(name),
-        )
+        Some(PathBuf::from(local).join("lilynk").join("cache").join(name))
     }
     #[cfg(not(windows))]
     {
         let base = crate::paths::xdg_home("XDG_CACHE_HOME", ".cache")?;
-        Some(base.join("punktfunk").join(name))
+        Some(base.join("lilynk").join(name))
     }
 }
 

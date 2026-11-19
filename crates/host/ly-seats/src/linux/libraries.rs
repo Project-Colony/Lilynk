@@ -1,6 +1,6 @@
 //! The box owner's Steam libraries, shown to a seat in place.
 //!
-//! Every library the owner's Steam lists appears in the seat at `/run/media/punktfunk/<key>`.
+//! Every library the owner's Steam lists appears in the seat at `/run/media/lilynk/<key>`.
 //! Its `steamapps` arrives through an idmapped mount: on disk each file stays the owner's, in the
 //! seat it is the seat user's, so the seat's Steam plays, updates and runs Proton from it with no
 //! ACL. The folder itself is the seat's own on the library's drive ([`make_anchor`]), where Steam
@@ -43,12 +43,12 @@ const STAGING: [&str; 2] = ["downloading", "temp"];
 
 /// Root-only: each seat's stages wait here for its unit to bind them, and [`super::stage`] names
 /// a scratch beside each that no one else can swap.
-pub(super) const STAGE_ROOT: &str = "/run/punktfunk/libraries";
+pub(super) const STAGE_ROOT: &str = "/run/lilynk/libraries";
 
 /// Where a seat sees each library and the shared games folder: in its own `/run/media`, a tmpfs
 /// only root writes, so a seat can't swap a bind target for a link. Steam's client container
 /// shares `/run/media` and no part of `/var`, where both live on the host.
-pub(super) const VIEW: &str = "/run/media/punktfunk";
+pub(super) const VIEW: &str = "/run/media/lilynk";
 
 /// Filesystems that take an idmapped mount. A library elsewhere (exFAT, NTFS, FUSE) is skipped.
 /// ZFS takes one from OpenZFS 2.2; an older one fails the mount, which [`unmounted`] reports.
@@ -1294,12 +1294,12 @@ mod tests {
 
     /// How a drop-in line starts the [`super::super::stage`] helper.
     const STAGE: &str = "ExecStartPre=-+/usr/bin/nsenter -t 1 -m -- \
-                         \"/usr/libexec/punktfunk/lilynk-seats\" stage";
+                         \"/usr/libexec/lilynk/lilynk-seats\" stage";
 
     fn shares(read_only: bool, spots: Vec<Spot>) -> Shares {
         Shares {
             nsenter: PathBuf::from("/usr/bin/nsenter"),
-            seats: PathBuf::from("/usr/libexec/punktfunk/lilynk-seats"),
+            seats: PathBuf::from("/usr/libexec/lilynk/lilynk-seats"),
             mount: PathBuf::from("/usr/bin/mount"),
             umount: PathBuf::from("/usr/bin/umount"),
             steam_owner: 1000,
@@ -1449,8 +1449,8 @@ mod tests {
             ..shares(false, Vec::new())
         };
         let text = unit_lines(Path::new("/b"), &id(), &shown);
-        let stage = "/run/punktfunk/libraries/0123456789abcdef0123456789abcdef/11bb";
-        let card = "/run/punktfunk/libraries/0123456789abcdef0123456789abcdef/22cc";
+        let stage = "/run/lilynk/libraries/0123456789abcdef0123456789abcdef/11bb";
+        let card = "/run/lilynk/libraries/0123456789abcdef0123456789abcdef/22cc";
         assert_eq!(
             text,
             format!(
@@ -1486,9 +1486,9 @@ mod tests {
             Some(&shares(false, Vec::new())),
         );
         let seat = "/b/seats/0123456789abcdef0123456789abcdef";
-        let stage = "/run/punktfunk/libraries/0123456789abcdef0123456789abcdef/00aa";
+        let stage = "/run/lilynk/libraries/0123456789abcdef0123456789abcdef/00aa";
         let owner = "/run/media/bazzite/QEMU HARDDISK/steamapps";
-        let (games, view) = ("/run/media/punktfunk/games", "/run/media/punktfunk/00aa");
+        let (games, view) = ("/run/media/lilynk/games", "/run/media/lilynk/00aa");
         let mut expected = format!(
             "[Service]\n\
              TemporaryFileSystem=/run/media:ro\n\
@@ -1514,7 +1514,7 @@ mod tests {
         }
         expected.push_str(&format!(
             "BindReadOnlyPaths=-{stage}/libraryfolders.vdf:{view}/steamapps/libraryfolders.vdf\n\
-             BindPaths=-/dev/punktfunk/uinput-pf-seat-1:/dev/uinput\n"
+             BindPaths=-/dev/lilynk/uinput-pf-seat-1:/dev/uinput\n"
         ));
         assert_eq!(text, expected);
     }
@@ -1538,7 +1538,7 @@ mod tests {
         let writable = unit_lines(state, &id(), &shares(false, Vec::new()));
         let read_only = unit_lines(state, &id(), &shares(true, shares_spots));
         let seat = "/b/seats/0123456789abcdef0123456789abcdef";
-        let steamapps = "/run/media/punktfunk/00aa/steamapps";
+        let steamapps = "/run/media/lilynk/00aa/steamapps";
         let mut binds = String::new();
         for name in STAGING {
             binds.push_str(&format!(
@@ -1567,16 +1567,16 @@ mod tests {
         let anchor =
             "/run/media/bazzite/QEMU HARDDISK/.lilynk-seats/0123456789abcdef0123456789abcdef";
         with.libraries[0].anchor = Some(PathBuf::from(anchor));
-        let stage = "/run/punktfunk/libraries/0123456789abcdef0123456789abcdef/00aa.root";
+        let stage = "/run/lilynk/libraries/0123456789abcdef0123456789abcdef/00aa.root";
         let root = "BindPaths=/b/seats/0123456789abcdef0123456789abcdef/libraries/00aa:\
-                    /run/media/punktfunk/00aa\n";
+                    /run/media/lilynk/00aa\n";
         let rest = unit_lines(state, &id(), &without);
         assert!(rest.starts_with(root), "{rest}");
         let expected = format!(
             "{STAGE} owner=1000 /usr/bin/mount \
              \"nosuid,nodev,X-mount.idmap=u:1000:987:1 g:1000:956:1\" \"{anchor}\" {stage}\n\
              ExecStopPost=-+/usr/bin/nsenter -t 1 -m -- /usr/bin/umount -l {stage}\n\
-             BindPaths={stage}:/run/media/punktfunk/00aa\n{}",
+             BindPaths={stage}:/run/media/lilynk/00aa\n{}",
             &rest[root.len()..]
         );
         assert_eq!(unit_lines(state, &id(), &with), expected);
@@ -1751,11 +1751,11 @@ mod tests {
             &seat,
             std::slice::from_ref(&library),
         );
-        let games = "/run/media/punktfunk/games";
+        let games = "/run/media/lilynk/games";
         let after = steam::library_folders_vdf(&[
             own.clone(),
             games.to_owned(),
-            "/run/media/punktfunk/00aa".to_owned(),
+            "/run/media/lilynk/00aa".to_owned(),
         ]);
         for dir in ["steamapps", "config"] {
             assert_eq!(
@@ -1799,7 +1799,7 @@ mod tests {
         register(Path::new("/b"), &id(), &me(&home), &[]);
         let read = |dir: &str| std::fs::read_to_string(steam_file(&home, dir)).unwrap();
         assert_eq!(read("steamapps"), padded);
-        let games = "/run/media/punktfunk/games";
+        let games = "/run/media/lilynk/games";
         assert_eq!(steam::library_paths(&read("config")), [own.as_str(), games]);
     }
 

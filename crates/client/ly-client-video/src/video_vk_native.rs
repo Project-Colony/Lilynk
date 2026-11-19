@@ -546,7 +546,7 @@ fn picture_format(codec: &str, stream: crate::video::StreamFormat) -> Result<vk:
 /// Film-grain flag the AV1 construction-time probe asks. Grain is part of the decode
 /// profile and negotiation carries no grain bit, so this is an assumption.
 ///
-/// `false`: punktfunk hosts encode desktop capture (grain off), and grain is an added
+/// `false`: lilynk hosts encode desktop capture (grain off), and grain is an added
 /// capability, never a replacement — probing `true` would refuse every grain-less
 /// device. A grain stream is checked at its first AU by `ensure_state` (sequence
 /// header, never softened) and fails there on a device that cannot decode grain.

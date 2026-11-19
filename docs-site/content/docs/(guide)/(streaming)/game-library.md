@@ -62,8 +62,8 @@ optional:
 | **Launch** | **Executable path**, **Install directory** or **Process name** | How the host recognizes the running game. Without one it can't see the game exit, end it on disconnect or count play time. |
 | **Launch** | **Who hears this title** | On a [shared display](/docs/virtual-displays): **Everyone**, **The display owner only**, **Joined sessions only** or **The session that launched it**. |
 
-Hand-added entries live in `library.json` in the host config directory (`~/.config/punktfunk/`
-on Linux, `%ProgramData%\punktfunk\` on Windows), readable by the host user only. Steps that run
+Hand-added entries live in `library.json` in the host config directory (`~/.config/lilynk/`
+on Linux, `%ProgramData%\lilynk\` on Windows), readable by the host user only. Steps that run
 before a title and undo after it go in that file: see
 [Per-app prep/undo](/docs/automation#per-app-prepundo).
 
@@ -115,10 +115,10 @@ game runs on the host, the tile reads **Resume** and the game's name.
 | Mac | **Library** in the window's sidebar |
 | iPhone, iPad, Apple TV, Android (touch) | The **Library** tab |
 | Controller home (TV, Steam Deck, a client with a controller) | **Y** on a saved host, or the host's options → **Library** |
-| Steam Deck | **Open Punktfunk** in the Decky panel, then the controller home. See [Steam Deck](/docs/steam-deck). |
+| Steam Deck | **Open Lilynk** in the Decky panel, then the controller home. See [Steam Deck](/docs/steam-deck). |
 | Moonlight | Turn on GameStream ([Moonlight](/docs/moonlight)). Titles appear in Moonlight's app list beside **Desktop**; titles with no launch command are left out. |
 | A link | `punktfunk://connect/couch-pc?launch=steam:570`. See [Presets and links](/docs/presets-and-links). |
-| Command line | `punktfunk library couch-pc` lists ids; `punktfunk launch couch-pc --game steam:570` streams one. See [the `punktfunk` CLI](/docs/clients#scripting-the-punktfunk-cli). |
+| Command line | `lilynk library couch-pc` lists ids; `lilynk launch couch-pc --game steam:570` streams one. See [the `lilynk` CLI](/docs/clients#scripting-the-lilynk-cli). |
 
 Where the game opens (your desktop, a gamescope session, or a headless session of its own) is
 display policy: see [Dedicated game sessions](/docs/virtual-displays#dedicated-game-sessions).
@@ -158,8 +158,8 @@ Deck plays the three at 1280×800 and 60 Hz. Moving them to 1440p later is one e
 
 ### When the settings apply
 
-They apply when a device connects to launch the game, from a Punktfunk library, a link or
-`punktfunk launch`. A game started inside a running stream, on its desktop, in Steam or from the
+They apply when a device connects to launch the game, from a Lilynk library, a link or
+`lilynk launch`. A game started inside a running stream, on its desktop, in Steam or from the
 library, keeps that stream's settings until the next such connect. Moonlight doesn't use them.
 
 Each app says what the host set: see [Presets and links](/docs/presets-and-links#using-a-preset).
@@ -180,7 +180,7 @@ started yourself on the host.
 | A library | Hold or right-click the running title → **End game** |
 | Controller home | The title's options → **End game** |
 | Steam Deck | **End game** under **Host menus** in the Decky panel |
-| Command line | `punktfunk end-game couch-pc --game steam:570` |
+| Command line | `lilynk end-game couch-pc --game steam:570` |
 
 The host asks the game to quit like its window's close button and forces it after 10 seconds.
 Unsaved progress is lost, so every client asks first. The web console's **Home** lists games still
@@ -188,11 +188,11 @@ running after their stream ended as **Nobody streaming**, with **End now**.
 
 ## Play stats
 
-Each launch from Punktfunk records the time and adds one to the title's launch count. Play time
+Each launch from Lilynk records the time and adds one to the title's launch count. Play time
 grows while the host sees the game running with a session attached. A launcher tile, or a custom
 entry with no **Process** hint, gets no play time.
 
-A Punktfunk session also credits its profile: the title's numbers count every launch, and each
+A Lilynk session also credits its profile: the title's numbers count every launch, and each
 profile keeps its own beside them. A Moonlight session counts toward the title only.
 
 The Apple, Linux and Windows apps and the controller home sort by **Recent** and **Most played**.

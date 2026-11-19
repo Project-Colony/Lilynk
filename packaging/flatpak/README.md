@@ -1,4 +1,4 @@
-# punktfunk client — Flatpak (Steam Deck / SteamOS, and any flatpak distro)
+# lilynk client — Flatpak (Steam Deck / SteamOS, and any flatpak distro)
 
 The native Linux **client** — the shell (crate `lilynk-client-linux`, binary
 `lilynk-client`) plus the Vulkan session binary it execs for streaming (crate
@@ -34,7 +34,7 @@ it, so `flatpak update` moves an existing install.
 
 ## Install
 
-On the [docs site](https://docs.punktfunk.unom.io/docs/install-client#linux-desktop-flatpak) — the
+On the [docs site](https://project-colony.github.io/Lilynk/docs/install-client#linux-desktop-flatpak) — the
 hosted repo is the supported path, with a single-file bundle as the no-remote fallback for a Deck
 that cannot reach it. Packager note: the bundle install has no remote, so it cannot self-update;
 re-running the install with a newer bundle is the upgrade.

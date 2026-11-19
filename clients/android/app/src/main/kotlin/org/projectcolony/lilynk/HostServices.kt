@@ -409,6 +409,6 @@ class HostServices(val store: KnownHostStore, private val native: HostNative) {
     val screensAt = ConcurrentHashMap<String, Long>()
 
     private companion object {
-        const val TAG = "punktfunk"
+        const val TAG = "lilynk"
     }
 }

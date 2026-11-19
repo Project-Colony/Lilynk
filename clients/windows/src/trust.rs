@@ -1,7 +1,7 @@
 //! Client identity, the known-hosts (pinned fingerprint) store, and app settings —
 //! re-exported from `ly-client-core` so the shell and the spawned `lilynk-session`
 //! binary share ONE `Settings`/`KnownHosts` shape over the same files
-//! (`%APPDATA%\punktfunk`, or a non-empty `LILYNK_CONFIG_DIR`:
+//! (`%APPDATA%\lilynk`, or a non-empty `LILYNK_CONFIG_DIR`:
 //! `client-windows-settings.json` / `client-known-hosts.json`).
 //!
 //! The shell is not the settings file's only writer (a session's window resize, the console

@@ -1,4 +1,4 @@
-//! The guided punktfunk installer, as a library so the tests can drive every stage.
+//! The guided lilynk installer, as a library so the tests can drive every stage.
 //!
 //! `Facts → Choices → Plan → Execute`, strictly ordered: probe the box, derive the
 //! editable option set, turn both into a pure `Vec<Step>`, then run it. `--dry-run`

@@ -5,7 +5,7 @@ import type { FC, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { m } from "@/paraglide/messages";
 
-const DOCS_BASE = "https://docs.punktfunk.unom.io/docs";
+const DOCS_BASE = "https://project-colony.github.io/Lilynk/docs";
 
 /** `path` is a docs-site route, optionally with an anchor: `virtual-displays#keep-alive`. */
 export const DocsLink: FC<{

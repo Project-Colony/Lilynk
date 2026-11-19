@@ -47,7 +47,7 @@ pub(crate) fn identity(model: Model, index: u8) -> crate::uhid_abi::Identity {
             BUS_USB
         },
         name: model.name().to_owned(),
-        phys: format!("punktfunk/8bitdo/{index}"),
+        phys: format!("lilynk/8bitdo/{index}"),
         uniq: format!("lilynk-8bitdo-{index}"),
         rdesc: model.rdesc(),
         vendor: VENDOR as u32,

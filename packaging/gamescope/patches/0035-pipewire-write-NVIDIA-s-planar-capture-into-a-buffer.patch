@@ -16,7 +16,7 @@ dmabuf. The pass computes each word's address, so the bytes sit where the
 consumer is told they are. A driver that cannot export such a buffer keeps
 the LINEAR-modifier image of 0035.
 
-punktfunk: also stamps the version banner +pfhdr33.
+lilynk: also stamps the version banner +pfhdr33.
 ---
  src/meson.build                     |   5 +-
  src/pipewire.cpp                    |   5 +-

@@ -143,7 +143,7 @@ INPUTS = [HOST_UPDATER, LISTEN, SEAT_MODEL, GAMESTREAM, PLATFORMS]
 UNITS = "packaging/linux/*.service"
 # Directories only root writes (lilynk-seats.tmpfiles; ly-seats' env files are root's with a
 # read ACL). Their subdirectories hold seat accounts' files, so a unit's file sits directly in one.
-ROOT_DIRS = ("/var/lib/lilynk-seats", "/run/punktfunk/seats")
+ROOT_DIRS = ("/var/lib/lilynk-seats", "/run/lilynk/seats")
 KEEP_LIST = "scripts/lilynk-atomic-keep.conf"
 DECK_SCRIPTS = "scripts/steamdeck/*.sh"
 # The /etc trees SteamOS's own keep list holds, as KEEP_LIST's comments say.
@@ -170,7 +170,7 @@ def caps_norm(caps):
 
 
 def binary_of(target, variables):
-    """The punktfunk binary a setcap target names, by literal path or by shell variable."""
+    """The lilynk binary a setcap target names, by literal path or by shell variable."""
     target = target.strip("'\"")
     for var, binary in variables.items():
         if re.search(r"\$\{?%s\b" % var, target):
@@ -369,7 +369,7 @@ def env_file_errors(units):
     return errors
 
 
-# A file path under /etc, not a tail of another path such as /usr/share/punktfunk/etc.
+# A file path under /etc, not a tail of another path such as /usr/share/lilynk/etc.
 ETC_PATH = re.compile(r"(?<![\w.-])/etc/[^\s\"'$)]+")
 
 
@@ -411,7 +411,7 @@ RUST_RESTART = re.compile(r'^\s*\["(?:try-)?restart",\s*"([^"]+)"\],?\s*$', re.M
 
 
 def restarted(text, loops=False):
-    """The punktfunk units `text` restarts by a systemctl command or a row of Rust arguments.
+    """The lilynk units `text` restarts by a systemctl command or a row of Rust arguments.
     `loops` counts the list a `for` walks too, which is how an updater restarts several."""
     shell = strip_comments(text.replace("\\\n", " "))
     found = [m.group(1) for m in RESTARTS.finditer(shell)]
@@ -731,15 +731,15 @@ sudo setcap cap_sys_nice=ep ${WORKER}
     expect("gate reader", GATE_CONST.findall("HOST_REL='usr/bin/lilynk-host'\nWANT_WORKER_CAPS='x'\n"),
            [("HOST_REL", "usr/bin/lilynk-host"), ("WANT_WORKER_CAPS", "x")])
 
-    users = "# c\ng punktfunk -\ng lilynk-update -\n"
-    expect("sysusers", SYSUSERS_GROUP.findall(users), ["punktfunk", "lilynk-update"])
-    expect("nix groups", NIX_GROUP.findall("users.groups.input = { };\nusers.groups.punktfunk = { };\n"),
-           ["input", "punktfunk"])
-    nix_ok = {"input", "punktfunk", "lilynk-update"}
-    texts = {"a.sh": "getent group x || groupadd --system punktfunk\n# groupadd old\n"
-                     "groupadd lilynk-games\nif ensure_group punktfunk; then\n"
+    users = "# c\ng lilynk -\ng lilynk-update -\n"
+    expect("sysusers", SYSUSERS_GROUP.findall(users), ["lilynk", "lilynk-update"])
+    expect("nix groups", NIX_GROUP.findall("users.groups.input = { };\nusers.groups.lilynk = { };\n"),
+           ["input", "lilynk"])
+    nix_ok = {"input", "lilynk", "lilynk-update"}
+    texts = {"a.sh": "getent group x || groupadd --system lilynk\n# groupadd old\n"
+                     "groupadd lilynk-games\nif ensure_group lilynk; then\n"
                      'usermod -aG input "$USER"\nusermod -aG lilynk-games u\n',
-             "a.rules": 'GROUP="input"\nRUN+="chgrp punktfunk /x"\n# GROUP="old"\n'}
+             "a.rules": 'GROUP="input"\nRUN+="chgrp lilynk /x"\n# GROUP="old"\n'}
     expect("groups agree", group_errors(users, nix_ok, texts), [])
     expect("nix lacks a group", len(group_errors(users, nix_ok - {"lilynk-update"}, {})), 1)
     expect("nix adds a group", len(group_errors(users, nix_ok | {"extra"}, {})), 1)
@@ -749,7 +749,7 @@ sudo setcap cap_sys_nice=ep ${WORKER}
                        ("a rule needs the group to exist", 'GROUP="lilynk-games"\n')):
         expect(f"unlisted group: {name}", len(group_errors(users, nix_ok, {"b": text})), 1)
 
-    payload = "# c\nhost usr/bin/lilynk-host\nseats usr/libexec/punktfunk/door-helper\n" \
+    payload = "# c\nhost usr/bin/lilynk-host\nseats usr/libexec/lilynk/door-helper\n" \
               "seats usr/lib/systemd/system/user@.service.d/50-lilynk-seats.conf\n"
     nix = "packaging/nix/packages.nix"
     expect("seats named", seats_errors(payload, {nix: "install door-helper\n"}), [])
@@ -760,11 +760,11 @@ sudo setcap cap_sys_nice=ep ${WORKER}
     steps = {
         "packaging/debian/build-seats-deb.sh":
             "cat > \"$STAGE/DEBIAN/prerm\" <<'EOF'\nif [ \"$1\" = remove ]; then\n"
-            "    /usr/libexec/punktfunk/door-remove || true\nfi\nEOF\n",
+            "    /usr/libexec/lilynk/door-remove || true\nfi\nEOF\n",
         "packaging/rpm/lilynk.spec":
-            "%preun seats\nif [ \"$1\" -eq 0 ]; then\n    %{_libexecdir}/punktfunk/door-remove || :\nfi\n"
+            "%preun seats\nif [ \"$1\" -eq 0 ]; then\n    %{_libexecdir}/lilynk/door-remove || :\nfi\n"
             "%endif\n",
-        "packaging/arch/lilynk-seats.install": "pre_remove() {\n  /usr/libexec/punktfunk/door-remove\n}\n",
+        "packaging/arch/lilynk-seats.install": "pre_remove() {\n  /usr/libexec/lilynk/door-remove\n}\n",
         "packaging/bazzite/lilynk-sysext.sh": "cmd_remove() {\n  need_root\n  door-remove\n}\n",
     }
     expect("removal steps run door-remove", removal_errors(steps), [])
@@ -792,18 +792,18 @@ sudo setcap cap_sys_nice=ep ${WORKER}
                        ("continued line", "sudo install x \\\n  /etc/b.conf\n")):
         expect(f"deck install: {name}", len(keep_errors(keep, {"d.sh": text})), 1)
 
-    door = ("[Service]\nUser=punktfunk\nExecStartPre=+-/usr/libexec/punktfunk/door-helper ports\n"
+    door = ("[Service]\nUser=lilynk\nExecStartPre=+-/usr/libexec/lilynk/door-helper ports\n"
             "EnvironmentFile=-/var/lib/lilynk-seats/host.env\n"
-            "# EnvironmentFile=-/var/lib/punktfunk/host.env\nEnvironmentFile=\n")
-    seat = "[Service]\nUser=%i\nEnvironmentFile=/run/punktfunk/seats/%i.env\nExecStopPost=-+/x %i\n"
+            "# EnvironmentFile=-/var/lib/lilynk/host.env\nEnvironmentFile=\n")
+    seat = "[Service]\nUser=%i\nEnvironmentFile=/run/lilynk/seats/%i.env\nExecStopPost=-+/x %i\n"
     expect("env files root's", env_file_errors({"door": door, "seat": seat}), [])
     for name, text in (
-            ("the door's own host.env", door + "EnvironmentFile=-/var/lib/punktfunk/host.env\n"),
-            ("the owner's host.env", seat + "EnvironmentFile=-%h/.config/punktfunk/host.env\n"),
-            ("a console without + lines", "User=punktfunk\nEnvironmentFile=/var/lib/punktfunk/web-password\n"),
+            ("the door's own host.env", door + "EnvironmentFile=-/var/lib/lilynk/host.env\n"),
+            ("the owner's host.env", seat + "EnvironmentFile=-%h/.config/lilynk/host.env\n"),
+            ("a console without + lines", "User=lilynk\nEnvironmentFile=/var/lib/lilynk/web-password\n"),
             ("a seat's folder in root's", "EnvironmentFile=/var/lib/lilynk-seats/hosts/%i/mgmt-token\n"),
-            ("a way out of root's", "EnvironmentFile=/var/lib/lilynk-seats/../punktfunk/host.env\n"),
-            ("spaced", "  EnvironmentFile = /var/lib/punktfunk/host.env \n")):
+            ("a way out of root's", "EnvironmentFile=/var/lib/lilynk-seats/../lilynk/host.env\n"),
+            ("spaced", "  EnvironmentFile = /var/lib/lilynk/host.env \n")):
         expect(f"env file: {name}", len(env_file_errors({"u": text})), 1)
 
     on = {
@@ -952,7 +952,7 @@ sudo setcap cap_sys_nice=ep ${WORKER}
     expect("ports: console moved",
            len(port_errors(profiles(consts, 48100), [("x", "web", read_ufw(ufw)["web"])])), 4)
     hint = ("ufw status verbose | grep -q '47993'\necho \"predates UDP 9778 (browser streaming)\"\n"
-            "# 1234\ninstall -Dm0755 a /etc/punktfunk/b\nTimeoutStartSec=20min\n")
+            "# 1234\ninstall -Dm0755 a /etc/lilynk/b\nTimeoutStartSec=20min\n")
     docs = ('{"ports": {"web": {"port": 47992, "proto": "tcp", "also": [47993]},\n'
             ' "mdns": {"port": 5353, "proto": "udp", "what": "mDNS"},\n'
             ' "gamestream": {"tcp": [47984, 48010], "udp": [47998], "what": "x"}}, "firewall": {}}')

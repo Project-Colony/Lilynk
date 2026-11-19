@@ -147,12 +147,12 @@ mod tests {
 
         record(
             dir.path(),
-            "@punktfunk/plugin-rom-manager",
+            "@lilynk/plugin-rom-manager",
             rec(Tier::Verified),
         )
         .unwrap();
         let m = load(dir.path());
-        let r = m.get("@punktfunk/plugin-rom-manager").unwrap();
+        let r = m.get("@lilynk/plugin-rom-manager").unwrap();
         assert_eq!(r.tier, Tier::Verified);
         assert_eq!(r.version.as_deref(), Some("0.2.1"));
         assert!(!m.contains_key("lilynk-plugin-other"));

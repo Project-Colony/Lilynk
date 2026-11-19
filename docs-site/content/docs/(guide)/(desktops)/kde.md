@@ -52,8 +52,8 @@ A box with no graphical login runs its own headless KWin session, `lilynk-kde-se
 needs none of the permissions above. It needs KWin 6.5.6 or newer (`kwin_wayland --version`).
 
 ```sh
-mkdir -p ~/.config/punktfunk
-cp /usr/share/punktfunk/host.env.kde ~/.config/punktfunk/host.env  # Ubuntu: lilynk-host/
+mkdir -p ~/.config/lilynk
+cp /usr/share/lilynk/host.env.kde ~/.config/lilynk/host.env  # Ubuntu: lilynk-host/
 systemctl --user daemon-reload
 systemctl --user enable --now lilynk-kde-session lilynk-host
 sudo loginctl enable-linger "$USER"
@@ -86,7 +86,7 @@ KWin refused the display; the message arrives in your session's language. Its ba
 one (a nested KWin, or `kwin_wayland --virtual` below 6.5.6), or KWin 6.6 created it disabled. The
 host enables a disabled one and retries on its own. If it keeps failing:
 
-- `lilynk-host list-monitors` shows a `Virtual-punktfunk-*` display marked `disabled`.
+- `lilynk-host list-monitors` shows a `Virtual-lilynk-*` display marked `disabled`.
 - `~/.config/kwinoutputconfig.json` holds a stale entry for it.
 - `journalctl --user -b -t kwin_wayland` says "Applying output configuration failed!": KWin won't
   enable one more display beside your monitors.
@@ -101,10 +101,10 @@ The libei input path, and portal capture (`LILYNK_VIDEO_SOURCE=portal`), go thro
 RemoteDesktop portal, which needs a one-time grant. Seed it, then log out and back in:
 
 ```sh
-bash /usr/share/punktfunk/bazzite/kde-desktop-setup.sh    # Fedora, Bazzite
+bash /usr/share/lilynk/bazzite/kde-desktop-setup.sh    # Fedora, Bazzite
 
 mkdir -p ~/.local/share/flatpak/db                        # Ubuntu, Arch
-cp /usr/share/punktfunk*/headless/kde-authorized ~/.local/share/flatpak/db/kde-authorized
+cp /usr/share/lilynk*/headless/kde-authorized ~/.local/share/flatpak/db/kde-authorized
 ```
 
 ### Black screen, no picture

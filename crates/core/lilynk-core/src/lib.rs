@@ -1,4 +1,4 @@
-//! Shared protocol, transport, and FEC core for Punktfunk hosts and clients.
+//! Shared protocol, transport, and FEC core for Lilynk hosts and clients.
 //!
 //! Platform capture, encode, decode, presentation, and input injection live elsewhere.
 //! This crate owns wire framing and reassembly ([`packet`]), erasure coding ([`fec`]),

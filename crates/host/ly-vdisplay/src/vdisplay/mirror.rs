@@ -276,7 +276,7 @@ fn check_mirrorable(target: &monitors::PhysicalMonitor, compositor: Compositor) 
         // Sway names every headless output `HEADLESS-N`, so a refuse would block a real pin.
         if names_ours_conclusively(compositor) {
             bail!(
-                "monitor {:?} is one of punktfunk's own virtual displays, not a physical head — \
+                "monitor {:?} is one of lilynk's own virtual displays, not a physical head — \
                  clear the streamed-screen setting to use the normal virtual-display path",
                 target.connector
             );
@@ -284,7 +284,7 @@ fn check_mirrorable(target: &monitors::PhysicalMonitor, compositor: Compositor) 
         tracing::warn!(
             connector = %target.connector,
             "the pinned monitor looks like a headless output — on this compositor that name is \
-             ambiguous (it may be one of punktfunk's own virtual displays), mirroring it anyway"
+             ambiguous (it may be one of lilynk's own virtual displays), mirroring it anyway"
         );
     }
     if target.width == 0 || target.height == 0 {
@@ -304,7 +304,7 @@ fn check_mirrorable(target: &monitors::PhysicalMonitor, compositor: Compositor) 
 /// streams our own virtual display. A new `Compositor` must fail to compile here.
 fn names_ours_conclusively(compositor: Compositor) -> bool {
     match compositor {
-        // `Virtual-punktfunk-<id>` and `PF-N` / `PF-<pid>-<n>` are minted only by us.
+        // `Virtual-lilynk-<id>` and `PF-N` / `PF-<pid>-<n>` are minted only by us.
         Compositor::Kwin | Compositor::Hyprland | Compositor::Niri | Compositor::Umbriel => true,
         // Sway's `HEADLESS-N` includes its own; Mutter has no distinguishing name;
         // gamescope only reports the real DRM head. A hint at most.
@@ -378,7 +378,7 @@ mod tests {
 
     #[test]
     fn one_of_our_own_virtual_displays_is_refused() {
-        let mut m = head("Virtual-punktfunk-1");
+        let mut m = head("Virtual-lilynk-1");
         m.managed = true;
         let err = check_mirrorable(&m, Compositor::Kwin)
             .unwrap_err()

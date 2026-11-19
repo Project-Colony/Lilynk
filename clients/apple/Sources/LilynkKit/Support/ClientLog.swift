@@ -118,7 +118,7 @@ final class ClientLogFile: @unchecked Sendable {
     static let shared: ClientLogFile? = FileManager.default
         .urls(for: .cachesDirectory, in: .userDomainMask).first
         .map { ClientLogFile(directory: $0.appendingPathComponent(
-            "\(Bundle.main.bundleIdentifier ?? "punktfunk")/client-log")) }
+            "\(Bundle.main.bundleIdentifier ?? "lilynk")/client-log")) }
 
     let current: URL
     let previous: URL

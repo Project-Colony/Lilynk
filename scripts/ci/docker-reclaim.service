@@ -8,7 +8,7 @@
 
 [Unit]
 Description=Reclaim disk leaked by Gitea act_runner (per-job volumes, networks, stale build cache)
-Documentation=https://git.unom.io/unom/punktfunk
+Documentation=https://github.com/Project-Colony/Lilynk
 After=docker.service
 Requires=docker.service
 

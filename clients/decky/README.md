@@ -1,11 +1,11 @@
-# Punktfunk — Steam Deck plugin (Decky)
+# Lilynk — Steam Deck plugin (Decky)
 
-A [Decky Loader](https://decky.xyz/) plugin that adds a Punktfunk panel to the Quick Access Menu.
+A [Decky Loader](https://decky.xyz/) plugin that adds a Lilynk panel to the Quick Access Menu.
 
 **It is a launcher, not a client.** It decodes nothing, browses no library and holds no settings —
 the Rust client does all of that. The plugin's whole job is to start it *the right way* so gamescope
 fullscreens and focuses it. Setup and use are
-[the docs site](https://docs.punktfunk.unom.io/docs/steam-deck)'s; this file is the mechanisms,
+[the docs site](https://project-colony.github.io/Lilynk/docs/steam-deck)'s; this file is the mechanisms,
 because none of them are obvious and all of them were expensive.
 
 ## Why the launch goes through Steam
@@ -19,20 +19,20 @@ The exe is `/bin/sh` with the wrapper as an argument so the script never needs a
 zip extraction drops it, and the root-owned plugins dir cannot be chmodded by the unprivileged
 backend.
 
-There are two visible shortcuts, both named `Punktfunk` so Steam keys them to one Steam Input
+There are two visible shortcuts, both named `Lilynk` so Steam keys them to one Steam Input
 configset (the key is the lowercase name): a hidden stateful one carrying the stream, and the
 visible stateless library entry that opens console home.
 
 ## The stream that looks like the game
 
 A tap runs the ordinary launch with `PF_GAME=steam:<appid>`, which the wrapper turns into
-`punktfunk launch <host> --game steam:<appid>` — the Deck names the title, the host resolves it
+`lilynk launch <host> --game steam:<appid>` — the Deck names the title, the host resolves it
 against its library, so no launch recipe ever rides the Steam launch options.
 
 The first stream of a title mints a *third* kind of shortcut: same `/bin/sh` + wrapper, hidden, but
 named with the game's display name and dressed in its own grid, hero, logo, header and icon
 (`game_art` reads Steam's `appcache/librarycache` first, the store CDN second). So the overlay, the
-now-playing surfaces and the friends list show the game rather than Punktfunk, and Steam Input binds
+now-playing surfaces and the friends list show the game rather than Lilynk, and Steam Input binds
 the native-touch layout per game name. Steam then shows the page of the app it just launched or
 closed — the hidden shortcut's — so the route patch sends that page back to the title's own. The
 shortcut's last-played time is mirrored onto the title at launch and again at load, so the game
@@ -53,16 +53,16 @@ at a menu built from the same data (`overview.per_client_data`, `BIsPerClientDat
 tokens. Selecting a Steam client calls `SteamClient.Apps.SetStreamingClientForApp`, exactly as
 Steam's own item does.
 
-Steam renders the ▾ only while `per_client_data` holds a second client. Where a Punktfunk host has
+Steam renders the ▾ only while `per_client_data` holds a second client. Where a Lilynk host has
 the title and the ▾ is missing, the plugin adds one: the main button's component in Steam's
 `StreamingSelector` classes. The Play button is re-dressed only with a ▾ on the page, because the
 menu's **This device** row is the way back.
 
 Every attempt logs where it got to in `window.__lilynkDiag` (CEF console lines start with
-`punktfunk:`); `localStorage["punktfunk:diagVerbose"] = "1"` traces every step.
+`lilynk:`); `localStorage["lilynk:diagVerbose"] = "1"` traces every step.
 
 Which hosts get listed: each scan asks every **paired, online** host for its library
-(`punktfunk library <host> --json`) and caches the set of `steam:<appid>` ids per host record. A
+(`lilynk library <host> --json`) and caches the set of `steam:<appid>` ids per host record. A
 sleeping host keeps its last set so its titles still list — the launch wakes it. A host answering
 `needs-pairing` or `refused` loses its set; a forgotten record is pruned. The match is Steam's own
 appid against that set, so non-Steam shortcuts never match.
@@ -70,7 +70,7 @@ appid against that set, so non-Steam shortcuts never match.
 ## Request access never streams
 
 The plugin saves the host with the fingerprint it **advertised**, then runs
-`punktfunk pair --request-access` pinned to it. The host parks that request for up to 185 s until its
+`lilynk pair --request-access` pinned to it. The host parks that request for up to 185 s until its
 operator approves the device. The sheet closes paired, and the next press on the row streams.
 
 **No advertised fingerprint, no request access.** That pinned fingerprint is the only thing between
@@ -84,7 +84,7 @@ cd clients/decky
 pnpm install
 pnpm build                             # rollup → dist/index.js
 pnpm test                              # typecheck, then scripts/test-*.ts under plain node
-pnpm run package                       # → out/punktfunk/ + out/lilynk-v<ver>.zip
+pnpm run package                       # → out/lilynk/ + out/lilynk-v<ver>.zip
 DECK=deck@<deck-ip> pnpm run deploy    # rsync → /tmp, sudo-install, restart loader
 
 python3.13 scripts/test-backend.py     # stdlib-only backend checks
@@ -109,7 +109,7 @@ of the client's data files and re-implements none of its rules. The `model.ts` f
 | `src/panel/` | The QAM panel. `Panel.tsx` stacks the sections: `UpdateSection`, `SessionSection` (the running stream), `HostsSection` with `HostRow`, `TroubleshootingSection`, About. `model.ts` holds its row decisions; `actions.ts` the one-tap actions. |
 | `src/hosts/` | `model.ts` joins discovery and the saved store into rows and splits them by access; `store.ts` is the one scan the panel and the game page share; `catalog.ts` which paired hosts have which Steam appids. |
 | `src/trust/` | The trust sheet and the gamepad-navigable PIN keypad. |
-| `src/game-page/` | The game-page route patch and the descent to the play bar (`library-page.tsx`, MobX-observer-safe subclassing in `patch.ts`); Punktfunk hosts in Steam's "Play from" dropdown (`play-from.tsx`); the title record and lens mark (`game.tsx`). |
+| `src/game-page/` | The game-page route patch and the descent to the play bar (`library-page.tsx`, MobX-observer-safe subclassing in `patch.ts`); Lilynk hosts in Steam's "Play from" dropdown (`play-from.tsx`); the title record and lens mark (`game.tsx`). |
 | `src/steam/` | Steam's side: the two fixed shortcuts and the per-game ones, their art, launch options and launches (`AddShortcut` / `SetAppLaunchOptions` / `RunGame`), the running-state feed, the compat-tool check. |
 | `src/update/` | The update check and the plugin and client installs; `model.ts` decides the panel's update row and what a check reports. |
 | `src/stream.ts` · `src/backend.ts` | The launch action behind a row and the game page; the typed bridge to the backend's callables. |
@@ -123,7 +123,7 @@ of the client's data files and re-implements none of its rules. The `model.ts` f
 | `py_modules/ly_decky/update.py` | Plugin and client update checks and the client install, with an explicit CA-bundle search: Decky's embedded Python has no usable default TLS roots on SteamOS. |
 | `py_modules/ly_decky/art.py` · `steam_input.py` | Shortcut and game artwork; the native-touch Steam Input layout. |
 
-The client must be **v0.22.0 or newer** — that is when the headless `punktfunk` CLI shipped, and the
+The client must be **v0.22.0 or newer** — that is when the headless `lilynk` CLI shipped, and the
 panel drives everything through it.
 
 ## Known gaps

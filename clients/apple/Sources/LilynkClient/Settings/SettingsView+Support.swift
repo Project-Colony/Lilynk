@@ -176,7 +176,7 @@ extension SettingsView {
         String(localized: L10n.playerAdvancedStatsHint)
     }
 
-    static let statsDocsURL = URL(string: "https://docs.punktfunk.unom.io/docs/stats")!
+    static let statsDocsURL = URL(string: "https://project-colony.github.io/Lilynk/docs/stats")!
 
     // MARK: - Controllers
 

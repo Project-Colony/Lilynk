@@ -21,7 +21,7 @@ export class PluginErrorBoundary extends Component<
   componentDidCatch(error: Error, info: ErrorInfo) {
     // Surface it for diagnosis, but never rethrow — containment is the whole point.
     // eslint-disable-next-line no-console
-    console.error("[punktfunk] contained UI render error:", error, info?.componentStack);
+    console.error("[lilynk] contained UI render error:", error, info?.componentStack);
   }
 
   render() {

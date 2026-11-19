@@ -376,7 +376,7 @@ final class Sc2UsbLink {
     }
 
     /// One input report from IOKit. The id arrives out of band (`reportID`); a buffer that does
-    /// not already start with it gets it prepended, because the punktfunk wire — and
+    /// not already start with it gets it prepended, because the lilynk wire — and
     /// `Sc2Device.parseState`, and core's gate — are id-first on every transport.
     private func handle(
         device: IOHIDDevice, reportID: UInt32, report: UnsafeMutablePointer<UInt8>, len: CFIndex

@@ -563,10 +563,7 @@ mod tests {
         for (bad, line) in [
             ("", "Enter the password."),
             (long.as_str(), "That password is too long."),
-            (
-                "a\0b",
-                "That password has a character Punktfunk can't send.",
-            ),
+            ("a\0b", "That password has a character Lilynk can't send."),
         ] {
             let got = prompt_unlock(pw(bad), true, Some(&key(&keys)));
             assert_eq!(got.err(), Some(line));

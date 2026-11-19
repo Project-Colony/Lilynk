@@ -54,11 +54,11 @@ pf_verify_gamescope() {
   [ -x "$root/usr/bin/lilynk-gamescope" ] || {
     err "$what has no executable usr/bin/lilynk-gamescope"; return 1; }
   "$root/usr/bin/lilynk-gamescope" --version 2>&1 | grep -q '+pfhdr' || {
-    err "$what: lilynk-gamescope has no +pfhdr marker — it is not a punktfunk HDR build"
+    err "$what: lilynk-gamescope has no +pfhdr marker — it is not a lilynk HDR build"
     return 1
   }
-  for f in usr/lib/punktfunk/libVkLayer_LILYNK_gamescope_wsi.so \
-           usr/lib/punktfunk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json; do
+  for f in usr/lib/lilynk/libVkLayer_LILYNK_gamescope_wsi.so \
+           usr/lib/lilynk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json; do
     [ -f "$root/$f" ] || { err "$what has no $f — no game HDR without it"; return 1; }
   done
 }
@@ -75,7 +75,7 @@ pf_stage_sysctl_unit() {
   install -d "$units/sysinit.target.d"
   cat > "$units/lilynk-sysctl.service" <<UNIT
 [Unit]
-Description=punktfunk UDP socket buffer limits
+Description=lilynk UDP socket buffer limits
 DefaultDependencies=no
 After=systemd-sysext.service systemd-sysctl.service
 Conflicts=shutdown.target
@@ -103,7 +103,7 @@ pf_stage_start_unit() {
   install -d "$units/sysinit.target.d"
   cat > "$units/lilynk-start-enabled.service" <<UNIT
 [Unit]
-Description=punktfunk services the extension merge brought
+Description=lilynk services the extension merge brought
 After=systemd-sysext.service
 
 [Service]

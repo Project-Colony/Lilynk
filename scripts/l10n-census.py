@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Punktfunk text census: the text a person reads that does not come from l10n/messages yet.
+Lilynk text census: the text a person reads that does not come from l10n/messages yet.
 
 Usage:  python3 scripts/l10n-census.py <repo-root> [--check | --update]
 

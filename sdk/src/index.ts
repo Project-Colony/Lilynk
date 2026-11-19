@@ -1,9 +1,9 @@
-// `@punktfunk/host` — the Promise facade, the package's front door (RFC §7): `connect()`,
+// `@lilynk/host` — the Promise facade, the package's front door (RFC §7): `connect()`,
 // `await`, `.on()` — a thin veneer over the same core the Effect surface uses (config
 // resolution, one HTTP implementation, one reconnecting SSE source). Effect is the substrate
-// and the power surface (`@punktfunk/host/effect`), never a prerequisite:
+// and the power surface (`@lilynk/host/effect`), never a prerequisite:
 //
-//   import { connect } from "@punktfunk/host";
+//   import { connect } from "@lilynk/host";
 //
 //   const pf = await connect();
 //   pf.events.on("pairing.pending", async (e) => {
@@ -74,7 +74,7 @@ export interface LilynkEvents {
 	on(pattern: SpecialPattern, cb: (ev: HostEvent) => unknown): () => void;
 }
 
-export interface Punktfunk {
+export interface Lilynk {
 	/** Resolved connection (URL/token/CA). */
 	readonly config: ResolvedConfig;
 	/**
@@ -96,7 +96,7 @@ export interface Punktfunk {
  * self-signed identity cert from the environment/host files (zero config on the host box),
  * verifies the credentials with an authenticated `GET /host` probe, and returns the client.
  */
-export const connect = async (options?: ConnectOptions): Promise<Punktfunk> => {
+export const connect = async (options?: ConnectOptions): Promise<Lilynk> => {
 	const cfg = await resolveConfig(options);
 	// Fail fast on bad credentials/URL: one cheap authenticated probe.
 	await httpRequest(cfg, "GET", "/host");
@@ -107,7 +107,7 @@ export const connect = async (options?: ConnectOptions): Promise<Punktfunk> => {
 	let closed = false;
 	const stop = new AbortController();
 
-	const warn = (m: string) => console.warn(`[punktfunk] ${m}`);
+	const warn = (m: string) => console.warn(`[lilynk] ${m}`);
 	const dispatch = (pattern: string, ev: unknown) => {
 		for (const l of listeners) {
 			if (l.pattern === pattern || (pattern !== "dropped" && pattern !== "unknown" && (l.pattern === "*" || kindMatches(l.pattern, pattern)))) {
@@ -162,12 +162,12 @@ export const connect = async (options?: ConnectOptions): Promise<Punktfunk> => {
 
 /**
  * A plugin's `main`: either a plain async function receiving the connected client, or an
- * Effect requiring the `LilynkHost` service (`@punktfunk/host/effect`) — the shape that
+ * Effect requiring the `LilynkHost` service (`@lilynk/host/effect`) — the shape that
  * makes it well-behaved under the managed runner's supervision (structured interruption,
  * scoped finalizers).
  */
 export type PluginMain =
-	| ((pf: Punktfunk) => Promise<unknown> | unknown)
+	| ((pf: Lilynk) => Promise<unknown> | unknown)
 	| Effect.Effect<unknown, unknown, LilynkHost>;
 
 export interface PluginDef {

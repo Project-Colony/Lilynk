@@ -86,8 +86,8 @@ fn extract_and_run(exe: &Path, data: &[u8], payload: &[u8]) -> Result<ExitCode, 
     })
 }
 
-/// Elevated: `%ProgramData%\punktfunk\setup\<pid>-<hex>`, protected before anything lands in
-/// it, after what another account put under `%ProgramData%\punktfunk` has gone aside.
+/// Elevated: `%ProgramData%\lilynk\setup\<pid>-<hex>`, protected before anything lands in
+/// it, after what another account put under `%ProgramData%\lilynk` has gone aside.
 /// Unelevated: the same layout under `%LOCALAPPDATA%` — the client has no driver staging
 /// and nothing there needs the admin-only guarantee.
 fn fresh_root() -> Result<PathBuf, String> {
@@ -99,9 +99,9 @@ fn fresh_root() -> Result<PathBuf, String> {
     })
     .map(PathBuf::from)
     .ok_or("neither ProgramData nor LOCALAPPDATA is set")?;
-    let base = data.join("punktfunk").join("setup");
+    let base = data.join("lilynk").join("setup");
     if elevated {
-        // `%ProgramData%` lets any account create `punktfunk\setup` ahead of the first install,
+        // `%ProgramData%` lets any account create `lilynk\setup` ahead of the first install,
         // own what it puts there and keep FILE_DELETE_CHILD over the extract root. The host
         // trusts a file Administrators own, so a folder another account owns goes aside whole,
         // and one that was open is locked and cleared, never re-owned.

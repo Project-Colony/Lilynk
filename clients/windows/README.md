@@ -1,11 +1,11 @@
-# punktfunk — Windows client
+# lilynk — Windows client
 
 The WinUI 3 shell: discover, pair, configure, launch. Pure Rust — the UI is WinUI 3 driven through
 [windows-reactor](https://github.com/microsoft/windows-rs), and it links `lilynk-core` directly.
 
 Decode, present and input are **not** here. They live in the spawned
 [`lilynk-session`](../session/) binary; this crate is the shell around it. What a user can do
-with the app is [the docs site](https://docs.punktfunk.unom.io/docs/install-client)'s job.
+with the app is [the docs site](https://project-colony.github.io/Lilynk/docs/install-client)'s job.
 The session presents through Vulkan, or through Direct3D 11 where the GPU's Vulkan driver can't
 import D3D11VA pictures (Snapdragon X). It picks once at start; `LILYNK_PRESENT_BACKEND=vulkan`
 or `d3d11` forces one, and `lilynk-session --probe-decode` prints the pick.

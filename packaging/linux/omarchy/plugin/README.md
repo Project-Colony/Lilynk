@@ -1,6 +1,6 @@
-# punktfunk — an Omarchy shell plugin
+# lilynk — an Omarchy shell plugin
 
-Pair devices, watch sessions and control your [Punktfunk](https://punktfunk.com) host from the
+Pair devices, watch sessions and control your [Lilynk](https://github.com/Project-Colony/Lilynk) host from the
 Omarchy bar, without opening a browser. Tabs like Nexthop; pairing like OmaConnect; display
 layout like hyprmoncfg.
 
@@ -22,10 +22,10 @@ closes, Tab switches panels. A waiting pair opens the Pair tab.
 
 ## Install
 
-The host package ships these files at `/usr/share/punktfunk/omarchy/plugin/`, and
-[`lilynk-omarchy setup`](https://punktfunk.com/docs/omarchy) offers to install them into
-`~/.config/omarchy/plugins/punktfunk` and enable the widget; `lilynk-omarchy remove` reverses
-both. Requires a Punktfunk host on the same machine — `lilynk-host` on `PATH`. Omarchy 4.0 or
+The host package ships these files at `/usr/share/lilynk/omarchy/plugin/`, and
+[`lilynk-omarchy setup`](https://project-colony.github.io/Lilynk/docs/omarchy) offers to install them into
+`~/.config/omarchy/plugins/lilynk` and enable the widget; `lilynk-omarchy remove` reverses
+both. Requires a Lilynk host on the same machine — `lilynk-host` on `PATH`. Omarchy 4.0 or
 newer.
 
 ## How it talks to the host
@@ -110,4 +110,4 @@ pairings or your firewall.
 
 ## Licence
 
-MIT OR Apache-2.0, same as Punktfunk.
+MIT OR Apache-2.0, same as Lilynk.

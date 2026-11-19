@@ -2,7 +2,7 @@
 //!
 //! Some Windows ICDs accept HDR swapchains on indirect displays but omit their HDR surface formats.
 //! The layer intercepts both surface-format queries and appends HDR10/scRGB formats when that
-//! surface's monitor is a Punktfunk virtual display in HDR (advanced color on, not ACM). Existing
+//! surface's monitor is a Lilynk virtual display in HDR (advanced color on, not ACM). Existing
 //! formats are deduplicated; physical, SDR and already-HDR surfaces pass through unchanged.
 //!
 //! `vkCreateWin32SurfaceKHR` supplies the `VkSurfaceKHR -> HWND` association used by the HDR gate.
@@ -479,8 +479,8 @@ mod hdr {
     const GET_SOURCE_NAME: i32 = 1;
     const GET_TARGET_NAME: i32 = 2;
     const GET_ADVANCED_COLOR_INFO: i32 = 9;
-    /// The EDID manufacturer the Punktfunk virtual display carries (ly-win-display's match).
-    const PF_EDID_MANUFACTURER: &str = "PNK";
+    /// The EDID manufacturer the Lilynk virtual display carries (ly-win-display's match).
+    const PF_EDID_MANUFACTURER: &str = "LYK";
     const MONITOR_DEFAULTTONEAREST: u32 = 2;
 
     // Safe fn: every invariant below is local (out-params point at live locals / exact-length
@@ -535,7 +535,7 @@ mod hdr {
         (ai.value & 0b110) == 0b010
     }
 
-    /// The target is a Punktfunk virtual display; its monitor path names our EDID manufacturer.
+    /// The target is a Lilynk virtual display; its monitor path names our EDID manufacturer.
     fn target_is_ours(p: &PathInfo) -> bool {
         // SAFETY: TargetName is a #[repr(C)] aggregate of integers — all-zero is a valid value.
         let mut tn: TargetName = unsafe { std::mem::zeroed() };
@@ -575,7 +575,7 @@ mod hdr {
         sn.gdi
     }
 
-    /// Is the display this surface lives on a Punktfunk virtual display in HDR? Physical panels
+    /// Is the display this surface lives on a Lilynk virtual display in HDR? Physical panels
     /// and ACM never qualify: their ICD lists its own formats. `hwnd == 0`/unknown falls back to
     /// "any of our displays is in HDR".
     ///

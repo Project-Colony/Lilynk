@@ -1,4 +1,4 @@
-//! Script-facing "a stream is live" marker at `$XDG_RUNTIME_DIR/punktfunk/stream`.
+//! Script-facing "a stream is live" marker at `$XDG_RUNTIME_DIR/lilynk/stream`.
 //!
 //! The file exists iff at least one client is streaming. Scripts treat absence as
 //! not-streaming and must not error. POSIX-`sh`-sourceable `KEY=value` lines:
@@ -116,14 +116,14 @@ mod imp {
         }
     }
 
-    /// `$XDG_RUNTIME_DIR/punktfunk/` of the live session, where its scripts look. Per-user
+    /// `$XDG_RUNTIME_DIR/lilynk/` of the live session, where its scripts look. Per-user
     /// tmpfs, gone on logout, so a reboot cannot leave a live marker. `/tmp` only when no
     /// runtime dir is known.
     fn dir() -> PathBuf {
         let base = ly_host_config::session::runtime_dir()
             .map(PathBuf::from)
             .unwrap_or_else(|| PathBuf::from("/tmp"));
-        base.join("punktfunk")
+        base.join("lilynk")
     }
 
     fn marker_path() -> PathBuf {
@@ -155,9 +155,10 @@ mod imp {
             return;
         };
 
-        let body = format!(
-            "# punktfunk stream marker — auto-generated. Present only while a client is streaming.\n\
-             # Sourceable from a launch script: `. \"$XDG_RUNTIME_DIR/punktfunk/stream\"`.\n\
+        let body =
+            format!(
+            "# lilynk stream marker — auto-generated. Present only while a client is streaming.\n\
+             # Sourceable from a launch script: `. \"$XDG_RUNTIME_DIR/lilynk/stream\"`.\n\
              PF_STREAM=1\n\
              PF_STREAM_SCHEMA=1\n\
              PF_STREAM_WIDTH={w}\n\

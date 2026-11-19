@@ -1,6 +1,6 @@
 // ── Example 4/4 · ADVANCED, Effect-native ───────────────────────────────────────────────────
 // You do NOT need this to use the SDK — examples 1–3 (the plain Promise `connect()` facade) cover
-// most automation. Reach for `@punktfunk/host/effect` only when you're composing Effect programs
+// most automation. Reach for `@lilynk/host/effect` only when you're composing Effect programs
 // and want the event stream, typed errors, and structured interruption as first-class values.
 //
 // Here: when the living-room TV starts a stream, apply a display preset — as a single composed,

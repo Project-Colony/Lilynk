@@ -1,4 +1,4 @@
-# punktfunk headless Steam session — systemd USER unit (Bazzite / SteamOS-like hosts).
+# lilynk headless Steam session — systemd USER unit (Bazzite / SteamOS-like hosts).
 #
 # DEPRECATED — superseded by the host-managed session (`LILYNK_GAMESCOPE_SESSION=steam` in
 # host.env). The host now LAUNCHES gamescope-session-plus on demand AT THE CLIENT'S mode (so games
@@ -23,7 +23,7 @@
 #   systemctl --user disable --now lilynk-steam-session
 #   sudo systemctl set-default graphical.target && sudo systemctl isolate graphical.target
 [Unit]
-Description=punktfunk headless Steam Big Picture session (gamescope-session-plus)
+Description=lilynk headless Steam Big Picture session (gamescope-session-plus)
 After=pipewire.service pipewire-pulse.service
 Wants=pipewire.service
 

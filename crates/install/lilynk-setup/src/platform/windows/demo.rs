@@ -7,7 +7,7 @@
 //!
 //! One Windows-only extra: `WinExecutor`'s `RemoveFiles` deletes with `std::fs`, not through
 //! the runner, so the uninstall preset's install location MUST be a sandbox path — a canned
-//! `C:\Program Files\punktfunk` would point a real sweep at a real install.
+//! `C:\Program Files\lilynk` would point a real sweep at a real install.
 //! `sandbox_app_dir` is that path; the wizard stages a marker file there so the removal has
 //! something honest to remove.
 
@@ -48,7 +48,7 @@ pub fn sandbox_app_dir() -> String {
         .to_string()
 }
 
-/// A Win11 box with nothing punktfunk on it — every preset is this with fields moved.
+/// A Win11 box with nothing lilynk on it — every preset is this with fields moved.
 fn fresh_box() -> WinFacts {
     WinFacts {
         os_build: 26200,

@@ -29,7 +29,7 @@
 	"browser_skew_hint": "Aktualisiere den Host oder diese Seite, damit beide zusammenpassen.",
 	"browser_skew_title": "Dieser Host spricht eine andere Version",
 	"browser_too_many": "Zu viele Anfragen von dieser Adresse. Warte eine Minute und versuch es dann erneut.",
-	"browser_trust_advice": "Hast du Punktfunk dort neu installiert oder die Konfiguration zurückgesetzt, ist das zu erwarten – entferne diesen Host und kopple ihn neu. Wenn nicht, hör hier auf: Unter dieser Adresse antwortet etwas anderes.",
+	"browser_trust_advice": "Hast du Lilynk dort neu installiert oder die Konfiguration zurückgesetzt, ist das zu erwarten – entferne diesen Host und kopple ihn neu. Wenn nicht, hör hier auf: Unter dieser Adresse antwortet etwas anderes.",
 	"browser_trust_body": "Unter {host} antwortet etwas, kann aber nicht beweisen, dass es der Host ist, mit dem dieser Browser gekoppelt wurde.",
 	"browser_trust_forget": "Entfernen und neu koppeln",
 	"browser_udp_unreachable": "Der Host war über UDP {port}, seinen Port für Browser-Streaming, nicht erreichbar. Prüfe, ob zwischen diesem Gerät und dem Host etwas ihn blockiert.",

@@ -1,9 +1,9 @@
 <#
 .SYNOPSIS
-  Generate the punktfunk host installer icon.
+  Generate the lilynk host installer icon.
 
 .DESCRIPTION
-  Renders the punktfunk brand mark - the two overlapping circles ("lens") from
+  Renders the lilynk brand mark - the two overlapping circles ("lens") from
   web/src/components/brand-mark.tsx (the canonical flattened geometry, shared with the Apple icon,
   the marketing site and the docs) into:
 

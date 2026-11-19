@@ -129,8 +129,8 @@ impl VirtualMouse {
             usb_vid_pid: Some("VID_5046&PID_4D4F"),
             usb_mi: None,
             bluetooth: false,
-            description: "Punktfunk Virtual Mouse",
-            enumerator: "punktfunk",
+            description: "Lilynk Virtual Mouse",
+            enumerator: "lilynk",
             property: None,
         }) {
             Ok((sw, id)) => (Some(sw), id),
@@ -608,8 +608,8 @@ pub fn channel_proof_probe() -> Result<()> {
         usb_vid_pid: Some("VID_5046&PID_4D4F"),
         usb_mi: None,
         bluetooth: false,
-        description: "Punktfunk Virtual Mouse (channel-proof probe)",
-        enumerator: "punktfunk",
+        description: "Lilynk Virtual Mouse (channel-proof probe)",
+        enumerator: "lilynk",
         property: None,
     })?;
     let Some(instance_id) = instance_id else {
@@ -646,7 +646,7 @@ pub fn channel_proof_probe() -> Result<()> {
              IOCTL to a UMDF minidriver and the HID pads/mouse need a different transport (the \
              xusb leg is unaffected — it owns its own device interface). If one says \"answered, \
              but not a proof\", an OLD ly_mouse driver is installed: reinstall it by \
-             running the Punktfunk installer again."
+             running the Lilynk installer again."
         ),
     }
     Ok(())

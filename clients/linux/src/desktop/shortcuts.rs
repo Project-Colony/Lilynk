@@ -79,7 +79,7 @@ fn write_desktop_entry(label: &str, url: &str) -> Result<PathBuf, String> {
         "[Desktop Entry]\n\
          Type=Application\n\
          Name={name}\n\
-         Comment=Stream from this Punktfunk host\n\
+         Comment=Stream from this Lilynk host\n\
          Exec=lilynk-client \"{exec_url}\"\n\
          Icon=org.projectcolony.lilynk\n\
          Terminal=false\n\

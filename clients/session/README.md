@@ -2,7 +2,7 @@
 
 The Vulkan session binary: one stream per invocation in an SDL3 window, no UI toolkit. It is
 deliberately dumb — a renderer the front-ends call *into*. The GTK shell, the WinUI shell and the
-`punktfunk` CLI all spawn it through the same brain (`ly_client_core::orchestrate`), which resolves
+`lilynk` CLI all spawn it through the same brain (`ly_client_core::orchestrate`), which resolves
 policy (presets, settings, wake) and hands the result down, normally as a `--resolved-spec` file.
 It reads the shared stores only as the compat fallback for a bare hand-launched invocation.
 
@@ -16,7 +16,7 @@ lilynk-session --browse host[:port] [--mgmt PORT] [--fullscreen]
 
 `--browse` opens the console game library instead of connecting: A launches the focused title in the
 same window, session end returns to the library, B quits. Paired hosts only — pairing is the
-desktop client's or the Decky plugin's job, and `punktfunk pair <host>` is the supported ceremony
+desktop client's or the Decky plugin's job, and `lilynk pair <host>` is the supported ceremony
 (`--pair` here still works for one release, with a deprecation notice, because someone's
 provisioning script calls it).
 
@@ -48,7 +48,7 @@ any field report against the table, not against prose here.
 ## Dev knobs
 
 `LILYNK_DECODER` and `LILYNK_PRESENT_MODE` are user-facing and documented on the
-[docs site](https://docs.punktfunk.unom.io/docs/configuration). These are not:
+[docs site](https://project-colony.github.io/Lilynk/docs/configuration). These are not:
 
 | Variable | Effect |
 | --- | --- |

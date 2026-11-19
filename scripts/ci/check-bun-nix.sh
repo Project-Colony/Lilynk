@@ -184,7 +184,7 @@ while read -r dir; do
         echo "check-bun-nix: $dir/bun.nix matches $dir/bun.lock"
     else
         echo "check-bun-nix: $dir/bun.nix is STALE — it does not match $dir/bun.lock." >&2
-        echo "The Nix build fetches node_modules only from bun.nix, so punktfunk's bun packages" >&2
+        echo "The Nix build fetches node_modules only from bun.nix, so lilynk's bun packages" >&2
         echo "would build against the wrong dependency set (or fail to fetch it at all)." >&2
         echo "Regenerate and commit it:  scripts/ci/check-bun-nix.sh --fix" >&2
         echo "--- diff (committed -> regenerated from bun.lock) ---" >&2

@@ -3,7 +3,7 @@ title: Virtual displays
 description: Choose what happens to your screens when a device connects — presets, keep-alive, your monitors, per-device settings and game sessions.
 ---
 
-When a device connects, Punktfunk creates a virtual display at that device's resolution and
+When a device connects, Lilynk creates a virtual display at that device's resolution and
 refresh rate and streams it. The **Displays** page of the [web console](/docs/web-console) decides
 what happens around it. A change applies to the next connection.
 
@@ -82,7 +82,7 @@ Devices that may [choose their screen](/docs/access-levels#individual-grants) ca
   lights them mid-stream: see [Umbriel](/docs/umbriel#config-save).
 - **KWin, Sway, Hyprland, niri and Umbriel** can keep chosen monitors lit under **Turn off**: set each to
   **Stay on** on its row in **Screens**.
-- Punktfunk never turns off a screen it created, so a second device never goes dark.
+- Lilynk never turns off a screen it created, so a second device never goes dark.
 
 ### A second device connects
 

@@ -17,9 +17,9 @@ struct AboutView: View {
     /// Where the product actually lives. Kept here rather than scattered through the view so the
     /// three of them can be checked against the README in one glance.
     private enum Destination {
-        static let docs = URL(string: "https://docs.punktfunk.unom.io")!
-        static let community = URL(string: "https://discord.gg/wzEGg9y45z")!
-        static let source = URL(string: "https://git.unom.io/unom/punktfunk")!
+        static let docs = URL(string: "https://project-colony.github.io/Lilynk")!
+        static let community = URL(string: "https://discord.gg/tvFApEEVfj")!
+        static let source = URL(string: "https://github.com/Project-Colony/Lilynk")!
     }
 
     #if !os(tvOS)
@@ -99,7 +99,7 @@ struct AboutView: View {
     private var identity: some View {
         VStack(spacing: 10) {
             AppIconView(side: Self.iconSide)
-            Text("Punktfunk")
+            Text("Lilynk")
                 .font(.geist(Self.nameFont, .bold, relativeTo: .largeTitle))
             Text(Self.versionLine)
                 .font(.geist(Self.versionFont, relativeTo: .callout))

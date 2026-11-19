@@ -71,7 +71,7 @@ Write-Host "staged + signed ly-vdisplay (new tree)  DriverVer=$ver  ->  $Stage"
 if ($Install) {
     & pnputil /add-driver $stagedInf /install
     $present = Get-PnpDevice -EA SilentlyContinue |
-        Where-Object { $_.InstanceId -match 'PF_VDISPLAY' -or $_.FriendlyName -match 'punktfunk Virtual Display' }
+        Where-Object { $_.InstanceId -match 'PF_VDISPLAY' -or $_.FriendlyName -match 'lilynk Virtual Display' }
     if (-not $present) {
         if (-not (Test-Path $Nefconc)) { throw "nefconc not found: $Nefconc" }
         & $Nefconc --create-device-node --hardware-id 'root\ly_vdisplay' --class-name Display --class-guid '{4d36e968-e325-11ce-bfc1-08002be10318}' | Out-Null

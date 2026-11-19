@@ -88,10 +88,10 @@ install -Dm0644 scripts/99-lilynk-client-net.conf \
 # unit and polkit rule. Separate paths because dpkg refuses two packages owning one file, and a
 # client-only box must be able to install this without lilynk-host. Opt-in = joining the
 # (shipped-empty) lilynk-update group (lilynk.sysusers).
-install -Dm0755 "$UPDATE_BIN"                      "$STAGE/usr/libexec/punktfunk/ly-update-client"
+install -Dm0755 "$UPDATE_BIN"                      "$STAGE/usr/libexec/lilynk/ly-update-client"
 install -Dm0644 packaging/linux/lilynk-client-update.service \
                 "$STAGE/usr/lib/systemd/system/lilynk-client-update.service"
-sed -i 's#/usr/libexec/punktfunk/ly-update#/usr/libexec/punktfunk/ly-update-client#' \
+sed -i 's#/usr/libexec/lilynk/ly-update#/usr/libexec/lilynk/ly-update-client#' \
        "$STAGE/usr/lib/systemd/system/lilynk-client-update.service"
 install -Dm0644 packaging/linux/49-lilynk-client-update.rules \
                 "$STAGE/usr/share/polkit-1/rules.d/49-lilynk-client-update.rules"
@@ -128,8 +128,8 @@ fi
 
 cat > "$DOCDIR/copyright" <<EOF
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: punktfunk
-Source: https://git.unom.io/unom/punktfunk
+Upstream-Name: lilynk
+Source: https://github.com/Project-Colony/Lilynk
 
 Files: *
 Copyright: unom and the punktfunk contributors
@@ -191,11 +191,11 @@ Maintainer: unom <packages@unom.io>
 Installed-Size: $INSTALLED_KB
 Section: net
 Priority: optional
-Homepage: https://git.unom.io/unom/punktfunk
+Homepage: https://github.com/Project-Colony/Lilynk
 Depends: $SHDEPS
 Recommends: $RECOMMENDS
 Description: Low-latency desktop/game streaming client (punktfunk/2, GTK4)
- The native Linux client for punktfunk, a Linux-first low-latency desktop and
+ The native Linux client for lilynk, a Linux-first low-latency desktop and
  game streaming stack. Discovers hosts on the LAN (mDNS), trusts them via
  certificate pinning with a SPAKE2 PIN pairing ceremony, and streams HEVC video
  (GF(2^16) Leopard FEC + AES-GCM over UDP, QUIC control plane) with Opus audio,

@@ -18,8 +18,8 @@ crates/install/lilynk-setup/src/platform/windows/exec.rs	{path} — already gone
 crates/install/lilynk-setup/src/platform/windows/exec.rs	{scope} PATH already right
 crates/install/lilynk-setup/src/platform/windows/exec.rs	{scope} PATH updated
 crates/install/lilynk-setup/src/platform/windows/exec.rs	{} — not there, nothing to do
-crates/install/lilynk-setup/src/platform/windows/plan.rs	Punktfunk Host
-crates/install/lilynk-setup/src/platform/windows/plan.rs	URL:Punktfunk stream link
+crates/install/lilynk-setup/src/platform/windows/plan.rs	Lilynk Host
+crates/install/lilynk-setup/src/platform/windows/plan.rs	URL:Lilynk stream link
 crates/install/lilynk-setup/src/platform/windows/plan.rs	Windows App Runtime
 crates/install/lilynk-setup/src/platform/windows/report.rs	Choices (nothing below has run yet)
 crates/install/lilynk-setup/src/platform/windows/report.rs	Desktop shortcut: {}
@@ -36,7 +36,7 @@ crates/install/lilynk-setup/src/platform/windows/sys.rs	'{name}' did not stop wi
 crates/install/lilynk-setup/src/platform/windows/sys.rs	SCM is Windows-only
 crates/install/lilynk-setup/src/report.rs	Choices (nothing below has run yet)
 crates/install/lilynk-setup/src/report.rs	Detected {} → {} (guide: {})
-crates/install/lilynk-setup/src/report.rs	Full controller (joins the punktfunk group — grants usbip attach)
+crates/install/lilynk-setup/src/report.rs	Full controller (joins the lilynk group — grants usbip attach)
 crates/install/lilynk-setup/src/report.rs	Re-running is safe. Ctrl-C stops between steps.
 crates/install/lilynk-setup/src/report.rs	Shared clipboard
 crates/install/lilynk-setup/src/report.rs	Start at boot with nobody logged in

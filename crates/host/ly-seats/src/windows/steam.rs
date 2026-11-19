@@ -41,7 +41,7 @@ use winreg::RegKey;
 /// Marks the `steam://` handler this module wrote, under the seat's classes key.
 const HANDLER_MARKER: &str = "LilynkSeat";
 /// The seat's copy and IPC name for `lilynk-tray --steam`, under the seat's own hive.
-const SEAT_STEAM_KEY: &str = r"Software\Punktfunk\SeatSteam";
+const SEAT_STEAM_KEY: &str = r"Software\Lilynk\SeatSteam";
 /// The Seats key value keeping what the box's shared Steam shortcuts pointed at.
 const KEPT_LINKS: &str = "SteamLinks";
 const TRAY_EXE: &str = "lilynk-tray.exe";
@@ -332,7 +332,7 @@ fn ensure_launchers(account: &str, seat_id: &str, exe: &Path) {
     }
 }
 
-/// `HKU\<sid>\Software\Punktfunk\SeatSteam`: the copy and its IPC name, which
+/// `HKU\<sid>\Software\Lilynk\SeatSteam`: the copy and its IPC name, which
 /// `lilynk-tray --steam` starts when the seat opens one of the box's Steam shortcuts.
 fn seat_steam_key(sid: &str, exe: &str, ipc: &str) -> std::io::Result<()> {
     let users = RegKey::predef(HKEY_USERS);
@@ -346,7 +346,7 @@ fn seat_steam_key(sid: &str, exe: &str, ipc: &str) -> std::io::Result<()> {
         Err(error) if error.kind() != std::io::ErrorKind::NotFound => return Err(error),
         _ => {}
     }
-    users.create_subkey(format!(r"{sid}\Software\Punktfunk"))?;
+    users.create_subkey(format!(r"{sid}\Software\Lilynk"))?;
     create_read_only_key(&path, sid)?;
     let key = users.open_subkey_with_flags(&path, KEY_ALL_ACCESS)?;
     key.set_value("Exe", &exe)?;

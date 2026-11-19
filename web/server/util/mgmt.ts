@@ -12,7 +12,7 @@ import { dirPrefix } from "../../nitro-entry/tls-paths.mjs";
  * NODE_TLS_REJECT_UNAUTHORIZED — see .env.example. */
 export function mgmtUrl(): string {
 	// Blank counts as UNSET, which `??` alone would not do. On a packaged install this value comes
-	// from ~/.config/punktfunk/mgmt-endpoint (written by the host's `serve` with the port it really
+	// from ~/.config/lilynk/mgmt-endpoint (written by the host's `serve` with the port it really
 	// bound, so a host moved off 47990 to coexist with a Sunshine fork carries the console with it),
 	// sourced as a systemd EnvironmentFile. An empty or truncated file would otherwise set the
 	// variable to "" and send every proxy hop to a URL that cannot parse.
@@ -118,7 +118,7 @@ export function mgmtBearer(): string {
 		throw createError({
 			statusCode: 503,
 			statusMessage:
-				"management token not configured (LILYNK_MGMT_TOKEN / ~/.config/punktfunk/mgmt-token)",
+				"management token not configured (LILYNK_MGMT_TOKEN / ~/.config/lilynk/mgmt-token)",
 		});
 	}
 	return `Bearer ${token}`;

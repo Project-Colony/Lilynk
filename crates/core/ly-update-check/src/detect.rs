@@ -25,10 +25,10 @@ impl Product {
     ///
     /// Separate files: a box can carry both packages, and two packages owning one path is a
     /// packaging conflict. The client file is in its own directory because the host RPM
-    /// claims `%{_datadir}/punktfunk/*` — a sibling would be owned by both subpackages.
+    /// claims `%{_datadir}/lilynk/*` — a sibling would be owned by both subpackages.
     pub fn marker_path(self) -> &'static str {
         match self {
-            Product::Host => "/usr/share/punktfunk/install-kind",
+            Product::Host => "/usr/share/lilynk/install-kind",
             Product::Client => "/usr/share/lilynk-client/install-kind",
         }
     }
@@ -106,7 +106,7 @@ pub struct Probe {
 }
 
 /// The Deck build's checkout, under `$HOME`.
-pub const SOURCE_CHECKOUT: &str = "punktfunk";
+pub const SOURCE_CHECKOUT: &str = "lilynk";
 
 /// Where a Deck build's checkout comes from. A system copy has no checkout to ask, so a door
 /// built from a fork reads as behind.
@@ -115,7 +115,7 @@ pub const SOURCE_REMOTE: &str = "https://github.com/Project-Colony/Lilynk";
 /// The copy of a Deck build that its door and seats run, outside the owner's 0700 home
 /// (`scripts/steamdeck/door.sh`). `source-head` and `source-commit` beside it are the checkout's
 /// `.git/HEAD` and the commit it was built from.
-pub const STEAMOS_SYSTEM_COPY: &str = "/opt/punktfunk/host";
+pub const STEAMOS_SYSTEM_COPY: &str = "/opt/lilynk/host";
 
 /// A system copy built from `built`, against its branch's `git ls-remote` line: 1 when the tip has
 /// moved on, 0 when it hasn't, `None` when the remote has no such branch.
@@ -173,7 +173,7 @@ pub fn classify(p: &Probe, product: Product) -> (InstallKind, Channel) {
             .exe
             .to_string_lossy()
             .to_ascii_lowercase()
-            .contains("\\program files\\punktfunk");
+            .contains("\\program files\\lilynk");
         return if installed {
             (
                 InstallKind::WindowsInstaller,
@@ -275,7 +275,7 @@ pub fn update_command(kind: InstallKind, product: Product) -> String {
                 .into()
         }
         (InstallKind::RpmOstree, Product::Host) => {
-            "sudo /usr/share/punktfunk/update-lilynk.sh   (staged; reboot to finish)".into()
+            "sudo /usr/share/lilynk/update-lilynk.sh   (staged; reboot to finish)".into()
         }
         (InstallKind::RpmOstree, Product::Client) => {
             format!("sudo rpm-ostree update --uninstall {bin} --install {bin}   (staged; reboot to finish)")
@@ -286,9 +286,9 @@ pub fn update_command(kind: InstallKind, product: Product) -> String {
         (InstallKind::Dnf, _) => "sudo dnf upgrade 'lilynk*'".into(),
         (InstallKind::Pacman, _) => "sudo pacman -Syu".into(),
         (InstallKind::SteamosSource, _) => {
-            "bash ~/punktfunk/scripts/steamdeck/update.sh --pull".into()
+            "bash ~/lilynk/scripts/steamdeck/update.sh --pull".into()
         }
-        (InstallKind::Nix, _) => "nix flake update punktfunk   (then rebuild your system)".into(),
+        (InstallKind::Nix, _) => "nix flake update lilynk   (then rebuild your system)".into(),
         (InstallKind::Source, Product::Host) => {
             "git pull && cargo build --release -p lilynk-host".into()
         }
@@ -356,21 +356,21 @@ mod tests {
     #[test]
     fn ladder_cargo_target_is_source_even_under_home() {
         let mut p = host_probe();
-        p.exe = PathBuf::from("/home/deck/punktfunk/target/release/lilynk-host");
+        p.exe = PathBuf::from("/home/deck/lilynk/target/release/lilynk-host");
         assert_eq!(classify(&p, Product::Host).0, InstallKind::Source);
     }
 
     #[test]
     fn ladder_deck_build_is_steamos_source() {
         let mut p = host_probe();
-        p.exe = PathBuf::from("/home/deck/punktfunk/target-steamos/release/lilynk-host");
+        p.exe = PathBuf::from("/home/deck/lilynk/target-steamos/release/lilynk-host");
         assert_eq!(classify(&p, Product::Host).0, InstallKind::SteamosSource);
     }
 
     #[test]
     fn a_deck_build_follows_the_branch_its_checkout_tracks() {
         let mut p = host_probe();
-        p.exe = PathBuf::from("/home/deck/punktfunk/target-steamos/release/lilynk-host");
+        p.exe = PathBuf::from("/home/deck/lilynk/target-steamos/release/lilynk-host");
         for (head, channel) in [
             (Some("ref: refs/heads/stable\n"), Channel::Stable),
             (Some("ref: refs/heads/main\n"), Channel::Canary),
@@ -390,13 +390,13 @@ mod tests {
         }
     }
 
-    /// The door runs as `punktfunk`, whose home is not the owner's; the copy's own stamp of the
+    /// The door runs as `lilynk`, whose home is not the owner's; the copy's own stamp of the
     /// checkout's branch is its channel.
     #[test]
     fn a_deck_builds_system_copy_is_still_the_deck_build() {
         let mut p = host_probe();
-        p.exe = PathBuf::from("/opt/punktfunk/host/lilynk-host");
-        p.home = Some(PathBuf::from("/var/lib/punktfunk"));
+        p.exe = PathBuf::from("/opt/lilynk/host/lilynk-host");
+        p.home = Some(PathBuf::from("/var/lib/lilynk"));
         p.source_head = Some("ref: refs/heads/stable\n".into());
         assert_eq!(
             classify(&p, Product::Host),
@@ -467,7 +467,7 @@ mod tests {
     fn windows_installed_vs_loose_build() {
         let mut p = Probe {
             windows: true,
-            exe: PathBuf::from("C:\\Program Files\\Punktfunk\\lilynk-host.exe"),
+            exe: PathBuf::from("C:\\Program Files\\Lilynk\\lilynk-host.exe"),
             version: "0.23.10118".into(),
             ..Default::default()
         };
@@ -475,7 +475,7 @@ mod tests {
             classify(&p, Product::Host),
             (InstallKind::WindowsInstaller, Channel::Canary)
         );
-        p.exe = PathBuf::from("C:\\src\\punktfunk\\target\\release\\lilynk-host.exe");
+        p.exe = PathBuf::from("C:\\src\\lilynk\\target\\release\\lilynk-host.exe");
         assert_eq!(classify(&p, Product::Host).0, InstallKind::Source);
     }
 

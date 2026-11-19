@@ -1749,11 +1749,11 @@ fn exec_line(cmd: &str) -> String {
 fn shim_body(sel: &str, fallback: Option<&str>) -> String {
     match fallback {
         Some(cmd) => format!(
-            "#!/bin/sh\n# Managed by punktfunk. Hands xdph the output this host is streaming; with\n# no selection pending, defers to the picker configured before us.\n[ -s \"{sel}\" ] && exec cat \"{sel}\"\n{}\n",
+            "#!/bin/sh\n# Managed by lilynk. Hands xdph the output this host is streaming; with\n# no selection pending, defers to the picker configured before us.\n[ -s \"{sel}\" ] && exec cat \"{sel}\"\n{}\n",
             exec_line(cmd)
         ),
         None => format!(
-            "#!/bin/sh\n# Managed by punktfunk.\n[ -s \"{sel}\" ] && exec cat \"{sel}\"\nexit 0\n"
+            "#!/bin/sh\n# Managed by lilynk.\n[ -s \"{sel}\" ] && exec cat \"{sel}\"\nexit 0\n"
         ),
     }
 }

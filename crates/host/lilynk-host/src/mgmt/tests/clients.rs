@@ -13,7 +13,7 @@ async fn paired_clients_list_and_unpair() {
     let state = test_state();
     let app = test_app(state.clone(), None);
 
-    // Native ephemeral identity (CN "punktfunk") so both build flavors share a stand-in cert.
+    // Native ephemeral identity (CN "lilynk") so both build flavors share a stand-in cert.
     let stand_in = crate::identity::ephemeral().unwrap();
     let (_, pem) = x509_parser::pem::parse_x509_pem(stand_in.cert_pem.as_bytes()).unwrap();
     let der = pem.contents.clone();
@@ -29,7 +29,7 @@ async fn paired_clients_list_and_unpair() {
     let (status, body) = send(&app, get_req("/api/v1/clients")).await;
     assert_eq!(status, StatusCode::OK);
     assert_eq!(body[0]["fingerprint"], fingerprint);
-    assert_eq!(body[0]["subject"], "CN=punktfunk");
+    assert_eq!(body[0]["subject"], "CN=lilynk");
 
     let bad = axum::http::Request::delete("/api/v1/clients/zz")
         .body(Body::empty())
@@ -83,7 +83,7 @@ async fn paired_clients_list_and_unpair() {
     assert_eq!(send(&app, del(fingerprint)).await.0, StatusCode::NOT_FOUND);
 
     // Restart must not resurrect the pairing (that re-opens the control port).
-    // `LILYNK_CONFIG_DIR` is used verbatim — no `punktfunk` subdirectory.
+    // `LILYNK_CONFIG_DIR` is used verbatim — no `lilynk` subdirectory.
     let disk = std::fs::read(tmp.path().join("paired.json")).expect("unpair persisted paired.json");
     assert_eq!(
         serde_json::from_slice::<Vec<Vec<u8>>>(&disk).unwrap(),

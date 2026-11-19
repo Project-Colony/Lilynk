@@ -138,7 +138,7 @@ pub struct WinInstall {
 /// Everything later Windows stages may know about this machine.
 ///
 /// On Windows, `BasePaths.config` is `%ProgramData%`, so `host_env()` is
-/// `%ProgramData%\punktfunk\host.env` — the file the service reads.
+/// `%ProgramData%\lilynk\host.env` — the file the service reads.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct WinFacts {
     pub os_build: u32,
@@ -192,7 +192,7 @@ impl WinFacts {
             arch: arch(env),
             installed,
             host_env_present: host_env_text.is_some(),
-            web_password_present: paths.config.join("punktfunk/web-password").is_file(),
+            web_password_present: paths.config.join("lilynk/web-password").is_file(),
             mgmt_bind_set: mgmt_bind_set(host_env_text.as_deref().unwrap_or_default()),
             competing_hosts: competing_hosts(run),
             mgmt_port_in_use: net.port_in_use(MGMT_PORT),
@@ -222,7 +222,7 @@ impl WinFacts {
         }
     }
 
-    /// The bound-port signal counts only on a box without punktfunk: on an upgrade the
+    /// The bound-port signal counts only on a box without lilynk: on an upgrade the
     /// running host owns :47990 itself, and a named competitor is caught by the service
     /// probe regardless.
     pub fn needs_coexistence(&self) -> bool {
@@ -506,7 +506,7 @@ mod tests {
     fn the_real_box_reads_host_env_under_program_data() {
         let paths = base_paths(&Env::of(&[("ProgramData", r"D:\PD")]));
         assert!(paths.host_env().starts_with(r"D:\PD"));
-        assert!(paths.host_env().ends_with("punktfunk/host.env"));
+        assert!(paths.host_env().ends_with("lilynk/host.env"));
         assert!(base_paths(&Env::default())
             .config
             .starts_with(r"C:\ProgramData"));
@@ -516,7 +516,7 @@ mod tests {
     fn the_uninstaller_name_switches_mode_whatever_its_case() {
         let p = std::path::Path::new;
         assert!(launched_as_uninstaller(p(
-            r"C:\Program Files\punktfunk\UNINS000.EXE"
+            r"C:\Program Files\lilynk\UNINS000.EXE"
         )));
         assert!(launched_as_uninstaller(p("unins000.exe")));
         assert!(!launched_as_uninstaller(p(r"C:\x\lilynk-host-setup.exe")));
@@ -529,11 +529,11 @@ mod tests {
             HOST_ARP_KEY,
             "InstallLocation",
             "REG_SZ",
-            r"C:\Program Files\punktfunk\",
+            r"C:\Program Files\lilynk\",
         );
         assert_eq!(
             parse_reg_value(&text, "InstallLocation").unwrap(),
-            r"C:\Program Files\punktfunk\"
+            r"C:\Program Files\lilynk\"
         );
         assert_eq!(parse_reg_value(&text, "DisplayVersion"), None);
     }
@@ -554,13 +554,13 @@ mod tests {
     fn an_arp_key_reports_the_install_with_version_and_location() {
         let (mut run, env, net, tmp) = fresh_box();
         let body = format!(
-            "\r\n{HOST_ARP_KEY}\r\n    DisplayVersion    REG_SZ    0.35.16661\r\n    InstallLocation    REG_SZ    C:\\Program Files\\punktfunk\\\r\n\r\n"
+            "\r\n{HOST_ARP_KEY}\r\n    DisplayVersion    REG_SZ    0.35.16661\r\n    InstallLocation    REG_SZ    C:\\Program Files\\lilynk\\\r\n\r\n"
         );
         run = run.answer(&format!("reg query {HOST_ARP_KEY}"), 0, &body);
         let facts = probe(&run, &env, &net, tmp.path());
         let installed = facts.installed.unwrap();
         assert_eq!(installed.version.unwrap(), "0.35.16661");
-        assert_eq!(installed.location.unwrap(), r"C:\Program Files\punktfunk\");
+        assert_eq!(installed.location.unwrap(), r"C:\Program Files\lilynk\");
     }
 
     #[test]
@@ -599,7 +599,7 @@ mod tests {
     fn an_upgrades_own_host_on_the_mgmt_port_is_no_conflict() {
         let (mut run, env, _, tmp) = fresh_box();
         let body = format!(
-            "\r\n{HOST_ARP_KEY}\r\n    DisplayVersion    REG_SZ    0.35.16661\r\n    InstallLocation    REG_SZ    C:\\Program Files\\punktfunk\\\r\n\r\n"
+            "\r\n{HOST_ARP_KEY}\r\n    DisplayVersion    REG_SZ    0.35.16661\r\n    InstallLocation    REG_SZ    C:\\Program Files\\lilynk\\\r\n\r\n"
         );
         run = run.answer(&format!("reg query {HOST_ARP_KEY}"), 0, &body);
         let net = FakeNet {
@@ -621,7 +621,7 @@ mod tests {
             &reg_out("HKEY...", "Start", "REG_DWORD", "0x2"),
         );
         let net = FakeNet::default();
-        let dir = tmp.path().join("config/punktfunk");
+        let dir = tmp.path().join("config/lilynk");
         std::fs::create_dir_all(&dir).unwrap();
         std::fs::write(dir.join("host.env"), "LILYNK_MGMT_BIND=0.0.0.0:48123\n").unwrap();
         let facts = probe(&run, &env, &net, tmp.path());

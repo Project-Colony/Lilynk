@@ -62,7 +62,7 @@ struct Caps {
     opted_in: bool,
     /// Pacman's root-owned full-sysupgrade opt-in; the helper refuses pacman without it.
     pacman_optin: bool,
-    /// This host is the door, a system service as the `punktfunk` user: no group of the
+    /// This host is the door, a system service as the `lilynk` user: no group of the
     /// operator's lets it start the helper, and the Deck's checkout is not its own. Its console
     /// asks the owner's host for a helper kind's update ([`crate::mgmt::update`]).
     door: bool,
@@ -176,7 +176,7 @@ struct Runtime {
     /// Version already emitted as `update.available`; a still-newer cache must
     /// not re-announce every auto-refresh.
     announced: Option<String>,
-    /// Commits `~/punktfunk` is behind its upstream — the source build's only
+    /// Commits `~/lilynk` is behind its upstream — the source build's only
     /// "newer" signal. Kept across a failed fetch; see [`source_newer`].
     source_behind: Option<u64>,
     job: Option<jobs::JobSnapshot>,

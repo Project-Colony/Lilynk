@@ -7,12 +7,12 @@ How a change gets from your clone into `main`: the hooks, the local pass, the pu
 CI lanes it runs.
 
 Talk a new feature or design through with the maintainer first, on
-[Discord](https://discord.gg/wzEGg9y45z) or as an idea on
-[improve unom](https://improve.unom.io/p/punktfunk), before you open an issue or a pull request;
+[Discord](https://discord.gg/tvFApEEVfj) or as an idea on
+[improve unom](https://github.com/Project-Colony/Lilynk/issues), before you open an issue or a pull request;
 the tracker holds bugs and agreed work. A bug reported on improve unom gets its tracker issue by
 itself ([Reporting an Issue](/docs/report-an-issue)). A new
 player-facing setting needs the maintainer's yes first
-([docs/settings.md](https://git.unom.io/unom/punktfunk/src/branch/main/docs/settings.md)).
+([docs/settings.md](https://github.com/Project-Colony/Lilynk/blob/main/docs/settings.md)).
 Security reports go to **security@punktfunk.com**, never to an issue.
 
 ## Git hooks
@@ -89,12 +89,12 @@ Every user-facing fact has one home, and everything else links to it:
 
 | Surface | Holds | Never holds |
 |---|---|---|
-| [docs-site](https://docs.punktfunk.unom.io) (`docs-site/content/`) | Every user-facing fact: install, config, features, troubleshooting | Design rationale |
+| [docs-site](https://project-colony.github.io/Lilynk) (`docs-site/content/`) | Every user-facing fact: install, config, features, troubleshooting | Design rationale |
 | READMEs | Build notes, traps, and links into the docs | User walkthroughs |
-| [punktfunk.unom.io](https://punktfunk.unom.io) (separate repo) | Marketing, downloads, blog | Instructions |
+| [punktfunk.unom.io](https://github.com/Project-Colony/Lilynk) (separate repo) | Marketing, downloads, blog | Instructions |
 
 When a change moves a user-facing fact, update the page that owns it in the same pull request. How
-to write a page: [docs/writing.md §4c](https://git.unom.io/unom/punktfunk/src/branch/main/docs/writing.md#4c-docs-pages).
+to write a page: [docs/writing.md §4c](https://github.com/Project-Colony/Lilynk/blob/main/docs/writing.md#4c-docs-pages).
 CI checks the textual half: `check-docs-drift.sh` (the OpenAPI and `platforms.json` snapshots,
 `LILYNK_*` and `PFVD_*` names the docs mention, host commands in [Host CLI](/docs/host-cli)) and
 `check-docs-links.sh` (page links, heading anchors, relative file links). A new `LILYNK_*` or
@@ -103,7 +103,7 @@ CI checks the textual half: `check-docs-drift.sh` (the OpenAPI and `platforms.js
 
 ## Writing rules
 
-[docs/writing.md](https://git.unom.io/unom/punktfunk/src/branch/main/docs/writing.md) is the house
+[docs/writing.md](https://github.com/Project-Colony/Lilynk/blob/main/docs/writing.md) is the house
 style for commits and the pull-request title (§1), the changelog (§2), comments (§3), error messages
 (§4) and docs pages (§4c), with a checklist for every pull request (§5).
 `scripts/ci/check-writing.sh` enforces the lengths and fails the pull request.
@@ -112,4 +112,4 @@ style for commits and the pull-request title (§1), the changelog (§2), comment
 
 Contributions are licensed GPL-3.0-or-later (inbound = outbound). Code copied from another project
 and every new dependency must be under a license compatible with GPL-3.0-or-later. The terms:
-[CONTRIBUTING.md](https://git.unom.io/unom/punktfunk/src/branch/main/CONTRIBUTING.md#licensing-of-contributions-inbound--outbound).
+[CONTRIBUTING.md](https://github.com/Project-Colony/Lilynk/blob/main/CONTRIBUTING.md#licensing-of-contributions-inbound--outbound).

@@ -31,7 +31,7 @@ pub(crate) fn channel_hint(kind: InstallKind) -> String {
     // first. Lives here, not in `ly-update-check` — client-on-Omarchy is out of scope.
     #[cfg(target_os = "linux")]
     if kind == InstallKind::Pacman && crate::osinfo::is_omarchy() {
-        return "omarchy update   (snapshots first; punktfunk rides the same transaction)".into();
+        return "omarchy update   (snapshots first; lilynk rides the same transaction)".into();
     }
     ly_update_check::detect::update_command(kind, Product::Host)
 }
@@ -44,7 +44,7 @@ mod tests {
     #[test]
     fn host_binding_reports_the_deck_source_leg() {
         let p = ly_update_check::detect::Probe {
-            exe: "/home/deck/punktfunk/target-steamos/release/lilynk-host".into(),
+            exe: "/home/deck/lilynk/target-steamos/release/lilynk-host".into(),
             home: Some("/home/deck".into()),
             ..Default::default()
         };

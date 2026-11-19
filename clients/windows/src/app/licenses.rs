@@ -25,7 +25,7 @@ const THIRD_PARTY_NOTICES: &str = include_str!("../../THIRD-PARTY-NOTICES.txt");
 pub(crate) fn licenses_page(pal: &Palette) -> View {
     let app_card = card(
         vstack((
-            text("Punktfunk")
+            text("Lilynk")
                 .font_size(15.0)
                 .font_weight(FontWeight::SEMI_BOLD),
             text(client::about_license_statement())
@@ -68,7 +68,7 @@ pub(crate) fn licenses_page(pal: &Palette) -> View {
 
     page(vec![
         page_header(client::about_licenses_title(), Vec::new()),
-        section(pal, "Punktfunk"),
+        section(pal, "Lilynk"),
         app_card.into(),
         section(pal, desktop::desktop_licenses_section_bundled()),
         natives_card.into(),

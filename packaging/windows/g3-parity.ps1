@@ -49,7 +49,7 @@ $log = Join-Path 'C:\Users\Public' "live-$Tag.log"
 
 # Each directory that exists is prepended, so an installed host is searched first, then
 # FFmpeg, then the stage. ffprobe is a test tool here, not a dependency of the host.
-foreach ($d in @($stage, 'C:\Users\Public\ffmpeg\bin', 'C:\Program Files\Punktfunk')) {
+foreach ($d in @($stage, 'C:\Users\Public\ffmpeg\bin', 'C:\Program Files\Lilynk')) {
     if (Test-Path $d) { $env:PATH = "$d;$env:PATH" }
 }
 

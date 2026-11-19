@@ -2,7 +2,7 @@
 //! the host's own restart for `host.restart`, and the per-verb probe the
 //! discovery route reports.
 //!
-//! Linux drives logind over zbus, authorized for group `punktfunk` by
+//! Linux drives logind over zbus, authorized for group `lilynk` by
 //! `packaging/linux/49-lilynk-power.rules`. A foreign inhibitor or a second
 //! local user makes logind refuse, and that is a `409 blocked`. The door has no
 //! session, so `49-lilynk-door.rules` grants it the second-user variants.
@@ -18,7 +18,7 @@ pub enum PowerVerb {
     Sleep,
     Reboot,
     Shutdown,
-    /// Restart the Punktfunk host process, not the machine.
+    /// Restart the Lilynk host process, not the machine.
     Restart,
 }
 
@@ -181,7 +181,7 @@ where
 }
 
 /// Only logind `"yes"` is available. `"challenge"` means polkit would prompt
-/// (host user not in group `punktfunk`, or a second local session).
+/// (host user not in group `lilynk`, or a second local session).
 #[cfg(target_os = "linux")]
 fn os_probe(verb: PowerVerb) -> Availability {
     let method = match verb {
@@ -195,7 +195,7 @@ fn os_probe(verb: PowerVerb) -> Availability {
         Ok(ans) if ans == "challenge" => Availability::refused(
             "host_power_needs_authorization",
             "The host would need interactive authorization — is the host user in group \
-             'punktfunk' (and no second local user logged in)?",
+             'lilynk' (and no second local user logged in)?",
         ),
         Ok(ans) if ans == "na" => Availability::refused(
             "host_power_not_supported_here",
@@ -242,7 +242,7 @@ fn os_probe(verb: PowerVerb) -> Availability {
         }
         PowerVerb::Restart => Availability::refused(
             "host_restart_no_service",
-            "The host is not running under the Punktfunk service, so nothing would start it again",
+            "The host is not running under the Lilynk service, so nothing would start it again",
         ),
     }
 }
@@ -281,9 +281,8 @@ pub fn act(verb: PowerVerb) -> Result<(), String> {
         }
         PowerVerb::Restart => unreachable!("handled above"),
         PowerVerb::Reboot | PowerVerb::Shutdown => {
-            let reason = windows::core::HSTRING::from(
-                "Requested from a Punktfunk client (host power action)",
-            );
+            let reason =
+                windows::core::HSTRING::from("Requested from a Lilynk client (host power action)");
             // SAFETY: local machine (None); `reason` lives across the call.
             unsafe {
                 InitiateSystemShutdownExW(

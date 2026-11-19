@@ -87,7 +87,7 @@ class KeyCaptureService : AccessibilityService() {
 }
 
 /**
- * The prominent disclosure Play requires before the service is turned on, because Punktfunk is not
+ * The prominent disclosure Play requires before the service is turned on, because Lilynk is not
  * an accessibility tool: what the service receives, where it goes, and an explicit Agree. It stands
  * alone; Play rejects one that shares a prompt with other disclosures. Agree opens Android's
  * Accessibility page; either answer closes the prompt. The `android_keycapture_*` messages match

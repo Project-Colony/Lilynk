@@ -163,7 +163,7 @@ export const runSandboxed = (
 		// shared name would let the old close delete the new socket.
 		const socket = path.join(
 			runtime,
-			"punktfunk",
+			"lilynk",
 			`plugin-${id}-${randomBytes(4).toString("hex")}.sock`,
 		);
 		const url = options.connect?.url ?? publishedMgmtUrl() ?? "https://127.0.0.1:47990";
@@ -179,7 +179,7 @@ export const runSandboxed = (
 		// Its UI socket goes in a dir of its own, forwarded to the host's loopback.
 		let ui: { dir: string; port: number } | undefined;
 		let forward: UiForward | undefined;
-		const dir = path.join(runtime, "punktfunk", `ui-${id}-${randomBytes(4).toString("hex")}`);
+		const dir = path.join(runtime, "lilynk", `ui-${id}-${randomBytes(4).toString("hex")}`);
 		try {
 			fs.mkdirSync(dir, { recursive: true, mode: 0o700 });
 			forward = forwardUi(path.join(dir, "ui.sock"));
@@ -189,7 +189,7 @@ export const runSandboxed = (
 		}
 		// A network plugin's resolver and its pasta's pid, in a dir no sandbox binds.
 		const net = tools
-			? path.join(runtime, "punktfunk", `net-${id}-${randomBytes(4).toString("hex")}`)
+			? path.join(runtime, "lilynk", `net-${id}-${randomBytes(4).toString("hex")}`)
 			: undefined;
 		let stopNet: (() => void) | undefined;
 		const release = (): void => {

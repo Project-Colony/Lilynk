@@ -1,4 +1,4 @@
-//! punktfunk Android client — the JNI bridge ("nativecore") over `lilynk-core`.
+//! lilynk Android client — the JNI bridge ("nativecore") over `lilynk-core`.
 //!
 //! Architecture: the **Rust-heavy** client model (like `lilynk-client-linux`, *not* the
 //! thin-native-over-C-ABI Apple model). This `cdylib` links `lilynk-core` directly and drives
@@ -154,7 +154,7 @@ impl log::Log for RingTee {
     }
 }
 
-/// Initialize logging once when the JVM loads the library: logcat under the `punktfunk` tag,
+/// Initialize logging once when the JVM loads the library: logcat under the `lilynk` tag,
 /// teed into the client log ring (see [`RingTee`]), and a panic hook that logs each panic before
 /// it unwinds. Core `tracing` events (transport warnings:
 /// socket-buffer clamp, QoS failures) arrive here too: tracing's "log" feature — declared
@@ -170,7 +170,7 @@ pub extern "system" fn JNI_OnLoad(
     let logcat = android_logger::AndroidLogger::new(
         android_logger::Config::default()
             .with_max_level(log::LevelFilter::Info)
-            .with_tag("punktfunk"),
+            .with_tag("lilynk"),
     );
     // `set_boxed_logger` (unlike `init_once`) does not set the max level itself.
     if log::set_boxed_logger(Box::new(RingTee(logcat))).is_ok() {
@@ -212,7 +212,7 @@ pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeCons
 }
 
 /// `NativeBridge.nativeSetLanguages(tags: String)` — word the Rust side's text in the first of
-/// `tags` that Punktfunk ships: a JSON array of BCP-47 tags, most preferred first. The console
+/// `tags` that Lilynk ships: a JSON array of BCP-47 tags, most preferred first. The console
 /// does this from its `languages`; call it first when the PyroWave row or the stats overlay's
 /// warnings are read with no console. Bad JSON leaves the language as it was.
 #[unsafe(no_mangle)]

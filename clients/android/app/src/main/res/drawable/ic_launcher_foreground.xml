@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Punktfunk mark: two overlapping violet circles (two "Punkte") with a lighter lens, from the
+  Lilynk mark: two overlapping violet circles (two "Punkte") with a lighter lens, from the
   shared brand logo (clients/apple/.../lilynk_Logo.icon). The source art lives in a 1001x1000
   space; the group scales + centers it into the adaptive-icon 108dp safe zone (inner ~66dp circle).
 -->

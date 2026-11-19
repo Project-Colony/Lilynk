@@ -73,7 +73,7 @@ SELF="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 # option set is saved and restored around the source.
 CAP_MATRIX_SH="$SELF/ci/assert-cap-matrix.sh"
 if [ ! -r "$CAP_MATRIX_SH" ]; then
-  echo "FATAL: cannot read $CAP_MATRIX_SH — run this from a Punktfunk checkout (it owns the" >&2
+  echo "FATAL: cannot read $CAP_MATRIX_SH — run this from a Lilynk checkout (it owns the" >&2
   echo "       capability-string canonicalizer this kit reuses)." >&2
   exit 3
 fi
@@ -1379,21 +1379,21 @@ This is also the fastest way to see whether the worker is installed and capped a
 
 --- Steam Deck (deck@192.168.1.253), DESKTOP mode -- V1 + V2 -------------------------------------
 The Deck is the RADV half of V2 and the KWin×RADV half of V1. /usr is read-only (SteamOS); the
-install is home-scoped under ~/punktfunk, and file capabilities do NOT survive a rebuild (a rebuild
+install is home-scoped under ~/lilynk, and file capabilities do NOT survive a rebuild (a rebuild
 is a new inode).
 
   1. PRIVILEGED, run by a human — sudo on the Deck needs the `deck` password, it is NOT passwordless.
      This also writes ~/.local/share/applications/org.projectcolony.lilynk.host.desktop, which V1 needs and
      which is NOT currently present on that box:
 
-         cd ~/punktfunk && scripts/steamdeck/install.sh
+         cd ~/lilynk && scripts/steamdeck/install.sh
 
      Then LOG OUT AND BACK IN. KWin reads the .desktop when the client first connects and caches the
      grant; an already-running session will not pick up a newly written file.
 
   2. Verify by hand, no root needed:
-         getcap ~/punktfunk/target-steamos/release/lilynk-host            # MUST print nothing
-         getcap ~/punktfunk/target-steamos/release/lilynk-encode-worker   # cap_sys_nice=ep
+         getcap ~/lilynk/target-steamos/release/lilynk-host            # MUST print nothing
+         getcap ~/lilynk/target-steamos/release/lilynk-encode-worker   # cap_sys_nice=ep
 
   3. Unprivileged, from a Desktop-mode terminal:
          scripts/validate-encode-worker.sh inspect v1 v2 v4

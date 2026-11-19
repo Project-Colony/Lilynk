@@ -205,7 +205,7 @@ describe("the ticket page", () => {
 		const squatter = Bun.serve({
 			port: 0,
 			hostname: "127.0.0.1",
-			tls: selfSigned("punktfunk test seat"),
+			tls: selfSigned("lilynk test seat"),
 			fetch: async (req) => {
 				heard.push(await req.text());
 				return Response.json({});

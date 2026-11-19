@@ -1,7 +1,7 @@
 clients/android/app/src/main/kotlin/org/projectcolony/lilynk/ControllersScreen.kt	Steam Controller
 clients/android/app/src/main/kotlin/org/projectcolony/lilynk/ControllersScreen.kt	Steam Controller 2
 clients/android/app/src/main/kotlin/org/projectcolony/lilynk/ControllersScreen.kt	Steam Controller 2
-clients/android/app/src/main/kotlin/org/projectcolony/lilynk/Links.kt	Punktfunk link
+clients/android/app/src/main/kotlin/org/projectcolony/lilynk/Links.kt	Lilynk link
 clients/android/app/src/main/kotlin/org/projectcolony/lilynk/SendLogs.kt	{}) — client log bundle
 clients/android/app/src/main/kotlin/org/projectcolony/lilynk/StreamPeripherals.kt	Sony pad
 clients/android/app/src/main/kotlin/org/projectcolony/lilynk/console/SkiaConsoleShell.kt	Steam Controller

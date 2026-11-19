@@ -97,7 +97,7 @@ for row in "${MATRIX[@]}"; do
           # (`if ldd | grep; then fail` rather than `grep && exit 1`: the latter leaves the block
           # returning grep NOT-found = 1, which under `set -e` fails the container on success.)
           for pkg in $PACKAGES; do
-            for bin in $(dpkg -L "$pkg" | grep -E "^/usr/(bin|libexec/punktfunk)/" || true); do
+            for bin in $(dpkg -L "$pkg" | grep -E "^/usr/(bin|libexec/lilynk)/" || true); do
               if ldd "$bin" 2>/dev/null | grep -F "not found"; then
                 echo "UNRESOLVED SONAME in $bin (from $pkg)"
                 exit 1

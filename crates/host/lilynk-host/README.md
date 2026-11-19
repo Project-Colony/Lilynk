@@ -26,7 +26,7 @@ cargo run -rp lilynk-host -- serve --gamestream    # + Moonlight compatibility
 Then pair from the web console on `https://<host-ip>:47992` or from a client app (the
 management API itself is 47990, and keeps every admin action loopback-only). For anything but
 development, install a package instead — [`packaging/`](../../../packaging/) builds them and
-[docs.punktfunk.unom.io/docs/install](https://docs.punktfunk.unom.io/docs/install) is the user-facing
+[project-colony.github.io/Lilynk/docs/install](https://project-colony.github.io/Lilynk/docs/install) is the user-facing
 guide.
 
 `--help` lists every subcommand and flag, and is the only list that cannot go stale: `serve`, `ctl`

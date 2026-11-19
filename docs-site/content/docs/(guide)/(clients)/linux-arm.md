@@ -1,6 +1,6 @@
 ---
 title: Linux on ARM
-description: What the Punktfunk app decodes in hardware on ARM Linux devices — Steam Frame, Raspberry Pi 5, Rockchip boards, Snapdragon laptops, Apple silicon — and what it decodes on the processor instead.
+description: What the Lilynk app decodes in hardware on ARM Linux devices — Steam Frame, Raspberry Pi 5, Rockchip boards, Snapdragon laptops, Apple silicon — and what it decodes on the processor instead.
 ---
 
 Find what your ARM Linux device decodes in hardware, and what to expect where it can't.
@@ -18,7 +18,7 @@ host picks a codec the device decodes in hardware.
 | Rockchip RK3588 boards | HEVC, 8-bit |
 | Apple silicon (Asahi Linux) | Nothing: H.264 on the processor |
 
-Three limits come from the device's Linux drivers, not from Punktfunk:
+Three limits come from the device's Linux drivers, not from Lilynk:
 
 - **Raspberry Pi 5** decodes HEVC on Raspberry Pi OS's kernel only, and every frame is copied once
   on its way to the screen.
@@ -46,7 +46,7 @@ itself. The app finds your PC on the adapter's network and uses it ahead of your
 the PC is not connected to the adapter, the app uses Wi-Fi.
 
 On a Linux PC, the adapter needs Linux 7.2 or SteamOS 3.9 or newer. While the adapter is
-connected, the Punktfunk packages run it in the low-latency mode Steam sets on SteamOS. Without
+connected, the Lilynk packages run it in the low-latency mode Steam sets on SteamOS. Without
 it, the headset drops the adapter after a few quiet seconds, and the adapter's network scans
 interrupt the stream.
 
@@ -71,5 +71,5 @@ in [Steam Frame wireless adapter](#steam-frame-wireless-adapter).
 
 ### The Steam Frame's controllers do nothing
 
-Outside Steam the headset's controllers are not a gamepad. Add Punktfunk to Steam as a non-Steam
+Outside Steam the headset's controllers are not a gamepad. Add Lilynk to Steam as a non-Steam
 game and start it from your library; Steam then passes them on as one.

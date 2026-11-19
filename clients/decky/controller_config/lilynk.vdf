@@ -2,8 +2,8 @@
 {
 	"version"		"3"
 	"revision"		"2"
-	"title"		"Punktfunk"
-	"description"		"Native touchscreen + full gamepad passthrough for the Punktfunk streaming client."
+	"title"		"Lilynk"
+	"description"		"Native touchscreen + full gamepad passthrough for the Lilynk streaming client."
 	"creator"		"0"
 	"progenitor"		"template://controller_neptune_gamepad_fps.vdf"
 	"url"		"template://controller_neptune_gamepad_fps.vdf"
@@ -17,8 +17,8 @@
 	{
 		"english"
 		{
-			"title"		"Punktfunk"
-			"description"		"Native touchscreen + full gamepad for Punktfunk streaming."
+			"title"		"Lilynk"
+			"description"		"Native touchscreen + full gamepad for Lilynk streaming."
 		}
 	}
 	"group"

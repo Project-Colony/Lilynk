@@ -1,4 +1,4 @@
-// Which Steam compatibility tool a Punktfunk shortcut runs in. The wrapper needs the host's
+// Which Steam compatibility tool a Lilynk shortcut runs in. The wrapper needs the host's
 // flatpak, so any tool breaks the launch: Proton and the Steam Linux Runtime are containers.
 
 /** The slice of `SteamClient.Apps` this module reads. */

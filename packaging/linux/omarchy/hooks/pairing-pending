@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
-# punktfunk hook: a device is asking to pair → an Omarchy toast with an Approve action.
+# lilynk hook: a device is asking to pair → an Omarchy toast with an Approve action.
 #
-# Wired by `lilynk-omarchy setup` as a `pairing.pending` entry in ~/.config/punktfunk/hooks.json.
+# Wired by `lilynk-omarchy setup` as a `pairing.pending` entry in ~/.config/lilynk/hooks.json.
 # The host runs it detached with the event JSON on stdin and every scalar leaf flattened into
 # `PF_EVENT_*` (see automation.md), so nothing here has to parse JSON.
 #
@@ -31,12 +31,12 @@ if [[ -n "$id" ]] && command -v lilynk-host >/dev/null; then
   omarchy-notification-send \
     --urgency=critical \
     --icon=org.projectcolony.lilynk \
-    "Punktfunk pairing request" "$body" \
+    "Lilynk pairing request" "$body" \
     --exec "Approve:lilynk-host ctl approve $id" \
     --exec "Deny:lilynk-host ctl deny $id"
 else
   omarchy-notification-send \
     --urgency=critical \
     --icon=org.projectcolony.lilynk \
-    "Punktfunk pairing request" "$body — approve it in the console"
+    "Lilynk pairing request" "$body — approve it in the console"
 fi

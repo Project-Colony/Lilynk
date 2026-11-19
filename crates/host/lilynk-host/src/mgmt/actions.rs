@@ -61,7 +61,7 @@ const BUILTINS: [Builtin; 5] = [
     },
     Builtin {
         id: "host.restart",
-        title: "Restart Punktfunk",
+        title: "Restart Lilynk",
         danger: true,
         group: "host",
         verb: Verb::Power(PowerVerb::Restart),

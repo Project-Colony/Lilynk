@@ -1,5 +1,5 @@
 #!/bin/sh
-# punktfunk guided installer — PREVIEW.
+# lilynk guided installer — PREVIEW.
 #
 #   cargo build --release -p lilynk-setup
 #   LILYNK_SETUP_BIN=target/release/lilynk-setup sh scripts/install.sh
@@ -22,7 +22,7 @@
 # Exit codes: 0 done · 1 unsupported system / a step failed · 2 bad usage.
 set -u
 
-DOCS=https://docs.punktfunk.unom.io/docs
+DOCS=https://project-colony.github.io/Lilynk/docs
 REGISTRY=${LILYNK_SETUP_REGISTRY:-}
 CHANNEL_DIR=${LILYNK_SETUP_VERSION:-latest}
 
@@ -35,7 +35,7 @@ for arg in "$@"; do
     case "$arg" in
         -h|--help)
             cat <<EOF
-punktfunk guided installer (preview)
+lilynk guided installer (preview)
 
 This script runs the lilynk-setup binary. It takes no options of its own — everything you
 pass is handed to the installer untouched, as is every LILYNK_INSTALL_* variable in the
@@ -67,7 +67,7 @@ done
 
 cat <<EOF
 
-  punktfunk guided installer — PREVIEW
+  lilynk guided installer — PREVIEW
   The per-distro pages stay the documented path; this automates them. Docs: $DOCS/install
 
 EOF

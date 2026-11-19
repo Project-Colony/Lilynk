@@ -2,7 +2,7 @@
 # aarch64-pc-windows-msvc rustup target (windows-client.yml's ARM64 leg). The runner itself -
 # act_runner, Node, rustup, VS Build Tools/NASM/CMake/LLVM - is provisioned generically by
 # unom/infra (windows-runner/windows-runner.pkr.hcl + proxmox/windows-runner's Terraform clone);
-# this script is what punktfunk adds on top, since the ARM64 target isn't every project's
+# this script is what lilynk adds on top, since the ARM64 target isn't every project's
 # concern. See also provision-windows-wdk.ps1 for the driver-build toolchain (also lilynk-only).
 #
 # Idempotent - safe to re-run. Run ELEVATED (admin) on the runner.
@@ -28,11 +28,11 @@ if (Test-Path $rustup) {
   Write-Warning "rustup not found at $rustup - has unom/infra's setup-gitea-runner-base.ps1 run on this box yet?"
 }
 
-# No FFmpeg here: nothing in punktfunk links libav*. A stale C:\Users\Public\ffmpeg can be deleted
+# No FFmpeg here: nothing in lilynk links libav*. A stale C:\Users\Public\ffmpeg can be deleted
 # by hand; this script does not remove what it no longer installs.
 
 
-# --- No Vulkan-Headers here: nothing punktfunk builds on Windows needs Vulkan headers at compile
+# --- No Vulkan-Headers here: nothing lilynk builds on Windows needs Vulkan headers at compile
 # time - ash generates its own bindings and dlopens vulkan-1.dll, which is a GPU-driver component.
 # A stale C:\Users\Public\vulkan-headers is harmless; delete it by hand if you want the disk back. ---
 
@@ -44,12 +44,12 @@ if (Test-Path $rustup) {
 # Steam's streaming drivers on the target box. A stale C:\Users\Public\vbcable on a runner is
 # harmless and can be deleted.
 
-# --- The runner daemon's punktfunk env extension point (unom/infra's
-# scripts/setup-gitea-runner-base.ps1) stays empty: punktfunk needs no runner env vars. Clear a
+# --- The runner daemon's lilynk env extension point (unom/infra's
+# scripts/setup-gitea-runner-base.ps1) stays empty: lilynk needs no runner env vars. Clear a
 # file an older run wrote. ---
 $projectEnv = "C:\Users\Public\act-runner\project-env.ps1"
 if (Test-Path $projectEnv) {
-  Set-Content -Encoding UTF8 $projectEnv "# punktfunk needs no runner env vars"
+  Set-Content -Encoding UTF8 $projectEnv "# lilynk needs no runner env vars"
   info "cleared $projectEnv - restart the gitea-act-runner scheduled task to pick it up"
 }
 
@@ -109,4 +109,4 @@ if (Test-Path (Join-Path $tscDir 'bin\x64\Azure.CodeSigning.Dlib.dll')) {
   if (-not (Test-Path (Join-Path $tscDir 'bin\x64\Azure.CodeSigning.Dlib.dll'))) { throw "extracted $tscVer but bin\x64\Azure.CodeSigning.Dlib.dll is absent." }
 }
 
-info "punktfunk extras provisioned OK."
+info "lilynk extras provisioned OK."

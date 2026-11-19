@@ -111,7 +111,7 @@ final class HostTextTests: XCTestCase {
             "The host's English.")
         XCTAssertEqual(
             try reason(#""unavailable_reason":"logind answered no""#), "logind answered no")
-        XCTAssertEqual(HostAction(id: "host.restart", title: "x").label, "Restart Punktfunk")
+        XCTAssertEqual(HostAction(id: "host.restart", title: "x").label, "Restart Lilynk")
         XCTAssertEqual(HostAction(id: "display.next", title: "x").label, "Next monitor")
     }
 

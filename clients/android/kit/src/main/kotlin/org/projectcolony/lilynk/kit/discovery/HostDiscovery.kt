@@ -370,10 +370,10 @@ class HostDiscovery private constructor(context: Context) {
         // getting the group — the stream holds these same locks to stay awake, so does the browse.
         wifiLocks = buildList {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                wifi.createWifiLock(WifiManager.WIFI_MODE_FULL_LOW_LATENCY, "punktfunk:mdns-ll")?.let(::add)
+                wifi.createWifiLock(WifiManager.WIFI_MODE_FULL_LOW_LATENCY, "lilynk:mdns-ll")?.let(::add)
             }
             @Suppress("DEPRECATION")
-            wifi.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "punktfunk:mdns-hp")?.let(::add)
+            wifi.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "lilynk:mdns-hp")?.let(::add)
         }.onEach { it.setReferenceCounted(false); runCatching { it.acquire() } }
     }
 

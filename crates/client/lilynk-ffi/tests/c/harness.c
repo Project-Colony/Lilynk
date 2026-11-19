@@ -1,5 +1,5 @@
 /*
- * punktfunk C ABI harness.
+ * lilynk C ABI harness.
  *
  * Proves the C ABI links from C and round-trips encoded access units through the full
  * packetize -> FEC -> in-process loopback (with deterministic packet loss) -> FEC
@@ -29,7 +29,7 @@ static LilynkConfig make_config(uint32_t role, uint32_t drop_period) {
 }
 
 int main(void) {
-    printf("punktfunk C ABI harness (abi_version=%u)\n", lilynk_abi_version());
+    printf("lilynk C ABI harness (abi_version=%u)\n", lilynk_abi_version());
 
     /* LilynkConnectOpts: the C compiler agrees with Rust's const-asserted layout, 224 bytes on
      * 64-bit and 160 on 32-bit with no tail padding, so an appended field never lands in bytes an

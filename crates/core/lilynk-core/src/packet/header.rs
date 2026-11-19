@@ -5,7 +5,7 @@
 pub const FLAG_PIC: u8 = 0x1;
 pub const FLAG_SOF: u8 = 0x4;
 /// Bandwidth-probe filler. Not decodable video — do not feed to the decoder.
-/// Punktfunk only; GameStream never sets this bit.
+/// Lilynk only; GameStream never sets this bit.
 pub const FLAG_PROBE: u8 = 0x8;
 
 /// `user_flags` bit, not a transport `flags` bit. Intra-refresh wave complete:

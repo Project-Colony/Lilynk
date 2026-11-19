@@ -1,6 +1,6 @@
 //! Client identity, known-hosts (pinned fingerprints), and the store they share.
 //!
-//! Identity PEMs live in `$XDG_CONFIG_HOME/punktfunk/` (Linux) or `%APPDATA%\punktfunk`
+//! Identity PEMs live in `$XDG_CONFIG_HOME/lilynk/` (Linux) or `%APPDATA%\lilynk`
 //! (Windows). A non-empty `LILYNK_CONFIG_DIR` overrides that directory; an
 //! empty value does not. `lilynk-probe` reads this same directory, so a box
 //! pairs once. On Windows the WinUI shell re-exports this module
@@ -123,9 +123,9 @@ fn set_aside(path: &Path, bytes: &[u8]) {
 /// Directory for the client identity, known hosts, and settings.
 ///
 /// A non-empty `LILYNK_CONFIG_DIR` wins over the OS default: Linux takes
-/// `$XDG_CONFIG_HOME/punktfunk` (`~/.config/punktfunk` when unset), so a Flatpak
-/// lands in its own `~/.var/app` dir; other Unix `~/.config/punktfunk`; Windows
-/// `%APPDATA%\punktfunk`. An empty override is ignored.
+/// `$XDG_CONFIG_HOME/lilynk` (`~/.config/lilynk` when unset), so a Flatpak
+/// lands in its own `~/.var/app` dir; other Unix `~/.config/lilynk`; Windows
+/// `%APPDATA%\lilynk`. An empty override is ignored.
 pub fn config_dir() -> Result<PathBuf> {
     let env = std::env::var_os("LILYNK_CONFIG_DIR");
     if let Some(dir) = resolve_config_dir(env.as_deref()) {
@@ -136,22 +136,22 @@ pub fn config_dir() -> Result<PathBuf> {
 
 /// OS default for [`config_dir`]. Missing `HOME` or `APPDATA` keeps its context
 /// string. Not called when an override already won. The first Linux call adopts
-/// the client files of a legacy `~/.config/punktfunk` the XDG dir lacks.
+/// the client files of a legacy `~/.config/lilynk` the XDG dir lacks.
 fn os_config_base() -> Result<PathBuf> {
     #[cfg(windows)]
     {
         let appdata = std::env::var("APPDATA").context("APPDATA unset")?;
-        Ok(PathBuf::from(appdata).join("punktfunk"))
+        Ok(PathBuf::from(appdata).join("lilynk"))
     }
     #[cfg(target_os = "linux")]
     {
         let dir = crate::paths::xdg_home("XDG_CONFIG_HOME", ".config")
             .context("HOME unset")?
-            .join("punktfunk");
+            .join("lilynk");
         static ADOPTED: std::sync::Once = std::sync::Once::new();
         ADOPTED.call_once(|| {
             if let Some(home) = std::env::var_os("HOME") {
-                adopt_legacy(&PathBuf::from(home).join(".config/punktfunk"), &dir);
+                adopt_legacy(&PathBuf::from(home).join(".config/lilynk"), &dir);
             }
         });
         Ok(dir)
@@ -159,12 +159,12 @@ fn os_config_base() -> Result<PathBuf> {
     #[cfg(not(any(windows, target_os = "linux")))]
     {
         let home = std::env::var("HOME").context("HOME unset")?;
-        Ok(PathBuf::from(home).join(".config/punktfunk"))
+        Ok(PathBuf::from(home).join(".config/lilynk"))
     }
 }
 
 /// Copy the `client-*` files of `legacy` that `dir` lacks, so the identity and pins carry
-/// over: older Flatpak builds kept them in the host's `~/.config/punktfunk` (the manifest
+/// over: older Flatpak builds kept them in the host's `~/.config/lilynk` (the manifest
 /// grants those files read-only), and a native box may set `XDG_CONFIG_HOME` after pairing.
 /// Copies, so the legacy dir stays usable by an older build. Lock and temp files stay behind.
 #[cfg(any(target_os = "linux", all(test, unix)))]
@@ -357,7 +357,7 @@ mod tests {
     fn adopting_the_legacy_dir_copies_only_missing_client_files() {
         use std::os::unix::fs::PermissionsExt;
         let root = crate::presets::tests::scratch_dir("adopt-legacy");
-        let (legacy, dir) = (root.join("legacy"), root.join("xdg/punktfunk"));
+        let (legacy, dir) = (root.join("legacy"), root.join("xdg/lilynk"));
         std::fs::create_dir_all(&legacy).unwrap();
         for (name, body) in [
             ("client-cert.pem", "cert"),

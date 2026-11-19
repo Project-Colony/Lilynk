@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
-import type { Punktfunk } from "@punktfunk/host";
+import type { Lilynk } from "@lilynk/host";
 import { Duration, Effect, Layer, Schema } from "effect";
 import {
 	localServer,
@@ -14,7 +14,7 @@ import { HostClient, type HostClientService } from "../src/host-client.js";
 import { defineLibraryPlugin } from "../src/library/define.js";
 
 const hostLayer = (request: HostClientService["request"]) =>
-	Layer.succeed(HostClient)({ request, facade: {} as Punktfunk });
+	Layer.succeed(HostClient)({ request, facade: {} as Lilynk });
 
 describe("a server on this computer", () => {
 	test("localServer names the port and the loopback address, and nothing elsewhere", () => {
@@ -158,7 +158,7 @@ describe("folder access", () => {
 		try {
 			delete process.env.LILYNK_MGMT_UNIX;
 			expect(unreachable([missing])).toEqual([]);
-			process.env.LILYNK_MGMT_UNIX = "/run/punktfunk/host.sock";
+			process.env.LILYNK_MGMT_UNIX = "/run/lilynk/host.sock";
 			expect(unreachable([missing, missing])).toEqual([missing]);
 		} finally {
 			if (previous === undefined) delete process.env.LILYNK_MGMT_UNIX;
@@ -170,7 +170,7 @@ describe("folder access", () => {
 		const missing = `/definitely-missing-lilynk-${process.pid}`;
 		const previous = process.env.LILYNK_MGMT_UNIX;
 		try {
-			process.env.LILYNK_MGMT_UNIX = "/run/punktfunk/host.sock";
+			process.env.LILYNK_MGMT_UNIX = "/run/lilynk/host.sock";
 			expect(unreachable([{ path: missing, files: true }, missing])).toEqual([
 				{ path: missing, files: true },
 			]);
@@ -185,7 +185,7 @@ describe("folder access", () => {
 		const previousSocket = process.env.LILYNK_MGMT_UNIX;
 		const config = `${import.meta.dir}/.access-${process.pid}`;
 		process.env.LILYNK_CONFIG_DIR = config;
-		process.env.LILYNK_MGMT_UNIX = "/run/punktfunk/host.sock";
+		process.env.LILYNK_MGMT_UNIX = "/run/lilynk/host.sock";
 		const posts: unknown[] = [];
 		const plugin = defineLibraryPlugin({
 			name: "access-test",
@@ -209,10 +209,10 @@ describe("folder access", () => {
 					return [{ id: "access-test", category: "library" }];
 				return [];
 			},
-		} as unknown as Punktfunk;
+		} as unknown as Lilynk;
 		let running: Promise<void> | undefined;
 		try {
-			running = (plugin.def.main as (pf: Punktfunk) => Promise<void>)(pf);
+			running = (plugin.def.main as (pf: Lilynk) => Promise<void>)(pf);
 			const deadline = Date.now() + 5000;
 			while (posts.length === 0 && Date.now() < deadline)
 				await new Promise((resolve) => setTimeout(resolve, 10));
@@ -241,7 +241,7 @@ describe("folder access", () => {
 		const previousSocket = process.env.LILYNK_MGMT_UNIX;
 		const config = `${import.meta.dir}/.access-refused-${process.pid}`;
 		process.env.LILYNK_CONFIG_DIR = config;
-		process.env.LILYNK_MGMT_UNIX = "/run/punktfunk/host.sock";
+		process.env.LILYNK_MGMT_UNIX = "/run/lilynk/host.sock";
 		const reconciles: string[] = [];
 		const plugin = defineLibraryPlugin({
 			name: "refused-test",
@@ -266,10 +266,10 @@ describe("folder access", () => {
 					return [{ id: "refused-test", category: "library" }];
 				return [];
 			},
-		} as unknown as Punktfunk;
+		} as unknown as Lilynk;
 		let running: Promise<void> | undefined;
 		try {
-			running = (plugin.def.main as (pf: Punktfunk) => Promise<void>)(pf);
+			running = (plugin.def.main as (pf: Lilynk) => Promise<void>)(pf);
 			const deadline = Date.now() + 5000;
 			while (reconciles.length === 0 && Date.now() < deadline)
 				await new Promise((resolve) => setTimeout(resolve, 10));

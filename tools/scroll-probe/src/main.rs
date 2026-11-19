@@ -345,7 +345,7 @@ mod linux {
         };
         let surface = comp.create_surface(&qh, ());
         let top = wm.get_xdg_surface(&surface, &qh, ()).get_toplevel(&qh, ());
-        top.set_title("punktfunk scroll-probe".into());
+        top.set_title("lilynk scroll-probe".into());
         top.set_fullscreen(None);
         surface.commit();
         app.surface = Some(surface);

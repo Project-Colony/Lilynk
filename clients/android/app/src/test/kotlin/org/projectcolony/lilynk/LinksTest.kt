@@ -13,9 +13,9 @@ class LinksTest {
 
     @Test
     fun aTitleSavesUnderANameEverySdCardTakes() {
-        assertEquals("Halo Reach.punktfunk", launcherFileName("Halo: Reach"))
-        assertEquals("AC DC Live.punktfunk", launcherFileName("AC/DC  Live?"))
-        assertEquals("Punktfunk.punktfunk", launcherFileName(" ... "))
+        assertEquals("Halo Reach.lilynk", launcherFileName("Halo: Reach"))
+        assertEquals("AC DC Live.lilynk", launcherFileName("AC/DC  Live?"))
+        assertEquals("Lilynk.lilynk", launcherFileName(" ... "))
     }
 
     @Test

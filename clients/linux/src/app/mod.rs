@@ -215,7 +215,7 @@ impl SimpleComponent for AppModel {
     fn init_root() -> Self::Root {
         // The minimum size is what the narrow breakpoint is checked against.
         adw::ApplicationWindow::builder()
-            .title("Punktfunk")
+            .title("Lilynk")
             .default_width(1200)
             .default_height(780)
             .width_request(360)
@@ -375,7 +375,7 @@ impl SimpleComponent for AppModel {
         });
         nav.add(
             &adw::NavigationPage::builder()
-                .title("Punktfunk")
+                .title("Lilynk")
                 .tag("main")
                 .child(&views)
                 .build(),
@@ -771,7 +771,7 @@ fn clear_steam_sdl_device_filter() {
 }
 
 /// Reads the OS's languages into `ly_l10n`. GTK and libadwaita translate their own strings
-/// through gettext; while Punktfunk reads English, their messages stay English too, so one
+/// through gettext; while Lilynk reads English, their messages stay English too, so one
 /// window never mixes two languages. Every other locale category follows the OS. Call before
 /// GTK starts and before any other thread exists.
 #[allow(unsafe_code)]
@@ -802,7 +802,7 @@ pub fn run() -> glib::ExitCode {
     // real devices (same rationale as the session binary).
     clear_steam_sdl_device_filter();
     // Headless paths (no GTK window). Pairing, wake, host listing and reset live in the
-    // `punktfunk` CLI, which ships in the same package.
+    // `lilynk` CLI, which ships in the same package.
     if let Some(target) = crate::cli::arg_value("--library") {
         return crate::cli::headless_library(&target);
     }
@@ -826,7 +826,7 @@ pub fn run() -> glib::ExitCode {
     // HANDLES_OPEN is what makes `Exec=lilynk-client %u` work: GApplication turns the URI
     // into an `open` call, and — this is the part that matters — a SECOND invocation forwards
     // its URI to the already-running instance over D-Bus and exits, so clicking a link with
-    // Punktfunk open reuses the window instead of racing a new one.
+    // Lilynk open reuses the window instead of racing a new one.
     let mut builder = adw::Application::builder()
         .application_id(APP_ID)
         .flags(gio::ApplicationFlags::HANDLES_OPEN);

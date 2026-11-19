@@ -1,4 +1,4 @@
-// Serves the shell's window list to the punktfunk host over D-Bus. GNOME gives Wayland clients no
+// Serves the shell's window list to the lilynk host over D-Bus. GNOME gives Wayland clients no
 // window list of its own, and the host needs one to tell when a launched game's window is up.
 // Titles stay in the shell: the host matches on pid and class alone.
 

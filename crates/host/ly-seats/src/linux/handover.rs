@@ -21,7 +21,7 @@ use std::time::{Duration, Instant};
 use zeroize::Zeroizing;
 
 /// Where the supervisor hands the password out: root's alone, `0600`.
-pub const SOCKET_PATH: &str = "/run/punktfunk/seats-login.sock";
+pub const SOCKET_PATH: &str = "/run/lilynk/seats-login.sock";
 /// The longest the supervisor keeps a password for its helper.
 pub(super) const LIFETIME: Duration = Duration::from_secs(30);
 /// A peer sends its request at once and reads the answer at once.

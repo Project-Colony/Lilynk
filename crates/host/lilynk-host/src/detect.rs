@@ -1,6 +1,6 @@
 //! Conflicting game-streaming host detection.
 //!
-//! Punktfunk shares NVIDIA GameStream ports, `_nvstream._tcp`, and often a
+//! Lilynk shares NVIDIA GameStream ports, `_nvstream._tcp`, and often a
 //! virtual-display driver with Sunshine and its forks. Running another host
 //! alongside is unsupported.
 //!
@@ -155,7 +155,7 @@ pub struct Known {
     pub flatpaks: &'static [&'static str],
 }
 
-/// Sunshine and forks that clash with Punktfunk. Add a row; every surface picks it up.
+/// Sunshine and forks that clash with Lilynk. Add a row; every surface picks it up.
 pub const KNOWN: &[Known] = &[
     Known {
         product: Product::Sunshine,
@@ -200,8 +200,7 @@ pub const KNOWN: &[Known] = &[
 ];
 
 /// Why running side-by-side breaks — shared by every surface (log, subcommand, installers).
-pub const UNSUPPORTED_BLURB: &str =
-    "Running Punktfunk alongside another Moonlight-compatible host \
+pub const UNSUPPORTED_BLURB: &str = "Running Lilynk alongside another Moonlight-compatible host \
 (Sunshine and its forks) is UNSUPPORTED: they bind the same GameStream ports (47984/47989, \
 47998-48010), advertise the same _nvstream mDNS name, and often install a conflicting \
 virtual-display driver. Expect \"address already in use\" errors, failed pairing, and capture \

@@ -1,6 +1,6 @@
-// The two fixed Punktfunk shortcuts. gamescope focuses and fullscreens only the window tree Steam
+// The two fixed Lilynk shortcuts. gamescope focuses and fullscreens only the window tree Steam
 // launched, so a stream starts as a non-Steam shortcut whose exe is `/bin/sh` running the wrapper
-// (bin/lilynkrun.sh), via RunGame. Both share the name "Punktfunk", so Steam keys them to one
+// (bin/lilynkrun.sh), via RunGame. Both share the name "Lilynk", so Steam keys them to one
 // controller layout:
 //
 //   • STREAM — hidden, stateful: its launch options carry the host reference and per-stream
@@ -39,9 +39,9 @@ function setShortcutHidden(appId: number, hidden: boolean): void {
 
 // User-visible in the overlay and the library, so brand-cased. Both fixed roles share it, so Steam
 // keys them to the same controller layout (the configset key is the lowercase name).
-const SHORTCUT_NAME = "Punktfunk";
+const SHORTCUT_NAME = "Lilynk";
 
-/** A "Punktfunk" shortcut to ADOPT instead of minting a new library entry, for a lost appId or a
+/** A "Lilynk" shortcut to ADOPT instead of minting a new library entry, for a lost appId or a
  *  pile of duplicates. Only overviews Steam says are shortcuts qualify, and the other role's id
  *  is excluded so the two roles never collapse onto one shortcut. The caller rewrites exe, dir,
  *  options and visibility, so any of them serves. */
@@ -66,7 +66,7 @@ function findAdoptableShortcut(excludeAppId: number | null): number | null {
   return null;
 }
 
-/** Remove every "Punktfunk" shortcut beyond the two remembered role ids. Reachable ONLY from the
+/** Remove every "Lilynk" shortcut beyond the two remembered role ids. Reachable ONLY from the
  *  user-pressed recreate button, never from mount: deleting library entries at boot is a bigger
  *  hazard than the duplicates it would tidy. Returns how many entries were removed. */
 function removeDuplicateShortcuts(): number {
@@ -90,7 +90,7 @@ function removeDuplicateShortcuts(): number {
       removed++;
     }
   } catch (e) {
-    console.warn("punktfunk: duplicate-shortcut sweep incomplete", e);
+    console.warn("lilynk: duplicate-shortcut sweep incomplete", e);
   }
   return removed;
 }
@@ -116,10 +116,10 @@ async function configOnce(marker: string, name: string): Promise<void> {
     if (r?.ok && (r.applied ?? []).some((a) => a.startsWith("configset:"))) {
       write(marker, `${CONFIG_VERSION}`);
     } else {
-      console.warn("punktfunk: controller config not fully applied", r);
+      console.warn("lilynk: controller config not fully applied", r);
     }
   } catch (e) {
-    console.warn("punktfunk: controller config not applied", e);
+    console.warn("lilynk: controller config not applied", e);
   }
 }
 
@@ -227,7 +227,7 @@ const STREAM_ROLE: ShortcutRole = {
 };
 
 /**
- * The GAMEPAD-UI shortcut (visible, stateless): the library-facing "Punktfunk" entry that opens
+ * The GAMEPAD-UI shortcut (visible, stateless): the library-facing "Lilynk" entry that opens
  * the client's console home. PF_BROWSE → the wrapper runs the session's `--browse --fullscreen`;
  * %command% expands to the shortcut exe (/bin/sh) with the wrapper behind it as an arg.
  * PF_CLIENT_BIN only for a resolved NATIVE client, else the wrapper's flatpak default stands.
@@ -252,15 +252,15 @@ export async function ensureGamepadUiShortcut(): Promise<number | null> {
   try {
     return (await ensureShortcut(UI_ROLE)).appId;
   } catch (e) {
-    console.warn("punktfunk: gamepad-UI shortcut not ensured", e);
+    console.warn("lilynk: gamepad-UI shortcut not ensured", e);
     return null;
   }
 }
 
 /**
- * Force the visible "Punktfunk" library entry back into existence: the recovery button, safe to
+ * Force the visible "Lilynk" library entry back into existence: the recovery button, safe to
  * press anytime. Drops each remembered appId that no longer maps to a live shortcut (so it can't
- * shadow a fresh AddShortcut), re-ensures, then sweeps surplus "Punktfunk" entries. Covers a
+ * shadow a fresh AddShortcut), re-ensures, then sweeps surplus "Lilynk" entries. Covers a
  * shortcut deleted without a reinstall, which no mount repairs. Returns the visible appId (null
  * on failure) and how many duplicates went.
  */

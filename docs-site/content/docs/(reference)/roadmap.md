@@ -1,14 +1,14 @@
 ---
 title: "Roadmap"
-description: "Where Punktfunk is heading: the live roadmap on improve unom, and what is not planned."
+description: "Where Lilynk is heading: the live roadmap on improve unom, and what is not planned."
 ---
 
-The roadmap is on [improve unom](https://improve.unom.io/p/punktfunk/roadmap): the ideas that are
+The roadmap is on [improve unom](https://github.com/Project-Colony/Lilynk/issues): the ideas that are
 planned, being built or already shipped, with their votes. Vote there for what you want, or post
 an idea of your own.
 
 For what works today, see the [Support matrix](/docs/support-matrix); for what changed, the
-[release notes](https://git.unom.io/unom/punktfunk/releases).
+[release notes](https://github.com/Project-Colony/Lilynk/releases).
 
 ## Not planned, or blocked upstream
 

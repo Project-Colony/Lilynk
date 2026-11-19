@@ -1,4 +1,4 @@
-//! GNOME's window list, from punktfunk's own GNOME Shell extension over D-Bus.
+//! GNOME's window list, from lilynk's own GNOME Shell extension over D-Bus.
 //!
 //! Mutter offers Wayland clients no toplevel list, and the shell's `Introspect` API answers only
 //! GNOME's own portal and screencast services. The extension (`gnome-shell/lilynk-windows@projectcolony.org`,

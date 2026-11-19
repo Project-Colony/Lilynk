@@ -1,9 +1,9 @@
 ---
 title: Wake-on-LAN
-description: Wake a sleeping host from a Punktfunk client — what has to happen first, the punktfunk wake command, and how to arm the host machine.
+description: Wake a sleeping host from a Lilynk client — what has to happen first, the lilynk wake command, and how to arm the host machine.
 ---
 
-Punktfunk clients wake a sleeping host with a Wake-on-LAN magic packet. The clients do it out of
+Lilynk clients wake a sleeping host with a Wake-on-LAN magic packet. The clients do it out of
 the box; the host machine has to be armed to wake, and that is where Wake-on-LAN usually fails:
 see [Arming the machine](#arming-the-machine). To put the host to sleep, see
 [Host power](/docs/host-power).
@@ -12,7 +12,7 @@ see [Arming the machine](#arming-the-machine). To put the host to sleep, see
 
 - **The client has to see the host awake once.** It learns the host's network card address (MAC)
   from the host's local-network announcement and keeps it. Open the client on the same network
-  while the host is on (`punktfunk discover` on the command line). The Linux, Windows, Apple and
+  while the host is on (`lilynk discover` on the command line). The Linux, Windows, Apple and
   Android apps also take a MAC typed in by hand.
 - **Client and host share a network.** Magic packets don't cross subnets, a VPN or a mesh network.
 - **Wired Ethernet is the sure thing.** Wi-Fi works when the adapter supports Wake on Wireless LAN
@@ -38,10 +38,10 @@ A saved host's menu also has **Wake host** while it is offline and its MAC is kn
 | Windows | Sends the packet | Under **Edit…** |
 | macOS · iOS · iPadOS · tvOS | Waits on the waking screen | On the host's page |
 | Android · Android TV | Waits on the waking screen | Under **Edit…** |
-| Punktfunk Console | In the host's options; on an asleep host's card the hint bar reads **Wake & connect** | Not offered |
+| Lilynk Console | In the host's options; on an asleep host's card the hint bar reads **Wake & connect** | Not offered |
 
 - The Apple apps add a **Wake Host** action to Shortcuts; on iPhone and iPad say *"Wake ⟨host⟩
-  with Punktfunk"*.
+  with Lilynk"*.
 - Android 17 and later asks for the local-network permission before the app can reach anything on
   your network, wake packets included.
 - The [Steam Deck plugin](/docs/steam-deck) wakes through the client, following its auto-wake
@@ -49,10 +49,10 @@ A saved host's menu also has **Wake host** while it is offline and its MAC is kn
 
 ### From the command line
 
-With the [`punktfunk` command](/docs/clients#scripting-the-punktfunk-cli):
+With the [`lilynk` command](/docs/clients#scripting-the-lilynk-cli):
 
 ```bash
-punktfunk wake <host-ref> [--wait]
+lilynk wake <host-ref> [--wait]
 ```
 
 `<host-ref>` is a saved host's id, name or address. Without `--wait` it sends the packet and
@@ -66,11 +66,11 @@ seconds.
 | `5` | No saved host matches, the name is ambiguous, or no MAC is known yet |
 | `6` | That address isn't a saved host: pair it first |
 
-`punktfunk launch` wakes the host by itself when auto-wake is on.
+`lilynk launch` wakes the host by itself when auto-wake is on.
 
 ## Arming the machine
 
-Punktfunk never changes these settings:
+Lilynk never changes these settings:
 
 1. **BIOS/UEFI:** turn on **Wake on LAN**, **Wake on PCIe**, or your vendor's name for it.
 2. **The network card:** arm it to wake on a magic packet, below.

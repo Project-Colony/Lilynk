@@ -1,4 +1,4 @@
-"""Punktfunk Decky plugin: the backend bridge the Gaming-Mode panel calls (``src/backend.ts``).
+"""Lilynk Decky plugin: the backend bridge the Gaming-Mode panel calls (``src/backend.ts``).
 
 Each method delegates to ``py_modules/ly_decky``. The method names, their parameters and
 defaults, and the result shapes are the frontend's contract. Decky appends ``py_modules`` to
@@ -70,7 +70,7 @@ class Plugin:
     async def save_icon(self, appid: int, png_base64: str) -> dict:
         return await art.save_icon(appid, png_base64)
 
-    async def apply_controller_config(self, name: str = "Punktfunk") -> dict:
+    async def apply_controller_config(self, name: str = "Lilynk") -> dict:
         return await steam_input.apply_controller_config(name)
 
     async def runner_info(self) -> dict:
@@ -101,10 +101,10 @@ class Plugin:
     # Decky lifecycle.
 
     async def _main(self):
-        decky.logger.info("punktfunk plugin loaded (runner=%s)", client._runner_path())
+        decky.logger.info("lilynk plugin loaded (runner=%s)", client._runner_path())
 
     async def _unload(self):
-        decky.logger.info("punktfunk plugin unloading")
+        decky.logger.info("lilynk plugin unloading")
 
     async def _uninstall(self):
-        decky.logger.info("punktfunk plugin uninstalled")
+        decky.logger.info("lilynk plugin uninstalled")

@@ -1,5 +1,5 @@
 //! A seat's `/dev/uinput`. The supervisor serves each running seat a CUSE device,
-//! `/dev/punktfunk/uinput-<account>`, which the seat's unit binds over `/dev/uinput`, and replays
+//! `/dev/lilynk/uinput-<account>`, which the seat's unit binds over `/dev/uinput`, and replays
 //! each open onto a real `/dev/uinput` of its own. A seat never holds the real node: a device it
 //! made there would sit on seat0, and a keyboard or mouse reaches the VT's SysRq and
 //! `/dev/input/mice` whoever owns its node. So only gamepad capabilities pass ([`allowed`]), the
@@ -880,7 +880,7 @@ impl Handle {
 }
 
 /// Where `lilynk-seats drain` reaches the running supervisor: root's alone.
-const DRAIN_SOCKET: &str = "/run/punktfunk/uinput-drain.sock";
+const DRAIN_SOCKET: &str = "/run/lilynk/uinput-drain.sock";
 /// How long the unit's `ExecStop=` waits for the supervisor to answer.
 const DRAIN_WAIT: Duration = Duration::from_secs(5);
 

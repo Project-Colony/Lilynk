@@ -11,7 +11,7 @@ encoder on its own, so most variables here are overrides you rarely need.
 
 | | Linux | Windows |
 |---|---|---|
-| File | `~/.config/punktfunk/host.env` | `%ProgramData%\punktfunk\host.env` |
+| File | `~/.config/lilynk/host.env` | `%ProgramData%\lilynk\host.env` |
 | Apply an edit | `systemctl --user restart lilynk-host` | `lilynk-host service restart` (elevated) |
 
 One `KEY=value` per line; `#` starts a comment and keys are case-sensitive. The host reads the file
@@ -27,7 +27,7 @@ Resolution and bitrate aren't host settings — the client picks them. See [Bitr
 
 Each row is on **Host**; **Show advanced** reveals the rest, and searching for the
 `host.env` name finds a row. A `host.env` line or a command-line flag wins and locks the row: remove
-it and restart to hand the setting back. **Restart Punktfunk** applies the rows marked *after a
+it and restart to hand the setting back. **Restart Lilynk** applies the rows marked *after a
 restart*.
 
 | Setting | `host.env` | Values | Default | Applies |
@@ -157,7 +157,7 @@ Env-only additions to the **Game Mode** rows above. See [gamescope](/docs/gamesc
 | `LILYNK_GAMESCOPE_NODE` | `auto` · node id | Attach to a running gamescope's video node at its own mode. Outranks `LILYNK_GAMESCOPE_SESSION`. |
 | `LILYNK_GAMESCOPE_APP` | command | What a bare gamescope session runs, e.g. `vkcube --wsi xcb`. |
 | `LILYNK_GAMESCOPE_BIN` | path | The gamescope binary for sessions the host starts. Unset: `lilynk-gamescope` on `PATH`, then `gamescope`. |
-| `LILYNK_GAMESCOPE_WSI_LAYER_DIR` | path | Where the Vulkan layer that gives nested games an HDR10 swapchain lives (default `/usr/lib/punktfunk/vulkan/implicit_layer.d`; the NixOS module sets it). |
+| `LILYNK_GAMESCOPE_WSI_LAYER_DIR` | path | Where the Vulkan layer that gives nested games an HDR10 swapchain lives (default `/usr/lib/lilynk/vulkan/implicit_layer.d`; the NixOS module sets it). |
 
 ## Compositor-specific (Linux)
 
@@ -202,7 +202,7 @@ Env-only additions to the **Game Mode** rows above. See [gamescope](/docs/gamesc
 | Variable | Values | What it does |
 |---|---|---|
 | `LILYNK_AUDIO_GAIN` | number (default `1.0`, max `8.0`) | Boosts captured desktop audio on both protocols; a soft limiter rounds off peaks. The only host-side level on Windows, where capture ignores the speaker volume. |
-| `LILYNK_STREAM_SINK` | unset · `stream` · `0` | Linux: where desktop audio is captured. Unset, the host creates **Punktfunk Stream Speaker**, makes it the default while streaming and records it. `stream` uses a capture stream in its place; `0` records your current default output. |
+| `LILYNK_STREAM_SINK` | unset · `stream` · `0` | Linux: where desktop audio is captured. Unset, the host creates **Lilynk Stream Speaker**, makes it the default while streaming and records it. `stream` uses a capture stream in its place; `0` records your current default output. |
 | `LILYNK_MIC_DEVICE` | name substring | Windows: the device the client's microphone is routed to. |
 | `LILYNK_LOOPBACK_DEVICE` | name substring | Windows: the output device desktop audio is captured from, in place of the host's own pick. `follow_default` captures the default output instead. |
 | `LILYNK_MIC_LEGACY_BUFFER` | `1` | Fixed microphone buffering instead of the adaptive one. If the mic only sounds right with this set, [report it](/docs/report-an-issue). |
@@ -236,7 +236,7 @@ Windows: the driver's host process keeps the environment it was started with.
 | `PFVD_POOL_BYPASS` | `0` · any other value | Whether the encoder reads the display's frame in place or from a copy. `0` copies every frame; any other value reads in place on every encoder that can. Unset, the NVIDIA, AMD and Intel encoders read in place and the Media Foundation encoder copies. When the next stream starts. |
 
 Restarting the adapter restarts one device, not the PC. With no stream running, open **Device
-Manager**, expand **Display adapters**, disable **Punktfunk Virtual Display**, then enable it again.
+Manager**, expand **Display adapters**, disable **Lilynk Virtual Display**, then enable it again.
 
 ## Network & discovery
 
@@ -256,14 +256,14 @@ can't carry them stays at standard size. Native protocol only.
 
 | Variable | Values | What it does |
 |---|---|---|
-| `LILYNK_MGMT_TOKEN` | token | Normally unset: the host generates the management token into `~/.config/punktfunk/mgmt-token`. A value set here is saved to that file and removed from the host's environment. |
-| `LILYNK_PLUGIN_TOKEN` | token | The plugin runner's narrower token, handled the same way (`~/.config/punktfunk/plugin-token`). |
-| `LILYNK_UI_PASSWORD_HASH` | argon2id hash | What a console sign-in is checked against; the console writes it to `~/.config/punktfunk/web-password`. See [Forgot your Password?](/docs/forgot-password). |
+| `LILYNK_MGMT_TOKEN` | token | Normally unset: the host generates the management token into `~/.config/lilynk/mgmt-token`. A value set here is saved to that file and removed from the host's environment. |
+| `LILYNK_PLUGIN_TOKEN` | token | The plugin runner's narrower token, handled the same way (`~/.config/lilynk/plugin-token`). |
+| `LILYNK_UI_PASSWORD_HASH` | argon2id hash | What a console sign-in is checked against; the console writes it to `~/.config/lilynk/web-password`. See [Forgot your Password?](/docs/forgot-password). |
 | `LILYNK_UI_PASSWORD` | password | A console password in clear text; the next sign-in replaces it with the hash. This is how you reset it. |
 | `LILYNK_MGMT_BIND` | `IP:PORT` (default `0.0.0.0:47990`) | Where the management API listens; `--mgmt-bind` overrides it. `127.0.0.1:47990` keeps it off the LAN (paired clients then can't browse your library); another port lets it share the machine with Sunshine or Apollo. The console, plugin runner and tray follow the port through the `mgmt-endpoint` file. See [another streaming host is installed](/docs/troubleshooting-connect#another-streaming-host-sunshine-apollo--is-installed). |
 | `LILYNK_UI_BIND` | address (default `0.0.0.0`) | Where the web console listens: `0.0.0.0` for your network, `127.0.0.1` for this machine, or one address such as a VPN interface. It never answers the internet. The installers ask; on NixOS use `services.lilynk.web.bind`. |
 | `LILYNK_UI_PLUGIN_PORT` | port (default console port + 1) | The separate origin plugin pages load from. If the console log says it couldn't open, point it at a free port. |
-| `LILYNK_CONFIG_DIR` | path | The config directory (default `~/.config/punktfunk`, `%ProgramData%\punktfunk` on Windows): pairing state, certificates, `apps.json`. The desktop clients read the same name for their own files — see [Client-side](#client-side-native-clients). |
+| `LILYNK_CONFIG_DIR` | path | The config directory (default `~/.config/lilynk`, `%ProgramData%\lilynk` on Windows): pairing state, certificates, `apps.json`. The desktop clients read the same name for their own files — see [Client-side](#client-side-native-clients). |
 | `LILYNK_PLUGIN_SANDBOX` | `off` | Runs [plugins](/docs/plugins) without their sandboxes, with your account's access — only for a kernel that refuses unprivileged user namespaces. The runner doesn't read `host.env`: set it with `systemctl --user edit lilynk-scripting` as `Environment=LILYNK_PLUGIN_SANDBOX=off`. |
 | `LILYNK_LIBRARY_ART_ROOTS` | directories, separated like `PATH` | Where the host may read local game art. Replaces the defaults (your home plus the system icon and Flatpak directories on Linux; `C:\Users` and your Steam and Playnite installs on Windows), so list every root. The host logs `dropped local art the proxy may not serve` when one is missing. |
 | `LILYNK_LIBRARY_ART_CACHE` | path | Where downloaded covers are kept (default under `~/.cache` or `%LOCALAPPDATA%`). `lilynk-host library art --clear` empties it. |
@@ -293,14 +293,14 @@ can't carry them stays at standard size. Native protocol only.
 | Variable | Values | What it does |
 |---|---|---|
 | `LILYNK_PERF` | `1` | Log per-stage timing (capture, encode, send). |
-| `RUST_LOG` | `info` · `debug` · `trace` | Log detail. Windows logs go to `%ProgramData%\punktfunk\logs\`. |
+| `RUST_LOG` | `info` · `debug` · `trace` | Log detail. Windows logs go to `%ProgramData%\lilynk\logs\`. |
 | `LILYNK_VIDEO_DROP` | `1`–`90` (percent) | Drop that share of video packets to test error correction. Testing only. |
 
 The host also reads debugging variables not listed here; they change between releases.
 
 ## Client-side (native clients)
 
-Read by the Linux and Windows clients, the Decky plugin and the `punktfunk` CLI — not the host. `LILYNK_AUDIO_HIRES` and `LILYNK_CONFIG_DIR` are also read by the host, each for its own files. On/off variables read
+Read by the Linux and Windows clients, the Decky plugin and the `lilynk` CLI — not the host. `LILYNK_AUDIO_HIRES` and `LILYNK_CONFIG_DIR` are also read by the host, each for its own files. On/off variables read
 like the host's: `0`, `false`, `off` or `no` (any case) is off, any other value on.
 
 | Variable | Values | What it does |
@@ -313,7 +313,7 @@ like the host's: `0`, `false`, `off` or `no` (any case) is off, any other value 
 | `LILYNK_PAD_SPEAKER_PATH` · `LILYNK_PAD_SPEAKER_VOLUME` | byte (default `0x20` / `0x64`) | Which DualSense output [controller audio](/docs/controller-audio) plays to, and how loud. Change them only if the pad's speaker stays silent. |
 | `LILYNK_PAD_AUDIO_PROFILE` | `0` | Linux: don't switch a wired DualSense's sound card to **Pro Audio** while streaming controller audio. Without it the voice coils fold into the speaker pair. |
 | `LILYNK_OSD_SCALE` | multiplier (default `1`) | Size of the in-stream overlay on top of display scaling, from 0.5 to 4. |
-| `LILYNK_CONFIG_DIR` | path | Where this client keeps its identity, saved hosts and settings (default `$XDG_CONFIG_HOME/punktfunk`, which is `~/.config/punktfunk` unless that variable is set, and `%APPDATA%\punktfunk` on Windows). Empty is ignored. Moving it moves that identity, so paired hosts need pairing again. The Flatpak keeps its own in `~/.var/app/org.projectcolony.lilynk/config/punktfunk` and copies an older `~/.config/punktfunk` the first time it starts. The private key is readable only by the account that created it. |
+| `LILYNK_CONFIG_DIR` | path | Where this client keeps its identity, saved hosts and settings (default `$XDG_CONFIG_HOME/lilynk`, which is `~/.config/lilynk` unless that variable is set, and `%APPDATA%\lilynk` on Windows). Empty is ignored. Moving it moves that identity, so paired hosts need pairing again. The Flatpak keeps its own in `~/.var/app/org.projectcolony.lilynk/config/lilynk` and copies an older `~/.config/lilynk` the first time it starts. The private key is readable only by the account that created it. |
 | `LILYNK_AUDIO_HIRES` | `1` · `48000` · `96000` · `<rate>/<bits>` · `0` | Asks for lossless audio, over the client's audio-format setting: `1` is 96 kHz/24-bit, a bare rate is 24-bit, `48000/16` is the cheapest. `0` or empty forces Opus; anything else is ignored. The host's **Lossless audio** reads the same name as on/off. |
 | `LILYNK_NO_AEC` | `1` | Turn microphone echo cancellation off for this run. |
 | `LILYNK_PRESENT_MODE` | `mailbox` · `fifo` · `immediate` · `fifo_relaxed` | Vulkan present mode. With V-sync on the default is `mailbox`, else `fifo` (AMD's Windows driver has no mailbox); in fullscreen on a driver whose surface offers `FIFO_LATEST_READY`, that mode comes first. With V-sync off `immediate` comes first, which on Wayland asks the compositor to tear. |

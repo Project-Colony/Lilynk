@@ -813,7 +813,7 @@ pub extern "C" fn lilynk_console_palettes() -> *mut c_char {
     })
 }
 
-/// Word the Rust side's text in the first of `languages_json` that Punktfunk ships, a JSON
+/// Word the Rust side's text in the first of `languages_json` that Lilynk ships, a JSON
 /// array of BCP-47 tags, most preferred first. `lilynk_console_new` does this from its
 /// `languages`; call it first when the palettes or the PyroWave warning are read with no
 /// console. NULL or bad JSON leaves the language as it was.

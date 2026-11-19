@@ -143,7 +143,7 @@ pub struct DiscoveredHost {
     /// OS-identity chain from mDNS `os` (`windows` | `macos` | `linux[/<family>][/<id>]`),
     /// sanitized ([`sanitize_os`]). Empty if absent.
     pub os: String,
-    /// The punktfunk protocols the host answers, from mDNS `wire` (`1,2`). Empty from a host
+    /// The lilynk protocols the host answers, from mDNS `wire` (`1,2`). Empty from a host
     /// that does not say, which answers `punktfunk/1`.
     pub wire: Vec<u8>,
 }
@@ -160,7 +160,7 @@ impl DiscoveredHost {
     }
 }
 
-/// The host a resolved advert describes, or `None` when it is no usable punktfunk host:
+/// The host a resolved advert describes, or `None` when it is no usable lilynk host:
 /// another `proto` (some other service sharing the type) or no IPv4 address. IPv4 only:
 /// clients dial `{host}:{port}`, which a bare IPv6 literal cannot parse. `txt` reads one
 /// TXT value; every value is unauthenticated.

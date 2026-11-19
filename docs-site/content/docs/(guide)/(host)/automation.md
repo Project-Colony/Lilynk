@@ -25,8 +25,8 @@ In the console, open **Automation** → **Add hook**, pick the event under **Whe
 matches a whole domain) and **Run a command** or **Call a webhook** under **Then**. **Only for a
 specific client or game** narrows it. **Save** asks for the console password.
 
-The console writes `~/.config/punktfunk/hooks.json` (Windows:
-`%ProgramData%\punktfunk\hooks.json`). You can edit that file by hand or `PUT` it to
+The console writes `~/.config/lilynk/hooks.json` (Windows:
+`%ProgramData%\lilynk\hooks.json`). You can edit that file by hand or `PUT` it to
 `/api/v1/hooks`; changes apply from the next event.
 
 The console sets no hooks for a profile on an existing account, on Linux and Windows: its hooks
@@ -36,13 +36,13 @@ didn't set.
 ```json
 {
   "hooks": [
-    { "on": "stream.started", "run": "/home/me/.config/punktfunk/scripts/on-stream.sh" },
+    { "on": "stream.started", "run": "/home/me/.config/lilynk/scripts/on-stream.sh" },
     { "on": "client.connected",
       "filter": { "fingerprint": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08" },
       "run": "kscreen-doctor output.HDMI-A-1.mode.3840x2160@60" },
     { "on": "pairing.pending",
-      "webhook": "https://ha.local/api/webhook/punktfunk",
-      "hmac_secret_file": "/home/me/.config/punktfunk/webhook-secret" }
+      "webhook": "https://ha.local/api/webhook/lilynk",
+      "hmac_secret_file": "/home/me/.config/lilynk/webhook-secret" }
   ]
 }
 ```
@@ -100,7 +100,7 @@ On Linux, give the script its own sudoers rule and run it with `sudo -n`, which 
 instead of waiting for a password. Keep the script owned by root: whoever can edit it runs as root.
 
 ```sh
-# sudo visudo -f /etc/sudoers.d/punktfunk
+# sudo visudo -f /etc/sudoers.d/lilynk
 me ALL=(root) NOPASSWD: /usr/local/bin/tv-hdr.sh
 ```
 
@@ -108,7 +108,7 @@ The hook's `run` is then `sudo -n /usr/local/bin/tv-hdr.sh`.
 
 ### Webhooks
 
-The host POSTs the event JSON with verified TLS, follows no redirects and sends no Punktfunk
+The host POSTs the event JSON with verified TLS, follows no redirects and sends no Lilynk
 credentials. A webhook can't point at `localhost`, a loopback or a link-local address; use `run`
 for a receiver on the host itself. LAN addresses and hostnames are fine.
 
@@ -131,7 +131,7 @@ own.
 
 ```json
 { "on": "game.launching", "filter": { "preset": "Docked" }, "hold": true, "timeout_s": 20,
-  "run": "/home/me/.config/punktfunk/scripts/tv-profile.sh" }
+  "run": "/home/me/.config/lilynk/scripts/tv-profile.sh" }
 ```
 
 Plugins hold the same stage: see [Writing plugins](/docs/developers/writing-plugins#hold-a-launch).
@@ -153,7 +153,7 @@ order, even when it ends in an error. A `do` that fails is logged and its `undo`
 console's Library form keeps prep steps but can't edit them.
 
 Every step gets the session's mode: `PF_STREAM_WIDTH`, `PF_STREAM_HEIGHT`, `PF_STREAM_REFRESH`,
-`PF_STREAM_HDR` (`1` / `0`), plus `PF_APP_ID` (a Punktfunk client's launch) or `PF_APP_TITLE`
+`PF_STREAM_HDR` (`1` / `0`), plus `PF_APP_ID` (a Lilynk client's launch) or `PF_APP_TITLE`
 (Moonlight), and `PF_PRESET_ID` / `PF_PRESET_NAME` when the device streamed with a preset. `undo` sees the same values as its `do`, so one entry serves every device.
 A device names its own presets, so `PF_PRESET_ID` and `PF_PRESET_NAME` hold its text: quote them,
 and never build a command line from them.
@@ -165,8 +165,8 @@ An `apps.json` entry; the `prep` array is the same in `library.json`:
 ```json
 { "id": 2, "title": "Cyberpunk 2077", "cmd": "steam -applaunch 1091500",
   "prep": [
-    { "do":   "/home/me/.config/punktfunk/scripts/mode.sh do",
-      "undo": "/home/me/.config/punktfunk/scripts/mode.sh undo" }
+    { "do":   "/home/me/.config/lilynk/scripts/mode.sh do",
+      "undo": "/home/me/.config/lilynk/scripts/mode.sh undo" }
   ] }
 ```
 

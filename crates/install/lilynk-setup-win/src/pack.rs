@@ -359,17 +359,17 @@ mod tests {
     #[test]
     fn only_a_dir_below_program_files_keeps_its_inherited_acl() {
         let pf = Some(r"C:\Program Files");
-        assert!(!needs_own_acl(r"C:\Program Files\punktfunk", pf));
-        assert!(!needs_own_acl(r"c:\program files\Games\Punktfunk\", pf));
+        assert!(!needs_own_acl(r"C:\Program Files\lilynk", pf));
+        assert!(!needs_own_acl(r"c:\program files\Games\Lilynk\", pf));
         for own in [
             r"C:\Program Files",
-            r"C:\Program Files\..\punktfunk",
-            r"C:\Program FilesX\punktfunk",
-            r"C:\punktfunk",
-            r"D:\Games\Punktfunk",
+            r"C:\Program Files\..\lilynk",
+            r"C:\Program FilesX\lilynk",
+            r"C:\lilynk",
+            r"D:\Games\Lilynk",
         ] {
             assert!(needs_own_acl(own, pf), "{own}");
         }
-        assert!(needs_own_acl(r"C:\Program Files\punktfunk", None));
+        assert!(needs_own_acl(r"C:\Program Files\lilynk", None));
     }
 }

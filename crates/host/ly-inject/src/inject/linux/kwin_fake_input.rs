@@ -524,7 +524,7 @@ impl KwinFakeInjector {
              KWin session",
         )?;
         // Legacy handshake; an interface-authorized client is accepted with no dialog.
-        fake.authenticate("Punktfunk".into(), "remote streaming input".into());
+        fake.authenticate("Lilynk".into(), "remote streaming input".into());
         queue
             .roundtrip(&mut state)
             .context("fake_input authenticate roundtrip")?;

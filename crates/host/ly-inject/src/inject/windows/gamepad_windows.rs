@@ -87,8 +87,8 @@ impl XusbWinPad {
             usb_vid_pid: None,
             usb_mi: None,
             bluetooth: false,
-            description: "Punktfunk Virtual Xbox 360 (XUSB)",
-            enumerator: "punktfunk",
+            description: "Lilynk Virtual Xbox 360 (XUSB)",
+            enumerator: "lilynk",
             property: None,
         })?;
         channel.bind_devnode(index as u32, instance_id.clone(), ProofTransport::XusbIoctl);
@@ -157,7 +157,7 @@ impl PadProto for XusbWinProto {
     type State = XboxState;
     const LABEL: &'static str = "Xbox 360/Windows";
     const DEVICE: &'static str = "Xbox 360";
-    const CREATE_HINT: &'static str = " (install/repair: run the Punktfunk installer again)";
+    const CREATE_HINT: &'static str = " (install/repair: run the Lilynk installer again)";
 
     fn open(&mut self, idx: u8) -> Result<XusbWinPad> {
         let p = XusbWinPad::open(idx)?;

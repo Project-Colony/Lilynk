@@ -44,7 +44,7 @@ struct RunningBadge: View {
             .font(.geist(11, .semibold, relativeTo: .caption2))
             .foregroundStyle(.white)
             // Semantic green rather than the brand violet: this is a state the host reports, not a
-            // Punktfunk surface, and it has to stay distinguishable from the launcher badge — which
+            // Lilynk surface, and it has to stay distinguishable from the launcher badge — which
             // already owns the brand fill one corner away.
             .padding(.horizontal, 6)
             .padding(.vertical, 3)

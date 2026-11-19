@@ -329,10 +329,8 @@ pub fn run(target: Option<&str>) -> u8 {
     let pending_cb = pending_approval.clone();
 
     let opts = ly_presenter::SessionOpts {
-        window_title: window_label.map_or_else(
-            || "Punktfunk".to_string(),
-            |label| format!("Punktfunk · {label}"),
-        ),
+        window_title: window_label
+            .map_or_else(|| "Lilynk".to_string(), |label| format!("Lilynk · {label}")),
         fullscreen: fullscreen_mode(),
         window_pos: window_pos(),
         stats_verbosity: stats_tier(&settings_at_start),

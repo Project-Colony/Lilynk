@@ -98,7 +98,7 @@ private fun LicensesBody(
     ) {
         if (version != null) {
             Text(
-                "Punktfunk $version",
+                "Lilynk $version",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

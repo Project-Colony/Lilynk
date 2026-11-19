@@ -3,7 +3,7 @@
 //! The portable core owns the validated ledger, the crash-recoverable secret root, the control
 //! protocol and serialized command dispatch. Platform effects cross `PlatformBackend`, so
 //! portable tests use a fake. Windows adds account ownership, DPAPI credentials, NLA session
-//! keepers, WTS selection, job-contained supervision and the named pipe the punktfunk service
+//! keepers, WTS selection, job-contained supervision and the named pipe the lilynk service
 //! serves. Linux adds users with their own logind session, one systemd unit per seat and the
 //! Unix socket the `lilynk-seats` daemon serves.
 

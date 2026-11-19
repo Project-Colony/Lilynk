@@ -207,7 +207,7 @@ mod tests {
         };
         assert_eq!(mk("power.sleep", "Sleep host").label(), "Sleep host");
         assert_eq!(mk("power.reboot", "whatever").label(), "Restart host");
-        assert_eq!(mk("host.restart", "x").label(), "Restart Punktfunk");
+        assert_eq!(mk("host.restart", "x").label(), "Restart Lilynk");
         assert_eq!(mk("display.next", "x").label(), "Next monitor");
         assert_eq!(
             mk("plugin:vpn:toggle", "Toggle the VPN").label(),

@@ -1,17 +1,17 @@
-// Punktfunk brand mark: two overlapping circles forming a lens — the violet
+// Lilynk brand mark: two overlapping circles forming a lens — the violet
 // brand identity. Copied verbatim from the marketing site (flattened from the
 // clients/apple lilynk_Logo.icon). Back-to-front: large light-violet circle,
 // deep-violet circle, light highlight where they overlap.
 export default function BrandMark({ className }: { className?: string }) {
   return (
     <svg
-      aria-label="Punktfunk"
+      aria-label="Lilynk"
       role="img"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 1000 1000"
       className={className}
     >
-      <title>Punktfunk</title>
+      <title>Lilynk</title>
       <path
         d="M403.037,791.672c107.586,0 194.41,-86.824 194.41,-194.41c0,-107.586 -86.824,-194.41 -194.41,-194.41c-107.586,0 -194.41,86.824 -194.41,194.41c0,107.586 86.824,194.41 194.41,194.41Z"
         fill="#a79ff8"

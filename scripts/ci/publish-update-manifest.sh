@@ -2,8 +2,8 @@
 # Build, sign, upload, and self-verify the host UPDATE MANIFEST for one channel
 # (planning: host-update-from-web-console.md §3 — the check truth the console trusts).
 #
-#   https://git.unom.io/api/packages/unom/generic/punktfunk-update/<channel>/manifest.json
-#   https://git.unom.io/api/packages/unom/generic/punktfunk-update/<channel>/manifest.json.sig
+#   https://git.unom.io/api/packages/unom/generic/lilynk-update/<channel>/manifest.json
+#   https://git.unom.io/api/packages/unom/generic/lilynk-update/<channel>/manifest.json.sig
 #
 # The signature is a raw 64-byte Ed25519 over the EXACT manifest bytes, base64 in the .sig —
 # the same format the plugin index uses and `ly_update_check::sig::verify_signature` checks. The
@@ -37,7 +37,7 @@ CHANNEL="${CHANNEL:?set CHANNEL=stable|canary}"
 VERSION="${VERSION:?set VERSION}"
 REGISTRY="${REGISTRY:-git.unom.io}"
 OWNER="${OWNER:-unom}"
-BASE="https://${REGISTRY}/api/packages/${OWNER}/generic/punktfunk-update/${CHANNEL}"
+BASE="https://${REGISTRY}/api/packages/${OWNER}/generic/lilynk-update/${CHANNEL}"
 
 case "$CHANNEL" in stable|canary) ;; *) echo "CHANNEL must be stable or canary" >&2; exit 1 ;; esac
 if [ "$CHANNEL" = canary ] && [ -z "${CI_RUN:-}" ]; then

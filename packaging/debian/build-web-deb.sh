@@ -59,8 +59,8 @@ install -Dm0644 web/README.md                       "$DOCDIR/README.md"
 
 cat > "$DOCDIR/copyright" <<EOF
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: punktfunk
-Source: https://git.unom.io/unom/punktfunk
+Upstream-Name: lilynk
+Source: https://github.com/Project-Colony/Lilynk
 
 Files: *
 Copyright: punktfunk contributors
@@ -95,9 +95,9 @@ Installed-Size: $INSTALLED_KB
 Section: net
 Priority: optional
 Depends: lilynk-bun (= $VERSION)
-Homepage: https://git.unom.io/unom/punktfunk
-Description: punktfunk management web console (Nitro SSR on bun + React)
- The browser console for a punktfunk streaming host: status, paired devices, and the
+Homepage: https://github.com/Project-Colony/Lilynk
+Description: lilynk management web console (Nitro SSR on bun + React)
+ The browser console for a lilynk streaming host: status, paired devices, and the
  SPAKE2 PIN pairing flow every client needs. Runs as a systemd --user service on port
  47992 over HTTPS (HTTP/1.1 over TLS, with the host's own identity cert), login-gated (a
  password generated on first start), proxying the host's loopback HTTPS management API
@@ -105,7 +105,7 @@ Description: punktfunk management web console (Nitro SSR on bun + React)
  from lilynk-bun (no system nodejs/bun dependency).
  .
  Auto-wired to the host on a packaged install: it sources the host's
- ~/.config/punktfunk/mgmt-token and a generated login password — no env editing. Enable
+ ~/.config/lilynk/mgmt-token and a generated login password — no env editing. Enable
  the systemd user service lilynk-web; read the login password out of web-password once,
  before the console replaces it with a salted argon2id hash on your first sign-in.
 EOF
@@ -117,7 +117,7 @@ if [ "$1" = "configure" ]; then
     echo "lilynk-web installed. Enable it for your user:"
     echo "    systemctl --user enable --now lilynk-web"
     echo "A login password is generated on first start. Read it once, before you sign in:"
-    echo "    sed -n 's/^LILYNK_UI_PASSWORD=//p' ~/.config/punktfunk/web-password"
+    echo "    sed -n 's/^LILYNK_UI_PASSWORD=//p' ~/.config/lilynk/web-password"
     echo "After that the console keeps only a salted hash, so a forgotten password is reset:"
     echo "put a LILYNK_UI_PASSWORD=<your-password> line in that file, then"
     echo "    systemctl --user restart lilynk-web"

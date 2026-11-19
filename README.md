@@ -1,107 +1,88 @@
 # Lilynk
 
-Lilynk is a GPL-3.0-or-later fork of [punktfunk](https://git.unom.io/unom/punktfunk) by unom. The
-rest of this README is still punktfunk's text and has not been rewritten for Lilynk yet. See
-[License](#license) for how the two licenses apply.
-
 <p align="center">
-  <img src="assets/lilynk-logo.svg" alt="Punktfunk" width="320" />
+  <img src="assets/lilynk-logo.svg" alt="Lilynk" width="320" />
 </p>
 
-<p align="center"><b>Low-latency desktop and game streaming with first-class Linux and Windows hosts.</b></p>
+Lilynk streams the desktop and games of a Linux or Windows PC to a Mac, PC, phone, tablet or TV
+with low latency. Each client gets its own virtual display at its own native resolution and
+refresh rate, so a laptop at 1080p60 and a TV at 4K can stream from one host at once without
+rearranging your real monitors.
 
-Run the host on a Linux or Windows PC and stream your desktop or games to a Mac, PC, phone, tablet
-or TV. Each client gets **its own virtual display at its own native resolution and refresh rate**,
-so a laptop at 1080p60 and a TV at 4K can stream from one box at once without rearranging your real
-monitors.
+Lilynk is a GPL-3.0-or-later fork of [punktfunk](https://git.unom.io/unom/punktfunk) by unom,
+taken from punktfunk's main at commit `f1e09f58c`, 386 commits after the v0.47.0 tag. See
+[License](#license) for how the two licenses apply. Its network protocol differs from punktfunk's,
+so punktfunk clients and hosts do not connect to Lilynk.
 
-📖 **[docs.punktfunk.unom.io](https://docs.punktfunk.unom.io)** —
-[How it works](https://docs.punktfunk.unom.io/docs/how-it-works) ·
-[Quick start](https://docs.punktfunk.unom.io/docs/quickstart) ·
-[Support matrix](https://docs.punktfunk.unom.io/docs/support-matrix) (what works where) ·
-[Roadmap](https://improve.unom.io/p/punktfunk/roadmap)
+The documentation lives at [project-colony.github.io/Lilynk](https://project-colony.github.io/Lilynk/).
+The site is not published yet; until it is, its pages are in `docs-site/content/docs/`. Start with
+[How it works](https://project-colony.github.io/Lilynk/docs/how-it-works),
+[Quick start](https://project-colony.github.io/Lilynk/docs/quickstart) and the
+[Support matrix](https://project-colony.github.io/Lilynk/docs/support-matrix), which lists what
+works on each platform.
 
-💬 [Discord](https://discord.gg/wzEGg9y45z) · [r/Punktfunk](https://www.reddit.com/r/Punktfunk/)
+Questions and discussion go on [Discord](https://discord.gg/tvFApEEVfj). Bugs and ideas go on
+[GitHub issues](https://github.com/Project-Colony/Lilynk/issues). Report a vulnerability
+privately through the [advisory form](https://github.com/Project-Colony/Lilynk/security/advisories/new),
+not in an issue; see [SECURITY.md](SECURITY.md).
 
-🐛 Bugs and ideas go on **[improve unom](https://improve.unom.io/p/punktfunk)**, where you can vote and follow them.
+## What it does
 
-🔒 Vulnerabilities go privately to **security@punktfunk.com**, not to an issue — [SECURITY.md](SECURITY.md).
-
-## What makes it different
-
-- **Displays you configure, not just create.** Keep a game's display alive across disconnects so a
-  reconnect drops straight back in; make the stream your sole desktop or extend alongside your
-  monitors; turn several devices into monitors of one desktop. Presets in the console —
-  [Virtual displays](https://docs.punktfunk.unom.io/docs/virtual-displays).
-- **A real virtual display on Windows, too.** Linux uses per-compositor virtual outputs; Windows
-  gets the same on-the-fly display from Punktfunk's own signed IddCx driver (`ly-vdisplay`) — no
-  dummy HDMI plug, no Desktop Duplication or WGC screen-scraping, and it survives the secure desktop
-  (UAC, lock screen).
-- **GPU end to end.** Frames reach the encoder with no CPU copies (dmabuf → CUDA/Vulkan → NVENC on
-  Linux; NVENC/AMF/QSV/Media Foundation on Windows). On a wired link,
-  [PyroWave](https://docs.punktfunk.unom.io/docs/pyrowave) — an intra-only wavelet codec run as
-  Vulkan compute — spends bandwidth to cut codec latency by an order of magnitude, and every frame
-  is a keyframe, so loss costs one frame instead of a recovery round-trip.
-- **Two protocols, one process.** `punktfunk/2` is the native plane: QUIC on one UDP port, with a
-  GF(2¹⁶) Leopard-RS FEC + AES-GCM media plane that breaks the ~1 Gbps FEC wall, mid-stream mode
-  renegotiation. `serve --gamestream` additionally serves any
-  [Moonlight](https://moonlight-stream.org/) client — opt-in, trusted-LAN only, because GameStream
-  has inherent on-path weaknesses.
-- **A library that fills itself.** Steam and non-Steam titles appear as a grid on every client, and
-  [plugins](https://docs.punktfunk.unom.io/docs/plugins) add their own sources — ROM Manager,
+- A virtual display can outlive the connection, so a reconnect lands back in the running game. The
+  stream can be your only desktop or extend your monitors, and several devices can act as monitors
+  of one desktop. The console has presets for each
+  ([Virtual displays](https://project-colony.github.io/Lilynk/docs/virtual-displays)).
+- Linux hosts use each compositor's own virtual outputs. Windows hosts get the same from Lilynk's
+  IddCx driver (`ly-vdisplay`), created on the fly. It needs no dummy HDMI plug, captures without
+  Desktop Duplication or WGC, and keeps working on the secure desktop (UAC, lock screen).
+- Frames reach the encoder with no CPU copies: dmabuf to CUDA or Vulkan to NVENC on Linux, and
+  NVENC, AMF, QSV or Media Foundation on Windows. On a wired link,
+  [PyroWave](https://project-colony.github.io/Lilynk/docs/pyrowave), an intra-only wavelet codec
+  that runs as Vulkan compute, spends bandwidth to cut codec latency by an order of magnitude.
+  Every PyroWave frame is a keyframe, so a loss costs one frame instead of a recovery round trip.
+- The native protocol runs over QUIC on one UDP port. Its media plane is encrypted with AES-GCM. The
+  GF(2¹⁶) Leopard-RS FEC keeps working past about 1 Gbps, and the stream mode can change
+  mid-stream. The same process can also serve any [Moonlight](https://moonlight-stream.org/)
+  client with `serve --gamestream`. That mode is opt-in and for trusted LANs only, because
+  GameStream has on-path weaknesses in its design.
+- Steam and non-Steam games appear as a grid on every client.
+  [Plugins](https://project-colony.github.io/Lilynk/docs/plugins) add other sources: ROM Manager,
   Playnite, Ubisoft Connect, Battle.net, itch.io, Flatpak and more.
-- **Secure by default.** One-time SPAKE2 **PIN pairing**, then pinned-identity reconnects. No
-  accounts, no cloud. Hosts advertise over mDNS, so clients find them without typing an IP.
+- A client pairs once with a SPAKE2 PIN and then reconnects to the pinned host identity. There are
+  no accounts and no cloud service. Hosts advertise over mDNS, so clients find them without an IP
+  address.
 
-## Install the host
+## Install
 
-One command on Linux (preview) — it detects your distro, adds the repo, installs the host and
-console, opens the firewall, and tells you how to pair:
+Lilynk has no packages, installers or store listings yet. Build the host and the clients from
+source: [Build from source](https://project-colony.github.io/Lilynk/docs/developers/build-from-source)
+has the steps for each platform. The Windows host needs Windows 11 22H2 (build 22621) or newer,
+because the display driver needs IddCx 1.10.
 
-```sh
-curl -fsSL https://punktfunk.unom.io/install.sh | sh
-```
+## Clients
 
-On **Windows 11 22H2+** it's a signed installer (host + virtual-display and gamepad drivers):
+| Streaming to | Client | Source |
+| --- | --- | --- |
+| Mac, iPhone, iPad, Apple TV | The Apple app | `clients/apple` |
+| Linux desktop or laptop | `lilynk-client` | `clients/linux` |
+| Steam Deck | The Decky plugin in Gaming Mode, `lilynk-client` in Desktop Mode | `clients/decky` |
+| Android phone or TV | The Android app | `clients/android` |
+| Windows | `lilynk-client-windows` | `clients/windows` |
+| Scripts and launchers | `lilynk`, the headless CLI | `clients/cli` |
+| Anything else | Moonlight, over GameStream | |
 
-```powershell
-winget source add -n punktfunk https://winget.punktfunk.unom.io -t Microsoft.Rest
-winget install Lilynk.LilynkHost
-```
-
-Prefer to add the repo yourself? Every platform has a one-page guide — apt, dnf, pacman, the Bazzite
-sysext, NixOS, SteamOS on-device build, and the Windows `setup.exe`:
-**[/docs/install](https://docs.punktfunk.unom.io/docs/install)**. Updating, rolling back and
-uninstalling are [/docs/updating](https://docs.punktfunk.unom.io/docs/updating) and
-[/docs/uninstall](https://docs.punktfunk.unom.io/docs/uninstall).
-
-## Connect a client
-
-| Streaming to… | Use |
-|---|---|
-| Mac | The **Apple app** — notarized DMG, or TestFlight |
-| iPhone, iPad, Apple TV | The **Apple app** on the [App Store](https://apps.apple.com/app/id6779991756) |
-| Linux desktop / laptop | **`lilynk-client`** — Flatpak (any distro), or apt / rpm / pacman |
-| Steam Deck | The **Decky plugin** in Gaming Mode; the Flatpak in Desktop Mode |
-| Android phone or TV | The **Android app** on Google Play |
-| Windows | Native **`lilynk-client`** — signed installer (portable zip and MSIX too) |
-| LG webOS TV | **`client-webos`**, in its own repo |
-| Scripts and launchers | **`punktfunk`**, the headless CLI in the Linux client packages |
-| Anything else | **Moonlight** over GameStream |
-
-Every client discovers hosts automatically and does a one-time
-[PIN pairing](https://docs.punktfunk.unom.io/docs/pairing). Per-device steps:
-**[/docs/install-client](https://docs.punktfunk.unom.io/docs/install-client)**.
+Every client finds hosts on the network and pairs once with a
+[PIN](https://project-colony.github.io/Lilynk/docs/pairing).
 
 ## Develop
 
 Building, testing and contributing are in the
-**[developer docs](https://docs.punktfunk.unom.io/docs/developers)**:
-[Architecture](https://docs.punktfunk.unom.io/docs/developers/architecture) (crate map and design
-invariants) ·
-[Build from source](https://docs.punktfunk.unom.io/docs/developers/build-from-source) ·
-[Testing](https://docs.punktfunk.unom.io/docs/developers/testing) ·
-[Contributing](https://docs.punktfunk.unom.io/docs/developers/contributing).
+[developer docs](https://project-colony.github.io/Lilynk/docs/developers):
+[Architecture](https://project-colony.github.io/Lilynk/docs/developers/architecture) (crate map and
+design invariants),
+[Build from source](https://project-colony.github.io/Lilynk/docs/developers/build-from-source),
+[Testing](https://project-colony.github.io/Lilynk/docs/developers/testing) and
+[Contributing](https://project-colony.github.io/Lilynk/docs/developers/contributing).
 
 ## Use of AI
 
@@ -126,14 +107,14 @@ Contributions are accepted under GPL-3.0-or-later. See [CONTRIBUTING.md](CONTRIB
 
 ### Third-party components
 
-Lilynk's own source is GPL-3.0-or-later. Shipped binaries additionally link third-party components
-under their own (permissive) licenses — see [`THIRD-PARTY-NOTICES.txt`](THIRD-PARTY-NOTICES.txt)
-(regenerate with `scripts/gen-third-party-notices.sh`). Nothing links FFmpeg any more: host encode
-went native in 2026-09, and the clients decode natively.
+Lilynk's own source is GPL-3.0-or-later. Built binaries also link third-party components under
+their own permissive licenses, listed in [`THIRD-PARTY-NOTICES.txt`](THIRD-PARTY-NOTICES.txt)
+(regenerate with `scripts/gen-third-party-notices.sh`). Nothing links FFmpeg: the host encodes and
+the clients decode natively.
 
 ### Trademarks
 
-Punktfunk is an independent project and is **not affiliated with, endorsed by, or sponsored by**
-NVIDIA, Microsoft, Sony, Valve, or the Moonlight project. "GameStream", "Moonlight", "Xbox",
-"DualSense", "DualShock", and "PlayStation" are trademarks of their respective owners and are used
-here only to describe interoperability.
+Lilynk is an independent project and is not affiliated with, endorsed by, or sponsored by unom,
+the punktfunk project, NVIDIA, Microsoft, Sony, Valve, or the Moonlight project. "GameStream",
+"Moonlight", "Xbox", "DualSense", "DualShock", and "PlayStation" are trademarks of their respective
+owners and are used here only to describe interoperability.

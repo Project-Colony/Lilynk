@@ -264,7 +264,7 @@ let
           w = desktop.security.wrappers.lilynk-encode-worker;
         in
         w.permissions == "u+rx,g+rx"
-        && w.group == "punktfunk"
+        && w.group == "lilynk"
         && seats.security.wrappers.lilynk-encode-worker.group == "lilynk-games"
         && lib.elem "lilynk-games" seats.users.users.alice.extraGroups;
     }
@@ -575,7 +575,7 @@ let
       ok = seats.users.groups ? lilynk-update;
     }
     {
-      # The door's user has a group of its own. `punktfunk` owns the usbip attach nodes and
+      # The door's user has a group of its own. `lilynk` owns the usbip attach nodes and
       # passes ly-dm-helper, which the door has no use for.
       name = "the door's units run in a group the module declares";
       ok =
@@ -604,7 +604,7 @@ let
         lib.head files == ""
         && lib.length files == 3
         && lib.hasInfix "lilynk-host.env" (lib.elemAt files 1)
-        && shipped == [ "-/run/punktfunk/seats/%u.env" ]
+        && shipped == [ "-/run/lilynk/seats/%u.env" ]
         && lib.last files == lib.last shipped;
     }
     {
@@ -648,7 +648,7 @@ in
 assert
   failures == [ ]
   || throw ''
-    The punktfunk NixOS module no longer renders what packaging/nix/module-check.nix requires.
+    The lilynk NixOS module no longer renders what packaging/nix/module-check.nix requires.
     Failing checks (${toString (lib.length failures)} of ${toString (lib.length results)}):
       - ${lib.concatStringsSep "\n    - " failures}
   '';
@@ -658,5 +658,5 @@ runCommand "lilynk-nixos-module-check"
     passed = toString (lib.length results);
   }
   ''
-    echo "punktfunk NixOS module: $passed checks passed at eval time" > "$out"
+    echo "lilynk NixOS module: $passed checks passed at eval time" > "$out"
   ''

@@ -365,7 +365,7 @@ fn acquire(what: &'static str) -> Option<ashpd::zbus::zvariant::OwnedFd> {
                     "/org/freedesktop/login1",
                     Some("org.freedesktop.login1.Manager"),
                     "Inhibit",
-                    &(what, "Punktfunk", "a client is streaming", "block"),
+                    &(what, "Lilynk", "a client is streaming", "block"),
                 )
                 .await?;
             reply.body().deserialize()

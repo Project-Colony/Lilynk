@@ -23,14 +23,14 @@ import {
 } from "../src/sandbox.js";
 
 const paths = {
-	stateDir: "/home/u/.config/punktfunk/plugin-state/demo",
-	tokenFile: "/home/u/.config/punktfunk/plugin-state/demo/.plugin-token",
-	socket: "/run/user/1000/punktfunk/plugin-demo.sock",
-	pluginsDir: "/home/u/.config/punktfunk/plugins",
+	stateDir: "/home/u/.config/lilynk/plugin-state/demo",
+	tokenFile: "/home/u/.config/lilynk/plugin-state/demo/.plugin-token",
+	socket: "/run/user/1000/lilynk/plugin-demo.sock",
+	pluginsDir: "/home/u/.config/lilynk/plugins",
 	bun: "/usr/lib/lilynk-bun/bun",
 	runner: "/usr/share/lilynk-scripting/runner-cli.js",
 	home: "/home/u",
-	configDir: "/home/u/.config/punktfunk",
+	configDir: "/home/u/.config/lilynk",
 };
 
 const manifest = (over: Partial<PluginManifest> = {}): PluginManifest => ({
@@ -67,11 +67,11 @@ describe("refusedRoot", () => {
 			"/run/user/1000",
 			"/home/u/.ssh",
 			"/home/u/.gnupg/private-keys-v1.d",
-			// A parent of punktfunk's config brings every plugin's token with it.
+			// A parent of lilynk's config brings every plugin's token with it.
 			"/home/u/.config",
 			"/home/u/.config/",
-			"/home/u/.config/punktfunk",
-			"/home/u/.config/punktfunk/plugin-run",
+			"/home/u/.config/lilynk",
+			"/home/u/.config/lilynk/plugin-run",
 			"/home/u/.config/lilynk-extra",
 			"/home/u/Games/../.ssh",
 		]) {
@@ -118,7 +118,7 @@ describe("refusedRoot", () => {
 			"/home/u/.config/plasma-workspace",
 			"/home/u/.config/autostart/../systemd/user",
 		]) {
-			for (const config of [paths.configDir, "/var/lib/punktfunk"]) {
+			for (const config of [paths.configDir, "/var/lib/lilynk"]) {
 				// Even through the owner's grant.
 				expect([p, config, refusedRoot(p, "/home/u", config, true, true)]).toEqual([
 					p,
@@ -162,7 +162,7 @@ describe("refusedRoot", () => {
 	test("a write binds only through the owner's grant, except under /tmp", () => {
 		for (const p of [
 			"/home/u/Emu",
-			"/home/u/.local/share/punktfunk/emulators/ryujinx/app",
+			"/home/u/.local/share/lilynk/emulators/ryujinx/app",
 			"/mnt/games",
 			"/run/media/u/SD",
 			"/tmpx/games",
@@ -284,7 +284,7 @@ describe("refusedRoot", () => {
 		fs.symlinkSync(path.join(root, "var/home"), path.join(root, "home"));
 		const home = path.join(root, "home/u");
 		try {
-			const config = path.join(home, ".config", "punktfunk");
+			const config = path.join(home, ".config", "lilynk");
 			expect(refusedRoot(real, home, config, false)).toBe(true);
 			expect(refusedRoot(path.join(real, ".ssh"), home, config, false)).toBe(true);
 			expect(refusedRoot(path.join(real, "Games"), home, config, false)).toBe(false);
@@ -328,14 +328,14 @@ describe("refusedRoot", () => {
 
 	test("a manifest or grant naming a refused root is never bound", () => {
 		const argv = bwrapArgv(
-			manifest({ reads: ["/proc", "~/.config/punktfunk/plugin-run", "~/Games"] }),
+			manifest({ reads: ["/proc", "~/.config/lilynk/plugin-run", "~/Games"] }),
 			paths,
 			[{ path: "/run/user/1000", write: false }],
 		);
 		const bound = binds(argv, "--ro-bind-try").map(([src]) => src);
 		expect(bound).toContain("/home/u/Games");
 		expect(bound).not.toContain("/proc");
-		expect(bound).not.toContain("/home/u/.config/punktfunk/plugin-run");
+		expect(bound).not.toContain("/home/u/.config/lilynk/plugin-run");
 		expect(bound).not.toContain("/run/user/1000");
 	});
 
@@ -373,7 +373,7 @@ describe("readManifest", () => {
 		const write = (id: string) =>
 			fs.writeFileSync(
 				path.join(dir, "package.json"),
-				JSON.stringify({ punktfunk: { schema: 1, id } }),
+				JSON.stringify({ lilynk: { schema: 1, id } }),
 			);
 		try {
 			write("rom-manager");
@@ -413,8 +413,8 @@ describe("bwrapArgv", () => {
 		// The spawn env does not survive it: without these the plugin has no HOME and no socket.
 		const joined = argv.join(" ");
 		expect(joined).toContain("--setenv HOME");
-		expect(joined).toContain("--setenv LILYNK_MGMT_UNIX /run/punktfunk/host.sock");
-		expect(joined).toContain("--setenv LILYNK_CONFIG_DIR /run/punktfunk");
+		expect(joined).toContain("--setenv LILYNK_MGMT_UNIX /run/lilynk/host.sock");
+		expect(joined).toContain("--setenv LILYNK_CONFIG_DIR /run/lilynk");
 		expect(binds(argv, "--proc")).toBeDefined();
 		expect(argv.join(" ")).toContain("--proc /proc");
 		// The unit allows netlink and writable tunables for bwrap's setup; the plugin gets neither.
@@ -427,21 +427,21 @@ describe("bwrapArgv", () => {
 		// The kit's `pluginStateDir("demo")` inside the sandbox, not one level above it.
 		expect(binds(argv, "--bind")).toContainEqual([
 			paths.stateDir,
-			"/run/punktfunk/plugin-state/demo",
+			"/run/lilynk/plugin-state/demo",
 		]);
 		expect(binds(argv, "--ro-bind")).toContainEqual([
 			paths.tokenFile,
-			"/run/punktfunk/plugin-token",
+			"/run/lilynk/plugin-token",
 		]);
-		expect(binds(argv, "--bind")).toContainEqual([paths.socket, "/run/punktfunk/host.sock"]);
+		expect(binds(argv, "--bind")).toContainEqual([paths.socket, "/run/lilynk/host.sock"]);
 		expect(binds(argv, "--ro-bind-try")).toContainEqual([
 			"/home/u/.local/share/Steam",
 			"/home/u/.local/share/Steam",
 		]);
-		// The home itself is never bound, so neither is ~/.ssh or ~/.config/punktfunk.
+		// The home itself is never bound, so neither is ~/.ssh or ~/.config/lilynk.
 		const all = [...binds(argv, "--bind"), ...binds(argv, "--ro-bind"), ...binds(argv, "--ro-bind-try")];
 		expect(all.map(([src]) => src)).not.toContain("/home/u");
-		expect(all.map(([src]) => src)).not.toContain("/home/u/.config/punktfunk");
+		expect(all.map(([src]) => src)).not.toContain("/home/u/.config/lilynk");
 	});
 
 	test("no plugin shares the host's network namespace", () => {
@@ -465,16 +465,16 @@ describe("bwrapArgv", () => {
 	});
 
 	test("every plugin's UI gets the runner's socket dir and port", () => {
-		const ui = { dir: "/run/user/1000/punktfunk/ui-demo-ab12", port: 41234 };
+		const ui = { dir: "/run/user/1000/lilynk/ui-demo-ab12", port: 41234 };
 		for (const network of [false, true]) {
 			const argv = bwrapArgv(manifest({ network }), { ...paths, ui }).join(" ");
-			expect(argv).toContain(`--bind ${ui.dir} /run/punktfunk/ui`);
+			expect(argv).toContain(`--bind ${ui.dir} /run/lilynk/ui`);
 			expect(argv).toContain("--setenv LILYNK_UI_PORT 41234");
 		}
 	});
 
 	test("a network plugin resolves through pasta's DNS forward", () => {
-		const resolvConf = "/run/user/1000/punktfunk/net-demo-ab12/resolv.conf";
+		const resolvConf = "/run/user/1000/lilynk/net-demo-ab12/resolv.conf";
 		const argv = bwrapArgv(manifest({ network: true }), { ...paths, resolvConf });
 		// After the base's own bind of the host's file, so this one is what the plugin reads.
 		const at = argv.findIndex((a, i) => a === "--ro-bind" && argv[i + 1] === resolvConf);
@@ -511,7 +511,7 @@ describe("bwrapArgv", () => {
 		expect(ro).toContainEqual(["/mnt/games", "/mnt/games"]);
 		expect(binds(argv, "--ro-bind")).toContainEqual([
 			paths.pluginsDir,
-			"/var/home/u/.config/punktfunk/plugins",
+			"/var/home/u/.config/lilynk/plugins",
 		]);
 		const all = [...binds(argv, "--bind"), ...binds(argv, "--ro-bind"), ...ro];
 		expect(all.filter(([, dest]) => dest.startsWith("/home/"))).toEqual([]);
@@ -620,8 +620,8 @@ describe("sandboxEnv", () => {
 		const env = sandboxEnv("/home/u");
 		// The real home, so a `~/...` read the manifest declared is where os.homedir() looks.
 		expect(env.HOME).toBe("/home/u");
-		expect(env.LILYNK_CONFIG_DIR).toBe("/run/punktfunk");
-		expect(env.LILYNK_MGMT_UNIX).toBe("/run/punktfunk/host.sock");
+		expect(env.LILYNK_CONFIG_DIR).toBe("/run/lilynk");
+		expect(env.LILYNK_MGMT_UNIX).toBe("/run/lilynk/host.sock");
 		expect(env.LILYNK_MGMT_TOKEN).toBeUndefined();
 	});
 });
@@ -674,7 +674,7 @@ describe("sandboxProbe", () => {
 
 describe("pastaArgv", () => {
 	test("forwards no port and maps no address to the host's loopback", () => {
-		const argv = pastaArgv(4242, "/run/user/1000/punktfunk/net-demo-ab12/pasta.pid");
+		const argv = pastaArgv(4242, "/run/user/1000/lilynk/net-demo-ab12/pasta.pid");
 		expect(argv).toContain("--no-map-gw");
 		for (const flag of ["-t", "-u", "-T", "-U"]) {
 			expect(argv[argv.indexOf(flag) + 1]).toBe("none");
@@ -685,7 +685,7 @@ describe("pastaArgv", () => {
 
 	test("forwards only the granted ports to this computer's loopback", () => {
 		const forwarded = (ports?: number[]) => {
-			const argv = pastaArgv(4242, "/run/user/1000/punktfunk/net-demo-ab12/pasta.pid", ports);
+			const argv = pastaArgv(4242, "/run/user/1000/lilynk/net-demo-ab12/pasta.pid", ports);
 			return argv[argv.indexOf("-T") + 1];
 		};
 		expect(forwarded()).toBe("none");
@@ -695,7 +695,7 @@ describe("pastaArgv", () => {
 });
 
 describe("grantedPorts", () => {
-	test("reads the granted ports, and never one of Punktfunk's own", () => {
+	test("reads the granted ports, and never one of Lilynk's own", () => {
 		const dir = fs.mkdtempSync(path.join(os.tmpdir(), "ports-"));
 		try {
 			fs.mkdirSync(path.join(dir, "plugin-run"));

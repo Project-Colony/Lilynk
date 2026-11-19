@@ -1,106 +1,89 @@
-# Security Policy
+# Security policy
 
-Punktfunk is a low-latency desktop/game streaming stack. A host is effectively remote control of a
-machine, so we take security reports seriously and appreciate responsible disclosure.
+Lilynk streams a desktop and its games to other devices. A host gives remote control of the
+machine it runs on, so a vulnerability in it can hand that machine to someone else.
 
 ## Supported versions
 
-Punktfunk ships on two tracks — **stable** (a `vX.Y.Z` tag) and
-**canary** (built from `main`). Fixes ship as a new release on those tracks; in practice
-we don't backport to older minor versions, so the supported versions are the latest stable release
-and the current canary build. If you're on an older build, please check that the issue still
-reproduces on the latest stable before reporting it. See
-[Release Channels](https://docs.punktfunk.unom.io/docs/channels).
-
-Security fixes are **free of charge**, ship **without undue delay**, and are **separated from
-feature updates where feasible**: on the stable track they arrive as patch releases (`vX.Y.Z+1`)
-that carry the fix rather than waiting on the next feature release.
+Lilynk has no releases yet. The supported version is the current `main` branch. Check that an
+issue still reproduces on `main` before you report it. Security fixes land on `main`.
 
 ## Reporting a vulnerability
 
-**Please report security issues privately by email to security@punktfunk.com.**
+Report a security issue privately through GitHub's
+[advisory form](https://github.com/Project-Colony/Lilynk/security/advisories/new). Only the
+maintainers can read the report until an advisory is published.
 
-Do **not** open a public issue, pull request, or chat/forum post for a suspected vulnerability — that
-exposes other users before a fix exists.
+Do not open a public issue or pull request, and do not post about it on Discord. That exposes other
+users before a fix exists.
 
 ### What to include
 
-The more of this you can give us, the faster we can act:
-
-- The component and version (e.g. `lilynk-host 0.22.3`, Windows or Linux, which client).
-- The impact — what an attacker can do, and from what position (same LAN, a local service account,
-  admin, a paired client, …).
-- Steps to reproduce, a proof-of-concept, or a crash/log if you have one.
-- Any suggested fix or mitigation (optional).
+- The component and the commit you built (`git rev-parse HEAD`), the host OS, and which client.
+- The impact: what an attacker can do, and from what position (same LAN, a local service account,
+  admin, a paired client).
+- Steps to reproduce, a proof of concept, or a crash or log if you have one.
+- A suggested fix or mitigation, if you have one.
 
 ## What to expect
 
-We're a small team, so timelines are best-effort, but we commit to:
+Timelines are best effort. The maintainers aim to:
 
-- **Acknowledge** your report within **3 business days**.
-- Give an **initial assessment** (severity + whether we can reproduce) within about **7 days**.
-- Keep you updated, and tell you when a fix ships.
-- **Credit** you in the advisory / release notes when the fix is public — unless you'd rather stay
-  anonymous.
+- acknowledge your report within 3 business days;
+- give an initial assessment (severity, and whether it reproduces) within about 7 days;
+- keep you updated in the advisory, and tell you when the fix lands;
+- credit you in the published advisory, unless you prefer to stay anonymous.
 
-We practice **coordinated disclosure**: please give us reasonable time to release a fix before
-publishing details. We aim to resolve valid issues within **90 days** and will agree a disclosure
-date with you.
+Disclosure is coordinated: give the maintainers reasonable time to fix the issue before you publish
+details. The aim is to resolve valid issues within 90 days, on a disclosure date agreed with you.
 
 ## Scope
 
-In scope — the code in this repository:
+In scope is the code in this repository:
 
-- The host (`lilynk-host`), its Windows drivers, and the protocol/crypto core (`lilynk-core`).
-- The native clients (Apple, Linux, Windows, Android), the web management console, and the management
-  API.
+- The host (`lilynk-host`), its Windows drivers, and the protocol and crypto core (`lilynk-core`).
+- The native clients (Apple, Linux, Windows, Android), the web management console, and the
+  management API.
 
-Known limits — documented behavior, not vulnerabilities (see
-https://docs.punktfunk.unom.io/docs/security):
+These limits are documented behaviour, not vulnerabilities (see
+[Security](https://project-colony.github.io/Lilynk/docs/security), or
+`docs-site/content/docs/(reference)/security.md` until the docs site is published):
 
-- **Admin/SYSTEM already on the host = out of scope.** An attacker who is already administrator or
-  SYSTEM on the host owns the machine regardless of punktfunk.
-- **The virtual display is a real monitor** — any process already in the interactive desktop session
-  can capture it via the normal OS screen-capture APIs, exactly as it could a physical monitor.
-- **GameStream/Moonlight compatibility** (`--gamestream`) uses legacy encryption and is documented as
-  opt-in, trusted-LAN-only.
-- **Public-internet exposure is unsupported** — issues that only arise from exposing the host to the
-  WAN are expected; keep the host on a trusted LAN or a VPN.
+- An attacker who is already administrator or SYSTEM on the host owns the machine whatever Lilynk
+  does. That is out of scope.
+- The virtual display is a real monitor. Any process already in the interactive desktop session
+  can capture it through the normal OS screen-capture APIs, as it could a physical monitor.
+- GameStream and Moonlight compatibility (`--gamestream`) uses legacy encryption. It is opt-in
+  and documented as trusted-LAN only.
+- Exposing a host to the public internet is unsupported. Keep the host on a trusted LAN or a VPN.
 
-If you're unsure whether something is in scope, report it anyway — we'd rather hear about it.
+If you are unsure whether something is in scope, report it.
 
-## Verifying what you downloaded
+## Verifying what you build
 
-Every distribution path is authenticated. Nothing below needs an account or a network round trip to
-us beyond the download itself.
+Lilynk publishes no binaries, packages or checksums yet. You build everything from a clone of
+`https://github.com/Project-Colony/Lilynk.git`, so what you run is the source you checked out.
+Compare `git rev-parse HEAD` with the commit you meant to build.
 
-- **Release-page downloads** (DMG, MSIX, setup.exe, APK, decky zip, .deb/.rpm) each ship a
-  `<file>.sha256` next to them. In your download directory:
-  `sha256sum -c lilynk-1.2.3.dmg.sha256` (macOS: `shasum -a 256 -c …`).
-- **Windows installers and MSIX packages** are Authenticode-signed; a release build that cannot
-  reach its code-signing certificate fails to build rather than falling back to a self-signed one.
-  Check with `Get-AuthenticodeSignature lilynk-host-setup-1.2.3.exe`.
-- **The Windows drivers** (virtual display, virtual gamepads) are signed with a stable self-signed
-  certificate, `CN=lilynk-driver`. The installer has to add it to the
-  machine's trusted roots for a self-signed driver to install at all, so — unlike the cases above —
-  this signature does **not** authenticate the download: it gives the drivers a stable publisher
-  identity you can compare against the published fingerprint, and it is removed again on uninstall.
-  Verify with `Get-AuthenticodeSignature` on the installed `ly_vdisplay.dll`, or list what is
-  trusted with `Get-ChildItem Cert:\LocalMachine\Root | ? Subject -like '*punktfunk*'`.
+The Windows drivers (virtual display, virtual gamepads) are signed with a self-signed
+code-signing certificate, `CN=lilynk-driver`. A build with no stable certificate configured signs
+them with a throwaway certificate made for that build. To install a self-signed driver at all,
+`lilynk-host driver install` adds the certificate to the machine's `Root` and `TrustedPublisher`
+stores. The signature therefore does not authenticate the files: anyone who can change the bundle
+can put their own certificate next to their own driver. `driver install` removes older
+`CN=lilynk-driver` certificates before it adds the current one, and `driver uninstall` removes
+them all. No driver certificate fingerprint is published yet.
 
-A checksum on its own only tells you the download wasn't corrupted in transit — it says nothing
-about who produced the file, since anyone able to replace an artifact can replace its checksum.
-Where that distinction matters (the update feeds, the package repos), the checksums are covered by
-a signature. If a signature check fails, please don't work around it; report it.
+Check the signer of the installed virtual display driver with `Get-AuthenticodeSignature` on
+`ly_vdisplay.dll`, and list the trusted driver certificates with
+`Get-ChildItem Cert:\LocalMachine\Root | ? Subject -like '*lilynk-driver*'`.
 
 ## Safe harbor
 
-We consider good-faith security research that follows this policy to be authorized, and we won't
-pursue legal action against researchers who:
+Good-faith security research that follows this policy is authorized, and the maintainers will not
+take legal action against researchers who:
 
-- make a good-faith effort to avoid privacy violations, data loss, and service disruption,
+- make a good-faith effort to avoid privacy violations, data loss and service disruption,
 - only test systems they own or have explicit permission to test,
-- give us reasonable time to remediate before public disclosure,
-- don't exfiltrate more data than needed to demonstrate the issue.
-
-Thank you for helping keep Punktfunk and its users safe.
+- give reasonable time to fix the issue before public disclosure,
+- do not exfiltrate more data than needed to show the issue.

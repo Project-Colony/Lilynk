@@ -75,7 +75,7 @@ pub(crate) struct ProfilePin {
 /// `POST /profiles/{id}/devices`.
 #[derive(Deserialize, ToSchema)]
 pub(crate) struct ProfileDeviceAdd {
-    /// SHA-256 of a paired device's certificate, hex: a Punktfunk device or a Moonlight one.
+    /// SHA-256 of a paired device's certificate, hex: a Lilynk device or a Moonlight one.
     fingerprint: String,
 }
 
@@ -460,7 +460,7 @@ pub(crate) async fn clear_profile_pin(
 
 /// Let a paired device open a profile
 ///
-/// Puts a device paired with this host, Punktfunk or Moonlight, on the profile's list until it
+/// Puts a device paired with this host, Lilynk or Moonlight, on the profile's list until it
 /// is signed out. Answers the list. Admin lane only.
 #[utoipa::path(
     post,

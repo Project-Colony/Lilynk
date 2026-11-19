@@ -398,7 +398,7 @@ fn warn_outside_console_session() {
         tracing::warn!(
             own_session = own,
             console_session = console,
-            "punktfunk seat host is intentionally outside the active console session — \
+            "lilynk seat host is intentionally outside the active console session — \
              the seat keeper must keep this RDP session active; display activation errors \
              that follow are real and mean the keeper or session is unavailable"
         );

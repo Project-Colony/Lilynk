@@ -52,7 +52,7 @@ async function doRefreshHosts(): Promise<void> {
   } catch (e) {
     // Inline, not a toast: the panel rescans on every QAM open, so a toast would repeat on each
     // open while the backend is unhappy. The row sits beside the Refresh button that retries.
-    console.warn("punktfunk: host list refresh failed", e);
+    console.warn("lilynk: host list refresh failed", e);
     setHostStore({ problem: "list-failed" });
   } finally {
     setHostStore({ scanning: false });

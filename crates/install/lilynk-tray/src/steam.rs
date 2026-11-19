@@ -1,6 +1,6 @@
 //! `lilynk-tray --steam <steam.exe> [args…]`: what the PC's shared Steam shortcuts start while
 //! seats are on. On a seat's account it starts that seat's own copy under the seat's IPC name,
-//! from `HKCU\Software\Punktfunk\SeatSteam` (`Exe`, `Ipc`), which the seat supervisor writes and
+//! from `HKCU\Software\Lilynk\SeatSteam` (`Exe`, `Ipc`), which the seat supervisor writes and
 //! the seat can only read; on any other account it starts `<steam.exe>` as the shortcut did.
 //! Steam runs once per IPC name per PC, so the PC's own Steam started on a seat would close the
 //! Steam already running.
@@ -14,7 +14,7 @@ use winreg::RegKey;
 /// The seat's copy and its IPC name, when this account is a seat's.
 fn seat_steam() -> Option<(PathBuf, String)> {
     let key = RegKey::predef(HKEY_CURRENT_USER)
-        .open_subkey(r"Software\Punktfunk\SeatSteam")
+        .open_subkey(r"Software\Lilynk\SeatSteam")
         .ok()?;
     let exe = PathBuf::from(key.get_value::<String, _>("Exe").ok()?);
     let ipc: String = key.get_value("Ipc").ok()?;

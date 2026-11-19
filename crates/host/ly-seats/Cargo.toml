@@ -1,5 +1,5 @@
 # The seat supervisor (design/multi-seat-product.md). The core builds and tests on every
-# platform. Windows runs it inside the punktfunk service behind a SYSTEM-only pipe and adds
+# platform. Windows runs it inside the lilynk service behind a SYSTEM-only pipe and adds
 # accounts, credentials and job-contained seat hosts; the RDP keeper links IronRDP and builds
 # apart, in crates/host/ly-seat-keeper. Linux runs it as the root `lilynk-seats` daemon behind a
 # Unix socket and starts one systemd unit per seat.

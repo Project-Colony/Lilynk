@@ -3,7 +3,7 @@
 # Why this exists: every CI push builds and sha-<commit>-tags a Docker image per pipeline
 # (rust-ci, web, docs, fedora-rpm, fedora44-rpm, ...). Those tags are never dangling, so a
 # plain `docker image prune` SKIPS them and they accumulate. Host-level, not per-repo CI,
-# because the runner is shared (punktfunk + other orgs all benefit).
+# because the runner is shared (lilynk + other orgs all benefit).
 #
 # THE BIG ONE (2026-06-19): the act_runner CACHE SERVER store lives in the long-running runner
 # container's WRITABLE LAYER (HOME/.cache/actcache/cache inside gitea-runner-runner-1,
@@ -23,7 +23,7 @@
 
 [Unit]
 Description=Prune aged Docker images/cache + cap the act_runner cache (CI runner disk hygiene)
-Documentation=https://git.unom.io/unom/punktfunk
+Documentation=https://github.com/Project-Colony/Lilynk
 Wants=docker.service
 After=docker.service
 

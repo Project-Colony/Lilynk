@@ -81,12 +81,12 @@ BAZ='ID=bazzite\nID_LIKE="fedora"\nVERSION_ID=43\nPRETTY_NAME="Bazzite"\n'
 NOB='ID=nobara\nID_LIKE="fedora"\nVERSION_ID=43\nPRETTY_NAME="Nobara Linux"\n'
 SIL='ID=fedora\nVARIANT_ID=silverblue\nVERSION_ID=44\nPRETTY_NAME="Fedora Linux 44 (Silverblue)"\n'
 
-# Desktop seat: the punktfunk group and the shared clipboard default to yes on every family;
+# Desktop seat: the lilynk group and the shared clipboard default to yes on every family;
 # linger only on the couch/HTPC distros. Each client opts in per host, so a shared clipboard on
 # the host grants nothing on its own. The couch cases carry their own why-text, and the opt-out
 # case proves --no-lilynk-group still wins. The grant is named in the label on purpose: under
 # --yes this summary is the only place it is stated.
-defaults_case debian-desk  "$DEB"  desktop '' 'Full controller (joins the punktfunk group — grants usbip attach): yes'
+defaults_case debian-desk  "$DEB"  desktop '' 'Full controller (joins the lilynk group — grants usbip attach): yes'
 defaults_case debian-desk2 "$DEB"  desktop '' 'Third-party clients (Moonlight, Artemis): no'
 defaults_case debian-desk3 "$DEB"  desktop '' 'Shared clipboard: yes'
 defaults_case debian-desk4 "$DEB"  desktop '' 'Start at boot with nobody logged in: no'
@@ -96,28 +96,28 @@ defaults_case debian-desk5 "$DEB"  desktop '' 'Web console reachable from: This 
 defaults_case bazzite-desk5 "$BAZ" desktop '' 'Web console reachable from: This local network'
 defaults_case debian-bind  "$DEB"  desktop '' 'Web console reachable from: This device only' --web-bind=localhost
 defaults_case debian-bind2 "$DEB"  desktop '' 'would set LILYNK_UI_BIND=100.64.0.3' --web-bind=100.64.0.3
-defaults_case fedora-desk  "$FED"  desktop '' 'Full controller (joins the punktfunk group — grants usbip attach): yes'
+defaults_case fedora-desk  "$FED"  desktop '' 'Full controller (joins the lilynk group — grants usbip attach): yes'
 defaults_case fedora-desk2 "$FED"  desktop '' 'Start at boot with nobody logged in: no'
-defaults_case arch-desk    "$ARCH" desktop '' 'Full controller (joins the punktfunk group — grants usbip attach): yes'
+defaults_case arch-desk    "$ARCH" desktop '' 'Full controller (joins the lilynk group — grants usbip attach): yes'
 defaults_case arch-desk2   "$ARCH" desktop '' 'Start at boot with nobody logged in: no'
 # Omarchy is a sit-at Arch flavour, not a couch/HTPC default — linger only if the session is seatless.
-defaults_case omarchy-desk  "$OMA" desktop '' 'Full controller (joins the punktfunk group — grants usbip attach): yes'
+defaults_case omarchy-desk  "$OMA" desktop '' 'Full controller (joins the lilynk group — grants usbip attach): yes'
 defaults_case omarchy-desk2 "$OMA" desktop '' 'Start at boot with nobody logged in: no'
 defaults_case omarchy-ssh   "$OMA" headless '' 'Start at boot with nobody logged in: yes  (no graphical session)'
 
-defaults_case bazzite-desk  "$BAZ" desktop '' 'Full controller (joins the punktfunk group — grants usbip attach): yes  (Bazzite — virtual Steam Deck controller)'
+defaults_case bazzite-desk  "$BAZ" desktop '' 'Full controller (joins the lilynk group — grants usbip attach): yes  (Bazzite — virtual Steam Deck controller)'
 defaults_case bazzite-desk2 "$BAZ" desktop '' 'Start at boot with nobody logged in: yes  (Bazzite hosts are usually headless)'
 defaults_case bazzite-desk3 "$BAZ" desktop '' 'Third-party clients (Moonlight, Artemis): no'
 defaults_case bazzite-desk4 "$BAZ" desktop '' 'Shared clipboard: yes'
 
-defaults_case nobara-desk  "$NOB" desktop '' 'Full controller (joins the punktfunk group — grants usbip attach): yes  (Nobara — virtual Steam Deck controller)'
+defaults_case nobara-desk  "$NOB" desktop '' 'Full controller (joins the lilynk group — grants usbip attach): yes  (Nobara — virtual Steam Deck controller)'
 defaults_case nobara-desk2 "$NOB" desktop '' 'Start at boot with nobody logged in: yes  (Nobara hosts are usually headless)'
 # Flags/env still win over the distro default.
-defaults_case bazzite-flag "$BAZ" desktop '' 'Full controller (joins the punktfunk group — grants usbip attach): no' --no-lilynk-group
+defaults_case bazzite-flag "$BAZ" desktop '' 'Full controller (joins the lilynk group — grants usbip attach): no' --no-lilynk-group
 
 # No graphical seat (SSH, CI, a pipe) → linger even on a generic distro.
 defaults_case debian-ssh  "$DEB" headless '' 'Start at boot with nobody logged in: yes  (no graphical session)'
-defaults_case debian-ssh2 "$DEB" headless '' 'Full controller (joins the punktfunk group — grants usbip attach): yes'
+defaults_case debian-ssh2 "$DEB" headless '' 'Full controller (joins the lilynk group — grants usbip attach): yes'
 # No desktop installed either → the host is pinned to gamescope, the backend that brings its own session.
 defaults_case debian-ssh3 "$DEB" headless '' 'would set LILYNK_COMPOSITOR=gamescope'
 
@@ -133,22 +133,22 @@ echo 0.0.0-test
 EOF
 chmod +x "$gsbin/lilynk-host"
 defaults_case debian-gs "$DEB" desktop "$gsbin" 'Third-party clients (Moonlight, Artemis): no'
-defaults_case debian-gs2 "$DEB" desktop "$gsbin" 'Full controller (joins the punktfunk group — grants usbip attach): yes'
+defaults_case debian-gs2 "$DEB" desktop "$gsbin" 'Full controller (joins the lilynk group — grants usbip attach): yes'
 
 # `ujust` and `rpm-ostree` are NOT couch-box tells. Bluefin and Aurora ship ujust; Silverblue
 # and Kinoite are rpm-ostree (so the installer calls them FAMILY=sysext, same as Bazzite). All
-# four are desktop workstations, and joining their users to the punktfunk group or enabling
+# four are desktop workstations, and joining their users to the lilynk group or enabling
 # linger under --yes without asking is not what they installed. Only ID/ID_LIKE decides.
 printf '#!/bin/sh\nexit 0\n' > "$ujbin/ujust"
 chmod +x "$ujbin/ujust"
 printf '#!/bin/sh\nexit 0\n' > "$ujbin/rpm-ostree"
 chmod +x "$ujbin/rpm-ostree"
-defaults_case debian-ujust "$DEB" desktop "$ujbin" 'Full controller (joins the punktfunk group — grants usbip attach): yes'
+defaults_case debian-ujust "$DEB" desktop "$ujbin" 'Full controller (joins the lilynk group — grants usbip attach): yes'
 defaults_case debian-ujust2 "$DEB" desktop "$ujbin" 'Start at boot with nobody logged in: no'
-defaults_case silverblue  "$SIL" desktop "$ujbin" 'Full controller (joins the punktfunk group — grants usbip attach): yes'
+defaults_case silverblue  "$SIL" desktop "$ujbin" 'Full controller (joins the lilynk group — grants usbip attach): yes'
 defaults_case silverblue2 "$SIL" desktop "$ujbin" 'Start at boot with nobody logged in: no'
 # …and the narrowing must not cost Bazzite its own defaults, sysext family and all.
-defaults_case bazzite-sysext "$BAZ" desktop "$ujbin" 'Full controller (joins the punktfunk group — grants usbip attach): yes  (Bazzite — virtual Steam Deck controller)'
+defaults_case bazzite-sysext "$BAZ" desktop "$ujbin" 'Full controller (joins the lilynk group — grants usbip attach): yes  (Bazzite — virtual Steam Deck controller)'
 
 # --no-start is "don't enable the services", not "don't configure": a linger promised in the
 # summary has to actually run. Every other case here passes --no-start, so only this one proves

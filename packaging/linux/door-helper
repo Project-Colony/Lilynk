@@ -1,5 +1,5 @@
 #!/bin/bash
-# punktfunk door helper (root): turns "Reachable without logging in" on or off for one user.
+# lilynk door helper (root): turns "Reachable without logging in" on or off for one user.
 #
 #   door-helper on|off <user>   lilynk-door-on@<user>.service, lilynk-door-off@<user>.service
 #   door-helper ports           lilynk-door.service's ExecStartPre: the owner's ports
@@ -9,5 +9,5 @@
 export LC_ALL=C
 # Root runs this: the system directories come first. NixOS keeps its tools in the unit's PATH.
 export PATH="/usr/sbin:/usr/bin:/sbin:/bin${PATH:+:$PATH}"
-SEATS=/usr/libexec/punktfunk/lilynk-seats
+SEATS=/usr/libexec/lilynk/lilynk-seats
 exec "$SEATS" door "$@"

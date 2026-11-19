@@ -1,6 +1,6 @@
 ---
 title: How It Works
-description: The ideas behind Punktfunk — a virtual display per client, how frames reach the wire, the two protocols, and pairing.
+description: The ideas behind Lilynk — a virtual display per client, how frames reach the wire, the two protocols, and pairing.
 ---
 
 What happens between your host and your device, in the words the rest of these docs use.
@@ -21,7 +21,7 @@ own mode.
 | **[niri](/docs/niri)** | A virtual output created over niri's IPC; needs the biri fork |
 | **[Umbriel](/docs/umbriel)** | A virtual output created over Umbriel's IPC |
 | **[sway, scroll](/docs/sway)** | A headless output added over the compositor's IPC |
-| **Windows** | Punktfunk's own display driver, which also shows the secure desktop (UAC, lock screen) |
+| **Windows** | Lilynk's own display driver, which also shows the secure desktop (UAC, lock screen) |
 
 You can stream one of your real monitors instead — see
 [Stream a real monitor](/docs/stream-a-monitor).
@@ -45,7 +45,7 @@ where the host's capture, its encoder and your client all support it. The full b
 
 ## Two protocols
 
-- **punktfunk/2** — Punktfunk's own protocol: control, video and audio over one encrypted QUIC
+- **punktfunk/2** — Lilynk's own protocol: control, video and audio over one encrypted QUIC
   port, with forward error correction on the video. The [native clients](/docs/clients) (Apple, Android, Linux,
   Windows) use it. It is always on.
 - **GameStream** — the protocol [Moonlight](/docs/moonlight) speaks, so any Moonlight client

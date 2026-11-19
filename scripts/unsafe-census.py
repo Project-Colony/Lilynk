@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Punktfunk unsafe census.
+Lilynk unsafe census.
 
 Reproducible, compiler-free census of `unsafe` in every crate a shipped binary links.
 Classifies by WHAT THE UNSAFE DOES (operations), not by block count.

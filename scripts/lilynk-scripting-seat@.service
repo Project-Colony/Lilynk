@@ -1,14 +1,14 @@
-# punktfunk plugin runner for a seat on a person's own account — systemd USER template unit.
+# lilynk plugin runner for a seat on a person's own account — systemd USER template unit.
 #
 # The instance is the seat's id. That seat's host, which runs as the person, starts it in their
 # own user manager while their seat runs and their console has the runner on; nothing enables it,
 # and seat-session stops it with the seat. The host makes plugin-run and plugin-state first: a
 # `+` ExecStartPre here fails at NAMESPACE. It reads the seat's config directory alone, never the
-# person's own ~/.config/punktfunk, and runs only the plugins their own console installed
+# person's own ~/.config/lilynk, and runs only the plugins their own console installed
 # (LILYNK_PERSON_PLUGINS). Otherwise it is lilynk-scripting.service, whose comments explain
 # each directive.
 [Unit]
-Description=punktfunk plugin runner for seat %i
+Description=lilynk plugin runner for seat %i
 
 [Service]
 Type=simple
@@ -29,7 +29,7 @@ ProtectHome=tmpfs
 # person token sit beside them, and so do other seats' files.
 TemporaryFileSystem=/var/lib/lilynk-seats:ro
 # The person's own desk config, which a granted ~/.config would otherwise carry in.
-InaccessiblePaths=-%h/.config/punktfunk
+InaccessiblePaths=-%h/.config/lilynk
 BindPaths=-/var/lib/lilynk-seats/seats/%i/config/plugins -/var/lib/lilynk-seats/seats/%i/config/plugin-state
 BindPaths=-%h/.bun
 BindReadOnlyPaths=-/var/lib/lilynk-seats/seats/%i/config/ingest

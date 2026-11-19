@@ -1,6 +1,6 @@
 {
   "_comment": [
-    "Punktfunk palette, rendered by Omarchy on every `omarchy-theme-set` from the active theme's",
+    "Lilynk palette, rendered by Omarchy on every `omarchy-theme-set` from the active theme's",
     "semantic colors.toml into ~/.local/state/omarchy/current/theme/lilynk.json.",
     "",
     "Installed by `lilynk-omarchy setup` (optional), removed by `lilynk-omarchy remove`.",

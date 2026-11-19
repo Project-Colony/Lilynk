@@ -3,9 +3,9 @@
 # of the `lilynk-update` group; see 49-lilynk-door.rules. The helper refuses any user who
 # isn't one.
 [Unit]
-Description=punktfunk door: turn off for %i (root helper)
+Description=lilynk door: turn off for %i (root helper)
 
 [Service]
 Type=oneshot
-ExecStart=/usr/libexec/punktfunk/door-helper off %i
+ExecStart=/usr/libexec/lilynk/door-helper off %i
 TimeoutStartSec=180

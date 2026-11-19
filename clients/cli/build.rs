@@ -9,8 +9,8 @@ fn main() {
         println!("cargo:rerun-if-changed={icon}");
         winresource::WindowsResource::new()
             .set_icon_with_id(icon, "1")
-            .set("FileDescription", "Punktfunk")
-            .set("ProductName", "Punktfunk")
+            .set("FileDescription", "Lilynk")
+            .set("ProductName", "Lilynk")
             .set("CompanyName", "Lilynk")
             .compile()
             .expect("embed windows icon/version resources");

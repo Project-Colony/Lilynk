@@ -171,7 +171,7 @@ fn a_failed_step_renders_the_failure_and_points_at_the_docs() {
         "no failure text:\n{text}"
     );
     assert!(
-        text.contains("docs.punktfunk.unom.io/docs/debian"),
+        text.contains("project-colony.github.io/Lilynk/docs/debian"),
         "no docs pointer:\n{text}"
     );
     assert!(
@@ -195,7 +195,7 @@ fn the_demo_writes_nothing_into_the_users_home() {
         text.contains("LILYNK_MGMT_BIND"),
         "the preset did not reach a SetEnv step"
     );
-    let touched = home.path().join(".config/punktfunk");
+    let touched = home.path().join(".config/lilynk");
     assert!(
         !touched.exists(),
         "demo mode created {} — it must reach the filesystem only through BasePaths",

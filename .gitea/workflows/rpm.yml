@@ -396,7 +396,7 @@ jobs:
           else
             # Warn only, even on a tag — the hard gate is the LAST step of this job. Failing here
             # would skip the sysext build, the sysext feed, AND the release attach below, so a
-            # missing gamescope would also withhold the punktfunk RPMs and the .raw images that
+            # missing gamescope would also withhold the lilynk RPMs and the .raw images that
             # built perfectly well.
             echo "::warning::lilynk-gamescope failed to build for f${{ matrix.fedver }} — the sysext ships without it (gamescope sessions stay SDR)"
           fi
@@ -539,7 +539,7 @@ jobs:
       # warns when it fails.
       #
       # ⚠ LAST step on purpose: failing at the build step instead would skip the sysext image,
-      # the feed publish AND the attach above, withholding the punktfunk RPMs and .raw images
+      # the feed publish AND the attach above, withholding the lilynk RPMs and .raw images
       # that built perfectly well. Everything good ships first; the job goes red after.
       - name: A stable tag must ship the gamescope RPM
         if: startsWith(gitea.ref, 'refs/tags/v')

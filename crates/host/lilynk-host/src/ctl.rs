@@ -721,14 +721,14 @@ fn console_stub() -> Result<String> {
         let ticket = handoff_ticket(&token, ts, &nonce)?;
         format!("https://127.0.0.1:47992/_auth/handoff?t={ticket}")
     };
-    write_stub(&std::path::Path::new(&runtime).join("punktfunk"), &target)
+    write_stub(&std::path::Path::new(&runtime).join("lilynk"), &target)
 }
 
 /// Where the browser lands when no ticket came: the console's sentence for a refused one.
 #[cfg(windows)]
 const PERSON_REFUSED: &str = "https://127.0.0.1:47992/closed?why=refused";
 
-/// Inside a Windows seat: the person's own Punktfunk, with a ticket this session's seat host
+/// Inside a Windows seat: the person's own Lilynk, with a ticket this session's seat host
 /// signed for this account (`windows::person_pipe`). The URL itself carries it: a Windows
 /// process's command line is its own account's, SYSTEM's and administrators' to read.
 #[cfg(windows)]
@@ -790,9 +790,9 @@ fn write_stub(dir: &std::path::Path, target: &str) -> Result<String> {
     // No escaping: every byte of the ticket is `[0-9a-f.]` by construction, so it is inert in an
     // attribute and in a href. The link is the fallback for a browser that ignores refresh.
     let page = format!(
-        "<!doctype html>\n<meta charset=\"utf-8\">\n<title>Punktfunk console</title>\n\
+        "<!doctype html>\n<meta charset=\"utf-8\">\n<title>Lilynk console</title>\n\
          <meta http-equiv=\"refresh\" content=\"0;url={target}\">\n\
-         <p><a href=\"{target}\">Open the Punktfunk console</a>\n"
+         <p><a href=\"{target}\">Open the Lilynk console</a>\n"
     );
     let mut f = std::fs::OpenOptions::new()
         .write(true)
@@ -1082,7 +1082,7 @@ CONSOLE
     console-url                  write a one-shot login page under $XDG_RUNTIME_DIR and print its
                                  file:// URL, so a browser opened at it lands already logged in.
                                  The ticket stays out of argv, where every local user can read it.
-                                 Inside a seat it opens that person's own Punktfunk instead.
+                                 Inside a seat it opens that person's own Lilynk instead.
                                  Windows: inside a seat only; prints the URL. --open opens it.
 
 DISPLAYS
@@ -1138,7 +1138,7 @@ mod tests {
     fn the_stub_is_private_and_overwrites_cleanly() {
         use std::os::unix::fs::PermissionsExt;
         let tmp = tempfile::tempdir().unwrap();
-        let dir = tmp.path().join("punktfunk");
+        let dir = tmp.path().join("lilynk");
 
         let url = write_stub(&dir, "https://localhost:47992/_auth/handoff?t=1.a.b").unwrap();
         let path = dir.join("console-open.html");

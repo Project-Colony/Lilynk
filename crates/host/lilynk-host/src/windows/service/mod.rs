@@ -12,7 +12,7 @@
 //! in this process and starts seat hosts in jobs of its own.
 //!
 //! Subcommands: `run` (SCM binPath), `install`/`uninstall`, `start`/`stop`/`restart`/`status`.
-//! Config: `%ProgramData%\punktfunk\host.env`. Logs: `%ProgramData%\punktfunk\logs\`.
+//! Config: `%ProgramData%\lilynk\host.env`. Logs: `%ProgramData%\lilynk\logs\`.
 //! [`runtime`] supervises both children, [`web`] is the console's slot, [`setup`] installs,
 //! [`host_env`] and [`firewall`] are what install writes, and [`rollback`] undoes a bad update.
 
@@ -49,7 +49,7 @@ use windows::Win32::System::Threading::{
 
 /// SCM key under `HKLM\SYSTEM\CurrentControlSet\Services`. Do not rename.
 const SERVICE_NAME: &str = "LilynkHost";
-const SERVICE_DISPLAY: &str = "Punktfunk Host";
+const SERVICE_DISPLAY: &str = "Lilynk Host";
 const SERVICE_DESCRIPTION: &str =
     "Low-latency desktop/game streaming host. Launches the ordinary host into the active console session.";
 
@@ -94,7 +94,7 @@ pub fn main(args: &[String]) -> Result<()> {
                  \x20   lilynk-host service stop        stop the service\n\
                  \x20   lilynk-host service restart     stop, wait for exit, start again\n\
                  \x20   lilynk-host service status      query the service\n\n\
-                 Config: %ProgramData%\\punktfunk\\host.env   Logs: %ProgramData%\\punktfunk\\logs\\"
+                 Config: %ProgramData%\\lilynk\\host.env   Logs: %ProgramData%\\lilynk\\logs\\"
             );
             Ok(())
         }

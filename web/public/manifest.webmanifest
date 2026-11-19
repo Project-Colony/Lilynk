@@ -1,7 +1,7 @@
 {
-	"name": "Punktfunk",
-	"short_name": "Punktfunk",
-	"description": "Management console for a punktfunk streaming host.",
+	"name": "Lilynk",
+	"short_name": "Lilynk",
+	"description": "Management console for a lilynk streaming host.",
 	"start_url": "/",
 	"scope": "/",
 	"display": "standalone",

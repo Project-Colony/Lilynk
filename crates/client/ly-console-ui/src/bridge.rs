@@ -84,7 +84,7 @@ pub struct CreateOptions {
     #[serde(default)]
     pub safe_area: Option<(u32, u32)>,
     /// The OS's preferred languages as BCP-47 tags, most preferred first: `["de-AT", "en"]`.
-    /// The console's text follows the first one Punktfunk ships. Absent or empty leaves the
+    /// The console's text follows the first one Lilynk ships. Absent or empty leaves the
     /// language as it is, English unless something set it.
     #[serde(default)]
     pub languages: Vec<String>,

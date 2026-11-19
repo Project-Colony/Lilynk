@@ -1,4 +1,4 @@
-// `@punktfunk/host/core` must be importable from a browser, which means nothing reachable from
+// `@lilynk/host/core` must be importable from a browser, which means nothing reachable from
 // it may name a `node:` module or a Bun global. A bundler would tell you this at the consumer's
 // build — after publishing. This tells you here.
 //
@@ -44,7 +44,7 @@ const walk = (entry: string): { files: Set<string>; bare: Set<string> } => {
 	return { files, bare };
 };
 
-describe("@punktfunk/host/core", () => {
+describe("@lilynk/host/core", () => {
 	it("reaches no node: or bun: module", () => {
 		const { bare, files } = walk(path.join(SRC, "core.ts"));
 		const platform = [...bare].filter((s) => /^(node:|bun:|bun$)/.test(s));

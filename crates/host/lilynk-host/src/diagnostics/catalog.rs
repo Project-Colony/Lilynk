@@ -18,7 +18,7 @@ use crate::vdisplay::{DriverHealth, TakeoverInapplicable, TakeoverVerdict};
 use std::process::Command;
 
 /// Privilege-helper allowlist and vhci attach-node owner — one group, two gates.
-const LILYNK_GROUP: &str = "punktfunk";
+const LILYNK_GROUP: &str = "lilynk";
 /// udev grants uinput/uhid here; not the same group as the vhci nodes.
 const INPUT_GROUP: &str = "input";
 
@@ -475,7 +475,7 @@ fn pad_audio() -> HostCheck {
         )
         .with_remedy(Remedy {
             text: "Update Steam — its streaming audio driver backs the endpoint — and restart \
-                   the Punktfunk host. If it stays, run `lilynk-host pad-endpoint repair` \
+                   the Lilynk host. If it stays, run `lilynk-host pad-endpoint repair` \
                    as administrator."
                 .to_string(),
             command: None,
@@ -542,7 +542,7 @@ fn encoder_sharing() -> HostCheck {
 }
 
 /// How to update the firmware a graphics card loads.
-const GPU_FIRMWARE_DOCS: &str = "https://docs.punktfunk.unom.io/docs/gpu-firmware";
+const GPU_FIRMWARE_DOCS: &str = "https://project-colony.github.io/Lilynk/docs/gpu-firmware";
 
 /// The firmware of the video chip Vulkan Video encodes on. Only AMD's is read.
 fn gpu_firmware() -> HostCheck {
@@ -577,7 +577,7 @@ fn gpu_firmware_verdict(firmware: Option<crate::encode::VcnFirmware>) -> HostChe
         Severity::Info,
         "The graphics card's video firmware has a color bug",
         format!(
-            "Video firmware {version} converts SDR correctly at limited range only, so Punktfunk \
+            "Video firmware {version} converts SDR correctly at limited range only, so Lilynk \
              streams SDR at limited range on this card. HDR isn't affected."
         ),
     )
@@ -740,8 +740,8 @@ fn vdisplay_driver_check(health: DriverHealth) -> HostCheck {
              reporting busy.",
         )
         .with_remedy(Remedy {
-            text: "Restart the Punktfunk host. If it happens again, disable and re-enable the \
-                   punktfunk Virtual Display adapter in Device Manager, or reboot. RivaTuner \
+            text: "Restart the Lilynk host. If it happens again, disable and re-enable the \
+                   lilynk Virtual Display adapter in Device Manager, or reboot. RivaTuner \
                    Statistics Server (MSI Afterburner) is a known cause — close it before the \
                    next connect."
                 .to_string(),
@@ -793,7 +793,7 @@ fn vdisplay_driver_check(health: DriverHealth) -> HostCheck {
             ),
         )
         .with_remedy(Remedy {
-            text: "Wait a moment and refresh. If it stays, check the punktfunk Virtual Display \
+            text: "Wait a moment and refresh. If it stays, check the lilynk Virtual Display \
                    adapter in Device Manager, or reboot."
                 .to_string(),
             command: None,
@@ -873,7 +873,7 @@ fn hyprland_permissions() -> HostCheck {
 }
 
 /// Where to get biri, the niri fork that creates virtual outputs.
-const BIRI_DOCS: &str = "https://docs.punktfunk.unom.io/docs/niri#get-biri";
+const BIRI_DOCS: &str = "https://project-colony.github.io/Lilynk/docs/niri#get-biri";
 
 /// Only a niri that creates virtual outputs (biri) can give each stream its own display.
 fn niri_virtual_outputs() -> HostCheck {

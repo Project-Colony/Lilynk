@@ -1,4 +1,4 @@
-"""The Punktfunk Decky backend, split by concern. ``main.py`` holds only the bridge class.
+"""The Lilynk Decky backend, split by concern. ``main.py`` holds only the bridge class.
 
 Decky appends ``<plugin>/py_modules`` to the END of ``sys.path`` and loads ``main.py`` under the
 module name ``_``, so the plugin root is not importable: no module here imports ``main``. One

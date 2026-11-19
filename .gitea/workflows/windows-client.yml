@@ -1,5 +1,5 @@
 # Windows CLIENT — build, lint, test and package, on a self-hosted windows-amd64 runner (host mode;
-# the generic runner + MSVC/WinUI toolchain come from unom/infra's windows-runner/, punktfunk's own
+# the generic runner + MSVC/WinUI toolchain come from unom/infra's windows-runner/, lilynk's own
 # extras — the WDK and the ARM64 rustup target — self-provision via the "Ensure Windows
 # toolchain" step, a fast no-op once present, so any runner with that label works).
 #
@@ -377,7 +377,7 @@ jobs:
       # The DEFAULT download: a per-user installer exe + a portable zip, packed from the layout
       # the MSIX step just assembled. The MSIX shape (WindowsApps ACLs, alias-only activation)
       # breaks Steam's non-Steam-game picker, the Steam overlay injection and Big Picture launch;
-      # the installer's stable %LOCALAPPDATA%\Programs\Punktfunk path is the fix. The MSIX stays
+      # the installer's stable %LOCALAPPDATA%\Programs\Lilynk path is the fix. The MSIX stays
       # published for Microsoft Store compatibility. Same signing env as the MSIX step above.
       - name: Pack + sign installer + portable zip
         if: github.event_name != 'pull_request'

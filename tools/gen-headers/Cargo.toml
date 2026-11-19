@@ -3,7 +3,7 @@
 # scripts/build-xcframework.sh run it, then diff include/.
 [package]
 name = "gen-headers"
-description = "Regenerate include/*.h from the punktfunk C ABI with cbindgen"
+description = "Regenerate include/*.h from the lilynk C ABI with cbindgen"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true

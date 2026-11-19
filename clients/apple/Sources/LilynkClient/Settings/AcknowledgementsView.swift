@@ -1,7 +1,7 @@
 import LilynkKit
 import SwiftUI
 
-/// Open-source acknowledgements: Punktfunk's own license (GPL-3.0-or-later) and punktfunk's MIT
+/// Open-source acknowledgements: Lilynk's own license (GPL-3.0-or-later) and punktfunk's MIT
 /// and Apache-2.0 texts, followed by the third-party software notices. Opened from `AboutView`:
 /// pushed on tvOS, a sheet elsewhere.
 struct AcknowledgementsView: View {
@@ -35,7 +35,7 @@ struct AcknowledgementsView: View {
                         #if os(tvOS)
                         TVScreenTitle(String(localized: L10n.aboutLicensesTitle))
                         #endif
-                        Text("Punktfunk")
+                        Text("Lilynk")
                             .font(.geist(Self.titleFont, .bold, relativeTo: .title2))
                         if let version {
                             Text(L10n.aboutVersionLine(version: version))

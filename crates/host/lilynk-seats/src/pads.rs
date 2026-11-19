@@ -39,7 +39,7 @@ const REQUEST_TIMEOUT: Duration = Duration::from_secs(5);
 /// How long a new pad server has to answer the import: `systemd-run` and an exec first.
 const PAD_SERVER_WAIT: Duration = Duration::from_secs(5);
 /// One file per relayed pad, `<account> <index> <kind>`, for `lilynk-seats list`.
-const RELAYED: &str = "/run/punktfunk/pads/relayed";
+const RELAYED: &str = "/run/lilynk/pads/relayed";
 
 /// Pads held per account, for the life of their relays.
 static HELD: LazyLock<Mutex<HashMap<String, usize>>> = LazyLock::new(Mutex::default);

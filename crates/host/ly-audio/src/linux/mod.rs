@@ -419,7 +419,7 @@ fn null_sink_props(name: &str, channels: u32, rate_hz: u32) -> Vec<(&'static str
     vec![
         ("factory.name", "support.null-audio-sink".to_string()),
         ("node.name", name.to_string()),
-        ("node.description", "Punktfunk Stream Speaker".to_string()),
+        ("node.description", "Lilynk Stream Speaker".to_string()),
         ("media.class", "Audio/Sink".to_string()),
         ("node.virtual", "true".to_string()),
         ("audio.rate", rate_hz.to_string()),
@@ -436,7 +436,7 @@ fn null_sink_props(name: &str, channels: u32, rate_hz: u32) -> Vec<(&'static str
     ]
 }
 
-/// Graph quantum every punktfunk PipeWire stream asks for, in frames:
+/// Graph quantum every lilynk PipeWire stream asks for, in frames:
 /// 240 @ 48 kHz = 5 ms, one protocol audio frame. Named so the `NODE_LATENCY`
 /// ask and the honoured-or-not check cannot drift.
 const CAPTURE_QUANTUM_FRAMES: u32 = 240;
@@ -763,18 +763,18 @@ fn create_null_sink(
     }
     let node = core
         .create_object::<pipewire::node::Node>("adapter", &props)
-        .context("create the punktfunk stream sink (support.null-audio-sink)")?;
+        .context("create the lilynk stream sink (support.null-audio-sink)")?;
     let listener = node
         .upcast_ref()
         .add_listener_local()
         .bound(|id| {
-            tracing::debug!(node_id = id, "punktfunk stream sink registered");
+            tracing::debug!(node_id = id, "lilynk stream sink registered");
         })
         .error(|_seq, res, message| {
             tracing::warn!(
                 res,
                 message,
-                "the punktfunk stream sink was not created — no desktop audio \
+                "the lilynk stream sink was not created — no desktop audio \
                  capture until it is. Set LILYNK_STREAM_SINK=stream for the 0.30 \
                  topology (no created sink)"
             );
@@ -871,7 +871,7 @@ fn capture_props(
             let mut p = properties! {
                 *pw::keys::MEDIA_TYPE       => "Audio",
                 *pw::keys::MEDIA_CLASS      => "Audio/Sink",
-                *pw::keys::NODE_DESCRIPTION => "Punktfunk Stream Speaker",
+                *pw::keys::NODE_DESCRIPTION => "Lilynk Stream Speaker",
                 *pw::keys::NODE_VIRTUAL     => "true",
                 // Low on purpose, like the mic. Parked sink must not win
                 // auto default election; routing is the claim.

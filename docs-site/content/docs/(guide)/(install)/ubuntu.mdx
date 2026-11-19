@@ -1,16 +1,11 @@
 ---
 title: Ubuntu
-description: Install the Punktfunk host on Ubuntu 26.04 or newer with apt, in four steps.
+description: Build the Lilynk host packages on Ubuntu 26.04 or newer and install them with apt, in four steps.
 ---
 
 Install the host on **Ubuntu 26.04 or newer**, Desktop or Server. Ubuntu 24.04 installs the
 package but can't stream: its desktop is too old
 ([Requirements](/docs/requirements#the-floor-for-a-working-host)).
-
-**One command instead?** The [guided installer](/docs/install#guided-install-preview) (preview)
-does steps 2 to 4 and warns when step 1 is missing:
-
-<Installer />
 
 ## 1. GPU driver
 
@@ -29,12 +24,24 @@ does steps 2 to 4 and warns when step 1 is missing:
 
 ## 2. Install the host
 
-Add the repo and install the host, the console and the plugin runner:
-
 <Install platform="debian" />
 
-`sudo apt upgrade` updates it from then on and restarts the running services, or let the
-[console update it](/docs/updating).
+Install the build tools with the `apt install` line in
+[Build from source](/docs/developers/build-from-source#ubuntu--debian), and [bun](https://bun.sh)
+for the console and the plugin runner. Then build the host, the console and the plugin runner as
+packages, and install them:
+
+```sh
+git clone https://github.com/Project-Colony/Lilynk.git lilynk && cd lilynk
+cargo build --release --locked -p lilynk-host -p lilynk-encode-worker -p lilynk-seats \
+  --features lilynk-host/nvenc,lilynk-host/vulkan-encode
+export VERSION="0.47.0+git$(git rev-list --count HEAD)"
+for s in deb seats-deb bun-deb web-deb scripting-deb; do bash packaging/debian/build-$s.sh; done
+sudo apt install ./dist/*_"$VERSION"_*.deb
+```
+
+To update, run `git pull && rm -rf web/.output` in the clone, then every line after `git clone`
+again. The commit count in `VERSION` lets apt replace the installed packages.
 
 ## 3. Let it use your controllers
 
@@ -42,7 +49,7 @@ Join the groups, then **restart the computer**:
 
 ```sh
 sudo usermod -aG input "$USER"       # virtual gamepads
-sudo usermod -aG punktfunk "$USER"   # virtual Steam Deck controller
+sudo usermod -aG lilynk "$USER"   # virtual Steam Deck controller
 ```
 
 ## 4. Start it

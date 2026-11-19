@@ -22,7 +22,7 @@ const MAX_ID: u32 = 15;
 const RESERVED_CONSOLE_MAX_ID: u32 = 11;
 const FIRST_SEAT_ID: u32 = 12;
 const SEAT_SLOT_ENV: &str = "LILYNK_SEAT_DISPLAY_SLOT";
-const SEATS_REGISTRY_KEY: &str = r"HKLM\SOFTWARE\Punktfunk\Seats";
+const SEATS_REGISTRY_KEY: &str = r"HKLM\SOFTWARE\Lilynk\Seats";
 
 /// Process role derived from the trusted seats reservation and the optional
 /// fixed connector assignment. The console role retains slot 0 for clients

@@ -292,7 +292,7 @@ internal class StreamPeripherals(
                 // missing) rather than being restated here — the grant itself is asked for where
                 // a user can act on it, in the console UI and the Controllers screen.
                 sc2.pairedBleAddress()?.let { addr ->
-                    Log.i("punktfunk", "SC2: no USB pad — using the paired BLE controller $addr")
+                    Log.i("lilynk", "SC2: no USB pad — using the paired BLE controller $addr")
                     sc2.startBle(addr)
                 }
             }
@@ -331,7 +331,7 @@ internal class StreamPeripherals(
                             settings.padHaptics,
                             settings.padSpeaker,
                         )
-                        Log.i("punktfunk", "pad audio on pad $pad: ${if (ok) "started" else "unavailable"}")
+                        Log.i("lilynk", "pad audio on pad $pad: ${if (ok) "started" else "unavailable"}")
                     }
 
                     // Returns only once the render thread is joined — DsCapture calls this before

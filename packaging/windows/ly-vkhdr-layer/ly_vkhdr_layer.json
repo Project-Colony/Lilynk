@@ -6,7 +6,7 @@
         "library_path": ".\\ly_vkhdr_layer.dll",
         "api_version": "1.4.280",
         "implementation_version": "1",
-        "description": "punktfunk: advertise HDR10/scRGB Vulkan surface formats on the virtual display (NVIDIA/AMD ICDs hide them on indirect displays even though the ICD accepts + presents a forced HDR swapchain).",
+        "description": "lilynk: advertise HDR10/scRGB Vulkan surface formats on the virtual display (NVIDIA/AMD ICDs hide them on indirect displays even though the ICD accepts + presents a forced HDR swapchain).",
         "functions": {
             "vkNegotiateLoaderLayerInterfaceVersion": "vkNegotiateLoaderLayerInterfaceVersion"
         },

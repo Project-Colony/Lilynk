@@ -144,7 +144,7 @@ if [ "$PROBES" = 1 ]; then
 else
   # Two sessions on a path are two clients. The host preempts a client's own earlier
   # session by certificate fingerprint and the probe keeps its certificate in
-  # $HOME/.config/punktfunk, so each probe needs its own HOME — and one PIN pairs one
+  # $HOME/.config/lilynk, so each probe needs its own HOME — and one PIN pairs one
   # device. `--allow-tofu` admits both on first use; each still pins the host, which
   # prints its fingerprint on the line it starts listening on.
   say "reading the host's fingerprint (--allow-tofu: one PIN cannot pair two clients)"

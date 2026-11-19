@@ -1,4 +1,4 @@
-//! Windows virtual-display backend for **ly-vdisplay**, punktfunk's IddCx Indirect Display Driver.
+//! Windows virtual-display backend for **ly-vdisplay**, lilynk's IddCx Indirect Display Driver.
 //!
 //! [`create`](VirtualDisplay::create) adds a virtual monitor at the client's `WxH@Hz` (mode baked
 //! into the ADD IOCTL; no EDID seeding), starts the watchdog ping, and the returned
@@ -128,8 +128,8 @@ enum AdapterCycle {
 /// reads `OK` after a refused disable. 3010 = reboot.
 const CYCLE_PS: &str = "$ErrorActionPreference='SilentlyContinue'; \
         $all = @(); if ($pin) { $all = @(Get-PnpDevice -InstanceId $pin | Where-Object { $_ }) }; \
-        if ($all.Count -eq 0 -and $seat) { $all = @(Get-PnpDevice -Class Display | Where-Object { $_.InstanceId -like ('SWD\\REMOTEDISPLAYENUM\\*' + $seat) -and $_.FriendlyName -match 'punktfunk Virtual Display' }) } \
-        elseif ($all.Count -eq 0) { $all = @(Get-PnpDevice -Class Display | Where-Object { $_.FriendlyName -match 'punktfunk Virtual Display' -and $_.InstanceId -notlike 'SWD\\REMOTEDISPLAYENUM\\*' }) }; \
+        if ($all.Count -eq 0 -and $seat) { $all = @(Get-PnpDevice -Class Display | Where-Object { $_.InstanceId -like ('SWD\\REMOTEDISPLAYENUM\\*' + $seat) -and $_.FriendlyName -match 'lilynk Virtual Display' }) } \
+        elseif ($all.Count -eq 0) { $all = @(Get-PnpDevice -Class Display | Where-Object { $_.FriendlyName -match 'lilynk Virtual Display' -and $_.InstanceId -notlike 'SWD\\REMOTEDISPLAYENUM\\*' }) }; \
         if ($all.Count -eq 0) { Write-Output 'ABSENT'; exit }; \
         $live = @($all | Where-Object { $_.Present -or $_.Status -ne 'Unknown' } | Sort-Object { $_.Status -ne 'OK' }); \
         if ($live.Count -eq 0) { Write-Output ('REFUSED only phantom (not-present) adapter devnodes remain (' + $all.Count + ') - the device node itself is gone and no reload can revive it; reinstalling the host re-creates it'); exit }; \
@@ -1317,7 +1317,7 @@ fn wait_for_interface(
                 // No adapter at all — waiting cannot conjure a driver.
                 AdapterCycle::NotInstalled => {
                     let e = Err(probe.into_error()).context(
-                        "no punktfunk virtual-display adapter devnode exists — the driver is not \
+                        "no lilynk virtual-display adapter devnode exists — the driver is not \
                          installed",
                     );
                     return (e, reloaded);
@@ -1821,7 +1821,7 @@ mod tests {
             Ok(v) => v,
             Err(_) => panic!(
                 "{what} did not finish within {budget:?} — failing rather than hanging, so the \
-                 harness can exit and the driver can reap. Check for a leaked punktfunk monitor \
+                 harness can exit and the driver can reap. Check for a leaked lilynk monitor \
                  before the next run."
             ),
         }

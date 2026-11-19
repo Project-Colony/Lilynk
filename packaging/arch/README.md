@@ -1,6 +1,6 @@
-# punktfunk on Arch Linux / SteamOS
+# lilynk on Arch Linux / SteamOS
 
-Packaging for punktfunk on Arch and Arch-derived immutable distros. The `PKGBUILD` is a **split
+Packaging for lilynk on Arch and Arch-derived immutable distros. The `PKGBUILD` is a **split
 package** producing **`lilynk-host`** (the gaming-rig host) and **`lilynk-client`** (the native
 GTK4/libadwaita Linux client) — mirrors the rpm subpackages (`packaging/rpm/lilynk.spec`) and the
 deb build scripts. On a **Steam Deck used as a client you want `lilynk-client`** (it's what the
@@ -27,7 +27,7 @@ tooling — mirroring the RPM spec's `%bcond_with web`.
 
 ## Install
 
-On the [docs site](https://docs.punktfunk.unom.io/docs/arch). CI (`arch.yml`) builds this PKGBUILD
+On the [docs site](https://project-colony.github.io/Lilynk/docs/arch). CI (`arch.yml`) builds this PKGBUILD
 in an `archlinux:base-devel` container on every push and publishes to the Arch package registry — a
 plain pacman repo, so a box installs and updates with `pacman -Syu` like anything else. It is a
 binary repo, so a partial upgrade is not supported: always a full `-Syu`.
@@ -54,7 +54,7 @@ Then the standard first-run (printed by the install scriptlet):
 ```sh
 sudo usermod -aG input "$USER"          # virtual gamepads; re-login after
 systemctl --user enable --now lilynk-host
-# Settings: the console. A line in ~/.config/punktfunk/host.env locks that setting there.
+# Settings: the console. A line in ~/.config/lilynk/host.env locks that setting there.
 # Web console (if you installed the lilynk-web package): enable it + read the login password.
 systemctl --user enable --now lilynk-web
 journalctl --user -u lilynk-web-init | sed -n 's/.*password generated: //p'   # open https://<host-ip>:47992
@@ -108,7 +108,7 @@ path, deliberately — one would make it unidentifiable to KWin and break deskto
 `lilynk-encode-worker` carries `cap_sys_nice=ep`, applied by `build-sysext.sh` because pacman
 scriptlets never run for a sysext and a merged `/usr` is read-only. Both are asserted at build
 time. See
-[Running as a service](https://punktfunk.io/docs/running-as-a-service#gpu-scheduling-priority).)
+[Running as a service](https://project-colony.github.io/Lilynk/docs/running-as-a-service#gpu-scheduling-priority).)
 
 ## Steam Deck — the client (what the Decky plugin launches)
 
@@ -137,13 +137,13 @@ the common case**: it ships `ufw` enabled, so the host is unreachable until you 
 
 The package ships openers for both — a ufw application profile and firewalld service definitions,
 neither auto-enabled. The commands are on the
-[Arch docs page](https://docs.punktfunk.unom.io/docs/arch) and the port breakdown in
+[Arch docs page](https://project-colony.github.io/Lilynk/docs/arch) and the port breakdown in
 [`data/platforms.json`](../../data/platforms.json).
 
 ## Files
 - `PKGBUILD` — split package: `lilynk-host` + `lilynk-client` + `lilynk-seats` (builds the
   working tree via `PF_SRCDIR`, or a git tag for AUR). `lilynk-seats` is the root supervisor
-  behind profile seats: a host dependency at its own version, installed under `/usr/libexec/punktfunk`,
+  behind profile seats: a host dependency at its own version, installed under `/usr/libexec/lilynk`,
   never enabled. It also carries the door's units, root helper and polkit rule.
 - `lilynk-host.install` / `lilynk-client.install` — pacman scriptlets (capabilities + first-run
   hint, incl. the ufw/firewalld enable command for whichever is present). The host's calls the
@@ -152,7 +152,7 @@ neither auto-enabled. The commands are on the
   `lilynk-scripting.install` loads the runner's AppArmor profile. `lilynk-seats.install`
   creates the seat directories.
 - The firewall openers are shared across all Linux packaging and live in [`../linux/`](../linux/):
-  the ufw application profile (`lilynk.ufw` → `/etc/ufw/applications.d/punktfunk`) and the
+  the ufw application profile (`lilynk.ufw` → `/etc/ufw/applications.d/lilynk`) and the
   firewalld service definitions (`lilynk-native.xml` / `lilynk-gamestream.xml` /
   `lilynk-web.xml` → `/usr/lib/firewalld/services/`). None auto-enabled; see Firewall above.
 - `build-sysext.sh` — wraps either built `.pkg.tar.zst` into a `systemd-sysext` `.raw` for SteamOS

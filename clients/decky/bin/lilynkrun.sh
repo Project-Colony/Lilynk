@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# punktfunk stream runner — the target of the non-Steam shortcuts the plugin creates.
+# lilynk stream runner — the target of the non-Steam shortcuts the plugin creates.
 #
 # WHY A WRAPPER SCRIPT (load-bearing, from MoonDeck's hard-won knowledge): the stream client
 # must be a descendant of the process Steam launches via `reaper`, or gamescope never gives
@@ -71,14 +71,14 @@ esac
 # installs a native `lilynk-client` with the CLI as its sibling, and the plugin passes the
 # client's absolute path here when that is what it resolved.
 #
-# run_cli execs the HEADLESS CLI (`punktfunk`); run_session execs the GTK/console shell
+# run_cli execs the HEADLESS CLI (`lilynk`); run_session execs the GTK/console shell
 # (`lilynk-client`). Both live in the same place in both install kinds — /app/bin inside the
 # flatpak, reachable with `--command=`, and one bindir natively.
 run_cli() {
     if [ -n "${PF_CLIENT_BIN:-}" ]; then
         # `${VAR%/*}` rather than `dirname`: pure parameter expansion, so this works with no
         # PATH at all — which is the environment a Steam launch option can leave us in.
-        exec "${PF_CLIENT_BIN%/*}/punktfunk" "$@"
+        exec "${PF_CLIENT_BIN%/*}/lilynk" "$@"
     fi
     # shellcheck disable=SC2086 # FLATPAK_ARGS is two options, split on purpose
     exec "$FLATPAK" run $FLATPAK_ARGS --command=lilynk "$APPID" "$@"

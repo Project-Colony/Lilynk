@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  firewalld service definition for the punktfunk management web console (the optional lilynk-web
+  firewalld service definition for the lilynk management web console (the optional lilynk-web
   package: device pairing, status, GPU selection, performance graphs).
 
   Installed to /usr/lib/firewalld/services/ by the lilynk-host package. NOT enabled automatically
@@ -16,8 +16,8 @@
   serves only read-only status/library to a paired client cert; its admin surface stays loopback-only.
 -->
 <service>
-  <short>Punktfunk web console</short>
-  <description>The optional punktfunk management web console (device pairing, status, GPU selection, performance graphs) over HTTPS. Open only if you run the lilynk-web package and want the console reachable from other devices on the LAN.</description>
+  <short>Lilynk web console</short>
+  <description>The optional lilynk management web console (device pairing, status, GPU selection, performance graphs) over HTTPS. Open only if you run the lilynk-web package and want the console reachable from other devices on the LAN.</description>
   <port protocol="tcp" port="47992"/>  <!-- HTTPS web console (login-gated) -->
   <!--
     Plugin UIs, on their OWN ORIGIN. Not a second console: a plugin's interface is third-party code,

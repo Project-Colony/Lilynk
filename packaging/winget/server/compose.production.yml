@@ -1,4 +1,4 @@
-# winget REST source for the punktfunk Windows host, on unom-1 (Hetzner Cloud).
+# winget REST source for the lilynk Windows host, on unom-1 (Hetzner Cloud).
 #
 # Caddy on that same box terminates TLS for winget.punktfunk.unom.io and reverse_proxies to :3240,
 # exactly as it already does for docs.punktfunk.unom.io -> :3220. This inner service speaks plain

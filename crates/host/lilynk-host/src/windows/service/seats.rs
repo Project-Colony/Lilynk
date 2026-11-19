@@ -4,7 +4,7 @@
 //! Seat hosts run in the supervisor's own jobs, never the console host's, so a console relaunch
 //! leaves them running; the service stopping logs their accounts off. Autostart seats come up
 //! one at a time once TermService runs, beside the pipe, which waits out a name another process
-//! holds. Without `HKLM\SOFTWARE\Punktfunk\Seats` the ledger is still served and every start
+//! holds. Without `HKLM\SOFTWARE\Lilynk\Seats` the ledger is still served and every start
 //! answers `seats_off`. A slot that cannot open logs the reason and stays inert: seats never stop
 //! the service.
 

@@ -67,7 +67,7 @@ import kotlinx.coroutines.delay
  * Connected-controllers debug view (Settings -> Controller -> Connected controllers): everything
  * the app can see about attached input devices, plus a live input test. This exists for exactly
  * the support case where a pad "doesn't work" - adapters and BT-to-USB dongles often enumerate
- * with a different identity than the physical pad, or not as a gamepad at all, and punktfunk only
+ * with a different identity than the physical pad, or not as a gamepad at all, and lilynk only
  * forwards devices Android classifies as a gamepad. This screen makes that visible on the
  * device itself.
  *

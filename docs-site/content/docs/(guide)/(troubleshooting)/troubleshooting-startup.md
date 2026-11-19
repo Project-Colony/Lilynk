@@ -23,9 +23,9 @@ systemctl --user enable --now lilynk-web
 On Fedora, `No match for argument` means the COPR repo, which has no console. Use the repo from
 [Fedora](/docs/fedora#2-install-the-host). Then [read the login password](/docs/forgot-password).
 
-### pacman: error: could not register 'punktfunk' database (database already registered)
+### pacman: error: could not register 'lilynk' database (database already registered)
 
-The `[punktfunk]` block is in `/etc/pacman.conf` twice. It's harmless; delete the second block.
+The `[lilynk]` block is in `/etc/pacman.conf` twice. It's harmless; delete the second block.
 
 ### The desktop won't start, or "GPU … not supported by EGL"
 
@@ -59,7 +59,7 @@ lilynk-host service restart
 - Two `lilynk-host.exe` processes are normal: one supervises, one streams in your session. Don't
   end either.
 - If the console page stays down, read its log from the elevated PowerShell:
-  `Get-Content -Tail 50 $env:ProgramData\punktfunk\logs\web.log`.
+  `Get-Content -Tail 50 $env:ProgramData\lilynk\logs\web.log`.
 
 ### Windows: the status icon is missing after an update
 

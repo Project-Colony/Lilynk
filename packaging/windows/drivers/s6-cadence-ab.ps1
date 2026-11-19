@@ -86,7 +86,7 @@ if (-not (Test-Path $Client)) { Say "FATAL no client at $Client"; exit 1 }
 if (-not $Reset) { Say "FATAL no reset-ly-vdisplay.ps1 under $Repo or $OutDir"; exit 1 }
 Say "reset script: $Reset"
 if (-not $Fp) {
-    $cert = Join-Path $env:ProgramData 'punktfunk\cert.pem'
+    $cert = Join-Path $env:ProgramData 'lilynk\cert.pem'
     if (-not (Test-Path $cert)) { Say "FATAL no cert at $cert and no -Fp"; exit 1 }
     $Fp = (Get-FileHash $cert -Algorithm SHA256).Hash.ToLower()
 }

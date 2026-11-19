@@ -4,7 +4,7 @@
 # through lilynk-core) does not fit next to the keeper's pinned picky.
 [package]
 name = "lilynk-seats"
-description = "punktfunk seat supervisor: the root daemon, its CLI and the seat pad broker"
+description = "lilynk seat supervisor: the root daemon, its CLI and the seat pad broker"
 version.workspace = true
 edition.workspace = true
 license = "GPL-3.0-or-later"

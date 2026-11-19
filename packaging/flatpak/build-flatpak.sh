@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build the punktfunk Linux client as a single-file `.flatpak` bundle.
+# Build the lilynk Linux client as a single-file `.flatpak` bundle.
 #
 # Works on the Steam Deck (org.flatpak.Builder from Flathub, user-scope, NO root) and on any
 # Linux box with flatpak + flatpak-builder. The CI does the same steps (.gitea/workflows/flatpak.yml).

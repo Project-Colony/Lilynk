@@ -156,7 +156,7 @@ jobs:
           # openh264 lives in fedora-cisco-openh264, hosted by Cisco rather than on the Fedora
           # mirrors, and the runners cannot reach it — one unreachable package fails the whole
           # transaction. It arrives as a weak dep of
-          # other packages, and punktfunk vendors its own openh264, so dropping the repo costs the
+          # other packages, and lilynk vendors its own openh264, so dropping the repo costs the
           # smoke nothing. This is the debian row's --no-install-recommends, aimed at one repo.
           - family: fedora-44
             image: fedora:44
@@ -176,8 +176,8 @@ jobs:
             # into lilynk-icons. Drop the pin when stable splits it too — same trap as
             # ci/omarchy/row.sh.
             clientchannel: --channel canary
-            oncanary: grep -q '^\[lilynk-canary\]' /etc/pacman.conf && ! grep -q '^\[punktfunk\]' /etc/pacman.conf
-            onstable: grep -q '^\[punktfunk\]' /etc/pacman.conf && ! grep -q '^\[lilynk-canary\]' /etc/pacman.conf
+            oncanary: grep -q '^\[lilynk-canary\]' /etc/pacman.conf && ! grep -q '^\[lilynk\]' /etc/pacman.conf
+            onstable: grep -q '^\[lilynk\]' /etc/pacman.conf && ! grep -q '^\[lilynk-canary\]' /etc/pacman.conf
     container:
       image: ${{ matrix.image }}
     steps:
@@ -275,4 +275,4 @@ jobs:
           $PF --yes --uninstall
           ! command -v lilynk-host
           ! test -e /etc/apt/sources.list.d/lilynk.list -o -e /etc/yum.repos.d/lilynk.repo
-          ! grep -q '^\[punktfunk\]' /etc/pacman.conf 2>/dev/null
+          ! grep -q '^\[lilynk\]' /etc/pacman.conf 2>/dev/null

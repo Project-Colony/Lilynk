@@ -10,7 +10,7 @@ use hermir::{Hermir, Installed, Options};
 use lilynk_core::config::GamepadPref;
 use ly_seats::ipc::{Command, CommandResult};
 
-/// Where managed emulators live. `%ProgramData%\punktfunk\emulators` on Windows, so the SYSTEM
+/// Where managed emulators live. `%ProgramData%\lilynk\emulators` on Windows, so the SYSTEM
 /// service installs and the player's session runs; a Windows seat reads the box's copies there.
 /// The data dir on POSIX: a plugin is granted the emulator's folder, and the runner shares
 /// nothing under the config dir.
@@ -431,15 +431,15 @@ fn first_pad(kind: GamepadPref) -> hermir::PadRef {
             }),
         ),
         GamepadPref::DualSense => {
-            let n = "Punktfunk DualSense 0";
+            let n = "Lilynk DualSense 0";
             (0x054c, 0x0ce6, 0x8100, n, Some(uhid(n)))
         }
         GamepadPref::DualSenseEdge => {
-            let n = "Punktfunk DualSense Edge 0";
+            let n = "Lilynk DualSense Edge 0";
             (0x054c, 0x0df2, 0x8100, n, Some(uhid(n)))
         }
         GamepadPref::DualShock4 => {
-            let n = "Punktfunk DualShock 4 0";
+            let n = "Lilynk DualShock 4 0";
             (0x054c, 0x09cc, 0x8100, n, Some(uhid(n)))
         }
         GamepadPref::SwitchPro => (
@@ -447,7 +447,7 @@ fn first_pad(kind: GamepadPref) -> hermir::PadRef {
             0x2009,
             0x0200,
             "Nintendo Switch Pro Controller",
-            Some(uhid("Punktfunk Switch Pro Controller 0")),
+            Some(uhid("Lilynk Switch Pro Controller 0")),
         ),
         _ => return hermir::PadRef::xbox360(0),
     };
@@ -1704,7 +1704,7 @@ I: Bus=0011 Vendor=0001 Product=0001 Version=ab41\nN: Name=\"AT Translated Set 2
         std::fs::create_dir_all(&hid).unwrap();
         std::fs::write(
             hid.join("uevent"),
-            "HID_NAME=Punktfunk Switch Pro Controller 0\n",
+            "HID_NAME=Lilynk Switch Pro Controller 0\n",
         )
         .unwrap();
         let got = hid_of(
@@ -1713,12 +1713,12 @@ I: Bus=0011 Vendor=0001 Product=0001 Version=ab41\nN: Name=\"AT Translated Set 2
         );
         let want = Hid {
             manufacturer: String::new(),
-            product: "Punktfunk Switch Pro Controller 0".into(),
+            product: "Lilynk Switch Pro Controller 0".into(),
             release: 0,
         };
         assert_eq!(got.as_ref(), Some(&want));
         // A Switch Pro's CRC is of hidapi's product string, not of SDL's name for it.
-        let crc = crc16(b"Punktfunk Switch Pro Controller 0");
+        let crc = crc16(b"Lilynk Switch Pro Controller 0");
         let guid = hidapi_guid(0x057e, 0x2009, &want).unwrap();
         assert_eq!(&guid[4..8], format!("{:02x}{:02x}", crc & 0xff, crc >> 8));
         assert_eq!(first_pad(GamepadPref::SwitchPro).guid, Some(guid));

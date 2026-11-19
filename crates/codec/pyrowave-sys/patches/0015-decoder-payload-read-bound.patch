@@ -1,4 +1,4 @@
-Keep the dequant's payload reads inside the payload buffer — PUNKTFUNK LOCAL PATCH.
+Keep the dequant's payload reads inside the payload buffer — LILYNK LOCAL PATCH.
 
 Not upstream. wavelet_dequant reads a packet's ballot, control words, q bits, bit planes and
 sign words from offsets the packet's own fields give, and never consults payload_words. A short
@@ -18,12 +18,12 @@ diff --git a/crates/codec/pyrowave-sys/vendor/pyrowave/pyrowave_decoder.cpp b/cr
  {
  }
 
-+// PUNKTFUNK (patch 0015): the dequant reads at most this far past a packet's start, whatever
++// LILYNK (patch 0015): the dequant reads at most this far past a packet's start, whatever
 +// its ballot, control words and q bits claim: 2360 bytes of header, codes and bit planes, then
 +// sign words to byte 2492.
 +static constexpr VkDeviceSize max_packet_read = 4096;
 +
-+// PUNKTFUNK (patch 0015): every packet start lies max_packet_read inside the buffer the dequant
++// LILYNK (patch 0015): every packet start lies max_packet_read inside the buffer the dequant
 +// reads, so the GPU stays in bounds without robustBufferAccess.
  bool Decoder::Impl::upload_payload(CommandBuffer &cmd)
  {
@@ -33,13 +33,13 @@ diff --git a/crates/codec/pyrowave-sys/vendor/pyrowave/pyrowave_decoder.cpp b/cr
 -	VkDeviceSize required_size_padded = required_size + 16;
 +	VkDeviceSize required_size_padded = required_size + max_packet_read;
 
- 	// PUNKTFUNK (patch 0011): the caller's memory is never reallocated. In-place packets are
+ 	// LILYNK (patch 0011): the caller's memory is never reallocated. In-place packets are
  	// already in it; copies land in its reserved head and must fit.
 @@ -1200,10 +1205,13 @@ bool Decoder::set_payload_memory(uint64_t buffer, uint64_t size, uint64_t copy_r
 
  bool Decoder::push_packet_in_place(const void *data, size_t size)
  {
-+	// PUNKTFUNK (patch 0015): the packets, and max_packet_read past their end, lie inside the
++	// LILYNK (patch 0015): the packets, and max_packet_read past their end, lie inside the
 +	// payload memory past the copy reserve, 4-byte aligned.
  	auto *p = static_cast<const uint8_t *>(data);
  	auto *base = impl->in_place_base;

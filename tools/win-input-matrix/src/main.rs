@@ -696,7 +696,7 @@ mod imp {
             let lower = p.to_ascii_lowercase();
             if lower.contains("vid_045e")
                 || lower.contains("vid_054c")
-                || lower.contains("punktfunk")
+                || lower.contains("lilynk")
             {
                 println!("  {p}");
             }

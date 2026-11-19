@@ -33,7 +33,7 @@ import { LilynkHost } from "./client.js";
 import { discoverUnits } from "./discover.js";
 import { layer as hostLayer } from "./effect.js";
 import { type ConnectOptions, configDir } from "./config.js";
-import { connect, type PluginDef, type Punktfunk } from "./index.js";
+import { connect, type PluginDef, type Lilynk } from "./index.js";
 import { grantedPorts, grantedRoots, type PluginManifest, sandboxProbe } from "./sandbox.js";
 import { pluginToken, runSandboxed } from "./runner-linux.js";
 import { defaultLog, type LogSink, type RunnerLogLevel } from "./runner-log.js";
@@ -100,7 +100,7 @@ export interface Unit {
 	file: string;
 	/** The installed package's directory — absent for a loose script. */
 	packageDir?: string;
-	/** Its `punktfunk` block, when it declared one. A plugin package without it gets no host-run
+	/** Its `lilynk` block, when it declared one. A plugin package without it gets no host-run
 	 * commands, and does not run at all while sandboxing is on. */
 	manifest?: PluginManifest;
 }
@@ -151,7 +151,7 @@ const client = (own: ConnectOptions | undefined) =>
  * plugin by itself. A lease that can't be held never stops the plugin.
  */
 const holdLease = (
-	acquire: Effect.Effect<Punktfunk, unknown, Scope.Scope>,
+	acquire: Effect.Effect<Lilynk, unknown, Scope.Scope>,
 	id: string,
 	options: RunnerOptions,
 ) =>
@@ -487,7 +487,7 @@ export const runner = (
 			const units = found.filter((unit) => {
 				if (sandbox === "off" || !unit.packageDir || unit.manifest) return true;
 				log(
-					`[runner] not starting ${unit.name}: no punktfunk manifest to sandbox it with — update the plugin`,
+					`[runner] not starting ${unit.name}: no lilynk manifest to sandbox it with — update the plugin`,
 					"error",
 				);
 				return false;

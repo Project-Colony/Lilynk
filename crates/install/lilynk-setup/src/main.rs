@@ -34,7 +34,7 @@ fn terminal_width() -> u16 {
     ConsoleTerm::open().map_or(80, |t| t.width())
 }
 
-const USAGE: &str = r#"punktfunk guided installer (preview)
+const USAGE: &str = r#"lilynk guided installer (preview)
 
 usage: lilynk-setup [options]
   -y, --yes             no prompts: take every default (also the behaviour without a terminal)
@@ -44,7 +44,7 @@ usage: lilynk-setup [options]
   --gamestream | --no-gamestream   Moonlight/Artemis/third-party clients (default off)
   --clipboard | --no-clipboard     shared clipboard (default yes)
   --lilynk-group | --no-lilynk-group   full controller / virtual Steam Deck pad (default yes;
-                        it joins the punktfunk group, which grants usbip attach)
+                        it joins the lilynk group, which grants usbip attach)
   --linger | --no-linger           start at boot with nobody logged in (default depends on the box)
   --console-cert | --no-console-cert     trust the console's certificate in Chromium (default yes)
   --omarchy-setup | --no-omarchy-setup   run `lilynk-omarchy setup` after an Omarchy install

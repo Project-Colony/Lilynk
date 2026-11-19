@@ -79,7 +79,7 @@ pub fn run(
         return Err(failed);
     }
     if uninstall {
-        ui.ok("punktfunk was removed");
+        ui.ok("lilynk was removed");
     } else {
         let host = env.get("COMPUTERNAME").unwrap_or("<this-PC>");
         report::outro(ui, facts, &choices, artifact, host);

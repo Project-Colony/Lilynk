@@ -15,7 +15,7 @@ rust-version.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-description = "Signed update-manifest fetch + verification, install-kind detection and version comparison, shared by the punktfunk host and client."
+description = "Signed update-manifest fetch + verification, install-kind detection and version comparison, shared by the lilynk host and client."
 publish = false
 
 [features]

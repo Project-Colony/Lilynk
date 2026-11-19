@@ -1,5 +1,5 @@
 # pacman install scriptlet: the capabilities and the first-run hints. The host state every format
-# shares (groups, udev, sysctl, firewall notes, conflict check) is usr/lib/punktfunk/post-install,
+# shares (groups, udev, sysctl, firewall notes, conflict check) is usr/lib/lilynk/post-install,
 # called root-relative because pacman runs this from the install root.
 
 # NO capability on the host binary — and an active removal of the one 0.26.0-1 granted.
@@ -76,13 +76,13 @@ post_install() {
 lilynk-host installed.
   1. Add yourself to the 'input' group for virtual gamepads:
        sudo usermod -aG input "$USER"     # then re-login
-     ALSO join 'punktfunk' if this box streams Steam Gaming Mode (gamescope), or you want the
+     ALSO join 'lilynk' if this box streams Steam Gaming Mode (gamescope), or you want the
      virtual Steam Deck pad (usbip):
-       sudo usermod -aG punktfunk "$USER"   # then log out and back in
+       sudo usermod -aG lilynk "$USER"   # then log out and back in
      It authorizes stopping the display manager for a managed gamescope session, and the pad's
      usbip nodes. It can emulate arbitrary USB devices — join it only on a machine you trust.
-  2. Settings live in the console (Host -> Settings). A line in ~/.config/punktfunk/host.env
-     locks that setting there; annotated templates: /usr/share/punktfunk/host.env.{bazzite,kde}
+  2. Settings live in the console (Host -> Settings). A line in ~/.config/lilynk/host.env
+     locks that setting there; annotated templates: /usr/share/lilynk/host.env.{bazzite,kde}
   3. Enable the host:
        systemctl --user enable --now lilynk-host
 
@@ -110,12 +110,12 @@ MSG
        sudo firewall-cmd --reload
 MSG
   fi
-  usr/lib/punktfunk/post-install
+  usr/lib/lilynk/post-install
 }
 
 post_upgrade() {
   _revoke_sched_capability
   # A replaced binary is a new inode, and the old grant went with the old one.
   _grant_worker_sched_capability
-  usr/lib/punktfunk/post-install
+  usr/lib/lilynk/post-install
 }

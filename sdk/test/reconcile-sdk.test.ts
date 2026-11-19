@@ -10,18 +10,18 @@ import { SDK_VERSION } from "../src/version.js";
 
 const dirs: string[] = [];
 
-/** A plugins tree whose installed `@punktfunk/host` is `version` (omit for "not installed"). */
+/** A plugins tree whose installed `@lilynk/host` is `version` (omit for "not installed"). */
 const tree = (version?: string): string => {
 	const dir = fs.mkdtempSync(path.join(os.tmpdir(), "pf-reconcile-"));
 	dirs.push(dir);
 	fs.writeFileSync(path.join(dir, "package.json"), '{"private":true}\n');
 	fs.writeFileSync(path.join(dir, "bun.lock"), "ORIGINAL-LOCK\n");
 	if (version !== undefined) {
-		const host = path.join(dir, "node_modules", "@punktfunk", "host");
+		const host = path.join(dir, "node_modules", "@lilynk", "host");
 		fs.mkdirSync(host, { recursive: true });
 		fs.writeFileSync(
 			path.join(host, "package.json"),
-			JSON.stringify({ name: "@punktfunk/host", version }),
+			JSON.stringify({ name: "@lilynk/host", version }),
 		);
 	}
 	return dir;
@@ -40,7 +40,7 @@ describe("installedSdkVersion", () => {
 	test("is undefined rather than throwing on a corrupt manifest", () => {
 		const dir = tree("0.1.2");
 		fs.writeFileSync(
-			path.join(dir, "node_modules", "@punktfunk", "host", "package.json"),
+			path.join(dir, "node_modules", "@lilynk", "host", "package.json"),
 			"{ not json",
 		);
 		expect(installedSdkVersion(dir)).toBeUndefined();
@@ -103,9 +103,9 @@ describe("movedPins", () => {
 	// the same version, but records whatever integrity the registry serves now.
 	const lock = (sdk: string, plugin: string) => `{
   "packages": {
-    "@t/plugin-x": ["@t/plugin-x@1.0.0", "https://r.example/x.tgz", { "dependencies": { "@punktfunk/host": "^0.1.0" } }, "${plugin}"],
+    "@t/plugin-x": ["@t/plugin-x@1.0.0", "https://r.example/x.tgz", { "dependencies": { "@lilynk/host": "^0.1.0" } }, "${plugin}"],
 
-    "@punktfunk/host": ["@punktfunk/host@${sdk}", "", {}, "sha512-sdk-${sdk}"],
+    "@lilynk/host": ["@lilynk/host@${sdk}", "", {}, "sha512-sdk-${sdk}"],
   }
 }`;
 

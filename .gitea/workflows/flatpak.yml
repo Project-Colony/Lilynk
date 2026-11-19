@@ -1,4 +1,4 @@
-# Build the native punktfunk Linux CLIENT as a single-file Flatpak bundle and publish it to
+# Build the native lilynk Linux CLIENT as a single-file Flatpak bundle and publish it to
 # Gitea's GENERIC package registry, so the Steam Deck (and any flatpak distro) installs it
 # the SteamOS-native, update-survivable way: `flatpak install --user <downloaded>.flatpak`.
 # (The HOST stays an RPM/deb — it needs unsandboxed /dev/uinput + zero-copy NVENC; only the
@@ -441,7 +441,7 @@ jobs:
           [Flatpak Repo]
           Title=unom
           Url=$REPO_URL/repo/
-          Homepage=https://punktfunk.unom.io
+          Homepage=https://github.com/Project-Colony/Lilynk
           Comment=unom Flatpak applications
           GPGKey=$GPGKEY
           EOF
@@ -466,21 +466,21 @@ jobs:
           Branch=$2
           Url=$REPO_URL/repo/
           Title=$3
-          Homepage=https://punktfunk.unom.io
+          Homepage=https://github.com/Project-Colony/Lilynk
           IsRuntime=false
           GPGKey=$GPGKEY
           RuntimeRepo=https://dl.flathub.org/repo/flathub.flatpakrepo
           EOF
           }
-          write_ref "${APP_ID}.flatpakref"        stable "Punktfunk"
-          write_ref "${APP_ID}.canary.flatpakref" canary "Punktfunk (Canary)"
+          write_ref "${APP_ID}.flatpakref"        stable "Lilynk"
+          write_ref "${APP_ID}.canary.flatpakref" canary "Lilynk (Canary)"
           # The CamelCase file names old links and docs use.
-          write_ref "${LEGACY_APP_ID}.flatpakref"        stable "Punktfunk"
-          write_ref "${LEGACY_APP_ID}.Canary.flatpakref" canary "Punktfunk (Canary)"
+          write_ref "${LEGACY_APP_ID}.flatpakref"        stable "Lilynk"
+          write_ref "${LEGACY_APP_ID}.Canary.flatpakref" canary "Lilynk (Canary)"
           cat > site/index.html <<EOF
           <!doctype html><meta charset=utf-8><title>unom flatpak repo</title>
           <h1>unom Flatpak repository</h1>
-          <p>Install the Punktfunk Linux client (auto-adds Flathub for the GNOME runtime, then tracks updates).</p>
+          <p>Install the Lilynk Linux client (auto-adds Flathub for the GNOME runtime, then tracks updates).</p>
           <p><b>Stable</b> (recommended — only moves on releases):</p>
           <pre>flatpak install --user $REPO_URL/${APP_ID}.flatpakref
           flatpak run $(channel_id stable)</pre>

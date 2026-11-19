@@ -33,7 +33,7 @@ async function artOnce(
     if (!isRetry) {
       setTimeout(() => void artOnce(marker, version, apply, true), 2500);
     }
-    console.warn("punktfunk: shortcut artwork not applied", e);
+    console.warn("lilynk: shortcut artwork not applied", e);
   }
 }
 

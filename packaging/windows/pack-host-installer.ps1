@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Build + sign the punktfunk Windows host installer (the lilynk-setup-win engine exe).
+  Build + sign the lilynk Windows host installer (the lilynk-setup-win engine exe).
 
 .DESCRIPTION
   From a release `cargo build -p lilynk-host --features nvenc` output (the exe), this:
@@ -99,7 +99,7 @@ $exe = $stampedExe
 # The .pfx modes export the .cer users import once (LocalMachine\TrustedPublisher) so SmartScreen
 # and UAC trust the setup.exe. Azure emits none, so HOST_CER_PATH stays unset.
 $cerPath = Join-Path $OutDir "lilynk-host-windows_${Version}.cer"
-$signing = Resolve-SigningMode -OutDir $OutDir -Publisher $Publisher -FriendlyName 'punktfunk host (self-signed)' `
+$signing = Resolve-SigningMode -OutDir $OutDir -Publisher $Publisher -FriendlyName 'lilynk host (self-signed)' `
     -PfxBase64 $PfxBase64 -PfxPassword $PfxPassword -AzureEndpoint $AzureEndpoint -AzureAccount $AzureAccount `
     -AzureProfile $AzureProfile -AzureDlib $AzureDlib -RequireSignedCert $RequireSignedCert `
     -CerPath $cerPath -NoSign:$NoSign
@@ -144,7 +144,7 @@ if (-not $NoDriver) {
 }
 else { Write-Host "-NoDriver: building installer WITHOUT the bundled ly-vdisplay driver" }
 
-# --- build (from source) + stage the punktfunk virtual-gamepad UMDF drivers --------------------
+# --- build (from source) + stage the lilynk virtual-gamepad UMDF drivers --------------------
 # ly-gamepad (DualSense / DS4 / Edge / Deck), ly-xusb (Xbox 360 / XInput), ly-mouse and
 # ly-touchpad are members of the same drivers workspace as ly-vdisplay, built from source per
 # release (build-gamepad-drivers.ps1). The installer adds each to the store via
@@ -162,7 +162,7 @@ if (-not $NoDriver) {
 }
 
 # --- audio: no virtual cable is bundled -------------------------------------------------------
-# The host mints its own audio endpoints from Steam's streaming drivers ("Punktfunk Speakers/
+# The host mints its own audio endpoints from Steam's streaming drivers ("Lilynk Speakers/
 # Microphone"), so audio needs Steam installed on the target box - never running. A user-installed
 # VB-CABLE still serves as a fallback mic target (ly-audio wiring_plan.rs).
 

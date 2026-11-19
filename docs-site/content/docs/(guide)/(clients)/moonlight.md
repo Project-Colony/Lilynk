@@ -1,16 +1,16 @@
 ---
 title: Connect with Moonlight
-description: Stream from a Punktfunk host using any Moonlight client.
+description: Stream from a Lilynk host using any Moonlight client.
 ---
 
 Turn on GameStream on the host and any [Moonlight](https://moonlight-stream.org/) client can stream
-from it: a browser, a smart TV, a console, an old phone. Where a [Punktfunk app](/docs/clients)
+from it: a browser, a smart TV, a console, an old phone. Where a [Lilynk app](/docs/clients)
 exists, use it instead: it has lower latency and more features.
 
 ## 1. Turn on GameStream
 
 GameStream is off by default. In the [web console](/docs/web-console), open **Host**,
-turn on **GameStream**, then click **Restart Punktfunk**. Or:
+turn on **GameStream**, then click **Restart Lilynk**. Or:
 
 | Where | How |
 |---|---|
@@ -74,5 +74,5 @@ An `apps.json` in the host's config directory replaces that list, **Desktop** in
   Pick HEVC or AV1; H.264 stays SDR.
 - **Bitrate:** the number covers video and error correction together. Start moderate and raise it.
 - The host adapts error correction and bitrate to the loss Moonlight reports. Nothing to set.
-- Moonlight's overlay and the Punktfunk [stats overlay](/docs/stats) measure different things.
+- Moonlight's overlay and the Lilynk [stats overlay](/docs/stats) measure different things.
 - The console's mute, access and player-slot controls work on Lilynk-app sessions only.

@@ -36,7 +36,7 @@ profile lilynk-scripting flags=(attach_disconnected,mediate_deleted) {
   # pasta connects a network plugin's namespace through a tap device.
   /dev/net/tun rw,
   # A bind must not carry the config dir to a path the file rules below do not cover.
-  deny mount /**/.config/punktfunk{,/,/*} -> /**,
+  deny mount /**/.config/lilynk{,/,/*} -> /**,
   deny mount /**/.config{,/} -> /**,
   deny mount /{,**/}home/{,*,*/} -> /**,
   deny mount /{,oldroot/} -> /**,
@@ -56,11 +56,11 @@ profile lilynk-scripting flags=(attach_disconnected,mediate_deleted) {
   owner /** wlk,
 
   # The host's config dir: only what the unit binds.
-  deny @{PF_HOMES}/.config/punktfunk/** mrwlkx,
-  priority=1 owner @{PF_HOMES}/.config/punktfunk/ r,
-  priority=1 owner @{PF_HOMES}/.config/punktfunk/{plugin-token,mgmt-endpoint,native-cert.pem,cert.pem} r,
-  priority=1 owner @{PF_HOMES}/.config/punktfunk/{scripts,ingest,plugin-run}/{,**} r,
-  priority=1 owner @{PF_HOMES}/.config/punktfunk/{plugins,plugin-state}/{,**} mrwlkix,
+  deny @{PF_HOMES}/.config/lilynk/** mrwlkx,
+  priority=1 owner @{PF_HOMES}/.config/lilynk/ r,
+  priority=1 owner @{PF_HOMES}/.config/lilynk/{plugin-token,mgmt-endpoint,native-cert.pem,cert.pem} r,
+  priority=1 owner @{PF_HOMES}/.config/lilynk/{scripts,ingest,plugin-run}/{,**} r,
+  priority=1 owner @{PF_HOMES}/.config/lilynk/{plugins,plugin-state}/{,**} mrwlkix,
 
   # Code written here runs outside this profile at the next login.
   deny @{PF_HOMES}/.config/systemd/** wl,
@@ -89,7 +89,7 @@ profile lilynk-scripting-seat flags=(attach_disconnected,mediate_deleted) {
   pivot_root,
   @{PROC}/sys/user/max_user_namespaces w,
   /dev/net/tun rw,
-  deny mount /**/.config/punktfunk{,/,/*} -> /**,
+  deny mount /**/.config/lilynk{,/,/*} -> /**,
   deny mount /**/.config{,/} -> /**,
   deny mount /{,**/}home/{,*,*/} -> /**,
   deny mount /{,oldroot/} -> /**,
@@ -107,7 +107,7 @@ profile lilynk-scripting-seat flags=(attach_disconnected,mediate_deleted) {
   owner /** wlk,
 
   # The person's own desk config, and the seat's trust copy: none of either.
-  deny @{HOME}/.config/punktfunk/** mrwlkx,
+  deny @{HOME}/.config/lilynk/** mrwlkx,
   deny /var/lib/lilynk-seats/trust/** mrwlkx,
   # The seat's config dir: only what the unit binds.
   deny /var/lib/lilynk-seats/seats/*/config/** mrwlkx,

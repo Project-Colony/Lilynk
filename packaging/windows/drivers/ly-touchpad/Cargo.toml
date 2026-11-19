@@ -1,4 +1,4 @@
-# ly-touchpad - punktfunk virtual Precision Touchpad UMDF2 HID minidriver.
+# ly-touchpad - lilynk virtual Precision Touchpad UMDF2 HID minidriver.
 # A member of the in-tree drivers workspace, built, signed and staged with ly-mouse.
 [package]
 name = "ly-touchpad"
@@ -6,7 +6,7 @@ edition.workspace = true
 version.workspace = true
 license.workspace = true
 publish = false
-description = "punktfunk virtual Precision Touchpad UMDF2 HID minidriver"
+description = "lilynk virtual Precision Touchpad UMDF2 HID minidriver"
 
 [package.metadata.wdk.driver-model]
 driver-type = "UMDF"

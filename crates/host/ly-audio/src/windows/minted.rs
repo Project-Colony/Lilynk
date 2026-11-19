@@ -31,7 +31,7 @@ pub const ROLE_MARKER: &str = "LilynkAudioRole";
 /// Secondary marker of a node a seat host minted. A seat host mints nothing ([`mints_nothing`]),
 /// so each such node is a leftover ([`remove_seat_devnodes`]).
 pub const SEAT_MARKER: &str = "LilynkAudioSeat";
-const SEAT_MARKER_DOMAIN: &[u8] = b"punktfunk/audio-seat/v1\0";
+const SEAT_MARKER_DOMAIN: &[u8] = b"lilynk/audio-seat/v1\0";
 /// Audiosrv can take this long to register a freshly minted endpoint.
 const ENDPOINT_WAIT: Duration = Duration::from_secs(15);
 /// Floor between retries. [`ensure_provisioned`] is called from wiring passes, which recur freely.
@@ -43,7 +43,7 @@ const MAX_UNLATCHED_ATTEMPTS: u32 = 5;
 /// render, Mic render and capture) plus stamp settles.
 const BLOCKING_WAIT: Duration = Duration::from_secs(90);
 /// Adapter half of both endpoints' names, and the devnodes' FriendlyName it is rebuilt from.
-const DEVICE_NAME: &str = "Punktfunk";
+const DEVICE_NAME: &str = "Lilynk";
 
 /// Persisted marker (`value`) and the INF/hwid needles for [`discover_driver`].
 #[derive(Clone, Copy, PartialEq)]
@@ -61,8 +61,8 @@ impl Role {
     }
     fn desc(self) -> &'static str {
         match self {
-            Role::Speakers => "Punktfunk Speakers",
-            Role::Mic => "Punktfunk Microphone",
+            Role::Speakers => "Lilynk Speakers",
+            Role::Mic => "Lilynk Microphone",
         }
     }
     fn needle(self) -> &'static str {
@@ -108,8 +108,8 @@ impl AudioIdentity {
             });
         let role_descs = match seat.as_ref() {
             Some(seat) => [
-                format!("Punktfunk Speakers [seat {}]", seat.id),
-                format!("Punktfunk Microphone [seat {}]", seat.id),
+                format!("Lilynk Speakers [seat {}]", seat.id),
+                format!("Lilynk Microphone [seat {}]", seat.id),
             ],
             None => [
                 Role::Speakers.desc().to_string(),
@@ -291,12 +291,12 @@ fn set_speakers_visible(visible: bool) -> bool {
         Ok(()) => {
             tracing::info!(endpoint = %id,
                 state = if visible { "shown (a capture binds it)" } else { "hidden (no capture)" },
-                "Punktfunk Speakers visibility");
+                "Lilynk Speakers visibility");
             true
         }
         Err(e) => {
             tracing::warn!(endpoint = %id, visible, error = %format!("{e:#}"),
-                "Punktfunk Speakers visibility change failed — the sink stays as it is");
+                "Lilynk Speakers visibility change failed — the sink stays as it is");
             false
         }
     }
@@ -757,7 +757,7 @@ fn remove_seat_devnodes() {
 }
 
 /// Recovers a console `ROOT\MEDIA\NNNN` with this hwid and no ownership marker.
-/// Steam's own nodes use another instance prefix; any marked Punktfunk family stays untouched.
+/// Steam's own nodes use another instance prefix; any marked Lilynk family stays untouched.
 fn adopt_console_orphan_devnode(role: Role, hwid: &str) -> Result<Option<String>> {
     use windows::Win32::Devices::DeviceAndDriverInstallation::SPDRP_HARDWAREID;
     let set = da::media_class_devs()?;
@@ -921,7 +921,7 @@ mod seat_tests {
         assert_ne!(first.seat_marker(), other.seat_marker());
         assert_eq!(
             first.role_desc(Role::Speakers),
-            "Punktfunk Speakers [seat 550e8400e29b41d4a716446655440000]"
+            "Lilynk Speakers [seat 550e8400e29b41d4a716446655440000]"
         );
     }
 

@@ -482,7 +482,7 @@ fn art_store_dir() -> PathBuf {
     let base = Some(ly_paths::xdg_home("XDG_CACHE_HOME", ".cache"));
     base.filter(|b| b.is_absolute())
         .unwrap_or_else(std::env::temp_dir)
-        .join("punktfunk")
+        .join("lilynk")
         .join("art")
 }
 
@@ -1179,7 +1179,7 @@ mod tests {
         );
 
         let secret = Artwork {
-            hero: Some(r"C:\ProgramData\punktfunk\mgmt-token".into()),
+            hero: Some(r"C:\ProgramData\lilynk\mgmt-token".into()),
             ..Default::default()
         };
         let err = validate_art_paths(&secret).expect_err("a secret path is refused");

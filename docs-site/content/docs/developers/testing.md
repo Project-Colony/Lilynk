@@ -138,5 +138,5 @@ target/release/lilynk launch <host-ip>
 
 Any installed client pairs the same way. `lilynk-probe` exercises single planes against a live
 host: `--input-test`, `--mic-test`, `--touch-test`, `--rich-input-test`. Its flags are in
-[clients/probe](https://git.unom.io/unom/punktfunk/src/branch/main/clients/probe/README.md). For
+[clients/probe](https://github.com/Project-Colony/Lilynk/blob/main/clients/probe/README.md). For
 the web console against this host, run `bun run dev` in `web/`.

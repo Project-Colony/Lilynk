@@ -45,7 +45,7 @@ export type Artwork = typeof Artwork.Type;
  * | `emulator` | a catalog emulator id (`pcsx2`); `args` name `platform`, `file`, and optionally `core` | both |
  *
  * `exec` is how a tile the host cannot name on its own (a ROM through whichever emulator the
- * operator configured) still launches. The template — program and argv — lives in the `punktfunk`
+ * operator configured) still launches. The template — program and argv — lives in the `lilynk`
  * block of your package.json, which ships in the reviewed tarball; the entry only supplies values
  * for its `{param}` placeholders in `args`, and the host checks each against the character class
  * the template declares. A plugin never composes a command line, and nothing it says at runtime

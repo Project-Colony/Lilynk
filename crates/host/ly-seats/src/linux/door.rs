@@ -151,12 +151,12 @@ fn ports(input: impl Read, to: &Path) -> Result<(), BackendError> {
 }
 
 /// The door's directory. `install -d` makes it; only the door opens a path inside it.
-const BOX_DIR: &str = "/var/lib/punktfunk";
+const BOX_DIR: &str = "/var/lib/lilynk";
 /// Held for a whole on or off. `ports` runs inside the door's start, which an on waits for while
 /// it holds this lock, so `ports` never takes it.
 const LOCK: &str = "/run/lilynk-door.lock";
-const DOOR: &str = "punktfunk";
-/// The door's primary group. Never `punktfunk`, which owns the usbip attach nodes and passes
+const DOOR: &str = "lilynk";
+/// The door's primary group. Never `lilynk`, which owns the usbip attach nodes and passes
 /// ly-dm-helper: the door opens no device.
 const DOOR_GROUP: &str = "lilynk-door";
 /// The shared games folder's group; the owner's Steam moves games into it at their next login.
@@ -213,7 +213,7 @@ mod hands {
 
         /// The owner's config folder under `home`.
         pub(super) fn config(home: &Path) -> Self {
-            Theirs(home.join(".config/punktfunk"))
+            Theirs(home.join(".config/lilynk"))
         }
 
         pub(super) fn join(&self, name: &str) -> Self {
@@ -1367,7 +1367,7 @@ mod tests {
             ("a byte past ASCII drops the line", "LILYNK_UI_BIND=b\u{fc}:1\n".as_bytes(), ""),
             (
                 "only a line that is the key",
-                b"export LILYNK_NATIVE_PORT=1\n#LILYNK_NATIVE_PORT=2\nLILYNK_NATIVE_PORTS=3\nlilynk_native_port=4\nPUNKTFUNK NATIVE_PORT=5\n",
+                b"export LILYNK_NATIVE_PORT=1\n#LILYNK_NATIVE_PORT=2\nLILYNK_NATIVE_PORTS=3\nlilynk_native_port=4\nLILYNK NATIVE_PORT=5\n",
                 "",
             ),
             (
@@ -1451,11 +1451,7 @@ mod tests {
         port_file: bool,
     }
 
-    const ALL_HAS: [&str; 3] = [
-        "passwd punktfunk",
-        "group lilynk-door",
-        "group lilynk-games",
-    ];
+    const ALL_HAS: [&str; 3] = ["passwd lilynk", "group lilynk-door", "group lilynk-games"];
     const ALICE: [(&str, &str); 9] = [
         ("native-cert.pem", "cert-alice"),
         ("native-key.pem", "key-alice"),
@@ -1535,7 +1531,7 @@ mod tests {
         world.home = "/home/bob";
         world.owner = vec![("uniqueid", "id-bob"), ("profiles.json", "{\"bob\":1}")];
         world.door = vec![("door-on", "")];
-        world.door_gid = "punktfunk";
+        world.door_gid = "lilynk";
         Scenario {
             record: Some("dave"),
             mark: true,
@@ -1668,7 +1664,7 @@ mod tests {
                 }
                 ("runuser", ["-u", _, "--", command @ ..]) => self.by(command),
                 ("tail", _) => {
-                    let lines = self.tree("/var/lib/punktfunk/web-password").unwrap_or("");
+                    let lines = self.tree("/var/lib/lilynk/web-password").unwrap_or("");
                     let last = lines.lines().rev().find(|l| {
                         let l = l.trim_start();
                         l.starts_with("LILYNK_UI_PASSWORD=")
@@ -1705,7 +1701,7 @@ mod tests {
 
         /// Which folder `path` is in, and its name there.
         fn rel<'p>(&self, path: &'p str) -> (bool, &'p str) {
-            let own = format!("{}/.config/punktfunk", self.home);
+            let own = format!("{}/.config/lilynk", self.home);
             match path.strip_prefix(&own) {
                 Some(rel) => (true, rel.trim_start_matches('/')),
                 None => (
@@ -1797,7 +1793,7 @@ mod tests {
             .into_iter()
             .map(|c| {
                 c.replace(&door.state, STATE)
-                    .replace(&door.contracts, "/run/punktfunk/seats")
+                    .replace(&door.contracts, "/run/lilynk/seats")
             })
             .collect();
         let read = |name| std::fs::read_to_string(state.join(name)).ok();
@@ -1992,16 +1988,16 @@ mod tests {
     /// nothing moves, and the on is put back.
     #[test]
     fn a_take_whose_read_fails_replaces_nothing() {
-        let own = "/home/alice/.config/punktfunk/native-key.pem";
-        let theirs = "/var/lib/punktfunk/native-key.pem";
+        let own = "/home/alice/.config/lilynk/native-key.pem";
+        let theirs = "/var/lib/lilynk/native-key.pem";
         let mut scenario = on_fresh();
         scenario.world.fail_at = Some(nth(
             &switch(on_fresh()).calls,
             &format!("runuser -u alice -- cat -- {own}"),
         ));
         let ran = switch(scenario);
-        let drop = format!(r#"runuser -u punktfunk -- sh -c rm -f "$1.tmp" sh {theirs}"#);
-        let moved = format!(r#"runuser -u punktfunk -- sh -c mv -f "$1.tmp" "$1" sh {theirs}"#);
+        let drop = format!(r#"runuser -u lilynk -- sh -c rm -f "$1.tmp" sh {theirs}"#);
+        let moved = format!(r#"runuser -u lilynk -- sh -c mv -f "$1.tmp" "$1" sh {theirs}"#);
         assert!(ran.calls.contains(&drop), "{:#?}", ran.calls);
         assert!(!ran.calls.contains(&moved), "{:#?}", ran.calls);
         assert_eq!(
@@ -2022,9 +2018,9 @@ mod tests {
     /// mark and the hold, and leaves the door off and the owner's host back.
     #[test]
     fn a_give_whose_read_fails_replaces_nothing() {
-        let own = "/home/alice/.config/punktfunk/uniqueid";
+        let own = "/home/alice/.config/lilynk/uniqueid";
         let mut scenario = off_owner();
-        let read = "runuser -u punktfunk -- cat -- /var/lib/punktfunk/uniqueid";
+        let read = "runuser -u lilynk -- cat -- /var/lib/lilynk/uniqueid";
         scenario.world.fail_at = Some(nth(&switch(off_owner()).calls, read));
         let ran = switch(scenario);
         let drop = format!(r#"runuser -u alice -- sh -c rm -f "$1.tmp" sh {own}"#);
@@ -2045,8 +2041,8 @@ mod tests {
     /// goes from the box before theirs arrive. Over a gone owner, what they lack stays.
     #[test]
     fn a_first_on_drops_the_box_files_the_owner_lacks() {
-        let rm = |name: &str| format!("runuser -u punktfunk -- rm -f {BOX_DIR}/{name}");
-        let avatars = format!("runuser -u punktfunk -- rm -rf {BOX_DIR}/profiles");
+        let rm = |name: &str| format!("runuser -u lilynk -- rm -f {BOX_DIR}/{name}");
+        let avatars = format!("runuser -u lilynk -- rm -rf {BOX_DIR}/profiles");
         let mut stale = on_fresh();
         stale.world.door = vec![
             ("lilynk1-paired.json", "[\"carol's phone\"]"),
@@ -2067,7 +2063,7 @@ mod tests {
             assert_eq!(lacks.contains(&name), !has, "{name}");
         }
         let emptied = nth(&ran.calls, &avatars);
-        let made = format!("runuser -u punktfunk -- mkdir -p -m 0700 {BOX_DIR}/profiles");
+        let made = format!("runuser -u lilynk -- mkdir -p -m 0700 {BOX_DIR}/profiles");
         assert!(emptied < nth(&ran.calls, &made), "{:#?}", ran.calls);
 
         let over_gone = switch(on_takeover());
@@ -2107,57 +2103,57 @@ mod tests {
         "systemctl is-active --quiet lilynk-seats.service",
         "getent group lilynk-door",
         "groupadd --system lilynk-door",
-        "getent passwd punktfunk",
-        "useradd --system --no-user-group --gid lilynk-door --home-dir /var/lib/punktfunk --shell /usr/sbin/nologin punktfunk",
-        "install -d -m 0711 -o punktfunk -g lilynk-door /var/lib/punktfunk",
-        "getent passwd punktfunk",
+        "getent passwd lilynk",
+        "useradd --system --no-user-group --gid lilynk-door --home-dir /var/lib/lilynk --shell /usr/sbin/nologin lilynk",
+        "install -d -m 0711 -o lilynk -g lilynk-door /var/lib/lilynk",
+        "getent passwd lilynk",
         "getent group lilynk-door",
-        "id -gn punktfunk",
-        "runuser -u punktfunk -- find /var/lib/punktfunk -xdev -user punktfunk ! -group lilynk-door -exec chgrp -h lilynk-door {} +",
+        "id -gn lilynk",
+        "runuser -u lilynk -- find /var/lib/lilynk -xdev -user lilynk ! -group lilynk-door -exec chgrp -h lilynk-door {} +",
         "getent group lilynk-games",
         "groupadd --system lilynk-games",
         "usermod -aG lilynk-games alice",
         "install -d -m 0711 -o root -g root /var/lib/lilynk-seats",
-        "getent passwd punktfunk",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/door-on",
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/native-cert.pem",
-        "runuser -u alice -- cat -- /home/alice/.config/punktfunk/native-cert.pem",
-        r#"runuser -u punktfunk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/punktfunk/native-cert.pem"#,
-        r#"runuser -u punktfunk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/punktfunk/native-cert.pem"#,
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/native-key.pem",
-        "runuser -u alice -- cat -- /home/alice/.config/punktfunk/native-key.pem",
-        r#"runuser -u punktfunk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/punktfunk/native-key.pem"#,
-        r#"runuser -u punktfunk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/punktfunk/native-key.pem"#,
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/uniqueid",
-        "runuser -u alice -- cat -- /home/alice/.config/punktfunk/uniqueid",
-        r#"runuser -u punktfunk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/punktfunk/uniqueid"#,
-        r#"runuser -u punktfunk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/punktfunk/uniqueid"#,
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/lilynk1-paired.json",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/lilynk1-paired.json",
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/profiles.json",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/profiles.json",
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/web-password",
-        "runuser -u alice -- cat -- /home/alice/.config/punktfunk/web-password",
-        r#"runuser -u punktfunk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/punktfunk/web-password"#,
-        r#"runuser -u punktfunk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/punktfunk/web-password"#,
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/web-session-key",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/web-session-key",
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/web-session-epoch",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/web-session-epoch",
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/host-settings.json",
-        "runuser -u alice -- cat -- /home/alice/.config/punktfunk/host-settings.json",
-        r#"runuser -u punktfunk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/punktfunk/host-settings.json"#,
-        r#"runuser -u punktfunk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/punktfunk/host-settings.json"#,
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/web.env",
-        "runuser -u punktfunk -- rm -rf /var/lib/punktfunk/profiles",
-        "runuser -u punktfunk -- mkdir -p -m 0700 /var/lib/punktfunk/profiles",
-        "runuser -u alice -- ls -1 -- /home/alice/.config/punktfunk/profiles",
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/profiles/a",
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/profiles/b.png",
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/profiles/alice.png",
-        "runuser -u alice -- cat -- /home/alice/.config/punktfunk/profiles/alice.png",
-        r#"runuser -u punktfunk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/punktfunk/profiles/alice.png"#,
-        r#"runuser -u punktfunk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/punktfunk/profiles/alice.png"#,
+        "getent passwd lilynk",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/door-on",
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/native-cert.pem",
+        "runuser -u alice -- cat -- /home/alice/.config/lilynk/native-cert.pem",
+        r#"runuser -u lilynk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/lilynk/native-cert.pem"#,
+        r#"runuser -u lilynk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/lilynk/native-cert.pem"#,
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/native-key.pem",
+        "runuser -u alice -- cat -- /home/alice/.config/lilynk/native-key.pem",
+        r#"runuser -u lilynk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/lilynk/native-key.pem"#,
+        r#"runuser -u lilynk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/lilynk/native-key.pem"#,
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/uniqueid",
+        "runuser -u alice -- cat -- /home/alice/.config/lilynk/uniqueid",
+        r#"runuser -u lilynk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/lilynk/uniqueid"#,
+        r#"runuser -u lilynk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/lilynk/uniqueid"#,
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/lilynk1-paired.json",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/lilynk1-paired.json",
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/profiles.json",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/profiles.json",
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/web-password",
+        "runuser -u alice -- cat -- /home/alice/.config/lilynk/web-password",
+        r#"runuser -u lilynk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/lilynk/web-password"#,
+        r#"runuser -u lilynk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/lilynk/web-password"#,
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/web-session-key",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/web-session-key",
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/web-session-epoch",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/web-session-epoch",
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/host-settings.json",
+        "runuser -u alice -- cat -- /home/alice/.config/lilynk/host-settings.json",
+        r#"runuser -u lilynk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/lilynk/host-settings.json"#,
+        r#"runuser -u lilynk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/lilynk/host-settings.json"#,
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/web.env",
+        "runuser -u lilynk -- rm -rf /var/lib/lilynk/profiles",
+        "runuser -u lilynk -- mkdir -p -m 0700 /var/lib/lilynk/profiles",
+        "runuser -u alice -- ls -1 -- /home/alice/.config/lilynk/profiles",
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/profiles/a",
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/profiles/b.png",
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/profiles/alice.png",
+        "runuser -u alice -- cat -- /home/alice/.config/lilynk/profiles/alice.png",
+        r#"runuser -u lilynk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/lilynk/profiles/alice.png"#,
+        r#"runuser -u lilynk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/lilynk/profiles/alice.png"#,
         "systemctl enable lilynk-seats.service",
         "systemctl start lilynk-seats.service",
         "lilynk-seats adopt-owner alice",
@@ -2171,18 +2167,18 @@ mod tests {
     const ON_REPEAT: &[&str] = &[
         "systemctl is-active --quiet lilynk-seats.service",
         "getent group lilynk-door",
-        "getent passwd punktfunk",
-        "install -d -m 0711 -o punktfunk -g lilynk-door /var/lib/punktfunk",
-        "getent passwd punktfunk",
+        "getent passwd lilynk",
+        "install -d -m 0711 -o lilynk -g lilynk-door /var/lib/lilynk",
+        "getent passwd lilynk",
         "getent group lilynk-door",
-        "id -gn punktfunk",
-        "runuser -u punktfunk -- find /var/lib/punktfunk -xdev -user punktfunk ! -group lilynk-door -exec chgrp -h lilynk-door {} +",
+        "id -gn lilynk",
+        "runuser -u lilynk -- find /var/lib/lilynk -xdev -user lilynk ! -group lilynk-door -exec chgrp -h lilynk-door {} +",
         "getent group lilynk-games",
         "usermod -aG lilynk-games alice",
         "install -d -m 0711 -o root -g root /var/lib/lilynk-seats",
-        "getent passwd punktfunk",
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/door-on",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/door-on",
+        "getent passwd lilynk",
+        "runuser -u lilynk -- test -f /var/lib/lilynk/door-on",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/door-on",
         "systemctl enable lilynk-seats.service",
         "systemctl start lilynk-seats.service",
         "lilynk-seats adopt-owner alice",
@@ -2196,38 +2192,38 @@ mod tests {
     const ON_TAKEOVER: &[&str] = &[
         "systemctl is-active --quiet lilynk-seats.service",
         "getent group lilynk-door",
-        "getent passwd punktfunk",
-        "install -d -m 0711 -o punktfunk -g lilynk-door /var/lib/punktfunk",
-        "getent passwd punktfunk",
+        "getent passwd lilynk",
+        "install -d -m 0711 -o lilynk -g lilynk-door /var/lib/lilynk",
+        "getent passwd lilynk",
         "getent group lilynk-door",
-        "id -gn punktfunk",
-        "usermod -g lilynk-door punktfunk",
-        "runuser -u punktfunk -- find /var/lib/punktfunk -xdev -user punktfunk ! -group lilynk-door -exec chgrp -h lilynk-door {} +",
+        "id -gn lilynk",
+        "usermod -g lilynk-door lilynk",
+        "runuser -u lilynk -- find /var/lib/lilynk -xdev -user lilynk ! -group lilynk-door -exec chgrp -h lilynk-door {} +",
         "find /var/lib/lilynk-seats/library -xdev ! -group lilynk-door -exec chgrp -h lilynk-door {} +",
         "getent group lilynk-games",
         "usermod -aG lilynk-games bob",
         "install -d -m 0711 -o root -g root /var/lib/lilynk-seats",
-        "getent passwd punktfunk",
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/door-on",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/door-on",
-        "runuser -u bob -- test -f /home/bob/.config/punktfunk/native-cert.pem",
-        "runuser -u bob -- test -f /home/bob/.config/punktfunk/native-key.pem",
-        "runuser -u bob -- test -f /home/bob/.config/punktfunk/uniqueid",
-        "runuser -u bob -- cat -- /home/bob/.config/punktfunk/uniqueid",
-        r#"runuser -u punktfunk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/punktfunk/uniqueid"#,
-        r#"runuser -u punktfunk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/punktfunk/uniqueid"#,
-        "runuser -u bob -- test -f /home/bob/.config/punktfunk/lilynk1-paired.json",
-        "runuser -u bob -- test -f /home/bob/.config/punktfunk/profiles.json",
-        "runuser -u bob -- cat -- /home/bob/.config/punktfunk/profiles.json",
-        r#"runuser -u punktfunk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/punktfunk/profiles.json"#,
-        r#"runuser -u punktfunk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/punktfunk/profiles.json"#,
-        "runuser -u bob -- test -f /home/bob/.config/punktfunk/web-password",
-        "runuser -u bob -- test -f /home/bob/.config/punktfunk/web-session-key",
-        "runuser -u bob -- test -f /home/bob/.config/punktfunk/web-session-epoch",
-        "runuser -u bob -- test -f /home/bob/.config/punktfunk/host-settings.json",
-        "runuser -u bob -- test -f /home/bob/.config/punktfunk/web.env",
-        "runuser -u punktfunk -- mkdir -p -m 0700 /var/lib/punktfunk/profiles",
-        "runuser -u bob -- ls -1 -- /home/bob/.config/punktfunk/profiles",
+        "getent passwd lilynk",
+        "runuser -u lilynk -- test -f /var/lib/lilynk/door-on",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/door-on",
+        "runuser -u bob -- test -f /home/bob/.config/lilynk/native-cert.pem",
+        "runuser -u bob -- test -f /home/bob/.config/lilynk/native-key.pem",
+        "runuser -u bob -- test -f /home/bob/.config/lilynk/uniqueid",
+        "runuser -u bob -- cat -- /home/bob/.config/lilynk/uniqueid",
+        r#"runuser -u lilynk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/lilynk/uniqueid"#,
+        r#"runuser -u lilynk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/lilynk/uniqueid"#,
+        "runuser -u bob -- test -f /home/bob/.config/lilynk/lilynk1-paired.json",
+        "runuser -u bob -- test -f /home/bob/.config/lilynk/profiles.json",
+        "runuser -u bob -- cat -- /home/bob/.config/lilynk/profiles.json",
+        r#"runuser -u lilynk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/lilynk/profiles.json"#,
+        r#"runuser -u lilynk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/lilynk/profiles.json"#,
+        "runuser -u bob -- test -f /home/bob/.config/lilynk/web-password",
+        "runuser -u bob -- test -f /home/bob/.config/lilynk/web-session-key",
+        "runuser -u bob -- test -f /home/bob/.config/lilynk/web-session-epoch",
+        "runuser -u bob -- test -f /home/bob/.config/lilynk/host-settings.json",
+        "runuser -u bob -- test -f /home/bob/.config/lilynk/web.env",
+        "runuser -u lilynk -- mkdir -p -m 0700 /var/lib/lilynk/profiles",
+        "runuser -u bob -- ls -1 -- /home/bob/.config/lilynk/profiles",
         "systemctl enable lilynk-seats.service",
         "systemctl start lilynk-seats.service",
         "lilynk-seats adopt-owner bob",
@@ -2241,46 +2237,46 @@ mod tests {
     const ON_STEAMOS: &[&str] = &[
         "systemctl is-active --quiet lilynk-seats.service",
         "getent group lilynk-door",
-        "getent passwd punktfunk",
-        "install -d -m 0711 -o punktfunk -g lilynk-door /var/lib/punktfunk",
-        "getent passwd punktfunk",
+        "getent passwd lilynk",
+        "install -d -m 0711 -o lilynk -g lilynk-door /var/lib/lilynk",
+        "getent passwd lilynk",
         "getent group lilynk-door",
-        "id -gn punktfunk",
-        "runuser -u punktfunk -- find /var/lib/punktfunk -xdev -user punktfunk ! -group lilynk-door -exec chgrp -h lilynk-door {} +",
+        "id -gn lilynk",
+        "runuser -u lilynk -- find /var/lib/lilynk -xdev -user lilynk ! -group lilynk-door -exec chgrp -h lilynk-door {} +",
         "getent group lilynk-games",
         "usermod -aG lilynk-games alice",
         "install -d -m 0711 -o root -g root /var/lib/lilynk-seats",
-        "getent passwd punktfunk",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/door-on",
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/native-cert.pem",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/native-cert.pem",
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/native-key.pem",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/native-key.pem",
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/uniqueid",
-        "runuser -u alice -- cat -- /home/alice/.config/punktfunk/uniqueid",
-        r#"runuser -u punktfunk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/punktfunk/uniqueid"#,
-        r#"runuser -u punktfunk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/punktfunk/uniqueid"#,
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/lilynk1-paired.json",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/lilynk1-paired.json",
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/profiles.json",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/profiles.json",
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/web-password",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/web-password",
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/web-session-key",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/web-session-key",
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/web-session-epoch",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/web-session-epoch",
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/host-settings.json",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/host-settings.json",
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/web.env",
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/web-password",
-        "runuser -u alice -- cat -- /home/alice/.config/punktfunk/web.env",
+        "getent passwd lilynk",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/door-on",
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/native-cert.pem",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/native-cert.pem",
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/native-key.pem",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/native-key.pem",
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/uniqueid",
+        "runuser -u alice -- cat -- /home/alice/.config/lilynk/uniqueid",
+        r#"runuser -u lilynk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/lilynk/uniqueid"#,
+        r#"runuser -u lilynk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/lilynk/uniqueid"#,
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/lilynk1-paired.json",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/lilynk1-paired.json",
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/profiles.json",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/profiles.json",
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/web-password",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/web-password",
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/web-session-key",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/web-session-key",
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/web-session-epoch",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/web-session-epoch",
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/host-settings.json",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/host-settings.json",
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/web.env",
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/web-password",
+        "runuser -u alice -- cat -- /home/alice/.config/lilynk/web.env",
         "grep -E ^[[:space:]]*LILYNK_UI_PASSWORD(_HASH)?=|^[[:space:]]*LILYNK_UI_SECRET=",
-        r#"runuser -u punktfunk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/punktfunk/web-password"#,
-        r#"runuser -u punktfunk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/punktfunk/web-password"#,
-        "runuser -u punktfunk -- rm -rf /var/lib/punktfunk/profiles",
-        "runuser -u punktfunk -- mkdir -p -m 0700 /var/lib/punktfunk/profiles",
-        "runuser -u alice -- ls -1 -- /home/alice/.config/punktfunk/profiles",
+        r#"runuser -u lilynk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/lilynk/web-password"#,
+        r#"runuser -u lilynk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/lilynk/web-password"#,
+        "runuser -u lilynk -- rm -rf /var/lib/lilynk/profiles",
+        "runuser -u lilynk -- mkdir -p -m 0700 /var/lib/lilynk/profiles",
+        "runuser -u alice -- ls -1 -- /home/alice/.config/lilynk/profiles",
         "systemctl enable lilynk-seats.service",
         "systemctl start lilynk-seats.service",
         "lilynk-seats adopt-owner alice",
@@ -2293,41 +2289,41 @@ mod tests {
 
     const OFF_OWNER: &[&str] = &[
         "systemctl stop lilynk-web-door.service lilynk-door.service",
-        "getent passwd punktfunk",
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/door-on",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/door-on",
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/native-cert.pem",
-        "runuser -u punktfunk -- cat -- /var/lib/punktfunk/native-cert.pem",
-        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/punktfunk/native-cert.pem"#,
-        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/punktfunk/native-cert.pem"#,
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/native-key.pem",
-        "runuser -u punktfunk -- cat -- /var/lib/punktfunk/native-key.pem",
-        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/punktfunk/native-key.pem"#,
-        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/punktfunk/native-key.pem"#,
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/uniqueid",
-        "runuser -u punktfunk -- cat -- /var/lib/punktfunk/uniqueid",
-        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/punktfunk/uniqueid"#,
-        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/punktfunk/uniqueid"#,
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/lilynk1-paired.json",
-        "runuser -u punktfunk -- cat -- /var/lib/punktfunk/lilynk1-paired.json",
-        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/punktfunk/lilynk1-paired.json"#,
-        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/punktfunk/lilynk1-paired.json"#,
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/profiles.json",
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/web-session-key",
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/web-session-epoch",
-        "runuser -u punktfunk -- cat -- /var/lib/punktfunk/web-session-epoch",
-        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/punktfunk/web-session-epoch"#,
-        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/punktfunk/web-session-epoch"#,
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/web.env",
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/web-password",
-        "runuser -u punktfunk -- cat -- /var/lib/punktfunk/web-password",
-        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/punktfunk/web-password"#,
-        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/punktfunk/web-password"#,
-        "runuser -u punktfunk -- ls -1 -- /var/lib/punktfunk/profiles",
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/profiles/alice.png",
-        "runuser -u punktfunk -- cat -- /var/lib/punktfunk/profiles/alice.png",
-        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/punktfunk/profiles/alice.png"#,
-        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/punktfunk/profiles/alice.png"#,
+        "getent passwd lilynk",
+        "runuser -u lilynk -- test -f /var/lib/lilynk/door-on",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/door-on",
+        "runuser -u lilynk -- test -f /var/lib/lilynk/native-cert.pem",
+        "runuser -u lilynk -- cat -- /var/lib/lilynk/native-cert.pem",
+        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/lilynk/native-cert.pem"#,
+        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/lilynk/native-cert.pem"#,
+        "runuser -u lilynk -- test -f /var/lib/lilynk/native-key.pem",
+        "runuser -u lilynk -- cat -- /var/lib/lilynk/native-key.pem",
+        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/lilynk/native-key.pem"#,
+        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/lilynk/native-key.pem"#,
+        "runuser -u lilynk -- test -f /var/lib/lilynk/uniqueid",
+        "runuser -u lilynk -- cat -- /var/lib/lilynk/uniqueid",
+        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/lilynk/uniqueid"#,
+        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/lilynk/uniqueid"#,
+        "runuser -u lilynk -- test -f /var/lib/lilynk/lilynk1-paired.json",
+        "runuser -u lilynk -- cat -- /var/lib/lilynk/lilynk1-paired.json",
+        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/lilynk/lilynk1-paired.json"#,
+        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/lilynk/lilynk1-paired.json"#,
+        "runuser -u lilynk -- test -f /var/lib/lilynk/profiles.json",
+        "runuser -u lilynk -- test -f /var/lib/lilynk/web-session-key",
+        "runuser -u lilynk -- test -f /var/lib/lilynk/web-session-epoch",
+        "runuser -u lilynk -- cat -- /var/lib/lilynk/web-session-epoch",
+        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/lilynk/web-session-epoch"#,
+        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/lilynk/web-session-epoch"#,
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/web.env",
+        "runuser -u lilynk -- test -f /var/lib/lilynk/web-password",
+        "runuser -u lilynk -- cat -- /var/lib/lilynk/web-password",
+        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/lilynk/web-password"#,
+        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/lilynk/web-password"#,
+        "runuser -u lilynk -- ls -1 -- /var/lib/lilynk/profiles",
+        "runuser -u lilynk -- test -f /var/lib/lilynk/profiles/alice.png",
+        "runuser -u lilynk -- cat -- /var/lib/lilynk/profiles/alice.png",
+        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/lilynk/profiles/alice.png"#,
+        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/lilynk/profiles/alice.png"#,
         "systemctl is-active --quiet lilynk-seats.service",
         "lilynk-seats stop-all",
         "lilynk-seats release-owner",
@@ -2339,42 +2335,42 @@ mod tests {
 
     const OFF_STEAMOS: &[&str] = &[
         "systemctl stop lilynk-web-door.service lilynk-door.service",
-        "getent passwd punktfunk",
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/door-on",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/door-on",
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/native-cert.pem",
-        "runuser -u punktfunk -- cat -- /var/lib/punktfunk/native-cert.pem",
-        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/punktfunk/native-cert.pem"#,
-        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/punktfunk/native-cert.pem"#,
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/native-key.pem",
-        "runuser -u punktfunk -- cat -- /var/lib/punktfunk/native-key.pem",
-        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/punktfunk/native-key.pem"#,
-        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/punktfunk/native-key.pem"#,
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/uniqueid",
-        "runuser -u punktfunk -- cat -- /var/lib/punktfunk/uniqueid",
-        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/punktfunk/uniqueid"#,
-        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/punktfunk/uniqueid"#,
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/lilynk1-paired.json",
-        "runuser -u punktfunk -- cat -- /var/lib/punktfunk/lilynk1-paired.json",
-        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/punktfunk/lilynk1-paired.json"#,
-        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/punktfunk/lilynk1-paired.json"#,
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/profiles.json",
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/web-session-key",
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/web-session-epoch",
-        "runuser -u punktfunk -- cat -- /var/lib/punktfunk/web-session-epoch",
-        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/punktfunk/web-session-epoch"#,
-        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/punktfunk/web-session-epoch"#,
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/web.env",
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/web-password",
-        "runuser -u punktfunk -- cat -- /var/lib/punktfunk/web-password",
+        "getent passwd lilynk",
+        "runuser -u lilynk -- test -f /var/lib/lilynk/door-on",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/door-on",
+        "runuser -u lilynk -- test -f /var/lib/lilynk/native-cert.pem",
+        "runuser -u lilynk -- cat -- /var/lib/lilynk/native-cert.pem",
+        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/lilynk/native-cert.pem"#,
+        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/lilynk/native-cert.pem"#,
+        "runuser -u lilynk -- test -f /var/lib/lilynk/native-key.pem",
+        "runuser -u lilynk -- cat -- /var/lib/lilynk/native-key.pem",
+        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/lilynk/native-key.pem"#,
+        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/lilynk/native-key.pem"#,
+        "runuser -u lilynk -- test -f /var/lib/lilynk/uniqueid",
+        "runuser -u lilynk -- cat -- /var/lib/lilynk/uniqueid",
+        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/lilynk/uniqueid"#,
+        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/lilynk/uniqueid"#,
+        "runuser -u lilynk -- test -f /var/lib/lilynk/lilynk1-paired.json",
+        "runuser -u lilynk -- cat -- /var/lib/lilynk/lilynk1-paired.json",
+        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/lilynk/lilynk1-paired.json"#,
+        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/lilynk/lilynk1-paired.json"#,
+        "runuser -u lilynk -- test -f /var/lib/lilynk/profiles.json",
+        "runuser -u lilynk -- test -f /var/lib/lilynk/web-session-key",
+        "runuser -u lilynk -- test -f /var/lib/lilynk/web-session-epoch",
+        "runuser -u lilynk -- cat -- /var/lib/lilynk/web-session-epoch",
+        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/lilynk/web-session-epoch"#,
+        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/lilynk/web-session-epoch"#,
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/web.env",
+        "runuser -u alice -- test -f /home/alice/.config/lilynk/web-password",
+        "runuser -u lilynk -- cat -- /var/lib/lilynk/web-password",
         "grep -E ^[[:space:]]*LILYNK_UI_PASSWORD(_HASH)?=",
         "tail -n1",
-        r#"runuser -u alice -- sh -c umask 077; { grep -vE "$3" "$1" || true; } >"$1.tmp" && printf "%s\n" "$2" >>"$1.tmp" && mv -f "$1.tmp" "$1" sh /home/alice/.config/punktfunk/web.env LILYNK_UI_PASSWORD_HASH=door-2 ^[[:space:]]*LILYNK_UI_PASSWORD(_HASH)?="#,
-        "runuser -u punktfunk -- ls -1 -- /var/lib/punktfunk/profiles",
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/profiles/alice.png",
-        "runuser -u punktfunk -- cat -- /var/lib/punktfunk/profiles/alice.png",
-        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/punktfunk/profiles/alice.png"#,
-        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/punktfunk/profiles/alice.png"#,
+        r#"runuser -u alice -- sh -c umask 077; { grep -vE "$3" "$1" || true; } >"$1.tmp" && printf "%s\n" "$2" >>"$1.tmp" && mv -f "$1.tmp" "$1" sh /home/alice/.config/lilynk/web.env LILYNK_UI_PASSWORD_HASH=door-2 ^[[:space:]]*LILYNK_UI_PASSWORD(_HASH)?="#,
+        "runuser -u lilynk -- ls -1 -- /var/lib/lilynk/profiles",
+        "runuser -u lilynk -- test -f /var/lib/lilynk/profiles/alice.png",
+        "runuser -u lilynk -- cat -- /var/lib/lilynk/profiles/alice.png",
+        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/lilynk/profiles/alice.png"#,
+        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/lilynk/profiles/alice.png"#,
         "systemctl is-active --quiet lilynk-seats.service",
         "lilynk-seats stop-all",
         "lilynk-seats release-owner",
@@ -2385,58 +2381,58 @@ mod tests {
 
     const OFF_GONE: &[&str] = &[
         "systemctl stop lilynk-web-door.service lilynk-door.service",
-        "getent passwd punktfunk",
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/door-on",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/door-on",
+        "getent passwd lilynk",
+        "runuser -u lilynk -- test -f /var/lib/lilynk/door-on",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/door-on",
         "systemctl is-active --quiet lilynk-seats.service",
         "systemctl disable --now lilynk-web-door.service lilynk-door.service lilynk-seats.service",
     ];
 
     const PORTS: &[&str] = &[
-        "getent passwd punktfunk",
+        "getent passwd lilynk",
         "getent group lilynk-door",
-        "id -gn punktfunk",
-        "runuser -u punktfunk -- find /var/lib/punktfunk -xdev -user punktfunk ! -group lilynk-door -exec chgrp -h lilynk-door {} +",
-        "getent passwd punktfunk",
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/door-on",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/door-on",
-        "runuser -u alice -- test -d /home/alice/.config/punktfunk",
-        "runuser -u alice -- cat -- /home/alice/.config/punktfunk/host.env",
-        "runuser -u alice -- cat -- /home/alice/.config/punktfunk/web.env",
+        "id -gn lilynk",
+        "runuser -u lilynk -- find /var/lib/lilynk -xdev -user lilynk ! -group lilynk-door -exec chgrp -h lilynk-door {} +",
+        "getent passwd lilynk",
+        "runuser -u lilynk -- test -f /var/lib/lilynk/door-on",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/door-on",
+        "runuser -u alice -- test -d /home/alice/.config/lilynk",
+        "runuser -u alice -- cat -- /home/alice/.config/lilynk/host.env",
+        "runuser -u alice -- cat -- /home/alice/.config/lilynk/web.env",
     ];
 
     const PORTS_LEGACY: &[&str] = &[
-        "getent passwd punktfunk",
+        "getent passwd lilynk",
         "getent group lilynk-door",
-        "id -gn punktfunk",
-        "runuser -u punktfunk -- find /var/lib/punktfunk -xdev -user punktfunk ! -group lilynk-door -exec chgrp -h lilynk-door {} +",
-        "getent passwd punktfunk",
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/door-on",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/door-on",
-        "runuser -u punktfunk -- cat -- /var/lib/punktfunk/host.env",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/host.env",
-        "runuser -u alice -- test -d /home/alice/.config/punktfunk",
-        "runuser -u alice -- cat -- /home/alice/.config/punktfunk/host.env",
-        "runuser -u alice -- cat -- /home/alice/.config/punktfunk/web.env",
+        "id -gn lilynk",
+        "runuser -u lilynk -- find /var/lib/lilynk -xdev -user lilynk ! -group lilynk-door -exec chgrp -h lilynk-door {} +",
+        "getent passwd lilynk",
+        "runuser -u lilynk -- test -f /var/lib/lilynk/door-on",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/door-on",
+        "runuser -u lilynk -- cat -- /var/lib/lilynk/host.env",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/host.env",
+        "runuser -u alice -- test -d /home/alice/.config/lilynk",
+        "runuser -u alice -- cat -- /home/alice/.config/lilynk/host.env",
+        "runuser -u alice -- cat -- /home/alice/.config/lilynk/web.env",
     ];
 
     const PORTS_GONE: &[&str] = &[
-        "getent passwd punktfunk",
+        "getent passwd lilynk",
         "getent group lilynk-door",
-        "id -gn punktfunk",
-        "runuser -u punktfunk -- find /var/lib/punktfunk -xdev -user punktfunk ! -group lilynk-door -exec chgrp -h lilynk-door {} +",
-        "getent passwd punktfunk",
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/door-on",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/door-on",
-        "runuser -u punktfunk -- cat -- /var/lib/punktfunk/host.env",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/host.env",
+        "id -gn lilynk",
+        "runuser -u lilynk -- find /var/lib/lilynk -xdev -user lilynk ! -group lilynk-door -exec chgrp -h lilynk-door {} +",
+        "getent passwd lilynk",
+        "runuser -u lilynk -- test -f /var/lib/lilynk/door-on",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/door-on",
+        "runuser -u lilynk -- cat -- /var/lib/lilynk/host.env",
+        "runuser -u lilynk -- rm -f /var/lib/lilynk/host.env",
     ];
 
     const PORTS_NONE: &[&str] = &[
-        "getent passwd punktfunk",
+        "getent passwd lilynk",
         "getent group lilynk-door",
-        "id -gn punktfunk",
-        "runuser -u punktfunk -- find /var/lib/punktfunk -xdev -user punktfunk ! -group lilynk-door -exec chgrp -h lilynk-door {} +",
+        "id -gn lilynk",
+        "runuser -u lilynk -- find /var/lib/lilynk -xdev -user lilynk ! -group lilynk-door -exec chgrp -h lilynk-door {} +",
         "find /var/lib/lilynk-seats/library -xdev ! -group lilynk-door -exec chgrp -h lilynk-door {} +",
     ];
 

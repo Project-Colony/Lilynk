@@ -1,4 +1,4 @@
-//! Punktfunk's messages, compiled in. One module per part of `messages/` (`common` always, the
+//! Lilynk's messages, compiled in. One module per part of `messages/` (`common` always, the
 //! rest behind a Cargo feature of the same name) and one function per message, named as its key:
 //!
 //! ```

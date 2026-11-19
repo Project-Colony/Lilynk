@@ -1,8 +1,8 @@
 [Desktop Entry]
 Type=Application
-Name=Punktfunk Host service
+Name=Lilynk Host service
 Name[de]=Lilynk-Host-Dienst
-Comment=Punktfunk streaming host — KWin virtual-output / input authorization
+Comment=Lilynk streaming host — KWin virtual-output / input authorization
 Comment[de]=Lilynk-Streaming-Host — Freigabe für virtuelle Ausgabe und Eingabe in KWin
 Exec=/usr/bin/lilynk-host
 Terminal=false

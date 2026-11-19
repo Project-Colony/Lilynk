@@ -1,6 +1,6 @@
 // The Y′CbCr→RGB conversion as three shader rows, ported from ly-client-video's `csc_rows`
 // (crates/client/ly-client-video/src/video_color.rs) — the ONE coefficient implementation every
-// punktfunk presenter derives its CSC from. `clients/shared/csc-vectors.json`, which the Rust
+// lilynk presenter derives its CSC from. `clients/shared/csc-vectors.json`, which the Rust
 // side writes, holds this port to it (`CscRowsTests`).
 //
 // The rows follow each decoded buffer's signalled matrix (VideoToolbox propagates the HEVC VUI /

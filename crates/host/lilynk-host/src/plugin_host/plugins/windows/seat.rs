@@ -82,7 +82,7 @@ pub(super) fn status() -> RuntimeStatus {
         detail: if installed {
             String::new()
         } else {
-            "reinstall punktfunk with the scripting component to get the plugin runner".into()
+            "reinstall lilynk with the scripting component to get the plugin runner".into()
         },
     }
 }
@@ -197,10 +197,10 @@ mod tests {
     /// spaces whole; only a person's own account narrows it to their plugins.
     #[test]
     fn the_runner_s_line_and_environment() {
-        let script = Path::new(r"C:\Program Files\punktfunk\scripting\scripting-run.cmd");
+        let script = Path::new(r"C:\Program Files\lilynk\scripting\scripting-run.cmd");
         assert_eq!(
             command_line(r"C:\Windows\System32\cmd.exe", script),
-            r#""C:\Windows\System32\cmd.exe" /d /c ""C:\Program Files\punktfunk\scripting\scripting-run.cmd"""#
+            r#""C:\Windows\System32\cmd.exe" /d /c ""C:\Program Files\lilynk\scripting\scripting-run.cmd"""#
         );
         assert_eq!(
             env(true),

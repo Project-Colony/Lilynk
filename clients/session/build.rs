@@ -18,8 +18,8 @@ fn main() {
             .set_icon_with_id(icon, "1")
             // The version-info strings Windows shows for the bare exe (Properties→Details
             // lists FileDescription).
-            .set("FileDescription", "Punktfunk Session")
-            .set("ProductName", "Punktfunk")
+            .set("FileDescription", "Lilynk Session")
+            .set("ProductName", "Lilynk")
             .set("CompanyName", "Lilynk")
             .compile()
             .expect("embed windows icon resource");

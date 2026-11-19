@@ -47,7 +47,7 @@ param(
     [switch]$SkipDeploy,
     [string]$Repo = 'C:\Users\Public\pf-phase0',
     [string]$Client = 'C:\Users\Public\lilynk-native\target\release\lilynk-session.exe',
-    [string]$HostExe = 'C:\Program Files\punktfunk\lilynk-host.exe',
+    [string]$HostExe = 'C:\Program Files\lilynk\lilynk-host.exe',
     [string]$Service = 'LilynkHost',
     [string]$OutDir = 'C:\Users\Public'
 )
@@ -58,7 +58,7 @@ $runLog = Join-Path $OutDir "stall-$Tag.log"
 $pollLog = Join-Path $OutDir "stall-$Tag-poll.jsonl"
 $clientLog = Join-Path $OutDir "stall-$Tag-client.out"
 $dumpDir = Join-Path $OutDir "stall-$Tag-au"
-$hostLog = Join-Path $env:ProgramData 'punktfunk\logs\host.log'
+$hostLog = Join-Path $env:ProgramData 'lilynk\logs\host.log'
 $machineEnv = 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
 $svcEnv = "HKLM:\SYSTEM\CurrentControlSet\Services\$Service"
 
@@ -145,7 +145,7 @@ $hostMark = (Get-Item $hostLog -ErrorAction SilentlyContinue).Length
 if (-not $hostMark) { $hostMark = 0 }
 
 # --- 4. loopback client -------------------------------------------------------------------------
-$cert = Join-Path $env:ProgramData 'punktfunk\cert.pem'
+$cert = Join-Path $env:ProgramData 'lilynk\cert.pem'
 $fp = (Get-FileHash -Algorithm SHA256 $cert).Hash.ToLower()
 Say "starting the loopback client (fp $fp)"
 $proc = Start-Process -FilePath $Client -PassThru -WindowStyle Minimized `

@@ -5,7 +5,7 @@ Support" (``controller_action ts_n``) is active for the game. The plugin ships o
 (``controller_config/lilynk.vdf``, built on Steam's gamepad-fps template), copies it into
 ``controller_base/templates/`` so it is also a selectable template, and points each account's
 configset entry for the shortcut's name at it. Steam keys a non-Steam game by its LOWERCASE
-name, so the shortcuts named "Punktfunk" share one entry.
+name, so the shortcuts named "Lilynk" share one entry.
 
 The client forwards a Steam Controller raw, so every key or mouse binding of its Deck-side
 layout doubles on the host. Both Steam Controllers get a gamepad-only layout too.

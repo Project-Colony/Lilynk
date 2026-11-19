@@ -36,7 +36,7 @@ $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 $PSNativeCommandUseErrorActionPreference = $false
 
-# The decoded DRIVER_CERT key is trusted as a machine root on every box that installs punktfunk,
+# The decoded DRIVER_CERT key is trusted as a machine root on every box that installs lilynk,
 # so it must not outlive this script: the trap shreds it on any throw, then re-throws, and the
 # normal exit calls Remove-SigningPfx too. signing.ps1 holds the shred; the key stays this script's.
 . (Join-Path $PSScriptRoot 'signing.ps1')

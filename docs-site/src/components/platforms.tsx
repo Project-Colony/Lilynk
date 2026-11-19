@@ -1,8 +1,10 @@
-// Install commands and port facts rendered from the platforms data file, so a docs page never
+// Install lines, notices and port facts rendered from the platforms data file, so a docs page never
 // restates a repo URL or a port number (Contributing page, "Docs"). The canonical file
 // is ../../data/platforms.json at the repo root; src/data/platforms.json is a byte-identical
 // snapshot (the Docker build context is docs-site/ alone) that scripts/ci/check-docs-drift.sh
 // keeps in sync — same arrangement as public/openapi.json.
+import Link from 'fumadocs-core/link'
+import { Callout } from 'fumadocs-ui/components/callout'
 import { CodeBlock, Pre } from 'fumadocs-ui/components/codeblock'
 import platforms from '@/data/platforms.json'
 
@@ -14,14 +16,24 @@ function find(id: string): Platform {
   return p
 }
 
-/** `<Install platform="debian" />` — the canonical install snippet for one platform. */
-export function Install({ platform, title }: { platform: string; title?: string }) {
-  const p = find(platform)
-  if (!('install' in p) || !p.install) {
-    throw new Error(`platforms.json: "${platform}" has no install snippet (it has a url instead)`)
+/** Platforms whose `install` lines already build from source. */
+const SOURCE_BUILT = ['nixos', 'steamos']
+
+/** `<Install platform="nixos" />`: the platform's install lines, or the build-from-source notice
+ * on a platform that has no package yet. */
+export function Install({ platform }: { platform: string }) {
+  const p = find(platform) // an unknown id still fails the build
+  if (!SOURCE_BUILT.includes(platform) || !('install' in p) || !p.install) {
+    return (
+      <Callout>
+        Lilynk publishes no packages yet, so this system has no install command. Build from a clone
+        as this step describes. <Link href="/docs/developers/build-from-source">Build from source</Link>{' '}
+        lists the tools.
+      </Callout>
+    )
   }
   return (
-    <CodeBlock title={title}>
+    <CodeBlock>
       <Pre>
         <code>
           {p.install.map((line, i) => (
@@ -35,14 +47,13 @@ export function Install({ platform, title }: { platform: string; title?: string 
   )
 }
 
-/** `<Installer />` — the guided installer's one-liner and its inspect-first form, from platforms.json. */
-export function Installer({ inspect }: { inspect?: boolean }) {
-  const lines = inspect ? platforms.installer.inspectFirst : [platforms.installer.oneLiner]
+/** `<Installer />`: builds the guided installer from a clone and runs it, from platforms.json. */
+export function Installer() {
   return (
     <CodeBlock>
       <Pre>
         <code>
-          {lines.map((line, i) => (
+          {platforms.installer.fromSource.map((line, i) => (
             <span key={i} className="line">
               {line}
             </span>

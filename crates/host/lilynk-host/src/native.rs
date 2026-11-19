@@ -15,7 +15,7 @@
 //!   only names its ask.
 //! - Knobs are read once (`knobs`): the process env at start, the console's rows per session.
 //!
-//! Serves `~/.config/punktfunk/native-cert.pem` (shared with the mgmt API) and logs the SHA-256
+//! Serves `~/.config/lilynk/native-cert.pem` (shared with the mgmt API) and logs the SHA-256
 //! fingerprint clients pin. Tests: `native/tests.rs`.
 
 use anyhow::{anyhow, Context, Result};
@@ -299,7 +299,7 @@ pub(crate) async fn serve(
         port = opts.port,
         source = ?opts.source,
         fingerprint = %hex::encode(fingerprint),
-        "punktfunk host listening (QUIC) — clients pin this fingerprint"
+        "lilynk host listening (QUIC) — clients pin this fingerprint"
     );
 
     // Held for the host lifetime: dropping `_advert` unregisters.
@@ -339,7 +339,7 @@ pub(crate) async fn serve(
     if !ly_paths::seat::role().is_seat_host() {
         crate::audio::pad_endpoint::provision_at_startup(true);
     }
-    // Windows: mint "Punktfunk Speakers/Microphone" (Valve streaming drivers). Best-effort;
+    // Windows: mint "Lilynk Speakers/Microphone" (Valve streaming drivers). Best-effort;
     // without Steam's drivers the wiring plan keeps its name-based ladder. The Speakers hide
     // between captures, so Windows never defaults to the silent sink on its own.
     #[cfg(target_os = "windows")]
@@ -351,7 +351,7 @@ pub(crate) async fn serve(
         // takeover is adopted, then swept and handed back by the startup restore.
         crate::vdisplay::reclaim_topology_journal();
         crate::vdisplay::restore_takeover_on_startup();
-        // Takeover needs the host user in `punktfunk`. Missing membership degrades to mirroring.
+        // Takeover needs the host user in `lilynk`. Missing membership degrades to mirroring.
         // No-op off Linux.
         crate::vdisplay::preflight_takeover_privilege();
         // Console registry after the probed subsystems are up, so a probe never names a node
@@ -369,7 +369,7 @@ pub(crate) async fn serve(
         );
         // Shared secret: print to the operator's terminal, not tracing — GET /api/v1/logs
         // ships the DEBUG ring.
-        eprintln!("[punktfunk] pairing PIN: {pin}  (enter this on the client to pair)");
+        eprintln!("[lilynk] pairing PIN: {pin}  (enter this on the client to pair)");
     }
     let opts = Arc::new(opts);
     if np.follows_box() {
@@ -855,7 +855,7 @@ pub(crate) async fn wait_for_approval(
 }
 
 /// A QUIC handshake that closes code 0 with no control stream is a reachability probe
-/// (`punktfunk reachable` / hosts-page pips). Log at debug, not warn.
+/// (`lilynk reachable` / hosts-page pips). Log at debug, not warn.
 pub(crate) enum Served {
     Session,
     ProbeClose,

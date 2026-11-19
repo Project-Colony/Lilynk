@@ -13,7 +13,7 @@ object NativeBridge {
 
     /**
      * Mint a fresh persistent self-signed identity, returned as
-     * `"<certPem>\n-----PUNKTFUNK-KEY-----\n<keyPem>"`, or `""` on error. Kotlin persists it
+     * `"<certPem>\n-----LILYNK-KEY-----\n<keyPem>"`, or `""` on error. Kotlin persists it
      * (Keystore-wrapped via `IdentityStore`) and only calls this again when the store is empty.
      */
     external fun nativeGenerateIdentity(): String
@@ -1085,7 +1085,7 @@ object NativeBridge {
     external fun nativeConsoleAvailable(): Boolean
 
     /**
-     * Word the Rust side's text in the first of [tags] that Punktfunk ships: a JSON array of
+     * Word the Rust side's text in the first of [tags] that Lilynk ships: a JSON array of
      * BCP-47 tags, most preferred first. `nativeConsoleCreate` does this from its `languages`; the app
      * calls this at process start, for the text read with no console.
      */

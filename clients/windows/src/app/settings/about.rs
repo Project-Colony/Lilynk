@@ -24,7 +24,7 @@ pub(super) fn about_section(pal: &Palette, set_screen: &AsyncSetState<Screen>) -
     // App identity + version at the top of the About card (the WinUI Settings convention).
     // CARGO_PKG_VERSION is the workspace version, baked in at compile time.
     let about_identity = vstack((
-        text("Punktfunk")
+        text("Lilynk")
             .font_size(20.0)
             .font_weight(FontWeight::SEMI_BOLD),
         text(client::about_version_line(env!("CARGO_PKG_VERSION")))

@@ -10,16 +10,16 @@ import AppIntents
 import Foundation
 
 /// Ends the active streaming session. Backs the Live Activity's End button and the Shortcuts /
-/// Siri "End the Punktfunk stream" phrase. `perform()` runs in the app's process (LiveActivityIntent)
+/// Siri "End the Lilynk stream" phrase. `perform()` runs in the app's process (LiveActivityIntent)
 /// — it posts `.lilynkEndActiveSession`, which the app's SessionModel owner observes and turns
 /// into `disconnect(deliberate: true)` (the user explicitly ended it → quit-close the host).
 public struct EndStreamIntent: LiveActivityIntent {
     public static let title: LocalizedStringResource = LocalizedStringResource(
-        "apple_intent_end_stream_title", defaultValue: "End Punktfunk Stream")
+        "apple_intent_end_stream_title", defaultValue: "End Lilynk Stream")
     public static let description = IntentDescription(
         LocalizedStringResource(
             "apple_intent_end_stream_desc",
-            defaultValue: "Ends the active Punktfunk streaming session."))
+            defaultValue: "Ends the active Lilynk streaming session."))
 
     public init() {}
 

@@ -1,11 +1,11 @@
-# punktfunk web console pre-start — systemd USER one-shot.
+# lilynk web console pre-start — systemd USER one-shot.
 #
 # Three jobs, all of which must happen BEFORE the console's exec:
 #
 #  0. Write host.env's LILYNK_UI_BIND once, so the operator finds where the console listens
 #     (see web-init.sh).
 #  1. Generate the console login password (LILYNK_UI_PASSWORD) in the streaming user's
-#     ~/.config/punktfunk on first start, surfaced to the --user journal for retrieval. A .deb
+#     ~/.config/lilynk on first start, surfaced to the --user journal for retrieval. A .deb
 #     postinst runs as root (wrong $HOME), so credential generation must happen as the user —
 #     hence this unit.
 #  2. Block until the HOST has written the files the console cannot start without (mgmt-token +
@@ -15,14 +15,14 @@
 #
 # Pulled in by lilynk-web.service (Wants= + After=); also runnable directly.
 #
-# Deliberately NOT gated on `ConditionPathExists=!%h/.config/punktfunk/web-password`, which is what
+# Deliberately NOT gated on `ConditionPathExists=!%h/.config/lilynk/web-password`, which is what
 # it carried while step 1 was its only job. That condition skips the unit from the second boot
 # onward — which is exactly when step 2 must still run, and it would tie a host-readiness gate to
 # the presence of an unrelated password file. The script is idempotent instead: it writes the
 # password only when absent, and in steady state the host's files already exist, so it returns
 # without sleeping.
 [Unit]
-Description=punktfunk web console pre-start (login password; waits for the host)
+Description=lilynk web console pre-start (login password; waits for the host)
 
 [Service]
 Type=oneshot

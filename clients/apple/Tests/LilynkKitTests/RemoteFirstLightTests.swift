@@ -20,7 +20,7 @@ final class RemoteFirstLightTests: XCTestCase {
     /// SPAKE2 with the host's arming PIN, then a pinned + identified session. Needs the host
     /// armed (`lilynk1-host` arms at startup) and its printed PIN in LILYNK_REMOTE_PIN.
     /// Heads-up: every run durably adds one throwaway "remote-test" identity to the host's
-    /// ~/.config/punktfunk/lilynk1-paired.json — prune those entries at will.
+    /// ~/.config/lilynk/lilynk1-paired.json — prune those entries at will.
     func testRemotePairingThenPinnedStream() throws {
         let env = ProcessInfo.processInfo.environment
         guard let host = env["LILYNK_REMOTE_HOST"], let pin = env["LILYNK_REMOTE_PIN"]

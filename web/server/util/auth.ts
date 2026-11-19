@@ -1,5 +1,5 @@
 const configDir = (): string =>
-	process.env.LILYNK_CONFIG_DIR ?? join(homedir(), ".config", "punktfunk");
+	process.env.LILYNK_CONFIG_DIR ?? join(homedir(), ".config", "lilynk");
 
 /**
  * A revocation marker for issued sessions, PERSISTED across restarts.
@@ -175,7 +175,7 @@ function passwordFile(): string {
 		process.env.LILYNK_UI_PASSWORD_FILE ??
 		join(
 			process.env.LILYNK_CONFIG_DIR ??
-				join(homedir(), ".config", "punktfunk"),
+				join(homedir(), ".config", "lilynk"),
 			"web-password",
 		)
 	);

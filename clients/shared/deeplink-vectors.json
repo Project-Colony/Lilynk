@@ -248,7 +248,7 @@
     },
     {
       "name": "scheme-without-authority-is-not-ours",
-      "url": "punktfunk:/connect/Desk",
+      "url": "lilynk:/connect/Desk",
       "error": "not-our-scheme"
     },
     {

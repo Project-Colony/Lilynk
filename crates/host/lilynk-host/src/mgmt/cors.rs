@@ -120,12 +120,12 @@ mod tests {
 
     #[test]
     fn the_origin_gate_matches_exactly() {
-        let list = vec!["https://web.punktfunk.io".to_string()];
-        assert!(allowed("https://web.punktfunk.io", &list));
+        let list = vec!["https://web.lilynk.example".to_string()];
+        assert!(allowed("https://web.lilynk.example", &list));
         assert!(!allowed("https://evil.example", &list));
         // A prefix or a suffix is a different origin, which is the classic way this is got wrong.
-        assert!(!allowed("https://web.punktfunk.io.evil.example", &list));
-        assert!(!allowed("https://evil.web.punktfunk.io", &list));
+        assert!(!allowed("https://web.lilynk.example.evil.example", &list));
+        assert!(!allowed("https://evil.web.lilynk.example", &list));
         // Unconfigured means any, as it does for the browser plane itself.
         assert!(allowed("https://anything", &[]));
     }
@@ -137,7 +137,7 @@ mod tests {
         assert!(!enabled(false, &[]), "no plane and no list: no headers");
         assert!(enabled(true, &[]), "the plane is running");
         assert!(
-            enabled(false, &["https://web.punktfunk.io".to_string()]),
+            enabled(false, &["https://web.lilynk.example".to_string()]),
             "an operator named the pages that may call"
         );
     }
@@ -154,13 +154,13 @@ mod tests {
     #[test]
     fn credentials_are_never_allowed() {
         let mut headers = axum::http::HeaderMap::new();
-        stamp(&mut headers, "https://web.punktfunk.io", true);
+        stamp(&mut headers, "https://web.lilynk.example", true);
         assert!(headers
             .get(header::ACCESS_CONTROL_ALLOW_CREDENTIALS)
             .is_none());
         assert_eq!(
             headers.get(header::ACCESS_CONTROL_ALLOW_ORIGIN).unwrap(),
-            "https://web.punktfunk.io"
+            "https://web.lilynk.example"
         );
         assert_eq!(headers.get(header::VARY).unwrap(), "Origin");
     }

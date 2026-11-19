@@ -1,7 +1,7 @@
-// Punktfunk on Steam's own game page.
+// Lilynk on Steam's own game page.
 //
 // Steam Remote Play turns a title's Play button into "Stream" when another of your Steam
-// clients has it installed, and the ▾ beside Play lists those clients. Punktfunk hosts belong
+// clients has it installed, and the ▾ beside Play lists those clients. Lilynk hosts belong
 // in that same list (see play-from.tsx). Getting there means rendering through Steam's page:
 // the `/library/app/:appid` route is patched, and from its render output the descent below
 // walks the section components down to the play bar row, where the Play button lives.
@@ -29,7 +29,7 @@ const STYLE_KEY = "lilynk-style";
 
 // On by default. The one preference the plugin keeps for itself: it is about the plugin's own
 // footprint in Steam's UI, not about streaming, so it has no home in the client's settings.
-const PREF_KEY = "punktfunk:gamePageStream";
+const PREF_KEY = "lilynk:gamePageStream";
 
 export function gamePageStreamEnabled(): boolean {
   return read(PREF_KEY) !== "0";
@@ -75,7 +75,7 @@ function redirectShortcutPage(shortcutAppId: number, steamAppId: number): void {
   }, 0);
 }
 
-// Steam's Play button while a Punktfunk host is chosen (play-from.tsx adds the class): Steam's
+// Steam's Play button while a Lilynk host is chosen (play-from.tsx adds the class): Steam's
 // gray at rest, our brand violet under focus or hover where Steam's is green. `!important`
 // because Steam styles the element through `:enabled` selectors. The lens mark's own violets
 // vanish on that fill, so those states swap it for the light pair. Rides the group as a 0×0 element.
@@ -143,7 +143,7 @@ function onSectionRender(out: any): any {
           `${hostsForApp(currentGame.appId, getHostStore().views).length} host(s) have it`,
       );
     }
-    // The same row holds the Play group: its ▾ menu and Play button get Punktfunk's hosts.
+    // The same row holds the Play group: its ▾ menu and Play button get Lilynk's hosts.
     patchPlayGroup(out);
     return out;
   }

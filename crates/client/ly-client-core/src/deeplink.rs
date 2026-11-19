@@ -125,7 +125,7 @@ impl ParseError {
     }
 }
 
-/// `punktfunk`, or its `pf` input alias, in any case.
+/// `lilynk`, or its `pf` input alias, in any case.
 fn our_scheme(scheme: &str) -> bool {
     scheme.eq_ignore_ascii_case("punktfunk") || scheme.eq_ignore_ascii_case("pf")
 }
@@ -598,7 +598,7 @@ mod tests {
     #[test]
     fn refusals_are_specific() {
         assert_eq!(parse("https://example.com/"), Err(ParseError::NotOurScheme));
-        assert_eq!(parse("punktfunk:/connect/x"), Err(ParseError::NotOurScheme));
+        assert_eq!(parse("lilynk:/connect/x"), Err(ParseError::NotOurScheme));
         assert_eq!(
             parse(&format!("punktfunk://connect/{}", "a".repeat(MAX_URL_LEN))),
             Err(ParseError::TooLong)

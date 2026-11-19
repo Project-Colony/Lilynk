@@ -367,7 +367,7 @@ fn feedback(pad: u8, outputs: Vec<Output>) -> DsFeedback {
 
 /// The HID interface's string on a pad whose client may not move the pointer. Udev keeps
 /// libinput off that pad's touchpad (`60-lilynk.rules`); no game reads the string.
-pub const GAMEPAD_ONLY_INTERFACE: &str = "Punktfunk gamepad only";
+pub const GAMEPAD_ONLY_INTERFACE: &str = "Lilynk gamepad only";
 
 /// Assemble the 4-interface composite. `index` is the wire pad and `seat` its MAC's seat; neither
 /// appears in descriptors (no `iSerialNumber`; `hid-playstation` takes identity from feature

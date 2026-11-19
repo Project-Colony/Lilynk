@@ -2,5 +2,5 @@
 # seats on. The host's post-install makes its directories and lilynk-restart.hook restarts it.
 pre_remove() {
   # A removal, not an upgrade: the door goes off for its owner, or its units are disabled.
-  /usr/libexec/punktfunk/door-remove || true
+  /usr/libexec/lilynk/door-remove || true
 }

@@ -12,7 +12,7 @@ to a channel is [Release channels](/docs/channels).
 |---|---|---|
 | Built by | A push to `main` that touches a platform's paths | A `vX.Y.Z` tag, every platform |
 | Version | One minor ahead of the latest stable tag, plus a per-channel build suffix | The tag |
-| Published to | Each platform's canary channel | Each stable channel, plus one [Gitea release](https://git.unom.io/unom/punktfunk/releases) with every artifact |
+| Published to | Each platform's canary channel | Each stable channel, plus one [Gitea release](https://github.com/Project-Colony/Lilynk/releases) with every artifact |
 | Android | Play open testing (`beta`) and closed testing (`alpha`) | Play production at 100% |
 | Apple | TestFlight | TestFlight; the App Store after you submit it |
 | Host update check | Canary manifest, after each Windows host canary | Stable manifest, published by `announce` |
@@ -87,9 +87,9 @@ the old ones.
 ## Release notes
 
 Write them in the cut commit, before the tag, with the `write-release-notes` skill
-([.agents/skills/write-release-notes/SKILL.md](https://git.unom.io/unom/punktfunk/src/branch/main/.agents/skills/write-release-notes/SKILL.md)).
+([.agents/skills/write-release-notes/SKILL.md](https://github.com/Project-Colony/Lilynk/blob/main/.agents/skills/write-release-notes/SKILL.md)).
 It reads `git log` since the previous tag. Voice and shape:
-[docs/writing.md §2](https://git.unom.io/unom/punktfunk/src/branch/main/docs/writing.md#2-changelogs).
+[docs/writing.md §2](https://github.com/Project-Colony/Lilynk/blob/main/docs/writing.md#2-changelogs).
 
 | File | Reader | Rule |
 |---|---|---|
@@ -101,7 +101,7 @@ Ordinary pull requests don't touch `CHANGELOG.md`. A change the reader must act 
 `BREAKING CHANGE:` footer, which the skill turns into **Before you update**. To edit the notes after
 the tag, change the file on `main` and dispatch `announce` again (it posts to Discord again), or
 patch the release body through the Gitea API. Flow and voice in full:
-[docs/releases/README.md](https://git.unom.io/unom/punktfunk/src/branch/main/docs/releases/README.md).
+[docs/releases/README.md](https://github.com/Project-Colony/Lilynk/blob/main/docs/releases/README.md).
 
 ## A platform's run is missing
 

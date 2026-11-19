@@ -1,6 +1,6 @@
 ---
 title: Requirements
-description: What a Punktfunk host needs — system, desktop, GPU and network.
+description: What a Lilynk host needs — system, desktop, GPU and network.
 ---
 
 Check your host against this list before you install. What each combination can do, feature by

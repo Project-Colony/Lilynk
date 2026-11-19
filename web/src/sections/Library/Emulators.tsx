@@ -105,7 +105,7 @@ const Adopt: FC<{ id: string; onDone: () => void }> = ({ id, onDone }) => {
 };
 
 /**
- * Every emulator the host knows: installed by punktfunk or found on the box first, the rest one
+ * Every emulator the host knows: installed by lilynk or found on the box first, the rest one
  * tap away. Installing and pointing at the operator's own copy are the operator's acts here; a
  * plugin's own ask lands in its source's Access rows instead. Of the operator's views only the
  * owner's library shows them. A person's own console shows their seat host's; on their own

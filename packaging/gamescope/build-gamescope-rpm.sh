@@ -43,9 +43,9 @@ done
 [ -n "$STAGE" ] || { echo "ERROR: --stage is required" >&2; exit 2; }
 # The layout build-lilynk-gamescope.sh writes under its --destdir/--prefix.
 BINARY="$STAGE/usr/bin/lilynk-gamescope"
-REAPER="$STAGE/usr/lib/punktfunk/gamescope/gamescopereaper"
-LAYER_SO="$STAGE/usr/lib/punktfunk/libVkLayer_LILYNK_gamescope_wsi.so"
-LAYER_JSON="$STAGE/usr/lib/punktfunk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json"
+REAPER="$STAGE/usr/lib/lilynk/gamescope/gamescopereaper"
+LAYER_SO="$STAGE/usr/lib/lilynk/libVkLayer_LILYNK_gamescope_wsi.so"
+LAYER_JSON="$STAGE/usr/lib/lilynk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json"
 [ -x "$BINARY" ] || { echo "ERROR: $BINARY is not an executable file" >&2; exit 1; }
 # gamescope starts every session's first child through its reaper.
 [ -x "$REAPER" ] || { echo "ERROR: $REAPER missing from the stage — a session would run nothing" >&2; exit 1; }
@@ -66,7 +66,7 @@ RELEASE="$(sed -n 's/^pkgrel=//p' packaging/gamescope/PKGBUILD).${RELEASE}"
 BANNER="$("$BINARY" --version 2>&1 | head -1)"
 case "$BANNER" in
   *'+pfhdr'*) ;;
-  *) echo "ERROR: $BINARY has no +pfhdr marker — it is not a punktfunk gamescope build" >&2
+  *) echo "ERROR: $BINARY has no +pfhdr marker — it is not a lilynk gamescope build" >&2
      echo "       banner: $BANNER" >&2
      exit 1 ;;
 esac

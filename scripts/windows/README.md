@@ -16,7 +16,7 @@ points are runtime-loaded from the driver's `nvEncodeAPI64.dll`):
 | --- | --- | --- |
 | `LIBCLANG_PATH` | `C:\Program Files\LLVM\bin` | bindgen (`libclang.dll`) |
 
-No `FFMPEG_DIR`: nothing in punktfunk links libavcodec. The VS C++ toolchain is loaded
+No `FFMPEG_DIR`: nothing in lilynk links libavcodec. The VS C++ toolchain is loaded
 per-build via `vcvars64.bat` (auto-discovered with `vswhere`).
 
 ## Rebuild + redeploy the host service
@@ -36,11 +36,11 @@ On an **installed** host (the `setup.exe`) the console is set up automatically â
 The installer bundles the built (self-contained, no-`node_modules`) `.output` server + a portable
 bun; the **`LilynkHost` service supervises the console as its own child** (`bun
 {app}\web\.output\server\index.mjs` on `:47992`, session 0, restarted on any exit, stdout in
-`%ProgramData%\punktfunk\logs\web.log`), starting it as soon as the host has written its mgmt token
+`%ProgramData%\lilynk\logs\web.log`), starting it as soon as the host has written its mgmt token
 + identity cert. `lilynk-host.exe web setup` provisions the rest: it opens inbound TCP 47992 and
-writes the login password to `%ProgramData%\punktfunk\web-password` (ACL'd to Administrators +
+writes the login password to `%ProgramData%\lilynk\web-password` (ACL'd to Administrators +
 SYSTEM). The mgmt bearer token it proxies with is the host's own
-`%ProgramData%\punktfunk\mgmt-token`. Browse `https://<host-ip>:47992` and log in with the password
+`%ProgramData%\lilynk\mgmt-token`. Browse `https://<host-ip>:47992` and log in with the password
 the installer shows on its final page. The console replaces that clear line with a salted argon2id
 hash on the first sign-in, so a forgotten password is **reset, not read**: put a
 `LILYNK_UI_PASSWORD=<your-password>` line back in `web-password` (elevated â€” the file is ACL'd)

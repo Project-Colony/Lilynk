@@ -4,8 +4,8 @@
 # deb, rpm and pacman each spell their payload out by hand (packaging/debian/build-*.sh,
 # packaging/rpm/lilynk.spec, packaging/arch/PKGBUILD). payload.txt is the part they share; this
 # reads each artifact through assert-cap-matrix.sh's payload readers and names every listed path
-# the artifact lacks. pacman has no /usr/libexec, so usr/libexec/punktfunk/ reads
-# usr/lib/punktfunk/ for a .pkg.tar.*, except in seats, which keeps /usr/libexec.
+# the artifact lacks. pacman has no /usr/libexec, so usr/libexec/lilynk/ reads
+# usr/lib/lilynk/ for a .pkg.tar.*, except in seats, which keeps /usr/libexec.
 #
 # Usage:
 #   scripts/ci/assert-payload-parity.sh <artifact> [<artifact> ...]
@@ -22,7 +22,7 @@ PAYLOAD="$HERE/../../packaging/linux/payload.txt"
 # paths <package> <artifact name>: payload.txt's paths for <package>, read through the pacman
 # relocation when the name is a pacman package.
 paths() {
-  local relocate='s#^usr/libexec/punktfunk/#usr/lib/punktfunk/#'
+  local relocate='s#^usr/libexec/lilynk/#usr/lib/lilynk/#'
   case "$2" in *.pkg.tar.*) [ "$1" != seats ] || relocate='' ;; *) relocate='' ;; esac
   awk -v p="$1" '$1 == p { print $2 }' "$PAYLOAD" | sed -e "$relocate"
 }
@@ -72,9 +72,9 @@ self_test() {
   _case "rpm without its sysctl" x.rpm "$(grep -vx usr/lib/sysctl.d/99-lilynk-net.conf <<<"$host")" \
     usr/lib/sysctl.d/99-lilynk-net.conf
   _case "pacman reads libexec as lib" x.pkg.tar.zst \
-    "$(sed 's#^usr/libexec/punktfunk/#usr/lib/punktfunk/#' <<<"$host")" ""
+    "$(sed 's#^usr/libexec/lilynk/#usr/lib/lilynk/#' <<<"$host")" ""
   _case "pacman with libexec unrelocated" x.pkg.tar.zst "$host" \
-    "$(grep '^usr/libexec/punktfunk/' <<<"$host" | sed 's#^usr/libexec/#usr/lib/#')"
+    "$(grep '^usr/libexec/lilynk/' <<<"$host" | sed 's#^usr/libexec/#usr/lib/#')"
   local seats; seats="$(awk '$1 == "seats" { print $2 }' "$PAYLOAD")"
   if [ -n "$(missing_paths seats x.pkg.tar.zst "$seats")" ]; then
     printf '  FAIL  %s\n' "pacman keeps libexec for seats"; failures=$((failures + 1))

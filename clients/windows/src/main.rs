@@ -10,7 +10,7 @@
 //!
 //! Usage:
 //!   lilynk-client                          (open the WinUI 3 window: host list, settings, pairing)
-//!   lilynk-client --discover               (list punktfunk hosts on the LAN)
+//!   lilynk-client --discover               (list lilynk hosts on the LAN)
 //!   lilynk-client --headless --speed-test --connect host[:port]
 //!                    (measure the path: ceiling, clean-round loss and jitter, recommended bitrate)
 
@@ -224,11 +224,11 @@ fn run_headless_cli(args: &[String], identity: (String, String)) {
     std::process::exit(2);
 }
 
-/// `--discover`: browse the LAN for punktfunk hosts (mDNS) and print them, then exit.
+/// `--discover`: browse the LAN for lilynk hosts (mDNS) and print them, then exit.
 #[cfg(windows)]
 fn discover_and_print() {
     use std::time::{Duration, Instant};
-    println!("Browsing the LAN for Punktfunk hosts (~5 s)…");
+    println!("Browsing the LAN for Lilynk hosts (~5 s)…");
     let (rx, _rescan) = ly_client_core::discovery::browse();
     let deadline = Instant::now() + Duration::from_secs(5);
     let mut seen = std::collections::HashSet::new();

@@ -30,8 +30,8 @@ fn main() {
             // Ordinal 1 — shell_window.rs loads it by this id for WM_SETICON.
             .set_icon_with_id(icon, "1")
             // UAC, firewall prompts and Task Manager name the exe by FileDescription.
-            .set("FileDescription", "Punktfunk")
-            .set("ProductName", "Punktfunk")
+            .set("FileDescription", "Lilynk")
+            .set("ProductName", "Lilynk")
             .set("CompanyName", "Lilynk")
             .compile()
             .expect("embed windows icon resource");

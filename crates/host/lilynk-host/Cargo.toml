@@ -1,6 +1,6 @@
 [package]
 name = "lilynk-host"
-description = "punktfunk Linux streaming host: virtual display, capture, encode, input injection"
+description = "lilynk Linux streaming host: virtual display, capture, encode, input injection"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true

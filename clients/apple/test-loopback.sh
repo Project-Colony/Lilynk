@@ -17,7 +17,7 @@ cargo build --release -p lilynk-host
 
 # Each host gets a throwaway config home: the pairing hosts persist a trust store
 # (lilynk1-paired.json, resolved from $HOME) and all mint an identity cert on first
-# run — none of that belongs in the user's real ~/.config/punktfunk, and separate homes
+# run — none of that belongs in the user's real ~/.config/lilynk, and separate homes
 # also keep the first runs from racing on the same cert.pem.
 CFG="$(mktemp -d "${TMPDIR:-/tmp}/lilynk-loopback.XXXXXX")"
 PAIR_LOG="$CFG/pairing-host.log"

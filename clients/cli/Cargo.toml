@@ -1,6 +1,6 @@
 [package]
 name = "lilynk-cli"
-description = "punktfunk — the headless client CLI: pair, list and edit hosts, wake, enumerate a library, start a stream, open a punktfunk:// URL"
+description = "lilynk — the headless client CLI: pair, list and edit hosts, wake, enumerate a library, start a stream, open a punktfunk:// URL"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true

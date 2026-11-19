@@ -33,8 +33,8 @@ fn entry(command: &str) -> String {
     format!(
         "[Desktop Entry]
 Type=Application
-Name=Punktfunk tray
-Comment=Shows the Punktfunk host's status next to the clock
+Name=Lilynk tray
+Comment=Shows the Lilynk host's status next to the clock
 Exec={exec} --autostart
 TryExec={command}
 Icon=lilynk-tray

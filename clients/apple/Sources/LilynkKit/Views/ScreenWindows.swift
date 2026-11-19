@@ -242,7 +242,7 @@ final class ScreenWindows {
         let window = NSWindow(
             contentRect: display.frame, styleMask: [.borderless], backing: .buffered, defer: false)
         window.isReleasedWhenClosed = false // `windows` owns it
-        window.title = "Punktfunk · \(Int(index) + 1)"
+        window.title = "Lilynk · \(Int(index) + 1)"
         window.backgroundColor = .black
         window.hasShadow = false
         window.isExcludedFromWindowsMenu = true

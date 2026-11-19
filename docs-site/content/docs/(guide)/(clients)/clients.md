@@ -1,6 +1,6 @@
 ---
 title: Clients
-description: The Punktfunk apps for Apple devices, Linux, Windows, Android and LG TVs, the browser client, the Samsung TV app, Moonlight, and the punktfunk command — what each does and which to pick.
+description: The Lilynk apps for Apple devices, Linux, Windows, Android and LG TVs, the browser client, the Samsung TV app, Moonlight, and the lilynk command — what each does and which to pick.
 ---
 
 Pick the app for the device you stream *to*. Install steps for each are on
@@ -19,9 +19,9 @@ Pick the app for the device you stream *to*. Install steps for each are on
 | A Samsung TV | The [Samsung TV app](/docs/samsung-tv) (preview) |
 | A browser tab, with nothing to install | The [browser client](/docs/browser-client) (preview) |
 | Any other device | [Moonlight](#moonlight-anything-else) |
-| Scripts and home automation | The [`punktfunk` command](#scripting-the-punktfunk-cli) |
+| Scripts and home automation | The [`lilynk` command](#scripting-the-lilynk-cli) |
 
-Every Punktfunk app [pairs](/docs/pairing) once and reconnects on its own, browses the host's
+Every Lilynk app [pairs](/docs/pairing) once and reconnects on its own, browses the host's
 [game library](/docs/game-library), and has a controller interface for the couch. All but the
 Samsung TV app find hosts on your network by themselves. They share
 [presets and `punktfunk://` links](/docs/presets-and-links), the
@@ -58,7 +58,7 @@ One app for macOS, iOS, iPadOS, tvOS and visionOS. It adds:
   all**, and a card's menu ends that host's stream.
 - Keys for the window: **Keyboard shortcuts** in the menu lists them.
 
-For the couch, open **Punktfunk Console**, the gamepad button in the header bar, or run
+For the couch, open **Lilynk Console**, the gamepad button in the header bar, or run
 `lilynk-client --browse --fullscreen`. **Controller interface** opens it when a controller
 connects.
 
@@ -74,7 +74,7 @@ and SDL3 controllers. It adds:
   and a network speed test.
 - Keys for the window: **Keyboard shortcuts** in the pane lists them.
 
-**Punktfunk Console** in the Start menu is the controller interface for a TV or HTPC, on x64; the
+**Lilynk Console** in the Start menu is the controller interface for a TV or HTPC, on x64; the
 Arm64 build has no console yet. **Controller interface** opens it when a controller connects.
 
 ## Android app (phone + Android TV)
@@ -95,7 +95,7 @@ screen** turns it off. If the lower screen stays dark while you stream, end the 
 
 ## webOS app (LG TV)
 
-[client-webos](https://github.com/punktfunk/client-webos) is the Punktfunk app for LG TVs on webOS 5
+[client-webos](https://github.com/punktfunk/client-webos) is the Lilynk app for LG TVs on webOS 5
 or newer. It uses the TV's hardware decoder and works with the Magic Remote. It isn't in the LG
 Content Store: [install it from the Homebrew Channel](/docs/install-client#lg-webos-tv-community).
 
@@ -105,28 +105,28 @@ Any [Moonlight](https://moonlight-stream.org/) client connects over GameStream o
 it on: see [Connect with Moonlight](/docs/moonlight). The stream is encrypted and adapts to a lossy
 link; the native speed test and jumbo frames are Lilynk-app only.
 
-## Scripting: the `punktfunk` CLI
+## Scripting: the `lilynk` CLI
 
-`punktfunk` is the client without a window. It ships with every Linux package and the Windows
+`lilynk` is the client without a window. It ships with every Linux package and the Windows
 installer. Under the Flatpak, run it as `flatpak run --command=lilynk org.projectcolony.lilynk`.
 
 ```sh
-punktfunk discover                            # hosts advertising on this network
-punktfunk pair <host>[:port] --pin -          # pair this device; PIN on stdin
-punktfunk hosts list --probe                  # saved hosts, each checked live
-punktfunk library <host-ref> --json           # the host's games
-punktfunk launch <host-ref> --game <id>       # stream, waking the host first
-punktfunk profiles <host-ref>                 # who plays on the host; --pick saves one
-punktfunk launch <host-ref> --as <profile>    # stream as that profile, this time only
-punktfunk end-game <host-ref> --game <id>     # close a game this device launched
-punktfunk open 'punktfunk://connect/<host-ref>'
-punktfunk speed-test <host-ref>               # what the link carries, loss at a rate it holds
-punktfunk network-check <host-ref>            # the speed test plus what the link does, by finding
+lilynk discover                            # hosts advertising on this network
+lilynk pair <host>[:port] --pin -          # pair this device; PIN on stdin
+lilynk hosts list --probe                  # saved hosts, each checked live
+lilynk library <host-ref> --json           # the host's games
+lilynk launch <host-ref> --game <id>       # stream, waking the host first
+lilynk profiles <host-ref>                 # who plays on the host; --pick saves one
+lilynk launch <host-ref> --as <profile>    # stream as that profile, this time only
+lilynk end-game <host-ref> --game <id>     # close a game this device launched
+lilynk open 'punktfunk://connect/<host-ref>'
+lilynk speed-test <host-ref>               # what the link carries, loss at a rate it holds
+lilynk network-check <host-ref>            # the speed test plus what the link does, by finding
 ```
 
 A `<host-ref>` is a saved host's id, its name or its address. Also: `hosts add`, `hosts forget`,
 `default-host`, [`wake`](/docs/wake-on-lan#from-the-command-line), `reachable`, `presets list`,
-`device-code` and `reset`. `punktfunk help <command>` lists a command's flags.
+`device-code` and `reset`. `lilynk help <command>` lists a command's flags.
 
 - `pair` reads the PIN from stdin with `--pin -`, or asks for it on a terminal. A PIN on the command
   line is refused.

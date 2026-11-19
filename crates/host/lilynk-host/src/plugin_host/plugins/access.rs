@@ -27,7 +27,7 @@ pub const MAX_PENDING: usize = 16;
 pub const MAX_GRANTS: usize = 64;
 /// Granted ports kept per plugin.
 pub const MAX_PORTS: usize = 16;
-/// Punktfunk's own TCP ports: the API, the console, each seat's API and GameStream. They trust
+/// Lilynk's own TCP ports: the API, the console, each seat's API and GameStream. They trust
 /// a caller on loopback, so no plugin is ever let onto one.
 const OWN_PORTS: std::ops::RangeInclusive<u16> = 47980..=48010;
 
@@ -626,7 +626,7 @@ fn covers(
 }
 
 /// Windows-only refusals: `C:\Users`, the profile roots directly under it, `C:\Windows` and
-/// everything inside, and the sensitive dirs inside any profile root: keys, the punktfunk config,
+/// everything inside, and the sensitive dirs inside any profile root: keys, the lilynk config,
 /// and [`PROFILE_SECRETS`] or a parent of one. Drive roots are already refused as filesystem roots.
 #[cfg(windows)]
 fn windows_protected(canonical: &Path) -> bool {
@@ -644,7 +644,7 @@ fn windows_protected(canonical: &Path) -> bool {
             if first == ".ssh" || first == ".gnupg" {
                 return true;
             }
-            if first == ".config" && it.next().is_some_and(|n| n.starts_with("punktfunk")) {
+            if first == ".config" && it.next().is_some_and(|n| n.starts_with("lilynk")) {
                 return true;
             }
         }
@@ -812,7 +812,7 @@ fn refusal_rule(
     if !facts.is_dir {
         return Some("not_directory");
     }
-    // Broad root: the filesystem root, the operator's home or anything above it, the punktfunk
+    // Broad root: the filesystem root, the operator's home or anything above it, the lilynk
     // config dir or anything above it. A plugin may ask for `~/Games`, never for `~`.
     if canonical.parent().is_none()
         || (!policy.home.as_os_str().is_empty() && within(&policy.home, canonical))
@@ -885,7 +885,7 @@ fn bind_refusal(
     })
 }
 
-/// `~/.config/<anything starting with punktfunk>` — the host's own dir and any sibling a
+/// `~/.config/<anything starting with lilynk>` — the host's own dir and any sibling a
 /// future component adds there stay ungrantable.
 fn lilynk_dot_config(home: &Path, canonical: &Path) -> bool {
     let cfg_root = home.join(".config");
@@ -894,7 +894,7 @@ fn lilynk_dot_config(home: &Path, canonical: &Path) -> bool {
     };
     rel.split(std::path::MAIN_SEPARATOR)
         .next()
-        .is_some_and(|n| n.starts_with("punktfunk"))
+        .is_some_and(|n| n.starts_with("lilynk"))
 }
 
 /// May a plugin hold WRITE on `canonical`? On Windows only the operator grants it, and never in
@@ -1508,7 +1508,7 @@ impl AccessStore {
     /// A plugin asks to connect to TCP `port` on this computer's loopback: one row, spelled as
     /// [`port_path`]. `networked` is its manifest's `network`, without which it has no network
     /// to forward a port into; `mgmt` is this host's API port, refused like every port of
-    /// Punktfunk's own.
+    /// Lilynk's own.
     pub fn request_port(
         &self,
         id: &str,
@@ -2433,7 +2433,7 @@ mod tests {
         for rel in [
             "home/.ssh",
             "home/.gnupg",
-            "home/.config/punktfunk",
+            "home/.config/lilynk",
             "home/.config/lilynk-extra",
             "runtime",
         ] {
@@ -2478,8 +2478,8 @@ mod tests {
     #[cfg(unix)]
     fn path_refusal_vectors() -> String {
         const HOME: &str = "/home/u";
-        const USER_CONFIG: &str = "/home/u/.config/punktfunk";
-        const SYSTEM_CONFIG: &str = "/var/lib/punktfunk";
+        const USER_CONFIG: &str = "/home/u/.config/lilynk";
+        const SYSTEM_CONFIG: &str = "/var/lib/lilynk";
         // `(config dir, read-only roots, the operator's read-write roots, a manifest's read-write
         // roots)`; every start-up location, credential store and `/tmp` socket joins the first two
         // lists below, and each `/tmp` socket the last.
@@ -2502,8 +2502,8 @@ mod tests {
                     "/home/u/.ssh",
                     "/home/u/.gnupg/private-keys-v1.d",
                     "/home/u/.config",
-                    "/home/u/.config/punktfunk",
-                    "/home/u/.config/punktfunk/plugin-run",
+                    "/home/u/.config/lilynk",
+                    "/home/u/.config/lilynk/plugin-run",
                     "/home/u/.config/lilynk-extra",
                     "/home/u/.local",
                     "/home/u/.local/share",
@@ -2542,12 +2542,12 @@ mod tests {
                     "/home/u/.local/share/flatpak/app",
                     "/home/u/.local/share/flatpak/app/org.libretro.RetroArch",
                     "/var/lib/flatpak/app/org.libretro.RetroArch",
-                    "/home/u/.local/share/punktfunk/emulators/ryujinx/app",
+                    "/home/u/.local/share/lilynk/emulators/ryujinx/app",
                 ],
                 &[
                     "/home/u/.ssh",
                     "/home/u/.config",
-                    "/home/u/.config/punktfunk",
+                    "/home/u/.config/lilynk",
                     "/home/u/.local",
                     "/home/u/.local/share",
                     "/home/u/.local/share/systemd/user",
@@ -2564,9 +2564,9 @@ mod tests {
                     "/home/u/.config/plasma-workspace-extra",
                     "/home/u/Emu",
                     "/home/u/Games",
-                    "/home/u/.local/share/punktfunk",
-                    "/home/u/.local/share/punktfunk/emulators/ryujinx/app",
-                    "/home/u/.local/state/punktfunk",
+                    "/home/u/.local/share/lilynk",
+                    "/home/u/.local/share/lilynk/emulators/ryujinx/app",
+                    "/home/u/.local/state/lilynk",
                     "/home/u/.local/share/lilynk-extra",
                     "/mnt/games1",
                     "/run/media/u/SD",
@@ -2576,7 +2576,7 @@ mod tests {
                 ],
                 &[
                     "/home/u/Games",
-                    "/home/u/.local/share/punktfunk/emulators/ryujinx/app",
+                    "/home/u/.local/share/lilynk/emulators/ryujinx/app",
                     "/home/u/.config/hypr",
                     "/tmp/vhclient",
                     "/tmp/vhclient_response",
@@ -2591,14 +2591,14 @@ mod tests {
                 &[
                     "/var",
                     "/var/lib",
-                    "/var/lib/punktfunk",
-                    "/var/lib/punktfunk/plugin-run",
+                    "/var/lib/lilynk",
+                    "/var/lib/lilynk/plugin-run",
                     "/var/lib/lilynk-other",
                     "/var/lib/flatpak",
                     "/home/u",
                     "/home/u/.ssh",
                     "/home/u/.config",
-                    "/home/u/.config/punktfunk",
+                    "/home/u/.config/lilynk",
                     "/home/u/.config/lilynk-extra",
                     "/home/u/.config/systemd/user",
                     "/home/u/.local/share",
@@ -2613,7 +2613,7 @@ mod tests {
                     "/home/u/.local/share/Steam",
                     "/home/u/.config/retroarch",
                     "/home/u/Games",
-                    "/home/u/.local/share/punktfunk/emulators/ryujinx/app",
+                    "/home/u/.local/share/lilynk/emulators/ryujinx/app",
                 ],
                 &["/home/u/Games", "/mnt/games1"],
             ),
@@ -2818,7 +2818,7 @@ mod tests {
         f.dir("home/.ssh");
         std::os::unix::fs::symlink(f.policy.home.join(".ssh"), f.policy.home.join("keys")).unwrap();
         let roots = f.store().runner_roots(&manifest(
-            &["~/.ssh", "~/keys", "~", "~/.config/punktfunk"],
+            &["~/.ssh", "~/keys", "~", "~/.config/lilynk"],
             &[],
         ));
         assert_eq!(targets(&roots), vec![]);
@@ -2873,7 +2873,7 @@ mod tests {
     fn a_declared_write_waits_for_the_operators_yes() {
         let f = fixture();
         let path = |d: &Path| d.to_string_lossy().into_owned();
-        let emu = f.dir("home/.local/share/punktfunk/emulators/ryujinx/app");
+        let emu = f.dir("home/.local/share/lilynk/emulators/ryujinx/app");
         let saves = f.dir("home/Saves");
         let drive = f.dir("data/games");
         let fifo = f.dir("tmp/vhclient");
@@ -2881,7 +2881,7 @@ mod tests {
         let declared = manifest(
             &[],
             &[
-                "~/.local/share/punktfunk/emulators/ryujinx/app",
+                "~/.local/share/lilynk/emulators/ryujinx/app",
                 "~/Saves",
                 &path(&drive),
                 &path(&fifo),

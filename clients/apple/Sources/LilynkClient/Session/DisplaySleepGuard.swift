@@ -49,7 +49,7 @@ final class DisplaySleepGuard {
             // for a session the user is watching in real time.
             activity = ProcessInfo.processInfo.beginActivity(
                 options: [.userInitiated, .idleDisplaySleepDisabled],
-                reason: "Punktfunk streaming session")
+                reason: "Lilynk streaming session")
             declareUserActivity()
             let timer = Timer.scheduledTimer(withTimeInterval: Self.heartbeatInterval, repeats: true) {
                 [weak self] _ in
@@ -99,7 +99,7 @@ final class DisplaySleepGuard {
         /// this Mac's own display, which is what a stream being watched here is.
         private func declareUserActivity() {
             IOPMAssertionDeclareUserActivity(
-                "Punktfunk streaming session" as CFString,
+                "Lilynk streaming session" as CFString,
                 kIOPMUserActiveLocal,
                 &userActivityAssertion)
         }

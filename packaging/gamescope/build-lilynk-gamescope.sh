@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build gamescope + punktfunk's `pipewire-hdr` patches and install it as `lilynk-gamescope`.
+# Build gamescope + lilynk's `pipewire-hdr` patches and install it as `lilynk-gamescope`.
 #
 # The ONE build recipe every packaging path calls (Arch PKGBUILD, the CI jobs that feed the .deb,
 # the RPM and the Bazzite sysext, an operator building by hand); the nix derivation expresses the
@@ -72,13 +72,13 @@ if [ -z "$SRCDIR" ]; then
   git -C "$SRCDIR" checkout --recurse-submodules "$REV"
 fi
 
-# Reusing --srcdir requires the current stamp, not just any punktfunk marker.
+# Reusing --srcdir requires the current stamp, not just any lilynk marker.
 if grep -q '+pfhdr' "$SRCDIR/src/meson.build"; then
-  echo "==> checking existing punktfunk patch level in $SRCDIR"
+  echo "==> checking existing lilynk patch level in $SRCDIR"
 else
-  echo "==> applying punktfunk patches"
+  echo "==> applying lilynk patches"
   git -C "$SRCDIR" \
-    -c user.name=punktfunk -c user.email=packages@unom.io \
+    -c user.name=lilynk -c user.email=packages@unom.io \
     am "${PATCHES[@]}"
 fi
 grep -Fxq "$VERSION_TAG" "$SRCDIR/src/meson.build" || {
@@ -200,10 +200,10 @@ ninja -C "$LAYER_BUILD" ${JOBS:+-j "$JOBS"}
 
 # Our own names only: `ninja install` would put gamescopectl/gamescopereaper/gamescopestream and the
 # WSI layer in the prefix, over the distro's gamescope. gamescope `execvp`s `gamescopereaper` for
-# every child it starts, so ours goes to /usr/lib/punktfunk/gamescope, first on the host's PATH.
+# every child it starts, so ours goes to /usr/lib/lilynk/gamescope, first on the host's PATH.
 REAPER=$(find "$BUILD" -type f -name gamescopereaper -perm -u+x | head -1)
 [ -n "$REAPER" ] || { echo "the build produced no gamescopereaper, so a session would run nothing" >&2; exit 1; }
-install -Dm755 "$REAPER" "${DESTDIR}${PREFIX}/lib/punktfunk/gamescope/gamescopereaper"
+install -Dm755 "$REAPER" "${DESTDIR}${PREFIX}/lib/lilynk/gamescope/gamescopereaper"
 BIN="$BUILD/src/gamescope"
 [ -x "$BIN" ] || { echo "build produced no $BIN" >&2; exit 1; }
 BANNER="$("$BIN" --version 2>&1)" || {
@@ -248,11 +248,11 @@ LAYER_SO=$(find "$LAYER_BUILD" -type f -name 'libVkLayer_*gamescope_wsi*.so' | h
 LAYER_SRC_JSON=$(find "$LAYER_BUILD" -type f -name '*gamescope_wsi*.json' | head -1)
 [ -n "$LAYER_SO" ] && [ -n "$LAYER_SRC_JSON" ] || {
   echo "the WSI layer did not build (.so=${LAYER_SO:-none} .json=${LAYER_SRC_JSON:-none}) — without" >&2
-  echo "it no game in a punktfunk gamescope session can get an HDR10 swapchain" >&2
+  echo "it no game in a lilynk gamescope session can get an HDR10 swapchain" >&2
   exit 1
 }
-LAYER_LIB_PATH="${PREFIX}/lib/punktfunk/libVkLayer_LILYNK_gamescope_wsi.so"
-LAYER_DEST_JSON="${DESTDIR}${PREFIX}/lib/punktfunk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json"
+LAYER_LIB_PATH="${PREFIX}/lib/lilynk/libVkLayer_LILYNK_gamescope_wsi.so"
+LAYER_DEST_JSON="${DESTDIR}${PREFIX}/lib/lilynk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json"
 echo "==> installing ${DESTDIR}${LAYER_LIB_PATH}"
 install -Dm755 "$LAYER_SO" "${DESTDIR}${LAYER_LIB_PATH}"
 install -d "$(dirname "$LAYER_DEST_JSON")"

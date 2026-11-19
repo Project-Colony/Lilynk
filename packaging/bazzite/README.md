@@ -1,10 +1,10 @@
-# punktfunk on Bazzite — packaging and install paths
+# lilynk on Bazzite — packaging and install paths
 
 The packager/ops view of the Bazzite (Fedora Atomic) target: which install path to ship, how each
 one is built and updated, and the gotchas of layered/bootc hosts. **Setting a host up** — udev and
 the `input` group, `host.env`, the service, the firewall, streaming the KDE desktop, verifying —
-is the docs' job: follow **[docs.punktfunk.unom.io/docs/bazzite](https://docs.punktfunk.unom.io/docs/bazzite)**
-(firewall specifics are on [Fedora §4](https://docs.punktfunk.unom.io/docs/fedora), same firewalld
+is the docs' job: follow **[project-colony.github.io/Lilynk/docs/bazzite](https://project-colony.github.io/Lilynk/docs/bazzite)**
+(firewall specifics are on [Fedora §4](https://project-colony.github.io/Lilynk/docs/fedora), same firewalld
 service definitions). Nothing here duplicates those pages. For the higher-level packaging
 rationale ("why not Flatpak", the build), see [`../README.md`](../README.md).
 
@@ -20,19 +20,19 @@ There are three paths on Bazzite, driven by different files in `packaging/`:
 | Path | Driven by | What it does | Best for |
 |---|---|---|---|
 | **A — systemd-sysext** ✅ recommended | `packaging/bazzite/lilynk-sysext.sh` + `build-sysext.sh` | Overlays the host onto `/usr` as a system extension — no layering, no reboot, one-command updates | Everyone; the default |
-| **B — bootc / OCI image** | `packaging/bootc/Containerfile` | Bakes punktfunk into a `FROM bazzite-nvidia` image once; you `bootc switch` any number of hosts onto it | Fleets, reproducible appliances, no per-host drift |
-| **C — rpm-ostree layering** (legacy) | `packaging/rpm/` | Layers the `punktfunk` RPM onto your deployment with `rpm-ostree install` | Only if you specifically want the RPM database to own the files |
+| **B — bootc / OCI image** | `packaging/bootc/Containerfile` | Bakes lilynk into a `FROM bazzite-nvidia` image once; you `bootc switch` any number of hosts onto it | Fleets, reproducible appliances, no per-host drift |
+| **C — rpm-ostree layering** (legacy) | `packaging/rpm/` | Layers the `lilynk` RPM onto your deployment with `rpm-ostree install` | Only if you specifically want the RPM database to own the files |
 
 **Why A over C:** the Bazzite docs treat layering as a last resort — every layered package makes
 every OS update slower and can **block upgrades entirely** until removed. A sysext never enters an
-rpm-ostree transaction: it merges/unmerges at runtime, survives OS updates, and updating punktfunk
+rpm-ostree transaction: it merges/unmerges at runtime, survives OS updates, and updating lilynk
 is one command with **no reboot** (layering needs one per update). It's the mechanism the Fedora
 Atomic maintainers ship via [fedora-sysexts](https://fedora-sysexts.github.io/).
 
 ### Path A — systemd-sysext (recommended)
 
 Install, day-2 commands, channel switching, rollback, feed-signature refusals and the
-major-rebase behavior are all on the [docs page](https://docs.punktfunk.unom.io/docs/bazzite) —
+major-rebase behavior are all on the [docs page](https://project-colony.github.io/Lilynk/docs/bazzite) —
 that's the walkthrough to hand a user. Packager-side facts:
 
 - This build has no feed. `REGISTRY` and `FEED_KEY` in `lilynk-sysext.sh` are empty, so
@@ -55,23 +55,23 @@ that's the walkthrough to hand a user. Packager-side facts:
 - The image embeds `ID=fedora` + `VERSION_ID` (matched through Bazzite's `ID_LIKE`), so after a
   major rebase the old image is refused instead of merging soname-broken binaries; feeds exist
   per Fedora major, from the same CI matrix as the RPM groups. `post-install` keeps the script at
-  `/etc/punktfunk/lilynk-sysext` with an enabled `lilynk-sysext-rebase.service`, which runs
+  `/etc/lilynk/lilynk-sysext` with an enabled `lilynk-sysext-rebase.service`, which runs
   `update` at boot while the image file exists and no marker is merged.
 - SELinux labels are baked into the image at build time (squashfs pseudo-xattrs computed from the
   targeted policy) — without them udev couldn't read the gamepad rule under enforcing. Validated
   live on Bazzite 43.
 - Install also applies what the RPM scriptlets would have (udev reload, sysctl) and seeds the
   `/etc` file a sysext can't carry (the gamescope-session drop-in), staged under
-  `/usr/share/punktfunk/etc/`.
+  `/usr/share/lilynk/etc/`.
 
 ### Path B — bootc image (`FROM bazzite-nvidia`)
 
 The image is built **off-host** (on any machine with `podman`) from
 `packaging/bootc/Containerfile`, which bases on `ghcr.io/ublue-os/bazzite-nvidia:stable`
 (override with `--build-arg BASE_IMAGE=…`), enables RPM Fusion free + nonfree, and installs the
-host **and the web console** from RPMs in `packaging/bootc/rpms/`. No punktfunk repo is added.
+host **and the web console** from RPMs in `packaging/bootc/rpms/`. No lilynk repo is added.
 Build the RPMs with `PF_WITH_WEB=1 packaging/rpm/build-rpm.sh` in the Fedora 43 builder
-(`../rpm/README.md`) and copy what it writes to `dist/`; the image needs `punktfunk`,
+(`../rpm/README.md`) and copy what it writes to `dist/`; the image needs `lilynk`,
 `lilynk-web` and `lilynk-bun`.
 
 ```sh
@@ -85,7 +85,7 @@ podman push  ghcr.io/<you>/bazzite-lilynk
 sudo bootc switch ghcr.io/<you>/bazzite-lilynk && systemctl reboot
 ```
 
-> The image has no repo to update from: a new punktfunk build is a new image. Rebuild with newer
+> The image has no repo to update from: a new lilynk build is a new image. Rebuild with newer
 > RPMs, push, and `bootc upgrade` the hosts.
 
 ### Path C — rpm-ostree layering (legacy)
@@ -99,28 +99,28 @@ rpm-ostree install \
   https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
   https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 
-# 2. Enable the punktfunk COPR repo  ⚠️ requires the COPR to be published (see callout above)
+# 2. Enable the lilynk COPR repo  ⚠️ requires the COPR to be published (see callout above)
 sudo wget -O /etc/yum.repos.d/_copr_lilynk.repo \
   https://copr.fedorainfracloud.org/coprs/enricobuehler/punktfunk/repo/fedora-$(rpm -E %fedora)/
 
-# 3. Layer punktfunk and reboot to activate the new deployment.
+# 3. Layer lilynk and reboot to activate the new deployment.
 rpm-ostree install lilynk
 systemctl reboot
 ```
 
 > The **reboot is mandatory** — `rpm-ostree install` stages a new deployment that only takes
-> effect on the next boot. This is normal atomic-distro behavior, not a punktfunk quirk.
+> effect on the next boot. This is normal atomic-distro behavior, not a lilynk quirk.
 
 #### Updating a Path-C host — `rpm-ostree upgrade` is NOT enough
 
-> ⚠️ **`rpm-ostree upgrade` will not update punktfunk on its own.** `upgrade` bumps the **base
+> ⚠️ **`rpm-ostree upgrade` will not update lilynk on its own.** `upgrade` bumps the **base
 > image** and only re-resolves *layered* packages **when the base changes**. A Bazzite base can
 > sit frozen for months (a pinned `:stable` tag, a paused rebase), so `rpm-ostree upgrade` keeps
-> reporting *"No updates available"* and your layered `punktfunk` stays put even after new RPMs
+> reporting *"No updates available"* and your layered `lilynk` stays put even after new RPMs
 > land in the repo. (Diagnose: `rpm-ostree status` shows the base `Version:` unchanged, while
-> `dnf -q repoquery --upgrades punktfunk` lists newer builds.)
+> `dnf -q repoquery --upgrades lilynk` lists newer builds.)
 
-To actually pull a newer host on a static base, force rpm-ostree to re-resolve just the punktfunk
+To actually pull a newer host on a static base, force rpm-ostree to re-resolve just the lilynk
 layer — remove + re-add the same names in one transaction:
 
 ```sh
@@ -131,13 +131,13 @@ sudo rpm-ostree update \
 systemctl reboot
 ```
 
-Or just run the helper, which detects what's layered and does the above. The `punktfunk` RPM
+Or just run the helper, which detects what's layered and does the above. The `lilynk` RPM
 installs it, so on a layered box it's already there — no checkout needed (it's the same command the
 web console's update hint prints):
 
 ```sh
-sudo /usr/share/punktfunk/update-lilynk.sh          # stage; reboot when ready
-sudo /usr/share/punktfunk/update-lilynk.sh --reboot # stage + reboot now
+sudo /usr/share/lilynk/update-lilynk.sh          # stage; reboot when ready
+sudo /usr/share/lilynk/update-lilynk.sh --reboot # stage + reboot now
 ```
 
 From a repo checkout (e.g. before the first install, or to run a newer helper than the layered RPM
@@ -148,14 +148,14 @@ sudo bash packaging/bazzite/update-lilynk.sh --reboot
 ```
 
 > **Channel gotcha:** the re-resolve picks the highest version across **every enabled**
-> `/etc/yum.repos.d/punktfunk*.repo`. If `lilynk-canary.repo` is enabled alongside the stable
+> `/etc/yum.repos.d/lilynk*.repo`. If `lilynk-canary.repo` is enabled alongside the stable
 > `lilynk.repo`, canary's `<next-minor>.0-0.ciN` **outranks** the stable `X.Y.Z-1` and the box
 > silently tracks canary. Enable exactly one channel — set `enabled=0` in the other repo file.
 
 ## First-run setup and gotchas
 
 The walkthrough — udev and group, `host.env`, the service, the firewall, verifying — is on the
-[Bazzite docs page](https://docs.punktfunk.unom.io/docs/bazzite). Two things that bite here and
+[Bazzite docs page](https://project-colony.github.io/Lilynk/docs/bazzite). Two things that bite here and
 nowhere else:
 
 - **Use `ujust add-user-to-input-group`, not `usermod -aG input`.** Bazzite is atomic; the plain
@@ -164,7 +164,7 @@ nowhere else:
   update and can block upgrades. The sysext overlays `/usr` at runtime, survives OS updates and
   needs no reboot, which is why it is Path A.
 - **A dev unit can shadow the packaged binary.** `scripts/lilynk-host.service` (the upstream/dev
-  unit) assumes the binary at `%h/punktfunk/target/release/lilynk-host`, while the packaged one
+  unit) assumes the binary at `%h/lilynk/target/release/lilynk-host`, while the packaged one
   is `/usr/bin/lilynk-host`. If `systemctl --user cat lilynk-host` shows an `ExecStart`
   pointing into a home directory, drop an override setting
   `ExecStart=/usr/bin/lilynk-host serve`.

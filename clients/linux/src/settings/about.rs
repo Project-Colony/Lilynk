@@ -40,7 +40,7 @@ pub fn show_about(parent: &impl IsA<gtk::Widget>) {
     let system_notices =
         gtk::glib::markup_escape_text(desktop::desktop_about_system_libraries_body());
     let about = adw::AboutDialog::builder()
-        .application_name("Punktfunk")
+        .application_name("Lilynk")
         // The app's own icon, by the id the desktop entry and the icon theme both use. It
         // resolves from the installed hicolor icon; an uninstalled dev run simply shows the
         // generic fallback rather than nothing.

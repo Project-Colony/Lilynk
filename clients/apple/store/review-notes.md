@@ -2,7 +2,7 @@
 
 ## The core problem, stated plainly
 
-Punktfunk is the client half of a two-part system: it streams from a host on the user's own PC.
+Lilynk is the client half of a two-part system: it streams from a host on the user's own PC.
 Guideline 2.1(a) asks for a way to exercise every feature, and a reviewer has no such PC. Build
 0.37.0 was rejected on exactly that (September 14, 2026), with no notes attached.
 
@@ -26,9 +26,9 @@ entitlement answers live.
 ```
 WHAT THIS APP IS
 
-Punktfunk is a low-latency game- and desktop-streaming client. It streams from a "host" the user
+Lilynk is a low-latency game- and desktop-streaming client. It streams from a "host" the user
 installs on their own gaming PC (Linux, or Windows 11 22H2+), over their own network. The host is
-separate open-source software we publish at https://git.unom.io/unom/punktfunk; it is not sold,
+separate open-source software we publish at https://github.com/Project-Colony/Lilynk; it is not sold,
 and this app has no purchases.
 
 HOW TO REVIEW IT: THE BUILT-IN DEMO HOST
@@ -37,7 +37,7 @@ No PC or account is needed. The app contains a demo host: a real host running in
 that renders a live desktop, encodes it and streams it through the same connect, decode, audio
 and input path a real PC uses. Like a demo login, it is reached with an address we give you:
 
-1. Launch Punktfunk and choose Add Host (Apple TV: "Add Host" on the Hosts tab; with a game
+1. Launch Lilynk and choose Add Host (Apple TV: "Add Host" on the Hosts tab; with a game
    controller: the "Add Host" tile).
 2. Enter the address:  demo.lilynk   (leave name and port as they are), then Add Host.
 3. A "Demo Host" card appears. Select it: the stream starts. Move the pointer with the Siri

@@ -27,7 +27,7 @@ trap 'rm -rf "$STAGE"' EXIT
 DOCDIR="$STAGE/usr/share/doc/$PKG"
 
 # --- file layout (matches the RPM %install) ----------------------------------
-LIBEXEC="$STAGE/usr/libexec/punktfunk"
+LIBEXEC="$STAGE/usr/libexec/lilynk"
 install -Dm0755 "$BIN" "$LIBEXEC/$PKG"
 for f in seat-session seat-reap; do
   install -Dm0755 "packaging/linux/$f" "$LIBEXEC/$f"
@@ -51,8 +51,8 @@ install -Dm0644 LICENSE-APACHE "$DOCDIR/LICENSE-APACHE"
 
 cat > "$DOCDIR/copyright" <<EOF
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: punktfunk
-Source: https://git.unom.io/unom/punktfunk
+Upstream-Name: lilynk
+Source: https://github.com/Project-Colony/Lilynk
 
 Files: *
 Copyright: unom and the punktfunk contributors
@@ -106,11 +106,11 @@ Maintainer: unom <packages@unom.io>
 Installed-Size: $INSTALLED_KB
 Section: net
 Priority: optional
-Homepage: https://git.unom.io/unom/punktfunk
+Homepage: https://github.com/Project-Colony/Lilynk
 Depends: $DEPENDS
-Description: punktfunk seat supervisor (a user, a session and a host per profile)
+Description: lilynk seat supervisor (a user, a session and a host per profile)
  The root daemon behind profile seats. Each seat is a system user with its own logind
- session, a headless desktop and a stock punktfunk host. The package also carries the
+ session, a headless desktop and a stock lilynk host. The package also carries the
  door units, which keep the box reachable with nobody logged in.
  .
  Installed but not enabled: the console turns seats and the door on. Stopping or
@@ -132,7 +132,7 @@ cat > "$STAGE/DEBIAN/prerm" <<'EOF'
 set -e
 # A removal, not an upgrade: the door goes off for its owner, or its units are disabled.
 if [ "$1" = "remove" ]; then
-    /usr/libexec/punktfunk/door-remove || true
+    /usr/libexec/lilynk/door-remove || true
 fi
 exit 0
 EOF

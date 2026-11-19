@@ -10,7 +10,7 @@ version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license = "GPL-3.0-or-later"
-description = "punktfunk capture worker: Windows Graphics Capture and the encoder for one mirror or shared-screen session, as the signed-in user."
+description = "lilynk capture worker: Windows Graphics Capture and the encoder for one mirror or shared-screen session, as the signed-in user."
 publish = false
 
 [[bin]]

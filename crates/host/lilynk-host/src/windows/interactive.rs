@@ -56,7 +56,7 @@ pub(super) fn current_process_session_id() -> Result<u32> {
 ///
 /// A child must never inherit the host's cwd. The service starts the host in its
 /// install directory, so an inherited cwd puts every launch under
-/// `C:\Program Files\punktfunk` — which Ryujinx tests
+/// `C:\Program Files\lilynk` — which Ryujinx tests
 /// (`Environment.CurrentDirectory`) and refuses to run under, and which sends a
 /// game's relative asset loads into the host's folder.
 ///

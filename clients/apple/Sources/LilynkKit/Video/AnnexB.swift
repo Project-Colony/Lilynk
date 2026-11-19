@@ -1,6 +1,6 @@
 // Annex-B (HEVC / H.264) → CoreMedia plumbing.
 //
-// The punktfunk host emits Annex-B access units with in-band parameter sets on every IDR
+// The lilynk host emits Annex-B access units with in-band parameter sets on every IDR
 // (deliberately — the client needs no out-of-band extradata). VideoToolbox wants the AVCC
 // flavor instead: a CMVideoFormatDescription built from the parameter sets, and sample
 // buffers whose NALs are 4-byte-length-prefixed. This file converts between the two, for

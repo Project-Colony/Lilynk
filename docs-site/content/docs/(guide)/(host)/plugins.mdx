@@ -101,15 +101,15 @@ lilynk-host plugins enable           # only if the runner is off
 ```
 
 If `lilynk-host` isn't found, open a new terminal, or use
-`& "$env:ProgramFiles\punktfunk\lilynk-host.exe"`.
+`& "$env:ProgramFiles\lilynk\lilynk-host.exe"`.
 
 </Tab>
 </Tabs>
 
 Every `plugins` command is in [Host CLI](/docs/host-cli#plugins).
 
-A bare name installs the first-party package from Punktfunk's registry: `playnite` is
-`@punktfunk/plugin-playnite`. Any other name comes from the public npm registry and needs
+A bare name installs the first-party package from Lilynk's registry: `playnite` is
+`@lilynk/plugin-playnite`. Any other name comes from the public npm registry and needs
 `--allow-public-registry`.
 
 ## Where plugins run
@@ -122,7 +122,7 @@ and your LAN, and of this computer's own `localhost` only the ports you allowed.
 Program Files but not user profiles or other drives. Still, a plugin is code on your host: install
 only plugins you trust.
 
-Scripts you put in `~/.config/punktfunk/scripts/` are your own code; they run in the runner itself,
+Scripts you put in `~/.config/lilynk/scripts/` are your own code; they run in the runner itself,
 not in a plugin sandbox.
 
 ## Give a plugin a folder
@@ -163,7 +163,7 @@ run `lilynk-host plugins grant <plugin> 127.0.0.1:<port>`. Then point the plugin
 `http://127.0.0.1:<port>`.
 
 **Plugins** → **Installed** lists the ports a plugin was allowed or refused; remove one there, or
-choose **Ask again**. A plugin is never given a port of Punktfunk's own, 47980 to 48010.
+choose **Ask again**. A plugin is never given a port of Lilynk's own, 47980 to 48010.
 
 ## Update and remove
 
@@ -198,7 +198,7 @@ executable on its `PATH`. Point `LILYNK_SCRIPTING` at it ([Configuration](/docs/
 ### The plugin runner keeps failing to start
 
 Read its log: `journalctl --user -u lilynk-scripting -f` on Linux,
-`%ProgramData%\punktfunk\plugin-state\runner.log` on Windows. The console's **Troubleshooting**
+`%ProgramData%\lilynk\plugin-state\runner.log` on Windows. The console's **Troubleshooting**
 page shows plugin output too, under the `plugin:<name>` sources (`plugin:runner` for the runner).
 A log that ends with `plugins can't be sandboxed here` is the [next entry](#plugins-cant-be-sandboxed-here).
 
@@ -241,5 +241,5 @@ The runner isn't running. Check with `lilynk-host plugins status`.
 
 ## Writing a plugin
 
-Plugins are TypeScript packages built on `@punktfunk/plugin-kit`. See
+Plugins are TypeScript packages built on `@lilynk/plugin-kit`. See
 [Writing plugins](/docs/developers/writing-plugins).

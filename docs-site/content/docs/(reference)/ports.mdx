@@ -1,9 +1,9 @@
 ---
 title: Ports & firewall
-description: Every port a Punktfunk host and its console use, the firewall profile that opens each, and how to move one.
+description: Every port a Lilynk host and its console use, the firewall profile that opens each, and how to move one.
 ---
 
-Find the port a Punktfunk host uses, the firewall profile that opens it, and how to move it. The
+Find the port a Lilynk host uses, the firewall profile that opens it, and how to move it. The
 Linux packages install firewalld services and ufw profiles but never enable them.
 
 <Ports />
@@ -55,13 +55,13 @@ sudo ufw allow lilynk-gamestream   # only with Moonlight compat on
 | NixOS | `openFirewall = true` in the module opens the ports |
 | Windows | `service install` adds the rules |
 
-On Windows each rule names the Punktfunk executable as well as the port. The rules cover
+On Windows each rule names the Lilynk executable as well as the port. The rules cover
 Private and Domain networks; `service install --allow-public-network` adds Public — see
 [Host CLI](/docs/host-cli#service-windows). Another program that answered discovery through
-Punktfunk's discovery rule needs a rule of its own. The browser client's rule, **Punktfunk
+Lilynk's discovery rule needs a rule of its own. The browser client's rule, **Lilynk
 Browser** (the browser streaming port, and each seat's UDP 9783–9786), exists only while **Browser
 streaming** is on: the service adds or removes it each time it starts the host, so it follows the
-setting at **Restart Punktfunk**.
+setting at **Restart Lilynk**.
 
 ## Who can reach the console
 

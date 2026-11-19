@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Publish a punktfunk sysext image into its feed on the Gitea generic package registry —
+# Publish a lilynk sysext image into its feed on the Gitea generic package registry —
 # called by .gitea/workflows/rpm.yml after the RPM publish. A feed is one fixed URL
 # (…/lilynk-sysext/<feed>/) holding versioned .raw files plus a SHA256SUMS manifest and its
 # detached OpenPGP signature SHA256SUMS.asc; lilynk-sysext(8) on the boxes verifies that
@@ -36,7 +36,7 @@ REGISTRY="${REGISTRY:-git.unom.io}"
 OWNER="${OWNER:-unom}"
 KEEP="${KEEP:-0}"
 AUTH=(--user "${CURL_USER:-enricobuehler}:${TOKEN:?TOKEN (write:package PAT) required}")
-BASE="https://$REGISTRY/api/packages/$OWNER/generic/punktfunk-sysext/$FEED"
+BASE="https://$REGISTRY/api/packages/$OWNER/generic/lilynk-sysext/$FEED"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 WORK="$(mktemp -d)"; trap 'rm -rf "$WORK"' EXIT

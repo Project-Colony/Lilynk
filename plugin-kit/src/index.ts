@@ -1,4 +1,4 @@
-// @punktfunk/plugin-kit — Effect-based framework for punktfunk plugins.
+// @lilynk/plugin-kit — Effect-based framework for lilynk plugins.
 
 export {
 	type AccessRequestOutcome,

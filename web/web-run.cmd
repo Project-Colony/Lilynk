@@ -1,16 +1,16 @@
 @echo off
-rem punktfunk web console launcher - DEV convenience, run BY HAND (in-repo tree). On an installed
+rem lilynk web console launcher - DEV convenience, run BY HAND (in-repo tree). On an installed
 rem host the LilynkHost service supervises the console itself (service.rs "web console child" -
 rem no scheduled task, no launcher script); a dev host running from target\release has no installed
 rem web payload next to its exe, so this script is how you serve the in-repo web\.output against it.
-rem It sources the host's mgmt bearer token + the console login password from %ProgramData%\punktfunk\,
+rem It sources the host's mgmt bearer token + the console login password from %ProgramData%\lilynk\,
 rem points the /api proxy at the host's loopback HTTPS mgmt API, and serves the self-contained
 rem (no-node_modules) Nitro console over HTTPS (HTTP/1.1 over TLS) on :47992 with the host's identity
 rem cert. %~dp0 = <repo>\web\ . The console runs on bun (the Nitro `bun` preset + Bun.serve TLS
 rem entry) - set BUN below to your bun.exe. Rebuild after a web change with `bun run build` in web\ .
 setlocal EnableExtensions
 
-set "PFDATA=%ProgramData%\punktfunk"
+set "PFDATA=%ProgramData%\lilynk"
 set "TOKENFILE=%PFDATA%\mgmt-token"
 set "PWFILE=%PFDATA%\web-password"
 set "CERTFILE=%PFDATA%\cert.pem"
@@ -23,7 +23,7 @@ set /a PFWAITS=0
 :pfwait
 if exist "%TOKENFILE%" if exist "%CERTFILE%" goto pfready
 if %PFWAITS% GEQ 150 (
-  echo [lilynk-web] gave up waiting for "%TOKENFILE%" + "%CERTFILE%" - is the punktfunk host running?
+  echo [lilynk-web] gave up waiting for "%TOKENFILE%" + "%CERTFILE%" - is the lilynk host running?
   exit /b 1
 )
 if %PFWAITS%==0 echo [lilynk-web] waiting for the host to write the mgmt token + identity cert...

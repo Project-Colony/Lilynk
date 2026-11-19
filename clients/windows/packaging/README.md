@@ -1,4 +1,4 @@
-# punktfunk Windows client — packaging
+# lilynk Windows client — packaging
 
 Three artifacts, packed from one assembled layout by
 [`windows-client.yml`](../../../.gitea/workflows/windows-client.yml) to Gitea's generic package
@@ -6,7 +6,7 @@ registry — canary on every `main` push that touches the client, stable on `vX.
 
 | Artifact | Notes |
 |---|---|
-| `lilynk-client-setup_<arch>.exe` | **The default download.** Per-user, no-UAC, into `%LOCALAPPDATA%\Programs\Punktfunk`. |
+| `lilynk-client-setup_<arch>.exe` | **The default download.** Per-user, no-UAC, into `%LOCALAPPDATA%\Programs\Lilynk`. |
 | `lilynk-client-windows_<arch>-portable.zip` | The same signed file set, nothing registered. |
 | `lilynk-client-windows_<arch>.msix` | Kept for Microsoft Store compatibility. |
 
@@ -19,7 +19,7 @@ exe lands under the ACL'd `C:\Program Files\WindowsApps`, which Steam's *Add a N
 picker cannot browse, and alias/`shell:AppsFolder` activation defeats the Steam overlay's injection
 and Big Picture launch. Steam must spawn the exe itself from a normal path. The installer re-creates
 the MSIX manifest's declarative grants per-user: `punktfunk://` in HKCU Classes, Start shortcuts,
-and `{app}` on the user PATH for the `punktfunk` CLI.
+and `{app}` on the user PATH for the `lilynk` CLI.
 
 **Two architectures, one x64 runner.** `x86_64-pc-windows-msvc` builds natively and
 `aarch64-pc-windows-msvc` cross-compiles, because the x64 MSVC toolset ships the ARM64 cross

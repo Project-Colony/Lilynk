@@ -1,6 +1,6 @@
 ---
 title: "SteamOS (Host)"
-description: "Run a Punktfunk host on SteamOS: one script builds it on the device, then streams Game Mode or the desktop to your other devices."
+description: "Run a Lilynk host on SteamOS: one script builds it on the device, then streams Game Mode or the desktop to your other devices."
 ---
 
 Stream *from* a Steam Deck or any SteamOS 3 box to your other devices. To stream *to* a Steam Deck
@@ -31,14 +31,9 @@ trusted LAN or VPN ([Security & Safe Use](/docs/security)).
 
 <Install platform="steamos" />
 
-**One command instead?** The [guided installer](/docs/install#guided-install-preview) (preview)
-runs the same two lines and also asks about Moonlight compatibility and the shared clipboard:
-
-<Installer />
-
 The script asks for your `sudo` password first, then builds; it is safe to re-run. It builds the
 host, the web console and the plugin runner, sets up gamepad access, UDP buffers and the `input`
-and `punktfunk` groups so they survive SteamOS updates, and starts the `lilynk-host` and
+and `lilynk` groups so they survive SteamOS updates, and starts the `lilynk-host` and
 `lilynk-web` user services, which run without anyone logged in. It also sets up
 [Reachable without logging in](/docs/profiles#on-linux), off until you tick it under **Profiles**.
 
@@ -47,8 +42,8 @@ and `punktfunk` groups so they survive SteamOS updates, and starts the `lilynk-h
 | `--gamestream` | Turn on **GameStream** for stock [Moonlight](/docs/moonlight) clients. Trusted LAN only. Change it later in the console. |
 | `--open` | Accept unpaired clients. Trusted LAN only. |
 | `--no-web` | Skip the web console. |
-| `--web-bind=ADDR` | Where the console listens: `0.0.0.0` (your network, the default), `127.0.0.1` (this device only) or one address. Once set, change it in `~/.config/punktfunk/web.env`. |
-| `--src=DIR` | Build from `DIR` instead of `~/punktfunk`. **Update now** and the boot rebuild check only look in `~/punktfunk`, so link it: `ln -s DIR ~/punktfunk`. |
+| `--web-bind=ADDR` | Where the console listens: `0.0.0.0` (your network, the default), `127.0.0.1` (this device only) or one address. Once set, change it in `~/.config/lilynk/web.env`. |
+| `--src=DIR` | Build from `DIR` instead of `~/lilynk`. The boot rebuild check only looks in `~/lilynk`, so link it: `ln -s DIR ~/lilynk`. |
 
 <Callout type="warn">
 **Reboot once after the first install.** Desktop-mode capture and the new groups only apply to a
@@ -71,38 +66,28 @@ is live when a client connects; see [Steam / gamescope](/docs/gamescope).
 The installer also builds `lilynk-gamescope`, gamescope with 10-bit capture, and points the host
 at it. A 10-bit client with HDR on then streams HDR10 from Game Mode; anything else streams SDR. If
 that build fails, the rest works in SDR; run `update.sh` to retry. `LILYNK_GAMESCOPE_HDR=0` in
-`~/.config/punktfunk/host.env` forces SDR.
+`~/.config/lilynk/host.env` forces SDR.
 
 Check what the host resolved. Load `host.env` first, as the service does, or the probe describes
 the wrong environment:
 
 ```sh
-( set -a; . ~/.config/punktfunk/host.env; set +a
-  ~/punktfunk/target-steamos/release/lilynk-host hdr-probe )
+( set -a; . ~/.config/lilynk/host.env; set +a
+  ~/lilynk/target-steamos/release/lilynk-host hdr-probe )
 ```
 
 More in [HDR on gamescope](/docs/gamescope#hdr-on-gamescope).
 
 ## Updating
 
-Press **Update now** on the console's **Updates** card, or run:
+Pull `main` and rebuild on the device:
 
 ```sh
-bash ~/punktfunk/scripts/steamdeck/update.sh --pull
+bash ~/lilynk/scripts/steamdeck/update.sh --pull
 ```
 
-Both rebuild on the device and keep your config and pairings. While Reachable without logging in
-is on, the console's Updates card can't see the checkout: run `update.sh --pull` in Konsole, which
-asks for your password to update the switch too. The checkout follows the `stable`
-branch, which moves to each release when it is announced. To follow `main`, the
-[canary channel](/docs/channels), switch the branch and rebuild:
-
-```sh
-git -C ~/punktfunk fetch && git -C ~/punktfunk switch main
-bash ~/punktfunk/scripts/steamdeck/update.sh --pull
-```
-
-`switch stable` goes back. More in [Updating](/docs/updating).
+It keeps your config and pairings. Run it in Konsole: while Reachable without logging in is on, it
+asks for your password to update the switch too. More in [Updating](/docs/updating).
 
 ## Good to know
 
@@ -111,7 +96,7 @@ bash ~/punktfunk/scripts/steamdeck/update.sh --pull
 - **Keep it awake.** Game Mode suspends on idle and drops the host off the network. Turn
   auto-suspend off under **Settings** → **Power**.
 - **Steam Deck controller.** After the first-install reboot a client's pad arrives as a real Steam
-  Deck controller, with paddles, trackpads and gyro. It needs the `input` and `punktfunk` groups;
+  Deck controller, with paddles, trackpads and gyro. It needs the `input` and `lilynk` groups;
   check with `id -nG`. Streaming to another Deck? [Turn Steam Input off](/docs/steam-deck) there.
 - **One mode at a time.** Two clients asking for different resolutions fight over the Game Mode
   session.

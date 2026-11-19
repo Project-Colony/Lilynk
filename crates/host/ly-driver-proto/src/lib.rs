@@ -1,4 +1,4 @@
-//! Shared binary contracts between the punktfunk host, its Windows drivers and capture worker.
+//! Shared binary contracts between the lilynk host, its Windows drivers and capture worker.
 //!
 //! The `ly-vdisplay` IddCx driver has two planes:
 //! * [`control`] — `DeviceIoControl` (add/remove, adapter pin, keepalive, info, clear-all,

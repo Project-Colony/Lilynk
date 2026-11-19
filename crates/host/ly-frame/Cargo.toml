@@ -10,7 +10,7 @@ version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license = "GPL-3.0-or-later"
-description = "punktfunk host shared frame/format vocabulary: CapturedFrame, PixelFormat, HDR metadata, thread QoS, and the Windows DXGI capture identity."
+description = "lilynk host shared frame/format vocabulary: CapturedFrame, PixelFormat, HDR metadata, thread QoS, and the Windows DXGI capture identity."
 publish = false
 
 [dependencies]

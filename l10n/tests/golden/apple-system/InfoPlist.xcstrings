@@ -7,13 +7,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bluetooth lässt Punktfunk deinen Steam Controller lesen."
+            "value" : "Bluetooth lässt Lilynk deinen Steam Controller lesen."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bluetooth lets Punktfunk read your Steam Controller."
+            "value" : "Bluetooth lets Lilynk read your Steam Controller."
           }
         }
       }
@@ -24,13 +24,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bluetooth lässt Punktfunk deinen Steam Controller lesen."
+            "value" : "Bluetooth lässt Lilynk deinen Steam Controller lesen."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bluetooth lets Punktfunk read your Steam Controller."
+            "value" : "Bluetooth lets Lilynk read your Steam Controller."
           }
         }
       }
@@ -58,13 +58,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Punktfunk connects to your host on the local network."
+            "value" : "Lilynk connects to your host on the local network."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Punktfunk connects to your host on the local network."
+            "value" : "Lilynk connects to your host on the local network."
           }
         }
       }

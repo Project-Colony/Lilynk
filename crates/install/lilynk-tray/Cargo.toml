@@ -1,6 +1,6 @@
 [package]
 name = "lilynk-tray"
-description = "System-tray status icon for the punktfunk streaming host (Windows notification area / Linux StatusNotifierItem)"
+description = "System-tray status icon for the lilynk streaming host (Windows notification area / Linux StatusNotifierItem)"
 version.workspace = true
 edition.workspace = true
 # Not workspace-inherited (1.85): the Linux instance lock is `File::try_lock`, stable in 1.89.
@@ -43,7 +43,7 @@ rustls = { workspace = true, features = ["logging", "tls12"] }
 lilynk-core = { path = "../../core/lilynk-core", default-features = false, features = ["tls", "ureq-tls"] }
 
 [target.'cfg(windows)'.dependencies]
-# "Restart Punktfunk" is the host part's message, shared with the web console.
+# "Restart Lilynk" is the host part's message, shared with the web console.
 ly-l10n = { path = "../../../l10n", features = ["host"] }
 # SCM QUERY_STATUS works unprivileged — the service-state probe. Same crate the host service uses,
 # and it must stay in lockstep with it — see the windows-sys note on the host's declaration.

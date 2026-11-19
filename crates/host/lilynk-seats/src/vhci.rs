@@ -17,7 +17,7 @@ use std::path::{Path, PathBuf};
 use std::sync::{Mutex, MutexGuard};
 use std::time::{Duration, Instant};
 
-pub const MAP: &str = "/run/punktfunk/pads/vhci";
+pub const MAP: &str = "/run/lilynk/pads/vhci";
 /// Ports one seat may hold: four players' pads.
 pub const MAX_PER_SEAT: usize = 4;
 /// Free ports a seat's attach leaves for the owner's own pads and the other seats. `vhci_hcd`

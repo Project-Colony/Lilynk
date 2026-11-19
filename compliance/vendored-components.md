@@ -1,6 +1,6 @@
 # Vendored & bundled components — CVE watch and update cadence
 
-Due-diligence record for every third-party component that ships with Punktfunk but is
+Due-diligence record for every third-party component that ships with Lilynk but is
 **not** tracked by a package manager's advisory feed (CRA Art. 13(5); Annex I Part II §1).
 Everything resolved through Cargo/bun/pnpm lockfiles is already scanned weekly by
 `.gitea/workflows/audit.yml` (cargo-audit against RustSec, bun/pnpm audit) — this file
@@ -16,7 +16,7 @@ watch feeds below.
 
 | Component | Where / pin | How to update | Watch |
 |---|---|---|---|
-| **pyrowave** (+ Granite, volk, Vulkan-Headers subtree) | `crates/codec/pyrowave-sys/vendor/pyrowave`, pin = `PYROWAVE_COMMIT` in `scripts/vendor-pyrowave.sh`; exact commits recorded in `vendor/pyrowave/PUNKTFUNK-VENDOR.txt` | Bump the commit in the script, re-run it (network required; never from CI), re-apply `crates/codec/pyrowave-sys/patches/`. ⚠️ **Bitstream changes are protocol-affecting** — the wire bit means "PyroWave as of this pin"; a bitstream-changing bump must bump the protocol version and re-diff the Apple Metal hand-port (see the script header). | GitHub releases/commits of Themaister/pyrowave + Themaister/Granite (niche projects, no CVE feed — repo watch is the feed) |
+| **pyrowave** (+ Granite, volk, Vulkan-Headers subtree) | `crates/codec/pyrowave-sys/vendor/pyrowave`, pin = `PYROWAVE_COMMIT` in `scripts/vendor-pyrowave.sh`; exact commits recorded in `vendor/pyrowave/LILYNK-VENDOR.txt` | Bump the commit in the script, re-run it (network required; never from CI), re-apply `crates/codec/pyrowave-sys/patches/`. ⚠️ **Bitstream changes are protocol-affecting** — the wire bit means "PyroWave as of this pin"; a bitstream-changing bump must bump the protocol version and re-diff the Apple Metal hand-port (see the script header). | GitHub releases/commits of Themaister/pyrowave + Themaister/Granite (niche projects, no CVE feed — repo watch is the feed) |
 | **libvpl** 2.17.0 | `crates/codec/libvpl-sys/vendor/libvpl` (dispatcher statically linked; needs cmake + libclang) | Manual re-vendor from intel/libvpl at the new tag; rebuild `libvpl-sys` | Intel Security Center (INTEL-SA advisories for oneVPL/media) + intel/libvpl releases |
 | **fec-rs** 0.1.0, forked | `crates/core/lilynk-core/vendor/fec-rs`: hgaiser/fec-rs with the Cauchy generator matrix Moonlight's `nanors` uses (see `crates/core/lilynk-core/Cargo.toml`) | First-party fork: fix in place, port upstream fixes by hand. ⚠️ The matrix is wire format: a stock Moonlight client must still decode our parity | hgaiser/fec-rs commits + releases (no CVE feed) |
 | **cros-codecs** parser layer | `crates/codec/ly-bitstream/vendor/cros-codecs`, pin and every local deviation in its `PROVENANCE.md`. Parses untrusted stream bytes in every client | Follow the re-sync procedure at the end of `PROVENANCE.md`, then re-apply the deviations | AOSP `platform/system/cros-codecs` log (GitHub mirror chromeos/cros-codecs) + Android Security Bulletins |

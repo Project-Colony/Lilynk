@@ -16,7 +16,7 @@ use std::path::{Path, PathBuf};
 const MARKER_PREFIX: &str = "lilynk-seat=";
 
 /// Groups a seat user joins when they exist: the GPU, then the shared games folder. Never
-/// `punktfunk`, which may power the box off and stop its display manager, nor `input`, which
+/// `lilynk`, which may power the box off and stop its display manager, nor `input`, which
 /// reads every input device on the box, the owner's keyboard too.
 const GROUPS: [&str; 2] = ["render", GAMES_GROUP];
 
@@ -703,7 +703,7 @@ mod tests {
 
     #[test]
     fn a_passwd_row_parses_and_keeps_the_whole_gecos_field() {
-        let row = "pf-seat-1:x:975:972:lilynk-seat=0123456789abcdef0123456789abcdef:/var/lib/punktfunk/seats/0123456789abcdef0123456789abcdef/home:/bin/bash\n";
+        let row = "pf-seat-1:x:975:972:lilynk-seat=0123456789abcdef0123456789abcdef:/var/lib/lilynk/seats/0123456789abcdef0123456789abcdef/home:/bin/bash\n";
         let parsed = parse_passwd(row).unwrap();
         assert_eq!(
             (parsed.name.as_str(), parsed.uid, parsed.gid),
@@ -712,7 +712,7 @@ mod tests {
         assert_eq!(parsed.gecos, marker(&id()));
         assert_eq!(
             parsed.home,
-            Path::new("/var/lib/punktfunk/seats/0123456789abcdef0123456789abcdef/home")
+            Path::new("/var/lib/lilynk/seats/0123456789abcdef0123456789abcdef/home")
         );
         assert!(parse_passwd("short:x:1").is_none());
         assert!(parse_passwd("n:x:notanumber:1:g:/h:/s").is_none());

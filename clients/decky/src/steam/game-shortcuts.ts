@@ -1,6 +1,6 @@
 // The stream that looks like the game: a stream started from a Steam game's own page runs under a
 // hidden per-game shortcut named after the game and wearing its art and icon, so the overlay, the
-// "now playing" surfaces and the friends list show the game rather than "Punktfunk". Minted on
+// "now playing" surfaces and the friends list show the game rather than "Lilynk". Minted on
 // the first Stream tap for that game and reused after; keys.ts holds the registry.
 import { keys, write } from "../lib/storage";
 import { applyGameArtwork } from "./art";
@@ -53,7 +53,7 @@ export function removeGameShortcuts(): number {
       write(gameArtKey(shortcut), null);
       running.delete(shortcut); // ours only — a generic stream that is up keeps its state
     } catch (e) {
-      console.warn("punktfunk: game shortcut not removed", e);
+      console.warn("lilynk: game shortcut not removed", e);
     }
   }
   // The per-game layouts are keyed by game name, so no appid can find them.

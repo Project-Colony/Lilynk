@@ -160,7 +160,7 @@ fn is_cap(t: &str) -> bool {
 fn is_product(t: &str) -> bool {
     const PRODUCTS: &[&str] = &[
         "steam",
-        "punktfunk",
+        "lilynk",
         "xbox",
         "playstation",
         "heroic",

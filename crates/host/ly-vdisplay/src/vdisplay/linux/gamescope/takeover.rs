@@ -744,13 +744,13 @@ fn dm_plan(dm: Option<&str>, any_live: bool) -> DmPlan {
 /// Helper names the DM from the `display-manager.service` symlink — this process never names a
 /// unit across the privilege boundary. Two layouts: rpm/deb `libexec`, Arch `/usr/lib/<pkg>`.
 const DM_HELPER_PATHS: &[&str] = &[
-    "/usr/libexec/punktfunk/ly-dm-helper",
-    "/usr/lib/punktfunk/ly-dm-helper",
+    "/usr/libexec/lilynk/ly-dm-helper",
+    "/usr/lib/lilynk/ly-dm-helper",
 ];
 
 /// Helper's own gate: polkit is `allow_any` (lingering user unit has no session to classify).
 /// Package creates the group and adds nobody — it also gates usbip attach.
-const DM_HELPER_GROUP: &str = "punktfunk";
+const DM_HELPER_GROUP: &str = "lilynk";
 
 fn installed_dm_helper() -> Option<&'static str> {
     DM_HELPER_PATHS
@@ -795,16 +795,16 @@ impl std::fmt::Display for DmHelperError {
         match self {
             Self::NotInstalled => write!(
                 f,
-                "no packaged ly-dm-helper on this box (looked in {}) — install the punktfunk \
+                "no packaged ly-dm-helper on this box (looked in {}) — install the lilynk \
                  package, or add a display-manager polkit rule for your user (see \
-                 https://docs.punktfunk.unom.io/docs/gamescope)",
+                 https://project-colony.github.io/Lilynk/docs/gamescope)",
                 DM_HELPER_PATHS.join(" and ")
             ),
             Self::NotExecutable { helper, io } => write!(
                 f,
                 "{helper} is installed but could not be run via pkexec ({io}) — this box appears \
                  to have no polkit; add a display-manager polkit rule for your user instead (see \
-                 https://docs.punktfunk.unom.io/docs/gamescope)"
+                 https://project-colony.github.io/Lilynk/docs/gamescope)"
             ),
             Self::Denied {
                 helper,
@@ -814,8 +814,8 @@ impl std::fmt::Display for DmHelperError {
                 f,
                 "pkexec never ran {helper} (exit {code}{}) — polkit did not authorize \
                  org.projectcolony.lilynk.dm-helper, so the action is missing or overridden; reinstall \
-                 the punktfunk package, or add a display-manager polkit rule for your user (see \
-                 https://docs.punktfunk.unom.io/docs/gamescope)",
+                 the lilynk package, or add a display-manager polkit rule for your user (see \
+                 https://project-colony.github.io/Lilynk/docs/gamescope)",
                 suffix(stderr)
             ),
             Self::Refused {
@@ -887,7 +887,7 @@ fn dm_helper(verb: &str) -> std::result::Result<(), DmHelperError> {
     }
 }
 
-/// Missing `punktfunk` group is silent: takeover degrades to attach (black screen). Log it at
+/// Missing `lilynk` group is silent: takeover degrades to attach (black screen). Log it at
 /// startup with the `usermod` line. Gated: root / no DM / no session infra / no helper never need
 /// the group. Reads the user database (`id -nG`), not `getgroups()` — that is what the helper
 /// reads. Log-back-in is for usbip: this process's supplementary groups were frozen at start.
@@ -2522,10 +2522,10 @@ mod tests {
     /// one that ran and refused.
     #[test]
     fn dm_helper_failures_stay_distinguishable() {
-        let refusal = "ly-dm-helper: user 'nobara-user' is not in the 'punktfunk' group — \
-                       refusing. Grant it with: sudo usermod -aG punktfunk nobara-user";
+        let refusal = "ly-dm-helper: user 'nobara-user' is not in the 'lilynk' group — \
+                       refusing. Grant it with: sudo usermod -aG lilynk nobara-user";
         let ran = DmHelperError::Refused {
-            helper: "/usr/libexec/punktfunk/ly-dm-helper",
+            helper: "/usr/libexec/lilynk/ly-dm-helper",
             code: Some(1),
             stderr: refusal.to_string(),
         }
@@ -2539,11 +2539,11 @@ mod tests {
         for e in [
             DmHelperError::NotInstalled,
             DmHelperError::NotExecutable {
-                helper: "/usr/libexec/punktfunk/ly-dm-helper",
+                helper: "/usr/libexec/lilynk/ly-dm-helper",
                 io: "No such file or directory (os error 2)".into(),
             },
             DmHelperError::Denied {
-                helper: "/usr/libexec/punktfunk/ly-dm-helper",
+                helper: "/usr/libexec/lilynk/ly-dm-helper",
                 code: 127,
                 stderr: "Error executing command as another user: Not authorized".into(),
             },

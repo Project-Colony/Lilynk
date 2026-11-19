@@ -1,5 +1,5 @@
 ;/*++
-; ly-vdisplay - punktfunk virtual display, UMDF2 IddCx driver INF (template; stampinf -> .inf).
+; ly-vdisplay - lilynk virtual display, UMDF2 IddCx driver INF (template; stampinf -> .inf).
 ;
 ; For the all-Rust wdk-sys / windows-drivers-rs driver in THIS tree
 ; (packaging/windows/drivers/ly-vdisplay/). The driver registers the OWNED ly_driver_proto
@@ -31,7 +31,7 @@ DriverVer=
 ;   %DeviceName%=ly_vdisplay_Seat_Install, RdpIdd_IndirectDisplay
 ; That id is the one the terminal-services stack actually starts, so a seat display needs it — but
 ; claiming it takes over EVERY RDP session on the machine, admin sessions included. It is an
-; install-time choice the seats add-on makes, never something installing punktfunk implies. The
+; install-time choice the seats add-on makes, never something installing lilynk implies. The
 ; seats package ships its own INF that adds the line back; see docs/multi-seat-contract.
 ; Winning the id is not about the certificate: inbox rdpidd.inf ranks 0x00FF0000 too, and the tie
 ; goes to the newer DriverVer date (`windows-seat-display-tier.md` §5d).
@@ -120,10 +120,10 @@ UMDriverCopy=12,UMDF
 ly_vdisplay.dll
 
 [Strings]
-ManufacturerName="Punktfunk"
-DiskName="Punktfunk Virtual Display Installation Disk"
+ManufacturerName="Lilynk"
+DiskName="Lilynk Virtual Display Installation Disk"
 WudfRdDisplayName="Windows Driver Foundation - User-mode Driver Framework Reflector"
-DeviceName="Punktfunk Virtual Display"
+DeviceName="Lilynk Virtual Display"
 
 REG_MULTI_SZ=0x00010000
 REG_SZ=0x00000000

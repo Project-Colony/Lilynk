@@ -3,7 +3,7 @@
 # helpers, the system tuning both installers apply, and the host's user unit. The variables it sets
 # are for those scripts.
 
-SRC="${LILYNK_SRC:-$HOME/punktfunk}"
+SRC="${LILYNK_SRC:-$HOME/lilynk}"
 BOX="${LILYNK_BOX:-pf2}"
 UNITS="$HOME/.config/systemd/user"
 
@@ -79,23 +79,23 @@ apply_system_tuning() {
         NEED_RELOGIN=1
         warn "added $USER to the 'input' group (applies after a reboot)"
     fi
-    # 'punktfunk' owns the vhci attach/detach nodes; running this script is the opt-in to the
+    # 'lilynk' owns the vhci attach/detach nodes; running this script is the opt-in to the
     # native pad, so the user joins it. `if ensure_group`: a usermod against a missing group would
     # end the run under set -e before the services restart.
-    if ensure_group punktfunk; then
-        if id -nG "$USER" | grep -qw punktfunk; then
-            ok "already in the 'punktfunk' group (usbip vhci access)"
+    if ensure_group lilynk; then
+        if id -nG "$USER" | grep -qw lilynk; then
+            ok "already in the 'lilynk' group (usbip vhci access)"
         else
-            sudo usermod -aG punktfunk "$USER"
+            sudo usermod -aG lilynk "$USER"
             NEED_RELOGIN=1
-            warn "added $USER to the 'punktfunk' group — the native Steam Deck pad needs it. That group"
-            warn "can emulate arbitrary USB devices; drop it with 'sudo gpasswd -d $USER punktfunk' if"
+            warn "added $USER to the 'lilynk' group — the native Steam Deck pad needs it. That group"
+            warn "can emulate arbitrary USB devices; drop it with 'sudo gpasswd -d $USER lilynk' if"
             warn "you would rather stream without the native pad."
         fi
     else
-        warn "couldn't create the 'punktfunk' group — the native Steam Deck pad will not attach"
+        warn "couldn't create the 'lilynk' group — the native Steam Deck pad will not attach"
         warn "(everything else works; the pad arrives as a generic Xbox 360 controller). By hand:"
-        warn "  sudo groupadd --system punktfunk; sudo usermod -aG punktfunk $USER"
+        warn "  sudo groupadd --system lilynk; sudo usermod -aG lilynk $USER"
     fi
     # The host carries no capability: KWin cannot identify a capability-carrying client, and every
     # Desktop-mode session dies. The worker carries cap_sys_nice=ep for PyroWave's GPU priority. A
@@ -124,7 +124,7 @@ apply_system_tuning() {
 # outrank that line, so it never stays there. An older unit's address other than the default moves
 # into host.env, unless host.env already names one.
 write_host_unit() {
-    local xrd="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}" bind env="$HOME/.config/punktfunk/host.env"
+    local xrd="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}" bind env="$HOME/.config/lilynk/host.env"
     bind=$(sed -n 's/^ExecStart=.* --mgmt-bind \([^ ]*\).*/\1/p' "$UNITS/lilynk-host.service" 2>/dev/null || true)
     if [ -n "$bind" ] && [ "$bind" != 0.0.0.0:47990 ] \
         && ! grep -qs '^[[:space:]]*LILYNK_MGMT_BIND[[:space:]]*=' "$env"; then

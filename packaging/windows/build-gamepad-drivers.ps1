@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Build + sign the punktfunk virtual-gamepad UMDF drivers (ly-gamepad = the HID pad identities,
+  Build + sign the lilynk virtual-gamepad UMDF drivers (ly-gamepad = the HID pad identities,
   ly-xusb = Xbox 360 / XInput) FROM SOURCE, in CI, and stage them for the host installer. The
   gamepad analogue of build-ly-vdisplay.ps1 - the .dll/.inf/.cat are built from the current source
   on every run, so they stay in lockstep with it.
@@ -38,7 +38,7 @@ $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 $PSNativeCommandUseErrorActionPreference = $false
 
-# The decoded DRIVER_CERT key is trusted as a machine root on every box that installs punktfunk,
+# The decoded DRIVER_CERT key is trusted as a machine root on every box that installs lilynk,
 # so it must not outlive this script: the trap shreds it on any throw, then re-throws, and the
 # normal exit calls Remove-SigningPfx too. signing.ps1 holds the shred; the key stays this script's.
 . (Join-Path $PSScriptRoot 'signing.ps1')

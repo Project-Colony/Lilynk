@@ -10,7 +10,7 @@
 > | `lilynk-gamescope` | ❌ wayland 1.22 | ✅ | ✅ | ❌ |
 > | `lilynk-client` | ❌ `libc6 >= 2.43` | ✅ | ❌ `libc6 >= 2.43` | ❌ |
 >
-> Debian 13 is a supported host target ([docs](https://docs.punktfunk.unom.io/docs/debian)); the
+> Debian 13 is a supported host target ([docs](https://project-colony.github.io/Lilynk/docs/debian)); the
 > client is the one gap, since it is built on 26.04 and floors at that release's glibc.
 
 `lilynk-host` is published as a `.deb` to **Gitea's Debian package registry** in the public
@@ -19,7 +19,7 @@ and publishes on every push to `main` (a rolling `<next-minor>~ciN.g<sha>` build
 derived from the latest stable tag by `scripts/ci/ly-version.sh` — to the **`canary`** apt
 distribution) and on `vX.Y.Z` tags (a clean `X.Y.Z` to the **`stable`** distribution, plus attached
 to the unified Gitea Release). The two are separate apt distributions, so a stable box never jumps
-to a canary build — see [Release Channels](https://punktfunk.unom.io/docs/channels). The repo line
+to a canary build — see [Release Channels](https://project-colony.github.io/Lilynk/docs/channels). The repo line
 below subscribes to `stable`; swap `stable` → `canary` for the latest main builds.
 
 The same workflow also publishes **`lilynk-web`** (the browser management console — pairing +
@@ -84,8 +84,8 @@ Two things make the one package serve both Debian 13 and Ubuntu 26.04:
 
 ## Install, firewall, updates
 
-All three live on the docs pages ([Debian](https://docs.punktfunk.unom.io/docs/debian) /
-[Ubuntu](https://docs.punktfunk.unom.io/docs/ubuntu)), stated once so they cannot drift. Packager
+All three live on the docs pages ([Debian](https://project-colony.github.io/Lilynk/docs/debian) /
+[Ubuntu](https://project-colony.github.io/Lilynk/docs/ubuntu)), stated once so they cannot drift. Packager
 notes: the registry is public, so there is no apt auth beyond the signing key, and `stable` and
 `canary` are separate apt distributions, so a stable box never jumps to a canary build. The package
 ships ufw profiles and firewalld service definitions, neither auto-enabled — Debian ships no

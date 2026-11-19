@@ -24,7 +24,7 @@ const PER_EXE: &str = r"SOFTWARE\Microsoft\GameInputRedist\Exe";
 const LIST: &str = r"SOFTWARE\Microsoft\GameInput";
 const QUIRK: &str = "BackgroundInput";
 /// A value per exe name a seat added, holding which forms it added: removal touches only those.
-const RECORD: &str = r"SOFTWARE\Punktfunk\GameInputBackground";
+const RECORD: &str = r"SOFTWARE\Lilynk\GameInputBackground";
 const ADDED_PER_EXE: u32 = 1;
 const ADDED_TO_LIST: u32 = 2;
 /// Names the seats may add: far past any library, and a bound on how far a guest's renamed

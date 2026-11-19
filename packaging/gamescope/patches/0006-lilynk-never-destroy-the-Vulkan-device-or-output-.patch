@@ -1,13 +1,13 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Enrico=20B=C3=BChler?= <enrico.buehler@unom.io>
 Date: Sat, 8 Aug 2026 19:17:25 +0200
-Subject: [PATCH 06/38] punktfunk: never destroy the Vulkan device or output at
+Subject: [PATCH 06/38] lilynk: never destroy the Vulkan device or output at
  exit
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Every gamescope session punktfunk spawns ended in SIGSEGV. It happened after
+Every gamescope session lilynk spawns ended in SIGSEGV. It happened after
 the compositor had already done its work — "Primary child shut down!", then a
 coredump — so the stream itself looked fine and the crash only showed up as a
 steady drip of coredumps and a non-zero exit from the spawn.
@@ -58,7 +58,7 @@ index d411417f..2e8ee547 100644
  }
  
 -VulkanOutput_t g_output;
-+// punktfunk: globals that own GPU objects must OUTLIVE static destruction.
++// lilynk: globals that own GPU objects must OUTLIVE static destruction.
 +//
 +// gamescope kept its Vulkan device and output as plain globals, so glibc ran their destructors
 +// from `__run_exit_handlers` after main() returned. Those destructors call back into the driver
@@ -66,7 +66,7 @@ index d411417f..2e8ee547 100644
 +// Vulkan ICD has already been torn down and unloaded, so the call jumps through a function
 +// pointer into an unmapped page: SIGSEGV at exactly the address it tried to execute. On NVIDIA it
 +// is 100% reproducible -- `gamescope --backend headless ... -- true` dies with exit 139 EVERY
-+// time -- so every punktfunk gamescope session ended in a coredump.
++// time -- so every lilynk gamescope session ended in a coredump.
 +//
 +// Nothing needs freeing at that point: the process is exiting and the kernel reclaims the device,
 +// its command buffers and every GPU allocation. So give these objects storage that is constructed

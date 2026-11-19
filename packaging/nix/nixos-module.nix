@@ -1,15 +1,15 @@
-# NixOS integration for punktfunk — the declarative equivalent of everything the RPM/deb do in
+# NixOS integration for lilynk — the declarative equivalent of everything the RPM/deb do in
 # their %install + %post (packaging/rpm/lilynk.spec, packaging/debian/build-deb.sh):
 # the systemd *user* service, the uinput/uhid/vhci udev rules, the vhci-hcd autoload, the 32 MB
-# UDP socket-buffer sysctls, the firewall openers, the `input`- and `punktfunk`-group membership
+# UDP socket-buffer sysctls, the firewall openers, the `input`- and `lilynk`-group membership
 # for virtual gamepads, the management web console (`services.lilynk.web`, on by default with
 # the host — the RPM/deb Recommends), and the plugin/script runner
 # (`services.lilynk.scripting`, likewise on by default — the game-library scanners are plugins),
 # and the seat supervisor (`services.lilynk.seats`, off by default).
 #
 # Usage (flake):
-#   { inputs.lilynk.url = "git+https://git.unom.io/unom/punktfunk?ref=nix-stable";
-#     outputs = { punktfunk, nixpkgs, ... }: {
+#   { inputs.lilynk.url = "git+https://github.com/Project-Colony/Lilynk?ref=nix-stable";
+#     outputs = { lilynk, nixpkgs, ... }: {
 #       nixosConfigurations.myhost = nixpkgs.lib.nixosSystem {
 #         modules = [ lilynk.nixosModules.default
 #                     { services.lilynk.host.enable = true;
@@ -102,7 +102,7 @@ let
   ]
   ++ optional cfg.host.gamescopeHdr cfg.host.gamescopePackage;
 
-  # Native punktfunk ports (QUIC control and media + discovery + mgmt API).
+  # Native lilynk ports (QUIC control and media + discovery + mgmt API).
   nativeTCP = [ 47990 ]; # mgmt/library REST API (HTTPS + mTLS)
   nativeUDP = [
     9777
@@ -124,7 +124,7 @@ in
 {
   options.services.lilynk = {
     host = {
-      enable = mkEnableOption "the punktfunk streaming host (systemd --user service + system wiring)";
+      enable = mkEnableOption "the lilynk streaming host (systemd --user service + system wiring)";
 
       package = mkOption {
         type = types.package;
@@ -144,7 +144,7 @@ in
           Moonlight client can pair, and open their firewall ports. OPT-IN (default `false`,
           matching every other package route): the compat planes carry plain-HTTP pairing and the
           legacy GCM-nonce path (security-review #5/#9), so the default is the secure native-only
-          host — Punktfunk clients only. Enable only on a trusted LAN.
+          host — Lilynk clients only. Enable only on a trusted LAN.
         '';
       };
 
@@ -195,8 +195,8 @@ in
         default = [ ];
         example = [ "alice" ];
         description = ''
-          Users to add to the `input` and `punktfunk` groups — required for the virtual gamepads
-          the host creates: `input` covers `/dev/uinput` and `/dev/uhid`, `punktfunk` covers the
+          Users to add to the `input` and `lilynk` groups — required for the virtual gamepads
+          the host creates: `input` covers `/dev/uinput` and `/dev/uhid`, `lilynk` covers the
           usbip/vhci nodes the virtual Steam Deck pad attaches through. The second is separate on
           purpose — it can emulate arbitrary USB hardware, so only list users you would trust with
           that. The host runs as these users' `systemd --user` service. The `CAP_SYS_NICE` encode
@@ -250,7 +250,7 @@ in
           not reach the store. Loaded optionally (a missing file does not fail the unit). With
           seats on, the owner's background session reads it as the owner, so keep it readable by
           them there. The host
-          keeps its own credentials in `~/.config/punktfunk/`, owner-only, and takes them out of its
+          keeps its own credentials in `~/.config/lilynk/`, owner-only, and takes them out of its
           environment at startup so the games and hooks it launches cannot inherit them.
         '';
       };
@@ -259,7 +259,7 @@ in
         type = types.bool;
         default = false;
         description = ''
-          Open the host's inbound ports. Native punktfunk always: UDP 9777 (QUIC control and
+          Open the host's inbound ports. Native lilynk always: UDP 9777 (QUIC control and
           media), 9778 (browser streaming) + 5353 (mDNS), TCP 47990 (mgmt API). With
           `gamestream = true` also TCP 47984/47989/48010 and UDP 47998/47999/48000. With
           `services.lilynk.seats.enable` also UDP 9779-9786, the seats a door redirects to and
@@ -271,7 +271,7 @@ in
         type = types.bool;
         default = true;
         description = ''
-          Put `lilynk-gamescope` — gamescope carrying punktfunk's `pipewire-hdr` patches — on
+          Put `lilynk-gamescope` — gamescope carrying lilynk's `pipewire-hdr` patches — on
           the host service's PATH, so a 10-bit-capable client can stream true HDR10 (BT.2020 PQ)
           off a gamescope virtual output. HDR is attempted by default once the binary is present
           (`LILYNK_GAMESCOPE_HDR=0` in `settings`/`environmentFile` forces SDR).
@@ -294,7 +294,7 @@ in
     };
 
     client = {
-      enable = mkEnableOption "the native punktfunk Linux client";
+      enable = mkEnableOption "the native lilynk Linux client";
 
       package = mkOption {
         type = types.package;
@@ -324,7 +324,7 @@ in
         description = ''
           Run the management web console as a `systemd --user` service on TCP 47992 (HTTPS). Enabled
           by default whenever the host is enabled — set to `false` for a console-less host. It
-          auto-wires to `~/.config/punktfunk/{mgmt-token,cert.pem,key.pem}` (written by the host's
+          auto-wires to `~/.config/lilynk/{mgmt-token,cert.pem,key.pem}` (written by the host's
           `serve`) and generates a login password on first start.
         '';
       };
@@ -389,8 +389,8 @@ in
           (`lilynk-scripting`). Enabled by default whenever the host is, and started by default
           too (see `autoStart`) — the game-library scanners are plugins, so a host without the
           runner has an empty library. It also runs whatever you put in
-          `~/.config/punktfunk/scripts` or install as `lilynk-plugin-*` under
-          `~/.config/punktfunk/plugins`. A plugin auto-wires to the host's mgmt token + identity cert.
+          `~/.config/lilynk/scripts` or install as `lilynk-plugin-*` under
+          `~/.config/lilynk/plugins`. A plugin auto-wires to the host's mgmt token + identity cert.
         '';
       };
 
@@ -426,7 +426,7 @@ in
     # headless desktop and stock host. Off by default, unlike the packaged distros, where the
     # package installs it disabled and the console turns it on: here the option is that decision.
     seats = {
-      enable = mkEnableOption "the punktfunk seat supervisor (a user, a session and a host per profile)";
+      enable = mkEnableOption "the lilynk seat supervisor (a user, a session and a host per profile)";
 
       package = mkOption {
         type = types.package;
@@ -450,7 +450,7 @@ in
           message = ''
             services.lilynk.host.settings must not carry a token or a password: it becomes a
             world-readable file in the Nix store. Use services.lilynk.host.environmentFile, or
-            let the host generate its own credentials in ~/.config/punktfunk/.
+            let the host generate its own credentials in ~/.config/lilynk/.
           '';
         }
         {
@@ -521,20 +521,20 @@ in
 
       # `input` group membership for the virtual-gamepad nodes (mirrors the RPM's usermod hint).
       #
-      # `punktfunk` is the SECOND group 60-lilynk.rules needs: it owns the usbip vhci
+      # `lilynk` is the SECOND group 60-lilynk.rules needs: it owns the usbip vhci
       # attach/detach nodes, and is deliberately not `input` because writing `attach` materialises
       # an arbitrary emulated USB device — a root-only kernel primitive that must not ride on the
       # group every gamepad guide tells you to join. Declaring the
-      # group is not optional: the rule shells out to `chgrp punktfunk`, which fails outright if
+      # group is not optional: the rule shells out to `chgrp lilynk`, which fails outright if
       # nothing ever created it, leaving the nodes root-only and the virtual Steam Deck pad unable
       # to attach. Membership follows `host.users`, which is already the explicit "these users run
       # the host" list this option's description scopes to the usbip/vhci pad.
       users.groups.input = { };
-      users.groups.punktfunk = { };
+      users.groups.lilynk = { };
       users.users = genAttrs cfg.host.users (_: {
         extraGroups = [
           "input"
-          "punktfunk"
+          "lilynk"
         ];
       });
 
@@ -589,10 +589,10 @@ in
         capabilities = "cap_sys_nice=ep";
         owner = "root";
         # The worker runs with AT_SECURE 0, so the GPU loaders read the caller's environment: only
-        # the host's users get it. `punktfunk` holds `host.users`; on a seats box `lilynk-games`
+        # the host's users get it. `lilynk` holds `host.users`; on a seats box `lilynk-games`
         # holds them and every seat user, and each seat's unit carries it for its own session.
         # Readable: the host pins the wrapper's inode by fd.
-        group = if cfg.seats.enable then "lilynk-games" else "punktfunk";
+        group = if cfg.seats.enable then "lilynk-games" else "lilynk";
         permissions = "u+rx,g+rx";
       };
 
@@ -663,7 +663,7 @@ in
         # disabling the system layer, which is HDR-less by construction.
         # An operator's `settings` still wins, as above.
         environment.LILYNK_GAMESCOPE_WSI_LAYER_DIR = mkIf cfg.host.gamescopeHdr
-          "${cfg.host.gamescopePackage}/lib/punktfunk/vulkan/implicit_layer.d";
+          "${cfg.host.gamescopePackage}/lib/lilynk/vulkan/implicit_layer.d";
         serviceConfig = {
           # The store path DIRECTLY — not a capability wrapper. /proc/<pid>/exe then resolves to the
           # very path packages.nix substituted into org.projectcolony.lilynk.host.desktop's Exec=, which is
@@ -680,7 +680,7 @@ in
           ]
           ++ (optional (cfg.host.settings != { }) "${hostSettingsFile}")
           ++ (optional (cfg.host.environmentFile != null) "-${toString cfg.host.environmentFile}")
-          ++ [ "-/run/punktfunk/seats/%u.env" ];
+          ++ [ "-/run/lilynk/seats/%u.env" ];
         };
         # No LILYNK_GAMESCOPE_HDR here: the host defaults it on, and the capability probe on
         # the resolved binary keeps a build-less box SDR. `gamescopeHdr` only controls whether
@@ -690,7 +690,7 @@ in
       # A switch reloads user managers but never restarts a user service. A changed package
       # reloads this unit instead, which restarts the running host, console and runner.
       systemd.services.lilynk-restart-user-units = {
-        description = "Restart the punktfunk user services after a package change";
+        description = "Restart the lilynk user services after a package change";
         wantedBy = [ "multi-user.target" ];
         reloadTriggers =
           [ cfg.host.package ]
@@ -749,9 +749,9 @@ in
         # would beat `web.bind`. The empty entry clears the list; the rest is the packaged order.
         serviceConfig.EnvironmentFile = [
           ""
-          "%h/.config/punktfunk/mgmt-token"
-          "-%h/.config/punktfunk/web-password"
-          "-%h/.config/punktfunk/mgmt-endpoint"
+          "%h/.config/lilynk/mgmt-token"
+          "-%h/.config/lilynk/web-password"
+          "-%h/.config/lilynk/mgmt-endpoint"
         ];
       };
     })
@@ -796,7 +796,7 @@ in
     (mkIf cfg.seats.enable {
       assertions = [
         {
-          # Every seat runs the host, and `users.groups.punktfunk` is declared with it.
+          # Every seat runs the host, and `users.groups.lilynk` is declared with it.
           assertion = cfg.host.enable;
           message = "services.lilynk.seats needs services.lilynk.host.enable: each seat runs the host.";
         }
@@ -842,7 +842,7 @@ in
         # no group of ours: the unit gives each seat's session that group, and no account changes.
         serviceConfig.SupplementaryGroups = [ "lilynk-games" ];
         environment.LILYNK_GAMESCOPE_WSI_LAYER_DIR = mkIf cfg.host.gamescopeHdr
-          "${cfg.host.gamescopePackage}/lib/punktfunk/vulkan/implicit_layer.d";
+          "${cfg.host.gamescopePackage}/lib/lilynk/vulkan/implicit_layer.d";
         # A switch must not end a seat's session. Seats survive an update on every other package.
         restartIfChanged = false;
       };
@@ -896,7 +896,7 @@ in
           "lilynk-games"
         ];
       });
-      # The door user's own group, in place of `punktfunk`, which owns the usbip attach nodes.
+      # The door user's own group, in place of `lilynk`, which owns the usbip attach nodes.
       users.groups.lilynk-door = { };
       security.polkit.enable = mkDefault true;
       environment.etc."polkit-1/rules.d/49-lilynk-door.rules".source =

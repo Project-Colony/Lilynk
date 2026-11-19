@@ -4,7 +4,7 @@
 import SwiftUI
 
 public extension Color {
-    /// The Punktfunk brand purple, the app family's accent. Light: #6656F2, Dark: #8678F5 (the
+    /// The Lilynk brand purple, the app family's accent. Light: #6656F2, Dark: #8678F5 (the
     /// lighter violet reads better on dark surfaces; ly-console-ui's dark accent). Defined
     /// explicitly, not as `Color.accentColor`, which on macOS follows the system accent unless the
     /// user picks Multicolor, and the brand mark must never drift.

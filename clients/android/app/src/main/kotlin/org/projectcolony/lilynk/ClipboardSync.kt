@@ -107,7 +107,7 @@ class ClipboardSync(
                 // Android checks focus only for clipboard reads (AOSP 10 through main), so a
                 // background write goes through. A throw here must reach the log, or
                 // "clipboard sync stopped" has nothing to point at.
-                runCatching { cm.setPrimaryClip(ClipData.newPlainText("Punktfunk", text)) }
+                runCatching { cm.setPrimaryClip(ClipData.newPlainText("Lilynk", text)) }
                     .onFailure { Log.w("ClipboardSync", "setPrimaryClip refused", it) }
             }
             // "state"/"cancel"/"error": nothing to drive in the text-only v1.

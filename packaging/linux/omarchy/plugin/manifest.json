@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "punktfunk",
-  "name": "Punktfunk",
+  "id": "lilynk",
+  "name": "Lilynk",
   "version": "0.1.0",
-  "author": "unom",
+  "author": "Lilynk",
   "license": "MIT OR Apache-2.0",
   "description": "Start the host, pair a device, and watch the live session from the bar.",
   "kinds": [
@@ -13,11 +13,11 @@
     "barWidget": "Panel.qml"
   },
   "barWidget": {
-    "displayName": "Punktfunk",
+    "displayName": "Lilynk",
     "description": "Start the host, pair a device, and watch the live session.",
     "category": "System",
     "defaultSection": "right",
-    "aliases": ["punktfunk", "streaming"],
+    "aliases": ["lilynk", "streaming"],
     "allowMultiple": false
   }
 }

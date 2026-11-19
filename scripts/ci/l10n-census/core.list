@@ -1,5 +1,5 @@
-crates/client/ly-client-core/src/audio.rs	Punktfunk Microphone
-crates/client/ly-client-core/src/audio.rs	Punktfunk Stream
+crates/client/ly-client-core/src/audio.rs	Lilynk Microphone
+crates/client/ly-client-core/src/audio.rs	Lilynk Stream
 crates/client/ly-client-core/src/audio_rt.rs	MMCSS and SetThreadPriority refused
 crates/client/ly-client-core/src/audio_rt.rs	MMCSS ok, SetThreadPriority refused
 crates/client/ly-client-core/src/audio_rt.rs	Pro Audio
@@ -15,6 +15,6 @@ crates/client/ly-client-core/src/menu_nav.rs	Xbox Elite Series 2
 crates/client/ly-client-core/src/omarchy_menu.rs	Connect and stream — {target}
 crates/client/ly-client-core/src/omarchy_menu.rs	{} does not parse as JSONC — fix it, then re-run
 crates/client/ly-client-core/src/pad_audio/mod.rs	Wireless Controller
-crates/client/ly-client-core/src/pad_audio/pipewire.rs	Punktfunk Pad Audio
+crates/client/ly-client-core/src/pad_audio/pipewire.rs	Lilynk Pad Audio
 crates/client/ly-client-core/src/update.rs	Access denied
 crates/client/ly-client-core/src/update.rs	Permission denied

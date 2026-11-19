@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- AppStream metainfo for the punktfunk Linux client flatpak. Validate with the appstream
+<!-- AppStream metainfo for the lilynk Linux client flatpak. Validate with the appstream
      check of ghcr.io/flathub-infra/flatpak-builder-lint. The component id MUST equal the flatpak app-id; the <launchable> MUST name the installed
      desktop file (org.projectcolony.lilynk.desktop). Each stable tag adds a <release> on top. -->
 <component type="desktop-application">
   <id>org.projectcolony.lilynk</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
-  <name>Punktfunk</name>
-  <name xml:lang="de">Punktfunk</name>
-  <name xml:lang="es">Punktfunk</name>
-  <name xml:lang="fr">Punktfunk</name>
+  <name>Lilynk</name>
+  <name xml:lang="de">Lilynk</name>
+  <name xml:lang="es">Lilynk</name>
+  <name xml:lang="fr">Lilynk</name>
   <summary>Stream your PC's games and desktop</summary>
   <summary xml:lang="de">Spiele und Desktop deines PCs streamen</summary>
   <summary xml:lang="es">Transmite los juegos y el escritorio de tu PC</summary>
@@ -19,55 +19,55 @@
 
   <description>
     <p>
-      Punktfunk plays games and uses the desktop of a computer running the Punktfunk host, with
+      Lilynk plays games and uses the desktop of a computer running the Lilynk host, with
       low latency over your network. The stream arrives at this screen's resolution and refresh
       rate, without scaling.
     </p>
     <p xml:lang="de">
-      Mit Punktfunk spielst du über dein Netzwerk mit geringer Latenz die Spiele eines Computers,
+      Mit Lilynk spielst du über dein Netzwerk mit geringer Latenz die Spiele eines Computers,
       auf dem der Lilynk-Host läuft, und nutzt seinen Desktop. Der Stream kommt in der Auflösung
       und Bildwiederholrate dieses Bildschirms an, ohne Skalierung.
     </p>
     <p xml:lang="es">
-      Con Punktfunk juegas y usas el escritorio de un equipo que ejecuta el host de Punktfunk, con
+      Con Lilynk juegas y usas el escritorio de un equipo que ejecuta el host de Lilynk, con
       baja latencia a través de tu red. La transmisión llega a la resolución y la frecuencia de
       actualización de esta pantalla, sin escalado.
     </p>
     <p xml:lang="fr">
-      Punktfunk vous fait jouer et utiliser le bureau d’un ordinateur qui exécute l’hôte Punktfunk,
+      Lilynk vous fait jouer et utiliser le bureau d’un ordinateur qui exécute l’hôte Lilynk,
       avec une faible latence sur votre réseau. Le flux arrive à la résolution et à la fréquence de
       rafraîchissement de cet écran, sans mise à l’échelle.
     </p>
     <p xml:lang="it">
-      Punktfunk ti permette di giocare e usare il desktop di un computer su cui è in esecuzione
-      l’host Punktfunk, con bassa latenza sulla tua rete. Lo streaming arriva alla risoluzione e
+      Lilynk ti permette di giocare e usare il desktop di un computer su cui è in esecuzione
+      l’host Lilynk, con bassa latenza sulla tua rete. Lo streaming arriva alla risoluzione e
       alla frequenza di aggiornamento di questo schermo, senza ridimensionamento.
     </p>
     <p xml:lang="pt_BR">
-      O Punktfunk permite jogar e usar a área de trabalho de um computador que executa o host do
-      Punktfunk, com baixa latência pela sua rede. A transmissão chega na resolução e na taxa de
+      O Lilynk permite jogar e usar a área de trabalho de um computador que executa o host do
+      Lilynk, com baixa latência pela sua rede. A transmissão chega na resolução e na taxa de
       atualização desta tela, sem redimensionamento.
     </p>
     <p>
-      You need the Punktfunk host on the computer you stream from. It runs on Linux and Windows.
+      You need the Lilynk host on the computer you stream from. It runs on Linux and Windows.
     </p>
     <p xml:lang="de">
       Auf dem Computer, von dem du streamst, brauchst du den Lilynk-Host. Er läuft unter Linux
       und Windows.
     </p>
     <p xml:lang="es">
-      Necesitas el host de Punktfunk en el equipo desde el que transmites. Funciona en Linux y
+      Necesitas el host de Lilynk en el equipo desde el que transmites. Funciona en Linux y
       Windows.
     </p>
     <p xml:lang="fr">
-      Il vous faut l’hôte Punktfunk sur l’ordinateur depuis lequel vous diffusez. Il fonctionne sous
+      Il vous faut l’hôte Lilynk sur l’ordinateur depuis lequel vous diffusez. Il fonctionne sous
       Linux et Windows.
     </p>
     <p xml:lang="it">
-      Ti serve l’host Punktfunk sul computer da cui trasmetti. Funziona su Linux e Windows.
+      Ti serve l’host Lilynk sul computer da cui trasmetti. Funziona su Linux e Windows.
     </p>
     <p xml:lang="pt_BR">
-      Você precisa do host do Punktfunk no computador de onde transmite. Ele funciona no Linux e no
+      Você precisa do host do Lilynk no computador de onde transmite. Ele funciona no Linux e no
       Windows.
     </p>
     <ul>
@@ -184,16 +184,13 @@
     <control>gamepad</control>
   </supports>
 
-  <url type="homepage">https://punktfunk.unom.io/</url>
-  <url type="help">https://docs.punktfunk.unom.io/</url>
-  <url type="bugtracker">https://punktfunk.unom.io/community#bugs</url>
-  <url type="vcs-browser">https://git.unom.io/unom/punktfunk</url>
+  <url type="homepage">https://github.com/Project-Colony/Lilynk</url>
+  <url type="help">https://project-colony.github.io/Lilynk/</url>
+  <url type="bugtracker">https://github.com/Project-Colony/Lilynk/issues</url>
+  <url type="vcs-browser">https://github.com/Project-Colony/Lilynk</url>
 
   <developer id="org.projectcolony">
-    <name>unom</name>
-    <name xml:lang="de">unom</name>
-    <name xml:lang="es">unom</name>
-    <name xml:lang="fr">unom</name>
+    <name>Lilynk</name>
   </developer>
 
   <content_rating type="oars-1.1"/>
@@ -203,72 +200,5 @@
     <color type="primary" scheme_preference="dark">#6c5bf3</color>
   </branding>
 
-  <releases>
-    <release version="0.47.0" date="2026-11-14">
-      <url type="details">https://git.unom.io/unom/punktfunk/releases/tag/v0.47.0</url>
-      <description>
-        <p>Six languages, locked profiles with a PIN, a screen role for each device, stream settings per game, shortcuts you can change, and faster recovery from a lost packet.</p>
-      </description>
-    </release>
-    <release version="0.46.0" date="2026-11-01">
-      <url type="details">https://git.unom.io/unom/punktfunk/releases/tag/v0.46.0</url>
-      <description>
-        <p>Right colours on Snapdragon devices and AMD RX 9000 hosts, Umbriel as a host desktop, a steadier automatic bitrate, Bazzite hosts that survive a reboot, and Switch 2 pads.</p>
-      </description>
-    </release>
-    <release version="0.45.0" date="2026-10-25">
-      <url type="details">https://git.unom.io/unom/punktfunk/releases/tag/v0.45.0</url>
-      <description>
-        <p>Stream to every monitor, keep the stream through a dropped link, share the clipboard with the host, and get even frame pacing on the Steam Deck.</p>
-      </description>
-    </release>
-    <release version="0.44.1" date="2026-10-16">
-      <url type="details">https://git.unom.io/unom/punktfunk/releases/tag/v0.44.1</url>
-      <description>
-        <p>Players on a Linux host keep their controllers apart, hosts reachable without logging in serve their library, and video gets priority on Wi-Fi again.</p>
-      </description>
-    </release>
-    <release version="0.44.0" date="2026-10-15">
-      <url type="details">https://git.unom.io/unom/punktfunk/releases/tag/v0.44.0</url>
-      <description>
-        <p>Profiles let everyone on the host pick who is playing, every stream uses one port, and lost packets are sent again instead of freezing the picture. Needs a 0.44 host.</p>
-      </description>
-    </release>
-    <release version="0.43.1" date="2026-10-04">
-      <url type="details">https://git.unom.io/unom/punktfunk/releases/tag/v0.43.1</url>
-      <description>
-        <p>gamescope sessions on NVIDIA and Intel show a picture again, Windows hosts keep every frame of a capped game, and the network check reports fast links at their speed.</p>
-      </description>
-    </release>
-    <release version="0.43.0" date="2026-10-04">
-      <url type="details">https://git.unom.io/unom/punktfunk/releases/tag/v0.43.0</url>
-      <description>
-        <p>Hosts install games when you start them, a network check says what your link does and offers paced delivery, and controller rumble can be turned off.</p>
-      </description>
-    </release>
-    <release version="0.42.0" date="2026-10-01">
-      <url type="details">https://git.unom.io/unom/punktfunk/releases/tag/v0.42.0</url>
-      <description>
-        <p>The Linux client is redesigned with Hosts and Library tabs and decodes in hardware on ARM devices, controller mouse gains a Touchpad mode, and 4K streams at 120 fps and above keep up again.</p>
-      </description>
-    </release>
-    <release version="0.41.0" date="2026-09-28">
-      <url type="details">https://git.unom.io/unom/punktfunk/releases/tag/v0.41.0</url>
-      <description>
-        <p>A game you launched can be ended from any client, keys no longer stick when a packet is lost, and large libraries load a page at a time.</p>
-      </description>
-    </release>
-    <release version="0.40.0" date="2026-09-25">
-      <url type="details">https://git.unom.io/unom/punktfunk/releases/tag/v0.40.0</url>
-      <description>
-        <p>The console is rebuilt for the TV remote, with Hosts, Games, Controllers and Settings tabs and a Games tab laid out like the Mac library.</p>
-      </description>
-    </release>
-    <release version="0.39.0" date="2026-09-20">
-      <url type="details">https://git.unom.io/unom/punktfunk/releases/tag/v0.39.0</url>
-      <description>
-        <p>Two players can share one host, a launch waits for the game's window, and automatic bitrate measures the link before the first frame.</p>
-      </description>
-    </release>
-  </releases>
+  <releases/>
 </component>

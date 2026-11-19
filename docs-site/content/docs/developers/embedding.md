@@ -1,12 +1,12 @@
 ---
 title: Embed the core (C ABI)
-description: Build a client for a platform without a Punktfunk app by linking the lilynk-ffi C ABI.
+description: Build a client for a platform without a Lilynk app by linking the lilynk-ffi C ABI.
 ---
 
 Link `lilynk-ffi` into your own client and it speaks the whole protocol for you: the QUIC
 handshake, pairing, the encrypted media path, FEC and loss recovery, clock sync. You decode
 video, present it, play audio and read input. The contract is
-[`include/lilynk_core.h`](https://git.unom.io/unom/punktfunk/src/branch/main/include/punktfunk_core.h):
+[`include/lilynk_core.h`](https://github.com/Project-Colony/Lilynk/blob/main/include/lilynk_core.h):
 every symbol carries a doc comment, and this page is the map to it. A Rust client depends on
 `lilynk-core` with `features = ["quic"]` instead, as the Android client does.
 
@@ -19,7 +19,7 @@ cargo build -p lilynk-ffi --features quic --release
 One build writes both library kinds to `target/release/`: `liblilynk_ffi.a` (static),
 `liblilynk_ffi.so` / `.dylib` / `lilynk_ffi.dll` (dynamic). `cargo run -p gen-headers`
 regenerates the header from
-[`lilynk-ffi`](https://git.unom.io/unom/punktfunk/src/branch/main/crates/client/punktfunk-ffi/src/lib.rs)
+[`lilynk-ffi`](https://github.com/Project-Colony/Lilynk/blob/main/crates/client/lilynk-ffi/src/lib.rs)
 with cbindgen; the header is checked in, and CI fails when it is stale.
 
 Compile your code with `-DLILYNK_FEATURE_QUIC`. The whole client API (`lilynk_connect*`,
@@ -55,7 +55,7 @@ that start with `struct_size` (`LilynkConnectOpts`, `LilynkRichInputEx`, `Lilynk
 are zero-initialised, then `struct_size = sizeof(T)`; the core rejects a size below its minimum.
 The wire protocol is versioned apart from the ABI, by ALPN, and the core checks it against the
 host itself. ABI changes per release:
-[`CHANGELOG.md`](https://git.unom.io/unom/punktfunk/src/branch/main/CHANGELOG.md).
+[`CHANGELOG.md`](https://github.com/Project-Colony/Lilynk/blob/main/CHANGELOG.md).
 
 ## Rules for every call
 
@@ -250,5 +250,5 @@ int main(int argc, char **argv) {
 A real client reports a refused AU and a stopped decoder too, persists the identity and
 `host_fp`, and runs audio and feedback on their own threads. For a complete client over the same
 API, read
-[`crates/client/ly-client-core/src/session.rs`](https://git.unom.io/unom/punktfunk/src/branch/main/crates/client/pf-client-core/src/session.rs).
+[`crates/client/ly-client-core/src/session.rs`](https://github.com/Project-Colony/Lilynk/blob/main/crates/client/ly-client-core/src/session.rs).
 `bash crates/client/lilynk-ffi/tests/c/run.sh` proves the static library links from C on your machine.

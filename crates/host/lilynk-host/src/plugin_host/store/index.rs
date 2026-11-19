@@ -241,7 +241,7 @@ impl Entry {
     pub(crate) fn incompatible_reason(&self) -> Option<String> {
         self.incompatibility().map(|why| match why {
             Incompatible::Platforms(list) => format!("requires {}", list.join(", ")),
-            Incompatible::Host(min) => format!("needs punktfunk {min} or newer"),
+            Incompatible::Host(min) => format!("needs lilynk {min} or newer"),
         })
     }
 
@@ -449,7 +449,7 @@ mod tests {
         format!(r#"{{"schema":1,"name":"t","plugins":[{entry_json}]}}"#).into_bytes()
     }
 
-    const GOOD: &str = r#"{"id":"rom-manager","pkg":"@punktfunk/plugin-rom-manager",
+    const GOOD: &str = r#"{"id":"rom-manager","pkg":"@lilynk/plugin-rom-manager",
         "registry":"https://git.unom.io/api/packages/unom/npm/","title":"ROM Manager",
         "description":"d","author":"unom","version":"0.2.1","integrity":"sha512-AAAA",
         "verification":{"reviewedAt":"2026-07-19"},"platforms":["linux","windows"]}"#;
@@ -459,7 +459,7 @@ mod tests {
         let idx = Index::parse(&doc(GOOD)).unwrap();
         assert_eq!(idx.plugins.len(), 1);
         let e = &idx.plugins[0];
-        assert_eq!(e.pkg, "@punktfunk/plugin-rom-manager");
+        assert_eq!(e.pkg, "@lilynk/plugin-rom-manager");
         assert_eq!(e.version, "0.2.1");
         assert!(e.verification.is_some());
     }
@@ -553,7 +553,7 @@ mod tests {
 
     #[test]
     fn drops_invalid_entries_but_keeps_the_rest() {
-        let bad_unscoped = GOOD.replace("@punktfunk/plugin-rom-manager", "lilynk-plugin-x");
+        let bad_unscoped = GOOD.replace("@lilynk/plugin-rom-manager", "lilynk-plugin-x");
         let body = format!(r#"{{"schema":1,"plugins":[{bad_unscoped},{GOOD}]}}"#);
         let idx = Index::parse(body.as_bytes()).unwrap();
         assert_eq!(idx.plugins.len(), 1, "unscoped pkg must be dropped (D8)");
@@ -612,7 +612,7 @@ mod tests {
 
     #[test]
     fn scope_extraction() {
-        assert_eq!(scope_of("@punktfunk/plugin-x").unwrap(), "@punktfunk");
+        assert_eq!(scope_of("@lilynk/plugin-x").unwrap(), "@lilynk");
         assert_eq!(scope_of("@a/b").unwrap(), "@a");
         assert!(scope_of("lilynk-plugin-x").is_none());
     }
@@ -657,7 +657,7 @@ mod tests {
             .iter()
             .find(|e| e.id == "rom-manager")
             .expect("rom-manager entry");
-        assert_eq!(rom.pkg, "@punktfunk/plugin-rom-manager");
+        assert_eq!(rom.pkg, "@lilynk/plugin-rom-manager");
         assert!(rom.integrity.starts_with("sha512-"));
         assert!(
             semver::Version::parse(&rom.version).is_ok(),
@@ -673,7 +673,7 @@ mod tests {
             Some("0.15.0"),
             "camelCase `minHost`"
         );
-        assert_eq!(scope_of(&rom.pkg).unwrap(), "@punktfunk");
+        assert_eq!(scope_of(&rom.pkg).unwrap(), "@lilynk");
 
         // Listed everywhere; installable only on a matching platform.
         let playnite = idx

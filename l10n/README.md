@@ -1,6 +1,6 @@
 # l10n
 
-Every message a person reads in Punktfunk is written once, here. Each platform's build turns
+Every message a person reads in Lilynk is written once, here. Each platform's build turns
 these files into its own form: Rust functions, Android resources, an Apple String Catalog,
 Paraglide for TypeScript. No generated platform file is committed. `SPEC.md` is the format.
 

@@ -1,15 +1,10 @@
 ---
 title: Fedora
-description: Install the Punktfunk host on Fedora 43, 44 or 45 from the RPM repo, in four steps.
+description: Build the Lilynk host RPMs on Fedora 43, 44 or 45 and install them with dnf, in four steps.
 ---
 
 Install the host on **Fedora 43, 44 or 45**, Workstation or KDE. Bazzite and other Fedora Atomic spins
 have [their own page](/docs/bazzite).
-
-**One command instead?** The [guided installer](/docs/install#guided-install-preview) (preview)
-does steps 2 to 4 and warns when step 1 is missing:
-
-<Installer />
 
 ## 1. GPU driver
 
@@ -29,14 +24,26 @@ does steps 2 to 4 and warns when step 1 is missing:
 
 ## 2. Install the host
 
-Add the repo and install the host, the console and the plugin runner. On **Fedora 43**, change
-`fedora-44` to `bazzite` in `baseurl` first. On **Fedora 45**, change it to `fedora-45`.
-`rpm -E %fedora` prints your release:
-
 <Install platform="fedora" />
 
-`sudo dnf upgrade` updates it from then on and restarts the running services, or let the
-[console update it](/docs/updating).
+Build the RPMs in the Fedora builder image from
+[Build from source](/docs/developers/build-from-source#fedora), with your release as
+`FEDORA_VERSION` (`rpm -E %fedora` prints it). Inside the image, in a clone, build them with the
+console and the plugin runner:
+
+```sh
+PF_VERSION=0.47.0 PF_RELEASE="$(git rev-list --count HEAD)" PF_WITH_WEB=1 PF_WITH_SCRIPTING=1 \
+  bash packaging/rpm/build-rpm.sh
+```
+
+Then install what it wrote to `dist/` on the host:
+
+```sh
+sudo dnf install ./dist/*.rpm
+```
+
+To update, run `git pull && rm -rf dist` in the clone, then both again. The commit count in
+`PF_RELEASE` lets dnf replace the installed packages.
 
 ## 3. Let it use your controllers
 
@@ -44,7 +51,7 @@ Join the groups, then **restart the computer**:
 
 ```sh
 sudo usermod -aG input "$USER"       # virtual gamepads
-sudo usermod -aG punktfunk "$USER"   # virtual Steam Deck controller
+sudo usermod -aG lilynk "$USER"   # virtual Steam Deck controller
 ```
 
 ## 4. Start it
@@ -74,4 +81,3 @@ a device.
 - Your desktop: [KDE](/docs/kde), [GNOME](/docs/gnome), [gamescope](/docs/gamescope).
 - Stream with nobody logged in: [Running as a service](/docs/running-as-a-service), or a headless
   KDE box: [KDE → Headless session](/docs/kde#headless-session).
-- A newer Fedora with no repo group yet: [Build from source](/docs/developers/build-from-source).

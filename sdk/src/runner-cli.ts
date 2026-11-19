@@ -199,7 +199,7 @@ const keepAlive = setInterval(() => {}, 2 ** 31 - 1);
 
 // Follow the host's REAL mgmt port before anything dials it. Plugins run in this process and
 // resolve their connection from `process.env` first, so setting it here reaches every plugin —
-// including one whose vendored `@punktfunk/host` predates `publishedMgmtUrl` (on Windows
+// including one whose vendored `@lilynk/host` predates `publishedMgmtUrl` (on Windows
 // `reconcileSharedSdk` cannot refresh a read-only tree, so an old copy can outlive several host
 // upgrades). An explicit LILYNK_MGMT_URL from the operator still wins.
 if (!process.env.LILYNK_MGMT_URL) {

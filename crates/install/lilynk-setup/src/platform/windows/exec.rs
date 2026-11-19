@@ -884,12 +884,12 @@ mod tests {
         let paths = BasePaths::rooted(Path::new("/box"));
         let exec = executor(&run, &net, &payload, &paths, &ui);
         exec.step(&WinAction::DeployFiles {
-            dest: r"%LocalAppData%\Programs\Punktfunk".into(),
+            dest: r"%LocalAppData%\Programs\Lilynk".into(),
         })
         .unwrap();
         assert_eq!(
             payload.deployed.borrow().as_slice(),
-            [r"C:\Users\me\AppData\Local\Programs\Punktfunk"]
+            [r"C:\Users\me\AppData\Local\Programs\Lilynk"]
         );
         assert_eq!(
             exec.sub(r"<start menu>\Lilynk.lnk"),
@@ -907,8 +907,8 @@ mod tests {
         assert!(path_with(r"C:\a;c:\PF\", r"C:\pf", &id).is_none());
         // A fresh install's literal entry is the upgrade's expanded dir.
         let lad = |e: &str| e.replace("%LocalAppData%", r"C:\Users\me\AppData\Local");
-        let literal = r"C:\a;%LocalAppData%\Programs\Punktfunk";
-        let expanded = r"C:\Users\me\AppData\Local\Programs\Punktfunk";
+        let literal = r"C:\a;%LocalAppData%\Programs\Lilynk";
+        let expanded = r"C:\Users\me\AppData\Local\Programs\Lilynk";
         assert!(path_with(literal, expanded, &lad).is_none());
         assert_eq!(path_without(literal, expanded, &lad).unwrap(), r"C:\a");
         // Entry-by-entry: a substring of another entry survives.
@@ -1011,7 +1011,7 @@ mod tests {
         let paths = BasePaths::rooted(Path::new("/box"));
         let mut ok = FakeRunner::new();
         for (name, ty, data) in [
-            ("DisplayName", "REG_SZ", "Punktfunk Host".to_string()),
+            ("DisplayName", "REG_SZ", "Lilynk Host".to_string()),
             ("DisplayVersion", "REG_SZ", "9.9.9".to_string()),
             ("Publisher", "REG_SZ", "Lilynk".to_string()),
             ("InstallLocation", "REG_SZ", r"C:\app".to_string()),
@@ -1040,7 +1040,7 @@ mod tests {
         let exec = executor(&ok, &net, &payload, &paths, &ui);
         exec.arp_register(
             super::super::HOST_ARP_KEY,
-            "Punktfunk Host",
+            "Lilynk Host",
             "<version>",
             r"C:\app",
         )
@@ -1058,7 +1058,7 @@ mod tests {
         let facts = WinFacts {
             installed: Some(WinInstall {
                 version: Some("0.34.0".into()),
-                location: Some(r"C:\Program Files\punktfunk\".into()),
+                location: Some(r"C:\Program Files\lilynk\".into()),
             }),
             ..fresh_facts()
         };
@@ -1076,7 +1076,7 @@ mod tests {
             "driver uninstall --audio",
         ] {
             run = run.answer(
-                &format!(r"C:\Program Files\punktfunk\lilynk-host.exe {cmd}"),
+                &format!(r"C:\Program Files\lilynk\lilynk-host.exe {cmd}"),
                 0,
                 "",
             );

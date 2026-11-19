@@ -96,8 +96,8 @@ fn rig() -> Rig {
         temp.path().join("home"),
     );
     std::fs::create_dir_all(&box_dir).unwrap();
-    std::fs::create_dir_all(home.join(".config/punktfunk")).unwrap();
-    std::fs::write(home.join(".config/punktfunk/host-settings.json"), "{}").unwrap();
+    std::fs::create_dir_all(home.join(".config/lilynk")).unwrap();
+    std::fs::write(home.join(".config/lilynk/host-settings.json"), "{}").unwrap();
     std::fs::write(home.join("notes.txt"), "mine").unwrap();
     std::fs::set_permissions(&home, std::fs::Permissions::from_mode(0o750)).unwrap();
     std::fs::create_dir_all(&state).unwrap();
@@ -507,16 +507,16 @@ fn a_start_through_the_login_helper_reads_its_end() {
 /// path a unit file can't hold verbatim gets none.
 #[test]
 fn the_login_drop_in_runs_the_helper_and_nothing_else() {
-    let helper = Path::new("/usr/libexec/punktfunk/lilynk-seats");
+    let helper = Path::new("/usr/libexec/lilynk/lilynk-seats");
     let plain = "[Service]\nExecStart=\n\
-         ExecStart=!/usr/libexec/punktfunk/lilynk-seats login %i\nRestart=no\n\
+         ExecStart=!/usr/libexec/lilynk/lilynk-seats login %i\nRestart=no\n\
          SyslogIdentifier=seat-session\n";
     assert_eq!(session::render_login(helper, None).unwrap(), plain);
     assert_eq!(
         session::render_login(helper, Some("system_u:system_r:init_t:s0")).unwrap(),
         format!("{plain}SELinuxContext=system_u:system_r:init_t:s0\n")
     );
-    let nix = "/nix/store/0abc-lilynk-seats-0.47.0/libexec/punktfunk/lilynk-seats";
+    let nix = "/nix/store/0abc-lilynk-seats-0.47.0/libexec/lilynk/lilynk-seats";
     assert!(session::render_login(Path::new(nix), None).is_some());
     for bad in [
         "relative/lilynk-seats",
@@ -539,7 +539,7 @@ static REAL_DROPINS: Mutex<()> = Mutex::new(());
 /// A start that wrote the login drop-in takes it away on every way out, a failed `systemctl
 /// start` included, and leaves no password waiting.
 #[test]
-#[ignore = "needs root: writes the row's drop-ins under /run/systemd/system and /run/punktfunk"]
+#[ignore = "needs root: writes the row's drop-ins under /run/systemd/system and /run/lilynk"]
 fn a_failed_start_leaves_no_login_drop_in() {
     use std::sync::atomic::{AtomicBool, Ordering};
     let _alone = REAL_DROPINS.lock().unwrap_or_else(|e| e.into_inner());
@@ -575,7 +575,7 @@ fn a_failed_start_leaves_no_login_drop_in() {
 /// PAM refusing in the helper what the gate admitted falls back to the plain start, and the
 /// supervisor runs no helper again until it restarts.
 #[test]
-#[ignore = "needs root: writes the row's drop-ins under /run/systemd/system and /run/punktfunk"]
+#[ignore = "needs root: writes the row's drop-ins under /run/systemd/system and /run/lilynk"]
 fn a_helper_refusal_falls_back_and_turns_the_helper_off() {
     let _alone = REAL_DROPINS.lock().unwrap_or_else(|e| e.into_inner());
     let rig = rig();

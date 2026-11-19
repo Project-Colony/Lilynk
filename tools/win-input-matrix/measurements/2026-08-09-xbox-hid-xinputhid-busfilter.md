@@ -9,15 +9,15 @@ Devnodes involved:
 
 | role | instance |
 |---|---|
-| parent / transport | `SWD\PUNKTFUNK\PF_XBOX_0` — `Service=MsHidUmdf`, software key `{745a17a0-…}\0072` |
-| HID child | `HID\PUNKTFUNK\1&1F9456C7&3&0000` — software key `…\0073` |
+| parent / transport | `SWD\LILYNK\PF_XBOX_0` — `Service=MsHidUmdf`, software key `{745a17a0-…}\0072` |
+| HID child | `HID\LILYNK\1&1F9456C7&3&0000` — software key `…\0073` |
 
 ## The result
 
 | | **baseline** (no virtual pad) | **A — control** (pad up, no change) | **B — filter ONLY** | **C — filter + `DevicePropertyFlags=1`** |
 |---|---|---|---|---|
-| `IG_` token on the child | — | ❌ `HID\PUNKTFUNK\…` | ❌ `HID\PUNKTFUNK\…` | ✅ **`HID\PUNKTFUNK&IG_00\…`** |
-| XUSB interface registered | none | ❌ none | ❌ none | ✅ **`\\?\hid#punktfunk&ig_00#…#{ec87f1e3…}`** |
+| `IG_` token on the child | — | ❌ `HID\LILYNK\…` | ❌ `HID\LILYNK\…` | ✅ **`HID\LILYNK&IG_00\…`** |
+| XUSB interface registered | none | ❌ none | ❌ none | ✅ **`\\?\hid#lilynk&ig_00#…#{ec87f1e3…}`** |
 | classic XInput | all 4 slots `1167` | ❌ all `1167` | ❌ all `1167` | ⚠️ **slot 0 `rc=0`** — admitted, data wrong |
 | WGI `Gamepad` | 1 (PS5 only) | ❌ absent | ❌ absent | ⚠️ **present**, `ts=0` MUTE |
 | WGI `RawGameController` | 2 | ✅ **LIVE** `[045E:0B13]` | ✅ LIVE | 🛑 **MUTE** (regressed) |
@@ -41,7 +41,7 @@ arm B. The filter was loading and then sitting inert because nothing had put it 
 
 ⚠️ Placement matters and is easy to get wrong, because the two values live in **different keys** —
 exactly as `xinputhid.inf` writes them:
-* `UpperFilters` (REG_MULTI_SZ) → the **hardware/instance** key, `…\Enum\SWD\PUNKTFUNK\PF_XBOX_0`
+* `UpperFilters` (REG_MULTI_SZ) → the **hardware/instance** key, `…\Enum\SWD\LILYNK\PF_XBOX_0`
   (an INF `[X.HW]` section);
 * `DevicePropertyFlags` (REG_DWORD) → the **software/driver** key,
   `…\Control\Class\{745a17a0-…}\0072` (an INF `[X]` DDInstall section).
@@ -83,7 +83,7 @@ win-input-matrix --watch 8
 
 Start-Process lilynk-host.exe -ArgumentList 'dualsense-windows-test','--xboxhid','--seconds','90'
 # arm C:
-New-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Enum\SWD\PUNKTFUNK\PF_XBOX_0' `
+New-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Enum\SWD\LILYNK\PF_XBOX_0' `
   -Name UpperFilters -PropertyType MultiString -Value @('xinputhid') -Force
 New-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Class\{745a17a0-74d3-11d0-b6fe-00a0c90f57da}\0072' `
   -Name DevicePropertyFlags -PropertyType DWord -Value 1 -Force

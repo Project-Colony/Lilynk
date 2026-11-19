@@ -1,4 +1,4 @@
-//! Translate Moonlight `SS_PEN` / `SS_TOUCH` into punktfunk [`PenSample`]s and wire-touch events.
+//! Translate Moonlight `SS_PEN` / `SS_TOUCH` into lilynk [`PenSample`]s and wire-touch events.
 //!
 //! Pen: each packet merges over last state into one sample (`BUTTON_ONLY` has no
 //! position by spec), then the [`PenSink`](crate::pen_sink::PenSink) both planes share.

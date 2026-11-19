@@ -1,5 +1,5 @@
 <#
-  Rebuild the punktfunk Windows host (release, nvenc + qsv) from the CURRENT source and
+  Rebuild the lilynk Windows host (release, nvenc + qsv) from the CURRENT source and
   restart the LocalSystem service, with automatic rollback if the build fails or the
   new binary won't start.
 
@@ -28,7 +28,7 @@ function Find-VcVars {
 
 function Svc-Running { (& sc.exe query $svc 2>$null) -match 'RUNNING' }
 
-Write-Host "== punktfunk host deploy =="
+Write-Host "== lilynk host deploy =="
 $vcvars = Find-VcVars
 Write-Host "vcvars : $vcvars"
 Set-Location $repo

@@ -185,8 +185,8 @@ pub const CODEC_AV1: u8 = 0x04;
 /// `design/pyrowave-codec-plan.md`). Deliberately absent from [`resolve_codec`]'s ladder:
 /// selected only as the preference — the client's [`Hello::preferred_codec`], or the host's
 /// Encoder pin for a client that names none. The bit means the bitstream of the vendored pin
-/// (`crates/codec/pyrowave-sys/vendor/pyrowave/PUNKTFUNK-VENDOR.txt`); upstream has no version
-/// field, so a bitstream-changing vendor bump bumps the punktfunk protocol instead.
+/// (`crates/codec/pyrowave-sys/vendor/pyrowave/LILYNK-VENDOR.txt`); upstream has no version
+/// field, so a bitstream-changing vendor bump bumps the lilynk protocol instead.
 pub const CODEC_PYROWAVE: u8 = 0x08;
 
 /// Pick the one codec the host will emit: client's [`Hello::video_codecs`] (`0` = older

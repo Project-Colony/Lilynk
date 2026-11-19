@@ -420,7 +420,7 @@ fn wait_endpoint_change(
 }
 
 /// Silent on the host with a working loopback: the name rule, or the minted Speakers by id
-/// ("Punktfunk Speakers" fails the name rule).
+/// ("Lilynk Speakers" fails the name rule).
 fn silent_loopback(name: &str, id: &str) -> bool {
     wiring_plan::silent_sink(&name.to_lowercase())
         || super::minted::minted_ids().speakers_render.as_deref() == Some(id)

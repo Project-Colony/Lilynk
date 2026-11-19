@@ -82,7 +82,7 @@ versionCode shipped.
 
 Voice: `docs/writing.md` §2. Name the thing, then what the reader gets.
 
-**Write for the people who USE Punktfunk to stream their games and desktops — not for the people who
+**Write for the people who USE Lilynk to stream their games and desktops — not for the people who
 build it.** A non-engineer should finish knowing what's new and whether it affects them.
 
 1. **Lead with the benefit.** Each entry = what the user can now *do*, what now *works*, or what
@@ -124,7 +124,7 @@ move a version integer. No Added/Changed/Fixed diary. Internal names are the poi
 use them.
 
 **Linking.** The notes link to the file **at the tag**, not at `main`:
-`https://git.unom.io/unom/punktfunk/src/tag/vX.Y.Z/CHANGELOG.md`. A release's notes are frozen; a
+`https://github.com/Project-Colony/Lilynk/blob/vX.Y.Z/CHANGELOG.md`. A release's notes are frozen; a
 link to `main` would silently start describing a later release.
 
 **Same freeze rule.** Add the release's card in the version-bump commit, alongside the notes.

@@ -107,7 +107,7 @@ async def stream_running() -> dict:
 
 
 async def end_game(ref: str, game_id: str) -> dict:
-    """End a title this device launched on the host (``punktfunk end-game <ref> --game ID``).
+    """End a title this device launched on the host (``lilynk end-game <ref> --game ID``).
 
     ``{ok: True, notice}`` once the game is gone, ended now or already stopped (exit 5). Anything
     else is ``{ok: False, error: <exit code>, notice}``, the notice being the CLI's own sentence.

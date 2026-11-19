@@ -2,7 +2,7 @@
   "name": "lilynk-docs",
   "private": true,
   "type": "module",
-  "description": "Punktfunk documentation site — Fumadocs on TanStack Start (Vite + Nitro/bun)",
+  "description": "Lilynk documentation site — Fumadocs on TanStack Start (Vite + Nitro/bun)",
   "scripts": {
     "dev": "vite dev --port 3001",
     "build": "vite build",

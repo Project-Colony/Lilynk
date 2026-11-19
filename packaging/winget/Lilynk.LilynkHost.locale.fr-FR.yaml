@@ -4,19 +4,19 @@ PackageVersion: 0.19.2
 PackageLocale: fr-FR
 
 Publisher: unom
-PublisherUrl: https://git.unom.io/unom/punktfunk
-PublisherSupportUrl: https://punktfunk.unom.io/community
+PublisherUrl: https://github.com/Project-Colony/Lilynk
+PublisherSupportUrl: https://discord.gg/tvFApEEVfj
 PrivacyUrl: https://unom.io/en/legal/privacy#punktfunk-apps
-PackageName: Punktfunk Host
-PackageUrl: https://docs.punktfunk.unom.io/docs/windows-host
+PackageName: Lilynk Host
+PackageUrl: https://project-colony.github.io/Lilynk/docs/windows-host
 License: MIT OR Apache-2.0
-LicenseUrl: https://git.unom.io/unom/punktfunk/src/branch/main/LICENSE-MIT
+LicenseUrl: https://github.com/Project-Colony/Lilynk/blob/main/LICENSE-MIT
 Copyright: Copyright (c) unom
-ShortDescription: Hôte de streaming de jeux à faible latence — diffusez les jeux de votre PC vers n’importe quel client Punktfunk ou Moonlight.
+ShortDescription: Hôte de streaming de jeux à faible latence — diffusez les jeux de votre PC vers n’importe quel client Lilynk ou Moonlight.
 Description: |-
-  Punktfunk Host transforme un PC Windows 11 en serveur de streaming de jeux à faible latence. Il capture
+  Lilynk Host transforme un PC Windows 11 en serveur de streaming de jeux à faible latence. Il capture
   le bureau ou un écran virtuel dédié, encode avec NVENC / AMF / QSV / Vulkan et diffuse via son
-  protocole QUIC natif vers les clients Punktfunk sous Windows, macOS, iOS, tvOS, Android et Linux —
+  protocole QUIC natif vers les clients Lilynk sous Windows, macOS, iOS, tvOS, Android et Linux —
   ou via GameStream vers les clients Moonlight standard.
 
   Le programme d’installation fournit le pilote d’écran virtuel ly-vdisplay (streaming en résolution native et en HDR
@@ -29,23 +29,23 @@ Tags:
   - gamestream
   - streaming
   - remote-play
-ReleaseNotesUrl: https://git.unom.io/unom/punktfunk/src/branch/main/docs/releases/v0.19.2.md
+ReleaseNotesUrl: https://github.com/Project-Colony/Lilynk/blob/main/docs/upstream/releases/v0.19.2.md
 InstallationNotes: |-
   Console de gestion web :  https://<ce-PC>:47992
     Cette installation a généré un mot de passe de connexion sans l’afficher. Affichez-le depuis
     un PowerShell EN TANT QU’ADMINISTRATEUR, AVANT votre première connexion :   lilynk-host web password
-    La console ne conserve ensuite qu’un hachage salé dans %ProgramData%\punktfunk\web-password, donc un
+    La console ne conserve ensuite qu’un hachage salé dans %ProgramData%\lilynk\web-password, donc un
     mot de passe oublié se réinitialise : remettez une ligne LILYNK_UI_PASSWORD=<votre-mot-de-passe> dans ce
     fichier et exécutez  lilynk-host service restart
 
-  Configuration :  %ProgramData%\punktfunk\host.env
-  Journaux :       %ProgramData%\punktfunk\logs\
+  Configuration :  %ProgramData%\lilynk\host.env
+  Journaux :       %ProgramData%\lilynk\logs\
 
   Le service de l’hôte démarre automatiquement avec le système. `lilynk-host` est dans le PATH de la machine — exécutez
   `lilynk-host service status` depuis une invite de commandes en tant qu’administrateur pour le vérifier.
 Documentations:
   - DocumentLabel: Windows Host Setup
-    DocumentUrl: https://docs.punktfunk.unom.io/docs/windows-host
+    DocumentUrl: https://project-colony.github.io/Lilynk/docs/windows-host
 
 ManifestType: locale
 ManifestVersion: 1.6.0

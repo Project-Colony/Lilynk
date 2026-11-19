@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# lilynk-sysext — install/update the punktfunk host on Bazzite / Fedora Atomic as a
+# lilynk-sysext — install/update the lilynk host on Bazzite / Fedora Atomic as a
 # systemd-sysext, the no-layering path (rpm-ostree layering is a last resort per the Bazzite
 # docs: it slows every update and can block upgrades; a sysext never enters an rpm-ostree
 # transaction, needs no reboot, and is trivially removable).
 #
 # The image overlays /usr from /var/lib/extensions/lilynk.raw with the host, tray and web
 # console + their udev/sysctl/systemd-user payload; the RPMs' /etc payload rides inside at
-# /usr/share/punktfunk/etc/, and the gamescope session drop-in is copied into the real /etc
+# /usr/share/lilynk/etc/, and the gamescope session drop-in is copied into the real /etc
 # here (a sysext can only carry /usr).
 #
 # Bootstrap, from a checkout (the script also ships inside the image as /usr/bin/lilynk-sysext):
@@ -45,9 +45,9 @@ SIDECAR="$EXT_DIR/.lilynk.version"
 FLOOR_FILE="$EXT_DIR/.lilynk.serial-floor"
 MARKER=/usr/lib/extension-release.d/extension-release.lilynk
 # Outside /usr, so they outlive a refused image: the script copy the rebase unit runs, and the unit.
-KEEP=/etc/punktfunk/lilynk-sysext
+KEEP=/etc/lilynk/lilynk-sysext
 REBASE_UNIT=/etc/systemd/system/lilynk-sysext-rebase.service
-ETC_SRC=/usr/share/punktfunk/etc
+ETC_SRC=/usr/share/lilynk/etc
 PF_TMP="$(mktemp -d)"; trap 'rm -rf "$PF_TMP"' EXIT
 
 # The feed's armored public signing key. Empty: this build has no feed. publish-sysext-feed.sh
@@ -214,8 +214,8 @@ post_merge() {
   # The host state every package format shares: groups, udev, sysctl, the seat directories, the
   # ds_inhibit SELinux module, firewall notes. An image older than that helper carries the same
   # steps in its own copy of this script.
-  if [ -x /usr/libexec/punktfunk/post-install ]; then
-    /usr/libexec/punktfunk/post-install
+  if [ -x /usr/libexec/lilynk/post-install ]; then
+    /usr/libexec/lilynk/post-install
   else
     /usr/bin/lilynk-sysext reapply || :
   fi
@@ -225,7 +225,7 @@ post_merge() {
   # polkitd reloads rules on inotify events in its rules dirs, and a merge mounting a new /usr
   # raises none, so a rule an update adds (the door switch's) refuses until polkitd restarts.
   systemctl try-restart polkit.service 2>/dev/null || :
-  # A firewalld that started while the image was refused found no punktfunk service and dropped
+  # A firewalld that started while the image was refused found no lilynk service and dropped
   # the user's whole zone config for stock; it then reports its state as failed. Reloading once
   # the services are back restores what the user opened.
   local fw_zone fw_svc
@@ -258,16 +258,16 @@ post_merge() {
   # session, silently. Joining stays opt-in (writing vhci `attach` materialises an arbitrary
   # emulated USB device), so say so instead of doing it.
   local _pf_user="${SUDO_USER:-}"
-  if [ -n "$_pf_user" ] && ! id -nG "$_pf_user" 2>/dev/null | tr ' ' '\n' | grep -qx punktfunk; then
-    echo "!! $_pf_user is not in the 'punktfunk' group — the managed gamescope takeover cannot stop"
+  if [ -n "$_pf_user" ] && ! id -nG "$_pf_user" 2>/dev/null | tr ' ' '\n' | grep -qx lilynk; then
+    echo "!! $_pf_user is not in the 'lilynk' group — the managed gamescope takeover cannot stop"
     echo "!! the display manager, and the virtual Steam Deck pad cannot attach. To opt in:"
-    echo "!!     sudo usermod -aG punktfunk $_pf_user"
+    echo "!!     sudo usermod -aG lilynk $_pf_user"
   fi
   # A host.env that turns Attach mode on serves every client a mirror of this box's screen at its
   # own resolution. The file outlives the template it was copied from, so check it on every merge.
   # The console updater has no SUDO_USER; getent then exits 2, which set -e must not see.
   local _pf_env
-  _pf_env="$(getent passwd "${_pf_user:-}" 2>/dev/null | cut -d: -f6 || :)/.config/punktfunk/host.env"
+  _pf_env="$(getent passwd "${_pf_user:-}" 2>/dev/null | cut -d: -f6 || :)/.config/lilynk/host.env"
   if [ -n "$_pf_user" ] && [ -f "$_pf_env" ] && host_env_pins_attach "$_pf_env"; then
     echo "!! $_pf_env turns Attach mode on: every client gets a mirror of this box's screen at its"
     echo "!! own resolution instead of a display of its own. Delete the LILYNK_GAMESCOPE_ATTACH"
@@ -298,7 +298,7 @@ do_install() {
     cp -f "$2" "$tmp"
   else
     ver="$1"
-    echo "downloading punktfunk $ver ($(channel), fedora $(os_version_id))…"
+    echo "downloading lilynk $ver ($(channel), fedora $(os_version_id))…"
     fetch -fL --progress-bar -o "$tmp" "$(feed_url)/$2"
     echo "$3  $tmp" | sha256sum -c --quiet
   fi
@@ -307,14 +307,14 @@ do_install() {
   systemctl enable --now systemd-sysext.service >/dev/null 2>&1 || :
   systemd-sysext refresh
   post_merge
-  echo "punktfunk $ver merged into /usr."
+  echo "lilynk $ver merged into /usr."
 }
 
 layering_hint() {
   if command -v rpm-ostree >/dev/null 2>&1 \
      && rpm-ostree status 2>/dev/null | grep -q 'LayeredPackages:.*lilynk'; then
     cat >&2 <<'EOF'
-!! punktfunk is ALSO layered via rpm-ostree. The sysext now shadows it, but remove the
+!! lilynk is ALSO layered via rpm-ostree. The sysext now shadows it, but remove the
 !! layer so it stops slowing/blocking OS updates (the reason this sysext exists):
 !!     sudo rpm-ostree uninstall lilynk lilynk-web && systemctl reboot
 EOF
@@ -346,8 +346,8 @@ cmd_install() {
 First-run (once):
   ujust add-user-to-input-group add    # virtual gamepads; then log out + back in
   systemctl --user daemon-reload && systemctl --user enable --now lilynk-host lilynk-web
-Settings: the console, Host -> Settings. A line in ~/.config/punktfunk/host.env locks that
-          setting there until you delete it (annotated template: /usr/share/punktfunk/host.env.bazzite).
+Settings: the console, Host -> Settings. A line in ~/.config/lilynk/host.env locks that
+          setting there until you delete it (annotated template: /usr/share/lilynk/host.env.bazzite).
 Updates:  sudo lilynk-sysext update
 EOF
 }
@@ -440,7 +440,7 @@ cmd_remove() {
   need_root
   # The door goes off for its owner while its helper is still in /usr, as every package's removal
   # does.
-  if [ -x /usr/libexec/punktfunk/door-remove ]; then /usr/libexec/punktfunk/door-remove || :; fi
+  if [ -x /usr/libexec/lilynk/door-remove ]; then /usr/libexec/lilynk/door-remove || :; fi
   # The seats' pad fence copy names a program the unmerge deletes.
   rm -f /etc/udev/rules.d/65-lilynk-seats.rules
   # /etc cleanup needs the /usr payload for the unmodified-compare — do it BEFORE unmerging.
@@ -454,11 +454,11 @@ cmd_remove() {
   # $FLOOR_FILE deliberately survives: it is anti-rollback state, not installation state, and a
   # remove/re-install cycle is the obvious way to hand a box a replayed manifest it already refused.
   systemctl disable --now "$(basename "$REBASE_UNIT")" >/dev/null 2>&1 || :
-  rm -f "$REBASE_UNIT" "$KEEP"; rmdir /etc/punktfunk 2>/dev/null || :
+  rm -f "$REBASE_UNIT" "$KEEP"; rmdir /etc/lilynk 2>/dev/null || :
   rm -f "$IMG" "$SIDECAR" "$CONF"
   systemd-sysext refresh 2>/dev/null || :
   udevadm control --reload 2>/dev/null || :
-  echo "punktfunk sysext removed (user config in ~/.config/punktfunk is untouched)."
+  echo "lilynk sysext removed (user config in ~/.config/lilynk is untouched)."
 }
 
 case "${1:-}" in

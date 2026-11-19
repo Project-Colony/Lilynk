@@ -38,7 +38,7 @@ use slot::PlaneSlot;
 /// `Cargo.toml` leaves `panic = "abort"` off so it works.
 pub(crate) fn jni_guard<T>(default: T, f: impl FnOnce() -> T) -> T {
     std::panic::catch_unwind(AssertUnwindSafe(f)).unwrap_or_else(|_| {
-        log::error!("punktfunk JNI: caught a panic at the FFI boundary (returning default)");
+        log::error!("lilynk JNI: caught a panic at the FFI boundary (returning default)");
         default
     })
 }

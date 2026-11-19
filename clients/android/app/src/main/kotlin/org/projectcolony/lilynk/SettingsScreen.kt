@@ -764,13 +764,13 @@ private fun GeneralSettings(s: Settings, update: (String, Settings) -> Unit, onR
         DeviceScopeOnly {
             ClickableRow(
                 title = stringResource(R.string.player_stats_docs_link),
-                subtitle = "docs.punktfunk.unom.io/docs/stats",
+                subtitle = "project-colony.github.io/Lilynk/docs/stats",
             ) {
                 runCatching {
                     context.startActivity(
                         android.content.Intent(
                             android.content.Intent.ACTION_VIEW,
-                            android.net.Uri.parse("https://docs.punktfunk.unom.io/docs/stats"),
+                            android.net.Uri.parse("https://project-colony.github.io/Lilynk/docs/stats"),
                         ),
                     )
                 }
@@ -1560,7 +1560,7 @@ private fun AboutSettings(
     }
     SettingsGroup {
         Column {
-            Text("Punktfunk", style = MaterialTheme.typography.titleLarge)
+            Text("Lilynk", style = MaterialTheme.typography.titleLarge)
             if (version.isNotEmpty()) {
                 Text(
                     stringResource(R.string.about_version_line, version),

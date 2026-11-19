@@ -493,9 +493,9 @@ pub(crate) fn fake_home() {
     HOME.get_or_init(|| {
         let dir = std::env::temp_dir().join(format!("pf-settings-test-{}", std::process::id()));
         let cfg = if cfg!(windows) {
-            dir.join("punktfunk")
+            dir.join("lilynk")
         } else {
-            dir.join(".config/punktfunk")
+            dir.join(".config/lilynk")
         };
         std::fs::create_dir_all(&cfg).unwrap();
         // SAFETY: runs at most once, inside `get_or_init` — concurrent `fake_home`

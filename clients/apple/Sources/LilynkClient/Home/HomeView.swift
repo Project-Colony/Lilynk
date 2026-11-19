@@ -147,7 +147,7 @@ struct HomeView: View {
             }
             // A TV's tab bar names the place, so its root carries no title.
             #if !os(tvOS)
-            .navigationTitle("Punktfunk")
+            .navigationTitle("Lilynk")
             #endif
             // The host page, from a card's ⓘ or its menu (design/apple-touch-ui-overhaul.md
             // §2.4), and the speed test pushed from it. The Mac opens both in the host's own

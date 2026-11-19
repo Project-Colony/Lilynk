@@ -1,4 +1,4 @@
-//! Virtual mouse ("Punktfunk Mouse"): a uinput relative mouse. libinput reads it as it reads a
+//! Virtual mouse ("Lilynk Mouse"): a uinput relative mouse. libinput reads it as it reads a
 //! mouse plugged into the host, so the compositor's pointer speed, acceleration profile,
 //! button and wheel settings apply to a client's mouse. Compositor protocols take finished
 //! pointer deltas and apply none of them.
@@ -65,8 +65,8 @@ impl VirtualMouse {
             product: 0x504d, // "PM"
             version: 1,
         };
-        dev.create(id, b"Punktfunk Mouse", 0)?;
-        tracing::info!("virtual mouse created (Punktfunk Mouse, uinput)");
+        dev.create(id, b"Lilynk Mouse", 0)?;
+        tracing::info!("virtual mouse created (Lilynk Mouse, uinput)");
         Ok(VirtualMouse {
             dev,
             clock: ReportClock::default(),

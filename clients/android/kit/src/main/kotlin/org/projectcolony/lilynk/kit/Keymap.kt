@@ -3,7 +3,7 @@ package org.projectcolony.lilynk.kit
 import android.view.KeyEvent
 
 /**
- * Hardware key → Windows Virtual-Key code (the punktfunk wire contract: **US-positional** — we
+ * Hardware key → Windows Virtual-Key code (the lilynk wire contract: **US-positional** — we
  * forward the physical key, not the typed character; the host maps VK → evdev via
  * `vk_to_evdev`). The Android analogue of the Linux client's evdev→VK table
  * (`lilynk_core::input::evdev_to_vk`) and the Apple client's `hidToVK`.

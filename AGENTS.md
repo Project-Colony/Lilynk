@@ -97,7 +97,7 @@ scans its own vendor dir still finds them via this file.
 
 ### Issue tracker
 
-Issues live as Gitea issues in `unom/punktfunk` on `git.unom.io`, driven by the `gitea` MCP server
+Issues live as Gitea issues in `unom/lilynk` on `git.unom.io`, driven by the `gitea` MCP server
 (`gh`/`glab`/`tea` do not work here), and every write needs the user's go-ahead first.
 See `docs/agents/issue-tracker.md`.
 

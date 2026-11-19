@@ -20,7 +20,7 @@ import { removeGameShortcuts } from "../steam/game-shortcuts";
 import { lastGameStream, stopStream } from "../steam/launch";
 import { recreateShortcuts } from "../steam/shortcuts";
 
-// Recovery action for "the Punktfunk library entry vanished" — recreates the visible shortcut
+// Recovery action for "the Lilynk library entry vanished" — recreates the visible shortcut
 // and sweeps duplicate entries. Self-heal waits for the next mount; this works in-session.
 // Always ends in a toast so the tap has feedback.
 export async function recreateLilynkShortcut(): Promise<void> {

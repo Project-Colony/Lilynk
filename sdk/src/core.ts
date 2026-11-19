@@ -1,4 +1,4 @@
-// `@punktfunk/host/core` — the SDK with nothing Node in it.
+// `@lilynk/host/core` — the SDK with nothing Node in it.
 //
 // The generated client and its Schemas, the `LilynkHost` service, the typed errors, the
 // event-stream decoder, and the credential kinds — everything a program needs to talk to a host
@@ -10,7 +10,7 @@
 // specifier, so this entry stays consumable from a browser by construction rather than by
 // habit.
 //
-//   import { api, connection, deviceKey, httpClientFor } from "@punktfunk/host/core";
+//   import { api, connection, deviceKey, httpClientFor } from "@lilynk/host/core";
 //
 //   const conn = connection({ url, credential: deviceKey({ url, hostFingerprint, signer }) });
 //   const program = Effect.gen(function* () {

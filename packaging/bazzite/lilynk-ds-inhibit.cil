@@ -1,6 +1,6 @@
 ; SELinux drop-in for Bazzite / SteamOS-derived hosts: silence the audit flood Valve's
 ; ds_inhibit (inside steamos-manager) produces around ANY `hid-playstation` hidraw —
-; which is exactly what punktfunk's virtual DualSense / DualShock 4 is (ds_inhibit
+; which is exactly what lilynk's virtual DualSense / DualShock 4 is (ds_inhibit
 ; selects by bound driver + touchpad mouse node; it has no VID/PID or virtual filtering).
 ;
 ; ds_inhibit reacts to every open/close of such a hidraw by walking /proc/*/fd/ to see

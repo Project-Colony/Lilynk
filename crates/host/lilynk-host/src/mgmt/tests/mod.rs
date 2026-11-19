@@ -418,7 +418,7 @@ impl ConfigDirOverride {
         ConfigDirOverride { tmp, prev, _serial }
     }
 
-    /// Config dir used verbatim by `ly_paths`; no `punktfunk` subdirectory is appended.
+    /// Config dir used verbatim by `ly_paths`; no `lilynk` subdirectory is appended.
     fn path(&self) -> &std::path::Path {
         self.tmp.path()
     }

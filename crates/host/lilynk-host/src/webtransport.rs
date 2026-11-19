@@ -867,7 +867,7 @@ mod tests {
     /// desktop any page can drive, because nothing else stands in front of the session.
     #[test]
     fn an_open_plane_must_name_the_pages_that_may_reach_it() {
-        let named = vec!["https://web.punktfunk.io".to_string()];
+        let named = vec!["https://web.lilynk.example".to_string()];
         assert!(is_confined(true, &[]), "pairing carries it alone");
         assert!(
             is_confined(false, &named),

@@ -1,6 +1,6 @@
 ---
 name: write-release-notes
-description: Write Punktfunk stable release notes from git history. Use when cutting a version, writing docs/releases/vX.Y.Z.md, a CHANGELOG.md release card, Play whatsnew, /release-notes, or bumping a stable tag.
+description: Write Lilynk stable release notes from git history. Use when cutting a version, writing docs/releases/vX.Y.Z.md, a CHANGELOG.md release card, Play whatsnew, /release-notes, or bumping a stable tag.
 ---
 
 # Write release notes
@@ -19,7 +19,7 @@ Ordinary PRs do not run this and do not edit `CHANGELOG.md`.
    - C ABI: `ABI_VERSION` / `LILYNK_ABI_VERSION` in that file and `include/lilynk_core.h`
    - Driver protocol: `MIN_DRIVER_PROTOCOL_VERSION` in `crates/host/ly-driver-proto/src/lib.rs`
    - Gamepad channel, plugin schema, OpenAPI (`api/openapi.json` info.version), gamescope `+pfhdrN`, SDK / plugin-kit tags — copy the rows the previous CHANGELOG section already lists; mark unchanged.
-5. Knobs, mechanically: `git grep -ohE 'LILYNK_[A-Z0-9_]+' vPrev -- crates | sort -u` against the same at HEAD; every new name is a Knobs line or a conscious skip. Same for new `punktfunk` / `lilynk-host` subcommands (`docs-site/content/docs/(reference)/host-cli.md` diff).
+5. Knobs, mechanically: `git grep -ohE 'LILYNK_[A-Z0-9_]+' vPrev -- crates | sort -u` against the same at HEAD; every new name is a Knobs line or a conscious skip. Same for new `lilynk` / `lilynk-host` subcommands (`docs-site/content/docs/(reference)/host-cli.md` diff).
 6. `git diff --stat vPrev HEAD -- docs-site/content` — every changed page is a user-facing fact; a new page is a bullet.
 
 ## Outputs (same bump commit; drafts may exist earlier)

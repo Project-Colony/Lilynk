@@ -1,4 +1,4 @@
-//! punktfunk virtual Precision Touchpad: a UMDF2 HID minidriver, identity PF:TP.
+//! lilynk virtual Precision Touchpad: a UMDF2 HID minidriver, identity PF:TP.
 //!
 //! The host presents a client's touchpad contacts here, one devnode per session, and Windows
 //! runs pointer motion, taps, scrolling and gestures with the user's own touchpad settings.
@@ -276,10 +276,10 @@ fn on_get_string(request: &Request) -> NTSTATUS {
     };
     let (_, string_id) = string_request_id(&bytes);
     let s: String = match string_id {
-        0 | 0x000E => "Punktfunk".into(),
+        0 | 0x000E => "Lilynk".into(),
         // Nothing reads a touchpad's serial, so it carries the channel proof.
         2 | 0x0010 => ChannelProof::new(CHANNEL.index(), std::process::id()).to_hid_string(),
-        _ => "Punktfunk Virtual Touchpad".into(),
+        _ => "Lilynk Virtual Touchpad".into(),
     };
     request.copy_utf16z_to_output(&s)
 }

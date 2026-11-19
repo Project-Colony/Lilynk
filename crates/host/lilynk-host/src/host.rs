@@ -299,7 +299,7 @@ pub fn serve(
         require_pairing = native.require_pairing,
         gamestream,
         door = ly_paths::seat::role().is_door(),
-        "punktfunk host"
+        "lilynk host"
     );
     crate::net_health::log_addresses();
     crate::net_health::spawn_route_watch();
@@ -316,13 +316,13 @@ pub fn serve(
         let report = crate::detect::render_report(conflicts);
         if crate::detect::any_active(conflicts) {
             tracing::warn!(
-                target: "punktfunk::detect",
+                target: "lilynk::detect",
                 count = conflicts.len(),
                 "{report}"
             );
         } else {
             tracing::info!(
-                target: "punktfunk::detect",
+                target: "lilynk::detect",
                 count = conflicts.len(),
                 "{report}"
             );

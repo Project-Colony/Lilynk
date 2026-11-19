@@ -8,9 +8,9 @@ box.
 
 ## What the unit starts
 
-The service runs `lilynk-host serve`: the Punktfunk plane and the management API. Two more
+The service runs `lilynk-host serve`: the Lilynk plane and the management API. Two more
 planes stay off until you turn them on under **Host** in the
-[web console](/docs/web-console), or in `~/.config/punktfunk/host.env`:
+[web console](/docs/web-console), or in `~/.config/lilynk/host.env`:
 
 | Plane | Setting | `host.env` | Firewall |
 |---|---|---|---|
@@ -33,7 +33,7 @@ systemctl --user status lilynk-host
 
 The host finds your live session by itself, so it needs no `host.env` and no
 `systemctl --user import-environment`. For settings, use the console or copy a template to
-`~/.config/punktfunk/host.env` — they are in `/usr/share/punktfunk/` (`/usr/share/lilynk-host/`
+`~/.config/lilynk/host.env` — they are in `/usr/share/lilynk/` (`/usr/share/lilynk-host/`
 on Ubuntu); every knob is in [Configuration](/docs/configuration). A line in `host.env` locks
 that setting in the console until you delete it. Built from source?
 [Build from source](/docs/developers/build-from-source) installs the unit.
@@ -46,7 +46,7 @@ answering but failing every session at capture. The drop-in makes a desktop rest
 ```sh
 mkdir -p ~/.config/systemd/user/lilynk-host.service.d
 # /usr/share/lilynk-host/ on Ubuntu
-cp /usr/share/punktfunk/lilynk-host-desktop-session.conf \
+cp /usr/share/lilynk/lilynk-host-desktop-session.conf \
    ~/.config/systemd/user/lilynk-host.service.d/desktop-session.conf
 systemctl --user daemon-reload
 systemctl --user reenable lilynk-host
@@ -95,7 +95,7 @@ lilynk-host service restart
 
 Every `service` subcommand is in [Host CLI](/docs/host-cli#service-windows). The planes in
 [What the unit starts](#what-the-unit-starts) work the same way; `host.env` is
-`%ProgramData%\punktfunk\host.env`. The installer opens the firewall on Private and Domain networks
+`%ProgramData%\lilynk\host.env`. The installer opens the firewall on Private and Domain networks
 only; a LAN Windows calls Public needs [one more step](/docs/troubleshooting#windows-firewall).
 
 ## Verifying
@@ -103,11 +103,11 @@ only; a LAN Windows calls Public needs [one more step](/docs/troubleshooting#win
 After a reboot, from another machine:
 
 ```sh
-punktfunk reachable 192.168.1.50   # exit 0 = the host answered, 2 = it didn't
-punktfunk hosts list --probe       # every saved host, online or offline
+lilynk reachable 192.168.1.50   # exit 0 = the host answered, 2 = it didn't
+lilynk hosts list --probe       # every saved host, online or offline
 ```
 
-`punktfunk` ships with the Linux client packages and the Windows client. Any client that lists the
+`lilynk` ships with the Linux client packages and the Windows client. Any client that lists the
 host works too. No answer? Read `journalctl --user -u lilynk-host` on the host, or
 `lilynk-host service status` on Windows.
 

@@ -15,7 +15,7 @@ off. You see `address already in use` in the host log, pairing that fails, or th
 answering.
 
 Run `lilynk-host detect-conflicts`, or read **Competing streaming server** on the console's
-**Troubleshooting** page. Then uninstall the other host, or keep both by moving Punktfunk's port:
+**Troubleshooting** page. Then uninstall the other host, or keep both by moving Lilynk's port:
 [Switching from Sunshine](/docs/switching-from-sunshine).
 
 ### The host isn't found on the network

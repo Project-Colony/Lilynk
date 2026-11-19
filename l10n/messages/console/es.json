@@ -3,7 +3,7 @@
 	"console_error_connect_failed_detail": "Error de conexión: {reason}",
 	"console_error_host_closed": "El host cerró la conexión.",
 	"console_exit_confirm": "Salir",
-	"console_exit_message": "¿Salir de Punktfunk?",
+	"console_exit_message": "¿Salir de Lilynk?",
 	"console_exit_title": "Salir",
 	"console_hosts_added": "Se añadió {address}",
 	"console_hosts_saved": "Se guardó {host}",
@@ -239,7 +239,7 @@
 			"n=other": "{count} otros dispositivos"
 		}
 	}],
-	"console_pad_none_detail": "Punktfunk solo reenvía lo que el sistema reconoce como mando o joystick; uno conectado mediante un adaptador o un hub puede aparecer como el adaptador o no aparecer.",
+	"console_pad_none_detail": "Lilynk solo reenvía lo que el sistema reconoce como mando o joystick; uno conectado mediante un adaptador o un hub puede aparecer como el adaptador o no aparecer.",
 	"console_pad_grants_detail": "Un DualSense o un Steam Controller 2 con cable necesita acceso USB para poder capturarse, y un Steam Controller 2 por Bluetooth necesita acceso a Bluetooth para que se vea siquiera.",
 	"console_pad_grants_detail_open": "{button} muestra los accesos y una prueba háptica.",
 	"console_pad_test_controller": "Probar mando",
@@ -326,7 +326,7 @@
 	"console_webos_decoder_failed": "Falló el decodificador de vídeo — sesión finalizada",
 	"console_overlay_present_frames": "presentación: {frames} fotogramas, {missed} perdidos",
 	"console_overlay_holding_keyframe": "en espera de un fotograma clave",
-	"console_switch_applet_mode": "Si se abre desde el Álbum, Punktfunk dispone de poca memoria y puede cerrarse; mantén {button} al iniciar un juego para abrirlo con toda la memoria.",
+	"console_switch_applet_mode": "Si se abre desde el Álbum, Lilynk dispone de poca memoria y puede cerrarse; mantén {button} al iniciar un juego para abrirlo con toda la memoria.",
 	"console_pad_fallback_name": "Mando",
 	"console_pad_player": "Jugador {number}"
 }

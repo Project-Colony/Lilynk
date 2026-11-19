@@ -1,15 +1,10 @@
 ---
 title: Arch Linux
-description: Install the Punktfunk host on Arch, CachyOS or EndeavourOS from the signed pacman repo, in four steps.
+description: Build the Lilynk host packages on Arch, CachyOS or EndeavourOS with the PKGBUILD and install them with pacman, in four steps.
 ---
 
 Install the host on **Arch Linux** and Arch-based distros such as CachyOS and EndeavourOS. Omarchy
 and SteamOS have their own pages: [Omarchy](/docs/omarchy), [SteamOS](/docs/steamos-host).
-
-**One command instead?** The [guided installer](/docs/install#guided-install-preview) (preview)
-does steps 2 to 4 and warns when step 1 is missing:
-
-<Installer />
 
 ## 1. GPU driver
 
@@ -19,14 +14,14 @@ does steps 2 to 4 and warns when step 1 is missing:
 
 ## 2. Install the host
 
-Trust the repo key, add the repo, and install the host, the console and the plugin runner. Always
-use a full `-Syu`: the packages are built against current Arch libraries, and a partial upgrade
-breaks them.
-
 <Install platform="arch" />
 
-`sudo pacman -Syu` updates every Punktfunk package from then on and restarts the running services,
-or let the [console update it](/docs/updating).
+Build the packages with the `PKGBUILD` in a clone, with `PF_WITH_WEB=1` and `PF_WITH_SCRIPTING=1`
+so the console and the plugin runner are built too, then install the host, the console and the
+plugin runner with `sudo pacman -U`
+([Build from source → Arch](/docs/developers/build-from-source#arch-pkgbuild)).
+
+To update, `git pull` in the clone and build and install the packages again.
 
 ## 3. Let it use your controllers
 
@@ -34,7 +29,7 @@ Join the groups, then **restart the computer**:
 
 ```sh
 sudo usermod -aG input "$USER"       # virtual gamepads
-sudo usermod -aG punktfunk "$USER"   # virtual Steam Deck controller
+sudo usermod -aG lilynk "$USER"   # virtual Steam Deck controller
 ```
 
 ## 4. Start it
@@ -63,9 +58,6 @@ a device.
 
 ## More
 
-- **pacman says `database already registered`?** The repo was added twice:
-  [the fix](/docs/troubleshooting-startup#pacman-error-could-not-register-punktfunk-database-database-already-registered).
 - Your desktop: [KDE](/docs/kde), [GNOME](/docs/gnome), [gamescope](/docs/gamescope),
   [Hyprland](/docs/hyprland), [niri](/docs/niri), [Sway](/docs/sway), [Umbriel](/docs/umbriel).
 - Stream with nobody logged in: [Running as a service](/docs/running-as-a-service).
-- Build the packages yourself: [Build from source](/docs/developers/build-from-source#arch-pkgbuild).

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# punktfunk — build and install the host's status tray on SteamOS (called by install.sh and
+# lilynk — build and install the host's status tray on SteamOS (called by install.sh and
 # update.sh; safe to run by hand). User-scoped, where the packages use /usr: the binary in
 # ~/.local/bin, the launcher, and the hicolor status icons. The host writes the autostart entry
 # from its Tray autostart setting, so an update never undoes the user's choice.
@@ -10,7 +10,7 @@ set -euo pipefail
 ok()   { printf '\033[1;32m  ok\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m  !!\033[0m %s\n' "$*" >&2; }
 
-SRC="${LILYNK_SRC:-$HOME/punktfunk}"
+SRC="${LILYNK_SRC:-$HOME/lilynk}"
 BOX="${LILYNK_BOX:-pf2}"
 TARGET_DIR="$SRC/target-steamos"
 BUILT="$TARGET_DIR/release/lilynk-tray"

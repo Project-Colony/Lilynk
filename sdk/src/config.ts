@@ -36,7 +36,7 @@ export interface ConnectOptions {
 
 /**
  * A Node-resolved connection: a [`Connection`] plus the bearer it was built from, empty on a
- * plugin's own pipe. `Punktfunk.config` exposes it.
+ * plugin's own pipe. `Lilynk.config` exposes it.
  */
 export interface ResolvedConfig extends Connection {
 	token: string;
@@ -51,11 +51,11 @@ export const configDir = (): string => {
 	if (explicit) return explicit;
 	if (process.platform === "win32") {
 		const base = process.env.ProgramData ?? process.env.APPDATA ?? ".";
-		return path.join(base, "punktfunk");
+		return path.join(base, "lilynk");
 	}
 	const base =
 		process.env.XDG_CONFIG_HOME ?? path.join(os.homedir(), ".config");
-	return path.join(base, "punktfunk");
+	return path.join(base, "lilynk");
 };
 
 /**
@@ -89,7 +89,7 @@ export const pluginStateDir = (name?: string): string => {
  * JSON under your `%APPDATA%`). `lilynk-host plugins enable` grants `BUILTIN\Users` **write** on
  * exactly `ingest` — so your app drops `ingest/<plugin>/…` and the runner reads it there. On Linux
  * the runner is a `systemd --user` unit owning the config dir, so a same-user producer writes here
- * with no special step; a sandboxed plugin (the default) sees `/run/punktfunk` as its config dir,
+ * with no special step; a sandboxed plugin (the default) sees `/run/lilynk` as its config dir,
  * with no `ingest` in it.
  *
  * The dir is NOT created here (a producer running as the interactive user creates its own

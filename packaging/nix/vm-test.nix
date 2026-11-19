@@ -69,13 +69,13 @@ testers.runNixOSTest {
         "ProtectControlGroups=yes",
         "CapabilityBoundingSet=\n",
         "RestartPreventExitStatus=78",
-        "/home/alice/.config/punktfunk/mgmt-token",
+        "/home/alice/.config/lilynk/mgmt-token",
     ):
         assert want in sandbox, f"{want!r} missing from:\n{sandbox}"
 
     # The door, as a member starts it. No seat starts here: the VM has no GPU.
-    seats = "${nodes.machine.services.lilynk.seats.package}/libexec/punktfunk/lilynk-seats"
-    box = "/var/lib/punktfunk"
+    seats = "${nodes.machine.services.lilynk.seats.package}/libexec/lilynk/lilynk-seats"
+    box = "/var/lib/lilynk"
     record = "/var/lib/lilynk-seats/owner"
 
     def switch(user, verb):
@@ -86,7 +86,7 @@ testers.runNixOSTest {
     machine.wait_for_unit("lilynk-door.service")
     assert machine.succeed(f"cat {record}").strip() == "alice"
     owner = machine.succeed(f"stat -c %U:%G {box}/native-key.pem").strip()
-    assert owner == "punktfunk:lilynk-door", owner
+    assert owner == "lilynk:lilynk-door", owner
     machine.succeed(f"{seats} list | grep -q owner=true")
 
     # A repeat changes nothing, and another member can't take a door that is on.
@@ -95,11 +95,11 @@ testers.runNixOSTest {
     assert machine.succeed(f"cat {record}").strip() == "alice"
 
     # What changed on the door goes home with the switch off.
-    machine.succeed(f"runuser -u punktfunk -- sh -c 'echo 7 > {box}/web-session-epoch'")
+    machine.succeed(f"runuser -u lilynk -- sh -c 'echo 7 > {box}/web-session-epoch'")
     machine.succeed(switch("alice", "off"))
     machine.succeed(f"test ! -e {record}")
     machine.fail("systemctl is-active lilynk-door.service")
-    epoch = machine.succeed("cat /home/alice/.config/punktfunk/web-session-epoch").strip()
+    epoch = machine.succeed("cat /home/alice/.config/lilynk/web-session-epoch").strip()
     assert epoch == "7", epoch
 
     # A record whose account is gone names no one: another member's on takes the door over.
@@ -133,7 +133,7 @@ testers.runNixOSTest {
     # An off whose hand-back fails leaves the door off and held, drops bob's contract, and keeps
     # the record and the mark: bob can't write his own folder. With it writable again, the next
     # off hands the files home.
-    conf = "/home/bob/.config/punktfunk"
+    conf = "/home/bob/.config/lilynk"
     hold = "/var/lib/lilynk-seats/door-hold"
     machine.succeed(switch("bob", "on"))
     machine.wait_for_unit("lilynk-door.service")
@@ -144,7 +144,7 @@ testers.runNixOSTest {
     )
     assert machine.succeed(f"cat {record}").strip() == "bob"
     machine.succeed(f"test -e /var/lib/lilynk-seats/door-on && test -e {hold}")
-    machine.succeed("test ! -e /run/punktfunk/seats/bob.env")
+    machine.succeed("test ! -e /run/lilynk/seats/bob.env")
     machine.fail("systemctl is-active lilynk-door.service")
     machine.succeed(f"chmod 0700 {conf}")
     machine.succeed(switch("bob", "off"))
@@ -159,10 +159,10 @@ testers.runNixOSTest {
     )
     machine.succeed(switch("bob", "on"))
     machine.wait_for_unit("lilynk-door.service")
-    taken = machine.succeed(f"runuser -u punktfunk -- cat {box}/web-password")
+    taken = machine.succeed(f"runuser -u lilynk -- cat {box}/web-password")
     assert taken == "LILYNK_UI_PASSWORD_HASH=bob-1\nLILYNK_UI_SECRET=bob-s\n", taken
     machine.succeed(
-        "runuser -u punktfunk -- sh -c "
+        "runuser -u lilynk -- sh -c "
         f"'echo LILYNK_UI_PASSWORD_HASH=bob-2 >> {box}/web-password'"
     )
     machine.succeed(switch("bob", "off"))

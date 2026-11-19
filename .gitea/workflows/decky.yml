@@ -1,4 +1,4 @@
-# Build the punktfunk Decky Loader plugin (Gaming-Mode QAM launcher) into a distribution zip
+# Build the lilynk Decky Loader plugin (Gaming-Mode QAM launcher) into a distribution zip
 # and publish it to Gitea's GENERIC package registry, giving Decky's "install from URL" a
 # stable link. On tags the zip is ALSO attached to the Gitea release.
 #
@@ -50,7 +50,7 @@ env:
   # The plugin's ON-DISK dir == the zip's top-level dir. Deliberately NOT plugin.json "name"
   # (that is the brand-cased label Decky lists, and it locates a plugin by matching it, not by
   # the folder) — see clients/decky/scripts/package.sh.
-  PLUGIN: punktfunk
+  PLUGIN: lilynk
 
 jobs:
   build-publish:

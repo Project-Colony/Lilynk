@@ -4,7 +4,7 @@
 //! table as a test. Flags and env twins pin a row before any UI shows it, so
 //! `--yes` and the TUI resolve identically.
 //!
-//! The punktfunk group is **yes everywhere**: it grants usbip attach, so the row label names
+//! The lilynk group is **yes everywhere**: it grants usbip attach, so the row label names
 //! the grant in plain mode too and `--no-lilynk-group` stays the opt-out. The clipboard is
 //! **yes** as well, since each client opts in per host anyway.
 //!
@@ -146,7 +146,7 @@ pub struct Choices {
     /// `--web-bind` says otherwise; the plugin-UI origin on 47993 follows it.
     pub web_bind: String,
     /// The console login password the user typed. `None` leaves it to the console's own
-    /// first start, which generates one into `~/.config/punktfunk/web-password`. Never
+    /// first start, which generates one into `~/.config/lilynk/web-password`. Never
     /// echoed: `exec` writes the file, the plan step carries no value.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub web_password: Option<String>,

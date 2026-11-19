@@ -5,7 +5,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 
-// Geist — the punktfunk brand typeface (the same family the website and the Apple client ship).
+// Geist — the lilynk brand typeface (the same family the website and the Apple client ship).
 // Bundled as static OTF weights in res/font and applied to every Material 3 text style below, so the
 // Android UI carries the brand type identically to the other clients. Geist Sans only — Geist Mono
 // is intentionally not shipped (the licenses screen's technical block uses the platform monospace).

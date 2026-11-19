@@ -1,12 +1,12 @@
-# bootc / OCI image layer that bakes punktfunk into a Bazzite-based atomic image.
+# bootc / OCI image layer that bakes lilynk into a Bazzite-based atomic image.
 #
 # Bazzite is already a bootc image (Fedora Atomic + gamescope + PipeWire + the NVIDIA
-# stack), so we layer punktfunk on top: enable RPM Fusion (for the freeworld VAAPI drivers),
-# install locally built punktfunk RPMs, and pre-enable the udev rule. Build + push this image,
+# stack), so we layer lilynk on top: enable RPM Fusion (for the freeworld VAAPI drivers),
+# install locally built lilynk RPMs, and pre-enable the udev rule. Build + push this image,
 # then `bootc switch` (or rebase) a Bazzite host onto it for an image-based, atomic install —
 # no per-host `rpm-ostree install` drift.
 #
-# There is no punktfunk RPM repo for this build. Copy the punktfunk, lilynk-web and
+# There is no lilynk RPM repo for this build. Copy the lilynk, lilynk-web and
 # lilynk-bun RPMs that `PF_WITH_WEB=1 packaging/rpm/build-rpm.sh` writes to dist/ (built in
 # the Fedora 43 builder for the bazzite base) into packaging/bootc/rpms/, then build with
 # packaging/bootc as the context (the repo root's .dockerignore keeps packaging/ out):
@@ -28,7 +28,7 @@ RUN dnf5 -y install \
     || true
 
 # Install the host + the web console from the build context. Their dependencies come from the
-# base image's own repos; no punktfunk repo is added.
+# base image's own repos; no lilynk repo is added.
 COPY rpms/ /tmp/lilynk-rpms/
 RUN dnf5 -y install /tmp/lilynk-rpms/*.rpm \
  && rm -rf /tmp/lilynk-rpms \

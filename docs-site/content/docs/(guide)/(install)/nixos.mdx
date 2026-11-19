@@ -1,6 +1,6 @@
 ---
 title: NixOS
-description: Install the Punktfunk host on NixOS from the repo's flake — import the module, enable the host.
+description: Install the Lilynk host on NixOS from the repo's flake — import the module, enable the host.
 ---
 
 Install the host on **NixOS 24.11 or newer**, `x86_64-linux`, from the repo's flake and NixOS
@@ -16,15 +16,14 @@ hour or more.
 
 <Install platform="nixos" />
 
-`?ref=nix-stable` follows releases. For canary, built nightly from `main`, use `?ref=nix-canary`
-([Release Channels](/docs/channels)).
+The input builds `main`, the repository's only branch.
 
 A typical host block:
 
 ```nix
 services.lilynk.host = {
   enable = true;
-  users = [ "alice" ];     # joins the input and punktfunk groups
+  users = [ "alice" ];     # joins the input and lilynk groups
   openFirewall = true;
   desktopSession = true;   # on a machine somebody logs into
   settings = { RUST_LOG = "info"; };   # written to host.env
@@ -54,8 +53,8 @@ a device.
 ## More
 
 - Every option, GPU driver notes and the headless setup:
-  [packaging/nix](https://git.unom.io/unom/punktfunk/src/branch/main/packaging/nix/README.md).
+  [packaging/nix](https://github.com/Project-Colony/Lilynk/blob/main/packaging/nix/README.md).
 - Run the host without NixOS (wrapped in [nixGL](https://github.com/nix-community/nixGL) for the
-  GPU drivers): `nix run 'git+https://git.unom.io/unom/punktfunk?ref=nix-stable#punktfunk-host' -- serve`.
-- Update: `nix flake update punktfunk`, then `sudo nixos-rebuild switch`. Remove:
+  GPU drivers): `nix run 'git+https://github.com/Project-Colony/Lilynk#lilynk-host' -- serve`.
+- Update: `nix flake update lilynk`, then `sudo nixos-rebuild switch`. Remove:
   [Uninstall](/docs/uninstall#nixos).

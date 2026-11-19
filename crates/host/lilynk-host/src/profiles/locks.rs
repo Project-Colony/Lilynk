@@ -412,7 +412,7 @@ impl LockStore {
 /// the PIN.
 fn audit(id: &str, fp: &str, result: &str, (device, profile): (u32, usize)) {
     tracing::info!(
-        target: "punktfunk::audit",
+        target: "lilynk::audit",
         profile = %id,
         device = %fp,
         result,

@@ -773,7 +773,7 @@ mod tests {
 
     #[test]
     fn path_resolution_table() {
-        let here = Path::new("/opt/punktfunk/bin");
+        let here = Path::new("/opt/lilynk/bin");
         let installed = here.join(ENCODE_WORKER_BIN);
         let on_path = Path::new("/usr/bin").join(ENCODE_WORKER_BIN);
         let exists = {

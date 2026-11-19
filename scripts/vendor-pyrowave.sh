@@ -7,7 +7,7 @@
 # Upstream froze the bitstream as v1 on 2026-10-03 (bitstream/bitstream.md), and
 # the CODEC_PYROWAVE wire bit means v1 (design/pyrowave-codec-plan.md §4.2).
 # Before a bump, diff bitstream.md, pyrowave_common.hpp and the shaders against
-# the old pin. A bump that changes the bitstream must bump the punktfunk protocol
+# the old pin. A bump that changes the bitstream must bump the lilynk protocol
 # version and the GameStream PYROWAVE_BITSTREAM_ID. The Apple Metal hand-port
 # (§4.7) re-diffs wavelet_dequant.comp and idwt.comp.
 set -euo pipefail
@@ -72,7 +72,7 @@ for p in "$REPO_ROOT"/crates/codec/pyrowave-sys/patches/*.patch; do
   echo "applied $(basename "$p")"
 done
 
-cat > "$DEST/PUNKTFUNK-VENDOR.txt" <<EOF
+cat > "$DEST/LILYNK-VENDOR.txt" <<EOF
 Vendored by scripts/vendor-pyrowave.sh — do not edit by hand.
 
 pyrowave:        $PYROWAVE_COMMIT

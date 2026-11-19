@@ -30,7 +30,7 @@ $bun = $env:BUN_EXE
 if (-not ($bun -and (Test-Path $bun))) { $bun = 'C:\Users\Public\bun\bin\bun.exe' }
 if (-not (Test-Path $bun)) { throw "bun not found at $bun (set `$env:BUN_EXE to override)" }
 
-Write-Host "== punktfunk plugin/script runner deploy =="
+Write-Host "== lilynk plugin/script runner deploy =="
 Write-Host "bun    : $bun"
 
 # --- 1. build the self-contained bundle ------------------------------------------------------
@@ -122,7 +122,7 @@ if ($existing) {
     Set-ScheduledTask -TaskName $task -Principal $principal | Out-Null
     Write-Host ""
     Write-Host "task   : $task principal -> NT AUTHORITY\LocalService"
-    $cfg = Join-Path $env:ProgramData 'punktfunk'
+    $cfg = Join-Path $env:ProgramData 'lilynk'
     foreach ($secret in @('plugin-token', 'cert.pem')) {
         $file = Join-Path $cfg $secret
         if (Test-Path $file) {
@@ -143,7 +143,7 @@ if ($existing) {
         if ($LASTEXITCODE -ne 0) { Write-Host "warn   : icacls grant failed on $dirPath" }
     }
     # State root gets inheritable Modify - the ONE writable grant, so a plugin can persist its
-    # config/cache under plugin-state\<name> (@punktfunk/host's pluginStateDir). Code dirs stay
+    # config/cache under plugin-state\<name> (@lilynk/host's pluginStateDir). Code dirs stay
     # RX+WA, secrets stay R; only this dir is writable.
     $stateDir = Join-Path $cfg 'plugin-state'
     New-Item -ItemType Directory -Force -Path $stateDir | Out-Null

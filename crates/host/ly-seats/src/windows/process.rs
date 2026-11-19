@@ -535,7 +535,7 @@ pub(super) fn seat_environment(
             entries.insert(name.to_ascii_uppercase(), value);
         }
     }
-    let rust_log = std::env::var_os("RUST_LOG").unwrap_or_else(|| OsString::from("punktfunk=info"));
+    let rust_log = std::env::var_os("RUST_LOG").unwrap_or_else(|| OsString::from("lilynk=info"));
     entries.insert("RUST_LOG".into(), rust_log);
     let values = [
         ("LILYNK_CONFIG_DIR", host_root.as_os_str().to_owned()),

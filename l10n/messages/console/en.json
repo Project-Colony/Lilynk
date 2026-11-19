@@ -3,7 +3,7 @@
 	"console_error_connect_failed_detail": "Connection failed: {reason}",
 	"console_error_host_closed": "The host closed the connection.",
 	"console_exit_confirm": "Exit",
-	"console_exit_message": "Exit Punktfunk?",
+	"console_exit_message": "Exit Lilynk?",
 	"console_exit_title": "Exit",
 	"console_hosts_added": "Added {address}",
 	"console_hosts_saved": "Saved {host}",
@@ -251,7 +251,7 @@
 			}
 		}
 	],
-	"console_pad_none_detail": "Punktfunk only forwards what the system sees as a controller or joystick; one behind an adapter or hub may show as the adapter, or not at all.",
+	"console_pad_none_detail": "Lilynk only forwards what the system sees as a controller or joystick; one behind an adapter or hub may show as the adapter, or not at all.",
 	"console_pad_grants_detail": "A wired DualSense or Steam Controller 2 needs USB access before it can be captured, and a Steam Controller 2 over Bluetooth needs Bluetooth access to be seen at all.",
 	"console_pad_grants_detail_open": "{button} lists the grants and a haptics test.",
 	"console_pad_test_controller": "Test controller",
@@ -338,7 +338,7 @@
 	"console_webos_decoder_failed": "Video decoder failed — session ended",
 	"console_overlay_present_frames": "present: {frames} frames, {missed} missed",
 	"console_overlay_holding_keyframe": "holding for a keyframe",
-	"console_switch_applet_mode": "Opened from the Album, Punktfunk has little memory and may close — hold {button} while starting a game to open it with full memory.",
+	"console_switch_applet_mode": "Opened from the Album, Lilynk has little memory and may close — hold {button} while starting a game to open it with full memory.",
 	"console_pad_fallback_name": "Controller",
 	"console_pad_player": "Player {number}"
 }

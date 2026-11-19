@@ -68,7 +68,7 @@ export const diagnosticsText = (parts: {
 }): string => {
 	const { generatedAt, checks, checksUnavailable, rows, bundles } = parts;
 	const out: string[] = [
-		`punktfunk diagnostics export`,
+		`lilynk diagnostics export`,
 		`generated: ${stamp(generatedAt.getTime())}`,
 		`host log lines: ${rows.length}`,
 		`device bundles: ${bundles.length}`,

@@ -7,7 +7,7 @@
 # Registry (public, unom org) — box setup (once), see packaging/arch/README.md. The registry
 # SIGNS the DB + packages, so the box imports the registry key first (pacman-key --add +
 # --lsign-key), then no SigLevel line is needed (pacman's default Required verifies):
-#   [punktfunk]                         # or [lilynk-canary] for main-push builds
+#   [lilynk]                         # or [lilynk-canary] for main-push builds
 #   Server = https://git.unom.io/api/packages/unom/arch/$repo/$arch
 #
 # REGISTRY_TOKEN: repo Actions secret, a PAT with write:package scope (shared with docker.yml).
@@ -111,7 +111,7 @@ on:
       - '.gitea/workflows/arch.yml'
     # Single project version: a `vX.Y.Z` tag is THE release. main publishes to the
     # `lilynk-canary` pacman repo as X.Y.Z-0.<run#> (sorts below the eventual X.Y.Z-1),
-    # tags to `punktfunk` — separate repos, so neither channel can shadow the other.
+    # tags to `lilynk` — separate repos, so neither channel can shadow the other.
     tags: ['v*']
   # REBUILDING A PUBLISHED RELEASE, because on a rolling distro the ground moves under one.
   # A system-library soname bump can leave a published package with a dependency bound no
@@ -125,7 +125,7 @@ on:
   workflow_dispatch:
     inputs:
       release_tag:
-        description: 'Rebuild this published release (e.g. v0.25.0) into the stable `punktfunk` repo. Empty = ordinary canary build of the dispatched ref.'
+        description: 'Rebuild this published release (e.g. v0.25.0) into the stable `lilynk` repo. Empty = ordinary canary build of the dispatched ref.'
         required: false
         default: ''
       pkgrel:
@@ -207,7 +207,7 @@ jobs:
           restore-keys: cargo-home-arch-
 
       - name: Version + channel
-        # vX.Y.Z tag -> X.Y.Z-1 in the `punktfunk` repo; main push -> <next-minor>-0.<run#> in
+        # vX.Y.Z tag -> X.Y.Z-1 in the `lilynk` repo; main push -> <next-minor>-0.<run#> in
         # `lilynk-canary`. scripts/ci/ly-version.sh owns the rule, including why the run number
         # is zero-padded; the leading `0.` sorts a canary BELOW the eventual `X.Y.Z-1` release.
         env:
@@ -223,7 +223,7 @@ jobs:
             # so "0.25.0-10" sorts BELOW "0.25.0-2" and the rebuild would never be advertised.
             V="${RELEASE_TAG#v}"
             R="${REBUILD_PKGREL:-2}"
-            REPO=punktfunk
+            REPO=lilynk
             case "$R" in
               ''|*[!0-9.]*) echo "::error::pkgrel '$R' is not digits+dots"; exit 1 ;;
               1) echo "::error::pkgrel 1 is the published build — a rebuild MUST go up (2, 3, …)"; exit 1 ;;
@@ -232,7 +232,7 @@ jobs:
             V="$PF_VERSION"
             R="$PF_RELEASE"
             case "$PF_CHANNEL" in
-              stable) REPO=punktfunk ;;
+              stable) REPO=lilynk ;;
               *)      REPO=lilynk-canary ;;
             esac
           fi
@@ -337,7 +337,7 @@ jobs:
           bash scripts/ci/assert-cap-matrix.sh "$GITHUB_WORKSPACE"/dist/lilynk-host-*.pkg.tar.zst
 
       # Every path packaging/linux/payload.txt names, read out of the built packages
-      # (usr/libexec/punktfunk/ reads usr/lib/punktfunk/ here, except in seats).
+      # (usr/libexec/lilynk/ reads usr/lib/lilynk/ here, except in seats).
       - name: Assert the shared payload (Arch packages)
         run: |
           bash scripts/ci/assert-payload-parity.sh --self-test
@@ -418,7 +418,7 @@ jobs:
           fi
           if [ "$rc" != 0 ]; then
             echo "::error::refusing to publish: pacman would reject this on a current box, and a"
-            echo "::error::rejected dependency blocks the user's ENTIRE upgrade, not just punktfunk."
+            echo "::error::rejected dependency blocks the user's ENTIRE upgrade, not just lilynk."
             echo "::error::Usual cause: the arch-ci builder image lags Arch across a soname bump —"
             echo "::error::bump 'refreshed:' in ci/arch-ci.Dockerfile, let docker.yml republish it, re-run."
             echo "::error::lilynk-gamescope is cached on packaging/gamescope: bump its pkgrel to rebuild."

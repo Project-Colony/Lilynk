@@ -36,7 +36,7 @@ mkdir -p "$WORK/hypr"
 cat > "$WORK/hypr/xdph.conf" <<'EOF'
 screencopy {
     allow_token_by_default = true
-    # punktfunk: previous custom_picker_binary = hyprland-preview-share-picker
+    # lilynk: previous custom_picker_binary = hyprland-preview-share-picker
     custom_picker_binary = /run/user/1000/lilynk-xdph-picker.sh
 }
 EOF
@@ -52,7 +52,7 @@ check "their picker comes back and their other keys survive" "$WORK/expected" "$
 # 2. The key did not exist before us: restoring must REMOVE our line, not blank it or invent a value.
 cat > "$WORK/hypr/xdph.conf" <<'EOF'
 screencopy {
-    # punktfunk: previous custom_picker_binary = (none)
+    # lilynk: previous custom_picker_binary = (none)
     custom_picker_binary = /run/user/1000/lilynk-xdph-picker.sh
 }
 EOF
@@ -86,7 +86,7 @@ echo "hooks.json"
 for combo in "hooks_json" "idle_hooks_json" "hooks_json idle_hooks_json"; do
   # shellcheck disable=SC2086
   XDG_CONFIG_HOME="$WORK/fresh-${combo// /-}" write_hooks $combo >/dev/null
-  f="$WORK/fresh-${combo// /-}/punktfunk/hooks.json"
+  f="$WORK/fresh-${combo// /-}/lilynk/hooks.json"
   if python3 -c "import json,sys; d=json.load(open(sys.argv[1])); assert d['hooks'] and all('on' in h and 'run' in h for h in d['hooks'])" "$f"; then
     printf '  ok   valid JSON for [%s]\n' "$combo"
   else
@@ -95,11 +95,11 @@ for combo in "hooks_json" "idle_hooks_json" "hooks_json idle_hooks_json"; do
 done
 
 # 6. An existing hooks.json is the operator's document: print, never overwrite.
-mkdir -p "$WORK/mine/punktfunk"
-echo '{"hooks":[{"on":"stream.started","webhook":"https://example.invalid/x"}]}' > "$WORK/mine/punktfunk/hooks.json"
-cp "$WORK/mine/punktfunk/hooks.json" "$WORK/expected"
+mkdir -p "$WORK/mine/lilynk"
+echo '{"hooks":[{"on":"stream.started","webhook":"https://example.invalid/x"}]}' > "$WORK/mine/lilynk/hooks.json"
+cp "$WORK/mine/lilynk/hooks.json" "$WORK/expected"
 XDG_CONFIG_HOME="$WORK/mine" write_hooks hooks_json >/dev/null
-check "an operator's own hooks.json is never overwritten" "$WORK/expected" "$WORK/mine/punktfunk/hooks.json"
+check "an operator's own hooks.json is never overwritten" "$WORK/expected" "$WORK/mine/lilynk/hooks.json"
 
 echo "omarchy menu merge"
 
@@ -199,12 +199,12 @@ fi
 echo "bar widget"
 
 # The shell registers a freshly copied plugin asynchronously, so `plugin_known` must poll the
-# list rather than trust the first answer. The stub lists punktfunk from its third call on.
+# list rather than trust the first answer. The stub lists lilynk from its third call on.
 mkdir -p "$WORK/om/bin"
 cat > "$WORK/om/bin/omarchy" <<'EOF'
 #!/bin/sh
 n=$(cat "$OM_CALLS" 2>/dev/null || echo 0); n=$((n + 1)); echo "$n" > "$OM_CALLS"
-[ "$1 $2" = "plugin list" ] && [ "$n" -ge 3 ] && echo "punktfunk   enabled   third-party bar-widget   Punktfunk"
+[ "$1 $2" = "plugin list" ] && [ "$n" -ge 3 ] && echo "lilynk   enabled   third-party bar-widget   Lilynk"
 exit 0
 EOF
 chmod +x "$WORK/om/bin/omarchy"
@@ -301,9 +301,9 @@ else
   printf '  FAIL mode --status without a file: %s\n' "${got:-<empty>}"; fails=$((fails + 1))
 fi
 
-mkdir -p "$mod/punktfunk"
+mkdir -p "$mod/lilynk"
 printf '{ "preset": "default", "capture_monitor": null, "max_displays": 4 }\n' \
-  > "$mod/punktfunk/display-settings.json"
+  > "$mod/lilynk/display-settings.json"
 if got=$(XDG_CONFIG_HOME="$mod" "$SCRIPT" mode --status) && [[ "$got" == "dedicated" ]]; then
   printf '  ok   mode --status is dedicated when capture_monitor is null\n'
 else
@@ -311,24 +311,24 @@ else
 fi
 
 printf 'LILYNK_MGMT_BIND=127.0.0.1:47990\nLILYNK_CAPTURE_MONITOR=DP-9\n' \
-  > "$mod/punktfunk/host.env"
+  > "$mod/lilynk/host.env"
 if got=$(XDG_CONFIG_HOME="$mod" "$SCRIPT" mode --status) && [[ "$got" == "mirror" ]]; then
   printf '  ok   mode --status honors the stronger host.env screen pin\n'
 else
   printf '  FAIL mode --status ignored host.env: %s\n' "${got:-<empty>}"; fails=$((fails + 1))
 fi
 
-XDG_CONFIG_HOME="$mod" write_capture_monitor "$mod/punktfunk/display-settings.json" "" >/dev/null
+XDG_CONFIG_HOME="$mod" write_capture_monitor "$mod/lilynk/display-settings.json" "" >/dev/null
 if got=$(XDG_CONFIG_HOME="$mod" "$SCRIPT" mode --status) && [[ "$got" == "dedicated" ]] &&
-   grep -qx 'LILYNK_MGMT_BIND=127.0.0.1:47990' "$mod/punktfunk/host.env" &&
-   ! grep -q '^LILYNK_CAPTURE_MONITOR=' "$mod/punktfunk/host.env"; then
+   grep -qx 'LILYNK_MGMT_BIND=127.0.0.1:47990' "$mod/lilynk/host.env" &&
+   ! grep -q '^LILYNK_CAPTURE_MONITOR=' "$mod/lilynk/host.env"; then
   printf '  ok   dedicated clears the stronger host.env screen pin\n'
 else
   printf '  FAIL dedicated left the host.env screen pin active\n'; fails=$((fails + 1))
 fi
 
 printf '{ "preset": "default", "capture_monitor": "DP-2", "max_displays": 4 }\n' \
-  > "$mod/punktfunk/display-settings.json"
+  > "$mod/lilynk/display-settings.json"
 if got=$(XDG_CONFIG_HOME="$mod" "$SCRIPT" mode --status) && [[ "$got" == "mirror" ]]; then
   printf '  ok   mode --status is mirror when capture_monitor is set\n'
 else
@@ -336,14 +336,14 @@ else
 fi
 
 # Write helpers only — `mode dedicated` would try-restart the real user unit.
-XDG_CONFIG_HOME="$mod" write_capture_monitor "$mod/punktfunk/display-settings.json" "" >/dev/null
+XDG_CONFIG_HOME="$mod" write_capture_monitor "$mod/lilynk/display-settings.json" "" >/dev/null
 if got=$(XDG_CONFIG_HOME="$mod" "$SCRIPT" mode --status) && [[ "$got" == "dedicated" ]] &&
    python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); assert d["capture_monitor"] is None; assert d["preset"]=="default"; assert d["max_displays"]==4' \
-     "$mod/punktfunk/display-settings.json"; then
+     "$mod/lilynk/display-settings.json"; then
   printf '  ok   dedicated clears capture_monitor and keeps the other axes\n'
 else
   printf '  FAIL dedicated did not clear the pin in place\n'; fails=$((fails + 1))
-  cat "$mod/punktfunk/display-settings.json"
+  cat "$mod/lilynk/display-settings.json"
 fi
 
 mkdir -p "$WORK/bin"
@@ -368,17 +368,17 @@ chmod +x "$WORK/bin/systemctl" "$WORK/bin/lilynk-host"
 
 SYSTEMCTL_LOG="$WORK/systemctl.log"
 : > "$SYSTEMCTL_LOG"
-printf 'LILYNK_CAPTURE_MONITOR=DP-9\n' > "$mod/punktfunk/host.env"
+printf 'LILYNK_CAPTURE_MONITOR=DP-9\n' > "$mod/lilynk/host.env"
 if PATH="$WORK/bin:$PATH" SYSTEMCTL_LOG="$SYSTEMCTL_LOG" XDG_CONFIG_HOME="$mod" \
      "$SCRIPT" mode mirror >/dev/null &&
    got=$(XDG_CONFIG_HOME="$mod" "$SCRIPT" mode --status) && [[ "$got" == "mirror" ]] &&
    python3 -c 'import json,sys; assert json.load(open(sys.argv[1]))["capture_monitor"]=="eDP-1"' \
-     "$mod/punktfunk/display-settings.json" &&
-   ! grep -q '^LILYNK_CAPTURE_MONITOR=' "$mod/punktfunk/host.env"; then
+     "$mod/lilynk/display-settings.json" &&
+   ! grep -q '^LILYNK_CAPTURE_MONITOR=' "$mod/lilynk/host.env"; then
   printf '  ok   mode mirror pins the primary connector and clears host.env\n'
 else
   printf '  FAIL mode mirror did not pin the primary\n'; fails=$((fails + 1))
-  cat "$mod/punktfunk/display-settings.json" 2>/dev/null || true
+  cat "$mod/lilynk/display-settings.json" 2>/dev/null || true
 fi
 if grep -q 'try-restart lilynk-host' "$SYSTEMCTL_LOG"; then
   printf '  ok   mode mirror reloads the host unit\n'
@@ -403,7 +403,7 @@ else
   printf '  ok   two untagged heads are not a pin\n'
 fi
 
-gs="$WORK/gs/punktfunk"
+gs="$WORK/gs/lilynk"
 mkdir -p "$gs"
 lilynk-host() { printf '%s\n' "$*" > "$WORK/gs/host-cmd"; }
 printf 'LILYNK_MGMT_BIND=127.0.0.1:47990\nLILYNK_GAMESTREAM=0\n' > "$gs/host.env"

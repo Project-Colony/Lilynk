@@ -396,7 +396,7 @@ mod tests {
     fn ours_at(x: i32) -> Row {
         Row {
             ours: true,
-            ..head("Virtual-punktfunk-1", true, 3, x)
+            ..head("Virtual-lilynk-1", true, 3, x)
         }
     }
 
@@ -406,8 +406,8 @@ mod tests {
     fn the_plan_follows_the_topology_rules() {
         use TopologyKind::*;
         let desk = head("eDP-1", true, 1, 0);
-        let sibling = head("Virtual-punktfunk-7", true, 1, 1920);
-        let predecessor = head("Virtual-punktfunk-1", true, 1, 1920);
+        let sibling = head("Virtual-lilynk-7", true, 1, 1920);
+        let predecessor = head("Virtual-lilynk-1", true, 1, 1920);
         let at = |x| Some(Placement { x, y: 0 });
         let kept = ["edp-1".to_string()];
         // (outputs, kind, the desk kept lit) → (take primary, disabled, origin)
@@ -490,7 +490,7 @@ mod tests {
     fn the_priority_order_puts_dark_outputs_last() {
         let outputs = vec![
             head("DP-2", false, 2, 3840),
-            head("Virtual-punktfunk-7", true, 3, 1920),
+            head("Virtual-lilynk-7", true, 3, 1920),
             ours_at(5760),
             head("eDP-1", true, 1, 0),
         ];

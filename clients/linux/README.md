@@ -1,4 +1,4 @@
-# punktfunk — Linux client
+# lilynk — Linux client
 
 `lilynk-client` is the relm4/GTK4/libadwaita **shell**: hosts, pairing and trust, settings, the
 desktop library page. It does not stream. Every session runs in the sibling
@@ -9,7 +9,7 @@ Rust end to end, no C ABI. The UI-agnostic plumbing — session pump, the native
 PipeWire audio, SDL3 gamepads and keymap, trust store, mDNS discovery, library client,
 Wake-on-LAN — is `crates/client/ly-client-core`, shared with the session binary.
 
-Installing it is [the docs site](https://docs.punktfunk.unom.io/docs/install-client)'s job;
+Installing it is [the docs site](https://project-colony.github.io/Lilynk/docs/install-client)'s job;
 building the packages is [`packaging/`](../../packaging/)'s.
 
 ## Build & run

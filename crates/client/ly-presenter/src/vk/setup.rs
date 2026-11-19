@@ -201,7 +201,7 @@ impl AdapterDecode {
             (0x1, "H.264"),
             (0x2, "H.265"),
             (0x4, "AV1"),
-            (0x8, "VP9 (no punktfunk rung)"),
+            (0x8, "VP9 (no lilynk rung)"),
         ];
         let mut names: Vec<String> = OPS
             .iter()
@@ -2036,7 +2036,7 @@ mod tests {
         assert_eq!(ops(0x3).codec_names(), ["H.264", "H.265"]);
         assert_eq!(
             ops(0x4 | 0x8 | 0x10).codec_names(),
-            ["AV1", "VP9 (no punktfunk rung)", "unrecognised bits 0x10"]
+            ["AV1", "VP9 (no lilynk rung)", "unrecognised bits 0x10"]
         );
     }
 

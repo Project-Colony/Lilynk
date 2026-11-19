@@ -70,8 +70,8 @@ Maintainer: unom <packages@unom.io>
 Installed-Size: $INSTALLED_KB
 Section: net
 Priority: optional
-Homepage: https://git.unom.io/unom/punktfunk
-Description: bun runtime for the punktfunk web console and plugin runner
+Homepage: https://github.com/Project-Colony/Lilynk
+Description: bun runtime for the lilynk web console and plugin runner
  The pinned bun build lilynk-web and lilynk-scripting run on, installed once at
  /usr/lib/lilynk-bun/bun. It is not on PATH and does not replace a system-wide bun.
 EOF

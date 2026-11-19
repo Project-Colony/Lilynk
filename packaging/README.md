@@ -1,7 +1,7 @@
 # packaging
 
-How each shipped artifact is built and published. **Installing** Punktfunk is
-[the docs site](https://docs.punktfunk.unom.io/docs/install)'s job — it generates every install
+How each shipped artifact is built and published. **Installing** Lilynk is
+[the docs site](https://project-colony.github.io/Lilynk/docs/install)'s job — it generates every install
 command from the canonical [`data/platforms.json`](../data/platforms.json), so a fourth copy
 here would be the one that
 drifts. These files are the maintainer's half: what CI runs, how each package is signed, and the

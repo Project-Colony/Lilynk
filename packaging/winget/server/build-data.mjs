@@ -19,7 +19,7 @@ import { parse as parseYaml } from "yaml";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const API = process.env.PF_GITEA_API ?? "https://git.unom.io/api/v1";
-const REPO = process.env.PF_GITEA_REPO ?? "unom/punktfunk";
+const REPO = process.env.PF_GITEA_REPO ?? "unom/lilynk";
 const PACKAGE_ID = "Lilynk.LilynkHost";
 const SOURCE_IDENTIFIER = process.env.PF_SOURCE_ID ?? "unom.punktfunk";
 // The API contract this source implements. Advertised via /information so a future client can

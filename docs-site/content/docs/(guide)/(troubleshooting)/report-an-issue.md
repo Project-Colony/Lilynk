@@ -7,7 +7,7 @@ Build one file with the host's log, its health checks and your client's log, and
 report.
 
 > **Security problem?** Don't open a public issue — email **security@punktfunk.com**
-> ([SECURITY.md](https://git.unom.io/unom/punktfunk/src/branch/main/SECURITY.md)).
+> ([SECURITY.md](https://github.com/Project-Colony/Lilynk/blob/main/SECURITY.md)).
 
 ## 1. Reproduce it, and keep the app open
 
@@ -40,10 +40,10 @@ names.
 
 ## 4. File the report
 
-Report it on [improve unom](https://improve.unom.io/p/punktfunk/new?kind=bug), where you can also
+Report it on [improve unom](https://github.com/Project-Colony/Lilynk/issues?kind=bug), where you can also
 vote for bugs that hit you too and follow what happens to yours. You need a free unom account. It
 takes text only, so paste the parts of the export that matter. Or post in the `bug-reports` forum on
-[Discord](https://discord.gg/wzEGg9y45z) and attach the export there.
+[Discord](https://discord.gg/tvFApEEVfj) and attach the export there.
 
 Either way the title and text of your report are public, on improve unom and on our
 [tracker](https://git.unom.io/unom/punktfunk/issues), so keep host names and addresses out of them.
@@ -61,10 +61,10 @@ For stutter or lag, add a [performance recording](/docs/stats#recording-a-captur
 | Where | How |
 | --- | --- |
 | Linux host | `journalctl --user -u lilynk-host` |
-| Windows host | `%ProgramData%\punktfunk\logs\` (`host.log`, `service.log`, `web.log`) from an **elevated** PowerShell |
+| Windows host | `%ProgramData%\lilynk\logs\` (`host.log`, `service.log`, `web.log`) from an **elevated** PowerShell |
 | Windows client | **Settings → About → Diagnostics → Open log folder** |
 | Mac, iPhone, iPad | Console.app on a Mac, subsystem `org.projectcolony.lilynk` |
-| Android | `adb logcat`, tag `punktfunk` |
+| Android | `adb logcat`, tag `lilynk` |
 | Linux client | Start it from a terminal; it logs there |
 
 These follow `RUST_LOG` (info by default), so they hold less than the uploads above, which keep

@@ -1,4 +1,4 @@
-# Unified in-tree workspace for punktfunk's all-Rust UMDF drivers, on microsoft/windows-drivers-rs
+# Unified in-tree workspace for lilynk's all-Rust UMDF drivers, on microsoft/windows-drivers-rs
 # (wdk-sys/wdk-build 0.5.1, vendored under vendor/ and patched in below). Design:
 # design/windows-host-rewrite.md.
 #

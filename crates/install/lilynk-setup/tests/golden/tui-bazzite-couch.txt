@@ -1,13 +1,13 @@
 │
-◆  Punktfunk setup  ·  Bazzite 43 · sysext
-│  https://docs.punktfunk.unom.io/docs/bazzite
+◆  Lilynk setup  ·  Bazzite 43 · sysext
+│  https://project-colony.github.io/Lilynk/docs/bazzite
 │
 │  ▸ Install now with these settings
 │  ──────────────────────────────────────────────────────────
 │    This device is           The PC I stream from (host)
 │    Channel                  stable
 │    Full controller support  Yes — Bazzite — virtual Steam Deck controller
-│    Third-party clients      No  — Punktfunk's own apps don't need it
+│    Third-party clients      No  — Lilynk's own apps don't need it
 │    Shared clipboard         Yes
 │    Start at boot            Yes — Bazzite hosts are usually headless
 │    Host service             Yes

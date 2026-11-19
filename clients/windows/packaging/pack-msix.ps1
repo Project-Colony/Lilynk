@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Assemble, pack and sign the punktfunk Windows client as a signed MSIX.
+  Assemble, pack and sign the lilynk Windows client as a signed MSIX.
 
 .DESCRIPTION
   Builds a packaging layout from a release `cargo build` output (exes + the SDL3 auto-staged DLL
@@ -200,7 +200,7 @@ if ($LASTEXITCODE -ne 0) { throw "makeappx pack failed ($LASTEXITCODE)" }
 # The .pfx modes export the .cer users import once (Trusted People); a stable .pfx keeps that import
 # good across upgrades. Azure emits none, so MSIX_CER_PATH stays unset.
 $cerPath = Join-Path $OutDir "lilynk-client-windows_${Version}_${Arch}.cer"
-$signing = Resolve-SigningMode -OutDir $OutDir -Publisher $Publisher -FriendlyName 'punktfunk MSIX (self-signed)' `
+$signing = Resolve-SigningMode -OutDir $OutDir -Publisher $Publisher -FriendlyName 'lilynk MSIX (self-signed)' `
     -PfxBase64 $PfxBase64 -PfxPassword $PfxPassword -AzureEndpoint $AzureEndpoint -AzureAccount $AzureAccount `
     -AzureProfile $AzureProfile -AzureDlib $AzureDlib -RequireSignedCert $RequireSignedCert -CerPath $cerPath
 Sign-File $signing $msix -Package

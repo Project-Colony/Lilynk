@@ -27,7 +27,7 @@ final class Sc2FramingTests: XCTestCase {
     func testShortPayloadPassesThroughUnmodified() {
         // Battery/status payloads keep whatever framing the firmware gave them — the host's
         // virtual pad handles the rest. (No 0x45→0x42 rewrite and no 54-byte pad on ANY path:
-        // that belongs to a synthetic-USB queue contract, not punktfunk's.)
+        // that belongs to a synthetic-USB queue contract, not lilynk's.)
         let battery: [UInt8] = [Sc2Device.idBattery, 0x64, 0x01]
         XCTAssertEqual(Sc2Device.frameIncoming(battery), battery)
         XCTAssertEqual(

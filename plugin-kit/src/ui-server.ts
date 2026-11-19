@@ -2,12 +2,12 @@
 // any HttpRouter route layers), mount it as the SDK server's `fetch` handler, and manage
 // register/renew/deregister through Scope. It needs only effect core layers (no platform
 // package), and a path outside the API prefix falls through to the SDK's static SPA.
-import { type PluginUiHandle, servePluginUi } from "@punktfunk/host";
+import { type PluginUiHandle, servePluginUi } from "@lilynk/host";
 import {
 	decodeHostEvent,
 	type EventOf,
 	type GameRef,
-} from "@punktfunk/host/core";
+} from "@lilynk/host/core";
 import { Effect, FileSystem, Layer, Path, Schema, type Scope } from "effect";
 import { Etag, HttpPlatform, HttpRouter } from "effect/http";
 import type { ConfigService } from "./config.js";
@@ -545,7 +545,7 @@ const verifyCategoryLanded = (
 			return Effect.logWarning(
 				`registered without category "${category}" (the host reports ` +
 					`${mine.category === undefined ? "none" : `"${mine.category}"`}) — it lands ` +
-					`in the console's sidebar, not its section. An @punktfunk/host older than 0.1.3 ` +
+					`in the console's sidebar, not its section. An @lilynk/host older than 0.1.3 ` +
 					`drops the field before registering; update it.`,
 			);
 		}),

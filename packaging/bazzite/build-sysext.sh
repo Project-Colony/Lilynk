@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Build the punktfunk systemd-sysext image for Bazzite / Fedora Atomic from the built RPMs —
+# Build the lilynk systemd-sysext image for Bazzite / Fedora Atomic from the built RPMs —
 # the no-layering install path (rpm-ostree layering slows every update and can block upgrades;
 # a sysext never enters an rpm-ostree transaction). The .raw overlays /usr read-only from
 # /var/lib/extensions/, survives OS updates, and is toggled/updated without a reboot.
 #
 # Counterpart to ../arch/build-sysext.sh (which wraps a pacman package for SteamOS). This one
-# wraps the Fedora RPMs (punktfunk, -web, -scripting, -seats, -bun) and additionally:
-#   * relocates the RPMs' /etc payload to /usr/share/punktfunk/etc/ (a sysext carries ONLY /usr;
+# wraps the Fedora RPMs (lilynk, -web, -scripting, -seats, -bun) and additionally:
+#   * relocates the RPMs' /etc payload to /usr/share/lilynk/etc/ (a sysext carries ONLY /usr;
 #     lilynk-sysext(8) copies the gamescope-session drop-in into the real /etc on install),
 #   * bakes SELinux labels in as squashfs pseudo-xattrs, computed with matchpathcon from the
 #     build container's targeted policy. Without them every file is unlabeled_t at runtime:
@@ -66,7 +66,7 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 STAGE="$(mktemp -d)"
 trap 'rm -rf "$STAGE"' EXIT
 
-# SYSEXT_VERSION_ID from the punktfunk RPM (V-R without the dist tag): what
+# SYSEXT_VERSION_ID from the lilynk RPM (V-R without the dist tag): what
 # `lilynk-sysext status` reports as the installed version.
 PF_VR=""
 SEEN_NAMES=" "
@@ -77,13 +77,13 @@ for rpm in "${RPMS[@]}"; do
   # download glob) silently shadow each other's files — refuse instead of building a chimera.
   case "$SEEN_NAMES" in *" $name "*) echo "duplicate RPM name '$name' in inputs — pass exactly one RPM per package" >&2; exit 1 ;; esac
   SEEN_NAMES="$SEEN_NAMES$name "
-  if [ "$name" = punktfunk ]; then
+  if [ "$name" = lilynk ]; then
     PF_VR="$(rpm -qp --qf '%{VERSION}-%{RELEASE}' "$rpm" 2>/dev/null)"
     PF_VR="${PF_VR%.fc*}"
   fi
   rpm2cpio "$rpm" | ( cd "$STAGE" && cpio -idmu --quiet )
 done
-[ -n "$PF_VR" ] || { echo "the punktfunk (host) RPM must be among the inputs" >&2; exit 1; }
+[ -n "$PF_VR" ] || { echo "the lilynk (host) RPM must be among the inputs" >&2; exit 1; }
 # An image resolves no dependencies, and both launchers exec lilynk-bun's bun.
 if [ -e "$STAGE/usr/bin/lilynk-web-server" ] || [ -e "$STAGE/usr/bin/lilynk-scripting" ]; then
   [ -x "$STAGE/usr/libexec/lilynk-bun/bun" ] || {
@@ -91,11 +91,11 @@ if [ -e "$STAGE/usr/bin/lilynk-web-server" ] || [ -e "$STAGE/usr/bin/lilynk-scri
 fi
 
 # A sysext carries only /usr. Relocate the RPMs' /etc payload (the gamescope-session drop-in, the
-# scripting AppArmor profile) under /usr/share/punktfunk/etc/ — lilynk-sysext copies the
+# scripting AppArmor profile) under /usr/share/lilynk/etc/ — lilynk-sysext copies the
 # drop-in into /etc.
 if [ -d "$STAGE/etc" ]; then
-  mkdir -p "$STAGE/usr/share/punktfunk/etc"
-  cp -a "$STAGE/etc/." "$STAGE/usr/share/punktfunk/etc/"
+  mkdir -p "$STAGE/usr/share/lilynk/etc"
+  cp -a "$STAGE/etc/." "$STAGE/usr/share/lilynk/etc/"
   rm -rf "${STAGE:?}/etc"
 fi
 rm -rf "${STAGE:?}/var"   # rpm ghosts etc. — nothing outside /usr may remain
@@ -104,14 +104,14 @@ rm -rf "${STAGE:?}/var"   # rpm ghosts etc. — nothing outside /usr may remain
 # its banner and its WSI layer rather than trusted by filename.
 if [ -n "$GAMESCOPE" ]; then
   GS_BIN="$GAMESCOPE/usr/bin/lilynk-gamescope"
-  GS_LAYER_SO="$GAMESCOPE/usr/lib/punktfunk/libVkLayer_LILYNK_gamescope_wsi.so"
-  GS_LAYER_JSON="$GAMESCOPE/usr/lib/punktfunk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json"
+  GS_LAYER_SO="$GAMESCOPE/usr/lib/lilynk/libVkLayer_LILYNK_gamescope_wsi.so"
+  GS_LAYER_JSON="$GAMESCOPE/usr/lib/lilynk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json"
   pf_verify_gamescope "$GAMESCOPE" "the gamescope stage $GAMESCOPE"
   install -Dm0755 "$GS_BIN" "$STAGE/usr/bin/lilynk-gamescope"
   install -Dm0755 "$GS_LAYER_SO" \
-    "$STAGE/usr/lib/punktfunk/libVkLayer_LILYNK_gamescope_wsi.so"
+    "$STAGE/usr/lib/lilynk/libVkLayer_LILYNK_gamescope_wsi.so"
   install -Dm0644 "$GS_LAYER_JSON" \
-    "$STAGE/usr/lib/punktfunk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json"
+    "$STAGE/usr/lib/lilynk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json"
 fi
 
 # Enable the plugin/script runner for every user, by baking its `[Install] WantedBy=default.target`
@@ -145,7 +145,7 @@ cat > "$STAGE/usr/lib/extension-release.d/extension-release.lilynk" <<EOF
 ID=fedora
 VERSION_ID=$VERSION_ID
 ARCHITECTURE=x86-64
-SYSEXT_ID=punktfunk
+SYSEXT_ID=lilynk
 SYSEXT_VERSION_ID=$PF_VR
 EXTENSION_RELOAD_MANAGER=1
 EOF
@@ -174,5 +174,5 @@ rm -f "$OUT"; mkdir -p "$(dirname "$OUT")"
 mksquashfs "$STAGE" "$OUT" -all-root -noappend -quiet \
   -xattrs-exclude '^security.selinux' -pf "$PSEUDO"
 rm -f "$PSEUDO"
-echo "built $OUT (punktfunk $PF_VR, fedora $VERSION_ID, $(du -h "$OUT" | cut -f1))"
+echo "built $OUT (lilynk $PF_VR, fedora $VERSION_ID, $(du -h "$OUT" | cut -f1))"
 echo "  install on the box:  lilynk-sysext install   (or --from-file $OUT)"

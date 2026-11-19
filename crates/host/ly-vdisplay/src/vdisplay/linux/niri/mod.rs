@@ -36,7 +36,7 @@ impl std::fmt::Display for NoVirtualOutputs {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(
             "this niri has no virtual outputs — install biri, the niri fork that adds them. See \
-             https://docs.punktfunk.unom.io/docs/niri#get-biri",
+             https://project-colony.github.io/Lilynk/docs/niri#get-biri",
         )
     }
 }

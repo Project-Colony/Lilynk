@@ -147,7 +147,7 @@ fn client_upgrade() -> WinFacts {
     WinFacts {
         client_installed: Some(WinInstall {
             version: Some("0.35.0".into()),
-            location: Some(r"C:\Users\me\AppData\Local\Programs\Punktfunk".into()),
+            location: Some(r"C:\Users\me\AppData\Local\Programs\Lilynk".into()),
         }),
         ..fresh()
     }
@@ -216,7 +216,7 @@ fn the_host_start_menu_link_is_created_then_removed() {
             })
             .collect()
     };
-    let link = r"<common start menu>\Punktfunk Host.lnk";
+    let link = r"<common start menu>\Lilynk Host.lnk";
     assert_eq!(links(&fresh(), false), [link]);
     assert_eq!(links(&upgrade(), true), [link]);
 }
@@ -224,7 +224,7 @@ fn the_host_start_menu_link_is_created_then_removed() {
 /// Host and client are two products under two registry keys (D1). On a box where the HOST is
 /// installed and the client is not, deriving the client's choices must read the CLIENT key:
 /// `installed` is the host's, and taking it would make the client a false upgrade pinned to
-/// `C:\Program Files\punktfunk\`. Fresh facts cannot catch this — both keys are empty there.
+/// `C:\Program Files\lilynk\`. Fresh facts cannot catch this — both keys are empty there.
 #[test]
 fn a_client_install_does_not_inherit_the_hosts_directory() {
     let facts = upgrade(); // host installed, client absent
@@ -257,8 +257,8 @@ fn an_upgrade_over_inno_retires_its_uninstaller_between_files_and_arp() {
         WinAction::DeleteFiles { paths } => assert_eq!(
             paths,
             &[
-                r"C:\Program Files\punktfunk\unins000.dat".to_string(),
-                r"C:\Program Files\punktfunk\unins000.msg".to_string(),
+                r"C:\Program Files\lilynk\unins000.dat".to_string(),
+                r"C:\Program Files\lilynk\unins000.msg".to_string(),
             ]
         ),
         other => panic!("{other:?}"),

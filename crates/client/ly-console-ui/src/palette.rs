@@ -426,7 +426,7 @@ pub(crate) fn mesh_colors_of(stops: &[(f64, f64, f64)]) -> [(f64, f64, f64); 16]
 }
 
 /// The brand default's field ramp, dark first. Its two lightest stops are the logo's violets,
-/// `#6c5bf3` and `#a79ff8` (punktfunk-website `public/punktfunk-logo.svg`).
+/// `#6c5bf3` and `#a79ff8` (punktfunk-website `public/lilynk-logo.svg`).
 pub const VIOLET_FIELD: [(f64, f64, f64); 5] = [
     (0.055, 0.035, 0.227),
     (0.129, 0.094, 0.431),

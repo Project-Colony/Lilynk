@@ -1,7 +1,7 @@
-# punktfunk — Android client (phone & TV)
+# lilynk — Android client (phone & TV)
 
 One Compose app for phone, tablet and Android TV (the TV layout is the same app in leanback mode).
-Installing it is [the docs site](https://docs.punktfunk.unom.io/docs/install-client)'s job — it is a
+Installing it is [the docs site](https://project-colony.github.io/Lilynk/docs/install-client)'s job — it is a
 public Google Play listing, with a signed APK published on every build for anyone who would rather
 sideload.
 
