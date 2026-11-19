@@ -46,7 +46,7 @@ Everything asserted in the copy was checked against the source rather than the m
 - Background audio mode and its 2.5.4 constraints — `Config/Info.plist`
 - "Collects no data" — verified by absence: no analytics SDK in `Package.swift`, no telemetry
   symbols in `Sources/`, `URLSession` used only against the paired host
-- Host platforms and protocol details — root `README.md`, `docs/releases/v0.24.0.md`
+- Host platforms and protocol details — root `README.md`, `docs/upstream/releases/v0.24.0.md`
 - Feature ship dates — `git tag --contains` on the relevant commits
 
 ## Not done here
