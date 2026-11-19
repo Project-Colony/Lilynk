@@ -2,6 +2,8 @@
 # Derived defaults for the guided installer (crates/install/punktfunk-setup, issue #431).
 # Faked os-release + --dry-run --yes --no-start: each family must print the summary that
 # --yes would actually take, and that summary must appear before the first sudo.
+# Stub host binaries on PATH put every case on the wiring-only path: this build has no package
+# repo, so a box without them stops before the summary.
 # DISPLAY / WAYLAND_DISPLAY / XDG_SESSION_TYPE are pinned per case so a graphical seat on
 # the machine running the gate cannot leak into a "headless" assertion.
 set -u
@@ -19,7 +21,11 @@ fail=0
 osr=$(mktemp -d)
 gsbin=$(mktemp -d)
 ujbin=$(mktemp -d)
-trap 'rm -rf "$osr" "$gsbin" "$ujbin"' EXIT
+pfbin=$(mktemp -d)
+trap 'rm -rf "$osr" "$gsbin" "$ujbin" "$pfbin"' EXIT
+for b in punktfunk-host punktfunk-web-server punktfunk-scripting; do
+    printf '#!/bin/sh\necho 0.0.0-test\n' > "$pfbin/$b"; chmod +x "$pfbin/$b"
+done
 
 # name os-release-body seat(desktop|headless) extra-PATH-dir expected-substring [installer args...]
 defaults_case() {
@@ -37,7 +43,7 @@ defaults_case() {
     esac
     # $_env is expanded on purpose: the seat pins must override a graphical session on the
     # machine running the gate. Quoted "$@" are extra installer flags (e.g. --no-punktfunk-group).
-    out=$(env $_env PATH="${extra:+$extra:}$PATH" \
+    out=$(env $_env PATH="${extra:+$extra:}$pfbin:$PATH" \
           PUNKTFUNK_INSTALL_OS_RELEASE="$osr/$name" \
           "$PF" --dry-run --yes --no-start "$@" 2>&1) || {
         echo "::error::punktfunk-setup --dry-run --yes --no-start on fake $name ($seat) exited $?"
@@ -155,7 +161,7 @@ defaults_case bazzite-linger "$BAZ" desktop '' '+ sudo loginctl enable-linger'
 # package-manager flags only; nothing may touch sudo itself.
 # The shim itself is exercised by installer-smoke, which runs as root with no sudo present.
 printf 'ID=debian\nVERSION_ID=13\n' > "$osr/sudoflags"
-out=$(PUNKTFUNK_INSTALL_OS_RELEASE="$osr/sudoflags" "$PF" --dry-run --yes --no-start 2>&1)
+out=$(PATH="$pfbin:$PATH" PUNKTFUNK_INSTALL_OS_RELEASE="$osr/sudoflags" "$PF" --dry-run --yes --no-start 2>&1)
 case "$out" in
     *'sudo -n '*)
         echo "::error::a flag was injected into a sudo line, which the root shim cannot run:"

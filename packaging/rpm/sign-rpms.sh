@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Detached-GPG-sign the built dist/*.rpm so the Gitea RPM registry can be served with gpgcheck=1.
 #
-# ACTIVE: RPM_GPG_PRIVATE_KEY is set as an ORG-level secret on `unom` (packages@unom.io,
-# AF245C506F4E4763 — the public half is committed at packaging/rpm/RPM-GPG-KEY-punktfunk and served
-# from the registry). Every published RPM carries its EdDSA header signature; the repo file in
-# README.md tells users gpgcheck=1, which only works because of that.
+# The signing key comes from the RPM_GPG_PRIVATE_KEY secret. This fork has none yet, and its
+# public half (packaging/rpm/RPM-GPG-KEY-punktfunk) is not in the tree; README.md has the runbook
+# that makes both. A signed RPM carries an EdDSA header signature, which a gpgcheck=1 repo file
+# needs.
 #
 # Without the key this exits 0 and leaves the RPMs unsigned, so a fork or a local build still works
 # — but NOT on a release. On refs/tags/v* a missing key is a hard failure: an org secret that got

@@ -1,28 +1,29 @@
 #!/bin/sh
 # punktfunk guided installer — PREVIEW.
 #
-#   curl -fsSL https://punktfunk.unom.io/install.sh | sh
-#   curl -fsSLO https://punktfunk.unom.io/install.sh && sh install.sh --help   # read it first
+#   cargo build --release -p punktfunk-setup
+#   PUNKTFUNK_SETUP_BIN=target/release/punktfunk-setup sh scripts/install.sh
 #
-# This is a stub. It checks that this is a Linux box it has a build for, downloads the
-# `punktfunk-setup` binary, verifies its sha256 and execs it with every argument and every
-# PUNKTFUNK_INSTALL_* variable untouched. The installer itself — distro detection, the guided
-# screen, the plan it runs, uninstall, channel switching — lives in that binary
-# (crates/install/punktfunk-setup, design/installer-v2.md).
+# This is a stub. It checks that this is a Linux box it has a build for, then execs a
+# `punktfunk-setup` binary with every argument and every PUNKTFUNK_INSTALL_* variable untouched.
+# The binary is PUNKTFUNK_SETUP_BIN, a local file, or a download from PUNKTFUNK_SETUP_REGISTRY,
+# checked against its sha256. No registry is published for this build, so there is no default.
+# The installer itself — distro detection, the guided screen, the plan it runs, uninstall,
+# channel switching — lives in that binary (crates/install/punktfunk-setup,
+# design/installer-v2.md).
 #
 # THE STUB NEVER GROWS A FLAG. The binary owns the interface, so a copy of this file cached
 # years ago keeps working against a newer installer. Anything that looks like a new option
 # belongs in the binary, which is what parses it.
 #
 # The sha256 comes from the same host as the binary, so it catches a truncated or corrupted
-# download, not a hostile registry: TLS to git.unom.io is the trust anchor — exactly the
-# posture `curl | sh` already had.
+# download, not a hostile registry: TLS to that registry is the trust anchor.
 #
 # Exit codes: 0 done · 1 unsupported system / a step failed · 2 bad usage.
 set -u
 
 DOCS=https://docs.punktfunk.unom.io/docs
-REGISTRY=${PUNKTFUNK_SETUP_REGISTRY:-https://git.unom.io/api/packages/unom/generic/punktfunk-setup}
+REGISTRY=${PUNKTFUNK_SETUP_REGISTRY:-}
 CHANNEL_DIR=${PUNKTFUNK_SETUP_VERSION:-latest}
 
 die() { printf '\033[1;31m  xx\033[0m %s\n' "$*" >&2; exit 1; }
@@ -36,11 +37,9 @@ for arg in "$@"; do
             cat <<EOF
 punktfunk guided installer (preview)
 
-  curl -fsSL https://punktfunk.unom.io/install.sh | sh
-
-This script downloads the punktfunk-setup binary, checks its sha256 and runs it. It takes no
-options of its own — everything you pass is handed to the installer untouched, as is every
-PUNKTFUNK_INSTALL_* variable in the environment.
+This script runs the punktfunk-setup binary. It takes no options of its own — everything you
+pass is handed to the installer untouched, as is every PUNKTFUNK_INSTALL_* variable in the
+environment.
 
   sh install.sh --yes            install unattended, taking every default
   sh install.sh --dry-run        print every command it would run, change nothing
@@ -51,9 +50,13 @@ Those four are the ones worth knowing before you start. The installer accepts mo
 and channel selection, the per-option environment twins, the Omarchy hand-off — and prints the
 authoritative list itself: $DOCS/install, or "punktfunk-setup --help" once it is on the box.
 
-Override the download for local work or CI:
+No installer download is published for this build. Build one and point the script at it:
 
-  PUNKTFUNK_SETUP_BIN=/path/to/punktfunk-setup sh install.sh …
+  cargo build --release -p punktfunk-setup
+  PUNKTFUNK_SETUP_BIN=target/release/punktfunk-setup sh install.sh …
+
+PUNKTFUNK_SETUP_REGISTRY=<url> downloads it from a registry of your own instead, checked
+against the sha256 published next to it.
 
 Docs: $DOCS/install
 EOF
@@ -83,6 +86,8 @@ if [ -n "${PUNKTFUNK_SETUP_BIN:-}" ]; then
     [ -x "$PUNKTFUNK_SETUP_BIN" ] || die "PUNKTFUNK_SETUP_BIN=$PUNKTFUNK_SETUP_BIN is not executable"
     exec "$PUNKTFUNK_SETUP_BIN" "$@"
 fi
+
+[ -n "$REGISTRY" ] || die "no installer download is published for this build — build it with 'cargo build --release -p punktfunk-setup', then run PUNKTFUNK_SETUP_BIN=target/release/punktfunk-setup sh install.sh"
 
 command -v curl >/dev/null 2>&1 || die "curl is required (install it with your package manager first)"
 

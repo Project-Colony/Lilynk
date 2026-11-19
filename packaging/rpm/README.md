@@ -38,9 +38,10 @@ carries it because CI builds the spec `--with web` (COPR's chroot has no `bun`).
 CI GPG-signs every RPM: `packaging/rpm/sign-rpms.sh` (run from `rpm.yml` between build and publish)
 signs with the dedicated EdDSA key **`packages@unom.io`** (`AF245C506F4E4763`) and self-verifies
 with `rpmkeys --checksig` before publishing, so an unsigned/bad build never reaches the registry.
-The public key is served from the registry (the `gpgkey=` URL above) and committed at
-`packaging/rpm/RPM-GPG-KEY-punktfunk`. (This is a GPG/OpenPGP key — a `step-ca`/X.509 cert can't
-sign RPMs; step-ca is only for registry/console TLS.)
+This fork has no RPM registry and no signing key yet, so `packaging/rpm/RPM-GPG-KEY-punktfunk`
+is not in the tree. The runbook below makes the key and commits its public half. (This is a
+GPG/OpenPGP key — a `step-ca`/X.509 cert can't sign RPMs; step-ca is only for registry/console
+TLS.)
 
 > `RPM_GPG_PRIVATE_KEY` is an **org-level** secret on `unom`, not a repo secret — it will not show
 > up under this repository's Actions secrets. Verify it end to end instead of by its absence there:
@@ -78,10 +79,10 @@ curl --user "<user>:<write:package-PAT>" --upload-file packaging/rpm/RPM-GPG-KEY
 Rotating the key means a new generic-registry version (bump `punktfunk-keys/1` → `/2` and the
 `gpgkey=` URL), since the registry rejects re-uploading an existing file.
 
-**This key also signs the Bazzite sysext feed**, and a third copy of its public half is baked into
-`packaging/bazzite/punktfunk-sysext.sh` (`FEED_KEY=`) — that script is bootstrapped by `curl` on
-machines that have nothing installed yet, so it can't fetch the key from the thing it's
-authenticating. A rotation must update **all three**: the CI secret, this directory's
+**This key also signs the Bazzite sysext feed**, and a third copy of its public half goes into
+`packaging/bazzite/punktfunk-sysext.sh` (`FEED_KEY=`, empty in this build, which has no feed) —
+that script runs on machines that have nothing installed yet, so it can't fetch the key from the
+thing it's authenticating. A rotation must update **all three**: the CI secret, this directory's
 `RPM-GPG-KEY-punktfunk` (+ its registry upload), and `FEED_KEY`. `publish-sysext-feed.sh` compares
 its signing key's fingerprint against `FEED_KEY` and refuses to sign on a mismatch, so forgetting
 the third one fails the publish instead of stranding every Bazzite box in front of a feed it

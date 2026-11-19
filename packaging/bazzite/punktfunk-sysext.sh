@@ -9,23 +9,23 @@
 # /usr/share/punktfunk/etc/, and the gamescope session drop-in is copied into the real /etc
 # here (a sysext can only carry /usr).
 #
-# Bootstrap (the script also ships inside the image as /usr/bin/punktfunk-sysext):
-#   curl -fsSLO https://git.unom.io/unom/punktfunk/raw/branch/main/packaging/bazzite/punktfunk-sysext.sh
-#   sudo bash punktfunk-sysext.sh install            # or: install --channel canary
+# Bootstrap, from a checkout (the script also ships inside the image as /usr/bin/punktfunk-sysext):
+#   sudo bash packaging/bazzite/punktfunk-sysext.sh install --from-file punktfunk-X-x86-64.raw
 # Thereafter:
-#   sudo punktfunk-sysext update | status | remove
+#   sudo punktfunk-sysext update --from-file X.raw | status | remove
 #
-# Feed: the Gitea generic package registry, one feed per Fedora major x channel
-# (…/punktfunk-sysext/f43/, f43-canary, f44, …), each a SHA256SUMS + SHA256SUMS.asc + versioned
-# .raw files — published by .gitea/workflows/rpm.yml from the same RPMs the (legacy) layering path
-# uses. The image pins ID=fedora + VERSION_ID, so after a major OS rebase the old image is refused
-# (not merged broken); punktfunk-sysext-rebase.service, which the image's post-install leaves in
-# /etc with a copy of this script, then runs `update` against the new release at boot.
+# This build has no feed: REGISTRY and FEED_KEY are empty, so install and update take
+# --from-file only (build-sysext.sh makes the image). A build with a feed sets both. A feed is one
+# per Fedora major x channel (…/f43/, f43-canary, f44, …), each a SHA256SUMS + SHA256SUMS.asc +
+# versioned .raw files. The image pins ID=fedora + VERSION_ID, so after a major OS rebase the old
+# image is refused (not merged broken); punktfunk-sysext-rebase.service, which the image's
+# post-install leaves in /etc with a copy of this script, then runs `update` at boot. Without a
+# feed that update stops, and `update --from-file` with an image for the new release replaces it.
 #
-# Trust: SHA256SUMS carries a detached OpenPGP signature (SHA256SUMS.asc) from packages@unom.io —
-# the same key that signs our RPMs — and this script verifies it before believing a word of the
-# manifest. The checksums alone could never have done that: they live on the same registry as the
-# images they describe, so anything able to replace an image could replace its checksum too. The
+# Trust: SHA256SUMS carries a detached OpenPGP signature (SHA256SUMS.asc) from the key in
+# FEED_KEY, and this script verifies it before believing a word of the manifest. The checksums
+# alone could never have done that: they live on the same registry as the images they describe,
+# so anything able to replace an image could replace its checksum too. The
 # public key is baked in below rather than fetched, because a key fetched from the thing you are
 # authenticating authenticates nothing.
 #   A signature alone still only says "we signed these bytes, once" — not which feed they were
@@ -37,7 +37,7 @@
 # happily. The Rust updater enforces the same two rules (pf-update-check: manifest.rs, floor.rs).
 set -euo pipefail
 
-REGISTRY="${PUNKTFUNK_SYSEXT_REGISTRY:-https://git.unom.io/api/packages/unom/generic/punktfunk-sysext}"
+REGISTRY="${PUNKTFUNK_SYSEXT_REGISTRY:-}"
 CONF=/etc/punktfunk-sysext.conf
 EXT_DIR=/var/lib/extensions
 IMG="$EXT_DIR/punktfunk.raw"
@@ -50,19 +50,9 @@ REBASE_UNIT=/etc/systemd/system/punktfunk-sysext-rebase.service
 ETC_SRC=/usr/share/punktfunk/etc
 PF_TMP="$(mktemp -d)"; trap 'rm -rf "$PF_TMP"' EXIT
 
-# The feed's signing key: punktfunk packages <packages@unom.io>, AF245C506F4E4763. Identical to
-# packaging/rpm/RPM-GPG-KEY-punktfunk — ONE key signs both the RPMs and this feed, so rotating it
-# means updating both copies (the rotation runbook in packaging/rpm/README.md says so, and
-# publish-sysext-feed.sh refuses to sign with any other key).
-FEED_KEY='-----BEGIN PGP PUBLIC KEY BLOCK-----
-
-mDMEai/2eRYJKwYBBAHaRw8BAQdAFxLGvh8wvzES9ylmxT4gy1i58EituotPyZwt
-z+y9rbC0JXB1bmt0ZnVuayBwYWNrYWdlcyA8cGFja2FnZXNAdW5vbS5pbz6IkAQT
-FgoAOBYhBDG6uOY81eoQ6beahK8kXFBvTkdjBQJqL/Z5AhsjBQsJCAcCBhUKCQgL
-AgQWAgMBAh4BAheAAAoJEK8kXFBvTkdj1QsBAM0sI/qUzGEbuC2Zrk36QQBrUu/9
-sy5uhYGZD6lMJ4uZAQC7W81H2gHlTDTA2Nq35HKW9IOU+Ll2c9fqa7fAIKf9Bg==
-=e4Az
------END PGP PUBLIC KEY BLOCK-----'
+# The feed's armored public signing key. Empty: this build has no feed. publish-sysext-feed.sh
+# refuses to sign with any key but the first one here.
+FEED_KEY=''
 
 usage() {
   sed -n 's/^#\( \|$\)//p' "$0" | sed -n '1,20p'
@@ -131,6 +121,10 @@ verify_manifest() {
 #   instead of dying on it; install/update turn that into a hard stop.
 fetch_manifest() {
   local feed sums sig want got serial floor
+  if [ -z "$REGISTRY" ] || [ -z "$FEED_KEY" ]; then
+    echo "this build has no sysext feed — install a local image: punktfunk-sysext install --from-file X.raw" >&2
+    return 1
+  fi
   feed="$(feed_url)"
   sums="$PF_TMP/SHA256SUMS"; sig="$PF_TMP/SHA256SUMS.asc"
   fetch -fsSL -o "$sums" "$feed/SHA256SUMS" || { echo "cannot reach the feed $feed" >&2; return 1; }
@@ -151,7 +145,7 @@ fetch_manifest() {
     return 1
   fi
   if ! verify_manifest "$sums" "$sig"; then
-    echo "!! the feed's SHA256SUMS is NOT signed by packages@unom.io (AF245C506F4E4763)." >&2
+    echo "!! the feed's SHA256SUMS is NOT signed by the key in FEED_KEY." >&2
     echo "!! Someone has tampered with the feed, or the signing key was rotated and this script is" >&2
     echo "!! older than the rotation. Do not install; re-download punktfunk-sysext.sh and retry." >&2
     return 1
@@ -425,7 +419,7 @@ cmd_update() {
 
 cmd_status() {
   echo "channel:    $(channel)"
-  echo "feed:       $(feed_url)"
+  echo "feed:       $([ -n "$REGISTRY" ] && feed_url || echo '(none in this build)')"
   echo "image:      $([ -f "$IMG" ] && du -h "$IMG" | cut -f1 || echo '(not installed)')"
   echo "merged:     $(merged && echo yes || echo no)"
   echo "installed:  $(installed_version || true)"

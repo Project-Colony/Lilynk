@@ -153,9 +153,10 @@ serves the `./site` tree (`repo/` + `unom.flatpakrepo` + `io.unom.punktfunk.flat
 `index.html`). The edge Caddy on home-reverse-proxy-1 fronts it at `https://flatpak.unom.io`.
 The CI deploy step **no-ops until the secret + infra exist**, so it won't redden builds mid-setup.
 
-**Signing key:** dedicated RSA-4096 key `unom Flatpak Repo <flatpak@unom.io>`. Public key committed
-at [`unom-flatpak.gpg`](unom-flatpak.gpg) (its base64 goes into the `.flatpakrepo`/`.flatpakref`
-`GPGKey=`); private key (ASCII-armored, then base64) lives only in the CI secret.
+**Signing key:** dedicated RSA-4096 key. This fork has no flatpak remote and no key yet, so the
+public key file `unom-flatpak.gpg` that `.gitea/workflows/flatpak.yml` reads is not in the tree.
+Its base64 goes into the `.flatpakrepo`/`.flatpakref` `GPGKey=`; the private key (ASCII-armored,
+then base64) lives only in the CI secret.
 
 One-time setup (mirrors any new unom DMZ service — see the deploy-infra notes):
 
@@ -172,8 +173,8 @@ One-time setup (mirrors any new unom DMZ service — see the deploy-infra notes)
 3. **Port allowlist:** add `3230` to `caddy_target_ports` in `unom/infra` (proxmox/unom-1) + terraform apply.
 4. **DNS:** ensure `flatpak.unom.io` resolves to the edge proxy.
 
-Re-signing/rotation: regenerate the key, replace `unom-flatpak.gpg` + the secret; every client must
-re-add the remote (the `GPGKey` changed), so rotate rarely.
+Re-signing/rotation: regenerate the key, replace the committed public key + the secret; every
+client must re-add the remote (the `GPGKey` changed), so rotate rarely.
 
 ## Alternatives considered
 

@@ -174,7 +174,7 @@
       "docs": "/docs/steamos-host",
       "floor": "SteamOS 3",
       "install": [
-        "git clone --branch stable https://git.unom.io/unom/punktfunk ~/punktfunk",
+        "git clone --branch stable https://github.com/Project-Colony/Lilynk ~/punktfunk",
         "bash ~/punktfunk/scripts/steamdeck/install.sh"
       ]
     },

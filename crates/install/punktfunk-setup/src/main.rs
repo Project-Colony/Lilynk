@@ -279,6 +279,7 @@ fn run() -> Result<(), ExitCode> {
         report::detected(ui, &facts);
     }
     gate_floor(ui, &facts, choices.action, interactive)?;
+    gate_host_punt(ui, &facts, &choices)?;
     match &tui {
         Some(tui) => {
             let drawn = tui.intro(
@@ -435,17 +436,24 @@ fn interactive_choices(
     Ok(choices)
 }
 
-/// A distro with no punktfunk repo stops a host install only: a client install takes the
-/// flatpak line. Checked after the screen, because switching to client-only is how a user
-/// gets past it.
+/// This build has no package repo or flatpak remote, so an install stops before it would add
+/// one: a host install on `host_punt`, a client install wherever the client is not already in
+/// place as a flatpak. A native client always comes from the family's repo. Checked before
+/// the screen and again after it, because the screen can change the components.
 fn gate_host_punt(ui: &dyn Reporter, facts: &Facts, choices: &Choices) -> Result<(), ExitCode> {
-    match &facts.host_punt {
-        Some(punt) if choices.action != Action::Uninstall && choices.components.host => {
-            ui.die(&punt.message());
-            Err(ExitCode::FAILURE)
-        }
-        _ => Ok(()),
+    if choices.action == Action::Uninstall {
+        return Ok(());
     }
+    let client_adds_feed = choices.components.client
+        && (facts.family.has_native_client()
+            || !(facts.has_flatpak_client || facts.legacy_flatpak_client));
+    let message = match &facts.host_punt {
+        Some(punt) if choices.components.host => punt.message(),
+        _ if client_adds_feed => Punt::Unsupported(facts.os.pretty.clone()).message(),
+        _ => return Ok(()),
+    };
+    ui.die(&message);
+    Err(ExitCode::FAILURE)
 }
 
 fn preflight(env: &Env, paths: &BasePaths, runner: &mut SystemRunner) -> Result<(), String> {
@@ -554,7 +562,7 @@ fn ask(interactive: bool, question: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use punktfunk_setup::facts::{Channel, FloorCause};
+    use punktfunk_setup::facts::{Channel, Family, FloorCause};
 
     fn args(list: &[&str]) -> Vec<String> {
         list.iter().map(|s| (*s).to_string()).collect()
@@ -683,12 +691,15 @@ mod tests {
         );
     }
 
-    /// A distro with no host repo stops only a host install.
+    /// The host punt stops a host install. A client already in place as a flatpak adds no
+    /// remote, so a client install there goes through.
     #[test]
     fn the_host_punt_leaves_a_client_install_through() {
         let (ui, _buf) = Plain::capture();
         let mut facts = arch();
+        facts.family = Family::Flatpak;
         facts.host_punt = Some(Punt::Unsupported("Void Linux".into()));
+        facts.has_flatpak_client = true;
         let mut choices = Choices::derive(&facts, &Pins::default());
         choices.components.host = true;
         assert_eq!(
@@ -697,6 +708,41 @@ mod tests {
         );
         choices.components.host = false;
         choices.components.client = true;
+        assert_eq!(gate_host_punt(&ui, &facts, &choices), Ok(()));
+    }
+
+    /// A client install that would add a repo or a flatpak remote stops on every family, and
+    /// an uninstall never does.
+    #[test]
+    fn a_client_install_that_adds_a_feed_stops() {
+        let (ui, buf) = Plain::capture();
+        let mut facts = arch();
+        facts.host_punt = None;
+        let mut choices = Choices::derive(&facts, &Pins::default());
+        choices.components.host = false;
+        choices.components.client = true;
+        for family in [
+            Family::Pacman,
+            Family::Sysext,
+            Family::Steamos,
+            Family::Flatpak,
+        ] {
+            facts.family = family;
+            assert_eq!(
+                gate_host_punt(&ui, &facts, &choices),
+                Err(ExitCode::FAILURE),
+                "{family:?}"
+            );
+        }
+        assert!(buf.borrow().contains("No package repo for"));
+        // A native client comes from the repo even when a flatpak one is there.
+        facts.family = Family::Apt;
+        facts.has_flatpak_client = true;
+        assert_eq!(
+            gate_host_punt(&ui, &facts, &choices),
+            Err(ExitCode::FAILURE)
+        );
+        choices.action = Action::Uninstall;
         assert_eq!(gate_host_punt(&ui, &facts, &choices), Ok(()));
     }
 

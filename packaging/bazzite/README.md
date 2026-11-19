@@ -8,11 +8,10 @@ is the docs' job: follow **[docs.punktfunk.unom.io/docs/bazzite](https://docs.pu
 service definitions). Nothing here duplicates those pages. For the higher-level packaging
 rationale ("why not Flatpak", the build), see [`../README.md`](../README.md).
 
-> ⚠️ **COPR note (Path C only).** The legacy layering path's commands reference a COPR project
-> named `enricobuehler/punktfunk` that is operator-run and may not be published (see
-> `packaging/copr/README.md`); layer from the **Gitea RPM registry** instead (`../rpm/README.md`,
-> the repo file `https://git.unom.io/api/packages/unom/rpm/bazzite.repo`) — it's what CI
-> actually publishes to. Paths A (sysext) and B (bootc) don't involve the COPR at all.
+> **No package feed in this fork.** There is no sysext feed, RPM registry or COPR for this
+> build yet. Path A installs an image you build with `--from-file`, Path B bakes RPMs you build
+> into the image, and Path C's COPR commands below name the upstream project's COPR, which this
+> fork does not publish to.
 
 ## 1. Choose an install path
 
@@ -20,9 +19,9 @@ There are three paths on Bazzite, driven by different files in `packaging/`:
 
 | Path | Driven by | What it does | Best for |
 |---|---|---|---|
-| **A — systemd-sysext** ✅ recommended | `packaging/bazzite/punktfunk-sysext.sh` + `build-sysext.sh` (published by `.gitea/workflows/rpm.yml`) | Overlays the host onto `/usr` as a system extension — no layering, no reboot, one-command updates | Everyone; the default |
+| **A — systemd-sysext** ✅ recommended | `packaging/bazzite/punktfunk-sysext.sh` + `build-sysext.sh` | Overlays the host onto `/usr` as a system extension — no layering, no reboot, one-command updates | Everyone; the default |
 | **B — bootc / OCI image** | `packaging/bootc/Containerfile` | Bakes punktfunk into a `FROM bazzite-nvidia` image once; you `bootc switch` any number of hosts onto it | Fleets, reproducible appliances, no per-host drift |
-| **C — rpm-ostree layering** (legacy) | `packaging/rpm/` + the Gitea RPM registry | Layers the `punktfunk` RPM onto your deployment with `rpm-ostree install` | Only if you specifically want the RPM database to own the files |
+| **C — rpm-ostree layering** (legacy) | `packaging/rpm/` | Layers the `punktfunk` RPM onto your deployment with `rpm-ostree install` | Only if you specifically want the RPM database to own the files |
 
 **Why A over C:** the Bazzite docs treat layering as a last resort — every layered package makes
 every OS update slower and can **block upgrades entirely** until removed. A sysext never enters an
@@ -36,11 +35,14 @@ Install, day-2 commands, channel switching, rollback, feed-signature refusals an
 major-rebase behavior are all on the [docs page](https://docs.punktfunk.unom.io/docs/bazzite) —
 that's the walkthrough to hand a user. Packager-side facts:
 
-- CI (`.gitea/workflows/rpm.yml`) builds the image per Fedora major and publishes it to the feed
-  `…/packages/unom/generic/punktfunk-sysext/f<ver>[-canary]/` — `SHA256SUMS` plus a detached
-  OpenPGP signature from `packages@unom.io` (`AF245C506F4E4763`, the RPM signing key). The public
-  key is baked into `punktfunk-sysext.sh`; the script refuses a feed it can't verify
-  (`PUNKTFUNK_SYSEXT_ALLOW_UNSIGNED=1` is the documented escape hatch for pre-signing feeds).
+- This build has no feed. `REGISTRY` and `FEED_KEY` in `punktfunk-sysext.sh` are empty, so
+  `install` and `update` take `--from-file X.raw` only, with an image from `build-sysext.sh`.
+  `status` prints `feed: (none in this build)`, and a feed command stops with a message that
+  names `--from-file`. The rest of this list describes a feed for a build that sets both.
+- A feed is `…/punktfunk-sysext/f<ver>[-canary]/`: `SHA256SUMS` plus a detached OpenPGP
+  signature from the RPM signing key. That key's public half is `FEED_KEY`; the script refuses a
+  feed it can't verify (`PUNKTFUNK_SYSEXT_ALLOW_UNSIGNED=1` is the escape hatch for pre-signing
+  feeds).
 - `SHA256SUMS` opens with `# FEED <name>` and `# SERIAL <unix-ts>` **inside the signed bytes**, so
   the signature says which feed and which publish it covers — a write:package token without the
   signing key can otherwise copy a canary manifest into the stable path, or put last month's back,
@@ -66,24 +68,25 @@ that's the walkthrough to hand a user. Packager-side facts:
 
 The image is built **off-host** (on any machine with `podman`) from
 `packaging/bootc/Containerfile`, which bases on `ghcr.io/ublue-os/bazzite-nvidia:stable`
-(override with `--build-arg BASE_IMAGE=…`), enables RPM Fusion free + nonfree, adds the Gitea RPM
-repo (`--build-arg PUNKTFUNK_RPM_GROUP=…`, default `bazzite`), and installs the host **and the web
-console** (`punktfunk punktfunk-web`). It uses the Gitea registry rather than the COPR specifically
-because the registry carries `punktfunk-web` (COPR's mock chroot can't build it — no `bun`).
+(override with `--build-arg BASE_IMAGE=…`), enables RPM Fusion free + nonfree, and installs the
+host **and the web console** from RPMs in `packaging/bootc/rpms/`. No punktfunk repo is added.
+Build the RPMs with `PF_WITH_WEB=1 packaging/rpm/build-rpm.sh` in the Fedora 43 builder
+(`../rpm/README.md`) and copy what it writes to `dist/`; the image needs `punktfunk`,
+`punktfunk-web` and `punktfunk-bun`.
 
 ```sh
-# Build + push (run from the repo root, on your builder machine):
-podman build -t ghcr.io/<you>/bazzite-punktfunk -f packaging/bootc/Containerfile .
+# Build + push (run from the repo root, on your builder machine). The context is
+# packaging/bootc: the root .dockerignore keeps packaging/ out of a root-context build.
+mkdir -p packaging/bootc/rpms && cp dist/punktfunk-*.rpm packaging/bootc/rpms/
+podman build -t ghcr.io/<you>/bazzite-punktfunk packaging/bootc
 podman push  ghcr.io/<you>/bazzite-punktfunk
 
 # On each target Bazzite host:
 sudo bootc switch ghcr.io/<you>/bazzite-punktfunk && systemctl reboot
 ```
 
-> ⚠️ The image installs from the **Gitea RPM registry** (group `bazzite`), so **Path B depends on
-> that registry being populated** — CI (`.gitea/workflows/rpm.yml`) publishes `punktfunk` +
-> `punktfunk-web` on every push to `main`. Packages are unsigned with GPG-signed metadata
-> (`repo_gpgcheck=1`), matching `packaging/rpm/README.md`.
+> The image has no repo to update from: a new punktfunk build is a new image. Rebuild with newer
+> RPMs, push, and `bootc upgrade` the hosts.
 
 ### Path C — rpm-ostree layering (legacy)
 

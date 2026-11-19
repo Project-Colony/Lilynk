@@ -44,7 +44,7 @@ HTTPS — HTTP/1.1 over TLS — via `Bun.serve`).
 A stock COPR build produces only `punktfunk` + `punktfunk-client`.
 
 Two ways to get the console:
-- **Recommended:** install it from the RPM registry ([`../rpm/README.md`](../rpm/README.md)), whose
-  CI builder image has `bun` and builds `--with web`. This is what `bootc/Containerfile` does.
+- **Recommended:** build the RPMs `--with web` in an image that has `bun`
+  ([`../rpm/README.md`](../rpm/README.md)) and install those files, as `bootc/Containerfile` does.
 - **In COPR:** add `bun` to the chroot (a custom mock config / external repo) and set the build
   option `--with web` on the project, then `dnf install punktfunk-web`.

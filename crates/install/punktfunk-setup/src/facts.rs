@@ -306,11 +306,23 @@ impl Facts {
             .map(str::to_string)
             .collect::<Vec<_>>();
 
-        let missing = BINARIES
+        let missing: Vec<String> = BINARIES
             .iter()
             .filter(|(bin, _)| !run.which(bin))
             .map(|(_, label)| (*label).to_string())
             .collect();
+        // A sysext reports a channel whenever the host is on PATH, and this build has no feed
+        // to refresh it from, so an installed one is wiring only.
+        let current_channel = match family {
+            Family::Sysext => None,
+            _ => crate::platform::backend(family).current_channel(paths, run),
+        };
+        // No package repo of our own: past SteamOS's source build, only a box with every
+        // binary on PATH and no repo configured goes on, to the wiring-only path.
+        let host_punt = host_punt.or_else(|| {
+            (family != Family::Steamos && (!missing.is_empty() || current_channel.is_some()))
+                .then(|| Punt::Unsupported(os.pretty.clone()))
+        });
 
         Ok(Facts {
             family,
@@ -329,7 +341,7 @@ impl Facts {
             graphical_seat: graphical_seat(env),
             desktop_sessions: desktop_sessions(paths),
             sunshine_active: sunshine_active(run),
-            current_channel: crate::platform::backend(family).current_channel(paths, run),
+            current_channel,
             installed_pf: crate::platform::backend(family).installed_pf(run),
             missing,
             host_version: run.first_line("punktfunk-host", &["--version"]),
@@ -718,6 +730,40 @@ mod tests {
         let (group, floor) = floors(&os("fedora", "", "46"), Family::Dnf);
         assert!(group.is_none());
         assert!(matches!(floor, Some(Floor::Die(_))));
+    }
+
+    // Only the wiring-only path and SteamOS's source build get past the probe: a fresh box, or
+    // one with a repo configured, would need a package feed this build does not have.
+    #[test]
+    fn the_host_punts_unless_every_binary_is_there_and_no_repo_is() {
+        let root = tempfile::tempdir().unwrap();
+        let paths = BasePaths::rooted(root.path());
+        let env = Env::default();
+        let os_release = |text: &str| std::fs::write(&paths.os_release, text).unwrap();
+        let punted = |run: &FakeRunner| Facts::probe(&paths, run, &env).unwrap().host_punt;
+        std::fs::create_dir_all(paths.etc("apt/sources.list.d")).unwrap();
+        let fresh = FakeRunner::new();
+        let installed = BINARIES
+            .iter()
+            .fold(FakeRunner::new(), |r, (bin, _)| r.with_path(bin));
+
+        os_release("ID=debian\nVERSION_ID=13\n");
+        assert!(punted(&fresh).is_some());
+        assert!(punted(&installed).is_none());
+        std::fs::write(
+            paths.etc("apt/sources.list.d/punktfunk.list"),
+            "deb x stable main\n",
+        )
+        .unwrap();
+        assert!(punted(&installed).is_some());
+
+        // A sysext put in place with `--from-file` reads as installed, not as a feed.
+        os_release("ID=bazzite\nID_LIKE=fedora\nVERSION_ID=43\n");
+        assert!(punted(&fresh).is_some());
+        assert!(punted(&installed).is_none());
+
+        os_release("ID=steamos\nID_LIKE=arch\n");
+        assert!(punted(&fresh).is_none());
     }
 
     #[test]

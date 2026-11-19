@@ -6,7 +6,7 @@
 # runs in a bun container with no cargo, and this needs a built installer.
 #
 # Two test seams: PUNKTFUNK_INSTALL_OS_RELEASE fakes the distro, PUNKTFUNK_INSTALL_ETC fakes the
-# repo config.
+# repo config. Stub binaries on PATH fake an installed host.
 #
 # Exit: 0 all cases held · 1 a case drifted · 2 the installer could not be built.
 set -u
@@ -26,31 +26,42 @@ sw=$(mktemp -d)
 trap 'rm -rf "$osr" "$sw"' EXIT
 
 # ------------------------------------------------------------------ the detection matrix
-# Faked os-release files through the real installer, nothing executed: each family must be
-# detected and print its own package-manager line, both for the install and for --uninstall;
-# the unsupported ones must stop with their pointer. A fix to the installer adds its case here.
+# Faked os-release files through the real installer, nothing executed. This build has no package
+# repo, so a fresh install names the family it detected, then stops with the build-from-source
+# pointer; --uninstall still prints the family's removal. No output ever names an upstream feed.
+# A fix to the installer adds its case here.
+upstream_feed() {   # output -> 0 when it names an upstream package host
+    case "$1" in *git.unom.io*|*flatpak.unom.io*) return 0 ;; esac
+    return 1
+}
 installer_case() {   # name os-release-body expected-substring [extra args...]
     name=$1; printf '%b' "$2" > "$osr/$name"; want=$3; shift 3
-    out=$(PUNKTFUNK_INSTALL_OS_RELEASE="$osr/$name" "$PF" --dry-run --yes --no-start "$@" 2>&1)
+    out=$(PATH="${pfpath:+$pfpath:}$PATH" PUNKTFUNK_INSTALL_OS_RELEASE="$osr/$name" \
+          "$PF" --dry-run --yes --no-start "$@" 2>&1)
     case "$out" in *"$want"*) ;; *)
         echo "::error::punktfunk-setup --dry-run $* on a fake $name os-release did not print '$want':"
         printf '%s\n' "$out" | sed 's/^/    /'
         fail=1 ;;
     esac
+    if upstream_feed "$out"; then
+        echo "::error::punktfunk-setup --dry-run $* on a fake $name os-release names an upstream feed:"
+        printf '%s\n' "$out" | grep -E 'git\.unom\.io|flatpak\.unom\.io' | sed 's/^/    /'
+        fail=1
+    fi
 }
-installer_case debian   'ID=debian\nVERSION_ID=13\n'                    'sudo apt install -y punktfunk-host punktfunk-web punktfunk-scripting'
-installer_case ubuntu   'ID=ubuntu\nID_LIKE=debian\nVERSION_ID=26.04\n'  'sudo apt install -y punktfunk-host punktfunk-web punktfunk-scripting'
+pfpath=
+NOREPO="No package repo for"
+installer_case debian   'ID=debian\nVERSION_ID=13\n'                    'Detected debian → apt'
+installer_case debian2  'ID=debian\nVERSION_ID=13\n'                    "$NOREPO 'debian' yet"
+installer_case ubuntu   'ID=ubuntu\nID_LIKE=debian\nVERSION_ID=26.04\n'  'Detected ubuntu → apt'
 installer_case mint22   'ID=linuxmint\nID_LIKE="ubuntu debian"\nVERSION_ID=22.1\n' "can't host"
-installer_case fedora   'ID=fedora\nVERSION_ID=44\n'                    'sudo dnf install -y punktfunk punktfunk-web punktfunk-scripting'
-installer_case fedora43 'ID=fedora\nVERSION_ID=43\n'                    '/rpm/bazzite'
-installer_case arch     'ID=arch\n'                                    'sudo pacman -Syu --noconfirm punktfunk-host punktfunk-web punktfunk-scripting'
-installer_case cachyos  'ID=cachyos\nID_LIKE="arch"\n'                  'sudo pacman -Syu --noconfirm punktfunk-host punktfunk-web punktfunk-scripting'
-# Omarchy: arch family, but its libalpm guard kills any -S+-u transaction, so the install must
-# split into -Sy then -S (and --yes still has to reach that -S), and the run must hand off to
-# `punktfunk-omarchy setup` rather than do a second, weaker version of the same wiring.
-installer_case omarchy  'ID=omarchy\nID_LIKE=arch\nVERSION_ID=4.0.1\n'    'sudo pacman -S --noconfirm punktfunk-host punktfunk-web punktfunk-scripting'
-installer_case omarchy2 'ID=omarchy\nID_LIKE=arch\nVERSION_ID=4.0.1\n'    'punktfunk-omarchy setup'
-installer_case bazzite  'ID=bazzite\nID_LIKE="fedora"\nVERSION_ID=43\n' 'punktfunk-sysext.sh install'
+installer_case fedora   'ID=fedora\nVERSION_ID=44\n'                    'Detected fedora → dnf'
+installer_case fedora2  'ID=fedora\nVERSION_ID=44\n'                    "$NOREPO 'fedora' yet"
+installer_case arch     'ID=arch\n'                                    'Detected arch → pacman'
+installer_case cachyos  'ID=cachyos\nID_LIKE="arch"\n'                  'Detected cachyos → pacman'
+installer_case omarchy  'ID=omarchy\nID_LIKE=arch\nVERSION_ID=4.0.1\n'    'Detected omarchy → pacman'
+installer_case bazzite  'ID=bazzite\nID_LIKE="fedora"\nVERSION_ID=43\n' 'Detected bazzite → sysext'
+installer_case bazzite2 'ID=bazzite\nID_LIKE="fedora"\nVERSION_ID=43\n' "$NOREPO 'bazzite' yet"
 installer_case nixos    'ID=nixos\n'                                   'docs/nixos'
 # SteamOS says ID_LIKE=arch, so it has to beat the arch test or a Deck gets pacman commands its
 # read-only /usr cannot run. The install is the on-device build, and a re-run must survive the
@@ -62,9 +73,9 @@ installer_case steamos3 'ID=steamos\nID_LIKE=arch\n'                    'git clo
 installer_case steamos-canary 'ID=steamos\nID_LIKE=arch\n'              'git clone --branch main' --channel canary
 installer_case holoiso  'ID=holoiso\nID_LIKE="steamos arch"\n'          'scripts/steamdeck/install.sh'
 installer_case gentoo   'ID=gentoo\n'                                  'build-from-source'
-# A distro with no host repo is a dead end for the HOST only: --client takes the flatpak line
-# instead of dying (design/installer-v2.md §5).
-installer_case gentoo-client 'ID=gentoo\n'  'flatpak install --user' --client
+# A client install would add the flatpak remote, or the family's repo, so it stops too.
+installer_case gentoo-client 'ID=gentoo\n'                             "$NOREPO 'gentoo' yet" --client
+installer_case arch-client   'ID=arch\n'                               "$NOREPO 'arch' yet" --client
 installer_case debian-rm 'ID=debian\nVERSION_ID=13\n'                   'sources.list.d/punktfunk.list' --uninstall
 installer_case fedora-rm 'ID=fedora\nVERSION_ID=44\n'                   'yum.repos.d/punktfunk.repo' --uninstall
 installer_case arch-rm   'ID=arch\n'                                   '/etc/pacman.conf' --uninstall
@@ -75,16 +86,23 @@ installer_case steamos-rm 'ID=steamos\nID_LIKE=arch\n'                  'no unin
 
 PUNKTFUNK_SETUP_BIN="$PF" sh scripts/ci/check-install-defaults.sh || fail=1
 
-# ------------------------------------------------------------------- channel switching
-# A box that already has all three binaries, on a repo config naming one channel, told --channel
-# <the other>: it must rewrite the repo AND re-resolve in a direction the package manager would
-# otherwise refuse (canary is always a minor ahead of stable, so canary->stable is a downgrade).
-# Two fakes make that reachable under --dry-run: stub binaries on PATH for the "already installed"
-# probe, and PUNKTFUNK_INSTALL_ETC pointing at the repo config the box is supposedly on.
+# --------------------------------------------------------------- an installed box, wiring only
+# All three binaries on PATH and no repo config: the box goes on to the setup phases and installs
+# nothing. A repo config left on the box (an upstream install) stops the run instead, so no
+# channel switch rewrites a repo. Two fakes make this reachable under --dry-run: stub binaries on
+# PATH, and PUNKTFUNK_INSTALL_ETC pointing at the repo config the box is supposedly on.
 mkdir -p "$sw/bin"
 for b in punktfunk-host punktfunk-web-server punktfunk-scripting; do
     printf '#!/bin/sh\necho 0.0.0-test\n' > "$sw/bin/$b"; chmod +x "$sw/bin/$b"
 done
+pfpath="$sw/bin"
+WIRED="skipping the install"
+installer_case debian-wired 'ID=debian\nVERSION_ID=13\n'                 "$WIRED"
+installer_case arch-wired   'ID=arch\n'                                "$WIRED"
+# Omarchy: the run hands off to `punktfunk-omarchy setup` rather than do a second, weaker version
+# of the same wiring.
+installer_case omarchy-wired 'ID=omarchy\nID_LIKE=arch\nVERSION_ID=4.0.1\n' 'punktfunk-omarchy setup'
+pfpath=
 switch_case() {   # name os-release-body config-path config-body expected-substring [extra args...]
     name=$1; printf '%b' "$2" > "$osr/$name"
     mkdir -p "$sw/$name/$(dirname "$3")"; printf '%b' "$4" > "$sw/$name/$3"; want=$5; shift 5
@@ -95,33 +113,20 @@ switch_case() {   # name os-release-body config-path config-body expected-substr
         printf '%s\n' "$out" | sed 's/^/    /'
         fail=1 ;;
     esac
+    if upstream_feed "$out"; then
+        echo "::error::punktfunk-setup --dry-run $* on an installed $name box names an upstream feed:"
+        printf '%s\n' "$out" | grep -E 'git\.unom\.io|flatpak\.unom\.io' | sed 's/^/    /'
+        fail=1
+    fi
 }
-APT_LIST=etc/apt/sources.list.d/punktfunk.list
 DEB13='ID=debian\nVERSION_ID=13\n'
-switch_case apt-up   "$DEB13" "$APT_LIST" 'deb [x] https://git.unom.io/api/packages/unom/debian stable main\n' \
-    'debian canary main' --channel canary
-switch_case apt-down "$DEB13" "$APT_LIST" 'deb [x] https://git.unom.io/api/packages/unom/debian canary main\n' \
-    '--allow-downgrades' --channel stable
-# A canary box missing one of the three packages, re-run with no --channel at all: the missing
-# ones must come from CANARY. Letting the flag's stable default win there rewrites the repo and
-# drags the whole box back a channel without ever saying so.
-mkdir -p "$sw/partial/bin" "$sw/partial/$(dirname "$APT_LIST")"
-printf '#!/bin/sh\necho 0.0.0-test\n' > "$sw/partial/bin/punktfunk-host"
-chmod +x "$sw/partial/bin/punktfunk-host"
-printf 'deb [x] https://git.unom.io/api/packages/unom/debian canary main\n' > "$sw/partial/$APT_LIST"
-printf '%b' "$DEB13" > "$osr/apt-partial"
-out=$(PATH="$sw/partial/bin:$PATH" PUNKTFUNK_INSTALL_OS_RELEASE="$osr/apt-partial" \
-      PUNKTFUNK_INSTALL_ETC="$sw/partial" "$PF" --dry-run --yes --no-start 2>&1)
-case "$out" in *'debian canary main'*) ;; *)
-    echo "::error::punktfunk-setup with no --channel, on a canary box missing packages, did not stay on canary:"
-    printf '%s\n' "$out" | sed 's/^/    /'
-    fail=1 ;;
-esac
-switch_case dnf-up   'ID=fedora\nVERSION_ID=44\n' etc/yum.repos.d/punktfunk.repo \
-    'baseurl=https://git.unom.io/api/packages/unom/rpm/fedora-44\n' 'distro-sync' --channel canary
-switch_case pac-down 'ID=arch\n' etc/pacman.conf '[punktfunk-canary]\nServer = x\n' \
-    "/^Server = /d' /etc/pacman.conf" --channel stable
-switch_case sys-down 'ID=bazzite\nID_LIKE="fedora"\nVERSION_ID=43\n' etc/punktfunk-sysext.conf 'CHANNEL=canary\n' \
-    'punktfunk-sysext.sh install --channel stable' --channel stable
+switch_case apt-repo "$DEB13" etc/apt/sources.list.d/punktfunk.list \
+    'deb [x] https://git.unom.io/api/packages/unom/debian stable main\n' "$NOREPO 'debian' yet" --channel canary
+switch_case dnf-repo 'ID=fedora\nVERSION_ID=44\n' etc/yum.repos.d/punktfunk.repo \
+    'baseurl=https://git.unom.io/api/packages/unom/rpm/fedora-44\n' "$NOREPO 'fedora' yet" --channel canary
+switch_case pac-repo 'ID=arch\n' etc/pacman.conf '[punktfunk-canary]\nServer = x\n' "$NOREPO 'arch' yet" --channel stable
+# A sysext has no repo file: an installed one, even from a feed's channel, is wiring only.
+switch_case sys-wired 'ID=bazzite\nID_LIKE="fedora"\nVERSION_ID=43\n' etc/punktfunk-sysext.conf 'CHANNEL=canary\n' \
+    "$WIRED" --channel stable
 
 exit $fail
