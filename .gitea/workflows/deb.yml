@@ -105,6 +105,7 @@ on:
       - 'packaging/linux/icons/**'
       - 'packaging/bazzite/host.env'
       - 'packaging/kde/host.env'
+      - 'LICENSE'
       - 'LICENSE-MIT'
       - 'LICENSE-APACHE'
       - 'README.md'

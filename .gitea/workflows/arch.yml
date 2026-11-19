@@ -75,6 +75,7 @@ on:
       - 'packaging/bazzite/host.env'
       - 'packaging/bazzite/gamescope-headless-session'
       - 'packaging/kde/host.env'
+      - 'LICENSE'
       - 'LICENSE-MIT'
       - 'LICENSE-APACHE'
       - 'README.md'

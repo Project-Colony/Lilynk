@@ -84,6 +84,7 @@ on:
       - 'packaging/linux/door-*'
       - 'packaging/linux/*.xml'
       - 'packaging/linux/icons/**'
+      - 'LICENSE'
       - 'LICENSE-MIT'
       - 'LICENSE-APACHE'
       - 'README.md'
