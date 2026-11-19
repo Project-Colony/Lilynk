@@ -17,7 +17,7 @@ description = "Which Windows input APIs can see this gamepad? XInput / WGI Gamep
 version = "0.26.0"
 edition = "2024"
 rust-version = "1.96.0"
-license = "MIT OR Apache-2.0"
+license = "GPL-3.0-or-later"
 publish = false
 
 [target.'cfg(windows)'.dependencies]

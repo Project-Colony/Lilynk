@@ -105,7 +105,7 @@ ndk = { path = "clients/android/native/vendor/ndk" }
 version = "0.47.0"
 edition = "2024"
 rust-version = "1.85"
-license = "MIT OR Apache-2.0"
+license = "GPL-3.0-or-later"
 authors = ["unom"]
 repository = "https://git.unom.io/unom/punktfunk"
 

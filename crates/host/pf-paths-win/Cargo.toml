@@ -5,7 +5,7 @@
 name = "pf-paths-win"
 version.workspace = true
 edition.workspace = true
-license = "MIT OR Apache-2.0"
+license = "GPL-3.0-or-later"
 description = "Windows file-owner and DACL checks: is this admin-owned, is it mine, may anyone else write here."
 publish = false
 

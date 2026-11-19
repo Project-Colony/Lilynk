@@ -16,7 +16,7 @@ name = "punktfunk-encode-worker"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
-license = "MIT OR Apache-2.0"
+license = "GPL-3.0-or-later"
 description = "punktfunk encode worker: owns the priority-elevated Vulkan devices (PyroWave, NVENC convert) so the host never carries a capability."
 publish = false
 

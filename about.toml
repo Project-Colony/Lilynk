@@ -4,9 +4,10 @@
 #   cargo about generate about.hbs > THIRD-PARTY-NOTICES.txt   # (or use scripts/gen-third-party-notices.sh)
 #
 # `accepted` is the allow-list of SPDX licenses permitted in the dependency tree. CI fails if a crate
-# carries anything not listed here — the regression guard against a copyleft dependency silently
-# entering the linked set. All entries
-# below are permissive / attribution-only; deliberately NO GPL/LGPL/AGPL/MPL-link/SSPL/EPL.
+# carries anything not listed here, so a new license cannot enter the linked set unreviewed.
+# GPL-3.0-or-later is listed for Lilynk's own crates. Every other entry is permissive or
+# attribution-only. A GPL-3.0-compatible copyleft dependency (LGPL, MPL-2.0, GPL-3.0) is allowed by
+# the project license, but its SPDX id goes in this list only after a review.
 #
 # ⚠ KNOW THE LIMIT OF THIS GATE. cargo-about walks the CARGO graph, so it sees CRATES. A native
 # library linked through a permissively-licensed `-sys` crate is INVISIBLE to it, licence and all:
@@ -19,6 +20,7 @@
 # which is what produced the committed baseline when cargo-about is unavailable offline.
 
 accepted = [
+    "GPL-3.0-or-later",
     "MIT",
     "MIT-0",
     "Apache-2.0",

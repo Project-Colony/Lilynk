@@ -11,7 +11,7 @@ name = "pf-driver-proto"
 version = "0.0.1"
 edition.workspace = true
 rust-version.workspace = true
-license = "MIT OR Apache-2.0"
+license = "GPL-3.0-or-later"
 description = "Shared host<->driver binary contracts for the punktfunk Windows drivers: virtual display (control IOCTLs, encode transport, cursor), gamepads and mouse."
 publish = false
 

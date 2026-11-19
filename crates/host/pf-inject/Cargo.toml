@@ -9,7 +9,7 @@ name = "pf-inject"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
-license = "MIT OR Apache-2.0"
+license = "GPL-3.0-or-later"
 description = "punktfunk host input injection: per-OS keyboard/mouse injectors + the virtual-gamepad HID backends behind one InputInjector trait."
 publish = false
 

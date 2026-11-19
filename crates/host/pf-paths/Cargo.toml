@@ -5,7 +5,7 @@
 name = "pf-paths"
 version.workspace = true
 edition.workspace = true
-license = "MIT OR Apache-2.0"
+license = "GPL-3.0-or-later"
 description = "Host config-directory resolution + owner-private file/dir creation (0600/0700 or SYSTEM/Admins DACL)."
 publish = false
 

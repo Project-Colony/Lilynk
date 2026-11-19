@@ -7,7 +7,7 @@ name = "pf-encode-session"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
-license = "MIT OR Apache-2.0"
+license = "GPL-3.0-or-later"
 description = "punktfunk Windows encode session: pool slot to encoder to AU section, shared by the display driver and the capture worker."
 publish = false
 

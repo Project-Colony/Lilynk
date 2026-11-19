@@ -12,7 +12,7 @@ members = ["wdk-iddcx", "pf-umdf-util", "pf-vdisplay", "pf-gamepad", "pf-xusb", 
 [workspace.package]
 edition = "2024"
 version = "0.0.1"
-license = "MIT OR Apache-2.0"
+license = "GPL-3.0-or-later"
 publish = false
 
 # The same unsafe discipline as the main workspace (see its Cargo.toml for the full rationale).

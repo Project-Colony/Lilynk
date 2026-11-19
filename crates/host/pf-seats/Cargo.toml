@@ -8,7 +8,7 @@ name = "pf-seats"
 description = "Multi-seat supervisor: seat ledger, Windows RDP keepers and seat hosts, the Linux seat daemon"
 version.workspace = true
 edition.workspace = true
-license = "MIT OR Apache-2.0"
+license = "GPL-3.0-or-later"
 publish = false
 
 [dependencies]

@@ -1,3 +1,9 @@
+# Lilynk
+
+Lilynk is a GPL-3.0-or-later fork of [punktfunk](https://git.unom.io/unom/punktfunk) by unom. The
+rest of this README is still punktfunk's text and has not been rewritten for Lilynk yet. See
+[License](#license) for how the two licenses apply.
+
 <p align="center">
   <img src="assets/punktfunk-logo.svg" alt="Punktfunk" width="320" />
 </p>
@@ -103,23 +109,24 @@ This project uses AI for writing code. The rules the agents follow are in [AGENT
 
 ## License
 
-Licensed under either of
+Lilynk is licensed under the GNU General Public License, version 3 or (at your option) any later
+version. The full text is in [LICENSE](LICENSE). `SPDX-License-Identifier: GPL-3.0-or-later`.
 
-- Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or
-  <https://www.apache.org/licenses/LICENSE-2.0>)
-- MIT license ([LICENSE-MIT](LICENSE-MIT) or <https://opensource.org/licenses/MIT>)
-
-at your option — `SPDX-License-Identifier: MIT OR Apache-2.0`.
+Lilynk is a fork of [punktfunk](https://git.unom.io/unom/punktfunk), taken at upstream commit
+`f1e09f58ca0c2d5125d23cecb00f64cb32a29921`. punktfunk is Copyright (c) 2026 unom - Enrico Bühler
+and is licensed under MIT OR Apache-2.0. Its license texts are kept in
+[LICENSE-MIT](LICENSE-MIT) and [LICENSE-APACHE](LICENSE-APACHE), and the punktfunk code up to that
+commit stays available under those terms. Changes made in Lilynk after the fork, and Lilynk as a
+whole, are licensed under GPL-3.0-or-later. Copyright and license headers in existing files are
+kept.
 
 ### Contribution
 
-Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in
-the work by you, as defined in the Apache-2.0 license, shall be dual licensed as above, without any
-additional terms or conditions. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Contributions are accepted under GPL-3.0-or-later. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ### Third-party components
 
-Punktfunk's own source is MIT/Apache-2.0. Shipped binaries additionally link third-party components
+Lilynk's own source is GPL-3.0-or-later. Shipped binaries additionally link third-party components
 under their own (permissive) licenses — see [`THIRD-PARTY-NOTICES.txt`](THIRD-PARTY-NOTICES.txt)
 (regenerate with `scripts/gen-third-party-notices.sh`). Nothing links FFmpeg any more: host encode
 went native in 2026-09, and the clients decode natively.

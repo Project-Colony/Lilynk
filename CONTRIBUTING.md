@@ -29,26 +29,20 @@ Thanks for your interest in contributing! Building, testing and sending a change
 
 ## Licensing of contributions (inbound = outbound)
 
-Punktfunk is dual-licensed under **MIT OR Apache-2.0**.
+Lilynk is licensed under **GPL-3.0-or-later**. It is a fork of punktfunk, which is licensed under
+MIT OR Apache-2.0; the [License section of the README](README.md#license) explains how the two
+apply.
 
-> Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in
-> the work by you, as defined in the Apache-2.0 license, shall be dual licensed as **MIT OR
-> Apache-2.0**, without any additional terms or conditions.
-
-By opening a pull request you agree to license your contribution under these terms. This is the
-standard Rust-ecosystem "inbound = outbound" model; it keeps the project's licensing unambiguous
-(including the Apache-2.0 §5 contributor patent grant) and any future relicensing clean. You retain
+By opening a pull request you agree to license your contribution under GPL-3.0-or-later. You keep
 the copyright to your contributions.
 
-### Do not paste copyleft (or otherwise incompatibly-licensed) code
+### Code from other projects
 
-The single thing that could poison the permissive license is **copied source from a copyleft
-project**. Several adjacent projects (Sunshine, Apollo, Moonlight) are GPL-3.0. You may study them
-and reimplement a *technique*, protocol, or wire format — those are not copyrightable — but **never
-paste their code**, and do not translate a GPL implementation line-by-line. When a comment credits
-prior art, make clear it is an independent reimplementation, not a copy. The same applies to any
-third party's code under a license incompatible with MIT/Apache.
+Code copied from another project must be under a license compatible with GPL-3.0-or-later, for
+example MIT, Apache-2.0, BSD, ISC, Zlib, MPL-2.0, LGPL-2.1-or-later or GPL-3.0. Keep its copyright
+and license notices, and name the source project and file in the commit message. Code under
+GPL-2.0-only and code with no license cannot be used.
 
-If you add a new third-party dependency, it must be permissive (MIT / Apache-2.0 / BSD / ISC / Zlib /
-Unicode-3.0 / etc.). `about.toml` holds the accepted-license allow-list; regenerate the attribution
-file with `scripts/gen-third-party-notices.sh` when the dependency tree changes.
+New dependencies follow the same rule. `about.toml` holds the accepted-license list: add a new SPDX
+id there only after checking that license, and regenerate the attribution file with
+`scripts/gen-third-party-notices.sh` when the dependency tree changes.

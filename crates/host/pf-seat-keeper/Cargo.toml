@@ -19,7 +19,7 @@ description = "Holds a punktfunk seat's loopback RDP session open"
 version = "0.0.1"
 edition = "2024"
 rust-version = "1.89"
-license = "MIT OR Apache-2.0"
+license = "GPL-3.0-or-later"
 publish = false
 
 [target.'cfg(windows)'.dependencies]

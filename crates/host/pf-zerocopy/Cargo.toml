@@ -10,7 +10,7 @@ edition.workspace = true
 # Inherit the workspace MSRV: clippy keys MSRV-gated lints off it (without this, e.g.
 # `manual_is_multiple_of` fires on code the host crate compiles clean).
 rust-version.workspace = true
-license = "MIT OR Apache-2.0"
+license = "GPL-3.0-or-later"
 description = "punktfunk host Linux zero-copy GPU plumbing: CUDA context/buffers, EGL/Vulkan dmabuf import, and the isolated import worker."
 publish = false
 

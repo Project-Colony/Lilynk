@@ -5,7 +5,7 @@
 name = "pf-gpu"
 version.workspace = true
 edition.workspace = true
-license = "MIT OR Apache-2.0"
+license = "GPL-3.0-or-later"
 description = "punktfunk host GPU vendor/adapter enumeration, selection preference, and active-session accounting."
 publish = false
 
