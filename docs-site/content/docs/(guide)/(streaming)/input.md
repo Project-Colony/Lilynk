@@ -42,7 +42,7 @@ speed there; no client has a sensitivity setting.
 | Windows | **Settings → Bluetooth & devices → Mouse**: pointer speed and **Enhance pointer precision** |
 | KDE Plasma | **System Settings → Mouse & Touchpad**, device **Punktfunk Mouse**: a speed and acceleration of its own |
 | GNOME | **Settings → Mouse & Touchpad**: the speed and acceleration every mouse shares |
-| Sway, Hyprland | The compositor's input settings for the device named `Punktfunk Mouse` (Sway: `4617:20557:Punktfunk_Mouse`) |
+| Sway, Hyprland | The compositor's input settings for the device named `Punktfunk Mouse` (Sway: `4617:20557:Lilynk_Mouse`) |
 | gamescope, a headless Linux session | One pixel a count, as gamescope moves a plugged-in mouse. No setting |
 
 - On Linux the **Punktfunk Mouse** appears with the first input a client sends and stays until
@@ -222,4 +222,4 @@ so drawing apps on the host see a real pen.
 
 Without host support, the stylus works as a finger, without pressure or tilt. To turn pen off
 for every client, switch off **Pen input** in the web console under **Host → Input**,
-or set `PUNKTFUNK_PEN=0` in [`host.env`](/docs/configuration). It applies from the next session.
+or set `LILYNK_PEN=0` in [`host.env`](/docs/configuration). It applies from the next session.

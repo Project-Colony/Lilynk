@@ -69,7 +69,7 @@ For a docs change, also run `sh scripts/ci/check-docs-links.sh` and
 
 ## Apple client
 
-Build `PunktfunkCore.xcframework` first
+Build `LilynkCore.xcframework` first
 ([Build from source](/docs/developers/build-from-source#apple-client)), then from `clients/apple`:
 
 ```sh
@@ -83,7 +83,7 @@ xcodebuild -project Lilynk.xcodeproj -scheme Lilynk-iOS \
 The iOS and tvOS builds need those slices in the xcframework (`BUILD_IOS=1`, `BUILD_TVOS=1`). The
 tvOS scheme is the same with `-scheme Lilynk-tvOS`, `'generic/platform=tvOS Simulator'` and
 `-skipMacroValidation -skipPackagePluginValidation`. `ScrollCaptureTests` needs an xcframework built
-from the same tree, whose header defines `PUNKTFUNK_FEATURE_QUIC`; `build-xcframework.sh` produces
+from the same tree, whose header defines `LILYNK_FEATURE_QUIC`; `build-xcframework.sh` produces
 that.
 
 ## Android client
@@ -114,7 +114,7 @@ anywhere the host compiles, macOS included. In two terminals, start it and conne
 which byte-checks the frames:
 
 ```sh
-cargo run -rp lilynk-host -- punktfunk1-host --source synthetic --allow-tofu
+cargo run -rp lilynk-host -- lilynk1-host --source synthetic --allow-tofu
 cargo run -rp lilynk-probe -- --connect 127.0.0.1:9777
 ```
 

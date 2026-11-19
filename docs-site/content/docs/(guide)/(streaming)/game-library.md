@@ -75,7 +75,7 @@ right away; a path previews after you save.
 - **A URL:** the host downloads it the first time a client asks, keeps it, and serves it to every
   client from then on. A redirect, a file over 16 MiB or a file that isn't an image goes to
   the client as a plain URL instead.
-- **A path:** it must be inside a folder the host may read art from. `PUNKTFUNK_LIBRARY_ART_ROOTS`
+- **A path:** it must be inside a folder the host may read art from. `LILYNK_LIBRARY_ART_ROOTS`
   in [Configuration](/docs/configuration) sets those folders. Network (UNC) paths are refused.
 
 `lilynk-host library art --clear` empties the host's cover store. Plugin titles bring their own

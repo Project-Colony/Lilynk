@@ -1,6 +1,6 @@
 //! The version this binary reports: `--version`, logs, the management API, update checks.
 //!
-//! The build fills a fixed slot with build.rs's `PUNKTFUNK_VERSION`. Packaging may overwrite
+//! The build fills a fixed slot with build.rs's `LILYNK_VERSION`. Packaging may overwrite
 //! the slot in the finished binary (`packaging/windows/stamp-version.ps1`), so a per-run
 //! version never reaches the compiler and an unchanged tree stays a cargo no-op.
 
@@ -12,13 +12,13 @@ const CAP: usize = 64;
 const LEN: usize = MARKER.len() + CAP;
 
 #[used]
-static SLOT: [u8; LEN] = slot(env!("PUNKTFUNK_VERSION"));
+static SLOT: [u8; LEN] = slot(env!("LILYNK_VERSION"));
 
 const fn slot(version: &str) -> [u8; LEN] {
     let v = version.as_bytes();
     assert!(
         v.len() < CAP,
-        "PUNKTFUNK_BUILD_VERSION does not fit the version slot"
+        "LILYNK_BUILD_VERSION does not fit the version slot"
     );
     let mut out = [0u8; LEN];
     let mut i = 0;
@@ -50,6 +50,6 @@ pub(crate) fn get() -> &'static str {
 mod tests {
     #[test]
     fn unstamped_slot_reads_the_build_version() {
-        assert_eq!(super::get(), env!("PUNKTFUNK_VERSION"));
+        assert_eq!(super::get(), env!("LILYNK_VERSION"));
     }
 }

@@ -427,7 +427,7 @@ pub fn runner_plugins() -> BTreeMap<String, PluginManifest> {
 const PERSON_PLUGINS: &str = "person-plugins.json";
 
 /// On a person's own account, the plugin packages their own lane installed, in
-/// `plugin-run/person-plugins.json`. Their runner starts these alone (`PUNKTFUNK_PERSON_PLUGINS`)
+/// `plugin-run/person-plugins.json`. Their runner starts these alone (`LILYNK_PERSON_PLUGINS`)
 /// and can't write the list. A missing or unreadable list names none.
 pub(crate) fn person_plugins(config: &Path) -> BTreeSet<String> {
     std::fs::read(config.join(super::RUNNER_DATA_DIR).join(PERSON_PLUGINS))

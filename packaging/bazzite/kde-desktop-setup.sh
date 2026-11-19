@@ -17,7 +17,7 @@
 # headless host can't answer. That's what this script seeds.
 set -euo pipefail
 
-GRANT_SRC="${PUNKTFUNK_GRANT_SRC:-/usr/share/punktfunk/headless/kde-authorized}"
+GRANT_SRC="${LILYNK_GRANT_SRC:-/usr/share/punktfunk/headless/kde-authorized}"
 GRANT_DST="$HOME/.local/share/flatpak/db/kde-authorized"
 
 echo "punktfunk: KDE Desktop-mode input setup"

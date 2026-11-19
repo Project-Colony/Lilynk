@@ -5,7 +5,7 @@
 # Standalone on purpose (its own pkgbase, not part of ../arch/PKGBUILD): a C++ meson build with a
 # completely different dependency set from the Rust workspace. lilynk-host depends on it.
 # Installing it does not touch the distro's own `gamescope`; the host resolves
-# `PUNKTFUNK_GAMESCOPE_BIN` > `lilynk-gamescope` > `gamescope`.
+# `LILYNK_GAMESCOPE_BIN` > `lilynk-gamescope` > `gamescope`.
 #
 #   makepkg -si
 #
@@ -110,10 +110,10 @@ package() {
   # rehomed it under /usr/lib/punktfunk, so it sits alongside the distro's rather than over it, and
   # the host enables whichever it means to per session. Without this file no game in a punktfunk
   # gamescope session can get an HDR10 swapchain at all — that layer is the only route to one.
-  install -Dm755 "${srcdir}/stage/usr/lib/punktfunk/libVkLayer_PUNKTFUNK_gamescope_wsi.so" \
-    "${pkgdir}/usr/lib/punktfunk/libVkLayer_PUNKTFUNK_gamescope_wsi.so"
-  install -Dm644 "${srcdir}/stage/usr/lib/punktfunk/vulkan/implicit_layer.d/punktfunk_gamescope_wsi.json" \
-    "${pkgdir}/usr/lib/punktfunk/vulkan/implicit_layer.d/punktfunk_gamescope_wsi.json"
+  install -Dm755 "${srcdir}/stage/usr/lib/punktfunk/libVkLayer_LILYNK_gamescope_wsi.so" \
+    "${pkgdir}/usr/lib/punktfunk/libVkLayer_LILYNK_gamescope_wsi.so"
+  install -Dm644 "${srcdir}/stage/usr/lib/punktfunk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json" \
+    "${pkgdir}/usr/lib/punktfunk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json"
 
   install -Dm644 gamescope/LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
 }

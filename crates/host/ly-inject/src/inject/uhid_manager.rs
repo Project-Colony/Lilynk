@@ -274,7 +274,7 @@ impl OverflowWarn {
 /// KNOWN COST: `ff-memless` sends one report at start and one at stop, so a finite effect
 /// longer than this window is cut in half. The uinput path can exempt that because evdev FF
 /// hands it `replay.length`; nothing equivalent reaches this layer. Do not widen or disable
-/// without evidence; `PUNKTFUNK_RUMBLE_IDLE_MS` exists for that experiment.
+/// without evidence; `LILYNK_RUMBLE_IDLE_MS` exists for that experiment.
 const RUMBLE_IDLE_TIMEOUT: Duration = Duration::from_millis(2500);
 
 /// How long a pad's motion feed may go quiet before angular velocity is zeroed — see
@@ -282,13 +282,13 @@ const RUMBLE_IDLE_TIMEOUT: Duration = Duration::from_millis(2500);
 /// floors ~4 ms); a still controller sends a zero sample, it does not stop sending.
 const MOTION_IDLE_TIMEOUT: Duration = Duration::from_millis(100);
 
-/// Abandoned-rumble force-off window. `PUNKTFUNK_RUMBLE_IDLE_MS` overrides
+/// Abandoned-rumble force-off window. `LILYNK_RUMBLE_IDLE_MS` overrides
 /// [`RUMBLE_IDLE_TIMEOUT`]; `0` disables. Non-zero values are floored at 2100 ms, just above
 /// SDL's ~2 s resend, so the hatch cannot cut a legitimately-held rumble. Shared by
 /// [`UhidManager`] and the Linux uinput FF mixer.
 pub(crate) fn rumble_idle_timeout() -> Option<Duration> {
     static VAL: std::sync::OnceLock<Option<Duration>> = std::sync::OnceLock::new();
-    *VAL.get_or_init(|| match std::env::var("PUNKTFUNK_RUMBLE_IDLE_MS") {
+    *VAL.get_or_init(|| match std::env::var("LILYNK_RUMBLE_IDLE_MS") {
         Ok(v) => match v.trim().parse::<u64>() {
             Ok(0) => None,
             Ok(ms) => Some(Duration::from_millis(ms.max(2100))),

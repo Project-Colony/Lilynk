@@ -16,7 +16,7 @@ use std::sync::{Arc, Mutex};
 use tokio::sync::mpsc::UnboundedReceiver;
 use tokio::sync::oneshot;
 
-use crate::error::PunktfunkStatus;
+use crate::error::LilynkStatus;
 use crate::quic::{
     clipstream, ClipFetch, ClipFetchHdr, ClipKind, CLIP_FETCH_DENIED, CLIP_FETCH_OK,
     CLIP_FETCH_STALE, CLIP_FETCH_UNAVAILABLE,
@@ -33,7 +33,7 @@ pub const INBOUND_REQ_FLAG: u32 = 0x8000_0000;
 /// Stall bound, seconds (`design/clipboard-and-file-transfer.md`). A holder that never
 /// answers fails the transfer instead of hanging it.
 const FETCH_STALL_SECS: u64 = 60;
-/// Event plane for `NativeClient::next_clip` / C ABI `punktfunk_connection_next_clipboard`.
+/// Event plane for `NativeClient::next_clip` / C ABI `lilynk_connection_next_clipboard`.
 #[derive(Clone, Debug)]
 pub enum ClipEventCore {
     /// Host copied. Fetch lazily — only when a local app actually pastes.
@@ -65,7 +65,7 @@ pub enum ClipEventCore {
     Cancelled {
         id: u32,
     },
-    /// A transfer failed; `code` is a [`PunktfunkStatus`] value (negative).
+    /// A transfer failed; `code` is a [`LilynkStatus`] value (negative).
     Error {
         id: u32,
         code: i32,
@@ -99,10 +99,10 @@ type ServeWaiters = Arc<Mutex<HashMap<u32, oneshot::Sender<Option<Vec<u8>>>>>>;
 
 fn fetch_status_to_code(status: u8) -> i32 {
     let s = match status {
-        CLIP_FETCH_STALE => PunktfunkStatus::NoFrame, // stale offer → "nothing to insert"
-        CLIP_FETCH_UNAVAILABLE => PunktfunkStatus::Unsupported,
-        CLIP_FETCH_DENIED => PunktfunkStatus::InvalidArg,
-        _ => PunktfunkStatus::BadPacket,
+        CLIP_FETCH_STALE => LilynkStatus::NoFrame, // stale offer → "nothing to insert"
+        CLIP_FETCH_UNAVAILABLE => LilynkStatus::Unsupported,
+        CLIP_FETCH_DENIED => LilynkStatus::InvalidArg,
+        _ => LilynkStatus::BadPacket,
     };
     s as i32
 }
@@ -163,7 +163,7 @@ pub async fn run(
                                 }
                                 let _ = events.try_send(ClipEventCore::Error {
                                     id: req_id,
-                                    code: PunktfunkStatus::InvalidArg as i32,
+                                    code: LilynkStatus::InvalidArg as i32,
                                 });
                             } else {
                                 buf.extend_from_slice(&bytes);
@@ -288,16 +288,16 @@ async fn run_outbound_fetch(
     let transfer = async {
         let (send, mut recv) = clipstream::open_fetch(&conn, &req)
             .await
-            .map_err(|_| PunktfunkStatus::Io as i32)?;
+            .map_err(|_| LilynkStatus::Io as i32)?;
         let hdr = clipstream::read_fetch_hdr(&mut recv)
             .await
-            .map_err(|_| PunktfunkStatus::Io as i32)?;
+            .map_err(|_| LilynkStatus::Io as i32)?;
         if hdr.status != CLIP_FETCH_OK {
             return Err(fetch_status_to_code(hdr.status));
         }
         let data = clipstream::read_data(&mut recv, CLIP_FETCH_CAP)
             .await
-            .map_err(|_| PunktfunkStatus::Io as i32)?;
+            .map_err(|_| LilynkStatus::Io as i32)?;
         drop(send); // done — dropping the send half finishes it
         Ok(data)
     };
@@ -320,7 +320,7 @@ async fn run_outbound_fetch(
         _ = tokio::time::sleep(std::time::Duration::from_secs(FETCH_STALL_SECS)) => {
             let _ = events.try_send(ClipEventCore::Error {
                 id: xfer_id,
-                code: PunktfunkStatus::Timeout as i32,
+                code: LilynkStatus::Timeout as i32,
             });
         }
     }

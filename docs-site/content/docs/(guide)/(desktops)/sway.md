@@ -31,7 +31,7 @@ org.freedesktop.impl.portal.ScreenCast=wlr
 
 Nothing is required: the host finds sway on every connect, so you don't export `SWAYSOCK`.
 
-Don't set `PUNKTFUNK_COMPOSITOR`: a pin turns off detection and session following. Every other
+Don't set `LILYNK_COMPOSITOR`: a pin turns off detection and session following. Every other
 option is in [Configuration](/docs/configuration).
 
 The host writes its own chooser into `~/.config/xdg-desktop-portal-wlr/config` and restarts xdpw

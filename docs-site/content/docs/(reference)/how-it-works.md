@@ -35,7 +35,7 @@ Captured frames stay on the GPU all the way into the encoder. Which encoder runs
 | **NVIDIA** | NVENC | NVENC |
 | **AMD** | Vulkan Video for HEVC and AV1, VAAPI for H.264 | AMF |
 | **Intel** | Vulkan Video for HEVC and AV1, VAAPI for H.264 | QSV |
-| **Other** | Software H.264, only if you set `PUNKTFUNK_ENCODER=software` | Media Foundation |
+| **Other** | Software H.264, only if you set `LILYNK_ENCODER=software` | Media Foundation |
 
 Client and host then agree on a codec: the one the client asks for if the host can encode it,
 otherwise **HEVC**, then **AV1**, then **H.264**, the software encoder's only codec.

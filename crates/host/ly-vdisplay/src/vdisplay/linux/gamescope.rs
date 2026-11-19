@@ -63,7 +63,7 @@ use {argv::*, bind::*, discovery::*, dropins::*, spawn::*, steam_launch::*, take
 /// Attach: capture + inject an already-running gamescope; no lifecycle ownership.
 /// Spawn: bare headless gamescope running [`VirtualDisplay::set_launch_command`].
 ///
-/// Operator env (`PUNKTFUNK_GAMESCOPE_{MANAGED,ATTACH,NODE,SESSION}`) feeds
+/// Operator env (`LILYNK_GAMESCOPE_{MANAGED,ATTACH,NODE,SESSION}`) feeds
 /// `routing::operator_gamescope` once; it is never republished here.
 #[derive(Default)]
 pub struct GamescopeDisplay {
@@ -73,7 +73,7 @@ pub struct GamescopeDisplay {
     /// The session's topology ([`VirtualDisplay::set_topology`]).
     topology: Option<crate::policy::Topology>,
 
-    /// Bare-spawn command. Not the process-global `PUNKTFUNK_GAMESCOPE_APP`.
+    /// Bare-spawn command. Not the process-global `LILYNK_GAMESCOPE_APP`.
     cmd: Option<String>,
     /// Set before `create`. Gamescope cannot enable HDR live, so this is part of the reuse key.
     hdr: bool,
@@ -307,7 +307,7 @@ impl GamescopeDisplay {
         // Diagnostic only: warns on known-deadlock-prone versions.
         check_gamescope_version();
         // Resolve once before the gate and hand the same answer to [`spawn`]. Gating on `self.cmd`
-        // alone while spawn fell back to `PUNKTFUNK_GAMESCOPE_APP` would pass `--steam` with no
+        // alone while spawn fell back to `LILYNK_GAMESCOPE_APP` would pass `--steam` with no
         // instance free.
         let app = resolved_spawn_app(self.cmd.as_deref());
         let steam = app.as_deref().is_some_and(is_steam_launch);
@@ -402,7 +402,7 @@ fn create_attach(node: &str, mode: Mode, hdr: bool) -> Result<VirtualOutput> {
         ensure_box_gamescope_mode(mode, hdr)?
     } else {
         node.parse()
-            .context("PUNKTFUNK_GAMESCOPE_NODE must be a node id or 'auto'")?
+            .context("LILYNK_GAMESCOPE_NODE must be a node id or 'auto'")?
     };
     Ok(attach_output(node_id, mode, auto))
 }
@@ -1074,14 +1074,14 @@ fn point_injector_at_eis(scope: Scope<'_>) {
 }
 
 /// Explicit-off kill switch for [`sync_session_keyboard_layout`].
-const LAYOUT_SYNC_ENV: &str = "PUNKTFUNK_SESSION_LAYOUT";
+const LAYOUT_SYNC_ENV: &str = "LILYNK_SESSION_LAYOUT";
 /// `setxkbmap` talks to a local X server; anything slower than this is a server that is not
 /// answering, and the connecting client is waiting on us.
 const LAYOUT_SYNC_BUDGET: std::time::Duration = std::time::Duration::from_secs(5);
 
 /// Attach path: autologin Xwayland is born `us`; `spawn::xkb_env` never reaches it.
 /// Xwayland only — Wayland-native clients take the compositor keymap (`+pfhdr8`). Off via
-/// `PUNKTFUNK_SESSION_LAYOUT`.
+/// `LILYNK_SESSION_LAYOUT`.
 fn sync_session_keyboard_layout() {
     if ly_host_config::env_on(LAYOUT_SYNC_ENV) == Some(false) {
         return;
@@ -1169,7 +1169,7 @@ pub(crate) fn stream_existing_output(
 fn launch_session(client: &str, unit_name: &str, mode: Mode, hdr: bool) -> Result<u32> {
     if !std::path::Path::new(SESSION_PLUS_BIN).exists() {
         anyhow::bail!(
-            "PUNKTFUNK_GAMESCOPE_SESSION is set but {SESSION_PLUS_BIN} is missing — the host-managed \
+            "LILYNK_GAMESCOPE_SESSION is set but {SESSION_PLUS_BIN} is missing — the host-managed \
              session needs gamescope-session-plus (a Bazzite / SteamOS-like host)"
         );
     }

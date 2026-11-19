@@ -1,6 +1,6 @@
 //! Stream-mode presets grouped by aspect ratio. One table so every client's
 //! picker offers the same families and sizes; twins in
-//! `PunktfunkShared/Resolutions.swift` and Android `Settings.kt`.
+//! `LilynkShared/Resolutions.swift` and Android `Settings.kt`.
 //!
 //! A picker shows one family at a time behind an aspect switch, plus its own
 //! native / match-window rows. Picking a family moves to its size nearest the

@@ -7,7 +7,7 @@
 //! Swap both for the fake pair and the engine cannot reach the host. See
 //! `design/installer-v2.md` D3.
 //!
-//! `PUNKTFUNK_INSTALL_OS_RELEASE` and `PUNKTFUNK_INSTALL_ETC` override the real
+//! `LILYNK_INSTALL_OS_RELEASE` and `LILYNK_INSTALL_ETC` override the real
 //! `/etc` paths so installer-smoke's fake boxes keep working against this binary.
 
 use std::collections::HashMap;
@@ -33,9 +33,9 @@ impl BasePaths {
         let config = Some(ly_paths::xdg_home("XDG_CONFIG_HOME", ".config"))
             .filter(|c| c.is_absolute())
             .unwrap_or_else(|| home.join(".config"));
-        let etc_root = std::env::var_os("PUNKTFUNK_INSTALL_ETC")
+        let etc_root = std::env::var_os("LILYNK_INSTALL_ETC")
             .map_or_else(|| PathBuf::from("/"), PathBuf::from);
-        let os_release = std::env::var_os("PUNKTFUNK_INSTALL_OS_RELEASE")
+        let os_release = std::env::var_os("LILYNK_INSTALL_OS_RELEASE")
             .map_or_else(|| PathBuf::from("/etc/os-release"), PathBuf::from);
         Self {
             os_release,

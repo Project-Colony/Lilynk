@@ -75,7 +75,7 @@ export interface SandboxPaths {
 	bun: string;
 	runner: string;
 	home: string;
-	/** The host's config dir (`PUNKTFUNK_CONFIG_DIR`), which no plugin may bind. */
+	/** The host's config dir (`LILYNK_CONFIG_DIR`), which no plugin may bind. */
 	configDir: string;
 	/** The runner's dir its UI socket goes in, and the forwarded port. */
 	ui?: { dir: string; port: number };
@@ -204,7 +204,7 @@ export const bwrapArgv = (
 		argv.push("--ro-bind", "/nix/store", "/nix/store");
 		argv.push("--ro-bind-try", "/run/current-system", "/run/current-system");
 	}
-	// Where `pluginStateDir(<id>)` resolves inside: `PUNKTFUNK_CONFIG_DIR/plugin-state/<id>`.
+	// Where `pluginStateDir(<id>)` resolves inside: `LILYNK_CONFIG_DIR/plugin-state/<id>`.
 	argv.push(
 		"--bind",
 		paths.stateDir,
@@ -215,7 +215,7 @@ export const bwrapArgv = (
 	// Its loopback is its own, so its UI listens where the runner can forward to.
 	if (paths.ui) {
 		argv.push("--bind", paths.ui.dir, UI_DIR);
-		argv.push("--setenv", "PUNKTFUNK_UI_PORT", String(paths.ui.port));
+		argv.push("--setenv", "LILYNK_UI_PORT", String(paths.ui.port));
 	}
 	// What it said it needs. `-try` so an uninstalled launcher's dir is simply absent rather
 	// than a sandbox that refuses to start.
@@ -502,14 +502,14 @@ export const sandboxEnv = (
 ): Record<string, string> => ({
 	// The REAL home, which is where a `~/...` read is bound. A plugin finds its declared paths
 	// with os.homedir(); pointing this at the state dir sends every scanner somewhere empty.
-	// Writable state is PUNKTFUNK_CONFIG_DIR's job, not this one's.
+	// Writable state is LILYNK_CONFIG_DIR's job, not this one's.
 	HOME: home,
 	// sbin: Debian ships VirtualHere's client there. The system profile is NixOS's /usr/bin.
 	PATH: "/usr/bin:/bin:/usr/local/bin:/usr/sbin:/sbin:/run/current-system/sw/bin",
-	PUNKTFUNK_CONFIG_DIR: "/run/punktfunk",
+	LILYNK_CONFIG_DIR: "/run/punktfunk",
 	// Reached through the supervisor's socket, so plain HTTP with no credential of its own.
-	PUNKTFUNK_MGMT_URL: "http://punktfunk.host",
-	PUNKTFUNK_MGMT_UNIX: "/run/punktfunk/host.sock",
+	LILYNK_MGMT_URL: "http://punktfunk.host",
+	LILYNK_MGMT_UNIX: "/run/punktfunk/host.sock",
 	...extra,
 });
 
@@ -654,7 +654,7 @@ const PROBE_BINDS: readonly string[] = [
  */
 export const hostExe = (): string =>
 	path.resolve(
-		path.dirname(process.env.PUNKTFUNK_RUNNER_ENTRY ?? process.argv[1] ?? ""),
+		path.dirname(process.env.LILYNK_RUNNER_ENTRY ?? process.argv[1] ?? ""),
 		"..",
 		"lilynk-host.exe",
 	);
@@ -700,7 +700,7 @@ export const sandboxProbe = (
 		// The host binary beside the runner is the AppContainer's door; the installer puts both.
 		return fs.existsSync(hostExe())
 			? { ok: true }
-			: { ok: false, reason: `${hostExe()} is missing — reinstall punktfunk, or set PUNKTFUNK_PLUGIN_SANDBOX=off` };
+			: { ok: false, reason: `${hostExe()} is missing — reinstall punktfunk, or set LILYNK_PLUGIN_SANDBOX=off` };
 	}
 	if (platform !== "linux") {
 		return { ok: false, reason: "sandboxing is Linux-only here" };
@@ -726,7 +726,7 @@ export const sandboxProbe = (
 			ok: false,
 			reason: probe.signal
 				? `bwrap was killed by ${probe.signal} before it could report`
-				: "bubblewrap (bwrap) is not installed — install it, or set PUNKTFUNK_PLUGIN_SANDBOX=off",
+				: "bubblewrap (bwrap) is not installed — install it, or set LILYNK_PLUGIN_SANDBOX=off",
 		};
 	}
 	const line = (probe.stderr ?? "").split("\n")[0]?.trim();

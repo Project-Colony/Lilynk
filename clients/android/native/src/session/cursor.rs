@@ -6,7 +6,7 @@ use jni::errors::LogErrorAndDefault;
 use jni::objects::{JIntArray, JObject};
 use jni::sys::{jboolean, jlong};
 use jni::EnvUnowned;
-use lilynk_core::error::PunktfunkError;
+use lilynk_core::error::LilynkError;
 use lilynk_core::quic::HOST_CAP_CURSOR;
 use std::time::Duration;
 
@@ -43,7 +43,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeNextCursorS
         };
         let mut st = match h.client.next_cursor_state(PULL_TIMEOUT) {
             Ok(st) => st,
-            Err(PunktfunkError::Closed) => return Ok(idle_pull(JIntArray::default())),
+            Err(LilynkError::Closed) => return Ok(idle_pull(JIntArray::default())),
             Err(_) => return Ok(JIntArray::default()),
         };
         while let Ok(newer) = h.client.next_cursor_state(Duration::ZERO) {

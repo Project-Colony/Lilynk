@@ -35,7 +35,7 @@ if ($SelfCheck) {
     '2026-09-03T10:04:00Z EVENT kind=run-end cycles=1 resizes=1 locks=1 sleep=False'
   ) | Set-Content (Join-Path $d "live-g4-sc.log")
   @(
-    '2026-09-03T10:00:01.0Z  INFO ly_capture::windows::idd_push::open: IDD push: PUNKTFUNK_IDD_DIAG is ON au_dump_dir=C:\Windows\Temp'
+    '2026-09-03T10:00:01.0Z  INFO ly_capture::windows::idd_push::open: IDD push: LILYNK_IDD_DIAG is ON au_dump_dir=C:\Windows\Temp'
     # 790 ms hole right after the client came up: the startup artefact, must not be counted.
     '2026-09-03T10:00:06.0Z DEBUG ly_capture::windows::idd_push::stall: IDD-push capture stall - x gap_ms=790 verdict=compose-silence (dwm) etw=none etw_presents=0 etw_queue_adds=0 cursor_moved_px_during_gap=0 flow_dwm_only=true max_heartbeat_age_ms=4'
     # Ours: the drain heartbeat went stale for most of a 4 s hole.
@@ -100,10 +100,10 @@ $hl = Get-Content $HostLog | ForEach-Object { $_ -replace "\x1b\[[0-9;]*m", "" }
 Emit "host.log lines in window: $(($hl | Measure-Object).Count)"
 
 # The ETW/probe leg is criterion 1's whole evidence base; a run without it cannot answer it.
-$diagOn = ($hl | Where-Object { $_ -match 'PUNKTFUNK_IDD_DIAG is ON' } | Measure-Object).Count
+$diagOn = ($hl | Where-Object { $_ -match 'LILYNK_IDD_DIAG is ON' } | Measure-Object).Count
 $etwOff = ($hl | Where-Object { $_ -match 'DxgKrnl ETW session unavailable' } | Measure-Object).Count
 Emit "diagnostics: IDD_DIAG sessions=$diagOn etw_unavailable_warnings=$etwOff"
-if ($diagOn -eq 0) { Emit 'WARNING: no session ran with PUNKTFUNK_IDD_DIAG - criterion 1 cannot be attributed' }
+if ($diagOn -eq 0) { Emit 'WARNING: no session ran with LILYNK_IDD_DIAG - criterion 1 cannot be attributed' }
 
 $stalls = $hl | Where-Object { $_ -match 'IDD-push capture stall' } | ForEach-Object {
   $etw = if ($_ -match 'etw=(.*?)\s+etw_presents=') { $Matches[1] } else { Field $_ 'etw' }

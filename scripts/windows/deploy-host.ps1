@@ -13,7 +13,7 @@ $ErrorActionPreference = 'Stop'
 $repo = Split-Path (Split-Path $PSScriptRoot)        # scripts\windows -> repo root
 $exe  = Join-Path $repo 'target\release\lilynk-host.exe'
 $bak  = "$exe.bak"
-$svc  = 'PunktfunkHost'
+$svc  = 'LilynkHost'
 
 function Find-VcVars {
   $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"

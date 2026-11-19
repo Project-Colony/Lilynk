@@ -23,7 +23,7 @@ lilynk-core = { path = "../../core/lilynk-core" }
 
 [target.'cfg(any(target_os = "linux", windows))'.dependencies]
 # Native Vulkan Video decode (H.264, H.265, AV1): `auto` tries it first except where
-# video_ladder puts D3D11VA ahead; also pinnable via `PUNKTFUNK_DECODER=native-vulkan`.
+# video_ladder puts D3D11VA ahead; also pinnable via `LILYNK_DECODER=native-vulkan`.
 # video_vk_native.rs runs ly-vkdecode's VkH264Decoder/VkH265Decoder/VkAv1Decoder on the
 # presenter's shared device.
 ly-vkdecode = { path = "../../codec/ly-vkdecode", optional = true }
@@ -149,10 +149,10 @@ desktop = [
 d3d11va = ["dep:ly-dxvadec", "dep:ly-bitstream"]
 # PyroWave client decode ships in every default build (flatpak included; pyrowave-sys is a
 # vendored in-repo tree, offline-safe, and an empty stub off Linux/Windows/Android/PS5). The
-# codec is still strictly per-session opt-in (Settings codec pick / PUNKTFUNK_PREFER_PYROWAVE=1).
+# codec is still strictly per-session opt-in (Settings codec pick / LILYNK_PREFER_PYROWAVE=1).
 pyrowave = ["dep:pyrowave-sys", "dep:ash"]
 
-# Headless wavelet decode bench over a `PUNKTFUNK_DUMP_VIDEO` capture.
+# Headless wavelet decode bench over a `LILYNK_DUMP_VIDEO` capture.
 [[example]]
 name = "pyrowave_bench"
 required-features = ["pyrowave"]

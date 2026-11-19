@@ -25,7 +25,7 @@ per-build via `vcvars64.bat` (auto-discovered with `vswhere`).
 powershell -ExecutionPolicy Bypass -File scripts\windows\deploy-host.ps1
 ```
 
-Stops `PunktfunkHost`, backs up the current binary (`lilynk-host.exe.bak`), builds
+Stops `LilynkHost`, backs up the current binary (`lilynk-host.exe.bak`), builds
 `--release -p lilynk-host --features nvenc` from the current source, then restarts the
 service on the new binary — **with automatic rollback** if the build fails or the new binary
 won't start. The service is down only for the build duration.
@@ -34,7 +34,7 @@ won't start. The service is down only for the build duration.
 
 On an **installed** host (the `setup.exe`) the console is set up automatically — no manual steps.
 The installer bundles the built (self-contained, no-`node_modules`) `.output` server + a portable
-bun; the **`PunktfunkHost` service supervises the console as its own child** (`bun
+bun; the **`LilynkHost` service supervises the console as its own child** (`bun
 {app}\web\.output\server\index.mjs` on `:47992`, session 0, restarted on any exit, stdout in
 `%ProgramData%\punktfunk\logs\web.log`), starting it as soon as the host has written its mgmt token
 + identity cert. `lilynk-host.exe web setup` provisions the rest: it opens inbound TCP 47992 and
@@ -43,7 +43,7 @@ SYSTEM). The mgmt bearer token it proxies with is the host's own
 `%ProgramData%\punktfunk\mgmt-token`. Browse `https://<host-ip>:47992` and log in with the password
 the installer shows on its final page. The console replaces that clear line with a salted argon2id
 hash on the first sign-in, so a forgotten password is **reset, not read**: put a
-`PUNKTFUNK_UI_PASSWORD=<your-password>` line back in `web-password` (elevated — the file is ACL'd)
+`LILYNK_UI_PASSWORD=<your-password>` line back in `web-password` (elevated — the file is ACL'd)
 and restart the service (`lilynk-host service restart`). The next sign-in re-hashes it and logs
 every other session out.
 
@@ -74,10 +74,10 @@ gated on the same `attempt=` check CI and the `.deb` builder use), then lays it 
 runner, and on Windows it resolves the runner *relative to the running exe* (`crates\lilynk-host\src\plugin_host\plugins.rs`).
 Since `deploy-host.ps1` runs the service out of `target\release`, a bundle sitting only in the
 installed `{app}` leaves the freshly built exe reporting *"the plugin runner isn't installed"*. The
-script deploys next to **every** host exe it finds - the built one and whatever the `PunktfunkHost`
+script deploys next to **every** host exe it finds - the built one and whatever the `LilynkHost`
 service actually runs.
 
-The `PunktfunkScripting` task is registered **disabled** (opt-in) by the installer, so the script
+The `LilynkScripting` task is registered **disabled** (opt-in) by the installer, so the script
 stages the bundle but does not silently enable it. Pass `-EnableTask` on a box you are validating
 plugins on (equivalent to `lilynk-host plugins enable`).
 

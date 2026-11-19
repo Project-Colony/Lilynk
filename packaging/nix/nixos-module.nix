@@ -52,7 +52,7 @@ let
   # glibc it was built for or newer. Built from this system's nixpkgs, they always match it.
   systemBuilt = self.lib.packagesWith pkgs;
 
-  # host.env rendering: booleans → 1/0 (what PUNKTFUNK_* knobs expect), everything else verbatim.
+  # host.env rendering: booleans → 1/0 (what LILYNK_* knobs expect), everything else verbatim.
   renderVal = v: if lib.isBool v then (if v then "1" else "0") else toString v;
   renderEnv =
     attrs: concatStringsSep "\n" (mapAttrsToList (k: v: "${k}=${renderVal v}") attrs) + "\n";
@@ -61,9 +61,9 @@ let
 
   # The owner's row runs the owner's host from seat-session, not from the user unit, so it takes
   # the same settings and the `gamestream` flag as a file: seat-session reads it for the owner
-  # alone (PUNKTFUNK_OWNER_ENV), so a seat of its own never sees them.
+  # alone (LILYNK_OWNER_ENV), so a seat of its own never sees them.
   ownerSettingsFile = pkgs.writeText "lilynk-owner.env" (
-    renderEnv (cfg.host.settings // lib.optionalAttrs cfg.host.gamestream { PUNKTFUNK_GAMESTREAM = true; })
+    renderEnv (cfg.host.settings // lib.optionalAttrs cfg.host.gamestream { LILYNK_GAMESTREAM = true; })
   );
 
   # WHICH users' `systemd --user` instances may run these units — and why they need saying at all.
@@ -177,7 +177,7 @@ in
           still answers, and every session it then serves fails at capture. A host that idles for
           days between sessions is exactly the shape that gets discovered at the worst moment.
 
-          Leave it OFF for an appliance — a pinned `PUNKTFUNK_COMPOSITOR`, a headless KWin or a
+          Leave it OFF for an appliance — a pinned `LILYNK_COMPOSITOR`, a headless KWin or a
           gamescope box. Those start their own compositor and may never reach
           `graphical-session.target` at all, and this would leave the host permanently stopped.
 
@@ -225,9 +225,9 @@ in
         default = { };
         example = literalExpression ''
           {
-            PUNKTFUNK_VIDEO_SOURCE = "virtual";
-            PUNKTFUNK_COMPOSITOR = "kwin";
-            PUNKTFUNK_444 = true;
+            LILYNK_VIDEO_SOURCE = "virtual";
+            LILYNK_COMPOSITOR = "kwin";
+            LILYNK_444 = true;
             RUST_LOG = "info";
           }
         '';
@@ -274,7 +274,7 @@ in
           Put `lilynk-gamescope` — gamescope carrying punktfunk's `pipewire-hdr` patches — on
           the host service's PATH, so a 10-bit-capable client can stream true HDR10 (BT.2020 PQ)
           off a gamescope virtual output. HDR is attempted by default once the binary is present
-          (`PUNKTFUNK_GAMESCOPE_HDR=0` in `settings`/`environmentFile` forces SDR).
+          (`LILYNK_GAMESCOPE_HDR=0` in `settings`/`environmentFile` forces SDR).
 
           It does NOT replace the system's `gamescope`: the binary has its own name and the host
           prefers it only for the sessions it spawns itself. Costs a gamescope build from source
@@ -358,7 +358,7 @@ in
           VPN (RFC 1918, link-local, IPv6 unique-local, Tailscale's or NetBird's 100.64/10), never
           the internet.
 
-          This is the imperative install's `PUNKTFUNK_UI_BIND` in `host.env`; on NixOS the option
+          This is the imperative install's `LILYNK_UI_BIND` in `host.env`; on NixOS the option
           is the source and `host.env` is not read by the console.
         '';
       };
@@ -573,7 +573,7 @@ in
       #
       # A file capability cannot live on a store path (read-only, and shared by every generation),
       # so `security.wrappers` is the only mechanism NixOS has — which is why the unit below points
-      # PUNKTFUNK_ENCODE_WORKER at `config.security.wrapperDir` rather than the store path. The
+      # LILYNK_ENCODE_WORKER at `config.security.wrapperDir` rather than the store path. The
       # host's own ExecStart stays on the store path and must never move.
       #
       # Best-effort by construction: if the wrapper is absent, not this user's to run, or the
@@ -630,11 +630,11 @@ in
           pkgs.pipewire
         ]
         # The HDR-capable gamescope, if enabled. On PATH rather than pinned through
-        # PUNKTFUNK_GAMESCOPE_BIN so an operator's own override of that env still wins.
+        # LILYNK_GAMESCOPE_BIN so an operator's own override of that env still wins.
         ++ optional cfg.host.gamescopeHdr cfg.host.gamescopePackage
         # The plugin runner, if enabled. Package ops (`plugins add`, and the console's store jobs,
         # which run INSIDE this service) exec `lilynk-scripting`; its resolution order is
-        # PUNKTFUNK_SCRIPTING -> beside the host binary -> PATH -> the /usr and ~/.local layouts.
+        # LILYNK_SCRIPTING -> beside the host binary -> PATH -> the /usr and ~/.local layouts.
         # On NixOS only the PATH rung can ever match: the runner is a derivation of its OWN, so it
         # is never beside the host binary and nothing lands in /usr. `environment.systemPackages`
         # covers an operator's interactive shell but NOT this unit, whose PATH is exactly this
@@ -647,7 +647,7 @@ in
           pkgs.util-linux
         ];
         # Point the host at the WRAPPED encode worker (see `security.wrappers` above). The host's
-        # own resolution order is PUNKTFUNK_ENCODE_WORKER -> alongside /proc/self/exe -> PATH, and
+        # own resolution order is LILYNK_ENCODE_WORKER -> alongside /proc/self/exe -> PATH, and
         # on NixOS the sibling of the store binary is the UNCAPPED store copy — it would run, and
         # be refused every priority class, silently. This env is the whole reason the override
         # exists. `config.security.wrapperDir` rather than a hard-coded /run/wrappers/bin so an
@@ -655,14 +655,14 @@ in
         #
         # An `EnvironmentFile=` value beats `Environment=`, so `settings`/`environmentFile` can
         # still override this (`off` forces the in-process encoder).
-        environment.PUNKTFUNK_ENCODE_WORKER = "${config.security.wrapperDir}/lilynk-encode-worker";
+        environment.LILYNK_ENCODE_WORKER = "${config.security.wrapperDir}/lilynk-encode-worker";
         # Where our Vulkan WSI layer's manifest lives. The host defaults to the FHS path every
         # distro package uses, which no NixOS box has — here the layer travels inside the gamescope
         # derivation, so point at it. Without this a game nested under the compositor gets no HDR10
         # swapchain at all: that layer is the only route to one, and the host falls back to
         # disabling the system layer, which is HDR-less by construction.
         # An operator's `settings` still wins, as above.
-        environment.PUNKTFUNK_GAMESCOPE_WSI_LAYER_DIR = mkIf cfg.host.gamescopeHdr
+        environment.LILYNK_GAMESCOPE_WSI_LAYER_DIR = mkIf cfg.host.gamescopeHdr
           "${cfg.host.gamescopePackage}/lib/punktfunk/vulkan/implicit_layer.d";
         serviceConfig = {
           # The store path DIRECTLY — not a capability wrapper. /proc/<pid>/exe then resolves to the
@@ -682,7 +682,7 @@ in
           ++ (optional (cfg.host.environmentFile != null) "-${toString cfg.host.environmentFile}")
           ++ [ "-/run/punktfunk/seats/%u.env" ];
         };
-        # No PUNKTFUNK_GAMESCOPE_HDR here: the host defaults it on, and the capability probe on
+        # No LILYNK_GAMESCOPE_HDR here: the host defaults it on, and the capability probe on
         # the resolved binary keeps a build-less box SDR. `gamescopeHdr` only controls whether
         # the patched binary is on PATH; `settings`/`environmentFile` can still set =0 to force SDR.
       };
@@ -744,8 +744,8 @@ in
         unitConfig.ConditionUser = userScope;
         wantedBy = optional cfg.web.autoStart "default.target";
         # Where both listeners bind (`web.bind`).
-        environment.PUNKTFUNK_UI_BIND = cfg.web.bind;
-        # The packaged list starts with host.env, where web-init.sh writes a PUNKTFUNK_UI_BIND that
+        environment.LILYNK_UI_BIND = cfg.web.bind;
+        # The packaged list starts with host.env, where web-init.sh writes a LILYNK_UI_BIND that
         # would beat `web.bind`. The empty entry clears the list; the rest is the packaged order.
         serviceConfig.EnvironmentFile = [
           ""
@@ -830,18 +830,18 @@ in
       systemd.services."lilynk-seat@" = {
         path = seatPath;
         # seat-session starts this host; the packaged default is /usr/bin/lilynk-host.
-        environment.PUNKTFUNK_HOST_BIN = "${cfg.host.package}/bin/lilynk-host";
+        environment.LILYNK_HOST_BIN = "${cfg.host.package}/bin/lilynk-host";
         # The owner's settings and `environmentFile`, for the owner's row only (see
         # ownerSettingsFile). An `environmentFile` the owner can't read is skipped there.
-        environment.PUNKTFUNK_OWNER_ENV = concatStringsSep " " (
+        environment.LILYNK_OWNER_ENV = concatStringsSep " " (
           [ "${ownerSettingsFile}" ] ++ optional (cfg.host.environmentFile != null) (toString cfg.host.environmentFile)
         );
         # Every seat's host encodes: the capped worker and the WSI layer, as the user unit has them.
-        environment.PUNKTFUNK_ENCODE_WORKER = "${config.security.wrapperDir}/lilynk-encode-worker";
+        environment.LILYNK_ENCODE_WORKER = "${config.security.wrapperDir}/lilynk-encode-worker";
         # The wrapper runs for `lilynk-games` alone, and a seat on a person's own account is in
         # no group of ours: the unit gives each seat's session that group, and no account changes.
         serviceConfig.SupplementaryGroups = [ "lilynk-games" ];
-        environment.PUNKTFUNK_GAMESCOPE_WSI_LAYER_DIR = mkIf cfg.host.gamescopeHdr
+        environment.LILYNK_GAMESCOPE_WSI_LAYER_DIR = mkIf cfg.host.gamescopeHdr
           "${cfg.host.gamescopePackage}/lib/punktfunk/vulkan/implicit_layer.d";
         # A switch must not end a seat's session. Seats survive an update on every other package.
         restartIfChanged = false;
@@ -860,8 +860,8 @@ in
       ];
       # The door's console binds where `web.bind` says, as the user's does. The packaged list
       # holds the door's host.env copy, which would beat it: the empty entry clears the list.
-      # The console reads the door's own files itself (the unit's PUNKTFUNK_ENV_FILES).
-      systemd.services.lilynk-web-door.environment.PUNKTFUNK_UI_BIND = cfg.web.bind;
+      # The console reads the door's own files itself (the unit's LILYNK_ENV_FILES).
+      systemd.services.lilynk-web-door.environment.LILYNK_UI_BIND = cfg.web.bind;
       systemd.services.lilynk-web-door.serviceConfig.EnvironmentFile = [ "" ];
       # NixOS ignores a packaged unit's [Install] and can't write its unit directory, so the
       # helper's `systemctl enable` has no effect. The units are wanted here, and their own
@@ -875,8 +875,8 @@ in
         lib.filterAttrs (
           name: _:
           builtins.elem name [
-            "PUNKTFUNK_MGMT_BIND"
-            "PUNKTFUNK_NATIVE_PORT"
+            "LILYNK_MGMT_BIND"
+            "LILYNK_NATIVE_PORT"
           ]
         ) cfg.host.settings
       );

@@ -198,8 +198,8 @@ All three run on [Bun](https://bun.sh). Run `bun install` in the directory first
 | `sdk/` | `bun src/runner-cli.ts` | The runner with your scripts and installed plugins (`--list` shows them) |
 | `docs-site/` | `bun run dev` | This site on `http://localhost:3001/docs` |
 
-The console's dev server sends every API call with `PUNKTFUNK_MGMT_TOKEN`: set it to the contents of
-the host's `mgmt-token` file, or every call fails. `PUNKTFUNK_MGMT_URL` points it at another host.
+The console's dev server sends every API call with `LILYNK_MGMT_TOKEN`: set it to the contents of
+the host's `mgmt-token` file, or every call fails. `LILYNK_MGMT_URL` points it at another host.
 More:
 [web](https://git.unom.io/unom/punktfunk/src/branch/main/web/README.md),
 [sdk](https://git.unom.io/unom/punktfunk/src/branch/main/sdk/README.md),

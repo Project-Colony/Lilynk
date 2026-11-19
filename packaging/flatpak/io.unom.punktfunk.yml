@@ -321,7 +321,7 @@ modules:
       # packaging/flatpak/VERSION (written by flatpak.yml and build-flatpak.sh) stamps the
       # package version into --version, About and the log bundle, as the deb/rpm/arch builds
       # do; without it the crate's own version stands.
-      - PUNKTFUNK_BUILD_VERSION="$(cat packaging/flatpak/VERSION 2>/dev/null || true)"
+      - LILYNK_BUILD_VERSION="$(cat packaging/flatpak/VERSION 2>/dev/null || true)"
           cargo --offline build --release -p lilynk-client-linux -p lilynk-client-session
           -p lilynk-cli
       - install -Dm0755 target/release/lilynk-client ${FLATPAK_DEST}/bin/lilynk-client

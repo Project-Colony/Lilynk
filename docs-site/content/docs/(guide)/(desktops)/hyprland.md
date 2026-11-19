@@ -31,7 +31,7 @@ org.freedesktop.impl.portal.ScreenCast=hyprland
 
 Nothing is required: the host finds Hyprland on every connect.
 
-Don't set `PUNKTFUNK_COMPOSITOR`: a pin turns off detection and session following. Every other
+Don't set `LILYNK_COMPOSITOR`: a pin turns off detection and session following. Every other
 option is in [Configuration](/docs/configuration).
 
 The host adds its picker to `~/.config/hypr/xdph.conf` and restarts xdph when that changes. A

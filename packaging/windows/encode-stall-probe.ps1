@@ -15,7 +15,7 @@
       combined rate IS the drain worker's cadence. A hitch shows as an interval below refresh.
     * LADDER - the rungs the host ran, from `capture.last_episode.stages[]` (the coordinator's own
       per-rung ms) and from the host.log timestamps of the lines each actuator writes.
-    * AU STREAM - the host's access-unit dump (PUNKTFUNK_IDD_DIAG, set as a per-service
+    * AU STREAM - the host's access-unit dump (LILYNK_IDD_DIAG, set as a per-service
       environment value so a service restart picks it up without a reboot): per-AU `qpc_pts`
       deltas and keyframe count, i.e. how many IDRs the recovery really cost.
 
@@ -48,7 +48,7 @@ param(
     [string]$Repo = 'C:\Users\Public\pf-phase0',
     [string]$Client = 'C:\Users\Public\lilynk-native\target\release\lilynk-session.exe',
     [string]$HostExe = 'C:\Program Files\punktfunk\lilynk-host.exe',
-    [string]$Service = 'PunktfunkHost',
+    [string]$Service = 'LilynkHost',
     [string]$OutDir = 'C:\Users\Public'
 )
 $ErrorActionPreference = 'Stop'
@@ -136,7 +136,7 @@ if (-not $SkipDeploy) {
 # --- 3. AU dump + knob --------------------------------------------------------------------------
 # Per-service Environment (REG_MULTI_SZ): the SCM applies it at service start, so unlike `setx /M`
 # this reaches the host without a reboot.
-Set-ItemProperty -Path $svcEnv -Name 'Environment' -Type MultiString -Value @("PUNKTFUNK_IDD_DIAG=$dumpDir")
+Set-ItemProperty -Path $svcEnv -Name 'Environment' -Type MultiString -Value @("LILYNK_IDD_DIAG=$dumpDir")
 Restart-Service $Service -Force
 Start-Sleep -Seconds 3
 Set-BlockKnob $BlockAfter
@@ -245,7 +245,7 @@ if ($final) { Say ("final class={0} state={1} detached={2} published={3}" -f $fi
 Say '--- access units (qpc_pts deltas, keyframes) ---'
 $dump = Get-ChildItem $dumpDir -Filter 'pfvd-au-*.bin' -ErrorAction SilentlyContinue |
     Sort-Object Length -Descending | Select-Object -First 1
-if (-not $dump) { Say '  no AU dump (PUNKTFUNK_IDD_DIAG did not reach the service)' }
+if (-not $dump) { Say '  no AU dump (LILYNK_IDD_DIAG did not reach the service)' }
 else {
     # Framing: [u32 len][u64 pts_ns][u8 keyframe][len bytes]. Seek past the payload - the file is
     # the whole encoded stream.

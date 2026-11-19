@@ -5,7 +5,7 @@
 use crate::*;
 
 // The audio format of the newest packet pulled, read fresh each call: a host may change it at a
-// marked packet (`PUNKTFUNK_REFORMAT_AUDIO`).
+// marked packet (`LILYNK_REFORMAT_AUDIO`).
 #[cfg(feature = "quic")]
 use lilynk_core::audio::plane::PlaneFormat as AudioFormat;
 
@@ -63,10 +63,10 @@ impl AudioPcmState {
         data: &[u8],
         seq: u32,
         fmt: AudioFormat,
-    ) -> Result<usize, PunktfunkStatus> {
+    ) -> Result<usize, LilynkStatus> {
         if self.decoder.is_none() {
             let dec = lilynk_core::audio::plane::PlaneDecoder::new(&fmt)
-                .map_err(|_| PunktfunkStatus::Unsupported)?;
+                .map_err(|_| LilynkStatus::Unsupported)?;
             self.ensure_buffer(fmt);
             self.decoder = Some(dec);
         }
@@ -99,12 +99,12 @@ impl AudioPcmState {
             }
             // Undecodable: keep concealment already earned. This slot is a ring gap.
             Err(_) if filled > 0 => Ok(filled),
-            Err(_) => Err(PunktfunkStatus::BadPacket),
+            Err(_) => Err(LilynkStatus::BadPacket),
         }
     }
 
     /// One drought concealment frame, no packet. `Ok(0)` before the first decode.
-    fn conceal(&mut self, fmt: AudioFormat) -> Result<usize, PunktfunkStatus> {
+    fn conceal(&mut self, fmt: AudioFormat) -> Result<usize, LilynkStatus> {
         let Some(dec) = self.decoder.as_mut() else {
             return Ok(0);
         };
@@ -120,7 +120,7 @@ impl AudioPcmState {
 }
 
 /// Pull the next reassembled access unit, waiting up to `timeout_ms`.
-/// [`PunktfunkStatus::NoFrame`] on timeout, [`PunktfunkStatus::Closed`] once ended.
+/// [`LilynkStatus::NoFrame`] on timeout, [`LilynkStatus::Closed`] once ended.
 /// On `Ok`, `*out` borrows until the next `next_au` on this handle (audio/rumble
 /// planes do not invalidate it).
 ///
@@ -129,14 +129,14 @@ impl AudioPcmState {
 /// video; it may run concurrently with one audio and one rumble puller.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_next_au(
-    c: *mut PunktfunkConnection,
-    out: *mut PunktfunkFrame,
+pub unsafe extern "C" fn lilynk_connection_next_au(
+    c: *mut LilynkConnection,
+    out: *mut LilynkFrame,
     timeout_ms: u32,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         if out.is_null() {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         match c
             .inner
@@ -147,7 +147,7 @@ pub unsafe extern "C" fn punktfunk_connection_next_au(
                 let f = slot.insert(frame);
                 // SAFETY: `out` is a caller-owned `#[repr(C)]` slot, written once by value.
                 unsafe { *out = frame_view(f) };
-                PunktfunkStatus::Ok
+                LilynkStatus::Ok
             }
             Err(e) => e.status(),
         }
@@ -156,8 +156,8 @@ pub unsafe extern "C" fn punktfunk_connection_next_au(
 
 /// `f` as the caller reads it, borrowing `f.data`; a new format sets `FRAME_NEW_FORMAT`.
 #[cfg(feature = "quic")]
-pub(super) fn frame_view(f: &lilynk_core::session::Frame) -> PunktfunkFrame {
-    PunktfunkFrame {
+pub(super) fn frame_view(f: &lilynk_core::session::Frame) -> LilynkFrame {
+    LilynkFrame {
         data: f.data.as_ptr(),
         len: f.data.len(),
         frame_index: f.frame_index,
@@ -176,7 +176,7 @@ pub(super) fn frame_view(f: &lilynk_core::session::Frame) -> PunktfunkFrame {
 /// until the next `next_audio`. Plane is `host_caps & HOST_CAP_AUDIO_HIRES`.
 #[cfg(feature = "quic")]
 #[repr(C)]
-pub struct PunktfunkAudioPacket {
+pub struct LilynkAudioPacket {
     pub data: *const u8,
     pub len: usize,
     pub seq: u32,
@@ -184,7 +184,7 @@ pub struct PunktfunkAudioPacket {
 }
 
 /// Pull the next audio packet, waiting up to `timeout_ms`.
-/// [`PunktfunkStatus::NoFrame`] on timeout, [`PunktfunkStatus::Closed`] once ended.
+/// [`LilynkStatus::NoFrame`] on timeout, [`LilynkStatus::Closed`] once ended.
 /// On `Ok`, `out->data` borrows until the next audio call (independent of video).
 /// Drain from a dedicated thread — Opus every 5 ms, lossless every 1–5 ms. The queue holds
 /// 64 packets: 320 ms at the Opus frame, less at a shorter lossless frame.
@@ -194,14 +194,14 @@ pub struct PunktfunkAudioPacket {
 /// it may run concurrently with the video/rumble pullers.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_next_audio(
-    c: *mut PunktfunkConnection,
-    out: *mut PunktfunkAudioPacket,
+pub unsafe extern "C" fn lilynk_connection_next_audio(
+    c: *mut LilynkConnection,
+    out: *mut LilynkAudioPacket,
     timeout_ms: u32,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         if out.is_null() {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         match c
             .inner
@@ -212,14 +212,14 @@ pub unsafe extern "C" fn punktfunk_connection_next_audio(
                 let p = slot.insert(pkt);
                 // SAFETY: `out` is a caller-owned `#[repr(C)]` slot, written once by value.
                 unsafe {
-                    *out = PunktfunkAudioPacket {
+                    *out = LilynkAudioPacket {
                         data: p.data.as_ptr(),
                         len: p.data.len(),
                         seq: p.seq,
                         pts_ns: p.pts_ns,
                     };
                 }
-                PunktfunkStatus::Ok
+                LilynkStatus::Ok
             }
             Err(e) => e.status(),
         }
@@ -229,23 +229,23 @@ pub unsafe extern "C" fn punktfunk_connection_next_audio(
 /// Mute this client's own speakers. Local only: the host keeps encoding and a session joined
 /// to the same display keeps hearing the game. Audio keeps arriving and decoding — zero only
 /// what you queue for the device — so unmute lands in step instead of re-syncing. Does not
-/// clear `PUNKTFUNK_AUDIO_MUTE_HOST`.
+/// clear `LILYNK_AUDIO_MUTE_HOST`.
 ///
 /// # Safety
 /// `c` is a valid connection handle. Callable from any thread.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_set_audio_muted(
-    c: *mut PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_set_audio_muted(
+    c: *mut LilynkConnection,
     muted: bool,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         c.inner.set_audio_muted(muted);
-        PunktfunkStatus::Ok
+        LilynkStatus::Ok
     })
 }
 
-/// Why this session is silent: `PUNKTFUNK_AUDIO_MUTE_LOCAL`, `PUNKTFUNK_AUDIO_MUTE_HOST`,
+/// Why this session is silent: `LILYNK_AUDIO_MUTE_LOCAL`, `LILYNK_AUDIO_MUTE_HOST`,
 /// both, or `0`. Name the reason in the overlay from this — a local unmute leaves an
 /// operator mute standing, and the player is owed the difference.
 ///
@@ -253,60 +253,60 @@ pub unsafe extern "C" fn punktfunk_connection_set_audio_muted(
 /// `c` is a valid connection handle; `out` is NULL or writable for one `u8`.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_audio_mute(
-    c: *mut PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_audio_mute(
+    c: *mut LilynkConnection,
     out: *mut u8,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     conn_out!(c, out => c.inner.audio_mute())
 }
 
 /// Host-resolved audio channel count: `2` (stereo), `6` (5.1) or `8` (7.1).
 /// `*out` is filled when non-NULL. Raw `0xC9` Opus is encoded for this layout
-/// ([`lilynk_core::audio::layout_for`]); or use [`punktfunk_connection_next_audio_pcm`].
+/// ([`lilynk_core::audio::layout_for`]); or use [`lilynk_connection_next_audio_pcm`].
 /// It and the other audio getters read the newest packet's format, which moves only where
-/// `next_audio_pcm` returned `PUNKTFUNK_STATUS_AUDIO_FORMAT`.
+/// `next_audio_pcm` returned `LILYNK_STATUS_AUDIO_FORMAT`.
 ///
 /// # Safety
 /// `c` is a valid connection handle; `out` is NULL or writable for one `u8`.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_audio_channels(
-    c: *mut PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_audio_channels(
+    c: *mut LilynkConnection,
     out: *mut u8,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     conn_out!(c, out => c.inner.audio_format().channels)
 }
 
-/// Resolved sample rate. Open the device from this, not `PUNKTFUNK_AUDIO_SAMPLE_RATE_HZ`
-/// (the Opus default). Accessor, not a field: `PunktfunkAudioPcm` has no size guard.
+/// Resolved sample rate. Open the device from this, not `LILYNK_AUDIO_SAMPLE_RATE_HZ`
+/// (the Opus default). Accessor, not a field: `LilynkAudioPcm` has no size guard.
 ///
 /// # Safety
 /// `c` is a valid connection handle; `out` is NULL or writable for one `u32`.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_audio_sample_rate(
-    c: *mut PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_audio_sample_rate(
+    c: *mut LilynkConnection,
     out: *mut u32,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     conn_out!(c, out => c.inner.audio_format().rate_hz)
 }
 
 /// Resolved sample depth (`16`, or `24` on lossless). Plane is
-/// `host_caps & PUNKTFUNK_HOST_CAP_AUDIO_HIRES`, not this: 48 kHz/16-bit matches both.
+/// `host_caps & LILYNK_HOST_CAP_AUDIO_HIRES`, not this: 48 kHz/16-bit matches both.
 ///
 /// # Safety
 /// `c` is a valid connection handle; `out` is NULL or writable for one `u8`.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_audio_bits(
-    c: *mut PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_audio_bits(
+    c: *mut LilynkConnection,
     out: *mut u8,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     conn_out!(c, out => c.inner.audio_format().bits)
 }
 
 /// Resolved frame length in µs (some ladder rungs are not whole ms); Opus is
-/// `PUNKTFUNK_AUDIO_FRAME_MS × 1000`. On 44.1 kHz this is a nominal length, not a
+/// `LILYNK_AUDIO_FRAME_MS × 1000`. On 44.1 kHz this is a nominal length, not a
 /// duration — size rings from it, advance clocks from samples / rate.
 /// Not derivable from `next_audio_pcm`'s `frame_count` (that includes concealment).
 ///
@@ -314,34 +314,34 @@ pub unsafe extern "C" fn punktfunk_connection_audio_bits(
 /// `c` is a valid connection handle; `out` is NULL or writable for one `u16`.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_audio_frame_us(
-    c: *mut PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_audio_frame_us(
+    c: *mut LilynkConnection,
     out: *mut u16,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     conn_out!(c, out => u16::try_from(c.inner.audio_format().frame_us).unwrap_or(u16::MAX))
 }
 
-/// Why the session ended (`PUNKTFUNK_END_REASON_*`). Latches after `Closed`.
+/// Why the session ended (`LILYNK_END_REASON_*`). Latches after `Closed`.
 /// `LOCAL`/`GAME_EXITED`/`HOST_ENDED` are not failures. Unknown values = `NONE`.
 ///
 /// # Safety
 /// `c` is a valid connection handle; `out` is NULL or writable for one `u8`.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_end_reason(
-    c: *mut PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_end_reason(
+    c: *mut LilynkConnection,
     out: *mut u8,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     conn_out!(c, out => c.inner.end_reason() as u8)
 }
 
 /// Milliseconds to wait before redial `attempt` (0-based) of a session that ended with
-/// `end_reason` (`PUNKTFUNK_END_REASON_*`); `-1` means stay ended. Only `LOST` redials, on
+/// `end_reason` (`LILYNK_END_REASON_*`); `-1` means stay ended. Only `LOST` redials, on
 /// one schedule every client shares. The redial reuses the dial that started the session.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub extern "C" fn punktfunk_redial_delay_ms(end_reason: u8, attempt: u32) -> i64 {
-    lilynk_core::client::PunktfunkEndReason::from_u8(end_reason)
+pub extern "C" fn lilynk_redial_delay_ms(end_reason: u8, attempt: u32) -> i64 {
+    lilynk_core::client::LilynkEndReason::from_u8(end_reason)
         .redial_delay(attempt)
         .map_or(-1, |d| d.as_millis() as i64)
 }
@@ -355,57 +355,57 @@ fn since_first(since_first_ms: i64) -> Option<std::time::Duration> {
 }
 
 /// Milliseconds to wait before dialing again a host that refused a connect with `refusal` (the
-/// connect's `PUNKTFUNK_STATUS_*`), `since_first_ms` after its first such refusal (`-1`: this is
+/// connect's `LILYNK_STATUS_*`), `since_first_ms` after its first such refusal (`-1`: this is
 /// the first); `-1` means show the refusal. With `auto_wake` on, a setup refusal dials again
 /// until `WAKE_SETTLE` (`lilynk_core::reject`) has passed since the first: a host that just
 /// woke answers before it can stream. One rule for every client.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub extern "C" fn punktfunk_wake_redial_delay_ms(
+pub extern "C" fn lilynk_wake_redial_delay_ms(
     auto_wake: bool,
     refusal: i32,
     since_first_ms: i64,
 ) -> i64 {
-    use lilynk_core::{error::PunktfunkError, reject::RejectReason};
+    use lilynk_core::{error::LilynkError, reject::RejectReason};
     let refused = RejectReason::ALL
         .iter()
         .copied()
-        .find(|&r| PunktfunkError::Rejected(r, String::new()).status() as i32 == refusal);
+        .find(|&r| LilynkError::Rejected(r, String::new()).status() as i32 == refusal);
     lilynk_core::reject::wake_redial_delay(auto_wake, refused, false, since_first(since_first_ms))
         .map_or(-1, |d| d.as_millis() as i64)
 }
 
-/// [`punktfunk_wake_redial_delay_ms`] for a session that ended: its typed close counts only
+/// [`lilynk_wake_redial_delay_ms`] for a session that ended: its typed close counts only
 /// before any frame. Writes `-1` to `out` when it stays ended. Ask after `Closed`, before free.
 ///
 /// # Safety
 /// `c` is a valid connection handle; `out` is NULL or writable for one `i64`.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_wake_redial_delay_ms(
-    c: *const PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_wake_redial_delay_ms(
+    c: *const LilynkConnection,
     auto_wake: bool,
     since_first_ms: i64,
     out: *mut i64,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     conn_out!(c, out => c
         .inner
         .wake_redial_delay(auto_wake, since_first(since_first_ms))
         .map_or(-1, |d| d.as_millis() as i64))
 }
 
-/// One decoded audio frame from [`punktfunk_connection_next_audio_pcm`]: interleaved
+/// One decoded audio frame from [`lilynk_connection_next_audio_pcm`]: interleaved
 /// f32 in wire order `FL FR FC LFE RL RR SL SR` (first `channels` of it). `samples`
 /// points at `frame_count * channels` floats and borrows until the next PCM call.
 /// Rate/depth are accessors, not fields: this type has no `struct_size`.
 #[cfg(feature = "quic")]
 #[repr(C)]
-pub struct PunktfunkAudioPcm {
+pub struct LilynkAudioPcm {
     /// Interleaved f32 samples (wire channel order), `frame_count * channels` long.
     pub samples: *const f32,
     /// Samples per channel in this frame.
     pub frame_count: u32,
-    /// Channel count (2/6/8) — the negotiated [`punktfunk_connection_audio_channels`].
+    /// Channel count (2/6/8) — the negotiated [`lilynk_connection_audio_channels`].
     pub channels: u8,
     /// Source packet sequence number.
     pub seq: u32,
@@ -414,24 +414,24 @@ pub struct PunktfunkAudioPcm {
 }
 
 /// Decode the next audio frame in-core to interleaved f32. Both planes share this
-/// call; size the ring from [`punktfunk_connection_audio_sample_rate`]. Seq-gap
+/// call; size the ring from [`lilynk_connection_audio_sample_rate`]. Seq-gap
 /// concealment is prepended in the same buffer. Quiet-wire droughts:
-/// [`punktfunk_connection_audio_plc`]. Mutually exclusive with `next_audio`.
-/// `PUNKTFUNK_STATUS_AUDIO_FORMAT`, only under `PUNKTFUNK_REFORMAT_AUDIO`: the next packet is
+/// [`lilynk_connection_audio_plc`]. Mutually exclusive with `next_audio`.
+/// `LILYNK_STATUS_AUDIO_FORMAT`, only under `LILYNK_REFORMAT_AUDIO`: the next packet is
 /// in a new format; reopen the player from the audio getters and call again.
 ///
 /// # Safety
 /// `c` is a valid connection handle; `out` is writable. At most one audio puller.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_next_audio_pcm(
-    c: *mut PunktfunkConnection,
-    out: *mut PunktfunkAudioPcm,
+pub unsafe extern "C" fn lilynk_connection_next_audio_pcm(
+    c: *mut LilynkConnection,
+    out: *mut LilynkAudioPcm,
     timeout_ms: u32,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         if out.is_null() {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         let mut state = lock_recover(&c.audio_pcm);
         let pkt = match state.held.take() {
@@ -446,17 +446,17 @@ pub unsafe extern "C" fn punktfunk_connection_next_audio_pcm(
         };
         if pkt.new_format.is_some() {
             state.reopen(pkt);
-            return PunktfunkStatus::AudioFormat;
+            return LilynkStatus::AudioFormat;
         }
         let fmt = c.inner.audio_format();
         let channels = fmt.channels;
         match state.decode_packet(&pkt.data, pkt.seq, fmt) {
             // Nothing to hand out: a DTX silence marker with no loss owed before it.
-            Ok(0) => PunktfunkStatus::NoFrame,
+            Ok(0) => LilynkStatus::NoFrame,
             Ok(samples) => {
                 // SAFETY: `out` is a caller-owned `#[repr(C)]` slot, written once by value.
                 unsafe {
-                    *out = PunktfunkAudioPcm {
+                    *out = LilynkAudioPcm {
                         samples: state.pcm.as_ptr(),
                         frame_count: (samples / channels.max(1) as usize) as u32,
                         channels,
@@ -464,7 +464,7 @@ pub unsafe extern "C" fn punktfunk_connection_next_audio_pcm(
                         pts_ns: pkt.pts_ns,
                     };
                 }
-                PunktfunkStatus::Ok
+                LilynkStatus::Ok
             }
             Err(status) => status,
         }
@@ -481,23 +481,23 @@ pub unsafe extern "C" fn punktfunk_connection_next_audio_pcm(
 /// `c` is a valid connection handle; `out` is writable. At most one audio puller.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_audio_plc(
-    c: *mut PunktfunkConnection,
-    out: *mut PunktfunkAudioPcm,
-) -> PunktfunkStatus {
+pub unsafe extern "C" fn lilynk_connection_audio_plc(
+    c: *mut LilynkConnection,
+    out: *mut LilynkAudioPcm,
+) -> LilynkStatus {
     with_conn!(c => {
         if out.is_null() {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         let fmt = c.inner.audio_format();
         let channels = fmt.channels;
         let mut state = lock_recover(&c.audio_pcm);
         match state.conceal(fmt) {
-            Ok(0) => PunktfunkStatus::NoFrame,
+            Ok(0) => LilynkStatus::NoFrame,
             Ok(samples) => {
                 // SAFETY: `out` is a caller-owned `#[repr(C)]` slot, written once by value.
                 unsafe {
-                    *out = PunktfunkAudioPcm {
+                    *out = LilynkAudioPcm {
                         samples: state.pcm.as_ptr(),
                         frame_count: (samples / channels.max(1) as usize) as u32,
                         channels,
@@ -505,7 +505,7 @@ pub unsafe extern "C" fn punktfunk_connection_audio_plc(
                         pts_ns: 0,
                     };
                 }
-                PunktfunkStatus::Ok
+                LilynkStatus::Ok
             }
             Err(status) => status,
         }
@@ -520,8 +520,8 @@ pub unsafe extern "C" fn punktfunk_connection_audio_plc(
 /// `buf` is writable for `buf_len` bytes.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_next_pad_audio(
-    c: *mut PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_next_pad_audio(
+    c: *mut LilynkConnection,
     out_pad: *mut u8,
     out_kind: *mut u8,
     out_seq: *mut u32,
@@ -574,14 +574,14 @@ pub unsafe extern "C" fn punktfunk_connection_next_pad_audio(
 /// `c` is a valid connection handle. Callable from any thread.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_set_pad_audio_caps(
-    c: *mut PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_set_pad_audio_caps(
+    c: *mut LilynkConnection,
     pad: u8,
     audio_caps: u8,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         c.inner.set_pad_audio_caps(pad, audio_caps);
-        PunktfunkStatus::Ok
+        LilynkStatus::Ok
     })
 }
 
@@ -590,7 +590,7 @@ mod tests {
     use super::*;
 
     /// Opus on `0xC9`, 48 kHz, 16-bit, stereo — what an embedder that does not call
-    /// `punktfunk_connect_ex11` still gets.
+    /// `lilynk_connect_ex11` still gets.
     const OPUS_48K: AudioFormat = AudioFormat {
         codec: lilynk_core::quic::AUDIO_CODEC_OPUS,
         rate_hz: lilynk_core::audio::SAMPLE_RATE_HZ,
@@ -751,7 +751,7 @@ mod tests {
         let (_, wire) = pcm_frame(240 * 2, lilynk_core::audio::pcm::BITS_24);
         assert_eq!(
             state.decode_packet(&wire[..wire.len() - 1], 0, PCM_48K_24),
-            Err(PunktfunkStatus::BadPacket)
+            Err(LilynkStatus::BadPacket)
         );
         // With a gap owed, the concealment survives the bad packet instead of dying with it.
         assert_eq!(state.decode_packet(&wire, 1, PCM_48K_24), Ok(240 * 2));
@@ -801,7 +801,7 @@ mod tests {
         assert_eq!(state.decode_packet(&out, 2, OPUS_48K), Ok(2 * 240 * 2));
         assert_eq!(state.conceal(OPUS_48K), Ok(240 * 2));
 
-        // Accessors report 48 kHz / 16-bit, matching `PUNKTFUNK_AUDIO_SAMPLE_RATE_HZ`.
+        // Accessors report 48 kHz / 16-bit, matching `LILYNK_AUDIO_SAMPLE_RATE_HZ`.
         assert_eq!(OPUS_48K.rate_hz, lilynk_core::audio::SAMPLE_RATE_HZ);
         assert!(!OPUS_48K.is_pcm());
     }

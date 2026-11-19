@@ -18,12 +18,12 @@ const MANIFEST: &str = r#"<assembly xmlns="urn:schemas-microsoft-com:asm.v1" man
 
 fn main() {
     // Not git-derived: RPM packaging uses a `git archive` tarball with no `.git`.
-    let version = std::env::var("PUNKTFUNK_BUILD_VERSION")
+    let version = std::env::var("LILYNK_BUILD_VERSION")
         .ok()
         .filter(|v| !v.trim().is_empty())
         .unwrap_or_else(|| std::env::var("CARGO_PKG_VERSION").unwrap_or_else(|_| "unknown".into()));
-    println!("cargo:rustc-env=PUNKTFUNK_VERSION={version}");
-    println!("cargo:rerun-if-env-changed=PUNKTFUNK_BUILD_VERSION");
+    println!("cargo:rustc-env=LILYNK_VERSION={version}");
+    println!("cargo:rerun-if-env-changed=LILYNK_BUILD_VERSION");
 
     // cfg(windows) is the HOST (Linux packaging skips this); `CARGO_CFG_WINDOWS` is
     // the TARGET. Task Manager / Explorer show FileDescription, not the exe name.

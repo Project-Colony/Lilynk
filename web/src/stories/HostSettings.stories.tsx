@@ -23,7 +23,7 @@ const row = (
 	stored: null,
 	source: "default",
 	origin: null,
-	env: `PUNKTFUNK_${r.id.toUpperCase()}`,
+	env: `LILYNK_${r.id.toUpperCase()}`,
 	apply: "next_session",
 	advanced: false,
 	title: r.id,
@@ -71,7 +71,7 @@ const settings: HostSettingsState = {
 			default: true,
 			value: false,
 			source: "env",
-			origin: "PUNKTFUNK_444",
+			origin: "LILYNK_444",
 			stored: true,
 		}),
 		row({

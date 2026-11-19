@@ -123,8 +123,8 @@ test("each stream the box serves reaches a seat's page while it stays open", asy
 		[...(tails ?? "").matchAll(/"([^"]+)"/g)].map((m) => m[1]).sort(),
 	);
 
-	process.env.PUNKTFUNK_MGMT_URL = `http://127.0.0.1:${seatHost.port}`;
-	process.env.PUNKTFUNK_MGMT_TOKEN = "t0k";
+	process.env.LILYNK_MGMT_URL = `http://127.0.0.1:${seatHost.port}`;
+	process.env.LILYNK_MGMT_TOKEN = "t0k";
 	const handle = toWebHandler(createApp().use(seatRoute));
 	try {
 		for (const stream of streams) {
@@ -139,7 +139,7 @@ test("each stream the box serves reaches a seat's page while it stays open", asy
 			expect(asked.pop()).toBe(`${base}/${rest}`);
 		}
 	} finally {
-		delete process.env.PUNKTFUNK_MGMT_URL;
-		delete process.env.PUNKTFUNK_MGMT_TOKEN;
+		delete process.env.LILYNK_MGMT_URL;
+		delete process.env.LILYNK_MGMT_TOKEN;
 	}
 });

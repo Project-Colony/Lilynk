@@ -25,13 +25,13 @@ use crate::ui::{columns, Reporter};
 /// generate it, in the outro, and in the docs. It prints until the first sign-in only: the
 /// console then stores a salted hash, and a forgotten password is reset, not read.
 pub const PASSWORD_READ: &str =
-    "sed -n 's/^PUNKTFUNK_UI_PASSWORD=//p' ~/.config/punktfunk/web-password";
+    "sed -n 's/^LILYNK_UI_PASSWORD=//p' ~/.config/punktfunk/web-password";
 
 /// [`PASSWORD_READ`] for this box. SteamOS keeps the password in `web.env`, which its script
 /// writes.
 pub fn password_read(family: Family) -> &'static str {
     match family {
-        Family::Steamos => "sed -n 's/^PUNKTFUNK_UI_PASSWORD=//p' ~/.config/punktfunk/web.env",
+        Family::Steamos => "sed -n 's/^LILYNK_UI_PASSWORD=//p' ~/.config/punktfunk/web.env",
         _ => PASSWORD_READ,
     }
 }
@@ -70,7 +70,7 @@ pub fn choices_summary(ui: &dyn Reporter, choices: &Choices) {
     let rows: [(&str, bool, &Option<Why>); 4] = [
         (
             "Full controller (joins the punktfunk group — grants usbip attach)",
-            choices.punktfunk_group,
+            choices.lilynk_group,
             &choices.group_why,
         ),
         (

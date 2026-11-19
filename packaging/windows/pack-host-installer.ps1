@@ -178,7 +178,7 @@ if ($wantWeb -or $wantScripting) {
     Copy-Item -LiteralPath $BunExe -Destination $bunStage -Force
 }
 # The web console: the self-contained .output tree (Nitro noExternals - deps bundled + tree-shaken,
-# no node_modules), run as a supervised child of the PunktfunkHost service (no launcher script),
+# no node_modules), run as a supervised child of the LilynkHost service (no launcher script),
 # auto-wired to the host's loopback mgmt API.
 if ($wantWeb) {
     $webStage = Join-Path $OutDir 'web'
@@ -189,7 +189,7 @@ if ($wantWeb) {
 }
 else { Write-Host "no -WebDir/-BunExe -> installer built WITHOUT the web console" }
 # The plugin/script runner: one self-contained bundle (effect + the SDK inlined). The installer
-# registers its PunktfunkScripting task and an upgrade keeps the task's enabled state. Built by CI
+# registers its LilynkScripting task and an upgrade keeps the task's enabled state. Built by CI
 # (SCRIPTING_BUNDLE) alongside the web console; omitted when -ScriptingBundle/-BunExe are unset.
 if ($wantScripting) {
     $scrStage = Join-Path $OutDir 'scripting'

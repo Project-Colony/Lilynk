@@ -54,8 +54,8 @@ type NonApiMethods = "httpClient" | "streamEvents" | "streamEventsSse";
  * error. The live-event SSE endpoint is intentionally absent — subscribe via `pf.events`.
  */
 export type HostApi = {
-	readonly [K in Exclude<keyof gen.Punktfunk, NonApiMethods>]: Promiseify<
-		gen.Punktfunk[K]
+	readonly [K in Exclude<keyof gen.Lilynk, NonApiMethods>]: Promiseify<
+		gen.Lilynk[K]
 	>;
 };
 

@@ -42,7 +42,7 @@ internal val BrandDark = darkColorScheme(
  * harmonises with the user's wallpaper, falling back to the punktfunk brand violets below that.
  */
 @Composable
-fun PunktfunkTheme(content: @Composable () -> Unit) {
+fun LilynkTheme(content: @Composable () -> Unit) {
     val scheme = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         dynamicDarkColorScheme(LocalContext.current)
     } else {
@@ -50,7 +50,7 @@ fun PunktfunkTheme(content: @Composable () -> Unit) {
     }
     // Geist Sans across the whole type scale — the brand typeface the website and the Apple client
     // already ship (see Type.kt).
-    MaterialTheme(colorScheme = scheme, typography = PunktfunkTypography, content = content)
+    MaterialTheme(colorScheme = scheme, typography = LilynkTypography, content = content)
 }
 
 /** A pill: a badge, a chip. */

@@ -84,11 +84,11 @@ pub mod video_fit;
 pub mod wol;
 
 pub use config::{CompositorPref, Config, FecConfig, FecScheme, Mode, Role};
-pub use error::{PunktfunkError, PunktfunkStatus, Result};
+pub use error::{LilynkError, LilynkStatus, Result};
 pub use session::{Frame, Session};
 pub use stats::Stats;
 
-/// Explicit-off for a `PUNKTFUNK_*` switch: trimmed, case-insensitive `0`/`false`/`off`/`no`
+/// Explicit-off for a `LILYNK_*` switch: trimmed, case-insensitive `0`/`false`/`off`/`no`
 /// are off, any other present value is on, unset is `None`. A kill switch reads
 /// `!= Some(false)`, an opt-in `== Some(true)`. `ly-host-config` applies the same rule to
 /// the host's rows; this one is for every process that has only the environment.
@@ -103,15 +103,15 @@ fn env_value_on(value: &str) -> bool {
     )
 }
 
-/// C-ABI generation. Mirrors `punktfunk_abi_version()`; embedders abort on mismatch.
+/// C-ABI generation. Mirrors `lilynk_abi_version()`; embedders abort on mismatch.
 ///
 /// Bump on any breaking change to the C ABI (`lilynk-ffi`). Additive bumps add
 /// symbols and leave every existing function's signature and behaviour alone.
-/// New connect options append to `PunktfunkConnectOpts` behind `struct_size`;
-/// do not mint another `connect_ex*` or grow `PunktfunkAudioPcm` / `PunktfunkStats`
+/// New connect options append to `LilynkConnectOpts` behind `struct_size`;
+/// do not mint another `connect_ex*` or grow `LilynkAudioPcm` / `LilynkStats`
 /// (no size guard, allocated by value). Growing a struct the library writes whole into
 /// the caller's buffer is a bump: the version check is the overrun guard
-/// (`PunktfunkHidOutput`, `PunktfunkProbeResult`).
+/// (`LilynkHidOutput`, `LilynkProbeResult`).
 ///
 /// The wire is versioned by ALPN, not by this. Pin the integer in `lilynk-ffi`
 /// (`abi_version_is_pinned`). Per-bump notes live in `CHANGELOG.md`.
@@ -119,11 +119,11 @@ pub const ABI_VERSION: u32 = 76;
 /// FNV-1a of the generated `include/lilynk_core.h` without comments or the version define.
 /// `gen-headers`'s `abi_header_hash` test fails on a change; update this beside `ABI_VERSION`.
 /// cbindgen:ignore
-pub const ABI_HEADER_HASH: u64 = 0x236a_ea12_1824_c2cb;
+pub const ABI_HEADER_HASH: u64 = 0xe36f_85ff_8782_8e4c;
 
 #[cfg(test)]
 mod env_tests {
-    /// The host reads `PUNKTFUNK_UPDATE_CHECK=no` as off; every other process must too.
+    /// The host reads `LILYNK_UPDATE_CHECK=no` as off; every other process must too.
     #[test]
     fn env_switches_read_the_hosts_off_grammar() {
         for off in ["0", "false", "off", "no", "OFF", " No ", "0 "] {

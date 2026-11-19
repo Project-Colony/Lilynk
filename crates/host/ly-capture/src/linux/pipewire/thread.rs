@@ -371,7 +371,7 @@ fn open_importer(plan: &NegotiationPlan, full_range: bool) -> Option<ly_zerocopy
                 "NV12"
             },
             "zero-copy: offering the producer's own planar LINEAR DMA-BUF first (no host \
-             RGB CSC; PUNKTFUNK_PIPEWIRE_NV12=0 restores the packed-RGB negotiation)"
+             RGB CSC; LILYNK_PIPEWIRE_NV12=0 restores the packed-RGB negotiation)"
         );
     }
     importer
@@ -436,7 +436,7 @@ fn log_resolved_arm(cfg: &StreamConfig, offer: &Offer, ladder: &Ladder) {
     );
     if plan.force_shm {
         tracing::info!(
-            "capture: PUNKTFUNK_FORCE_SHM — race-free SHM download path (no dmabuf, no zero-copy)"
+            "capture: LILYNK_FORCE_SHM — race-free SHM download path (no dmabuf, no zero-copy)"
         );
     } else if plan.raw_dmabuf_latched {
         tracing::warn!(
@@ -473,12 +473,12 @@ fn log_resolved_arm(cfg: &StreamConfig, offer: &Offer, ladder: &Ladder) {
         tracing::warn!(
             consumer = consumer.as_str(),
             "{} encode with the CPU capture path (per-frame de-pad + CSC + upload) — \
-             zero-copy is off for this capture ({}); set PUNKTFUNK_ZEROCOPY=1 to restore the \
+             zero-copy is off for this capture ({}); set LILYNK_ZEROCOPY=1 to restore the \
              dmabuf default",
             consumer.as_str(),
             // The knob's own grammar decided (`ly_zerocopy`); a set-but-on value is not the cause.
             if !ly_zerocopy::enabled() {
-                "PUNKTFUNK_ZEROCOPY is off"
+                "LILYNK_ZEROCOPY is off"
             } else if opts.want_hdr && !policy.hdr_cuda_ok {
                 // `build_importer` drops HDR when the encoder cannot take packed 10-bit
                 // CUDA. Naming the output format would send the reader to the wrong knob.
@@ -498,7 +498,7 @@ fn log_resolved_arm(cfg: &StreamConfig, offer: &Offer, ladder: &Ladder) {
     } else if want_dmabuf && !vaapi_passthrough && ly_zerocopy::nv12_enabled() {
         tracing::info!(
             full_range = opts.full_range,
-            "PUNKTFUNK_NV12: tiled dmabufs convert to NV12 (BT.709) on the GPU — NVENC fed \
+            "LILYNK_NV12: tiled dmabufs convert to NV12 (BT.709) on the GPU — NVENC fed \
              native YUV (no internal RGB→YUV CSC)"
         );
     }
@@ -510,7 +510,7 @@ fn log_format_offer(opts: &CaptureOpts) {
         tracing::info!(
             fw,
             fh,
-            "pipewire: offering a fixed BGRx format pod (PUNKTFUNK_PW_FIXED_POD)"
+            "pipewire: offering a fixed BGRx format pod (LILYNK_PW_FIXED_POD)"
         );
     }
     if opts.want_hdr {

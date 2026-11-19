@@ -18,7 +18,7 @@ tokio = { version = "1", features = ["rt", "rt-multi-thread", "net", "time"] }
 ashpd = { version = "0.13", features = ["screencast"] }
 anyhow = "1"
 tracing = "0.1"
-# `PUNKTFUNK_PORTAL_CURSOR_MODE`, read by the cursor negotiation.
+# `LILYNK_PORTAL_CURSOR_MODE`, read by the cursor negotiation.
 ly-host-config = { path = "../ly-host-config" }
 
 [lints]

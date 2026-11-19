@@ -1,4 +1,4 @@
-//! Decoder-input capture behind `PUNKTFUNK_DUMP_VIDEO`.
+//! Decoder-input capture behind `LILYNK_DUMP_VIDEO`.
 //!
 //! Writes each AU the session pump admits, before the AV1 intake rule and the decoder see it.
 //! The data file is the raw concatenation (a valid Annex-B / OBU stream for
@@ -33,10 +33,10 @@ fn codec_ext(codec: u8) -> &'static str {
 }
 
 impl AuDump {
-    /// `PUNKTFUNK_DUMP_VIDEO` directory. `None` if unset, or if the files could not
+    /// `LILYNK_DUMP_VIDEO` directory. `None` if unset, or if the files could not
     /// be created (that case is logged).
     pub fn from_env(codec: u8) -> Option<AuDump> {
-        let dir = std::env::var_os("PUNKTFUNK_DUMP_VIDEO")?;
+        let dir = std::env::var_os("LILYNK_DUMP_VIDEO")?;
         let stamp = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .map(|d| d.as_secs())
@@ -58,7 +58,7 @@ impl AuDump {
             Ok((data, idx)) => {
                 tracing::info!(
                     path = %data_path.display(),
-                    "PUNKTFUNK_DUMP_VIDEO: capturing decoder input"
+                    "LILYNK_DUMP_VIDEO: capturing decoder input"
                 );
                 Some(AuDump {
                     data: BufWriter::new(data),
@@ -70,7 +70,7 @@ impl AuDump {
                 tracing::warn!(
                     error = %e,
                     dir = %dir.display(),
-                    "PUNKTFUNK_DUMP_VIDEO capture file create failed — capture disabled"
+                    "LILYNK_DUMP_VIDEO capture file create failed — capture disabled"
                 );
                 None
             }
@@ -93,7 +93,7 @@ impl AuDump {
         match r {
             Ok(()) => true,
             Err(e) => {
-                tracing::warn!(error = %e, "PUNKTFUNK_DUMP_VIDEO write failed — capture disabled");
+                tracing::warn!(error = %e, "LILYNK_DUMP_VIDEO write failed — capture disabled");
                 false
             }
         }

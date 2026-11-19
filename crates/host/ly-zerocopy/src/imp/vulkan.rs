@@ -122,11 +122,11 @@ impl VkBridge {
     /// `full_range`, or studio.
     pub fn new(full_range: bool) -> Result<VkBridge> {
         // CSC shares SM with the game: request elevated global priority so it schedules first.
-        // `PUNKTFUNK_VK_QUEUE_PRIORITY` = off | high | realtime (default high); a refused class
+        // `LILYNK_VK_QUEUE_PRIORITY` = off | high | realtime (default high); a refused class
         // steps down to the next, so it never fails the bridge. This device is always NVIDIA,
         // whose REALTIME queue adds ~0.5 ms to every frame's convert, more than it preempts.
         let priorities: &[vk::QueueGlobalPriorityKHR] =
-            match std::env::var("PUNKTFUNK_VK_QUEUE_PRIORITY").as_deref() {
+            match std::env::var("LILYNK_VK_QUEUE_PRIORITY").as_deref() {
                 Ok("off" | "0") => &[],
                 Ok("realtime") => &[
                     vk::QueueGlobalPriorityKHR::REALTIME,

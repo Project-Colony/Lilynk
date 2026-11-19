@@ -233,8 +233,8 @@ mod tests {
     #[test]
     fn every_minted_family_is_swept() {
         // A new minted family that omits itself here ships as a leftover after uninstall.
-        assert!(OWNER_MARKERS.contains(&"PunktfunkPadIndex"));
-        assert!(OWNER_MARKERS.contains(&"PunktfunkAudioRole"));
-        assert!(OWNER_MARKERS.contains(&"PunktfunkAudioProbe"));
+        assert!(OWNER_MARKERS.contains(&"LilynkPadIndex"));
+        assert!(OWNER_MARKERS.contains(&"LilynkAudioRole"));
+        assert!(OWNER_MARKERS.contains(&"LilynkAudioProbe"));
     }
 }

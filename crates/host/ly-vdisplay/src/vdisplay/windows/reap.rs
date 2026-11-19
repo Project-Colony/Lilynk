@@ -269,7 +269,7 @@ mod tests {
     /// A ghost needs both: a node that is gone and a name that is ours. A present node, one in
     /// a problem state, an unknown answer or a stranger's name stays.
     #[test]
-    fn only_an_absent_punktfunk_node_is_a_ghost() {
+    fn only_an_absent_lilynk_node_is_a_ghost() {
         const CR_SUCCESS: u32 = 0;
         const CR_INVALID_DEVNODE: u32 = 0x05;
         let ours = Some("generic monitor (punktfunk)");
@@ -344,7 +344,7 @@ mod tests {
     /// A monitor node is a ghost only when it is absent, PnP reads its status `Unknown` and its
     /// name is ours. Any other node may carry a live session.
     #[test]
-    fn the_script_selects_only_absent_punktfunk_monitors() {
+    fn the_script_selects_only_absent_lilynk_monitors() {
         assert!(
             REAP_PS.contains("Get-PnpDevice -Class Monitor"),
             "{REAP_PS}"

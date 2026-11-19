@@ -597,7 +597,7 @@ pub(crate) struct NativeVulkanDecoder {
     health: DecodeHealth,
     /// Stream damage; host should re-anchor. Drained into the shared `want_keyframe`.
     want_recovery: bool,
-    /// `PUNKTFUNK_AU_FAULT`. Armed here so a faulted AU is byte-identical to a lossy
+    /// `LILYNK_AU_FAULT`. Armed here so a faulted AU is byte-identical to a lossy
     /// network delivery; only this rung injects.
     fault: Option<ly_vkdecode::AuFault>,
     /// Intel on i915: the GEM wait that keeps the media engine clocked (`wait_timeline`).
@@ -740,22 +740,22 @@ impl NativeVulkanDecoder {
                  completion — the only signal libavcodec's rungs ever had)"
             );
         }
-        // `PUNKTFUNK_AU_FAULT=<mode>[:<period>]`. Unset is normal; a spec that does
+        // `LILYNK_AU_FAULT=<mode>[:<period>]`. Unset is normal; a spec that does
         // not parse leaves the injector disarmed rather than half-arming.
-        let fault = std::env::var("PUNKTFUNK_AU_FAULT").ok().and_then(|spec| {
+        let fault = std::env::var("LILYNK_AU_FAULT").ok().and_then(|spec| {
             match ly_vkdecode::AuFault::from_spec(&spec) {
                 Some(f) => {
                     tracing::warn!(
                         mode = ?f.mode(),
                         period = f.period(),
-                        "PUNKTFUNK_AU_FAULT: deliberately corrupting decoder input"
+                        "LILYNK_AU_FAULT: deliberately corrupting decoder input"
                     );
                     Some(f)
                 }
                 None => {
                     tracing::warn!(
                         value = %spec,
-                        "PUNKTFUNK_AU_FAULT not understood (want drop|truncate|flip[:period]) \
+                        "LILYNK_AU_FAULT not understood (want drop|truncate|flip[:period]) \
                          — ignored"
                     );
                     None
@@ -825,7 +825,7 @@ impl NativeVulkanDecoder {
         let au = match self.fault.as_mut().map(|f| f.apply(au)) {
             None | Some(ly_vkdecode::FaultAction::Pass) => au,
             Some(ly_vkdecode::FaultAction::Drop) => {
-                tracing::warn!(len = au.len(), "PUNKTFUNK_AU_FAULT: dropping this AU");
+                tracing::warn!(len = au.len(), "LILYNK_AU_FAULT: dropping this AU");
                 // Never fed — same observable as a lost AU. Still settle prior
                 // verdicts so query slots do not sit unread. Do not fold a clean
                 // `note`: this AU never reached the decoder, so it is not evidence
@@ -841,7 +841,7 @@ impl NativeVulkanDecoder {
                 tracing::warn!(
                     len = au.len(),
                     corrupted_len = bytes.len(),
-                    "PUNKTFUNK_AU_FAULT: corrupting this AU"
+                    "LILYNK_AU_FAULT: corrupting this AU"
                 );
                 faulted = bytes;
                 &faulted[..]

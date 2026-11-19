@@ -162,11 +162,11 @@ const runUnit = arg("--run-unit");
 if (runUnit) {
 	const unit = { name: arg("--unit-name") ?? runUnit, file: runUnit };
 	// Set only on Linux, where the supervisor forwards every plugin's UI.
-	const uiPort = Number(process.env.PUNKTFUNK_UI_PORT);
+	const uiPort = Number(process.env.LILYNK_UI_PORT);
 	if (uiPort > 0) redirectUiServe(uiPort);
 	// Set only for a Windows container, whose page goes over the host's channel on its pipe.
-	const channel = process.env.PUNKTFUNK_UI_CHANNEL;
-	const pipe = process.env.PUNKTFUNK_MGMT_UNIX;
+	const channel = process.env.LILYNK_UI_CHANNEL;
+	const pipe = process.env.LILYNK_MGMT_UNIX;
 	if (channel && pipe) redirectUiServeToChannel(pipe, channel);
 	const unitShipper = installLogShipper();
 	const unitFiber = Effect.runFork(runOneUnit(unit));
@@ -201,10 +201,10 @@ const keepAlive = setInterval(() => {}, 2 ** 31 - 1);
 // resolve their connection from `process.env` first, so setting it here reaches every plugin —
 // including one whose vendored `@punktfunk/host` predates `publishedMgmtUrl` (on Windows
 // `reconcileSharedSdk` cannot refresh a read-only tree, so an old copy can outlive several host
-// upgrades). An explicit PUNKTFUNK_MGMT_URL from the operator still wins.
-if (!process.env.PUNKTFUNK_MGMT_URL) {
+// upgrades). An explicit LILYNK_MGMT_URL from the operator still wins.
+if (!process.env.LILYNK_MGMT_URL) {
 	const published = publishedMgmtUrl();
-	if (published) process.env.PUNKTFUNK_MGMT_URL = published;
+	if (published) process.env.LILYNK_MGMT_URL = published;
 }
 
 // Tee this process's output to the host so the console's Logs page can show it. Installed HERE and

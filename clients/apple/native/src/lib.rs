@@ -1,5 +1,5 @@
 //! The Apple client's one static library: the punktfunk C ABI, linked whole, plus the
-//! console's (`punktfunk_console_*`). Swift imports both as `PunktfunkCore`.
+//! console's (`lilynk_console_*`). Swift imports both as `LilynkCore`.
 
 pub use lilynk_ffi;
 

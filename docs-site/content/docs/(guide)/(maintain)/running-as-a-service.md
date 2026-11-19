@@ -14,8 +14,8 @@ planes stay off until you turn them on under **Host** in the
 
 | Plane | Setting | `host.env` | Firewall |
 |---|---|---|---|
-| Stock [Moonlight](/docs/moonlight) (GameStream) | **GameStream** | `PUNKTFUNK_GAMESTREAM=1` | open the `lilynk-gamestream` service |
-| [Browser client](/docs/browser-client) (preview) | **Browser streaming** | `PUNKTFUNK_WEBTRANSPORT=1` | UDP 9778, in `lilynk-native` (`PUNKTFUNK_WEBTRANSPORT_PORT` moves it) |
+| Stock [Moonlight](/docs/moonlight) (GameStream) | **GameStream** | `LILYNK_GAMESTREAM=1` | open the `lilynk-gamestream` service |
+| [Browser client](/docs/browser-client) (preview) | **Browser streaming** | `LILYNK_WEBTRANSPORT=1` | UDP 9778, in `lilynk-native` (`LILYNK_WEBTRANSPORT_PORT` moves it) |
 
 Both take effect after a host restart. GameStream pairs over plain HTTP with weaker encryption, so
 turn it on only on a LAN you trust ([Security](/docs/security)).
@@ -82,7 +82,7 @@ that comes up at boot.
 
 ## Windows
 
-The installer registers the host as the **`PunktfunkHost`** service: `LocalSystem`, started at
+The installer registers the host as the **`LilynkHost`** service: `LocalSystem`, started at
 boot, so it captures the lock screen and UAC prompts with nobody logged in. Keep a host with that
 much reach on a network you trust ([Security](/docs/security)).
 
@@ -138,7 +138,7 @@ On the Bazzite image `/usr` is read-only: run `sudo lilynk-sysext update` instea
 module wraps the worker for you.
 
 Without the grant the stream still runs, at normal priority, but a GPU-bound game adds milliseconds
-to every frame. The host log then says `VkBridge queue at default GPU priority`. `PYROWAVE_QUEUE_PRIORITY=off` and `PUNKTFUNK_ENCODE_WORKER=off` are the opt-outs —
+to every frame. The host log then says `VkBridge queue at default GPU priority`. `PYROWAVE_QUEUE_PRIORITY=off` and `LILYNK_ENCODE_WORKER=off` are the opt-outs —
 [Configuration](/docs/configuration#advanced-performance-tuning).
 
 ## Stopping and removing

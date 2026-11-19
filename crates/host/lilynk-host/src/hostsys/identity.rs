@@ -112,7 +112,7 @@ fn generate() -> Result<(String, String)> {
     Ok((cert.pem(), key.serialize_pem()))
 }
 
-/// Serializes every test in this crate that overrides `PUNKTFUNK_CONFIG_DIR`.
+/// Serializes every test in this crate that overrides `LILYNK_CONFIG_DIR`.
 /// The env var is process-global: parallel tests would share throwaway
 /// config dirs. Lock it before installing the override.
 #[cfg(test)]
@@ -122,16 +122,16 @@ pub(crate) static CONFIG_DIR_TEST_LOCK: std::sync::Mutex<()> = std::sync::Mutex:
 mod tests {
     use super::*;
 
-    /// Scoped `PUNKTFUNK_CONFIG_DIR` override, restored on drop even if an
+    /// Scoped `LILYNK_CONFIG_DIR` override, restored on drop even if an
     /// assertion panics. These tests write identity files and must never
     /// touch a real config dir.
     struct EnvGuard(Option<std::ffi::OsString>);
     impl EnvGuard {
         fn set(dir: &std::path::Path) -> EnvGuard {
-            let prev = std::env::var_os("PUNKTFUNK_CONFIG_DIR");
+            let prev = std::env::var_os("LILYNK_CONFIG_DIR");
             // SAFETY: only called by tests that hold CONFIG_DIR_TEST_LOCK, which serializes
             // every test that writes or reads this variable across the whole test binary.
-            unsafe { std::env::set_var("PUNKTFUNK_CONFIG_DIR", dir) };
+            unsafe { std::env::set_var("LILYNK_CONFIG_DIR", dir) };
             EnvGuard(prev)
         }
     }
@@ -140,9 +140,9 @@ mod tests {
             match self.0.take() {
                 // SAFETY: dropped while the owning test still holds CONFIG_DIR_TEST_LOCK — the
                 // same serialization as `EnvGuard::set`.
-                Some(v) => unsafe { std::env::set_var("PUNKTFUNK_CONFIG_DIR", v) },
+                Some(v) => unsafe { std::env::set_var("LILYNK_CONFIG_DIR", v) },
                 // SAFETY: as above.
-                None => unsafe { std::env::remove_var("PUNKTFUNK_CONFIG_DIR") },
+                None => unsafe { std::env::remove_var("LILYNK_CONFIG_DIR") },
             }
         }
     }

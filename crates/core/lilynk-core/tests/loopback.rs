@@ -162,10 +162,7 @@ fn flush_backlog_discards_queue_and_recovers() {
     assert!(flushed > 0, "a queued backlog must be discarded");
     assert_eq!(client.stats().packets_dropped, flushed);
     assert!(
-        matches!(
-            client.poll_frame(),
-            Err(lilynk_core::PunktfunkError::NoFrame)
-        ),
+        matches!(client.poll_frame(), Err(lilynk_core::LilynkError::NoFrame)),
         "nothing pending after a flush"
     );
     let recovery = vec![0xA5u8; 100_000];

@@ -25,7 +25,7 @@ systemctl --user enable --now lilynk-web
 [install it](/docs/troubleshooting-startup#systemctl---user-status-lilynk-web-unit-not-found).
 
 The console answers devices on your local network or a VPN and refuses the internet. To keep it to
-the host machine, set `PUNKTFUNK_UI_BIND=127.0.0.1` in `host.env`
+the host machine, set `LILYNK_UI_BIND=127.0.0.1` in `host.env`
 ([Configuration](/docs/configuration)) and restart the console.
 
 ## Two ports, not one

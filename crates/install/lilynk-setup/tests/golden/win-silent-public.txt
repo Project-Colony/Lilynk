@@ -27,8 +27,8 @@
   + "C:\Program Files\punktfunk\lilynk-host.exe" driver install --dir <staging>\pfvdisplay
   + "C:\Program Files\punktfunk\lilynk-host.exe" driver install --gamepad --dir <staging>\gamepad
 ==> Plugin runner
-  + schtasks /Create /TN PunktfunkScripting /XML <generated> /F
-  + schtasks /Run /TN PunktfunkScripting
+  + schtasks /Create /TN LilynkScripting /XML <generated> /F
+  + schtasks /Run /TN LilynkScripting
 ==> Service
   + "C:\Program Files\punktfunk\lilynk-host.exe" service install --gamestream=off --allow-public-network=off --web-bind=0.0.0.0
   + "C:\Program Files\punktfunk\lilynk-host.exe" service start

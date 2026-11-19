@@ -109,7 +109,7 @@ console.log("launch id tests passed");
 
 // The options string: PF_REF first, the client path only when given, each extra in a fixed
 // order, and the wrapper behind %command% as a quoted argument.
-const runner = "/home/deck/homebrew/plugins/punktfunk/bin/punktfunkrun.sh";
+const runner = "/home/deck/homebrew/plugins/punktfunk/bin/lilynkrun.sh";
 const tail = `%command% "${runner}"`;
 const host = "11111111-2222-4333-8444-555555555555";
 assert.equal(launchOptions(host, runner, "", {}), `PF_REF=${host} ${tail}`, "plain stream");

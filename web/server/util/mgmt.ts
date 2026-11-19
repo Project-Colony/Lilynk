@@ -17,7 +17,7 @@ export function mgmtUrl(): string {
 	// sourced as a systemd EnvironmentFile. An empty or truncated file would otherwise set the
 	// variable to "" and send every proxy hop to a URL that cannot parse.
 	followEndpoint();
-	const url = process.env.PUNKTFUNK_MGMT_URL?.trim();
+	const url = process.env.LILYNK_MGMT_URL?.trim();
 	return url ? url : "https://127.0.0.1:47990";
 }
 
@@ -27,17 +27,17 @@ function followEndpoint(): void {
 	const now = Date.now();
 	if (now - endpointAt < CERT_CACHE_MS) return;
 	endpointAt = now;
-	loadEnvFiles(process.env, ["PUNKTFUNK_MGMT_URL"]);
+	loadEnvFiles(process.env, ["LILYNK_MGMT_URL"]);
 }
 let endpointAt = 0;
 
 /** Bearer token for the management API, injected server-side. */
 export function mgmtToken(): string {
-	return process.env.PUNKTFUNK_MGMT_TOKEN ?? "";
+	return process.env.LILYNK_MGMT_TOKEN ?? "";
 }
 
 /** Bun's per-request `tls` for the loopback hop to the management API, or `undefined` to
- * verify normally (a non-loopback `PUNKTFUNK_MGMT_URL` must present a real chain).
+ * verify normally (a non-loopback `LILYNK_MGMT_URL` must present a real chain).
  *
  * Loopback is pinned, not relaxed: the host's identity certs are the CA and the name check is
  * off, since the legacy cert carries no SAN. Whatever answers on the port must hold the host's
@@ -50,7 +50,7 @@ export function loopbackTls(base: string): { tls: object } | undefined {
 		if (!warnedUnpinned) {
 			warnedUnpinned = true;
 			console.warn(
-				"[lilynk-web] PUNKTFUNK_UI_TLS_CERT names no readable host cert — the loopback hop to the management API is not pinned",
+				"[lilynk-web] LILYNK_UI_TLS_CERT names no readable host cert — the loopback hop to the management API is not pinned",
 			);
 		}
 		return { tls: { rejectUnauthorized: false } };
@@ -75,7 +75,7 @@ function hostIdentityCerts(): string[] {
 	const now = Date.now();
 	if (now - certCache.at < CERT_CACHE_MS) return certCache.pems;
 	const pems: string[] = [];
-	const legacy = process.env.PUNKTFUNK_UI_TLS_CERT?.trim();
+	const legacy = process.env.LILYNK_UI_TLS_CERT?.trim();
 	if (legacy) {
 		const dir = dirPrefix(legacy, "cert.pem");
 		for (const p of [dir === null ? null : `${dir}native-cert.pem`, legacy]) {
@@ -118,7 +118,7 @@ export function mgmtBearer(): string {
 		throw createError({
 			statusCode: 503,
 			statusMessage:
-				"management token not configured (PUNKTFUNK_MGMT_TOKEN / ~/.config/punktfunk/mgmt-token)",
+				"management token not configured (LILYNK_MGMT_TOKEN / ~/.config/punktfunk/mgmt-token)",
 		});
 	}
 	return `Bearer ${token}`;
@@ -131,7 +131,7 @@ export function assertHostTokenAccepted(res: { status: number }): void {
 		throw createError({
 			statusCode: 502,
 			statusMessage:
-				"management API rejected the host token (check PUNKTFUNK_MGMT_TOKEN)",
+				"management API rejected the host token (check LILYNK_MGMT_TOKEN)",
 		});
 	}
 }

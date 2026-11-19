@@ -194,7 +194,7 @@ jobs:
         # vX.Y.Z tag -> X.Y.Z in the `stable` apt distribution; a main push -> <next-minor>~ciN.g<sha>
         # in `canary`, where the '~' sorts below the eventual tag (scripts/ci/ly-version.sh owns the
         # rule, see channels.md). Computed BEFORE the build so it's stamped into the binary
-        # (PUNKTFUNK_BUILD_VERSION -> build.rs -> --version).
+        # (LILYNK_BUILD_VERSION -> build.rs -> --version).
         run: |
           eval "$(bash scripts/ci/ly-version.sh --format deb)"   # -> PF_VERSION, PF_CHANNEL
           echo "VERSION=$PF_VERSION" >> "$GITHUB_ENV"
@@ -254,7 +254,7 @@ jobs:
 
       - name: Build release clients
         env:
-          PUNKTFUNK_BUILD_VERSION: ${{ env.VERSION }}   # stamped into the binaries (build.rs)
+          LILYNK_BUILD_VERSION: ${{ env.VERSION }}   # stamped into the binaries (build.rs)
         run: |
           git config --global --add safe.directory "$PWD"
           # FOUR binaries ship in the client .deb, so all four are built here: the GTK shell,
@@ -310,7 +310,7 @@ jobs:
           if ! grep -q 'Bun\.serve' .output/server/index.mjs; then
             echo "ERROR: web build is not a bun bundle — need the 'bun' preset + custom entry"; exit 1
           fi
-          PORT=3009 HOST=127.0.0.1 PUNKTFUNK_UI_PASSWORD=ci bun .output/server/index.mjs &
+          PORT=3009 HOST=127.0.0.1 LILYNK_UI_PASSWORD=ci bun .output/server/index.mjs &
           NP=$!; sleep 3
           code=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3009/login || echo 000)
           kill "$NP" 2>/dev/null || true
@@ -468,7 +468,7 @@ jobs:
 
       - name: Build release host
         env:
-          PUNKTFUNK_BUILD_VERSION: ${{ env.VERSION }}   # stamped into the binary (build.rs)
+          LILYNK_BUILD_VERSION: ${{ env.VERSION }}   # stamped into the binary (build.rs)
         run: |
           git config --global --add safe.directory "$PWD"
           # Features: nvenc (direct-SDK NVENC, real RFI on NVIDIA; NVENC/CUDA is dlopen'd — no link
@@ -722,7 +722,7 @@ jobs:
 
       - name: Build the arm64 client .deb
         env:
-          PUNKTFUNK_BUILD_VERSION: ${{ env.VERSION }}   # stamped into the binaries (build.rs)
+          LILYNK_BUILD_VERSION: ${{ env.VERSION }}   # stamped into the binaries (build.rs)
         run: |
           git config --global --add safe.directory "$PWD"
           # The restored target holds the binaries the cache was saved with, and the packer

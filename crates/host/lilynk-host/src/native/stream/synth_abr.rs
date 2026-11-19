@@ -11,7 +11,7 @@ use crate::session_status::pack_mode;
 use lilynk_core::abr::budget::encoder_kbps_for_budget;
 
 /// A keyframe against an ordinary frame, percent, when `--idr-pct` says nothing: ten times. A
-/// hardware encoder at its default `PUNKTFUNK_VBV_FRAMES` fits its keyframe near one frame's
+/// hardware encoder at its default `LILYNK_VBV_FRAMES` fits its keyframe near one frame's
 /// share, so this is the pessimistic end.
 pub const DEFAULT_IDR_PCT: u32 = 1_000;
 
@@ -134,7 +134,7 @@ impl KeyframeAnswer {
 
 /// How a `synthetic-abr` session behaves, as the command line sets it.
 ///
-/// One value on [`Punktfunk1Source`](crate::native::Punktfunk1Source) rather
+/// One value on [`Lilynk1Source`](crate::native::Lilynk1Source) rather
 /// than four: the source is the only thing that reads any of it.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct SynthAbrShape {

@@ -17,7 +17,7 @@ const IFACE = `
   </interface>
 </node>`;
 
-export default class PunktfunkWindows extends Extension {
+export default class LilynkWindows extends Extension {
     enable() {
         this._object = Gio.DBusExportedObject.wrapJSObject(IFACE, this);
         this._object.export(Gio.DBus.session, OBJECT_PATH);

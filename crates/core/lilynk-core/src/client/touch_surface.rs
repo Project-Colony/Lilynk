@@ -8,7 +8,7 @@
 //! one, and its id stays reserved as long. [`TouchpadSources`] shares the one host pad between
 //! the surface and [`pinch_frame`]. Design: `design/touchpad-passthrough.md` §4.
 
-use crate::error::{PunktfunkError, Result};
+use crate::error::{LilynkError, Result};
 use crate::quic::{
     pinch_frame, touchpad_scan_time, PinchPhase, TouchpadContact, TouchpadFrame,
     TOUCHPAD_ASSUMED_DMM, TOUCHPAD_MAX_CONTACTS,
@@ -247,7 +247,7 @@ fn validate(touches: &[SurfaceTouch]) -> Result<()> {
     if finite && distinct {
         Ok(())
     } else {
-        Err(PunktfunkError::InvalidArg(
+        Err(LilynkError::InvalidArg(
             "surface touches need finite coordinates and distinct ids",
         ))
     }

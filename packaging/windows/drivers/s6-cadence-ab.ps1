@@ -61,7 +61,7 @@ param(
     [string]$Repo = 'C:\Users\Public\pf-phase0',
     [string]$Client = 'C:\Users\Public\lilynk-native\target\release\lilynk-session.exe',
     [string]$FurMark = 'C:\Program Files\Geeks3D\FurMark2_x64\furmark.exe',
-    [string]$Service = 'PunktfunkHost',
+    [string]$Service = 'LilynkHost',
     [string]$OutDir = 'C:\Users\Public'
 )
 $ErrorActionPreference = 'Continue'

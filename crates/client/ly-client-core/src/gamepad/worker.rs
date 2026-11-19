@@ -826,8 +826,8 @@ impl Worker {
                     }
                     if slot.audio_caps & 0x02 != 0 {
                         // Channel 1 powers up on the headphone jack; see `speaker_enable_packet`.
-                        let path = env_u8("PUNKTFUNK_PAD_SPEAKER_PATH").unwrap_or(0x20);
-                        let volume = env_u8("PUNKTFUNK_PAD_SPEAKER_VOLUME").unwrap_or(0x64);
+                        let path = env_u8("LILYNK_PAD_SPEAKER_PATH").unwrap_or(0x20);
+                        let volume = env_u8("LILYNK_PAD_SPEAKER_VOLUME").unwrap_or(0x64);
                         if let Err(e) = slot
                             .pad
                             .send_effect(&Ds5Feedback::speaker_enable_packet(volume, path))

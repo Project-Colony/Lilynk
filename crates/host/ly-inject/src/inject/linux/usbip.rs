@@ -4,7 +4,7 @@
 //! ([`crate::usbip_relay`]), and the local host imports it. Attach is in-process: the host
 //! preconnects and accepts only that TCP 4-tuple before handing the socket to `vhci_hcd`. A
 //! seat host can't write `attach`; the supervisor's pad server serves its device instead and
-//! the seat keeps only the relay. `PUNKTFUNK_USBIP_ATTACH=cli` is an unauthenticated debug
+//! the seat keeps only the relay. `LILYNK_USBIP_ATTACH=cli` is an unauthenticated debug
 //! override. The Deck, SC1, SC2 and DualSense callers degrade to UHID on failure; Switch 2
 //! has no UHID transport.
 
@@ -420,7 +420,7 @@ impl Drop for UsbipAttachment {
 }
 
 /// Attach `hello`'s device. A seat host has the supervisor serve it; `audio` takes a pad's
-/// isochronous OUT. `PUNKTFUNK_USBIP_ATTACH=cli` selects the unauthenticated CLI fallback.
+/// isochronous OUT. `LILYNK_USBIP_ATTACH=cli` selects the unauthenticated CLI fallback.
 pub(crate) fn attach_device(
     hello: Hello,
     audio: Option<SyncSender<Vec<f32>>>,
@@ -440,7 +440,7 @@ pub(crate) fn attach_device(
         );
         return UsbipAttachment::linked(port, None, None, true, UnixDatagram::from(relay), audio);
     }
-    let mode = std::env::var("PUNKTFUNK_USBIP_ATTACH").ok();
+    let mode = std::env::var("LILYNK_USBIP_ATTACH").ok();
     if mode.as_deref() == Some("cli") {
         tracing::warn!("using the explicitly requested unauthenticated usbip CLI fallback");
         return attach_via_cli(&hello, audio, label);

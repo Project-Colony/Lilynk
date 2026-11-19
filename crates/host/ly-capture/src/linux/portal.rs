@@ -6,7 +6,7 @@
 //! session and signals done. ashpd's `Session` has no `Drop`, so the thread ends the
 //! compositor's cast with `Session.Close`.
 //!
-//! HDR offer is scoped to `PUNKTFUNK_CAPTURE_MONITOR` when set; unpinned it is
+//! HDR offer is scoped to `LILYNK_CAPTURE_MONITOR` when set; unpinned it is
 //! "any head in BT.2100". See `design/per-monitor-portal-capture.md`. The probe
 //! is one session-bus round-trip; call from control-plane threads only.
 
@@ -22,7 +22,7 @@ use std::os::fd::OwnedFd;
 /// within 2 s) so the caller offers SDR. Blocking session-bus round-trip;
 /// control-plane only.
 ///
-/// When `PUNKTFUNK_CAPTURE_MONITOR` is set, only that connector counts — an
+/// When `LILYNK_CAPTURE_MONITOR` is set, only that connector counts — an
 /// HDR neighbour must not pull PQ onto an SDR panel. Unpinned: any head.
 /// See `design/per-monitor-portal-capture.md`.
 pub fn gnome_hdr_monitor_active() -> bool {

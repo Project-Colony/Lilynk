@@ -12,7 +12,7 @@
 use lilynk_core::audio::{LAYOUT_STEREO, SAMPLE_RATE_HZ};
 use lilynk_core::config::{CompositorPref, FecConfig, FecScheme, Mode, Role};
 use lilynk_core::crypto::MediaSuite;
-use lilynk_core::error::{PunktfunkError, Result};
+use lilynk_core::error::{LilynkError, Result};
 use lilynk_core::input::{GamepadSnapshot, InputEvent, InputKind, INPUT_MAGIC};
 use lilynk_core::packet::{FLAG_PIC, FLAG_SOF};
 use lilynk_core::quic::v2::clock::SessionClock;
@@ -96,7 +96,7 @@ impl DemoHost {
             .enable_all()
             .build()?;
         let cert = rcgen::generate_simple_self_signed(vec!["punktfunk".into()])
-            .map_err(|_| PunktfunkError::Crypto)?;
+            .map_err(|_| LilynkError::Crypto)?;
         let fingerprint = lilynk_core::tls::cert_fingerprint(cert.cert.der());
         let (endpoint, media_socket) = {
             let _rt = rt.enter();
@@ -238,10 +238,10 @@ async fn serve(
 ) -> Result<()> {
     let id = conn.stable_id();
     // A reachability probe closes before opening a stream; that ends here.
-    let (mut send, mut recv) = conn.accept_bi().await.map_err(|_| PunktfunkError::Closed)?;
+    let (mut send, mut recv) = conn.accept_bi().await.map_err(|_| LilynkError::Closed)?;
     let clock = Arc::new(SessionClock::new());
     if v2io::read_stream_type(&mut recv).await? != registry::STREAM_CONTROL {
-        return Err(PunktfunkError::InvalidArg("first stream is not control"));
+        return Err(LilynkError::InvalidArg("first stream is not control"));
     }
     let mut recv: CtlRecv = v2io::FrameReader::new(recv);
     let (ty, body) = recv.read_frame().await?;
@@ -257,7 +257,7 @@ async fn serve(
     rand::rng().fill_bytes(&mut session_id);
     let Some(codec) = quic::resolve_codec(hello.video_codecs, codecs, hello.preferred_codec) else {
         conn.close(0u32.into(), b"no shared codec");
-        return Err(PunktfunkError::Unsupported("no codec the demo can encode"));
+        return Err(LilynkError::Unsupported("no codec the demo can encode"));
     };
     if let Some(old) = shared.current.lock().unwrap().replace(conn.clone()) {
         old.close(0u32.into(), b"superseded");
@@ -340,7 +340,7 @@ async fn serve(
         "demo session started"
     );
 
-    let keys = endpoint::media_keys(conn, &session_id, suite).ok_or(PunktfunkError::Crypto)?;
+    let keys = endpoint::media_keys(conn, &session_id, suite).ok_or(LilynkError::Crypto)?;
     let sender = MediaSender::new(media_socket, conn.clone())?;
     let media = MediaV2 {
         clock_origin_ns: clock.origin_ns(),
@@ -358,7 +358,7 @@ async fn serve(
         r = control_loop(send, recv, &clock, shared, id) => r,
         () = input_loop(&dgrams, shared) => Ok(()),
         r = audio_loop(&dgrams, shared) => r,
-        r = video => r.map_err(|_| PunktfunkError::Closed)?,
+        r = video => r.map_err(|_| LilynkError::Closed)?,
     }
 }
 
@@ -498,7 +498,7 @@ async fn audio_loop(dgrams: &Dgrams<'_>, shared: &Shared) -> Result<()> {
         layout.mapping,
         opus::Application::LowDelay,
     )
-    .map_err(|_| PunktfunkError::Unsupported("opus encoder"))?;
+    .map_err(|_| LilynkError::Unsupported("opus encoder"))?;
     let mut tick = tokio::time::interval(Duration::from_millis(5));
     tick.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
     let mut pcm = [0f32; AUDIO_FRAME_SAMPLES * 2];
@@ -520,7 +520,7 @@ async fn audio_loop(dgrams: &Dgrams<'_>, shared: &Shared) -> Result<()> {
         }
         let n = encoder
             .encode_float(&pcm, &mut packet)
-            .map_err(|_| PunktfunkError::Unsupported("opus encode"))?;
+            .map_err(|_| LilynkError::Unsupported("opus encode"))?;
         let dg = quic::encode_audio_datagram(seq, wall_clock_ns(), &packet[..n]);
         if !dgrams.send(dg) {
             return Ok(());

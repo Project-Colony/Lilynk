@@ -1,7 +1,7 @@
 //! Virtual touchpad ("Punktfunk Touchpad"): a per-session uinput clickpad that libinput turns
 //! into pointer motion, scrolling, gestures and clicks under the compositor's own touchpad
 //! settings. Gated like the pen: `/dev/uinput` opens, the node is not a seat proxy, and
-//! `PUNKTFUNK_TOUCHPAD` is not off. The handshake excludes gamescope.
+//! `LILYNK_TOUCHPAD` is not off. The handshake excludes gamescope.
 //!
 //! The host's contract, in the order it calls:
 //! - [`supported`] and [`taps`] once per session at the handshake: `FEATURE_TOUCHPAD` and
@@ -61,7 +61,7 @@ const TOOLS: [u16; SLOTS] = [
 const UINPUT: &str = "/dev/uinput";
 
 pub fn supported() -> bool {
-    if ly_host_config::env_on("PUNKTFUNK_TOUCHPAD") == Some(false) {
+    if ly_host_config::env_on("LILYNK_TOUCHPAD") == Some(false) {
         return false;
     }
     crate::uapi::open_nonblock(UINPUT).is_ok()

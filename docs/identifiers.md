@@ -20,7 +20,7 @@ convention instead.
 | Kind | Form | Example |
 | --- | --- | --- |
 | Packages, binaries, systemd units, sysext images | Lowercase, hyphenated | `lilynk-host`, `lilynk-client.raw` |
-| Windows services, tasks, registry keys | CamelCase, no dots | `PunktfunkHost`, `HKLM\SOFTWARE\Punktfunk` |
+| Windows services, tasks, registry keys | CamelCase, no dots | `LilynkHost`, `HKLM\SOFTWARE\Punktfunk` |
 | winget | Publisher.Package | `unom.PunktfunkHost` |
 | URL scheme, DNS-SD service | Lowercase | `punktfunk://`, `_punktfunk._udp` |
 | GNOME Shell extension | name@domain | `punktfunk-windows@unom.io` |

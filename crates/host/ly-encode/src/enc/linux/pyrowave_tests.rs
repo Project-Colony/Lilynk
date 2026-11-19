@@ -601,7 +601,7 @@ fn test_card(w: u32, h: u32, seed: u32) -> CapturedFrame {
 /// Dump Apple Metal golden fixtures: host-encoded AUs (dense and chunk-aligned)
 /// plus upstream decode as YUV420P. Float wavelet math is not bit-exact; the Swift
 /// test PSNR-matches Metal against these. Set `PYROWAVE_GOLDEN_DIR` and copy into
-/// `clients/apple/Tests/PunktfunkKitTests/PyroWaveFixtures/`.
+/// `clients/apple/Tests/LilynkKitTests/PyroWaveFixtures/`.
 #[test]
 #[ignore = "fixture generator — needs a real Vulkan 1.3 compute device"]
 fn pyrowave_dump_golden() {
@@ -680,7 +680,7 @@ fn pyrowave_dump_golden() {
     dump("ref-dense444-cr.bin", &cr);
 }
 
-/// Input for the client's `pyrowave_bench` example: a `PUNKTFUNK_DUMP_VIDEO`-shaped
+/// Input for the client's `pyrowave_bench` example: a `LILYNK_DUMP_VIDEO`-shaped
 /// capture at `PYROWAVE_BENCH_OUT`, shaped by `PYROWAVE_BENCH_MODE=WxH:fps:mbps:bits`
 /// (default `3840x2160:120:1200:10`). `PF_WAVE_NOISE=1` fills the rate budget the way
 /// game content does.
@@ -772,7 +772,7 @@ fn luma_psnr(src_bgra: &[u8], decoded_y: &[u8]) -> f64 {
     10.0 * (255.0f64 * 255.0 / mse).log10()
 }
 
-/// With `PUNKTFUNK_PYROWAVE_STREAMED_AU=1`, a busy-card GPU encode must come out of
+/// With `LILYNK_PYROWAVE_STREAMED_AU=1`, a busy-card GPU encode must come out of
 /// `poll_chunk` in several window-aligned pieces that concatenate to a decodable AU.
 /// Flat fills reassemble even with missing subbands; the busy card puts energy in
 /// every subband so a lost window collapses PSNR.
@@ -797,7 +797,7 @@ fn pyrowave_streamed_chunks_reassemble_and_keep_the_picture() {
 
     assert!(
         enc.supports_chunked_poll(),
-        "PUNKTFUNK_PYROWAVE_STREAMED_AU=1 must be set in the ENVIRONMENT of this test binary \
+        "LILYNK_PYROWAVE_STREAMED_AU=1 must be set in the ENVIRONMENT of this test binary \
          — without it PW6 is off by design and there is nothing to verify"
     );
 

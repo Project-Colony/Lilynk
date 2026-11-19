@@ -131,7 +131,7 @@ internal enum class StatsView(@StringRes val label: Int) {
  * one on its own.
  */
 internal object CompanionMemory {
-    private const val PREFS = "punktfunk_companion"
+    private const val PREFS = "lilynk_companion"
     private const val PAGE = "page"
     private const val STATS_VIEW = "stats_view"
 

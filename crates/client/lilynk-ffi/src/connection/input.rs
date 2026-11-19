@@ -13,10 +13,10 @@ use lilynk_core::input::InputEvent;
 /// `c` is a valid connection handle; `ev` points to a readable `InputEvent`-sized allocation.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_send_input(
-    c: *mut PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_send_input(
+    c: *mut LilynkConnection,
     ev: *const InputEvent,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         // SAFETY: `read_input_event` validates the tag before forming `&InputEvent` (else UB).
         let ev = match unsafe { read_input_event(ev) } {
@@ -36,11 +36,11 @@ pub unsafe extern "C" fn punktfunk_connection_send_input(
 /// `c` is a valid connection handle; `out` is NULL or writable for one `bool`.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_holds_screen_awake(
-    c: *const PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_holds_screen_awake(
+    c: *const LilynkConnection,
     keep_awake: bool,
     out: *mut bool,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     conn_out!(c, out => {
         lilynk_core::client::holds_screen_awake(keep_awake, c.inner.input_idle())
     })
@@ -55,13 +55,13 @@ pub unsafe extern "C" fn punktfunk_connection_holds_screen_awake(
 /// points to that many readable bytes; it may be NULL when `len == 0`.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_send_mic(
-    c: *mut PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_send_mic(
+    c: *mut LilynkConnection,
     opus_data: *const u8,
     len: usize,
     seq: u32,
     pts_ns: u64,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         // SAFETY: `opus_data` is null or readable for `len` bytes (this fn's contract).
         let opus = match unsafe { in_bytes(opus_data, len) } {
@@ -76,53 +76,53 @@ pub unsafe extern "C" fn punktfunk_connection_send_mic(
 /// The host drops it for an Xbox pad, which has no rich plane. `InvalidArg` on unknown `kind`.
 ///
 /// # Safety
-/// `c` is a valid connection handle; `rich` points to a valid [`PunktfunkRichInput`].
+/// `c` is a valid connection handle; `rich` points to a valid [`LilynkRichInput`].
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_send_rich_input(
-    c: *mut PunktfunkConnection,
-    rich: *const PunktfunkRichInput,
-) -> PunktfunkStatus {
+pub unsafe extern "C" fn lilynk_connection_send_rich_input(
+    c: *mut LilynkConnection,
+    rich: *const LilynkRichInput,
+) -> LilynkStatus {
     with_conn!(c => {
         // SAFETY: caller handle or null; `as_mut`/`as_ref` never dereference null.
         let rich = match unsafe { rich.as_ref() } {
             Some(r) => r,
-            None => return PunktfunkStatus::NullPointer,
+            None => return LilynkStatus::NullPointer,
         };
         match rich.to_rich() {
             Some(r) => status_of(c.inner.send_rich_input(r)),
-            None => PunktfunkStatus::InvalidArg,
+            None => LilynkStatus::InvalidArg,
         }
     })
 }
 
-/// Send rich input via [`PunktfunkRichInputEx`] — the C path for `TouchpadEx`
+/// Send rich input via [`LilynkRichInputEx`] — the C path for `TouchpadEx`
 /// (second trackpad / signed coords / pressure). Set
-/// `rich->struct_size = sizeof(PunktfunkRichInputEx)`; a smaller layout is rejected.
+/// `rich->struct_size = sizeof(LilynkRichInputEx)`; a smaller layout is rejected.
 ///
 /// # Safety
 /// `c` is a valid connection handle; `rich` is null or points to at least its declared
 /// `struct_size` bytes.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_send_rich_input2(
-    c: *mut PunktfunkConnection,
-    rich: *const PunktfunkRichInputEx,
-) -> PunktfunkStatus {
+pub unsafe extern "C" fn lilynk_connection_send_rich_input2(
+    c: *mut LilynkConnection,
+    rich: *const LilynkRichInputEx,
+) -> LilynkStatus {
     with_conn!(c => {
         if rich.is_null() {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         // Size prefix first so the full read is bounded by what the caller declared.
         // SAFETY: `addr_of!` does not form a `&`; the caller may have a smaller older layout.
         let declared = unsafe { std::ptr::addr_of!((*rich).struct_size).read_unaligned() } as usize;
-        if declared < std::mem::size_of::<PunktfunkRichInputEx>() {
-            return PunktfunkStatus::InvalidArg;
+        if declared < std::mem::size_of::<LilynkRichInputEx>() {
+            return LilynkStatus::InvalidArg;
         }
         // SAFETY: pointers are caller-supplied and null-checked on this path.
         match unsafe { *rich }.to_rich() {
             Some(r) => status_of(c.inner.send_rich_input(r)),
-            None => PunktfunkStatus::InvalidArg,
+            None => LilynkStatus::InvalidArg,
         }
     })
 }
@@ -147,18 +147,18 @@ fn hid_report_rich_input(pad: u8, report: &[u8]) -> lilynk_core::quic::RichInput
 /// `c` is a valid connection handle; `data` points to `len` readable bytes.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_send_hid_report(
-    c: *mut PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_send_hid_report(
+    c: *mut LilynkConnection,
     pad: u8,
     data: *const u8,
     len: usize,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         if data.is_null() {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         if len == 0 {
-            return PunktfunkStatus::InvalidArg;
+            return LilynkStatus::InvalidArg;
         }
         // SAFETY: caller pointer/length; borrowed for this call only. The clamp copies.
         let report =
@@ -168,33 +168,33 @@ pub unsafe extern "C" fn punktfunk_connection_send_hid_report(
 }
 
 /// Gate what of a Steam Controller 2's raw reports on `pad` reaches the host: an OR of
-/// `PUNKTFUNK_SC2_GATE_*`. Call when the client's overlay takes or returns the pad and when its
+/// `LILYNK_SC2_GATE_*`. Call when the client's overlay takes or returns the pad and when its
 /// system-button policy changes. Latest wins; unknown bits are ignored; `pad` masks to 16.
 ///
 /// # Safety
 /// `c` is a valid connection handle. Callable from any thread.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_set_sc2_gate(
-    c: *mut PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_set_sc2_gate(
+    c: *mut LilynkConnection,
     pad: u8,
     gate: u32,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         c.inner.set_sc2_gate(pad & 0xF, lilynk_core::client::Sc2Gate::from_bits(gate));
-        PunktfunkStatus::Ok
+        LilynkStatus::Ok
     })
 }
 
 /// The `index`-th feature query a client reads off a Steam Controller 2 for
-/// [`punktfunk_connection_send_pad_identity`], id first, copied into `out`. Returns its length;
+/// [`lilynk_connection_send_pad_identity`], id first, copied into `out`. Returns its length;
 /// 0 past the last one or when `cap` is short. `puck` adds a Puck slot's queries.
 ///
 /// # Safety
 /// `out` points to `cap` writable bytes.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_sc2_identity_request(
+pub unsafe extern "C" fn lilynk_sc2_identity_request(
     puck: bool,
     index: u32,
     out: *mut u8,
@@ -211,14 +211,14 @@ pub unsafe extern "C" fn punktfunk_sc2_identity_request(
     req.len()
 }
 
-/// [`punktfunk_sc2_identity_request`] for a 2015 Steam Controller: the `index`-th query, report
+/// [`lilynk_sc2_identity_request`] for a 2015 Steam Controller: the `index`-th query, report
 /// id 0 first. Returns its length; 0 past the last one or when `cap` is short.
 ///
 /// # Safety
 /// `out` points to `cap` writable bytes.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_sc1_identity_request(
+pub unsafe extern "C" fn lilynk_sc1_identity_request(
     index: u32,
     out: *mut u8,
     cap: usize,
@@ -235,23 +235,22 @@ pub unsafe extern "C" fn punktfunk_sc1_identity_request(
     req.len()
 }
 
-/// Bytes of state [`punktfunk_sc1_ble_input`] keeps per pad.
+/// Bytes of state [`lilynk_sc1_ble_input`] keeps per pad.
 #[cfg(feature = "quic")]
-pub const PUNKTFUNK_SC1_BLE_STATE_LEN: usize = 160;
+pub const LILYNK_SC1_BLE_STATE_LEN: usize = 160;
 #[cfg(feature = "quic")]
-const _: () =
-    assert!(PUNKTFUNK_SC1_BLE_STATE_LEN == lilynk_core::client::sc1_ble::CLASSIC_BLE_STATE);
+const _: () = assert!(LILYNK_SC1_BLE_STATE_LEN == lilynk_core::client::sc1_ble::CLASSIC_BLE_STATE);
 
 /// One segment of a 2015 Steam Controller's Bluetooth input, `[0x03, header, 18 bytes]`. True
 /// when it completed a state message: `out` then holds the 64-byte wired frame to forward.
-/// `state` is [`PUNKTFUNK_SC1_BLE_STATE_LEN`] bytes, zeroed once per link and kept.
+/// `state` is [`LILYNK_SC1_BLE_STATE_LEN`] bytes, zeroed once per link and kept.
 ///
 /// # Safety
 /// `state` points to that many writable bytes, `segment` to `len` readable ones, `out` to 64
 /// writable ones.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_sc1_ble_input(
+pub unsafe extern "C" fn lilynk_sc1_ble_input(
     state: *mut u8,
     segment: *const u8,
     len: usize,
@@ -280,7 +279,7 @@ pub unsafe extern "C" fn punktfunk_sc1_ble_input(
 /// `frame` points to `len` readable bytes, `out` to `cap` writable ones.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_sc1_ble_segments(
+pub unsafe extern "C" fn lilynk_sc1_ble_segments(
     frame: *const u8,
     len: usize,
     out: *mut u8,
@@ -312,7 +311,7 @@ pub unsafe extern "C" fn punktfunk_sc1_ble_segments(
 /// `segments` points to `len` readable bytes, `out` to `cap` writable ones.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_sc1_ble_reply(
+pub unsafe extern "C" fn lilynk_sc1_ble_reply(
     segments: *const u8,
     len: usize,
     out: *mut u8,
@@ -344,21 +343,21 @@ pub unsafe extern "C" fn punktfunk_sc1_ble_reply(
 /// `c` is a valid connection handle; `serial` is NUL-terminated; `replies` points to `len` bytes.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_send_pad_identity(
-    c: *mut PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_send_pad_identity(
+    c: *mut LilynkConnection,
     pad: u8,
     slot: u8,
     serial: *const std::ffi::c_char,
     replies: *const u8,
     len: usize,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         if serial.is_null() || (replies.is_null() && len > 0) {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         // SAFETY: caller-provided NUL-terminated string, borrowed for this call.
         let Ok(serial) = unsafe { std::ffi::CStr::from_ptr(serial) }.to_str() else {
-            return PunktfunkStatus::InvalidArg;
+            return LilynkStatus::InvalidArg;
         };
         let replies = if len == 0 {
             Vec::new()
@@ -375,28 +374,28 @@ pub unsafe extern "C" fn punktfunk_connection_send_pad_identity(
     })
 }
 
-/// Send one stylus sample batch — `count` (`1..=PUNKTFUNK_PEN_BATCH_MAX`)
-/// [`PunktfunkPenSample`]s, oldest first — as one `0xCC/0x05` pen datagram
+/// Send one stylus sample batch — `count` (`1..=LILYNK_PEN_BATCH_MAX`)
+/// [`LilynkPenSample`]s, oldest first — as one `0xCC/0x05` pen datagram
 /// (`design/pen-tablet-input.md`). Split longer runs. Gate on
-/// `host_caps & PUNKTFUNK_HOST_CAP_PEN`; without it this is `Unsupported` (keep
+/// `host_caps & LILYNK_HOST_CAP_PEN`; without it this is `Unsupported` (keep
 /// pen-as-touch). `InvalidArg` on a bad count or sample.
 ///
 /// # Safety
 /// `c` is a valid connection handle; `samples` is null or points to `count` valid
-/// [`PunktfunkPenSample`]s.
+/// [`LilynkPenSample`]s.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_send_pen(
-    c: *mut PunktfunkConnection,
-    samples: *const PunktfunkPenSample,
+pub unsafe extern "C" fn lilynk_connection_send_pen(
+    c: *mut LilynkConnection,
+    samples: *const LilynkPenSample,
     count: u32,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         if samples.is_null() {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
-        if count == 0 || count > PUNKTFUNK_PEN_BATCH_MAX {
-            return PunktfunkStatus::InvalidArg;
+        if count == 0 || count > LILYNK_PEN_BATCH_MAX {
+            return LilynkStatus::InvalidArg;
         }
         // SAFETY: caller pointer/length; borrowed for this call only.
         let raw = unsafe { std::slice::from_raw_parts(samples, count as usize) };
@@ -404,7 +403,7 @@ pub unsafe extern "C" fn punktfunk_connection_send_pen(
         for (slot, s) in batch.iter_mut().zip(raw) {
             match s.to_sample() {
                 Some(v) => *slot = v,
-                None => return PunktfunkStatus::InvalidArg,
+                None => return LilynkStatus::InvalidArg,
             }
         }
         status_of(c.inner.send_pen(&batch[..count as usize]))
@@ -414,27 +413,27 @@ pub unsafe extern "C" fn punktfunk_connection_send_pen(
 /// Send the whole touchpad as one `0xCC/0x06` frame (wire: `lilynk-core`'s
 /// `quic/touchpad.rs`). Send one with no contacts when the source appears, and one on every
 /// change after. Core stamps the sequence and repeats the last frame every 100 ms while a
-/// contact or the button is down. Gate on [`punktfunk_connection_host_touchpad`]; without it
+/// contact or the button is down. Gate on [`lilynk_connection_host_touchpad`]; without it
 /// this is `Unsupported`.
-/// `InvalidArg` on a count above `PUNKTFUNK_TOUCHPAD_MAX_CONTACTS`, an unknown state bit, an id
-/// above `PUNKTFUNK_TOUCHPAD_MAX_ID` or one id twice.
+/// `InvalidArg` on a count above `LILYNK_TOUCHPAD_MAX_CONTACTS`, an unknown state bit, an id
+/// above `LILYNK_TOUCHPAD_MAX_ID` or one id twice.
 ///
 /// # Safety
 /// `c` is a valid connection handle; `frame` is null or points to a readable
-/// [`PunktfunkTouchpadFrame`].
+/// [`LilynkTouchpadFrame`].
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_send_touchpad(
-    c: *mut PunktfunkConnection,
-    frame: *const PunktfunkTouchpadFrame,
-) -> PunktfunkStatus {
+pub unsafe extern "C" fn lilynk_connection_send_touchpad(
+    c: *mut LilynkConnection,
+    frame: *const LilynkTouchpadFrame,
+) -> LilynkStatus {
     with_conn!(c => {
         // SAFETY: caller pointer, null or readable; copied before use.
         let Some(frame) = (unsafe { frame.as_ref() }).copied() else {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         };
         let Some((n, contacts)) = frame.to_contacts() else {
-            return PunktfunkStatus::InvalidArg;
+            return LilynkStatus::InvalidArg;
         };
         status_of(c.inner.send_touchpad(
             frame.button != 0,
@@ -447,27 +446,27 @@ pub unsafe extern "C" fn punktfunk_connection_send_touchpad(
 
 /// An OS pinch and rotation as two fingers on the host's touchpad, for a source that gives no
 /// finger positions. `scale` and `rotation` (radians, clockwise) are cumulative since
-/// `PUNKTFUNK_PINCH_BEGIN`; `PUNKTFUNK_PINCH_END` lifts both. `Unsupported` without
-/// [`punktfunk_connection_host_touchpad`]; `InvalidArg` on an unknown phase or a value that is
+/// `LILYNK_PINCH_BEGIN`; `LILYNK_PINCH_END` lifts both. `Unsupported` without
+/// [`lilynk_connection_host_touchpad`]; `InvalidArg` on an unknown phase or a value that is
 /// not finite.
 ///
 /// # Safety
 /// `c` is a valid connection handle.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_send_touchpad_pinch(
-    c: *mut PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_send_touchpad_pinch(
+    c: *mut LilynkConnection,
     phase: u8,
     scale: f32,
     rotation: f32,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     use lilynk_core::quic::PinchPhase;
     with_conn!(c => {
         let phase = match phase {
-            PUNKTFUNK_PINCH_BEGIN => PinchPhase::Begin,
-            PUNKTFUNK_PINCH_UPDATE => PinchPhase::Update,
-            PUNKTFUNK_PINCH_END => PinchPhase::End,
-            _ => return PunktfunkStatus::InvalidArg,
+            LILYNK_PINCH_BEGIN => PinchPhase::Begin,
+            LILYNK_PINCH_UPDATE => PinchPhase::Update,
+            LILYNK_PINCH_END => PinchPhase::End,
+            _ => return LilynkStatus::InvalidArg,
         };
         status_of(c.inner.send_touchpad_pinch(phase, scale, rotation))
     })
@@ -484,18 +483,18 @@ pub unsafe extern "C" fn punktfunk_connection_send_touchpad_pinch(
 ///
 /// `*forwarded` true: core owns this update; do not also turn these touches into pointer or
 /// scroll. False: the gesture is the caller's until an update with no touches, and on any
-/// error. `Unsupported` without [`punktfunk_connection_host_touchpad`]; `InvalidArg` on a
+/// error. `Unsupported` without [`lilynk_connection_host_touchpad`]; `InvalidArg` on a
 /// coordinate that is not finite or one `id` twice.
 ///
 /// # Safety
 /// `c` is a valid connection handle; `touches` points to `count` readable
-/// [`PunktfunkSurfaceTouch`]es, or is null when `count` is 0; `forwarded` is null or writable.
+/// [`LilynkSurfaceTouch`]es, or is null when `count` is 0; `forwarded` is null or writable.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
 #[allow(clippy::too_many_arguments)]
-pub unsafe extern "C" fn punktfunk_connection_touchpad_surface(
-    c: *mut PunktfunkConnection,
-    touches: *const PunktfunkSurfaceTouch,
+pub unsafe extern "C" fn lilynk_connection_touchpad_surface(
+    c: *mut LilynkConnection,
+    touches: *const LilynkSurfaceTouch,
     count: u8,
     max_contacts: u8,
     button: bool,
@@ -505,12 +504,12 @@ pub unsafe extern "C" fn punktfunk_connection_touchpad_surface(
     height_dmm: u16,
     time_us: u64,
     forwarded: *mut bool,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     // SAFETY: the caller passes `forwarded` null or writable for one value.
     unsafe { put(forwarded, false) };
     with_conn!(c => {
         if touches.is_null() && count != 0 {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         let raw = if count == 0 {
             &[][..]
@@ -536,7 +535,7 @@ pub unsafe extern "C" fn punktfunk_connection_touchpad_surface(
             Ok(owned) => {
                 // SAFETY: as above.
                 unsafe { put(forwarded, owned) };
-                PunktfunkStatus::Ok
+                LilynkStatus::Ok
             }
             Err(e) => e.status(),
         }
@@ -544,18 +543,18 @@ pub unsafe extern "C" fn punktfunk_connection_touchpad_surface(
 }
 
 /// Currently active session mode — Welcome's, until an accepted
-/// [`punktfunk_connection_request_mode`] switches it. Safe any time after connect.
+/// [`lilynk_connection_request_mode`] switches it. Safe any time after connect.
 ///
 /// # Safety
 /// `c` is a valid connection handle; out pointers are writable (NULLs skipped).
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_mode(
-    c: *const PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_mode(
+    c: *const LilynkConnection,
     width: *mut u32,
     height: *mut u32,
     refresh_hz: *mut u32,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         let mode = c.inner.mode();
         // SAFETY: the caller passes each out-param null or writable for one value.
@@ -564,7 +563,7 @@ pub unsafe extern "C" fn punktfunk_connection_mode(
             put(height, mode.height);
             put(refresh_hz, mode.refresh_hz);
         }
-        PunktfunkStatus::Ok
+        LilynkStatus::Ok
     })
 }
 
@@ -576,25 +575,25 @@ pub unsafe extern "C" fn punktfunk_connection_mode(
 /// `c` is a valid connection handle; `refresh_mhz` is null or writable.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_refresh_mhz(
-    c: *const PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_refresh_mhz(
+    c: *const LilynkConnection,
     refresh_mhz: *mut u32,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     conn_out!(c, refresh_mhz => c.inner.mode().millihz())
 }
 
-/// Virtual gamepad the host resolved (`PUNKTFUNK_GAMEPAD_*`; Welcome echo of
-/// [`punktfunk_connect_ex2`]). `AUTO` = a host that didn't say — assume X-Box 360,
+/// Virtual gamepad the host resolved (`LILYNK_GAMEPAD_*`; Welcome echo of
+/// [`lilynk_connect_ex2`]). `AUTO` = a host that didn't say — assume X-Box 360,
 /// no HID-output. Safe any time after connect.
 ///
 /// # Safety
 /// `c` is a valid connection handle; `gamepad` is writable (NULL is skipped).
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_gamepad(
-    c: *const PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_gamepad(
+    c: *const LilynkConnection,
     gamepad: *mut u32,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     conn_out!(c, gamepad => c.inner.resolved_gamepad.to_u8() as u32)
 }
 
@@ -602,7 +601,7 @@ pub unsafe extern "C" fn punktfunk_connection_gamepad(
 mod tests {
     use super::*;
 
-    /// `punktfunk_connection_send_hid_report`'s clamp: `pad` masked to 16 and the
+    /// `lilynk_connection_send_hid_report`'s clamp: `pad` masked to 16 and the
     /// report bounded to `HID_REPORT_MAX` — same rules as the Android JNI shim.
     #[test]
     fn send_hid_report_clamps_like_the_android_shim() {
@@ -635,18 +634,15 @@ mod tests {
     #[test]
     fn a_touchpad_frame_is_read_strictly() {
         use lilynk_core::quic::{TOUCHPAD_MAX_CONTACTS, TOUCHPAD_MAX_ID};
-        assert_eq!(
-            PUNKTFUNK_TOUCHPAD_MAX_CONTACTS as usize,
-            TOUCHPAD_MAX_CONTACTS
-        );
-        assert_eq!(PUNKTFUNK_TOUCHPAD_MAX_ID, TOUCHPAD_MAX_ID);
-        let finger = PunktfunkTouchpadContact {
+        assert_eq!(LILYNK_TOUCHPAD_MAX_CONTACTS as usize, TOUCHPAD_MAX_CONTACTS);
+        assert_eq!(LILYNK_TOUCHPAD_MAX_ID, TOUCHPAD_MAX_ID);
+        let finger = LilynkTouchpadContact {
             id: 4,
-            state: PUNKTFUNK_TOUCHPAD_TIP,
+            state: LILYNK_TOUCHPAD_TIP,
             x: 7,
             y: 9,
         };
-        let mut frame = PunktfunkTouchpadFrame {
+        let mut frame = LilynkTouchpadFrame {
             width_dmm: 700,
             height_dmm: 1500,
             button: 1,
@@ -659,10 +655,10 @@ mod tests {
         assert_eq!((c.id, c.tip, c.confident, c.x, c.y), (4, true, false, 7, 9));
         frame.contacts[0].state = 0x04;
         assert!(frame.to_contacts().is_none(), "unknown state bit");
-        frame.contacts[0].state = PUNKTFUNK_TOUCHPAD_CONFIDENT;
+        frame.contacts[0].state = LILYNK_TOUCHPAD_CONFIDENT;
         frame.count = 6;
         assert!(frame.to_contacts().is_none(), "count above five");
-        assert_eq!(std::mem::size_of::<PunktfunkTouchpadFrame>(), 36);
-        assert_eq!(std::mem::size_of::<PunktfunkSurfaceTouch>(), 16);
+        assert_eq!(std::mem::size_of::<LilynkTouchpadFrame>(), 36);
+        assert_eq!(std::mem::size_of::<LilynkSurfaceTouch>(), 16);
     }
 }

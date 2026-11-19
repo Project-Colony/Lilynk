@@ -10,7 +10,7 @@
 #   - In-tree / CI:       PF_SRCDIR=$(git rev-parse --show-toplevel) makepkg --holdver
 #                         (builds the working tree instead of the tagged source — see build()).
 #
-# Host encode: NVENC on NVIDIA (nvidia-utils), VAAPI on AMD/Intel (mesa) — PUNKTFUNK_ENCODER=auto
+# Host encode: NVENC on NVIDIA (nvidia-utils), VAAPI on AMD/Intel (mesa) — LILYNK_ENCODER=auto
 # picks per GPU. The CLIENT decodes via VAAPI (AMD/Intel, incl. the Deck) with a software
 # fallback, so it works everywhere. See README.md.
 pkgbase=lilynk
@@ -84,7 +84,7 @@ _repo() { printf '%s' "${PF_SRCDIR:-$srcdir/punktfunk}"; }
 build() {
   cd "$(_repo)"
   export RUSTUP_TOOLCHAIN=stable CARGO_TARGET_DIR="$srcdir/target"
-  export PUNKTFUNK_BUILD_VERSION="${pkgver}-${pkgrel}"   # stamp --version / mgmt /health (build.rs)
+  export LILYNK_BUILD_VERSION="${pkgver}-${pkgrel}"   # stamp --version / mgmt /health (build.rs)
   # The host's zero-copy FFI link-needs libcuda at build time; nvidia-utils provides it on an
   # NVIDIA builder. On a GPU-less builder symlink the CUDA stub into the link path first (same
   # caveat the RPM documents): ln -s "$(find / -name libcuda.so -path '*stubs*'|head -1)" /usr/lib/
@@ -98,7 +98,7 @@ build() {
   # leaves them on VAAPI. Without this feature an NVIDIA box has no NVENC at all.
   # `lilynk-host/vulkan-encode` is the AMD/Intel twin: a raw VK_KHR_video_encode_h265 backend with
   # real RFI (clean P-frame recovery anchor via DPB reference slots; design/linux-vulkan-video-encode.md).
-  # Pure Rust `ash` (no new lib, no link-time deps); default on for HEVC (PUNKTFUNK_VULKAN_ENCODE=0
+  # Pure Rust `ash` (no new lib, no link-time deps); default on for HEVC (LILYNK_VULKAN_ENCODE=0
   # opts back to the native VAAPI session), and a failed open falls back to it so unsupported
   # devices are safe.
   if [ "$CARCH" = 'aarch64' ]; then

@@ -254,7 +254,7 @@ fn discover_and_print() {
         std::thread::sleep(Duration::from_millis(100));
     }
     if seen.is_empty() {
-        println!("  (none found — is a host running with --native / punktfunk1-host?)");
+        println!("  (none found — is a host running with --native / lilynk1-host?)");
     }
 }
 

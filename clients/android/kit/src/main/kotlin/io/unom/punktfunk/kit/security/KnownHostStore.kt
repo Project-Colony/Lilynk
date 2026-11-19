@@ -343,10 +343,10 @@ class KnownHostStore(context: Context) {
 
     companion object {
         /** The prefs file holding the host records. */
-        private const val PREFS_HOSTS = "punktfunk_hosts"
+        private const val PREFS_HOSTS = "lilynk_hosts"
 
         /** The app's settings file — read once by [migrate] for the retiring global. */
-        private const val PREFS_SETTINGS = "punktfunk_settings"
+        private const val PREFS_SETTINGS = "lilynk_settings"
 
         /**
          * The global clipboard-sync key this migration retires. Clipboard sync is a decision about

@@ -11,7 +11,7 @@ fn published_endpoint_line_parses_the_way_both_consumers_read_it() {
     assert_eq!(path.file_name().unwrap(), super::ENDPOINT_FILE);
 
     let contents = std::fs::read_to_string(&path).unwrap();
-    assert_eq!(contents, "PUNKTFUNK_MGMT_URL=https://127.0.0.1:47991\n");
+    assert_eq!(contents, "LILYNK_MGMT_URL=https://127.0.0.1:47991\n");
 
     let line = contents
         .lines()
@@ -33,11 +33,7 @@ fn the_published_port_is_the_one_a_reader_dials() {
     assert_eq!(super::published_port(dir.path()), super::DEFAULT_PORT);
     super::write_endpoint(dir.path(), 47995).unwrap();
     assert_eq!(super::published_port(dir.path()), 47995);
-    std::fs::write(
-        dir.path().join(super::ENDPOINT_FILE),
-        "PUNKTFUNK_MGMT_URL=\n",
-    )
-    .unwrap();
+    std::fs::write(dir.path().join(super::ENDPOINT_FILE), "LILYNK_MGMT_URL=\n").unwrap();
     assert_eq!(super::published_port(dir.path()), super::DEFAULT_PORT);
 }
 
@@ -376,8 +372,8 @@ fn fake_session_with_flags(
     (guard, stop, quit, idr)
 }
 
-/// Overrides `PUNKTFUNK_CONFIG_DIR` for one test and restores it on drop, even on panic.
-/// [`ConfigDirOverride::seat`] also points `PUNKTFUNK_LIBRARY_DIR` at a box's library.
+/// Overrides `LILYNK_CONFIG_DIR` for one test and restores it on drop, even on panic.
+/// [`ConfigDirOverride::seat`] also points `LILYNK_LIBRARY_DIR` at a box's library.
 ///
 /// One helper for every mgmt test: `check-unsafe-hygiene.sh` greps this file for a fixed
 /// count of `set_var` sites (and prose mentions), all in [`write_env`]. The lock is a field so
@@ -404,9 +400,9 @@ impl ConfigDirOverride {
             .unwrap_or_else(|e| e.into_inner());
         let tmp = tempfile::tempdir().unwrap();
         let vars = [
-            ("PUNKTFUNK_CONFIG_DIR", Some(tmp.path().as_os_str())),
+            ("LILYNK_CONFIG_DIR", Some(tmp.path().as_os_str())),
             (
-                "PUNKTFUNK_LIBRARY_DIR",
+                "LILYNK_LIBRARY_DIR",
                 library.map(std::path::Path::as_os_str),
             ),
         ];

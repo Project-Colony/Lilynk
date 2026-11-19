@@ -83,7 +83,7 @@ async fn paired_clients_list_and_unpair() {
     assert_eq!(send(&app, del(fingerprint)).await.0, StatusCode::NOT_FOUND);
 
     // Restart must not resurrect the pairing (that re-opens the control port).
-    // `PUNKTFUNK_CONFIG_DIR` is used verbatim — no `punktfunk` subdirectory.
+    // `LILYNK_CONFIG_DIR` is used verbatim — no `punktfunk` subdirectory.
     let disk = std::fs::read(tmp.path().join("paired.json")).expect("unpair persisted paired.json");
     assert_eq!(
         serde_json::from_slice::<Vec<Vec<u8>>>(&disk).unwrap(),

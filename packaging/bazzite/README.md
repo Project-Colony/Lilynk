@@ -41,7 +41,7 @@ that's the walkthrough to hand a user. Packager-side facts:
   names `--from-file`. The rest of this list describes a feed for a build that sets both.
 - A feed is `…/lilynk-sysext/f<ver>[-canary]/`: `SHA256SUMS` plus a detached OpenPGP
   signature from the RPM signing key. That key's public half is `FEED_KEY`; the script refuses a
-  feed it can't verify (`PUNKTFUNK_SYSEXT_ALLOW_UNSIGNED=1` is the escape hatch for pre-signing
+  feed it can't verify (`LILYNK_SYSEXT_ALLOW_UNSIGNED=1` is the escape hatch for pre-signing
   feeds).
 - `SHA256SUMS` opens with `# FEED <name>` and `# SERIAL <unix-ts>` **inside the signed bytes**, so
   the signature says which feed and which publish it covers — a write:package token without the
@@ -100,7 +100,7 @@ rpm-ostree install \
   https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 
 # 2. Enable the punktfunk COPR repo  ⚠️ requires the COPR to be published (see callout above)
-sudo wget -O /etc/yum.repos.d/_copr_punktfunk.repo \
+sudo wget -O /etc/yum.repos.d/_copr_lilynk.repo \
   https://copr.fedorainfracloud.org/coprs/enricobuehler/punktfunk/repo/fedora-$(rpm -E %fedora)/
 
 # 3. Layer punktfunk and reboot to activate the new deployment.

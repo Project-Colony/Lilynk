@@ -184,7 +184,7 @@ fn command_line(cmd: &str, script: &Path) -> String {
 /// run their own plugins alone.
 fn env(person: bool) -> Vec<(String, String)> {
     person
-        .then(|| ("PUNKTFUNK_PERSON_PLUGINS".to_string(), "1".to_string()))
+        .then(|| ("LILYNK_PERSON_PLUGINS".to_string(), "1".to_string()))
         .into_iter()
         .collect()
 }
@@ -204,7 +204,7 @@ mod tests {
         );
         assert_eq!(
             env(true),
-            [("PUNKTFUNK_PERSON_PLUGINS".to_string(), "1".to_string())]
+            [("LILYNK_PERSON_PLUGINS".to_string(), "1".to_string())]
         );
         assert!(env(false).is_empty());
     }

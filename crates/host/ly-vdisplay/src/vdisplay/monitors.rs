@@ -1,7 +1,7 @@
 //! Physical-monitor enumeration: heads the compositor already has.
 //!
 //! [`list`] and [`resolve`] only report existing heads, so an operator can pin capture
-//! (`PUNKTFUNK_CAPTURE_MONITOR`) and the console can render a picker. The `exclusive`
+//! (`LILYNK_CAPTURE_MONITOR`) and the console can render a picker. The `exclusive`
 //! topology's darken and relight (`disable_for_exclusive`, `dpms_others`, `relight`) live
 //! here too; each backend supplies the per-head call.
 //! See `design/per-monitor-portal-capture.md`.
@@ -30,7 +30,7 @@ use anyhow::bail;
 /// way to compare a size against `x`/`y`. Mixing the two spaces is a trap.
 #[derive(Clone, Debug, PartialEq)]
 pub struct PhysicalMonitor {
-    /// Connector name (`DP-1`, `HDMI-A-2`). The id `PUNKTFUNK_CAPTURE_MONITOR` names.
+    /// Connector name (`DP-1`, `HDMI-A-2`). The id `LILYNK_CAPTURE_MONITOR` names.
     pub connector: String,
     /// Human label for a picker (`make model`, else the connector). Never used for matching.
     pub description: String,

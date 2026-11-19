@@ -42,7 +42,7 @@ echo "==> wrote $OUT" >&2
 #
 # These are GENERATED, not copied: the workspace-wide file attributes to every client every crate
 # anything in this repo links: the NVENC SDK, GTK4, windows-rs. The Apple app links ONE Rust
-# library (lilynk-client-apple, through PunktfunkCore.xcframework — see
+# library (lilynk-client-apple, through LilynkCore.xcframework — see
 # scripts/build-xcframework.sh) and Android links the JNI bridge over the core; everything else in
 # those apps is Swift/Kotlin and platform frameworks.
 #
@@ -62,7 +62,7 @@ if [ "$OUT" = "THIRD-PARTY-NOTICES.txt" ]; then
         python3 scripts/gen-third-party-notices.py --packages "$packages" --out "$dest"
         echo "==> generated $dest ($packages closure)" >&2
     done <<'CLIENTS'
-clients/apple/Sources/PunktfunkKit/Resources/THIRD-PARTY-NOTICES.txt lilynk-ffi
+clients/apple/Sources/LilynkKit/Resources/THIRD-PARTY-NOTICES.txt lilynk-ffi
 clients/android/app/src/main/assets/THIRD-PARTY-NOTICES.txt lilynk-client-android
 clients/linux/THIRD-PARTY-NOTICES.txt lilynk-client-linux,lilynk-client-session,lilynk-cli,ly-update
 clients/windows/THIRD-PARTY-NOTICES.txt lilynk-client-windows,lilynk-client-session,lilynk-cli

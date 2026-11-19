@@ -884,7 +884,7 @@
           "host"
         ],
         "summary": "List compositor backends",
-        "description": "Each row carries availability and whether `Auto` resolves to it. Clients pass\n`id` to `--compositor` or `PUNKTFUNK_COMPOSITOR_*`.",
+        "description": "Each row carries availability and whether `Auto` resolves to it. Clients pass\n`id` to `--compositor` or `LILYNK_COMPOSITOR_*`.",
         "operationId": "listCompositors",
         "responses": {
           "200": {
@@ -11151,7 +11151,7 @@
             }
           },
           "409": {
-            "description": "Refused: unsupported install kind, apply disabled (PUNKTFUNK_UPDATE_APPLY=0), a job already running, an active streaming session without `force`, or nothing newer to apply",
+            "description": "Refused: unsupported install kind, apply disabled (LILYNK_UPDATE_APPLY=0), a job already running, an active streaming session without `force`, or nothing newer to apply",
             "content": {
               "application/json": {
                 "schema": {
@@ -11774,7 +11774,7 @@
         "properties": {
           "connector": {
             "type": "string",
-            "description": "Connector (`DP-1`, `HDMI-A-2`) — the value `PUNKTFUNK_CAPTURE_MONITOR` takes."
+            "description": "Connector (`DP-1`, `HDMI-A-2`) — the value `LILYNK_CAPTURE_MONITOR` takes."
           },
           "description": {
             "type": "string",
@@ -11801,7 +11801,7 @@
           },
           "selected": {
             "type": "boolean",
-            "description": "True when the host-wide pin (`PUNKTFUNK_CAPTURE_MONITOR`, else the stored policy) names\nthis monitor."
+            "description": "True when the host-wide pin (`LILYNK_CAPTURE_MONITOR`, else the stored policy) names\nthis monitor."
           },
           "x": {
             "type": "integer",
@@ -12112,7 +12112,7 @@
         "properties": {
           "available": {
             "type": "boolean",
-            "description": "Usable now: the live session's compositor, the `PUNKTFUNK_COMPOSITOR` pin, or a backend\nwhose own probe passes."
+            "description": "Usable now: the live session's compositor, the `LILYNK_COMPOSITOR` pin, or a backend\nwhose own probe passes."
           },
           "default": {
             "type": "boolean",
@@ -13516,7 +13516,7 @@
               },
               {
                 "$ref": "#/components/schemas/DisplayTarget",
-                "description": "What a device with no `screen` of its own streams; absent is its own screen.\nHost-wide, orthogonal to `preset`. `PUNKTFUNK_CAPTURE_MONITOR` overrides it so\n`host.env` can pin without a console write undoing it."
+                "description": "What a device with no `screen` of its own streams; absent is its own screen.\nHost-wide, orthogonal to `preset`. `LILYNK_CAPTURE_MONITOR` overrides it so\n`host.env` can pin without a console write undoing it."
               }
             ]
           },
@@ -13655,7 +13655,7 @@
           },
           "locked": {
             "type": "boolean",
-            "description": "`PUNKTFUNK_CAPTURE_MONITOR` fixes the screen for every device."
+            "description": "`LILYNK_CAPTURE_MONITOR` fixes the screen for every device."
           },
           "may_choose": {
             "type": "boolean",
@@ -15268,14 +15268,14 @@
               "string",
               "null"
             ],
-            "description": "`PUNKTFUNK_ENCODER` when pinned (`qsv` / `nvenc` / …, not `auto`). A vendor mismatch is\noverridden at session open (adapter wins); the console uses this to flag a stale pin."
+            "description": "`LILYNK_ENCODER` when pinned (`qsv` / `nvenc` / …, not `auto`). A vendor mismatch is\noverridden at session open (adapter wins); the console uses this to flag a stale pin."
           },
           "env_override": {
             "type": [
               "string",
               "null"
             ],
-            "description": "`PUNKTFUNK_RENDER_ADAPTER` when set. Windows honours it in `auto`; a manual pick\noverrides it."
+            "description": "`LILYNK_RENDER_ADAPTER` when set. Windows honours it in `auto`; a manual pick\noverrides it."
           },
           "gpus": {
             "type": "array",
@@ -19648,7 +19648,7 @@
       },
       "SessionEndReason": {
         "type": "string",
-        "description": "Why a session ended, in the client's own words\n([`lilynk_core::client::PunktfunkEndReason`]) so both ends name the same end the\nsame way. The bytes match that ABI where the two overlap.\n\n[`Self::StoppedByOperator`] from a console stop and [`Self::Stolen`] close as code 0, which\nevery client reads as `host_ended`. A `stopped_by_operator` after an access expiry, an\nunpair, a power action or a closed profile closes with a typed reject code the client names.",
+        "description": "Why a session ended, in the client's own words\n([`lilynk_core::client::LilynkEndReason`]) so both ends name the same end the\nsame way. The bytes match that ABI where the two overlap.\n\n[`Self::StoppedByOperator`] from a console stop and [`Self::Stolen`] close as code 0, which\nevery client reads as `host_ended`. A `stopped_by_operator` after an access expiry, an\nunpair, a power action or a closed profile closes with a typed reject code the client names.",
         "enum": [
           "local",
           "game_exited",
@@ -21168,7 +21168,7 @@
           },
           "check_disabled": {
             "type": "boolean",
-            "description": "`PUNKTFUNK_UPDATE_CHECK=0`."
+            "description": "`LILYNK_UPDATE_CHECK=0`."
           },
           "current_version": {
             "type": "string"

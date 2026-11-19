@@ -13,7 +13,7 @@ The host can't capture this session. Check:
 
 - You're logged into a Wayland session, not X11. Pick it on the login screen.
 - The compositor meets its floor: [Requirements → Desktop](/docs/requirements#desktop).
-- `host.env` has no `PUNKTFUNK_COMPOSITOR` line. The host finds the live compositor itself; a pin
+- `host.env` has no `LILYNK_COMPOSITOR` line. The host finds the live compositor itself; a pin
   aims it at one backend even when another session runs.
 - Hyprland with `ecosystem.enforce_permissions` on: grant the host
   ([Hyprland → Permission system](/docs/hyprland#permission-system)).
@@ -37,7 +37,7 @@ physical monitor, or a launcher (Steam Big Picture, Heroic) that opens the game 
 ### Game Mode: black screen on connect, or the stream is stuck at the box's resolution
 
 A screen is pinned under **Displays** → **Stream this monitor**, or `host.env` sets
-`PUNKTFUNK_GAMESCOPE_ATTACH`, so the host mirrors the box's own screen instead of taking the
+`LILYNK_GAMESCOPE_ATTACH`, so the host mirrors the box's own screen instead of taking the
 session over. The checks and the fix:
 [gamescope → Troubleshooting](/docs/gamescope#the-stream-is-black-on-connect-or-stuck-at-the-boxs-resolution).
 

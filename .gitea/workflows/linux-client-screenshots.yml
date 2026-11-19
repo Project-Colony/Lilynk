@@ -1,5 +1,5 @@
 # Native Linux client screenshots for the app/marketing listings. The client renders
-# host-free mock scenes (PUNKTFUNK_SHOT_SCENE) under a virtual X display; the driver
+# host-free mock scenes (LILYNK_SHOT_SCENE) under a virtual X display; the driver
 # (clients/linux/tools/screenshots.sh) grabs each one — no host, GPU, or Wayland. The
 # Linux analogue of apple.yml's `screenshots` job, gated to STABLE RELEASE tags only.
 # Standalone + best-effort: a failure here reds nothing else. PNGs land as a 30-day
@@ -116,14 +116,14 @@ jobs:
       # `gtk::init()`, and libtest gives every test its own thread — so a second display test in
       # the same process dies with "Attempted to initialize GTK from two different threads",
       # which `--test-threads=1` does not fix. Discovered by name so a new one is picked up.
-      # Each gets a scratch PUNKTFUNK_CONFIG_DIR: the tests that write the stores need one.
+      # Each gets a scratch LILYNK_CONFIG_DIR: the tests that write the stores need one.
       - name: Display-only client tests
         run: |
           cargo test -p lilynk-client-linux --locked -- --ignored --list --format terse \
             | sed -n 's/: test$//p' \
             | while read -r t; do
                 echo "--- $t"
-                PUNKTFUNK_CONFIG_DIR="$(mktemp -d)" xvfb-run -a \
+                LILYNK_CONFIG_DIR="$(mktemp -d)" xvfb-run -a \
                   cargo test -p lilynk-client-linux --locked -- --ignored --exact "$t"
               done
 

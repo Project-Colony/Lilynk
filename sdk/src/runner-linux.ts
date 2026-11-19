@@ -93,7 +93,7 @@ export const writePluginToken = (
 	try {
 		fs.mkdirSync(stateDir, { recursive: true });
 		fs.rmSync(file, { force: true });
-		fs.writeFileSync(file, `PUNKTFUNK_PLUGIN_TOKEN=${token}\n`, { mode: 0o600, flag: "wx" });
+		fs.writeFileSync(file, `LILYNK_PLUGIN_TOKEN=${token}\n`, { mode: 0o600, flag: "wx" });
 		return file;
 	} catch (e) {
 		return new Error(`Couldn't write the credential for ${id} into ${stateDir} — ${e}`);
@@ -400,7 +400,7 @@ export const exitOutcome = (
 
 /** The runner bundle this process is running, which each sandbox re-execs. */
 export const runnerEntry = (): string =>
-	process.env.PUNKTFUNK_RUNNER_ENTRY ?? process.argv[1] ?? "";
+	process.env.LILYNK_RUNNER_ENTRY ?? process.argv[1] ?? "";
 
 /** The argv tail every out-of-process shape runs: this runner, in `--run-unit` mode, on `unit`. */
 export const unitArgv = (unit: Unit): string[] => [

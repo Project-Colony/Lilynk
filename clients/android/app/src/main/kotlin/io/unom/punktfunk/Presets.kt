@@ -170,7 +170,7 @@ enum class PresetResolution { FOUND, NOT_FOUND, AMBIGUOUS }
  * The preset catalog — client-wide, not per host: "Work" applied to three hosts is one preset,
  * and the per-host part is only the binding on the host record ([KnownHost.presetId]).
  *
- * Stored one JSON string per preset keyed by id in its own `punktfunk_presets` prefs file — the
+ * Stored one JSON string per preset keyed by id in its own `lilynk_presets` prefs file — the
  * `KnownHostStore` pattern, and deliberately not inside the settings file, which is rewritten
  * wholesale by several writers.
  */
@@ -260,10 +260,10 @@ class PresetStore(context: Context) {
     }
 
     private companion object {
-        const val PREFS = "punktfunk_presets"
+        const val PREFS = "lilynk_presets"
 
         /** The pre-rename file (design/preset-rename.md), left as it was for an older build. */
-        const val LEGACY_PREFS = "punktfunk_profiles"
+        const val LEGACY_PREFS = "lilynk_profiles"
 
         /** Marks the copy done, so deleting every preset does not bring the old ones back. A
          *  Boolean, which [all] skips: only String values are presets. */

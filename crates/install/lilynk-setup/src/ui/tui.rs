@@ -379,7 +379,7 @@ impl<'a> Tui<'a> {
     fn current_bool(&self, screen: &Screen, field: Field) -> bool {
         let c = &screen.choices;
         match field {
-            Field::Group => c.punktfunk_group,
+            Field::Group => c.lilynk_group,
             Field::Gamestream => c.gamestream,
             Field::Clipboard => c.clipboard,
             Field::Linger => c.linger,

@@ -35,7 +35,7 @@ use usbip_sim::{
     Version,
 };
 
-/// Default on, on the Deck's knob: `PUNKTFUNK_STEAM_USBIP=0`/`false` keeps the SC2 on UHID.
+/// Default on, on the Deck's knob: `LILYNK_STEAM_USBIP=0`/`false` keeps the SC2 on UHID.
 pub fn usbip_preferred() -> bool {
     super::steam_usbip::usbip_preferred()
 }

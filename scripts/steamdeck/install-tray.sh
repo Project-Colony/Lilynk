@@ -10,8 +10,8 @@ set -euo pipefail
 ok()   { printf '\033[1;32m  ok\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m  !!\033[0m %s\n' "$*" >&2; }
 
-SRC="${PUNKTFUNK_SRC:-$HOME/punktfunk}"
-BOX="${PUNKTFUNK_BOX:-pf2}"
+SRC="${LILYNK_SRC:-$HOME/punktfunk}"
+BOX="${LILYNK_BOX:-pf2}"
 TARGET_DIR="$SRC/target-steamos"
 BUILT="$TARGET_DIR/release/lilynk-tray"
 TRAY="$HOME/.local/bin/lilynk-tray"

@@ -4,7 +4,7 @@ import { ButtonItem, PanelSection, PanelSectionRow } from "@decky/ui";
 import { FC } from "react";
 import { FaPlus, FaStopCircle } from "react-icons/fa";
 import { t } from "../i18n";
-import { forceStop, recreatePunktfunkShortcut, removeGamePageShortcuts } from "./actions";
+import { forceStop, recreateLilynkShortcut, removeGamePageShortcuts } from "./actions";
 
 export const TroubleshootingSection: FC = () => (
   <PanelSection title={t("decky_section_troubleshooting")}>
@@ -18,7 +18,7 @@ export const TroubleshootingSection: FC = () => (
       <ButtonItem
         layout="below"
         description={t("decky_recreate_hint")}
-        onClick={() => void recreatePunktfunkShortcut()}
+        onClick={() => void recreateLilynkShortcut()}
       >
         <FaPlus style={{ marginRight: "0.5em" }} />
         {t("decky_recreate")}

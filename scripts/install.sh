@@ -2,11 +2,11 @@
 # punktfunk guided installer — PREVIEW.
 #
 #   cargo build --release -p lilynk-setup
-#   PUNKTFUNK_SETUP_BIN=target/release/lilynk-setup sh scripts/install.sh
+#   LILYNK_SETUP_BIN=target/release/lilynk-setup sh scripts/install.sh
 #
 # This is a stub. It checks that this is a Linux box it has a build for, then execs a
-# `lilynk-setup` binary with every argument and every PUNKTFUNK_INSTALL_* variable untouched.
-# The binary is PUNKTFUNK_SETUP_BIN, a local file, or a download from PUNKTFUNK_SETUP_REGISTRY,
+# `lilynk-setup` binary with every argument and every LILYNK_INSTALL_* variable untouched.
+# The binary is LILYNK_SETUP_BIN, a local file, or a download from LILYNK_SETUP_REGISTRY,
 # checked against its sha256. No registry is published for this build, so there is no default.
 # The installer itself — distro detection, the guided screen, the plan it runs, uninstall,
 # channel switching — lives in that binary (crates/install/lilynk-setup,
@@ -23,8 +23,8 @@
 set -u
 
 DOCS=https://docs.punktfunk.unom.io/docs
-REGISTRY=${PUNKTFUNK_SETUP_REGISTRY:-}
-CHANNEL_DIR=${PUNKTFUNK_SETUP_VERSION:-latest}
+REGISTRY=${LILYNK_SETUP_REGISTRY:-}
+CHANNEL_DIR=${LILYNK_SETUP_VERSION:-latest}
 
 die() { printf '\033[1;31m  xx\033[0m %s\n' "$*" >&2; exit 1; }
 
@@ -38,7 +38,7 @@ for arg in "$@"; do
 punktfunk guided installer (preview)
 
 This script runs the lilynk-setup binary. It takes no options of its own — everything you
-pass is handed to the installer untouched, as is every PUNKTFUNK_INSTALL_* variable in the
+pass is handed to the installer untouched, as is every LILYNK_INSTALL_* variable in the
 environment.
 
   sh install.sh --yes            install unattended, taking every default
@@ -53,9 +53,9 @@ authoritative list itself: $DOCS/install, or "lilynk-setup --help" once it is on
 No installer download is published for this build. Build one and point the script at it:
 
   cargo build --release -p lilynk-setup
-  PUNKTFUNK_SETUP_BIN=target/release/lilynk-setup sh install.sh …
+  LILYNK_SETUP_BIN=target/release/lilynk-setup sh install.sh …
 
-PUNKTFUNK_SETUP_REGISTRY=<url> downloads it from a registry of your own instead, checked
+LILYNK_SETUP_REGISTRY=<url> downloads it from a registry of your own instead, checked
 against the sha256 published next to it.
 
 Docs: $DOCS/install
@@ -80,14 +80,14 @@ case "$(uname -m)" in
     *) die "no lilynk-setup build for $(uname -m) — build from source: $DOCS/build-from-source" ;;
 esac
 
-# PUNKTFUNK_SETUP_BIN skips the download entirely. installer-smoke points it at the binary built
+# LILYNK_SETUP_BIN skips the download entirely. installer-smoke points it at the binary built
 # from the pull request's own tree, so CI tests the checked-out code and never the published one.
-if [ -n "${PUNKTFUNK_SETUP_BIN:-}" ]; then
-    [ -x "$PUNKTFUNK_SETUP_BIN" ] || die "PUNKTFUNK_SETUP_BIN=$PUNKTFUNK_SETUP_BIN is not executable"
-    exec "$PUNKTFUNK_SETUP_BIN" "$@"
+if [ -n "${LILYNK_SETUP_BIN:-}" ]; then
+    [ -x "$LILYNK_SETUP_BIN" ] || die "LILYNK_SETUP_BIN=$LILYNK_SETUP_BIN is not executable"
+    exec "$LILYNK_SETUP_BIN" "$@"
 fi
 
-[ -n "$REGISTRY" ] || die "no installer download is published for this build — build it with 'cargo build --release -p lilynk-setup', then run PUNKTFUNK_SETUP_BIN=target/release/lilynk-setup sh install.sh"
+[ -n "$REGISTRY" ] || die "no installer download is published for this build — build it with 'cargo build --release -p lilynk-setup', then run LILYNK_SETUP_BIN=target/release/lilynk-setup sh install.sh"
 
 command -v curl >/dev/null 2>&1 || die "curl is required (install it with your package manager first)"
 

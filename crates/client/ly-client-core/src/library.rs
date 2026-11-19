@@ -451,7 +451,7 @@ impl HostApi {
                     }
                     refused = Some(reply);
                 }
-                Err(lilynk_core::PunktfunkError::Crypto) => return Err(LibraryError::PinMismatch),
+                Err(lilynk_core::LilynkError::Crypto) => return Err(LibraryError::PinMismatch),
                 Err(e) => {
                     tracing::debug!(error = %e, path, "stream port did not answer — asking HTTPS")
                 }

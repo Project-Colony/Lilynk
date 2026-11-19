@@ -11,7 +11,7 @@ Two things about this crate are contracts rather than choices:
 - **The C ABI is versioned.** It lives in [`lilynk-ffi`](../../client/lilynk-ffi/), which builds the
   cdylib and staticlib; cbindgen generates [`include/lilynk_core.h`](../../../include/lilynk_core.h)
   from it and from this crate's constants (`cargo run -p gen-headers`). `ABI_VERSION` is defined here;
-  `punktfunk_abi_version()` and `PunktfunkConfig::struct_size` are how an embedder detects a
+  `lilynk_abi_version()` and `LilynkConfig::struct_size` are how an embedder detects a
   mismatch instead of corrupting a struct.
 
 ## Test

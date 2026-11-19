@@ -19,7 +19,7 @@ use winreg::{RegKey, RegValue};
 const WINSTATIONS: &str = r"SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations";
 const STOCK: &str = "RDP-Tcp";
 /// Set on the listener this module writes; [`remove`] deletes no other.
-const MARKER: &str = "PunktfunkSeatListener";
+const MARKER: &str = "LilynkSeatListener";
 /// Values the seat listener sets itself rather than copying.
 const OWN_VALUES: [&str; 4] = [
     "fEnableWinStation",

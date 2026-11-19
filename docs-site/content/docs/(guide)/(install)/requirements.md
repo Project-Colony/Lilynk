@@ -39,7 +39,7 @@ you log into a GNOME or Sway session instead.
 
 The host needs a **Wayland** session: a desktop you log into, a
 [headless session](/docs/running-as-a-service), or none at all with gamescope, which the host
-starts per client. On a box that boots to no session, set `PUNKTFUNK_COMPOSITOR=gamescope` in
+starts per client. On a box that boots to no session, set `LILYNK_COMPOSITOR=gamescope` in
 `host.env`.
 
 | Desktop | Floor |
@@ -63,7 +63,7 @@ input: a denial shows as black frames and dropped input, not as an error.
 |---|---|---|
 | NVIDIA | NVENC | Driver 535 or newer with its GL/EGL userspace, and `nvidia-drm modeset=1` |
 | AMD, Intel | Vulkan Video (HEVC, AV1), VAAPI (H.264 and fallback) | Current Mesa with its Vulkan driver (26.2 or newer for Vulkan Video on Intel), and the VAAPI driver |
-| None | Software H.264 | `PUNKTFUNK_ENCODER=software`, a fallback rather than a daily driver |
+| None | Software H.264 | `LILYNK_ENCODER=software`, a fallback rather than a daily driver |
 
 Your distro's install page installs the right driver packages. On Intel Gen12 (Tiger Lake) and
 newer, including Arc, encoding needs the HuC firmware loaded: check `dmesg | grep -i huc` if encoding

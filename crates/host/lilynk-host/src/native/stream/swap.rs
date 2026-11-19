@@ -726,13 +726,13 @@ pub(super) mod tests {
                 std::process::Command::new(std::env::current_exe().expect("this test binary"));
             child.args(["--exact", &test, "--nocapture"]);
             for (key, _) in std::env::vars_os() {
-                if key.to_string_lossy().starts_with("PUNKTFUNK_") {
+                if key.to_string_lossy().starts_with("LILYNK_") {
                     child.env_remove(key);
                 }
             }
             let out = child
                 .env(SCRATCH_CONFIG, dir.path())
-                .env("PUNKTFUNK_CONFIG_DIR", dir.path())
+                .env("LILYNK_CONFIG_DIR", dir.path())
                 .output()
                 .expect("run the child");
             assert!(

@@ -15,7 +15,7 @@
 //! session, the client signs a host nonce bound to the channel.
 
 use super::*;
-use crate::error::{PunktfunkError, Result};
+use crate::error::{LilynkError, Result};
 
 pub const MSG_PAIR_REQUEST: u8 = 0x10;
 pub const MSG_PAIR_CHALLENGE: u8 = 0x11;
@@ -131,12 +131,12 @@ fn put_bytes(b: &mut Vec<u8>, x: &[u8]) {
 
 fn get_bytes(b: &[u8], off: usize) -> Result<(&[u8], usize)> {
     if off + 2 > b.len() {
-        return Err(PunktfunkError::InvalidArg("truncated field"));
+        return Err(LilynkError::InvalidArg("truncated field"));
     }
     let n = u16::from_le_bytes([b[off], b[off + 1]]) as usize;
     let start = off + 2;
     if start + n > b.len() {
-        return Err(PunktfunkError::InvalidArg("field overruns message"));
+        return Err(LilynkError::InvalidArg("field overruns message"));
     }
     Ok((&b[start..start + n], start + n))
 }
@@ -162,11 +162,11 @@ impl PairRequest {
 
     pub fn decode_pkf1(b: &[u8]) -> Result<PairRequest> {
         if b.len() < 6 || &b[0..4] != CTL_MAGIC || b[4] != MSG_PAIR_REQUEST {
-            return Err(PunktfunkError::InvalidArg("bad PairRequest"));
+            return Err(LilynkError::InvalidArg("bad PairRequest"));
         }
         let n = b[5] as usize;
         if n > 64 || b.len() < 6 + n {
-            return Err(PunktfunkError::InvalidArg("bad PairRequest name"));
+            return Err(LilynkError::InvalidArg("bad PairRequest name"));
         }
         let name = String::from_utf8_lossy(&b[6..6 + n]).into_owned();
         let (spake_a, end) = get_bytes(b, 6 + n)?;
@@ -176,7 +176,7 @@ impl PairRequest {
             get_bytes(b, end)?
         };
         if end != b.len() {
-            return Err(PunktfunkError::InvalidArg("trailing bytes"));
+            return Err(LilynkError::InvalidArg("trailing bytes"));
         }
         Ok(PairRequest {
             name,
@@ -198,11 +198,11 @@ impl PairChallenge {
 
     pub fn decode_pkf1(b: &[u8]) -> Result<PairChallenge> {
         if b.len() < 5 || &b[0..4] != CTL_MAGIC || b[4] != MSG_PAIR_CHALLENGE {
-            return Err(PunktfunkError::InvalidArg("bad PairChallenge"));
+            return Err(LilynkError::InvalidArg("bad PairChallenge"));
         }
         let (spake_b, end) = get_bytes(b, 5)?;
         if end + 32 != b.len() {
-            return Err(PunktfunkError::InvalidArg("bad PairChallenge confirm"));
+            return Err(LilynkError::InvalidArg("bad PairChallenge confirm"));
         }
         let mut confirm = [0u8; 32];
         confirm.copy_from_slice(&b[end..end + 32]);
@@ -224,7 +224,7 @@ impl PairProof {
 
     pub fn decode_pkf1(b: &[u8]) -> Result<PairProof> {
         if b.len() != 37 || &b[0..4] != CTL_MAGIC || b[4] != MSG_PAIR_PROOF {
-            return Err(PunktfunkError::InvalidArg("bad PairProof"));
+            return Err(LilynkError::InvalidArg("bad PairProof"));
         }
         let mut confirm = [0u8; 32];
         confirm.copy_from_slice(&b[5..37]);
@@ -243,7 +243,7 @@ impl PairResult {
 
     pub fn decode_pkf1(b: &[u8]) -> Result<PairResult> {
         if b.len() != 6 || &b[0..4] != CTL_MAGIC || b[4] != MSG_PAIR_RESULT {
-            return Err(PunktfunkError::InvalidArg("bad PairResult"));
+            return Err(LilynkError::InvalidArg("bad PairResult"));
         }
         Ok(PairResult { ok: b[5] != 0 })
     }
@@ -279,15 +279,15 @@ impl Refused {
 
     pub fn decode_pkf1(b: &[u8]) -> Result<Refused> {
         if b.len() < 9 || &b[0..4] != CTL_MAGIC || b[4] != MSG_REFUSED {
-            return Err(PunktfunkError::InvalidArg("bad Refused"));
+            return Err(LilynkError::InvalidArg("bad Refused"));
         }
         let code = u32::from_le_bytes([b[5], b[6], b[7], b[8]]);
         let (reason, end) = get_bytes(b, 9)?;
         if end != b.len() {
-            return Err(PunktfunkError::InvalidArg("trailing bytes"));
+            return Err(LilynkError::InvalidArg("trailing bytes"));
         }
         let reason = core::str::from_utf8(reason)
-            .map_err(|_| PunktfunkError::InvalidArg("Refused reason is not UTF-8"))?;
+            .map_err(|_| LilynkError::InvalidArg("Refused reason is not UTF-8"))?;
         Ok(Refused {
             code,
             reason: reason.to_string(),

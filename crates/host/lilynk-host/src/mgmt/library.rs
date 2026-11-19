@@ -1230,7 +1230,7 @@ fn reconcile_provider_now(
             example_path = %path,
             "library reconcile: dropped local art the proxy may not serve — these entries still \
              sync, but their covers will be blank. The path must be an image file (jpg/png/webp/\
-             gif/bmp/ico/tga) inside an allowed art root; set PUNKTFUNK_LIBRARY_ART_ROOTS if this \
+             gif/bmp/ico/tga) inside an allowed art root; set LILYNK_LIBRARY_ART_ROOTS if this \
              library's art lives outside the defaults"
         );
     }

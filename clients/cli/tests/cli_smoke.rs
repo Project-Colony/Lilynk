@@ -53,7 +53,7 @@ fn per_verb_help_answers_both_spellings() {
 
 /// `default-host` is the only door to the start-screen pointer on a headless box, and the
 /// verbs that read it must refuse rather than guess. Runs against a scratch directory.
-/// `PUNKTFUNK_CONFIG_DIR` is set there too, so a developer export cannot point the
+/// `LILYNK_CONFIG_DIR` is set there too, so a developer export cannot point the
 /// verb at the real identity.
 #[test]
 fn default_host_is_set_read_and_cleared() {
@@ -75,7 +75,7 @@ fn default_host_is_set_read_and_cleared() {
         Command::new(env!("CARGO_BIN_EXE_lilynk"))
             .args(args)
             .env(if cfg!(windows) { "APPDATA" } else { "HOME" }, &home)
-            .env("PUNKTFUNK_CONFIG_DIR", &store)
+            .env("LILYNK_CONFIG_DIR", &store)
             .output()
             .expect("run punktfunk")
     };
@@ -140,7 +140,7 @@ fn forgetting_a_host_clears_its_default_and_cached_catalog() {
 
     let out = Command::new(env!("CARGO_BIN_EXE_lilynk"))
         .args(["hosts", "forget", "Desk"])
-        .env("PUNKTFUNK_CONFIG_DIR", &store)
+        .env("LILYNK_CONFIG_DIR", &store)
         .env("XDG_CACHE_HOME", &home)
         .env("LOCALAPPDATA", &home)
         .output()
@@ -167,7 +167,7 @@ fn hosts_added_by_eight_processes_at_once_all_land() {
         .map(|n| {
             Command::new(env!("CARGO_BIN_EXE_lilynk"))
                 .args(["hosts", "add", &format!("10.0.0.{n}")])
-                .env("PUNKTFUNK_CONFIG_DIR", &store)
+                .env("LILYNK_CONFIG_DIR", &store)
                 .spawn()
                 .expect("run punktfunk")
         })
@@ -242,10 +242,10 @@ fn scratch_store(tag: &str, known_hosts: &str) -> std::path::PathBuf {
 }
 
 /// `punktfunk` against `store`, with every cache dir inside it too.
-fn punktfunk_in(store: &std::path::Path, args: &[&str]) -> std::process::Output {
+fn lilynk_in(store: &std::path::Path, args: &[&str]) -> std::process::Output {
     Command::new(env!("CARGO_BIN_EXE_lilynk"))
         .args(args)
-        .env("PUNKTFUNK_CONFIG_DIR", store)
+        .env("LILYNK_CONFIG_DIR", store)
         .env("XDG_CACHE_HOME", store)
         .env("LOCALAPPDATA", store)
         .output()
@@ -271,7 +271,7 @@ fn hosts_list_prints_one_line_per_saved_host() {
     let store = scratch_store("list", TWO_HOSTS);
     let want = "Desk\t10.0.0.5:9777\tpaired\t-\nCouch\t10.0.0.6:1234\ttrusted\t-\n";
     for args in [&["hosts", "list"][..], &["hosts"][..]] {
-        let out = punktfunk_in(&store, args);
+        let out = lilynk_in(&store, args);
         assert!(out.status.success(), "{args:?}: {}", stderr_of(&out));
         assert_eq!(stdout_of(&out), want, "{args:?}");
     }
@@ -294,7 +294,7 @@ fn hosts_list_json_resolves_presets_and_keeps_the_old_keys() {
         r#"{"version":1,"presets":[{"id":"p1","name":"Work"}]}"#,
     )
     .expect("seed the catalog");
-    let out = punktfunk_in(&store, &["hosts", "list", "--json"]);
+    let out = lilynk_in(&store, &["hosts", "list", "--json"]);
     assert!(out.status.success(), "{}", stderr_of(&out));
     let got: serde_json::Value = serde_json::from_str(&stdout_of(&out)).expect("one JSON object");
     let preset = serde_json::json!({"id": "p1", "name": "Work"});
@@ -327,7 +327,7 @@ fn hosts_list_json_resolves_presets_and_keeps_the_old_keys() {
 fn hosts_add_reports_what_it_did() {
     let store = scratch_store("add", "");
     let fp = "ab".repeat(32);
-    let say = |args: &[&str]| punktfunk_in(&store, args);
+    let say = |args: &[&str]| lilynk_in(&store, args);
     for (args, stdout, stderr) in [
         (
             vec!["hosts", "add", "10.0.0.5"],
@@ -382,14 +382,14 @@ fn hosts_add_reports_what_it_did() {
 #[test]
 fn the_device_code_is_stable_and_spelled_in_fours() {
     let store = scratch_store("device-code", "");
-    let plain = stdout_of(&punktfunk_in(&store, &["device-code"]));
+    let plain = stdout_of(&lilynk_in(&store, &["device-code"]));
     let code = plain.trim();
     let groups: Vec<&str> = code.split(' ').collect();
     assert_eq!(groups.len(), 4, "{code:?}");
     assert!(groups.iter().all(|g| g.len() == 4
         && g.bytes()
             .all(|b| b.is_ascii_digit() || (b'A'..=b'F').contains(&b))));
-    let out = punktfunk_in(&store, &["device-code", "--json"]);
+    let out = lilynk_in(&store, &["device-code", "--json"]);
     assert_eq!(out.status.code(), Some(0), "{}", stderr_of(&out));
     assert_eq!(stdout_of(&out).trim(), format!("{{\"code\":\"{code}\"}}"));
     std::fs::remove_dir_all(&store).ok();
@@ -400,7 +400,7 @@ fn the_device_code_is_stable_and_spelled_in_fours() {
 #[test]
 fn a_request_without_a_fingerprint_refuses() {
     let store = scratch_store("no-fp-request", "");
-    let out = punktfunk_in(&store, &["pair", "127.0.0.1:1", "--request-access"]);
+    let out = lilynk_in(&store, &["pair", "127.0.0.1:1", "--request-access"]);
     assert_eq!(out.status.code(), Some(5), "{}", stderr_of(&out));
     assert!(stderr_of(&out).starts_with("no fingerprint for 127.0.0.1"));
     assert!(!store.join("client-known-hosts.json").exists());
@@ -417,7 +417,7 @@ fn a_bare_fp_is_a_usage_error() {
         &["hosts", "add", "10.0.0.5", "--fp"][..],
         &["hosts", "add", "10.0.0.5", "--fp", "--name", "Desk"][..],
     ] {
-        let out = punktfunk_in(&store, args);
+        let out = lilynk_in(&store, args);
         assert_eq!(out.status.code(), Some(5), "{args:?}: {}", stderr_of(&out));
         assert_eq!(
             stderr_of(&out),
@@ -437,7 +437,7 @@ fn hosts_refuses_what_it_cannot_resolve() {
         (&["hosts", "frob"][..], "unknown hosts command \"frob\""),
         (&["hosts", "forget"][..], "usage: punktfunk hosts forget"),
     ] {
-        let out = punktfunk_in(&store, args);
+        let out = lilynk_in(&store, args);
         assert_eq!(out.status.code(), Some(5), "{args:?}");
         assert!(
             stderr_of(&out).contains(said),
@@ -446,12 +446,12 @@ fn hosts_refuses_what_it_cannot_resolve() {
         );
     }
     // A name nothing matches reads as an address nobody saved: a person's call (6).
-    let out = punktfunk_in(&store, &["hosts", "forget", "Nobody"]);
+    let out = lilynk_in(&store, &["hosts", "forget", "Nobody"]);
     assert_eq!(out.status.code(), Some(6));
     assert!(stderr_of(&out).contains("Nobody:9777 isn't a saved host"));
-    let out = punktfunk_in(&store, &["hosts", "forget", "Desk"]);
+    let out = lilynk_in(&store, &["hosts", "forget", "Desk"]);
     assert_eq!(stdout_of(&out), "forgot Desk\n");
-    let left = stdout_of(&punktfunk_in(&store, &["hosts", "list"]));
+    let left = stdout_of(&lilynk_in(&store, &["hosts", "list"]));
     assert_eq!(left.lines().count(), 1, "{left}");
     std::fs::remove_dir_all(&store).ok();
 }
@@ -462,16 +462,16 @@ fn hosts_refuses_what_it_cannot_resolve() {
 fn the_probe_verbs_refuse_before_they_dial() {
     let store = scratch_store("probe", TWO_HOSTS);
     for verb in ["speed-test", "network-check"] {
-        let out = punktfunk_in(&store, &[verb]);
+        let out = lilynk_in(&store, &[verb]);
         assert_eq!(out.status.code(), Some(5), "{verb}");
         assert!(
             stderr_of(&out).contains(&format!("usage: punktfunk {verb} <host-ref>")),
             "{verb}: {}",
             stderr_of(&out)
         );
-        let out = punktfunk_in(&store, &[verb, "Nobody"]);
+        let out = lilynk_in(&store, &[verb, "Nobody"]);
         assert_eq!(out.status.code(), Some(6), "{verb} Nobody");
-        let out = punktfunk_in(&store, &[verb, "Couch"]);
+        let out = lilynk_in(&store, &[verb, "Couch"]);
         assert_eq!(out.status.code(), Some(6), "{verb} Couch");
         assert_eq!(stderr_of(&out), "Couch isn't paired yet\n", "{verb} Couch");
     }
@@ -484,7 +484,7 @@ fn the_probe_verbs_refuse_before_they_dial() {
 fn hosts_add_without_a_config_dir_fails_to_save() {
     let out = Command::new(env!("CARGO_BIN_EXE_lilynk"))
         .args(["hosts", "add", "10.0.0.5"])
-        .env_remove("PUNKTFUNK_CONFIG_DIR")
+        .env_remove("LILYNK_CONFIG_DIR")
         .env_remove("XDG_CONFIG_HOME")
         .env_remove("HOME")
         .env_remove("APPDATA")

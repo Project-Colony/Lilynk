@@ -8,7 +8,7 @@
 //!
 //! Invariants: a GPU without every feature the shaders use is refused before a device exists; a
 //! priority ladder rides only on a device that enables a global-priority extension; only
-//! `PUNKTFUNK_PERF` adds the calibrated clock; the planes and the CSC shader follow the
+//! `LILYNK_PERF` adds the calibrated clock; the planes and the CSC shader follow the
 //! negotiated chroma, depth and colour. Each row of `open_table` and each ladder test names the
 //! rule it pins. Design: `design/ly-encode-overhaul.md` §4.4.
 
@@ -85,7 +85,7 @@ pub(crate) struct DeviceFacts<'a> {
     /// The extensions of [`PROBED`] it advertises.
     pub extensions: Vec<CString>,
     pub features: Features,
-    /// `PUNKTFUNK_PERF`: split each encode's time on the GPU.
+    /// `LILYNK_PERF`: split each encode's time on the GPU.
     pub perf: bool,
     /// `PYROWAVE_QUEUE_PRIORITY` as given; `None` asks for the default class.
     pub intent: Option<&'a str>,
@@ -197,7 +197,7 @@ pub(crate) enum OpenStep {
         luma: Plane,
         chroma: Plane,
     },
-    /// `PUNKTFUNK_PERF`'s timestamp queries, calibrated through `calibrate` when there is one.
+    /// `LILYNK_PERF`'s timestamp queries, calibrated through `calibrate` when there is one.
     Timer {
         calibrate: Option<&'static CStr>,
     },
@@ -343,7 +343,7 @@ mod tests {
     };
 
     /// AMD, 1920×1080 4:2:0 8-bit SDR on family 1, every feature and every extension the open
-    /// looks for, no `PUNKTFUNK_PERF`; then `edit`.
+    /// looks for, no `LILYNK_PERF`; then `edit`.
     fn facts(edit: impl FnOnce(&mut DeviceFacts<'static>)) -> DeviceFacts<'static> {
         let mut f = DeviceFacts {
             vendor_id: AMD,
@@ -530,7 +530,7 @@ mod tests {
                 })])),
             ),
             (
-                "add the calibrated clock and the timer under PUNKTFUNK_PERF",
+                "add the calibrated clock and the timer under LILYNK_PERF",
                 facts(|f| f.perf = true),
                 Ok(plan(vec![
                     device(|d| d.extensions.push(EXT_CALIBRATED_KHR)),

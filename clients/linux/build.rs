@@ -5,15 +5,15 @@
 
 fn main() {
     // Build provenance, as in crates/host/lilynk-host/build.rs: packaging sets
-    // PUNKTFUNK_BUILD_VERSION to the full package version; a plain `cargo build` uses the crate's.
+    // LILYNK_BUILD_VERSION to the full package version; a plain `cargo build` uses the crate's.
     // `--version` prints it and `--check-update` compares it with the signed manifest. Canary
     // channels compare the CI run number in its suffix (ly_update_check::version).
-    let version = std::env::var("PUNKTFUNK_BUILD_VERSION")
+    let version = std::env::var("LILYNK_BUILD_VERSION")
         .ok()
         .filter(|v| !v.trim().is_empty())
         .unwrap_or_else(|| std::env::var("CARGO_PKG_VERSION").unwrap_or_else(|_| "unknown".into()));
-    println!("cargo:rustc-env=PUNKTFUNK_VERSION={version}");
-    println!("cargo:rerun-if-env-changed=PUNKTFUNK_BUILD_VERSION");
+    println!("cargo:rustc-env=LILYNK_VERSION={version}");
+    println!("cargo:rerun-if-env-changed=LILYNK_BUILD_VERSION");
 
     // Host cfg gate mirrors this crate's `#[cfg(target_os = "linux")]` modules: on any other
     // host the crate compiles to an empty stub and `glib-compile-resources` may not exist.

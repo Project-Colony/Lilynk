@@ -37,7 +37,7 @@
 # happily. The Rust updater enforces the same two rules (ly-update-check: manifest.rs, floor.rs).
 set -euo pipefail
 
-REGISTRY="${PUNKTFUNK_SYSEXT_REGISTRY:-}"
+REGISTRY="${LILYNK_SYSEXT_REGISTRY:-}"
 CONF=/etc/lilynk-sysext.conf
 EXT_DIR=/var/lib/extensions
 IMG="$EXT_DIR/lilynk.raw"
@@ -128,8 +128,8 @@ fetch_manifest() {
   feed="$(feed_url)"
   sums="$PF_TMP/SHA256SUMS"; sig="$PF_TMP/SHA256SUMS.asc"
   fetch -fsSL -o "$sums" "$feed/SHA256SUMS" || { echo "cannot reach the feed $feed" >&2; return 1; }
-  if [ "${PUNKTFUNK_SYSEXT_ALLOW_UNSIGNED:-0}" = 1 ]; then
-    echo "!! PUNKTFUNK_SYSEXT_ALLOW_UNSIGNED=1 — the feed manifest is NOT being verified." >&2
+  if [ "${LILYNK_SYSEXT_ALLOW_UNSIGNED:-0}" = 1 ]; then
+    echo "!! LILYNK_SYSEXT_ALLOW_UNSIGNED=1 — the feed manifest is NOT being verified." >&2
     return 0
   fi
   # curl's own "404"/"could not open file" is noise here — a missing signature is an expected
@@ -137,7 +137,7 @@ fetch_manifest() {
   if ! fetch -fsSL -o "$sig" "$feed/SHA256SUMS.asc" 2>/dev/null; then
     echo "!! the feed $feed has no SHA256SUMS.asc — refusing to install from an unsigned feed." >&2
     echo "!! (a feed published before signing existed; it is sealed on the next publish. To install" >&2
-    echo "!!  from it anyway, knowing the images are unauthenticated: PUNKTFUNK_SYSEXT_ALLOW_UNSIGNED=1)" >&2
+    echo "!!  from it anyway, knowing the images are unauthenticated: LILYNK_SYSEXT_ALLOW_UNSIGNED=1)" >&2
     return 1
   fi
   if ! command -v gpg >/dev/null 2>&1; then
@@ -195,13 +195,13 @@ installed_version() {
 }
 merged() { [ -f "$MARKER" ]; }
 
-# True when host.env turns Attach mode on, by the host's own grammar: PUNKTFUNK_GAMESCOPE_ATTACH set
-# to anything but 0/false/off/no, or PUNKTFUNK_GAMESCOPE_NODE set at all. Last line wins.
+# True when host.env turns Attach mode on, by the host's own grammar: LILYNK_GAMESCOPE_ATTACH set
+# to anything but 0/false/off/no, or LILYNK_GAMESCOPE_NODE set at all. Last line wins.
 host_env_pins_attach() {
   local attach node
-  attach="$(sed -n 's/^[[:space:]]*PUNKTFUNK_GAMESCOPE_ATTACH=[[:space:]]*//p' "$1" | tail -n1 \
+  attach="$(sed -n 's/^[[:space:]]*LILYNK_GAMESCOPE_ATTACH=[[:space:]]*//p' "$1" | tail -n1 \
             | tr -d "\"'" | tr '[:upper:]' '[:lower:]')"
-  node="$(sed -n 's/^[[:space:]]*PUNKTFUNK_GAMESCOPE_NODE=[[:space:]]*//p' "$1" | tail -n1 | tr -d "\"'")"
+  node="$(sed -n 's/^[[:space:]]*LILYNK_GAMESCOPE_NODE=[[:space:]]*//p' "$1" | tail -n1 | tr -d "\"'")"
   case "$attach" in ''|0|false|off|no) [ -n "$node" ] ;; *) return 0 ;; esac
 }
 
@@ -270,7 +270,7 @@ post_merge() {
   _pf_env="$(getent passwd "${_pf_user:-}" 2>/dev/null | cut -d: -f6 || :)/.config/punktfunk/host.env"
   if [ -n "$_pf_user" ] && [ -f "$_pf_env" ] && host_env_pins_attach "$_pf_env"; then
     echo "!! $_pf_env turns Attach mode on: every client gets a mirror of this box's screen at its"
-    echo "!! own resolution instead of a display of its own. Delete the PUNKTFUNK_GAMESCOPE_ATTACH"
+    echo "!! own resolution instead of a display of its own. Delete the LILYNK_GAMESCOPE_ATTACH"
     echo "!! (or _NODE) line, then: systemctl --user restart lilynk-host"
   fi
   modprobe vhci-hcd 2>/dev/null || :
@@ -404,10 +404,10 @@ cmd_update() {
     [0-9]*)
       if [ "$ver" != "$cur" ] \
          && [ "$(printf '%s\n%s\n' "$ver" "$cur" | sort -V | tail -n1)" = "$cur" ] \
-         && [ "${PUNKTFUNK_SYSEXT_ALLOW_DOWNGRADE:-0}" != 1 ]; then
+         && [ "${LILYNK_SYSEXT_ALLOW_DOWNGRADE:-0}" != 1 ]; then
         echo "!! the feed's newest image ($ver) is OLDER than the installed $cur — refusing to" >&2
         echo "!! downgrade. For a deliberate rollback:" >&2
-        echo "!!     sudo PUNKTFUNK_SYSEXT_ALLOW_DOWNGRADE=1 lilynk-sysext update" >&2
+        echo "!!     sudo LILYNK_SYSEXT_ALLOW_DOWNGRADE=1 lilynk-sysext update" >&2
         exit 1
       fi ;;
   esac

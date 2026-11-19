@@ -1,6 +1,6 @@
 //! Virtual-gamepad backend selection for the native host session.
 //!
-//! [`pick_gamepad`] maps client [`GamepadPref`] plus `PUNKTFUNK_GAMEPAD` onto a backend this
+//! [`pick_gamepad`] maps client [`GamepadPref`] plus `LILYNK_GAMEPAD` onto a backend this
 //! host can build (compile-time OS flags). [`resolve_gamepad`] is the session shell: env, logs,
 //! and the runtime degrades. [`resolve_pad_kind`] is the same ladder for one mixed-type pad
 //! (no Auto/env). [`route_decision`] pins a live pad to its owning manager so a later declared
@@ -46,7 +46,7 @@ pub(super) fn resolve_pad_kind(kind: GamepadPref, steam_force: bool) -> GamepadP
     )))
 }
 
-/// Session backend from client `pref`, then `PUNKTFUNK_GAMEPAD` under Auto, then Xbox 360.
+/// Session backend from client `pref`, then `LILYNK_GAMEPAD` under Auto, then Xbox 360.
 ///
 /// `linux`/`windows` are the host OS. Every kind has a Linux and a Windows backend, the two
 /// Switch 2 pads folding to the Switch Pro on Windows; other wishes fold to Xbox 360 (never an
@@ -276,7 +276,7 @@ fn physical_steam_product_present(product: u16) -> bool {
 }
 
 /// Fold a virtual Deck to DualSense when the host has a Deck controller of its own.
-/// `forced` (`PUNKTFUNK_STEAM_FORCE=1`) keeps it, on a host with no competing Steam Input.
+/// `forced` (`LILYNK_STEAM_FORCE=1`) keeps it, on a host with no competing Steam Input.
 #[cfg(target_os = "linux")]
 fn degrade_steam_on_conflict(chosen: GamepadPref, forced: bool) -> GamepadPref {
     let Some(product) = steam_backend_product(chosen) else {
@@ -288,7 +288,7 @@ fn degrade_steam_on_conflict(chosen: GamepadPref, forced: bool) -> GamepadPref {
             wanted = chosen.as_str(),
             conflict = conflict.as_str(),
             "the host has a Steam Deck controller of its own and Steam Input confuses two Decks — \
-             falling back to DualSense (set PUNKTFUNK_STEAM_FORCE=1 to override)"
+             falling back to DualSense (set LILYNK_STEAM_FORCE=1 to override)"
         );
         return degrade_if_no_uhid(GamepadPref::DualSense);
     }
@@ -391,7 +391,7 @@ pub(crate) fn windows_xbox_hid() -> bool {
     })
 }
 
-/// `PUNKTFUNK_XBOX_BACKEND` (`hid` / `xusb`) wins; unset or unrecognised follows `xinputhid`.
+/// `LILYNK_XBOX_BACKEND` (`hid` / `xusb`) wins; unset or unrecognised follows `xinputhid`.
 /// Without that filter the HID pad sits on the unfiltered line, where XInput cannot see it.
 #[cfg_attr(not(target_os = "windows"), allow(dead_code))]
 fn xbox_backend_hid(env: Option<&str>, xinputhid: bool) -> bool {
@@ -403,7 +403,7 @@ fn xbox_backend_hid(env: Option<&str>, xinputhid: bool) -> bool {
 }
 
 /// Env/logging shell around [`pick_gamepad`]. Always concrete: `Welcome` reports what we drive.
-/// `steam_force` is the session's `PUNKTFUNK_STEAM_FORCE`.
+/// `steam_force` is the session's `LILYNK_STEAM_FORCE`.
 pub(super) fn resolve_gamepad(pref: GamepadPref, steam_force: bool) -> GamepadPref {
     let env = ly_host_config::config().gamepad.clone();
     let chosen = pick_gamepad(
@@ -425,7 +425,7 @@ pub(super) fn resolve_gamepad(pref: GamepadPref, steam_force: bool) -> GamepadPr
                     tracing::warn!(
                         env,
                         chosen = chosen.as_str(),
-                        "PUNKTFUNK_GAMEPAD unrecognized or unavailable — falling back"
+                        "LILYNK_GAMEPAD unrecognized or unavailable — falling back"
                     );
                 }
             }

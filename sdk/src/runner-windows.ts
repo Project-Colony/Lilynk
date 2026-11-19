@@ -31,8 +31,8 @@ export const runInOwnProcess = (
  * certificate proves the host before the bearer goes out.
  */
 export const ownProcessEnv = (options: RunnerOptions): NodeJS.ProcessEnv => {
-	const { PUNKTFUNK_MGMT_UNIX: _, ...env } = process.env;
-	return { ...env, ...(options.configDir ? { PUNKTFUNK_CONFIG_DIR: options.configDir } : {}) };
+	const { LILYNK_MGMT_UNIX: _, ...env } = process.env;
+	return { ...env, ...(options.configDir ? { LILYNK_CONFIG_DIR: options.configDir } : {}) };
 };
 
 /**
@@ -80,15 +80,15 @@ export const containerEnv = (
 	exists: (pipe: string) => boolean = fs.existsSync,
 ): NodeJS.ProcessEnv => {
 	const id = unit.manifest?.id;
-	const pipe = id ? pipeName(id, process.env.PUNKTFUNK_SEAT_ID) : undefined;
+	const pipe = id ? pipeName(id, process.env.LILYNK_SEAT_ID) : undefined;
 	return {
 		...process.env,
-		...(options.configDir ? { PUNKTFUNK_CONFIG_DIR: options.configDir } : {}),
+		...(options.configDir ? { LILYNK_CONFIG_DIR: options.configDir } : {}),
 		...(id && pipe && exists(pipe)
 			? {
-					PUNKTFUNK_MGMT_URL: "http://punktfunk.host",
-					PUNKTFUNK_MGMT_UNIX: pipe,
-					PUNKTFUNK_UI_CHANNEL: id,
+					LILYNK_MGMT_URL: "http://punktfunk.host",
+					LILYNK_MGMT_UNIX: pipe,
+					LILYNK_UI_CHANNEL: id,
 				}
 			: {}),
 	};

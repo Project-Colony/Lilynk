@@ -71,7 +71,7 @@ impl NativeRung {
         }
     }
 
-    /// Log / `PUNKTFUNK_DECODER` name — the same strings as the `stats:` decode-path tag.
+    /// Log / `LILYNK_DECODER` name — the same strings as the `stats:` decode-path tag.
     pub fn name(self) -> &'static str {
         self.names().0
     }
@@ -248,14 +248,14 @@ pub fn last_rung_verdict(negotiated: u8, advertised: u8, loss: RungLoss) -> Last
     }
 }
 
-/// Whether decode is pinned to the CPU rung (`PUNKTFUNK_DECODER` wins over Settings).
+/// Whether decode is pinned to the CPU rung (`LILYNK_DECODER` wins over Settings).
 /// Same precedence as [`Decoder::new`](crate::video::Decoder::new): a second reading of
 /// the same two inputs would drift.
 pub fn decode_pinned_to_software(pref: &str) -> bool {
-    resolve_decoder_pref(std::env::var("PUNKTFUNK_DECODER").ok().as_deref(), pref) == "software"
+    resolve_decoder_pref(std::env::var("LILYNK_DECODER").ok().as_deref(), pref) == "software"
 }
 
-/// `PUNKTFUNK_DECODER` if it carries a value, else the stored setting. Pure
+/// `LILYNK_DECODER` if it carries a value, else the stored setting. Pure
 /// and shared so [`Decoder::new`](crate::video::Decoder::new) and
 /// [`decode_pinned_to_software`] cannot drift.
 ///
@@ -418,13 +418,13 @@ pub fn amd_vulkan_hdr_driver_notice(
     )))
 }
 
-/// `PUNKTFUNK_NATIVE_SCANOUT=1`: the Wayland presenter hands pictures to the compositor as
+/// `LILYNK_NATIVE_SCANOUT=1`: the Wayland presenter hands pictures to the compositor as
 /// the window's buffer, so the Vulkan decoder keeps its pictures copyable. Opt-in: KWin
 /// composites the buffer, where the swapchain's own can be scanned out.
 pub fn native_scanout_wanted() -> bool {
     cfg!(target_os = "linux")
         && matches!(
-            std::env::var("PUNKTFUNK_NATIVE_SCANOUT").as_deref(),
+            std::env::var("LILYNK_NATIVE_SCANOUT").as_deref(),
             Ok("1" | "flip")
         )
 }
@@ -780,7 +780,7 @@ pub(crate) mod tests {
     #[test]
     fn a_software_pin_takes_hevc_off_the_advertisement() {
         // Same precedence as `Decoder::new` (env first). Skip if the override is set.
-        if std::env::var_os("PUNKTFUNK_DECODER").is_some() {
+        if std::env::var_os("LILYNK_DECODER").is_some() {
             return;
         }
         assert!(decode_pinned_to_software("software"));
@@ -999,7 +999,7 @@ pub(crate) mod tests {
     #[cfg(target_os = "linux")]
     #[test]
     fn hevc_is_advertised_only_where_hardware_decodes_it() {
-        if std::env::var_os("PUNKTFUNK_DECODER").is_some() {
+        if std::env::var_os("LILYNK_DECODER").is_some() {
             return;
         }
         let none = V4l2Summary::default();
@@ -1056,7 +1056,7 @@ pub(crate) mod tests {
     /// 10-bit is a promise about a hardware rung; the CPU rung refuses it.
     #[test]
     fn ten_bit_is_advertised_only_with_a_hardware_ten_bit_path() {
-        if std::env::var_os("PUNKTFUNK_DECODER").is_some() {
+        if std::env::var_os("LILYNK_DECODER").is_some() {
             return;
         }
         let none = V4l2Summary::default();

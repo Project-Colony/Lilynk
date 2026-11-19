@@ -28,8 +28,8 @@ LEGACY_APP_ID = "io.unom.Punktfunk"
 
 
 def _runner_path() -> str:
-    """Absolute path to the launch wrapper shipped with the plugin (bin/punktfunkrun.sh)."""
-    return str(Path(decky.DECKY_PLUGIN_DIR) / "bin" / "punktfunkrun.sh")
+    """Absolute path to the launch wrapper shipped with the plugin (bin/lilynkrun.sh)."""
+    return str(Path(decky.DECKY_PLUGIN_DIR) / "bin" / "lilynkrun.sh")
 
 
 def _flatpak() -> str | None:

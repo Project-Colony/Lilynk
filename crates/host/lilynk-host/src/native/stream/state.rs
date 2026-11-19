@@ -93,7 +93,7 @@ impl AuClock {
 /// The escalation `adapt_to_cadence` makes when encode cannot hold cadence: the encoder's
 /// pipelined retrieve, wound back after a clean run.
 pub(super) struct Pipelining {
-    /// `PUNKTFUNK_IDD_ADAPTIVE`: off, `adapt_to_cadence` does nothing.
+    /// `LILYNK_IDD_ADAPTIVE`: off, `adapt_to_cadence` does nothing.
     pub(super) adaptive: bool,
     pub(super) behind_score: u32,
     pub(super) depth_frames: u64,
@@ -139,10 +139,10 @@ pub(super) struct FecState {
     pub(super) hold_logged: u8,
 }
 
-/// What the loop only logs: the capture split and stage timings under `PUNKTFUNK_PERF`, the
+/// What the loop only logs: the capture split and stage timings under `LILYNK_PERF`, the
 /// host-composite outcomes, and the cadence verdict's flips with the chains behind them.
 pub(super) struct Diag {
-    /// NEW source frames / REPEATS / cursor REGENS since `diag_at`. Logged every 2 s under `PUNKTFUNK_PERF`.
+    /// NEW source frames / REPEATS / cursor REGENS since `diag_at`. Logged every 2 s under `LILYNK_PERF`.
     pub(super) diag_new: u64,
     pub(super) diag_repeat: u64,
     pub(super) diag_regen: u64,
@@ -155,7 +155,7 @@ pub(super) struct Diag {
     pub(super) st_wait: Vec<u32>,
     pub(super) st_queue: Vec<u32>,
     /// The first degraded verdict logs the stage histograms once; until then they sample
-    /// without `PUNKTFUNK_PERF` too.
+    /// without `LILYNK_PERF` too.
     pub(super) stages_owed: bool,
     pub(super) was_degraded: bool,
     pub(super) last_cadence_log: Option<std::time::Instant>,
@@ -713,7 +713,7 @@ impl StreamState {
     }
 
     /// Follow a mid-stream Gaming↔Desktop switch: the seat's own, else the box's when the
-    /// session's `PUNKTFUNK_SESSION_WATCH` allows and `PUNKTFUNK_COMPOSITOR` does not pin the
+    /// session's `LILYNK_SESSION_WATCH` allows and `LILYNK_COMPOSITOR` does not pin the
     /// backend. A device joined to a seat's screen ends instead; its reconnect joins the new one.
     fn spawn_session_watcher(&mut self) {
         #[cfg(target_os = "linux")]
@@ -753,7 +753,7 @@ impl StreamState {
         self.ends.session_rx = session_rx;
         let stop = self.facts.life.stop_flag().clone();
         self._watcher = std::thread::Builder::new()
-            .name("punktfunk1-watcher".into())
+            .name("lilynk1-watcher".into())
             .spawn(move || session_watcher_loop(session_tx, stop))
             .ok();
     }
@@ -942,7 +942,7 @@ fn display_request(
 }
 
 /// Whether AUs go out streamed, then sliced: the client accepts streamed AUs and the session's
-/// knobs leave them on (`PUNKTFUNK_STREAMED_AU=0` reverts to whole-AU sends). Encoder chunking
+/// knobs leave them on (`LILYNK_STREAMED_AU=0` reverts to whole-AU sends). Encoder chunking
 /// is per AU.
 fn wire_request(ctx: &SessionContext) -> (bool, bool) {
     // Sentinel-headed streamed blocks: ship early FEC while the AU tail still encodes.

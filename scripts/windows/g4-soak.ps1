@@ -13,7 +13,7 @@
     kick-task.ps1 -Name pf-g4 -Script C:\Users\Public\g4-soak.ps1 -ScriptArgs "-Tag g4n -Minutes 240"
   -ScriptArgs carries no commas and no colons, so list arguments use '/' as the separator.
 
-  Sets PUNKTFUNK_IDD_DIAG in host.env for the run: without it the host starts no DxgKrnl ETW
+  Sets LILYNK_IDD_DIAG in host.env for the run: without it the host starts no DxgKrnl ETW
   session and criterion 1 has nothing to attribute a gap with. host.env is restored at the end.
 
 .EXAMPLE
@@ -206,13 +206,13 @@ function Set-HostEnv([hashtable]$kv) {
   }
   $out = @($keep) + ($kv.Keys | ForEach-Object { "$_=$($kv[$_])" })
   $out | Set-Content $envPath -Encoding ascii
-  Restart-Service PunktfunkHost -Force -ErrorAction SilentlyContinue
+  Restart-Service LilynkHost -Force -ErrorAction SilentlyContinue
   Start-Sleep 15
-  Say "host.env applied: $(($kv.Keys | ForEach-Object { "$_=$($kv[$_])" }) -join ' ') service=$((Get-Service PunktfunkHost).Status)"
+  Say "host.env applied: $(($kv.Keys | ForEach-Object { "$_=$($kv[$_])" }) -join ' ') service=$((Get-Service LilynkHost).Status)"
 }
 
 function Restore-Box {
-  if (Test-Path $envBak) { Copy-Item $envBak $envPath -Force; Restart-Service PunktfunkHost -Force -ErrorAction SilentlyContinue }
+  if (Test-Path $envBak) { Copy-Item $envBak $envPath -Force; Restart-Service LilynkHost -Force -ErrorAction SilentlyContinue }
   if (Test-Path $profilesBak) { Copy-Item $profilesBak $profiles -Force } else { Remove-Item $profiles -ErrorAction SilentlyContinue }
   Get-Process furmark -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
   Get-Process lilynk-session -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
@@ -289,7 +289,7 @@ function Invoke-SleepCycle([string]$token) {
   Unregister-ScheduledTask $wakeTask -Confirm:$false -ErrorAction SilentlyContinue
   # The service may have lost the adapter across S3; give it a settling window before the next cycle.
   Start-Sleep 30
-  Mark 'sleep-recovered' "service=$((Get-Service PunktfunkHost).Status) class=$(Get-CaptureClass $token)"
+  Mark 'sleep-recovered' "service=$((Get-Service LilynkHost).Status) class=$(Get-CaptureClass $token)"
 }
 
 # --- preflight ---------------------------------------------------------------------------
@@ -326,9 +326,9 @@ if (Test-Path $profiles) { Copy-Item $profiles $profilesBak -Force } else { '{"v
   )
 } | ConvertTo-Json -Depth 8 | Set-Content $profiles -Encoding utf8
 
-$knobs = @{ PUNKTFUNK_IDD_DIAG = '1'; RUST_LOG = 'info,ly_capture=debug' }
-if ($Vendor -eq 'amd') { $knobs['PUNKTFUNK_ENCODER'] = 'amf'; $knobs['PUNKTFUNK_RENDER_ADAPTER'] = 'Radeon' }
-else { $knobs['PUNKTFUNK_ENCODER'] = 'nvenc'; $knobs['PUNKTFUNK_RENDER_ADAPTER'] = 'NVIDIA' }
+$knobs = @{ LILYNK_IDD_DIAG = '1'; RUST_LOG = 'info,ly_capture=debug' }
+if ($Vendor -eq 'amd') { $knobs['LILYNK_ENCODER'] = 'amf'; $knobs['LILYNK_RENDER_ADAPTER'] = 'Radeon' }
+else { $knobs['LILYNK_ENCODER'] = 'nvenc'; $knobs['LILYNK_RENDER_ADAPTER'] = 'NVIDIA' }
 Set-HostEnv $knobs
 
 if ($doLock) {

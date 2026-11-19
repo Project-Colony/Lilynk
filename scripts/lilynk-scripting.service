@@ -20,7 +20,7 @@
 # Auto-wired like the console: a plugin's connect() reads the host's SCOPED plugin token + identity
 # cert from ~/.config/punktfunk/{plugin-token,cert.pem} (written by the host's `serve`) — no env
 # editing. The plugin token authorizes the plugin surface but not hook registration or pairing
-# administration; a script that needs the admin surface sets PUNKTFUNK_MGMT_TOKEN explicitly.
+# administration; a script that needs the admin surface sets LILYNK_MGMT_TOKEN explicitly.
 [Unit]
 Description=punktfunk plugin/script runner
 Documentation=https://git.unom.io/unom/punktfunk

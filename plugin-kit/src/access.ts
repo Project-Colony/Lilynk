@@ -191,7 +191,7 @@ const post = (
 export const unreachable = <T extends string | AccessRequestPath>(
 	dirs: ReadonlyArray<T>,
 ): T[] => {
-	const sandboxed = !!process.env.PUNKTFUNK_MGMT_UNIX;
+	const sandboxed = !!process.env.LILYNK_MGMT_UNIX;
 	const seen = new Map<string, T>();
 	for (const entry of dirs) {
 		const dir = expand(pathOf(entry));

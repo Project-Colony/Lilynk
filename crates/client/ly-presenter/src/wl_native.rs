@@ -13,7 +13,7 @@
 //!
 //! Each buffer is imported once under a key and reused; the caller's hold is kept until the
 //! compositor releases the buffer. The overlay rides on its own subsurface above the picture,
-//! with an empty input region. Opt-in (`PUNKTFUNK_NATIVE_SCANOUT=1`).
+//! with an empty input region. Opt-in (`LILYNK_NATIVE_SCANOUT=1`).
 //!
 //! SDL owns the socket. A private queue takes this lane's events; SDL's pump reads them in
 //! and [`NativeLane::pump`] dispatches them. Presentation times arrive on CLOCK_MONOTONIC
@@ -62,7 +62,7 @@ const KIND_ZERO_COPY: u32 = 8;
 /// linux-dmabuf tranche flag: this tranche's buffers can go straight to a plane.
 const TRANCHE_SCANOUT: u32 = 1;
 
-/// `PUNKTFUNK_NATIVE_SCANOUT=1` arms the lane.
+/// `LILYNK_NATIVE_SCANOUT=1` arms the lane.
 pub fn enabled() -> bool {
     ly_client_core::video::native_scanout_wanted()
 }

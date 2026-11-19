@@ -39,19 +39,19 @@ const ANSWER_TIMEOUT: Duration = Duration::from_secs(180);
 const FLATPAK_TIMEOUT: Duration = Duration::from_secs(30 * 60);
 
 /// Root, or the `punktfunk` user when it exists. With no such user only root is let in.
-pub fn peer_allowed(peer_uid: u32, punktfunk_uid: Option<u32>) -> bool {
-    peer_uid == 0 || punktfunk_uid == Some(peer_uid)
+pub fn peer_allowed(peer_uid: u32, lilynk_uid: Option<u32>) -> bool {
+    peer_uid == 0 || lilynk_uid == Some(peer_uid)
 }
 
 /// Whether `peer_uid` may send `command`: anything as a peer [`peer_allowed`] lets in, a
 /// box-wide Flatpak change as the box owner `owner_uid`, nothing otherwise.
 pub fn command_allowed(
     peer_uid: u32,
-    punktfunk_uid: Option<u32>,
+    lilynk_uid: Option<u32>,
     owner_uid: Option<u32>,
     command: &Command,
 ) -> bool {
-    peer_allowed(peer_uid, punktfunk_uid)
+    peer_allowed(peer_uid, lilynk_uid)
         || (owner_uid == Some(peer_uid)
             && matches!(
                 command,
@@ -304,7 +304,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn root_and_the_punktfunk_user_are_served_and_nobody_else() {
+    fn root_and_the_lilynk_user_are_served_and_nobody_else() {
         assert!(peer_allowed(0, None));
         assert!(peer_allowed(0, Some(972)));
         assert!(peer_allowed(972, Some(972)));

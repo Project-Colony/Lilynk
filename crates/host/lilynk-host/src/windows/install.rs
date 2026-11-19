@@ -618,11 +618,11 @@ fn inf_class(inf: &Path) -> (String, String) {
 }
 
 // Install-time provisioning only: login password, firewall, and delete of the legacy
-// `PunktfunkWeb` scheduled task (a live one races the service's console child for :47992).
+// `LilynkWeb` scheduled task (a live one races the service's console child for :47992).
 // The service supervises bun; see `service/web.rs` and design/windows-web-console-lifecycle.md.
 
 /// Retired scheduled-task name; referenced only to delete it from older installs.
-const WEB_TASK: &str = "PunktfunkWeb";
+const WEB_TASK: &str = "LilynkWeb";
 
 pub fn web_main(args: &[String]) -> Result<()> {
     match args.first().map(String::as_str) {
@@ -657,16 +657,16 @@ fn web_password() -> Result<()> {
             continue;
         };
         match (key.trim(), value.trim()) {
-            ("PUNKTFUNK_UI_PASSWORD", pw) if !pw.is_empty() => {
+            ("LILYNK_UI_PASSWORD", pw) if !pw.is_empty() => {
                 println!("{pw}");
                 return Ok(());
             }
-            ("PUNKTFUNK_UI_PASSWORD_HASH", h) if !h.is_empty() => hashed = true,
+            ("LILYNK_UI_PASSWORD_HASH", h) if !h.is_empty() => hashed = true,
             _ => {}
         }
     }
     bail!(
-        "{} Set a new one: put a PUNKTFUNK_UI_PASSWORD=<your-password> line in {}, then run `lilynk-host service restart`.",
+        "{} Set a new one: put a LILYNK_UI_PASSWORD=<your-password> line in {}, then run `lilynk-host service restart`.",
         if hashed {
             "The console password is stored as a salted hash, so it can't be read back."
         } else {
@@ -752,14 +752,12 @@ fn web_setup(args: &[String]) -> Result<()> {
             eprintln!("warning: firewall rule for TCP {port} not added");
         }
     }
-    println!(
-        "web console set up (https://<host-ip>:47992; supervised by the PunktfunkHost service)"
-    );
+    println!("web console set up (https://<host-ip>:47992; supervised by the LilynkHost service)");
     Ok(())
 }
 
 /// Non-empty `--password-file` (fresh) > keep existing (upgrade) > random. Writes
-/// `PUNKTFUNK_UI_PASSWORD=<pw>\n` (LF, no BOM) and ACLs it to Administrators + SYSTEM only.
+/// `LILYNK_UI_PASSWORD=<pw>\n` (LF, no BOM) and ACLs it to Administrators + SYSTEM only.
 /// The console replaces that line with a salted hash the first time the password signs in, so
 /// an upgrade keeping the existing file keeps the hash.
 fn set_web_password(pw_path: &Path, pw_file: Option<&str>) {
@@ -792,7 +790,7 @@ fn set_web_password(pw_path: &Path, pw_file: Option<&str>) {
         // the file and reports the error instead of leaving the secret on the inherited,
         // Users-readable `%ProgramData%` ACL.
         if let Err(e) =
-            ly_paths::write_secret_file(pw_path, format!("PUNKTFUNK_UI_PASSWORD={pw}\n").as_bytes())
+            ly_paths::write_secret_file(pw_path, format!("LILYNK_UI_PASSWORD={pw}\n").as_bytes())
         {
             eprintln!("warning: {} not written: {e}", pw_path.display());
         }

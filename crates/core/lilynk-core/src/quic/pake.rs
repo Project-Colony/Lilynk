@@ -6,7 +6,7 @@
 //! [`PairingPake::finish`] — it yields a different key, and the confirmation MACs
 //! simply disagree. Tests at the foot pin matching PIN+certs, a wrong PIN, and a
 //! MITM with split host certs.
-use crate::error::{PunktfunkError, Result};
+use crate::error::{LilynkError, Result};
 use hmac::{Hmac, KeyInit, Mac};
 use spake2::{Ed25519Group, Identity, Password, Spake2};
 
@@ -72,7 +72,7 @@ impl PairingPake {
         let key = self
             .state
             .finish(peer_msg)
-            .map_err(|_| PunktfunkError::Crypto)?;
+            .map_err(|_| LilynkError::Crypto)?;
         Ok(Confirmations {
             host: confirm(&key, b"punktfunk-pair-host", &self.transcript),
             client: confirm(&key, b"punktfunk-pair-client", &self.transcript),

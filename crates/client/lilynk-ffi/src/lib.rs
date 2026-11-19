@@ -1,18 +1,18 @@
 //! Stable `extern "C"` surface. `cbindgen` emits `include/lilynk_core.h`
-//! (`cargo run -p gen-headers`). Pin with [`punktfunk_abi_version`] and `struct_size`.
+//! (`cargo run -p gen-headers`). Pin with [`lilynk_abi_version`] and `struct_size`.
 //!
 //! Opaque handles only. Cross-boundary structs are `#[repr(C)]`; buffers are
 //! pointer + length. Every handle must reach its own release call: its `*_free`
-//! ([`punktfunk_session_free`] for a loopback pair), `punktfunk_connection_close` or
-//! `punktfunk_demo_host_stop`. A [`PunktfunkFrame`]'s `data` is borrowed until
+//! ([`lilynk_session_free`] for a loopback pair), `lilynk_connection_close` or
+//! `lilynk_demo_host_stop`. A [`LilynkFrame`]'s `data` is borrowed until
 //! the next `poll`/`free` on that session — copy it out.
 //!
 //! Callers own every pointer. Handles stay valid until released (`as_mut` /
 //! `as_ref` turn null into `None`). Out-params are writable slots; C strings
 //! are NUL-terminated or null (`opt_cstr`). Nothing is retained past the call, except the
-//! callbacks of `punktfunk_set_log_callback` and `punktfunk_connection_set_au_memory`.
+//! callbacks of `lilynk_set_log_callback` and `lilynk_connection_set_au_memory`.
 //!
-//! Panics never cross: [`guard`] maps them to `PunktfunkStatus::Panic`;
+//! Panics never cross: [`guard`] maps them to `LilynkStatus::Panic`;
 //! [`guard_void`] swallows teardown panics. Bare entry points cannot panic.
 //! Evidence: `include/lilynk_core.h`.
 //!
@@ -34,7 +34,7 @@ mod reanchor;
 
 mod demo;
 
-// The loopback host behind `punktfunk_demo_host_*`. Safe Rust, like core.
+// The loopback host behind `lilynk_demo_host_*`. Safe Rust, like core.
 /// cbindgen:ignore
 #[cfg(feature = "quic")]
 #[deny(unsafe_code)]
@@ -47,7 +47,7 @@ pub use demo::*;
 pub use reanchor::*;
 pub use session::*;
 
-use lilynk_core::error::PunktfunkStatus;
+use lilynk_core::error::LilynkStatus;
 use std::ffi::{c_void, CStr};
 use std::os::raw::c_char;
 use std::panic::AssertUnwindSafe;
@@ -60,8 +60,8 @@ fn lock_recover<T>(m: &std::sync::Mutex<T>) -> std::sync::MutexGuard<'_, T> {
 }
 
 #[inline]
-fn guard<F: FnOnce() -> PunktfunkStatus>(f: F) -> PunktfunkStatus {
-    std::panic::catch_unwind(AssertUnwindSafe(f)).unwrap_or(PunktfunkStatus::Panic)
+fn guard<F: FnOnce() -> LilynkStatus>(f: F) -> LilynkStatus {
+    std::panic::catch_unwind(AssertUnwindSafe(f)).unwrap_or(LilynkStatus::Panic)
 }
 
 fn ffi_slice_bytes<T>(len: usize) -> Option<usize> {
@@ -82,9 +82,9 @@ unsafe fn put<T>(p: *mut T, v: T) {
 }
 
 /// `Ok(())` is `Ok`; an error is its status.
-fn status_of(r: lilynk_core::Result<()>) -> PunktfunkStatus {
+fn status_of(r: lilynk_core::Result<()>) -> LilynkStatus {
     match r {
-        Ok(()) => PunktfunkStatus::Ok,
+        Ok(()) => LilynkStatus::Ok,
         Err(e) => e.status(),
     }
 }
@@ -94,12 +94,12 @@ fn status_of(r: lilynk_core::Result<()>) -> PunktfunkStatus {
 ///
 /// # Safety
 /// `p` is null or readable for `len` bytes that stay unmodified while the slice lives.
-unsafe fn in_bytes<'a>(p: *const u8, len: usize) -> Result<&'a [u8], PunktfunkStatus> {
+unsafe fn in_bytes<'a>(p: *const u8, len: usize) -> Result<&'a [u8], LilynkStatus> {
     if p.is_null() && len != 0 {
-        return Err(PunktfunkStatus::NullPointer);
+        return Err(LilynkStatus::NullPointer);
     }
     if ffi_slice_bytes::<u8>(len).is_none() {
-        return Err(PunktfunkStatus::InvalidArg);
+        return Err(LilynkStatus::InvalidArg);
     }
     if len == 0 {
         return Ok(&[]);
@@ -118,7 +118,7 @@ macro_rules! with_conn {
             // SAFETY: the calling entry point's `# Safety` makes the handle null or live;
             // `as_ref` maps null to `None` and never dereferences it.
             let Some($c) = (unsafe { $c.as_ref() }) else {
-                return lilynk_core::error::PunktfunkStatus::NullPointer;
+                return lilynk_core::error::LilynkStatus::NullPointer;
             };
             $body
         })
@@ -136,7 +136,7 @@ macro_rules! conn_out {
             // SAFETY: the calling entry point's `# Safety` makes `$out` null or writable for
             // one value.
             unsafe { $crate::put($out, v) };
-            lilynk_core::error::PunktfunkStatus::Ok
+            lilynk_core::error::LilynkStatus::Ok
         })
     };
 }
@@ -177,20 +177,20 @@ unsafe fn write_cstr(out: *mut c_char, cap: usize, s: &str) -> bool {
 /// aborts the embedder; the object is being dropped either way.
 fn guard_void<F: FnOnce()>(f: F) {
     if std::panic::catch_unwind(AssertUnwindSafe(f)).is_err() {
-        tracing::error!("panic escaped a punktfunk_* teardown entry point; swallowed at the C ABI");
+        tracing::error!("panic escaped a lilynk_* teardown entry point; swallowed at the C ABI");
     }
 }
 
 /// Current ABI version. Mismatch with [`lilynk_core::ABI_VERSION`] is an incompatible core.
 #[unsafe(no_mangle)]
-pub extern "C" fn punktfunk_abi_version() -> u32 {
+pub extern "C" fn lilynk_abi_version() -> u32 {
     lilynk_core::ABI_VERSION
 }
 
-/// Log sink for [`punktfunk_set_log_callback`]. `level` 1..=5 (error…trace).
+/// Log sink for [`lilynk_set_log_callback`]. `level` 1..=5 (error…trace).
 /// `target` and `message` are NUL-terminated UTF-8, borrowed for this call —
 /// copy them out. Any thread may call; thread-safe, non-blocking, no re-entry.
-pub type PunktfunkLogCb = Option<
+pub type LilynkLogCb = Option<
     unsafe extern "C" fn(
         level: u8,
         target: *const c_char,
@@ -209,12 +209,12 @@ struct LogSink {
 static LOG_SINK: std::sync::Mutex<Option<LogSink>> = std::sync::Mutex::new(None);
 static LOG_INSTALLED: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
 
-/// `log` backend for [`punktfunk_set_log_callback`]. Installed once; the sink slot swaps.
+/// `log` backend for [`lilynk_set_log_callback`]. Installed once; the sink slot swaps.
 struct CallbackLogger;
 
 impl log::Log for CallbackLogger {
     fn enabled(&self, _: &log::Metadata) -> bool {
-        // Level gating is `log::set_max_level` in `punktfunk_set_log_callback`.
+        // Level gating is `log::set_max_level` in `lilynk_set_log_callback`.
         true
     }
 
@@ -255,15 +255,15 @@ impl log::Log for CallbackLogger {
 /// `cb` and `user` stay valid until every thread that may log has stopped, not just until
 /// the next call here.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_set_log_callback(
+pub unsafe extern "C" fn lilynk_set_log_callback(
     max_level: u8,
-    cb: PunktfunkLogCb,
+    cb: LilynkLogCb,
     user: *mut c_void,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     guard(|| {
         let installed = *LOG_INSTALLED.get_or_init(|| log::set_logger(&CallbackLogger).is_ok());
         if !installed {
-            return PunktfunkStatus::Unsupported;
+            return LilynkStatus::Unsupported;
         }
         *lock_recover(&LOG_SINK) = cb.map(|cb| LogSink {
             cb,
@@ -277,7 +277,7 @@ pub unsafe extern "C" fn punktfunk_set_log_callback(
             (_, 4) => log::LevelFilter::Debug,
             _ => log::LevelFilter::Trace,
         });
-        PunktfunkStatus::Ok
+        LilynkStatus::Ok
     })
 }
 
@@ -291,20 +291,20 @@ pub unsafe extern "C" fn punktfunk_set_log_callback(
 /// Nonzero representable `mac_count`: `macs` is `mac_count * 6` readable bytes.
 /// `last_known_ip`, if non-NULL, is a NUL-terminated string.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_wake_on_lan(
+pub unsafe extern "C" fn lilynk_wake_on_lan(
     macs: *const u8,
     mac_count: usize,
     last_known_ip: *const c_char,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     guard(|| {
         if macs.is_null() {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         let Some(byte_len) = ffi_slice_bytes::<lilynk_core::wol::Mac>(mac_count) else {
-            return PunktfunkStatus::InvalidArg;
+            return LilynkStatus::InvalidArg;
         };
         if byte_len == 0 {
-            return PunktfunkStatus::InvalidArg;
+            return LilynkStatus::InvalidArg;
         }
         // SAFETY: `ffi_slice_bytes` proved `mac_count` MACs fit a Rust slice; borrowed for this call.
         let bytes = unsafe { std::slice::from_raw_parts(macs, byte_len) };
@@ -323,8 +323,8 @@ pub unsafe extern "C" fn punktfunk_wake_on_lan(
             .flatten()
             .and_then(|s| s.parse::<std::net::Ipv4Addr>().ok());
         match lilynk_core::wol::send_magic_packet(&mac_vec, ip) {
-            Ok(()) => PunktfunkStatus::Ok,
-            Err(_) => PunktfunkStatus::Io,
+            Ok(()) => LilynkStatus::Ok,
+            Err(_) => LilynkStatus::Io,
         }
     })
 }
@@ -351,7 +351,7 @@ mod abi_version_tests {
     fn abi_version_is_pinned() {
         // Current ABI. A bump must update this pin.
         assert_eq!(lilynk_core::ABI_VERSION, 76);
-        assert_eq!(super::punktfunk_abi_version(), 76);
+        assert_eq!(super::lilynk_abi_version(), 76);
     }
 
     /// The C cap and the wire's are one number.
@@ -359,7 +359,7 @@ mod abi_version_tests {
     #[test]
     fn profile_id_max_is_the_wire_bound() {
         assert_eq!(
-            super::PUNKTFUNK_PROFILE_ID_MAX,
+            super::LILYNK_PROFILE_ID_MAX,
             lilynk_core::quic::v2::msg::PROFILE_ID_MAX
         );
     }
@@ -368,7 +368,7 @@ mod abi_version_tests {
     #[cfg(all(feature = "quic", target_pointer_width = "64"))]
     #[test]
     fn probe_result_size_is_pinned() {
-        assert_eq!(std::mem::size_of::<super::PunktfunkProbeResult>(), 72);
+        assert_eq!(std::mem::size_of::<super::LilynkProbeResult>(), 72);
     }
 
     #[test]
@@ -388,8 +388,8 @@ mod abi_version_tests {
         // SAFETY: an unrepresentable count is rejected before `pointer` is read, so the
         // readable-region precondition does not apply.
         let status =
-            unsafe { super::punktfunk_wake_on_lan(pointer, usize::MAX / 6 + 1, std::ptr::null()) };
-        assert_eq!(status, lilynk_core::error::PunktfunkStatus::InvalidArg);
+            unsafe { super::lilynk_wake_on_lan(pointer, usize::MAX / 6 + 1, std::ptr::null()) };
+        assert_eq!(status, lilynk_core::error::LilynkStatus::InvalidArg);
     }
 }
 
@@ -425,8 +425,8 @@ mod log_sink_tests {
     fn callback_receives_log_and_tracing_lines() {
         // SAFETY: `collect` is a valid fn for the life of the test binary; the user token is an
         // opaque integer.
-        let st = unsafe { punktfunk_set_log_callback(3, Some(collect), 0x5151 as *mut c_void) };
-        assert_eq!(st, PunktfunkStatus::Ok);
+        let st = unsafe { lilynk_set_log_callback(3, Some(collect), 0x5151 as *mut c_void) };
+        assert_eq!(st, LilynkStatus::Ok);
 
         log::warn!(target: "quinn::connection", "handshake \0 done");
         tracing::info!(target: "lilynk_core::transport", buf = 4096, "socket buffer clamped");
@@ -453,8 +453,8 @@ mod log_sink_tests {
         assert!(!lines.iter().any(|l| l.2.contains("must not arrive")));
 
         // SAFETY: NULL callback detaches; no pointer is retained.
-        let detached = unsafe { punktfunk_set_log_callback(3, None, ptr::null_mut()) };
-        assert_eq!(detached, PunktfunkStatus::Ok);
+        let detached = unsafe { lilynk_set_log_callback(3, None, ptr::null_mut()) };
+        assert_eq!(detached, LilynkStatus::Ok);
         // By this line, not by a count: the sink is process-wide, so any
         // other test emitting while it was attached grows the same vector.
         log::error!(target: "quinn::connection", "after detach");
@@ -472,14 +472,13 @@ mod tests {
     #[test]
     fn null_session_and_connection_handles_return_status() {
         // SAFETY: null handles are the documented reported-not-UB case.
-        let session = unsafe { punktfunk_get_stats(std::ptr::null_mut(), std::ptr::null_mut()) };
-        assert_eq!(session, PunktfunkStatus::NullPointer);
+        let session = unsafe { lilynk_get_stats(std::ptr::null_mut(), std::ptr::null_mut()) };
+        assert_eq!(session, LilynkStatus::NullPointer);
 
         // SAFETY: null handles are the documented reported-not-UB case.
-        let connection = unsafe {
-            punktfunk_connection_audio_channels(std::ptr::null_mut(), std::ptr::null_mut())
-        };
-        assert_eq!(connection, PunktfunkStatus::NullPointer);
+        let connection =
+            unsafe { lilynk_connection_audio_channels(std::ptr::null_mut(), std::ptr::null_mut()) };
+        assert_eq!(connection, LilynkStatus::NullPointer);
     }
 
     /// A string plus NUL fills exactly `cap`; one byte less writes nothing. Null slots are skipped.
@@ -511,7 +510,7 @@ mod tests {
     fn guard_maps_panics_to_panic_status() {
         assert_eq!(
             guard(|| panic!("test panic must stay inside the ABI guard")),
-            PunktfunkStatus::Panic
+            LilynkStatus::Panic
         );
     }
 }

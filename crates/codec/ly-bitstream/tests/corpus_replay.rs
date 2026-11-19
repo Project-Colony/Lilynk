@@ -1,6 +1,6 @@
 //! Corpus replay: a captured host stream through the H.264 / H.265 planners.
 //!
-//! The capture hook (`PUNKTFUNK_DUMP_VIDEO=<dir>`) writes decoder input as
+//! The capture hook (`LILYNK_DUMP_VIDEO=<dir>`) writes decoder input as
 //! `au-<stamp>.<codec>` plus an `.idx` sidecar (`offset len flags complete`
 //! per AU). This harness feeds those AUs through
 //! [`ly_bitstream::h264::H264Planner`] / [`ly_bitstream::h265::H265Planner`]

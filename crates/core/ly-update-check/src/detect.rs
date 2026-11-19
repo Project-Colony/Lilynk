@@ -480,7 +480,7 @@ mod tests {
     }
 
     #[test]
-    fn package_hints_upgrade_every_installed_punktfunk_package() {
+    fn package_hints_upgrade_every_installed_lilynk_package() {
         for product in [Product::Host, Product::Client] {
             assert_eq!(
                 update_command(InstallKind::Apt, product),

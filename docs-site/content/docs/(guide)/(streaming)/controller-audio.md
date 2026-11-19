@@ -89,7 +89,7 @@ pad as stereo, or as a mono speaker plus headphones, which drops them. When the 
 four-channel output, the client switches its card to **Pro Audio** for the session and restores
 your profile afterwards; it never saves the switch. SteamOS already has a four-channel output.
 
-- To manage the card yourself, set `PUNKTFUNK_PAD_AUDIO_PROFILE=0` in the client's environment
+- To manage the card yourself, set `LILYNK_PAD_AUDIO_PROFILE=0` in the client's environment
   and pick a four-channel profile.
 - A Flatpak client may not be allowed to switch the profile. If the log says so, set the
   controller's **Profile** to **Pro Audio** in your sound settings.
@@ -119,11 +119,11 @@ flatpak run --command=lilynk-session io.unom.punktfunk --pad-audio-test
 
 - **The pad's speaker stays silent.** The speaker shares channel 1 with the headphone jack. The
   client points it at the speaker when **Controller speaker** is on, but a game that sets the
-  pad's audio itself overrides that. `PUNKTFUNK_PAD_SPEAKER_PATH` and `PUNKTFUNK_PAD_SPEAKER_VOLUME`
+  pad's audio itself overrides that. `LILYNK_PAD_SPEAKER_PATH` and `LILYNK_PAD_SPEAKER_VOLUME`
   ([client-side settings](/docs/configuration#client-side-native-clients)) try other values.
 - **A real DualSense plugged into the host can take the audio.** Some titles find it first. Unplug
   it while you stream.
 - **Titles that match the pad by container ID** don't recognise it on a Linux host. Titles that
   match by name or USB ids work.
-- **A Windows host gives one pad controller audio by default.** `PUNKTFUNK_PAD_AUDIO_SLOTS` raises
+- **A Windows host gives one pad controller audio by default.** `LILYNK_PAD_AUDIO_SLOTS` raises
   it to four ([Configuration](/docs/configuration)).

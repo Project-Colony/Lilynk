@@ -129,7 +129,7 @@ mod platform {
     use winreg::RegKey;
 
     const RUN: &str = r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run";
-    const VALUE: &str = "PunktfunkTray";
+    const VALUE: &str = "LilynkTray";
 
     pub fn installed() -> bool {
         crate::tray::tray_exe().is_some()

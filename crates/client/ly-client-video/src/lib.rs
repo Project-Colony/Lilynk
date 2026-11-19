@@ -5,7 +5,7 @@
 //! vocabulary, the `VkDevice` handoff, the presenter's SPIR-V and PyroWave decode: the
 //! modules Android links directly. webOS, Apple and wasm never build it.
 
-// Decoder-input capture behind `PUNKTFUNK_DUMP_VIDEO`, written by the session pump.
+// Decoder-input capture behind `LILYNK_DUMP_VIDEO`, written by the session pump.
 #[cfg(desktop)]
 pub mod au_dump;
 // The AV1 receiver rule and concealer: what the session pump keeps off the decoder after a loss.
@@ -65,10 +65,10 @@ pub mod video_csc_spv;
 mod video_software;
 // Native VAAPI: ly-vaapi plans into dlopen'd libva, DRM-PRIME dmabufs for the presenter.
 // Only VAAPI rung. It is `verified: false`, so `auto` never tries it before a usable Vulkan rung;
-// pin `PUNKTFUNK_DECODER=native-vaapi` to run it first. Evidence: `video_caps`.
+// pin `LILYNK_DECODER=native-vaapi` to run it first. Evidence: `video_caps`.
 #[cfg(all(desktop, target_os = "linux"))]
 pub mod video_vaapi_native;
-// V4L2 decode: the hardware rung of SoCs with no Vulkan Video and no VA-API. `auto` reaches it after both; pin `PUNKTFUNK_DECODER=native-v4l2`.
+// V4L2 decode: the hardware rung of SoCs with no Vulkan Video and no VA-API. `auto` reaches it after both; pin `LILYNK_DECODER=native-v4l2`.
 #[cfg(all(desktop, target_os = "linux"))]
 mod video_v4l2;
 // The stateless half of that rung: HEVC on decoders that take parsed slices (Raspberry Pi 5, RK3588).
@@ -76,7 +76,7 @@ mod video_v4l2;
 mod video_v4l2_hevc;
 // Native Vulkan Video (H.264/H.265/AV1) on the presenter's device. `auto` tries it first, except
 // on Windows GPUs other than NVIDIA and AMD, where D3D11VA goes first (`video_ladder`).
-// Pin `PUNKTFUNK_DECODER=native-vulkan`. Evidence: `video_caps`.
+// Pin `LILYNK_DECODER=native-vulkan`. Evidence: `video_caps`.
 #[cfg(desktop)]
 mod video_vk_native;
 // The priority hook for the Vulkan Video decode-done thread; the embedder installs it before a session starts.
@@ -87,7 +87,7 @@ pub use ly_vkdecode::decoder::waiter::set_waiter_boost;
 #[cfg(all(feature = "d3d11va", windows))]
 pub mod video_d3d11;
 // Native D3D11VA: `ID3D11VideoDecoder` from ly-bitstream plans into `video_d3d11`'s hand-off ring.
-// Only DXVA rung; in `auto` for H.264/H.265/AV1. Pin `PUNKTFUNK_DECODER=native-d3d11va`.
+// Only DXVA rung; in `auto` for H.264/H.265/AV1. Pin `LILYNK_DECODER=native-d3d11va`.
 // Evidence: `video_caps`.
 #[cfg(all(feature = "d3d11va", windows))]
 pub mod video_d3d11_native;

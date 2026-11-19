@@ -20,7 +20,7 @@ use crate::sys::sysprop;
 use lilynk_core::audio::plane::{PlaneDecoder, PlaneFormat};
 use lilynk_core::audio::AudioPlayout;
 use lilynk_core::client::{AudioPacket, NativeClient};
-use lilynk_core::error::PunktfunkError;
+use lilynk_core::error::LilynkError;
 use ndk::audio::{
     AudioCallbackResult, AudioContentType, AudioDirection, AudioFormat, AudioPerformanceMode,
     AudioSharingMode, AudioStream, AudioStreamBuilder, AudioUsage,
@@ -144,7 +144,7 @@ struct Counters {
 /// Whether the A/V sync loop runs this session. `false` leaves `JitterPolicy`'s sync target at
 /// `None`: the ring runs without sync steering.
 ///
-/// Two levers because Android has neither of the other clients' launch surfaces. `PUNKTFUNK_NO_AV_SYNC`
+/// Two levers because Android has neither of the other clients' launch surfaces. `LILYNK_NO_AV_SYNC`
 /// keeps the contract the desktop clients document (and works when the client is driven from a
 /// shell), but an app started from the launcher inherits no such environment, so the one a field
 /// tester can actually reach is the sysprop — `adb shell setprop debug.lilynk.no_av_sync 1`,
@@ -152,7 +152,7 @@ struct Counters {
 /// bisectable on the device that reports the regression, not only on the bench.
 fn av_sync_enabled() -> bool {
     if matches!(
-        std::env::var("PUNKTFUNK_NO_AV_SYNC").as_deref(),
+        std::env::var("LILYNK_NO_AV_SYNC").as_deref(),
         Ok("1") | Ok("true")
     ) {
         return false;
@@ -1015,7 +1015,7 @@ fn decode_loop(
                 return DecodeExit::Reformat;
             }
             Ok(pkt) => plane.on_packet(&pkt),
-            Err(PunktfunkError::NoFrame) => plane.on_quiet(),
+            Err(LilynkError::NoFrame) => plane.on_quiet(),
             Err(_) => return DecodeExit::SessionClosed,
         };
         if let Err(exit) = step {
@@ -1081,7 +1081,7 @@ impl<'a> Plane<'a> {
         // end-to-end figure.
         let av_sync_enabled = av_sync_enabled();
         if !av_sync_enabled {
-            log::info!("audio: A/V sync disabled (PUNKTFUNK_NO_AV_SYNC / debug.lilynk.no_av_sync)");
+            log::info!("audio: A/V sync disabled (LILYNK_NO_AV_SYNC / debug.lilynk.no_av_sync)");
         }
         Ok(Plane {
             client,

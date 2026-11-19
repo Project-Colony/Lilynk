@@ -35,7 +35,7 @@ pub(super) struct WebConfig {
 
 /// Supervised web-console slot. Every host-loop wait goes through `wait`.
 pub(super) struct WebSlot {
-    /// `None` when the payload is absent or `PUNKTFUNK_WEB_CONSOLE` opted out.
+    /// `None` when the payload is absent or `LILYNK_WEB_CONSOLE` opted out.
     cfg: Option<WebConfig>,
     child: Option<Child>,
     /// Kill-on-close, no breakaway. Created at first spawn; drop reaps bun and its children.
@@ -64,7 +64,7 @@ impl WebSlot {
                 .join("index.mjs"),
             web_dir: app.join("web"),
         };
-        let opted_out = std::env::var("PUNKTFUNK_WEB_CONSOLE").is_ok_and(|v| {
+        let opted_out = std::env::var("LILYNK_WEB_CONSOLE").is_ok_and(|v| {
             matches!(
                 v.trim().to_ascii_lowercase().as_str(),
                 "off" | "0" | "false" | "no"
@@ -72,7 +72,7 @@ impl WebSlot {
         });
         let cfg = if opted_out {
             tracing::info!(
-                "web console disabled (PUNKTFUNK_WEB_CONSOLE in host.env) — not supervising it"
+                "web console disabled (LILYNK_WEB_CONSOLE in host.env) — not supervising it"
             );
             None
         } else if !cfg.bun.exists() || !cfg.server.exists() {
@@ -260,7 +260,7 @@ pub(super) fn read_env_file_value(path: &Path) -> Option<String> {
 }
 
 /// The console password line as the env name it must keep plus its value. `web-password` carries
-/// `PUNKTFUNK_UI_PASSWORD_HASH` once the console has migrated it, and the clear-text key only
+/// `LILYNK_UI_PASSWORD_HASH` once the console has migrated it, and the clear-text key only
 /// until then — forwarding either under the other's name hands the console a hash to compare as a
 /// password. The value stays as written; the console strips the quotes the hash is stored in.
 pub(super) fn read_password_env(path: &Path) -> Option<(&'static str, String)> {
@@ -276,16 +276,16 @@ pub(super) fn read_password_env(path: &Path) -> Option<(&'static str, String)> {
             continue;
         }
         match key.trim() {
-            "PUNKTFUNK_UI_PASSWORD_HASH" => hash = Some(value.to_string()),
-            "PUNKTFUNK_UI_PASSWORD" => clear = Some(value.to_string()),
+            "LILYNK_UI_PASSWORD_HASH" => hash = Some(value.to_string()),
+            "LILYNK_UI_PASSWORD" => clear = Some(value.to_string()),
             _ => {}
         }
     }
     // Clear text wins, the rule the console's own compare follows: writing one back beside a hash
     // is how a password is reset, and the console hashes it again on the next sign-in.
     clear
-        .map(|v| ("PUNKTFUNK_UI_PASSWORD", v))
-        .or_else(|| hash.map(|v| ("PUNKTFUNK_UI_PASSWORD_HASH", v)))
+        .map(|v| ("LILYNK_UI_PASSWORD", v))
+        .or_else(|| hash.map(|v| ("LILYNK_UI_PASSWORD_HASH", v)))
 }
 
 /// This process's env plus `overrides` (case-insensitive win) as a double-NUL UTF-16 block.
@@ -310,20 +310,20 @@ pub(super) fn env_block_with(overrides: &[(&str, String)]) -> Vec<u16> {
 /// matches `scripts/lilynk-web.service`.
 pub(super) fn spawn_web(cfg: &WebConfig, data: &Path, job: HANDLE) -> Result<Child> {
     // Env-over-file, same as `mgmt_token.rs`: a host.env override must reach both processes.
-    let token = std::env::var("PUNKTFUNK_MGMT_TOKEN")
+    let token = std::env::var("LILYNK_MGMT_TOKEN")
         .ok()
         .filter(|v| !v.trim().is_empty())
         .or_else(|| read_env_file_value(&data.join("mgmt-token")))
         .context("read mgmt-token")?;
     let pw_path = data.join("web-password");
-    let password = std::env::var("PUNKTFUNK_UI_PASSWORD")
+    let password = std::env::var("LILYNK_UI_PASSWORD")
         .ok()
         .filter(|v| !v.trim().is_empty())
-        .map(|v| ("PUNKTFUNK_UI_PASSWORD", v))
+        .map(|v| ("LILYNK_UI_PASSWORD", v))
         .or_else(|| read_password_env(&pw_path));
     // Env-over-file; `mgmt::publish_endpoint` rewrites the file each `serve`. Default 47990 is
     // last-resort — a Sunshine fork often owns that port as its web UI.
-    let mgmt_url = std::env::var("PUNKTFUNK_MGMT_URL")
+    let mgmt_url = std::env::var("LILYNK_MGMT_URL")
         .ok()
         .filter(|v| !v.trim().is_empty())
         .or_else(|| read_env_file_value(&data.join("mgmt-endpoint")))
@@ -331,27 +331,27 @@ pub(super) fn spawn_web(cfg: &WebConfig, data: &Path, job: HANDLE) -> Result<Chi
 
     let mut overrides: Vec<(&str, String)> = vec![
         ("PORT", "47992".into()),
-        // No HOST override: the bind is host.env's PUNKTFUNK_UI_BIND, already in this process's
+        // No HOST override: the bind is host.env's LILYNK_UI_BIND, already in this process's
         // environment (`load_host_env`); without it the console binds every interface.
         // Proxy hop to the host's loopback HTTPS mgmt API. Self-signed cert is accepted
         // per-request, never process-wide.
-        ("PUNKTFUNK_MGMT_URL", mgmt_url),
+        ("LILYNK_MGMT_URL", mgmt_url),
         // Host identity cert; cookie is Secure. These names are the legacy pair — the console
         // prefers the native sibling (`web/nitro-entry/tls-paths.mjs`) when it exists.
         (
-            "PUNKTFUNK_UI_TLS_CERT",
+            "LILYNK_UI_TLS_CERT",
             data.join("cert.pem").to_string_lossy().into_owned(),
         ),
         (
-            "PUNKTFUNK_UI_TLS_KEY",
+            "LILYNK_UI_TLS_KEY",
             data.join("key.pem").to_string_lossy().into_owned(),
         ),
-        ("PUNKTFUNK_UI_SECURE", "1".into()),
-        ("PUNKTFUNK_MGMT_TOKEN", token),
+        ("LILYNK_UI_SECURE", "1".into()),
+        ("LILYNK_MGMT_TOKEN", token),
         // The file the console rewrites when it turns a clear-text password into a salted hash.
         // It is reached through this name, not %ProgramData%, so the console needs no path rules.
         (
-            "PUNKTFUNK_UI_PASSWORD_FILE",
+            "LILYNK_UI_PASSWORD_FILE",
             pw_path.to_string_lossy().into_owned(),
         ),
     ];

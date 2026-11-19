@@ -1,7 +1,7 @@
 //! Client identity, known-hosts (pinned fingerprints), and the store they share.
 //!
 //! Identity PEMs live in `$XDG_CONFIG_HOME/punktfunk/` (Linux) or `%APPDATA%\punktfunk`
-//! (Windows). A non-empty `PUNKTFUNK_CONFIG_DIR` overrides that directory; an
+//! (Windows). A non-empty `LILYNK_CONFIG_DIR` overrides that directory; an
 //! empty value does not. `lilynk-probe` reads this same directory, so a box
 //! pairs once. On Windows the WinUI shell re-exports this module
 //! (`clients/windows/src/trust.rs`); the session binary shares the same stores.
@@ -122,12 +122,12 @@ fn set_aside(path: &Path, bytes: &[u8]) {
 
 /// Directory for the client identity, known hosts, and settings.
 ///
-/// A non-empty `PUNKTFUNK_CONFIG_DIR` wins over the OS default: Linux takes
+/// A non-empty `LILYNK_CONFIG_DIR` wins over the OS default: Linux takes
 /// `$XDG_CONFIG_HOME/punktfunk` (`~/.config/punktfunk` when unset), so a Flatpak
 /// lands in its own `~/.var/app` dir; other Unix `~/.config/punktfunk`; Windows
 /// `%APPDATA%\punktfunk`. An empty override is ignored.
 pub fn config_dir() -> Result<PathBuf> {
-    let env = std::env::var_os("PUNKTFUNK_CONFIG_DIR");
+    let env = std::env::var_os("LILYNK_CONFIG_DIR");
     if let Some(dir) = resolve_config_dir(env.as_deref()) {
         return Ok(dir);
     }
@@ -203,7 +203,7 @@ fn adopt_one(from: &Path, dir: &Path, to: &Path) -> std::io::Result<()> {
     Ok(())
 }
 
-/// A non-empty `PUNKTFUNK_CONFIG_DIR`, or `None` when the OS default applies.
+/// A non-empty `LILYNK_CONFIG_DIR`, or `None` when the OS default applies.
 ///
 /// An empty value is `None`. The caller then reads `HOME` or `APPDATA`, so an
 /// override never builds that error and never requires the variable to be set.

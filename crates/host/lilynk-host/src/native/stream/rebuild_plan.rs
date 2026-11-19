@@ -49,7 +49,7 @@ pub(super) struct RebuildFacts {
     pub(super) pyrowave_max_kbps: Option<u32>,
     /// The topology generation the loop last followed.
     pub(super) seen_reassert_gen: u64,
-    /// No `PUNKTFUNK_COMPOSITOR` pin: a capture loss re-detects the live session, and input
+    /// No `LILYNK_COMPOSITOR` pin: a capture loss re-detects the live session, and input
     /// follows it. A pinned session leaves input to the operator.
     pub(super) follows_session: bool,
     /// A Windows IDD-push display can be mode-set in place.

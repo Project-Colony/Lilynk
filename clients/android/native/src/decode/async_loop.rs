@@ -1,7 +1,7 @@
 //! The event-driven async MediaCodec decode loop (default) + its feeder/dispatch/present helpers.
 
 use lilynk_core::client::{Decoded, NativeClient};
-use lilynk_core::error::PunktfunkError;
+use lilynk_core::error::LilynkError;
 use lilynk_core::reanchor::{self, AnchorEvidence, DecoderClass, LocalRecovery};
 use lilynk_core::session::Frame;
 use ly_bitstream::av1::conceal::Av1Concealer;
@@ -613,7 +613,7 @@ fn other_codec(client: &NativeClient, shutdown: &AtomicBool) -> Option<Box<Frame
                     return Some(Box::new(frame));
                 }
             }
-            Err(PunktfunkError::NoFrame) => {}
+            Err(LilynkError::NoFrame) => {}
             Err(_) => return None,
         }
     }
@@ -1992,8 +1992,8 @@ fn feeder_loop(
                     break; // the decode loop is gone, or is ending for the new format
                 }
             }
-            Err(PunktfunkError::NoFrame) => {} // timeout — re-check shutdown and poll again
-            Err(_) => break,                   // session closed
+            Err(LilynkError::NoFrame) => {} // timeout — re-check shutdown and poll again
+            Err(_) => break,                // session closed
         }
     }
 }

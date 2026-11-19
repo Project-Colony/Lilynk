@@ -5,7 +5,7 @@
 //! mixed controller kinds to uinput/UHID (Linux) or XUSB/UMDF (Windows). Rumble and
 //! HID-output pump on the same thread.
 //!
-//! Pin `PUNKTFUNK_RUMBLE_TTL_MS`, `PUNKTFUNK_XBOX_BACKEND=xusb`.
+//! Pin `LILYNK_RUMBLE_TTL_MS`, `LILYNK_XBOX_BACKEND=xusb`.
 //! Evidence: `design/gamescope-multiuser.md`, `design/rumble-envelope-plan.md`,
 //! `design/trigger-rumble-plane.md`, `design/pen-tablet-input.md`.
 
@@ -179,7 +179,7 @@ struct Pads {
     xbox360: Option<crate::inject::gamepad::GamepadManager>,
     /// Every other identity, per OS.
     backends: PadBackends,
-    /// The session's `PUNKTFUNK_STEAM_FORCE`, for every kind [`resolve_pad_kind`] folds.
+    /// The session's `LILYNK_STEAM_FORCE`, for every kind [`resolve_pad_kind`] folds.
     steam_force: bool,
 }
 
@@ -187,7 +187,7 @@ impl Pads {
     /// Every pad starts on the session kind ([`resolve_gamepad`]) until it declares otherwise.
     /// `id` names the device and the player slot it asked for, so its pads land on the
     /// same OS slots they had last connect ([`crate::inject::pad_pool::PadIdentity`]).
-    /// `steam_force` is the session's `PUNKTFUNK_STEAM_FORCE`.
+    /// `steam_force` is the session's `LILYNK_STEAM_FORCE`.
     fn new(
         default: GamepadPref,
         id: crate::inject::pad_pool::PadIdentity,
@@ -595,7 +595,7 @@ impl Pads {
 }
 
 /// Per-pad 0xD1 streamers (`super::pad_audio`). `spawn` refuses an OS slot past
-/// `PUNKTFUNK_PAD_AUDIO_SLOTS`.
+/// `LILYNK_PAD_AUDIO_SLOTS`.
 /// Opened when a DualSense-family arrival declares renderer bits; reaped on
 /// remove / re-declare / teardown.
 struct PadAudioSlots {
@@ -687,7 +687,7 @@ impl PadAudioSlots {
         if let Some((_, h)) = self.slots.get_mut(idx).and_then(|s| s.take()) {
             h.signal();
             let _ = std::thread::Builder::new()
-                .name("punktfunk1-padreap".into())
+                .name("lilynk1-padreap".into())
                 .spawn(move || h.stop());
         }
     }
@@ -782,12 +782,12 @@ impl PenSession {
 
 /// Default 0xCA envelope TTL: the client silences unless renewed. Covers 2–3
 /// lost renewals and caps an abandoned rumble on every client. Override with
-/// `PUNKTFUNK_RUMBLE_TTL_MS`, floored at [`RUMBLE_TTL_FLOOR_MS`].
+/// `LILYNK_RUMBLE_TTL_MS`, floored at [`RUMBLE_TTL_FLOOR_MS`].
 const RUMBLE_TTL_MS: u16 = 400;
-/// `PUNKTFUNK_RUMBLE_TTL_MS` floor. Below this, ~50 ms client ticks make expiry audible
+/// `LILYNK_RUMBLE_TTL_MS` floor. Below this, ~50 ms client ticks make expiry audible
 /// (`design/rumble-envelope-plan.md`).
 const RUMBLE_TTL_FLOOR_MS: u16 = 150;
-/// `PUNKTFUNK_RUMBLE_TTL_MS` ceiling. A multi-second lease is no longer prompt,
+/// `LILYNK_RUMBLE_TTL_MS` ceiling. A multi-second lease is no longer prompt,
 /// and staying well under `u16::MAX` avoids a client treating TTL as a sentinel.
 const RUMBLE_TTL_CEIL_MS: u16 = 5_000;
 /// Floor for renew = ttl × 3/10, so an aggressive TTL hatch cannot spin faster.
@@ -871,7 +871,7 @@ struct RumbleLeases {
 }
 
 impl RumbleLeases {
-    /// The session's `PUNKTFUNK_RUMBLE_TTL_MS`, held inside the floor and ceiling; unset is
+    /// The session's `LILYNK_RUMBLE_TTL_MS`, held inside the floor and ceiling; unset is
     /// [`RUMBLE_TTL_MS`].
     fn with_ttl(ttl_ms: Option<u16>) -> RumbleLeases {
         let ttl_ms = ttl_ms

@@ -16,11 +16,11 @@ pub const MGMT_PORT: u16 = 47990;
 /// The browser plane's port: WebTransport over UDP, beside the native plane's.
 pub const BROWSER_PORT: u16 = 9778;
 
-const MGMT_BIND_ENV: &str = "PUNKTFUNK_MGMT_BIND";
-const NATIVE_PORT_ENV: &str = "PUNKTFUNK_NATIVE_PORT";
-const BROWSER_ENV: &str = "PUNKTFUNK_WEBTRANSPORT";
-const BROWSER_PORT_ENV: &str = "PUNKTFUNK_WEBTRANSPORT_PORT";
-const GAMESTREAM_ENV: &str = "PUNKTFUNK_GAMESTREAM";
+const MGMT_BIND_ENV: &str = "LILYNK_MGMT_BIND";
+const NATIVE_PORT_ENV: &str = "LILYNK_NATIVE_PORT";
+const BROWSER_ENV: &str = "LILYNK_WEBTRANSPORT";
+const BROWSER_PORT_ENV: &str = "LILYNK_WEBTRANSPORT_PORT";
+const GAMESTREAM_ENV: &str = "LILYNK_GAMESTREAM";
 
 /// What `serve` binds.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -90,7 +90,7 @@ impl ListenPlan {
     }
 
     /// The plan `serve` resolves once the Windows service has loaded this `host.env`: flags
-    /// from its `PUNKTFUNK_HOST_CMD`, env from its lines. A value `serve` refuses to start on
+    /// from its `LILYNK_HOST_CMD`, env from its lines. A value `serve` refuses to start on
     /// keeps the default here, because the rule has to name some port.
     pub fn from_host_env(text: &str) -> ListenPlan {
         let env = |key| ly_paths::env_file::get(text, key);
@@ -105,14 +105,14 @@ impl ListenPlan {
     }
 }
 
-/// The words of this `host.env`'s `PUNKTFUNK_HOST_CMD`.
+/// The words of this `host.env`'s `LILYNK_HOST_CMD`.
 fn host_cmd(text: &str) -> std::str::SplitWhitespace<'_> {
-    ly_paths::env_file::get(text, "PUNKTFUNK_HOST_CMD")
+    ly_paths::env_file::get(text, "LILYNK_HOST_CMD")
         .unwrap_or("")
         .split_whitespace()
 }
 
-/// The word after `name` on this `host.env`'s `PUNKTFUNK_HOST_CMD`.
+/// The word after `name` on this `host.env`'s `LILYNK_HOST_CMD`.
 fn cmd_flag<'a>(text: &'a str, name: &str) -> Option<&'a str> {
     let mut words = host_cmd(text);
     words.find(|w| *w == name).and_then(|_| words.next())
@@ -120,7 +120,7 @@ fn cmd_flag<'a>(text: &'a str, name: &str) -> Option<&'a str> {
 
 /// The browser plane's UDP port once the Windows service has loaded this `host.env`, or
 /// `None` while the plane is off. `row` is the `webtransport` row as the caller resolves it,
-/// without this file; a `--webtransport` flag, then a `PUNKTFUNK_WEBTRANSPORT` line, outrank
+/// without this file; a `--webtransport` flag, then a `LILYNK_WEBTRANSPORT` line, outrank
 /// it as they do for `serve`. The port reads as [`ListenPlan::from_host_env`] reads its ports.
 pub fn browser_port_from_host_env(text: &str, row: bool) -> Option<u16> {
     let env = |key| ly_paths::env_file::get(text, key);
@@ -132,7 +132,7 @@ pub fn browser_port_from_host_env(text: &str, row: bool) -> Option<u16> {
 }
 
 /// Whether the Windows service's next host serves GameStream. `row` is the `gamestream` row as
-/// the caller resolves it; a `--gamestream` flag, then a `PUNKTFUNK_GAMESTREAM` line, outrank it.
+/// the caller resolves it; a `--gamestream` flag, then a `LILYNK_GAMESTREAM` line, outrank it.
 pub fn gamestream_from_host_env(text: &str, row: bool) -> bool {
     let line = ly_paths::env_file::get(text, GAMESTREAM_ENV)
         .and_then(|v| crate::registry::parse_bool(&v.trim().to_ascii_lowercase()));
@@ -155,15 +155,16 @@ mod tests {
     #[test]
     fn the_mgmt_rule_follows_the_host_env_bind() {
         assert_eq!(mgmt_port(""), 47990);
-        assert_eq!(mgmt_port("PUNKTFUNK_MGMT_BIND=0.0.0.0:47991\r\n"), 47991);
-        assert_eq!(mgmt_port("# PUNKTFUNK_MGMT_BIND=0.0.0.0:48123\n"), 47990);
+        assert_eq!(mgmt_port("LILYNK_MGMT_BIND=0.0.0.0:47991\r\n"), 47991);
+        assert_eq!(mgmt_port("# LILYNK_MGMT_BIND=0.0.0.0:48123\n"), 47990);
         assert_eq!(
-            mgmt_port("PUNKTFUNK_MGMT_BIND=0.0.0.0:47991\nPUNKTFUNK_MGMT_BIND=\n"),
+            mgmt_port("LILYNK_MGMT_BIND=0.0.0.0:47991\nLILYNK_MGMT_BIND=\n"),
             47990
         );
-        assert_eq!(mgmt_port("PUNKTFUNK_MGMT_BIND=\"[::]:48123\"\n"), 48123);
-        assert_eq!(mgmt_port("PUNKTFUNK_MGMT_BIND=nonsense\n"), 47990);
-        let cmd = "PUNKTFUNK_MGMT_BIND=0.0.0.0:47991\nPUNKTFUNK_HOST_CMD=serve --mgmt-bind 0.0.0.0:48123\n";
+        assert_eq!(mgmt_port("LILYNK_MGMT_BIND=\"[::]:48123\"\n"), 48123);
+        assert_eq!(mgmt_port("LILYNK_MGMT_BIND=nonsense\n"), 47990);
+        let cmd =
+            "LILYNK_MGMT_BIND=0.0.0.0:47991\nLILYNK_HOST_CMD=serve --mgmt-bind 0.0.0.0:48123\n";
         assert_eq!(
             mgmt_port(cmd),
             48123,
@@ -175,17 +176,15 @@ mod tests {
     #[test]
     fn the_native_rule_follows_the_serve_port() {
         assert_eq!(native_port(""), 9777);
-        assert_eq!(native_port("PUNKTFUNK_NATIVE_PORT=9800\r\n"), 9800);
-        assert_eq!(native_port("# PUNKTFUNK_NATIVE_PORT=9800\n"), 9777);
-        assert_eq!(native_port("PUNKTFUNK_NATIVE_PORT=\n"), 9777);
+        assert_eq!(native_port("LILYNK_NATIVE_PORT=9800\r\n"), 9800);
+        assert_eq!(native_port("# LILYNK_NATIVE_PORT=9800\n"), 9777);
+        assert_eq!(native_port("LILYNK_NATIVE_PORT=\n"), 9777);
         assert_eq!(
-            native_port(
-                "PUNKTFUNK_NATIVE_PORT=9800\nPUNKTFUNK_HOST_CMD=\"serve --native-port 9900\"\n"
-            ),
+            native_port("LILYNK_NATIVE_PORT=9800\nLILYNK_HOST_CMD=\"serve --native-port 9900\"\n"),
             9900
         );
         assert_eq!(
-            native_port("PUNKTFUNK_NATIVE_PORT=9800\nPUNKTFUNK_HOST_CMD=serve --gamestream\n"),
+            native_port("LILYNK_NATIVE_PORT=9800\nLILYNK_HOST_CMD=serve --gamestream\n"),
             9800
         );
     }
@@ -197,12 +196,12 @@ mod tests {
         assert!(!on("", false));
         assert!(on("", true));
         assert!(
-            !on("PUNKTFUNK_GAMESTREAM=0\n", true),
+            !on("LILYNK_GAMESTREAM=0\n", true),
             "the line outranks the row"
         );
-        assert!(on("PUNKTFUNK_GAMESTREAM=maybe\n", true));
+        assert!(on("LILYNK_GAMESTREAM=maybe\n", true));
         assert!(on(
-            "PUNKTFUNK_GAMESTREAM=0\nPUNKTFUNK_HOST_CMD=serve --moonlight\n",
+            "LILYNK_GAMESTREAM=0\nLILYNK_HOST_CMD=serve --moonlight\n",
             false
         ));
     }
@@ -213,23 +212,23 @@ mod tests {
         let port = browser_port_from_host_env;
         assert_eq!(port("", false), None);
         assert_eq!(port("", true), Some(9778));
-        assert_eq!(port("PUNKTFUNK_WEBTRANSPORT=on\n", false), Some(9778));
-        let off = "PUNKTFUNK_WEBTRANSPORT=0\n";
+        assert_eq!(port("LILYNK_WEBTRANSPORT=on\n", false), Some(9778));
+        let off = "LILYNK_WEBTRANSPORT=0\n";
         assert_eq!(port(off, true), None, "the line outranks the row");
         assert_eq!(
-            port("PUNKTFUNK_WEBTRANSPORT=\n", true),
+            port("LILYNK_WEBTRANSPORT=\n", true),
             Some(9778),
             "blank is unset"
         );
-        assert_eq!(port("PUNKTFUNK_WEBTRANSPORT=maybe\n", false), None);
-        let flag = "PUNKTFUNK_WEBTRANSPORT=0\nPUNKTFUNK_HOST_CMD=serve --webtransport\n";
+        assert_eq!(port("LILYNK_WEBTRANSPORT=maybe\n", false), None);
+        let flag = "LILYNK_WEBTRANSPORT=0\nLILYNK_HOST_CMD=serve --webtransport\n";
         assert_eq!(port(flag, false), Some(9778), "the flag outranks the line");
-        let moved = "PUNKTFUNK_WEBTRANSPORT_PORT=9900\n";
+        let moved = "LILYNK_WEBTRANSPORT_PORT=9900\n";
         assert_eq!(port(moved, true), Some(9900));
         assert_eq!(port(moved, false), None);
-        assert_eq!(port("PUNKTFUNK_WEBTRANSPORT_PORT=x\n", true), Some(9778));
-        let both = "PUNKTFUNK_WEBTRANSPORT_PORT=9900\n\
-                    PUNKTFUNK_HOST_CMD=serve --webtransport-port 9901\n";
+        assert_eq!(port("LILYNK_WEBTRANSPORT_PORT=x\n", true), Some(9778));
+        let both = "LILYNK_WEBTRANSPORT_PORT=9900\n\
+                    LILYNK_HOST_CMD=serve --webtransport-port 9901\n";
         assert_eq!(port(both, true), Some(9901));
     }
 
@@ -263,11 +262,11 @@ mod tests {
         let bad = |me, ne| plan(None, None, me, ne).unwrap_err().to_string();
         assert_eq!(
             bad(Some("47991"), None),
-            "bad PUNKTFUNK_MGMT_BIND '47991' (want IP:PORT)"
+            "bad LILYNK_MGMT_BIND '47991' (want IP:PORT)"
         );
         assert_eq!(
             bad(None, Some("abc")),
-            "bad PUNKTFUNK_NATIVE_PORT 'abc' (want a port)"
+            "bad LILYNK_NATIVE_PORT 'abc' (want a port)"
         );
     }
 }

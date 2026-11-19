@@ -15,7 +15,7 @@ use lilynk_core::client::{ConnectParams, Decoded, NativeClient};
 use lilynk_core::config::{CompositorPref, GamepadPref, Mode};
 pub use lilynk_core::reject::WAKE_SETTLE;
 use lilynk_core::session::Frame;
-use lilynk_core::PunktfunkError;
+use lilynk_core::LilynkError;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
@@ -40,7 +40,7 @@ pub struct SessionParams {
     /// fact: this box filters it, then the host may still answer Opus — read
     /// `NativeClient::audio_codec` / `_sample_rate_hz` / `_bits` for what landed.
     /// `String` so an unknown settings-file value resolves to Opus rather than refusing
-    /// a connect. `PUNKTFUNK_AUDIO_HIRES` overrides it (`requested_audio_format`).
+    /// a connect. `LILYNK_AUDIO_HIRES` overrides it (`requested_audio_format`).
     pub audio_format: String,
     /// Soft `quic::CODEC_*` bit (`0` = auto). The host honors it when it can; the
     /// resolved codec drives the decoder.
@@ -50,18 +50,18 @@ pub struct SessionParams {
     /// fresh Hello is the only lever.
     pub exclude_codecs: u8,
     /// Advertised `quic::VIDEO_CAP_*` bits, built by `video::video_caps_for`. The host
-    /// still gates the upgrade behind `PUNKTFUNK_10BIT`.
+    /// still gates the upgrade behind `LILYNK_10BIT`.
     pub video_caps: u8,
     /// The Full chroma switch as set. `video_caps` holds 4:4:4 only when HEVC 4:4:4
     /// decodes here; a PyroWave session asks on this alone, as it decodes 4:4:4 on any GPU.
     pub want_444: bool,
     /// This panel's HDR volume, riding `Hello::display_hdr` into the host EDID so apps
-    /// tone-map here. `None` = unknown/SDR. `PUNKTFUNK_CLIENT_PEAK_NITS` synthesizes a
+    /// tone-map here. `None` = unknown/SDR. `LILYNK_CLIENT_PEAK_NITS` synthesizes a
     /// BT.2020 volume at that peak.
     pub display_hdr: Option<lilynk_core::quic::HdrMeta>,
     pub mic_enabled: bool,
     /// Echo cancellation on the uplink. Ignored when `mic_enabled` is false;
-    /// `PUNKTFUNK_NO_AEC=1` forces it off.
+    /// `LILYNK_NO_AEC=1` forces it off.
     pub echo_cancel: bool,
     /// DualSense voice-coil haptics (0xD1 kind 0). With `pad_speaker` it gates
     /// `CLIENT_CAP_PAD_AUDIO` and the pad-audio renderer thread.
@@ -84,7 +84,7 @@ pub struct SessionParams {
     /// the host may stop compositing it. Only set when it actually draws — advertising
     /// without rendering streams with no visible cursor.
     pub cursor_forward: bool,
-    /// Decoder preference; `PUNKTFUNK_DECODER` overrides — see `video::Decoder::new`.
+    /// Decoder preference; `LILYNK_DECODER` overrides — see `video::Decoder::new`.
     pub decoder: String,
     /// Library id for the host to launch (`"steam:570"`); `None` = desktop session.
     pub launch: Option<String>,
@@ -107,7 +107,7 @@ pub struct SessionParams {
     /// [`WAKE_REDIAL_PAUSE`](lilynk_core::reject::WAKE_REDIAL_PAUSE) before dialing.
     pub settle_until: Option<Instant>,
     /// How long the pump waits before it dials. A redial after [`SessionEvent::Lost`] waits
-    /// out `PunktfunkEndReason::redial_delay`; zero on any other dial.
+    /// out `LilynkEndReason::redial_delay`; zero on any other dial.
     pub redial_wait: Duration,
     /// Presenter raises this when it can't display the decoder's hardware frames. The pump
     /// demotes the decoder off that rung and re-requests a keyframe. Decode still succeeds
@@ -375,8 +375,8 @@ pub enum SessionEvent {
         refused: Option<lilynk_core::reject::RejectReason>,
     },
     Ended(Option<String>),
-    /// The link died mid-session (`PunktfunkEndReason::Lost`). Terminal like [`Self::Ended`],
-    /// whose sentence it carries; the embedder redials on `PunktfunkEndReason::redial_delay`'s
+    /// The link died mid-session (`LilynkEndReason::Lost`). Terminal like [`Self::Ended`],
+    /// whose sentence it carries; the embedder redials on `LilynkEndReason::redial_delay`'s
     /// schedule, and one that does not ends as for [`Self::Ended`].
     Lost(Option<String>),
     /// The host answered but couldn't start the stream, and [`SessionParams::not_ready`] held.
@@ -515,7 +515,7 @@ pub use crate::audio_format::{
 };
 
 /// Lossless format this client asks the host for — `Some((rate_hz, bits))` when on,
-/// `None` for Opus. The environment wins: `PUNKTFUNK_AUDIO_HIRES` overrides `setting`.
+/// `None` for Opus. The environment wins: `LILYNK_AUDIO_HIRES` overrides `setting`.
 ///
 /// Grammar: `1`/`true`/`on`/`yes` → 96 kHz/24-bit; `96000` → that rate at 24-bit;
 /// `<rate>/<16|24>` → an explicit pair at any rate the plane carries (`48000/16` is the
@@ -526,10 +526,7 @@ pub use crate::audio_format::{
 /// and ignored, so the setting still decides — treating garbage as off would silently
 /// defeat a UI switch.
 fn requested_audio_format(setting: &str) -> Option<(u32, u8)> {
-    resolve_audio_format(
-        std::env::var("PUNKTFUNK_AUDIO_HIRES").ok().as_deref(),
-        setting,
-    )
+    resolve_audio_format(std::env::var("LILYNK_AUDIO_HIRES").ok().as_deref(), setting)
 }
 
 /// Precedence half of [`requested_audio_format`], split so the env-beats-setting
@@ -547,7 +544,7 @@ fn resolve_audio_format(env: Option<&str>, setting: &str) -> Option<(u32, u8)> {
             tracing::warn!(
                 value = %raw,
                 setting,
-                "PUNKTFUNK_AUDIO_HIRES is not a format this client can ask for — use 1, \
+                "LILYNK_AUDIO_HIRES is not a format this client can ask for — use 1, \
                  96000, 0, or <rate>/<16|24>; ignoring it and using the audio-format \
                  setting instead"
             );
@@ -609,17 +606,17 @@ struct ConnectPlan {
 }
 
 fn connect_plan(params: &SessionParams) -> ConnectPlan {
-    // `PUNKTFUNK_PREFER_PYROWAVE=1`: the host only ever picks PyroWave when the
+    // `LILYNK_PREFER_PYROWAVE=1`: the host only ever picks PyroWave when the
     // client names it as `preferred_codec`.
     #[allow(unused_mut)]
     let mut preferred = params.preferred_codec;
     #[cfg(all(any(target_os = "linux", windows), feature = "pyrowave"))]
-    if crate::env_on("PUNKTFUNK_PREFER_PYROWAVE") == Some(true) {
+    if crate::env_on("LILYNK_PREFER_PYROWAVE") == Some(true) {
         if params.vulkan.as_ref().is_some_and(|v| v.pyrowave_decode) {
             preferred = lilynk_core::quic::CODEC_PYROWAVE;
         } else {
             tracing::warn!(
-                "PUNKTFUNK_PREFER_PYROWAVE=1 but the presenter device failed the pyrowave probe — keeping the normal codec preference"
+                "LILYNK_PREFER_PYROWAVE=1 but the presenter device failed the pyrowave probe — keeping the normal codec preference"
             );
         }
     }
@@ -714,7 +711,7 @@ fn dial(
         reopens_audio: true,
         video_codecs: plan.advertised_codecs,
         preferred_codec: plan.preferred,
-        // Env hatch wins so an A/B run can pin an exact peak (`PUNKTFUNK_CLIENT_PEAK_NITS`).
+        // Env hatch wins so an A/B run can pin an exact peak (`LILYNK_CLIENT_PEAK_NITS`).
         display_hdr: lilynk_core::client::display_hdr_env_override().or(params.display_hdr),
         client_caps: client_caps(params, plan.pad_audio_on),
         // Slice-progressive delivery: off — every rung here is fed whole AUs.
@@ -759,18 +756,18 @@ fn dial(
     })
     .map(Arc::new)
     .map_err(|e| {
-        let trust_rejected = matches!(e, PunktfunkError::Crypto);
+        let trust_rejected = matches!(e, LilynkError::Crypto);
         let refused = match e {
-            PunktfunkError::Rejected(reason, _) => Some(reason),
+            LilynkError::Rejected(reason, _) => Some(reason),
             _ => None,
         };
         let not_ready = params.not_ready(refused, 0);
         let msg = match e {
-            PunktfunkError::Crypto => ly_l10n::client::dial_identity_rejected().to_string(),
-            PunktfunkError::Timeout => ly_l10n::client::dial_timed_out().to_string(),
+            LilynkError::Crypto => ly_l10n::client::dial_identity_rejected().to_string(),
+            LilynkError::Timeout => ly_l10n::client::dial_timed_out().to_string(),
             // Host said why it turned us away — show that verbatim: "denied on the
             // host" and "timed out" call for different next steps.
-            PunktfunkError::Rejected(reason, said) => {
+            LilynkError::Rejected(reason, said) => {
                 crate::trust::reject_message(reason, Some(&said))
             }
             other => {
@@ -1134,7 +1131,7 @@ fn screen_pump(
     while !stop.load(Ordering::SeqCst) {
         let frame = match connector.next_screen_frame(screen, Duration::from_millis(20)) {
             Ok(frame) => frame,
-            Err(PunktfunkError::NoFrame) => continue,
+            Err(LilynkError::NoFrame) => continue,
             Err(_) => return,
         };
         let changed = frame
@@ -1266,21 +1263,21 @@ fn pump(
         },
     );
 
-    // `PUNKTFUNK_DEBUG_RECONFIGURE=WxH@HZ:SECS` — request one mid-stream mode
+    // `LILYNK_DEBUG_RECONFIGURE=WxH@HZ:SECS` — request one mid-stream mode
     // switch N seconds in, so a headless session can exercise the resize path.
     let pump_start = Instant::now();
-    let debug_reconfig = std::env::var("PUNKTFUNK_DEBUG_RECONFIGURE")
+    let debug_reconfig = std::env::var("LILYNK_DEBUG_RECONFIGURE")
         .ok()
         .and_then(|s| {
             let parsed = parse_debug_reconfigure(&s);
             if parsed.is_none() {
-                tracing::warn!(value = %s, "PUNKTFUNK_DEBUG_RECONFIGURE not understood (want WxH@HZ:SECS) — ignored");
+                tracing::warn!(value = %s, "LILYNK_DEBUG_RECONFIGURE not understood (want WxH@HZ:SECS) — ignored");
             }
             parsed
         });
     let mut p = Pump {
         in_flight: None,
-        // This is what the host sent. `PUNKTFUNK_AU_FAULT` injects one level down, so
+        // This is what the host sent. `LILYNK_AU_FAULT` injects one level down, so
         // a faulted run's fixture is the clean bitstream and will not replay the damage.
         au_dump: crate::au_dump::AuDump::from_env(connector.codec),
         notices: WindowNotices {
@@ -1366,7 +1363,7 @@ struct Pump {
     asked_off: u8,
     /// Set when the host refused setup before any frame while it may still be waking.
     not_ready: bool,
-    /// The `PUNKTFUNK_DEBUG_RECONFIGURE` switch still to send, and when.
+    /// The `LILYNK_DEBUG_RECONFIGURE` switch still to send, and when.
     debug_reconfig: Option<(Mode, Duration)>,
     pump_start: Instant,
     access: crate::access::SessionAccess,
@@ -1444,8 +1441,8 @@ impl Pump {
                     Pass::Skip => continue,
                     Pass::End(end) => return end,
                 },
-                Err(PunktfunkError::NoFrame) => {}
-                Err(PunktfunkError::Closed) => return self.on_closed(),
+                Err(LilynkError::NoFrame) => {}
+                Err(LilynkError::Closed) => return self.on_closed(),
                 Err(e) => {
                     tracing::warn!(error = %e, "session pump failed");
                     return Some(ly_l10n::client::ended_unexpected().to_string());
@@ -1461,13 +1458,13 @@ impl Pump {
         }
     }
 
-    /// Send the `PUNKTFUNK_DEBUG_RECONFIGURE` mode switch once its delay has passed.
+    /// Send the `LILYNK_DEBUG_RECONFIGURE` mode switch once its delay has passed.
     fn debug_reconfigure(&mut self) {
         if let Some((mode, delay)) = self.debug_reconfig {
             if self.pump_start.elapsed() >= delay {
                 tracing::info!(
                     ?mode,
-                    "PUNKTFUNK_DEBUG_RECONFIGURE: requesting mid-stream mode switch"
+                    "LILYNK_DEBUG_RECONFIGURE: requesting mid-stream mode switch"
                 );
                 if let Err(e) = self.connector.request_mode(mode) {
                     tracing::warn!(error = ?e, "debug mode switch request failed");
@@ -1753,7 +1750,7 @@ impl Pump {
     /// The connector closed. `None` means normal finish to every embedder; only an
     /// ending that went wrong carries a message.
     fn on_closed(&mut self) -> Option<String> {
-        use lilynk_core::client::PunktfunkEndReason as End;
+        use lilynk_core::client::LilynkEndReason as End;
         // A typed mid-session rejection names itself — access expiry would
         // otherwise file under HostError as "the host ended with an error".
         if let Some(reason) = self.connector.end_reject() {
@@ -1805,7 +1802,7 @@ impl Pump {
             self.connector
                 .set_au_memory(Arc::new(lilynk_core::au::HeapPool::default()));
         }
-        let lost = self.connector.end_reason() == lilynk_core::client::PunktfunkEndReason::Lost
+        let lost = self.connector.end_reason() == lilynk_core::client::LilynkEndReason::Lost
             && self.connector.end_reject().is_none();
         let last = match self.codec_fallback.take() {
             Some(ev) => ev,
@@ -2111,8 +2108,8 @@ fn play_audio(
     .map_err(|e| tracing::warn!(error = %e, "audio disabled"))
     .ok()?;
     // A/V sync. This thread holds the packet's host capture `pts_ns`, the ring
-    // depth, and the video e2e figure. `PUNKTFUNK_NO_AV_SYNC` is the escape hatch.
-    let av_sync_enabled = crate::env_on("PUNKTFUNK_NO_AV_SYNC") != Some(true);
+    // depth, and the video e2e figure. `LILYNK_NO_AV_SYNC` is the escape hatch.
+    let av_sync_enabled = crate::env_on("LILYNK_NO_AV_SYNC") != Some(true);
     let sync_cell = player.sync_cell();
     // Device-callback counters. Logged from this thread, on wall clock — the
     // PipeWire callback runs on the graph's realtime loop and formats nothing.
@@ -2144,7 +2141,7 @@ fn play_audio(
     let mut frame_samples = 0usize;
     let mut av = playout.sync();
     if !av_sync_enabled {
-        tracing::info!("A/V sync disabled by PUNKTFUNK_NO_AV_SYNC");
+        tracing::info!("A/V sync disabled by LILYNK_NO_AV_SYNC");
     }
     // Drought concealment. A seq gap is concealed when a later packet
     // arrives; when the wire goes quiet nothing arrives to reveal it.
@@ -2249,7 +2246,7 @@ fn play_audio(
                     ),
                 }
             }
-            Err(PunktfunkError::NoFrame) => {
+            Err(LilynkError::NoFrame) => {
                 // Nothing on the wire. If the ring is draining, conceal at one
                 // frame per tick — this arm fires every frame time, the rate
                 // the callback drains at. `frame_samples` is 0 until first decode.
@@ -2267,7 +2264,7 @@ fn play_audio(
     None
 }
 
-/// `PUNKTFUNK_DEBUG_RECONFIGURE`: `WxH@HZ:SECS` → request that mode SECS seconds in.
+/// `LILYNK_DEBUG_RECONFIGURE`: `WxH@HZ:SECS` → request that mode SECS seconds in.
 fn parse_debug_reconfigure(s: &str) -> Option<(Mode, Duration)> {
     let (mode_s, secs_s) = s.split_once(':')?;
     let (res, hz) = mode_s.split_once('@')?;
@@ -2392,7 +2389,7 @@ mod tests {
         assert_eq!(audio_format_wire(""), None);
     }
 
-    /// `PUNKTFUNK_AUDIO_HIRES` overrides the setting in both directions. Unset leaves
+    /// `LILYNK_AUDIO_HIRES` overrides the setting in both directions. Unset leaves
     /// the setting alone. A typo is ignored rather than read as "off" — that would
     /// silently defeat a UI choice.
     #[test]

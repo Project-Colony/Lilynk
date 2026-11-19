@@ -52,7 +52,7 @@ mod tests {
     }
 
     #[test]
-    fn hints_upgrade_every_punktfunk_package() {
+    fn hints_upgrade_every_lilynk_package() {
         assert!(channel_hint(InstallKind::Apt).contains("'lilynk*'"));
         assert!(channel_hint(InstallKind::Sysext).contains("lilynk-sysext update"));
     }

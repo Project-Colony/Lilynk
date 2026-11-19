@@ -170,7 +170,7 @@ impl SessionAccess {
 /// `GUID_DEVINTERFACE_XUSB` and has no HID collection, so hidapi/SDL/RawInput/DirectInput/
 /// `joy.cpl`/WGI cannot see it — only `XInputGetState`. Both planes read
 /// `native::gamepad::windows_xbox_hid` (`cfg(windows)`, so not an intra-doc link): HID where
-/// `xinputhid` exists, XUSB where it does not, `PUNKTFUNK_XBOX_BACKEND` overriding both.
+/// `xinputhid` exists, XUSB where it does not, `LILYNK_XBOX_BACKEND` overriding both.
 ///
 /// Elsewhere there is no choice: Linux is one uinput X-Box pad; other platforms drop events.
 enum PadDevices {

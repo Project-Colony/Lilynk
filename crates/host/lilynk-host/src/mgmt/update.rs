@@ -92,7 +92,7 @@ pub(crate) struct UpdateStatus {
     pub apply: String,
     /// Copy-paste update command for this install kind.
     pub channel_hint: String,
-    /// `PUNKTFUNK_UPDATE_CHECK=0`.
+    /// `LILYNK_UPDATE_CHECK=0`.
     pub check_disabled: bool,
     /// Newer than `current_version` on this channel. Unparseable pairs never flag.
     pub available: bool,
@@ -225,7 +225,7 @@ pub(crate) async fn force_update_check(State(st): State<Arc<MgmtState>>) -> Resp
         Err(update::ForceError::Disabled) => api_error_coded(
             StatusCode::CONFLICT,
             "update_checks_disabled",
-            "Update checks are disabled on this host (PUNKTFUNK_UPDATE_CHECK=0)",
+            "Update checks are disabled on this host (LILYNK_UPDATE_CHECK=0)",
         ),
         Err(update::ForceError::TooSoon) => api_error_coded(
             StatusCode::TOO_MANY_REQUESTS,
@@ -255,7 +255,7 @@ pub(crate) struct ApplyRequest {
     request_body = ApplyRequest,
     responses(
         (status = ACCEPTED, description = "Apply started — poll `GET /update/status`", body = UpdateStatus),
-        (status = CONFLICT, description = "Refused: unsupported install kind, apply disabled (PUNKTFUNK_UPDATE_APPLY=0), a job already running, an active streaming session without `force`, or nothing newer to apply", body = ApiError),
+        (status = CONFLICT, description = "Refused: unsupported install kind, apply disabled (LILYNK_UPDATE_APPLY=0), a job already running, an active streaming session without `force`, or nothing newer to apply", body = ApiError),
         (status = UNAUTHORIZED, description = "Missing or invalid bearer token", body = ApiError),
     )
 )]
@@ -285,7 +285,7 @@ pub(crate) async fn apply_update(
         Err(update::ApplyError::Disabled) => api_error_coded(
             StatusCode::CONFLICT,
             "update_apply_disabled",
-            "One-click apply is disabled on this host (PUNKTFUNK_UPDATE_APPLY=0)",
+            "One-click apply is disabled on this host (LILYNK_UPDATE_APPLY=0)",
         ),
         Err(update::ApplyError::JobRunning) => api_error(
             StatusCode::CONFLICT,

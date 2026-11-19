@@ -38,7 +38,7 @@ run -p ly-zerocopy --lib "$@"
 run -p ly-encode --lib --features vulkan-encode,pyrowave "$@"
 run -p ly-vkdecode --test gpu_smoke --test gpu_parity "$@"
 # The route a device with no plane views takes, on one that has both.
-PUNKTFUNK_VKDECODE_ARRANGEMENT=sampler run -p ly-vkdecode --test gpu_smoke --test gpu_parity "$@"
+LILYNK_VKDECODE_ARRANGEMENT=sampler run -p ly-vkdecode --test gpu_smoke --test gpu_parity "$@"
 run -p ly-presenter --lib csc "$@"
 
 errors=$(grep -c 'Validation Error' "$log")

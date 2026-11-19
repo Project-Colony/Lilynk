@@ -65,7 +65,7 @@ pub(super) fn runner_command() -> Result<(std::path::PathBuf, Vec<String>)> {
     let path_var = std::env::var("PATH").ok();
     let home = std::env::var("HOME").ok();
     resolve_runner_in(
-        std::env::var("PUNKTFUNK_SCRIPTING").ok().as_deref(),
+        std::env::var("LILYNK_SCRIPTING").ok().as_deref(),
         exe.as_deref().and_then(std::path::Path::parent),
         path_var.as_deref(),
         home.as_deref().map(std::path::Path::new),
@@ -78,10 +78,10 @@ pub(super) fn runner_command() -> Result<(std::path::PathBuf, Vec<String>)> {
 pub(super) const RUNNER_MISSING: &str =
     "the plugin runner isn't installed — install it first (Debian/Ubuntu: `sudo apt install \
      lilynk-scripting`; SteamOS: re-run scripts/steamdeck/install.sh; NixOS: enable \
-     `services.lilynk.scripting`). If it is installed somewhere else, point PUNKTFUNK_SCRIPTING \
+     `services.lilynk.scripting`). If it is installed somewhere else, point LILYNK_SCRIPTING \
      at the lilynk-scripting executable.";
 
-/// Rungs: `PUNKTFUNK_SCRIPTING` → beside the host → `PATH` → `/usr` → `~/.local`.
+/// Rungs: `LILYNK_SCRIPTING` → beside the host → `PATH` → `/usr` → `~/.local`.
 /// Injected so tests do not mutate process env (races `getenv` in parallel).
 ///
 /// `PATH` is the only rung a Nix install can land on: `lilynk-scripting` is its
@@ -304,13 +304,13 @@ fn systemctl_output(args: &[&str]) -> Option<String> {
     }
 }
 
-/// Is `PUNKTFUNK_PLUGIN_SANDBOX` off in the runner unit's own environment? The host's
+/// Is `LILYNK_PLUGIN_SANDBOX` off in the runner unit's own environment? The host's
 /// environment says nothing about it: the runner reads only what its unit sets.
 #[cfg(target_os = "linux")]
 pub(super) fn runner_sandbox_off() -> bool {
     systemctl_output(&["show", unit(), "-p", "Environment", "--value"]).is_some_and(|env| {
         env.split_whitespace().any(|kv| {
-            kv.strip_prefix("PUNKTFUNK_PLUGIN_SANDBOX=")
+            kv.strip_prefix("LILYNK_PLUGIN_SANDBOX=")
                 .is_some_and(|v| matches!(v.trim_matches('"'), "0" | "off" | "false"))
         })
     })
@@ -569,7 +569,7 @@ mod tests {
             "apt install",
             "steamdeck/install.sh",
             "NixOS",
-            "PUNKTFUNK_SCRIPTING",
+            "LILYNK_SCRIPTING",
         ] {
             assert!(RUNNER_MISSING.contains(hint), "missing hint: {hint}");
         }
@@ -587,8 +587,8 @@ mod tests {
         assert_eq!(unit_for(Some(id)), format!("lilynk-scripting-seat@{id}"));
         assert_eq!(unit_for(Some("")), "lilynk-scripting-seat@");
         for line in [
-            "Environment=PUNKTFUNK_CONFIG_DIR=/var/lib/lilynk-seats/seats/%i/config",
-            "Environment=PUNKTFUNK_PERSON_PLUGINS=1",
+            "Environment=LILYNK_CONFIG_DIR=/var/lib/lilynk-seats/seats/%i/config",
+            "Environment=LILYNK_PERSON_PLUGINS=1",
             "TemporaryFileSystem=/var/lib/lilynk-seats:ro",
             "InaccessiblePaths=-%h/.config/punktfunk",
             "ProtectHome=tmpfs",

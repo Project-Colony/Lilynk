@@ -39,7 +39,7 @@ use winreg::enums::{HKEY_LOCAL_MACHINE, HKEY_USERS, KEY_ALL_ACCESS, KEY_READ, KE
 use winreg::RegKey;
 
 /// Marks the `steam://` handler this module wrote, under the seat's classes key.
-const HANDLER_MARKER: &str = "PunktfunkSeat";
+const HANDLER_MARKER: &str = "LilynkSeat";
 /// The seat's copy and IPC name for `lilynk-tray --steam`, under the seat's own hive.
 const SEAT_STEAM_KEY: &str = r"Software\Punktfunk\SeatSteam";
 /// The Seats key value keeping what the box's shared Steam shortcuts pointed at.

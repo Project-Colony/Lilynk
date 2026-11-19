@@ -2,7 +2,7 @@
 //!
 //! Exit codes: 0 done, 1 unsupported system or a step failed, 2 bad usage, as
 //! `scripts/install.sh` documents. That stub execs this binary with every argument and
-//! `PUNKTFUNK_INSTALL_*` variable untouched, so this parser owns the whole interface.
+//! `LILYNK_INSTALL_*` variable untouched, so this parser owns the whole interface.
 //!
 //! No TTY behaves exactly like `--yes`. Probe by opening `/dev/tty`: in a container
 //! or under a service the node exists but open returns ENXIO, so `-r`/`-w` still
@@ -63,10 +63,10 @@ usage: lilynk-setup [options]
   --fail PHASE          with --demo: show how a failure in that phase renders
   -h, --help            this text
 
-Every option has an environment twin for scripted installs: PUNKTFUNK_INSTALL_YES=1,
-PUNKTFUNK_INSTALL_CHANNEL, PUNKTFUNK_INSTALL_GAMESTREAM, PUNKTFUNK_INSTALL_CLIPBOARD,
-PUNKTFUNK_INSTALL_PUNKTFUNK_GROUP, PUNKTFUNK_INSTALL_LINGER, PUNKTFUNK_INSTALL_CONSOLE_CERT,
-PUNKTFUNK_INSTALL_OMARCHY_SETUP, PUNKTFUNK_INSTALL_MGMT_PORT, PUNKTFUNK_INSTALL_WEB_BIND
+Every option has an environment twin for scripted installs: LILYNK_INSTALL_YES=1,
+LILYNK_INSTALL_CHANNEL, LILYNK_INSTALL_GAMESTREAM, LILYNK_INSTALL_CLIPBOARD,
+LILYNK_INSTALL_LILYNK_GROUP, LILYNK_INSTALL_LINGER, LILYNK_INSTALL_CONSOLE_CERT,
+LILYNK_INSTALL_OMARCHY_SETUP, LILYNK_INSTALL_MGMT_PORT, LILYNK_INSTALL_WEB_BIND
 (1/0 for the flags)."#;
 
 /// 2 is bad usage, as `scripts/install.sh` documents.
@@ -102,34 +102,34 @@ fn parse(args: Vec<String>, env: &Env) -> Result<Cli, (u8, String)> {
     let mut cli = Cli {
         pins: Pins {
             channel: env
-                .get("PUNKTFUNK_INSTALL_CHANNEL")
+                .get("LILYNK_INSTALL_CHANNEL")
                 .and_then(|v| v.parse().ok()),
-            gamestream: env_flag(env, "PUNKTFUNK_INSTALL_GAMESTREAM"),
-            clipboard: env_flag(env, "PUNKTFUNK_INSTALL_CLIPBOARD"),
-            punktfunk_group: env_flag(env, "PUNKTFUNK_INSTALL_PUNKTFUNK_GROUP"),
-            linger: env_flag(env, "PUNKTFUNK_INSTALL_LINGER"),
-            omarchy_setup: env_flag(env, "PUNKTFUNK_INSTALL_OMARCHY_SETUP"),
-            omarchy_toasts: env_flag(env, "PUNKTFUNK_INSTALL_OMARCHY_TOASTS"),
-            omarchy_idle: env_flag(env, "PUNKTFUNK_INSTALL_OMARCHY_IDLE"),
-            omarchy_theme: env_flag(env, "PUNKTFUNK_INSTALL_OMARCHY_THEME"),
-            console_cert: env_flag(env, "PUNKTFUNK_INSTALL_CONSOLE_CERT"),
+            gamestream: env_flag(env, "LILYNK_INSTALL_GAMESTREAM"),
+            clipboard: env_flag(env, "LILYNK_INSTALL_CLIPBOARD"),
+            lilynk_group: env_flag(env, "LILYNK_INSTALL_LILYNK_GROUP"),
+            linger: env_flag(env, "LILYNK_INSTALL_LINGER"),
+            omarchy_setup: env_flag(env, "LILYNK_INSTALL_OMARCHY_SETUP"),
+            omarchy_toasts: env_flag(env, "LILYNK_INSTALL_OMARCHY_TOASTS"),
+            omarchy_idle: env_flag(env, "LILYNK_INSTALL_OMARCHY_IDLE"),
+            omarchy_theme: env_flag(env, "LILYNK_INSTALL_OMARCHY_THEME"),
+            console_cert: env_flag(env, "LILYNK_INSTALL_CONSOLE_CERT"),
             mgmt_port: env
-                .get("PUNKTFUNK_INSTALL_MGMT_PORT")
+                .get("LILYNK_INSTALL_MGMT_PORT")
                 .map(|v| v.parse().unwrap_or(0)),
-            web_bind: match env.get("PUNKTFUNK_INSTALL_WEB_BIND") {
+            web_bind: match env.get("LILYNK_INSTALL_WEB_BIND") {
                 Some(v) => Some(web_bind(v)?),
                 None => None,
             },
             ..Pins::default()
         },
-        yes: env.get("PUNKTFUNK_INSTALL_YES") == Some("1"),
-        dry: env.get("PUNKTFUNK_INSTALL_DRY_RUN") == Some("1"),
+        yes: env.get("LILYNK_INSTALL_YES") == Some("1"),
+        dry: env.get("LILYNK_INSTALL_DRY_RUN") == Some("1"),
         facts_file: None,
         demo: None,
         fail: None,
         verbose: false,
     };
-    if env.get("PUNKTFUNK_INSTALL_CHANNEL").is_some() && cli.pins.channel.is_none() {
+    if env.get("LILYNK_INSTALL_CHANNEL").is_some() && cli.pins.channel.is_none() {
         return Err((BAD_USAGE, "--channel must be stable or canary".into()));
     }
 
@@ -155,8 +155,8 @@ fn parse(args: Vec<String>, env: &Env) -> Result<Cli, (u8, String)> {
             "--no-gamestream" => cli.pins.gamestream = Some(false),
             "--clipboard" => cli.pins.clipboard = Some(true),
             "--no-clipboard" => cli.pins.clipboard = Some(false),
-            "--lilynk-group" => cli.pins.punktfunk_group = Some(true),
-            "--no-lilynk-group" => cli.pins.punktfunk_group = Some(false),
+            "--lilynk-group" => cli.pins.lilynk_group = Some(true),
+            "--no-lilynk-group" => cli.pins.lilynk_group = Some(false),
             "--linger" => cli.pins.linger = Some(true),
             "--no-linger" => cli.pins.linger = Some(false),
             "--omarchy-setup" => cli.pins.omarchy_setup = Some(true),
@@ -457,8 +457,7 @@ fn gate_host_punt(ui: &dyn Reporter, facts: &Facts, choices: &Choices) -> Result
 }
 
 fn preflight(env: &Env, paths: &BasePaths, runner: &mut SystemRunner) -> Result<(), String> {
-    let linux =
-        std::env::consts::OS == "linux" || env.get("PUNKTFUNK_INSTALL_OS_RELEASE").is_some();
+    let linux = std::env::consts::OS == "linux" || env.get("LILYNK_INSTALL_OS_RELEASE").is_some();
     if !linux {
         return Err(Punt::NotLinux.message());
     }
@@ -580,14 +579,14 @@ mod tests {
         let err = parse(args(&["--help"]), &Env::default()).err().unwrap();
         assert_eq!(err.0, 0);
         for twin in [
-            "PUNKTFUNK_INSTALL_YES",
-            "PUNKTFUNK_INSTALL_CHANNEL",
-            "PUNKTFUNK_INSTALL_GAMESTREAM",
-            "PUNKTFUNK_INSTALL_CLIPBOARD",
-            "PUNKTFUNK_INSTALL_PUNKTFUNK_GROUP",
-            "PUNKTFUNK_INSTALL_LINGER",
-            "PUNKTFUNK_INSTALL_OMARCHY_SETUP",
-            "PUNKTFUNK_INSTALL_MGMT_PORT",
+            "LILYNK_INSTALL_YES",
+            "LILYNK_INSTALL_CHANNEL",
+            "LILYNK_INSTALL_GAMESTREAM",
+            "LILYNK_INSTALL_CLIPBOARD",
+            "LILYNK_INSTALL_LILYNK_GROUP",
+            "LILYNK_INSTALL_LINGER",
+            "LILYNK_INSTALL_OMARCHY_SETUP",
+            "LILYNK_INSTALL_MGMT_PORT",
         ] {
             assert!(err.1.contains(twin), "--help does not mention {twin}");
         }
@@ -622,21 +621,21 @@ mod tests {
     #[test]
     fn a_flag_overrides_its_env_twin() {
         let env = Env::of(&[
-            ("PUNKTFUNK_INSTALL_CHANNEL", "canary"),
-            ("PUNKTFUNK_INSTALL_PUNKTFUNK_GROUP", "1"),
+            ("LILYNK_INSTALL_CHANNEL", "canary"),
+            ("LILYNK_INSTALL_LILYNK_GROUP", "1"),
         ]);
         let cli = parse(args(&["--channel", "stable", "--no-lilynk-group"]), &env).unwrap();
         assert_eq!(cli.pins.channel, Some(Channel::Stable));
-        assert_eq!(cli.pins.punktfunk_group, Some(false));
+        assert_eq!(cli.pins.lilynk_group, Some(false));
     }
 
     #[test]
     fn env_twins_stand_when_no_flag_contradicts_them() {
         let env = Env::of(&[
-            ("PUNKTFUNK_INSTALL_YES", "1"),
-            ("PUNKTFUNK_INSTALL_LINGER", "0"),
-            ("PUNKTFUNK_INSTALL_OMARCHY_SETUP", "0"),
-            ("PUNKTFUNK_INSTALL_MGMT_PORT", "48000"),
+            ("LILYNK_INSTALL_YES", "1"),
+            ("LILYNK_INSTALL_LINGER", "0"),
+            ("LILYNK_INSTALL_OMARCHY_SETUP", "0"),
+            ("LILYNK_INSTALL_MGMT_PORT", "48000"),
         ]);
         let cli = parse(vec![], &env).unwrap();
         assert!(cli.yes);
@@ -650,7 +649,7 @@ mod tests {
     fn the_omarchy_hand_off_has_a_flag_and_an_env_twin() {
         let flag = parse(args(&["--no-omarchy-setup"]), &Env::default()).unwrap();
         assert_eq!(flag.pins.omarchy_setup, Some(false));
-        let env = Env::of(&[("PUNKTFUNK_INSTALL_OMARCHY_SETUP", "1")]);
+        let env = Env::of(&[("LILYNK_INSTALL_OMARCHY_SETUP", "1")]);
         assert_eq!(parse(vec![], &env).unwrap().pins.omarchy_setup, Some(true));
     }
 

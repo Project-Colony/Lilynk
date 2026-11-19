@@ -28,17 +28,17 @@ use std::time::Duration;
 
 pub const NATIVE_SERVICE: &str = "_punktfunk._udp.local.";
 
-/// The `PUNKTFUNK_MDNS` row. Default ON; off disables both native and GameStream adverts.
+/// The `LILYNK_MDNS` row. Default ON; off disables both native and GameStream adverts.
 /// CLI `--no-mdns` is the same knob. Multicast-dead environments (bridged Docker, CI netns)
 /// otherwise abort the GameStream plane; clients can still dial a manually-added host.
 pub(crate) fn mdns_enabled() -> bool {
-    ly_host_config::row_bool("PUNKTFUNK_MDNS")
+    ly_host_config::row_bool("LILYNK_MDNS")
 }
 
 pub const NATIVE_PROTO: &str = "punktfunk/2";
 
 /// A-record target (`<label>.local.`), not the service instance name. Instance may be free
-/// text (`PUNKTFUNK_HOST_NAME`); a host name may not. `mdns-sd` rejects the whole `ServiceInfo`
+/// text (`LILYNK_HOST_NAME`); a host name may not. `mdns-sd` rejects the whole `ServiceInfo`
 /// if the target is illegal, which takes discovery down rather than looking wrong. Already-legal
 /// names pass through; anything outside `[A-Za-z0-9.-]` becomes `-`. A non-ASCII name also gets
 /// `-` and 6 hex of its SHA-256, so two all-CJK hosts on one LAN do not answer for one label.
@@ -209,7 +209,7 @@ mod tests {
 
     #[test]
     fn dns_label_passes_machine_names_through_and_tames_display_names() {
-        // Machine hostnames (no `PUNKTFUNK_HOST_NAME`) pass through unchanged.
+        // Machine hostnames (no `LILYNK_HOST_NAME`) pass through unchanged.
         for plain in ["bazzite-htpc", "DESKTOP-1A2B3C", "box.lan", "steamdeck"] {
             assert_eq!(dns_label(plain), plain);
         }

@@ -12,7 +12,7 @@ const KEPT: usize = 16;
 
 static LOST: Mutex<Vec<(String, u16, [u8; 16])>> = Mutex::new(Vec::new());
 
-/// A session to `host:port` ended as [`super::PunktfunkEndReason::Lost`].
+/// A session to `host:port` ended as [`super::LilynkEndReason::Lost`].
 pub(crate) fn note_lost(host: &str, port: u16, session_id: [u8; 16]) {
     let mut lost = LOST.lock().unwrap_or_else(|e| e.into_inner());
     lost.retain(|(h, p, _)| !(h == host && *p == port));

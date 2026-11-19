@@ -331,7 +331,7 @@ impl PlatformBackend for WindowsBackend {
         Ok(self.doctor_report(ledger))
     }
 
-    /// `<root>\hosts\<id>`, the `PUNKTFUNK_CONFIG_DIR` the supervisor starts the host with.
+    /// `<root>\hosts\<id>`, the `LILYNK_CONFIG_DIR` the supervisor starts the host with.
     fn host_config_dir(&self, seat: &Seat) -> Option<PathBuf> {
         Some(self.root.path().join("hosts").join(seat.id.as_str()))
     }

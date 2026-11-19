@@ -1,4 +1,4 @@
-//! Vulkan implicit layer `VK_LAYER_PUNKTFUNK_hdr_inject` for IddCx displays.
+//! Vulkan implicit layer `VK_LAYER_LILYNK_hdr_inject` for IddCx displays.
 //!
 //! Some Windows ICDs accept HDR swapchains on indirect displays but omit their HDR surface formats.
 //! The layer intercepts both surface-format queries and appends HDR10/scRGB formats when that
@@ -645,7 +645,7 @@ pub unsafe extern "system" fn vkNegotiateLoaderLayerInterfaceVersion(
     s.pfn_gipa = Some(layer_gipa);
     s.pfn_gdpa = Some(layer_gdpa);
     s.pfn_gpdpa = Some(layer_gpdpa);
-    log("negotiate: VK_LAYER_PUNKTFUNK_hdr_inject active (v2)");
+    log("negotiate: VK_LAYER_LILYNK_hdr_inject active (v2)");
     vk::Result::SUCCESS
 }
 

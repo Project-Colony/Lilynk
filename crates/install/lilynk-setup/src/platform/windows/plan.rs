@@ -629,10 +629,10 @@ fn host_uninstall(facts: &WinFacts, choices: &WinChoices) -> WinPlan {
             WinAction::RemoveFiles {
                 dir: r"%SystemRoot%\SysWOW64\punktfunk".into(),
             },
-            run_lenient(&["schtasks", "/End", "/TN", "PunktfunkWeb"]),
-            run_lenient(&["schtasks", "/Delete", "/TN", "PunktfunkWeb", "/F"]),
-            run_lenient(&["schtasks", "/End", "/TN", "PunktfunkScripting"]),
-            run_lenient(&["schtasks", "/Delete", "/TN", "PunktfunkScripting", "/F"]),
+            run_lenient(&["schtasks", "/End", "/TN", "LilynkWeb"]),
+            run_lenient(&["schtasks", "/Delete", "/TN", "LilynkWeb", "/F"]),
+            run_lenient(&["schtasks", "/End", "/TN", "LilynkScripting"]),
+            run_lenient(&["schtasks", "/Delete", "/TN", "LilynkScripting", "/F"]),
             WinAction::KillPortListeners {
                 ports: vec![47992, 3000],
             },
@@ -666,7 +666,7 @@ fn host_uninstall(facts: &WinFacts, choices: &WinChoices) -> WinPlan {
                 "delete",
                 r"HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
                 "/v",
-                "PunktfunkTray",
+                "LilynkTray",
                 "/f",
             ]),
             run_lenient(&[

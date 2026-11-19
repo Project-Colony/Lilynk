@@ -332,7 +332,7 @@ internal fun PairDialog() {
 
 /**
  * The live stats HUD (the real StatsOverlay) at the given [verbosity] tier, over a real captured
- * frame when `PUNKTFUNK_SHOT_HERO` names a PNG, else a synthetic gradient. The mode line is this
+ * frame when `LILYNK_SHOT_HERO` names a PNG, else a synthetic gradient. The mode line is this
  * canvas's own pixel size and refresh rate, as a stream sized to the display would report.
  * [loss] false zeroes the lost, skipped and FEC counters, so a store shot has no counter line.
  */
@@ -348,7 +348,7 @@ internal fun StreamScene(verbosity: StatsVerbosity = StatsVerbosity.DETAILED, lo
     val fps = hz * 238.0 / 240.0
     val (lost, skipped, fec) = if (loss) Triple(2.0, 1.0, 5.0) else Triple(0.0, 0.0, 0.0)
     val hero = remember {
-        System.getenv("PUNKTFUNK_SHOT_HERO")?.takeIf { it.isNotEmpty() }
+        System.getenv("LILYNK_SHOT_HERO")?.takeIf { it.isNotEmpty() }
             ?.let {
                 BitmapFactory.decodeFile(
                     it,

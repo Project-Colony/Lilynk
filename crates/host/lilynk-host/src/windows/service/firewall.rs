@@ -312,7 +312,7 @@ mod firewall_tests {
         let rule = |host_env: &str| udp_ports(ListenPlan::from_host_env(host_env).native_port);
         assert_eq!(rule(""), "9777,9779,9780,9781,9782,5353");
         assert_eq!(
-            rule("PUNKTFUNK_NATIVE_PORT=9800\n"),
+            rule("LILYNK_NATIVE_PORT=9800\n"),
             "9800,9779,9780,9781,9782,5353"
         );
     }
@@ -346,15 +346,11 @@ mod firewall_tests {
     #[test]
     fn the_mgmt_bind_flag_lands_where_the_rule_reads() {
         let mgmt_port = |host_env: &str| ListenPlan::from_host_env(host_env).mgmt.port();
-        let set =
-            |text: &str| mgmt_port(&with_env_line(text, "PUNKTFUNK_MGMT_BIND", "0.0.0.0:47991"));
+        let set = |text: &str| mgmt_port(&with_env_line(text, "LILYNK_MGMT_BIND", "0.0.0.0:47991"));
         assert_eq!(set(""), 47991);
+        assert_eq!(set("RUST_LOG=info\n# LILYNK_MGMT_BIND=0.0.0.0:1\n"), 47991);
         assert_eq!(
-            set("RUST_LOG=info\n# PUNKTFUNK_MGMT_BIND=0.0.0.0:1\n"),
-            47991
-        );
-        assert_eq!(
-            set("PUNKTFUNK_MGMT_BIND=0.0.0.0:1\nPUNKTFUNK_MGMT_BIND=0.0.0.0:2\n"),
+            set("LILYNK_MGMT_BIND=0.0.0.0:1\nLILYNK_MGMT_BIND=0.0.0.0:2\n"),
             47991
         );
         assert_eq!(

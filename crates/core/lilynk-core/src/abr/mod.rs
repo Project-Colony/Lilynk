@@ -79,7 +79,7 @@ pub struct DriverConfig {
     /// Welcome-resolved Automatic rate, kbps. `0` = the embedder pinned a
     /// rate or the host predates renegotiation: the controller stays off.
     pub start_kbps: u32,
-    /// `PUNKTFUNK_ABR_MAX_MBPS` as kbps. `None` = no cap.
+    /// `LILYNK_ABR_MAX_MBPS` as kbps. `None` = no cap.
     pub ceiling_cap_kbps: Option<u32>,
     /// Stream-shape bound on every learned ceiling, for the negotiated
     /// geometry. A mode switch recomputes it from the new one.
@@ -95,9 +95,9 @@ pub struct DriverConfig {
     pub audio_reserved_kbps: u32,
     /// Host marks idle-keepalive repeats (`HOST_CAP2_REPEAT_MARK`).
     pub marks_repeats: bool,
-    /// Run the startup capacity probe (`PUNKTFUNK_ABR_PROBE`).
+    /// Run the startup capacity probe (`LILYNK_ABR_PROBE`).
     pub probe: bool,
-    /// `PUNKTFUNK_ABR_PROBE_KBPS`: the burst's target, and a bound on the ramp's
+    /// `LILYNK_ABR_PROBE_KBPS`: the burst's target, and a bound on the ramp's
     /// maximum. `None` leaves both to the capacity probe's own sizing.
     pub probe_target_kbps: Option<u32>,
     /// Host serves probe requests during bring-up

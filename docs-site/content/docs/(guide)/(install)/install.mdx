@@ -49,20 +49,20 @@ Each option also has an environment twin (`1` or `0` for on/off options). `--hel
 
 | Flag | Environment | What it does |
 |---|---|---|
-| `-y`, `--yes` | `PUNKTFUNK_INSTALL_YES=1` | No questions: take every default |
+| `-y`, `--yes` | `LILYNK_INSTALL_YES=1` | No questions: take every default |
 | `--host`, `--client` | | What to install (default: host). `--client` alone installs only the client, as a Flatpak where your distro has no Punktfunk repo |
-| `--channel stable\|canary` | `PUNKTFUNK_INSTALL_CHANNEL` | Package channel. On an installed box this switches channel; without it the box keeps its current one ([Release Channels](/docs/channels)) |
-| `--gamestream` / `--no-gamestream` | `PUNKTFUNK_INSTALL_GAMESTREAM` | [Moonlight](/docs/moonlight) compatibility (default off) |
-| `--clipboard` / `--no-clipboard` | `PUNKTFUNK_INSTALL_CLIPBOARD` | [Shared clipboard](/docs/clipboard) (default on) |
-| `--lilynk-group` / `--no-lilynk-group` | `PUNKTFUNK_INSTALL_PUNKTFUNK_GROUP` | Join the `punktfunk` group for the virtual Steam Deck controller (default on) |
-| `--linger` / `--no-linger` | `PUNKTFUNK_INSTALL_LINGER` | Start at boot with nobody logged in (default on for Bazzite, Nobara, Game Mode boxes and runs without a graphical session) |
-| `--console-cert` / `--no-console-cert` | `PUNKTFUNK_INSTALL_CONSOLE_CERT` | Trust the console's certificate in this box's browser (default on when a desktop is installed) |
-| `--web-bind lan\|localhost\|ADDR` | `PUNKTFUNK_INSTALL_WEB_BIND` | Where the console listens (default `lan`). Written to `host.env` as [`PUNKTFUNK_UI_BIND`](/docs/configuration) |
-| `--mgmt-port N` | `PUNKTFUNK_INSTALL_MGMT_PORT` | Where the management API moves when Sunshine or Apollo holds 47990 (default 47991) |
-| `--omarchy-setup` / `--no-omarchy-setup` | `PUNKTFUNK_INSTALL_OMARCHY_SETUP` | Run `lilynk-omarchy setup` on [Omarchy](/docs/omarchy) (default on). `--no-omarchy-setup` also turns off the three rows below |
-| `--omarchy-toasts`, `--omarchy-idle`, `--omarchy-theme` (and `--no-…`) | `PUNKTFUNK_INSTALL_OMARCHY_TOASTS`, `PUNKTFUNK_INSTALL_OMARCHY_IDLE`, `PUNKTFUNK_INSTALL_OMARCHY_THEME` | Omarchy pairing and stream toasts, keep the screen awake while streaming, console follows the Omarchy theme |
+| `--channel stable\|canary` | `LILYNK_INSTALL_CHANNEL` | Package channel. On an installed box this switches channel; without it the box keeps its current one ([Release Channels](/docs/channels)) |
+| `--gamestream` / `--no-gamestream` | `LILYNK_INSTALL_GAMESTREAM` | [Moonlight](/docs/moonlight) compatibility (default off) |
+| `--clipboard` / `--no-clipboard` | `LILYNK_INSTALL_CLIPBOARD` | [Shared clipboard](/docs/clipboard) (default on) |
+| `--lilynk-group` / `--no-lilynk-group` | `LILYNK_INSTALL_LILYNK_GROUP` | Join the `punktfunk` group for the virtual Steam Deck controller (default on) |
+| `--linger` / `--no-linger` | `LILYNK_INSTALL_LINGER` | Start at boot with nobody logged in (default on for Bazzite, Nobara, Game Mode boxes and runs without a graphical session) |
+| `--console-cert` / `--no-console-cert` | `LILYNK_INSTALL_CONSOLE_CERT` | Trust the console's certificate in this box's browser (default on when a desktop is installed) |
+| `--web-bind lan\|localhost\|ADDR` | `LILYNK_INSTALL_WEB_BIND` | Where the console listens (default `lan`). Written to `host.env` as [`LILYNK_UI_BIND`](/docs/configuration) |
+| `--mgmt-port N` | `LILYNK_INSTALL_MGMT_PORT` | Where the management API moves when Sunshine or Apollo holds 47990 (default 47991) |
+| `--omarchy-setup` / `--no-omarchy-setup` | `LILYNK_INSTALL_OMARCHY_SETUP` | Run `lilynk-omarchy setup` on [Omarchy](/docs/omarchy) (default on). `--no-omarchy-setup` also turns off the three rows below |
+| `--omarchy-toasts`, `--omarchy-idle`, `--omarchy-theme` (and `--no-…`) | `LILYNK_INSTALL_OMARCHY_TOASTS`, `LILYNK_INSTALL_OMARCHY_IDLE`, `LILYNK_INSTALL_OMARCHY_THEME` | Omarchy pairing and stream toasts, keep the screen awake while streaming, console follows the Omarchy theme |
 | `--no-start` | | Install and configure, but don't start the services |
-| `--dry-run` | `PUNKTFUNK_INSTALL_DRY_RUN=1` | Print every command, change nothing |
+| `--dry-run` | `LILYNK_INSTALL_DRY_RUN=1` | Print every command, change nothing |
 | `--demo PRESET` | | Walk the whole flow against a canned machine, change nothing |
 | `--uninstall` | | Stop the services and remove the packages and repo. Your config stays |
 | `-v`, `--verbose` | | Echo every command instead of one progress line |

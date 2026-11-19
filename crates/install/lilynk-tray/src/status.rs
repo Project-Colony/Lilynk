@@ -60,7 +60,7 @@ pub enum TrayStatus {
     Starting,
     Running(Summary),
     /// Running, summary unreachable past [`START_GRACE`]. Not a service failure:
-    /// a custom `PUNKTFUNK_HOST_CMD` or relocated `--mgmt-bind` is legitimate.
+    /// a custom `LILYNK_HOST_CMD` or relocated `--mgmt-bind` is legitimate.
     Degraded,
     Error(String),
 }
@@ -212,7 +212,7 @@ fn poll_loop(
     on_change: Box<dyn Fn(TrayStatus, bool, Vec<TrayStatus>) + Send>,
 ) {
     // Per tick, not once: a captured port misses a republished
-    // `PUNKTFUNK_MGMT_BIND` after restart.
+    // `LILYNK_MGMT_BIND` after restart.
     let summary_url = || {
         let port = mgmt_port
             .or_else(ly_paths::published_mgmt_port)
@@ -304,7 +304,7 @@ fn probe_console(agent: &ureq::Agent, url: &str) -> bool {
 fn tray_token() -> Option<String> {
     let path = ly_paths::config_dir().join("tray-token");
     match std::fs::read_to_string(&path) {
-        Ok(text) => ly_paths::env_file::get(&text, "PUNKTFUNK_TRAY_TOKEN").map(str::to_owned),
+        Ok(text) => ly_paths::env_file::get(&text, "LILYNK_TRAY_TOKEN").map(str::to_owned),
         Err(e) if e.kind() == std::io::ErrorKind::PermissionDenied => std::process::exit(0),
         Err(_) => None,
     }
@@ -326,7 +326,7 @@ fn fetch_summary(agent: &ureq::Agent, url: &str, token: Option<&str>) -> Option<
 /// Windows: `None` — the cert file is SYSTEM/Administrators-DACL'd.
 fn load_pin() -> Option<[u8; 32]> {
     use rustls::pki_types::pem::PemObject;
-    let dir = punktfunk_config_dir()?;
+    let dir = lilynk_config_dir()?;
     // Prefer `native-cert.pem`; `cert.pem` is the GameStream identity still served when native is absent.
     let pem = std::fs::read(dir.join("native-cert.pem"))
         .or_else(|_| std::fs::read(dir.join("cert.pem")))
@@ -336,9 +336,9 @@ fn load_pin() -> Option<[u8; 32]> {
 }
 
 /// The host's [`ly_paths::config_dir`] where the tray may read it: on Linux, or wherever
-/// `PUNKTFUNK_CONFIG_DIR` points. `None` otherwise: Windows' files are SYSTEM/Admins-DACL'd.
-pub fn punktfunk_config_dir() -> Option<std::path::PathBuf> {
-    let overridden = std::env::var_os("PUNKTFUNK_CONFIG_DIR").is_some_and(|d| !d.is_empty());
+/// `LILYNK_CONFIG_DIR` points. `None` otherwise: Windows' files are SYSTEM/Admins-DACL'd.
+pub fn lilynk_config_dir() -> Option<std::path::PathBuf> {
+    let overridden = std::env::var_os("LILYNK_CONFIG_DIR").is_some_and(|d| !d.is_empty());
     (cfg!(target_os = "linux") || overridden).then(ly_paths::config_dir)
 }
 
@@ -361,7 +361,7 @@ fn agent(pin: Option<[u8; 32]>) -> ureq::Agent {
 
 /// SCM name written by `lilynk-host service install` (`windows/service/mod.rs`).
 #[cfg(windows)]
-pub const SERVICE_NAME: &str = "PunktfunkHost";
+pub const SERVICE_NAME: &str = "LilynkHost";
 
 /// The host's state and its companions'. Windows has none: the service runs the console itself.
 #[cfg(windows)]

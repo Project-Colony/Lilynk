@@ -172,7 +172,7 @@ mod tests {
         // directory, deliberately not split). Parallel tests may `getenv` concurrently; glibc
         // keeps replaced environ storage alive, and every reader tolerates either value.
         // Point the store at `cfg` directly. A `HOME` redirect loses to a developer override.
-        unsafe { std::env::set_var("PUNKTFUNK_CONFIG_DIR", &cfg) };
+        unsafe { std::env::set_var("LILYNK_CONFIG_DIR", &cfg) };
 
         // A device whose owner has set a bitrate, and a host bound to a preset that raises it
         // further — the two layers the spec has to carry.

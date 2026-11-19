@@ -211,7 +211,7 @@ const HOST_BACKOFF: Backoff = Backoff::new(
 /// [`WebSlot::wait`] so both children remain covered while either arm blocks.
 pub(super) fn supervise(stop: HANDLE, session_ev: HANDLE) -> Result<()> {
     let exe = std::env::current_exe().context("current_exe")?;
-    let host_cmd = std::env::var("PUNKTFUNK_HOST_CMD").unwrap_or_else(|_| DEFAULT_HOST_CMD.into());
+    let host_cmd = std::env::var("LILYNK_HOST_CMD").unwrap_or_else(|_| DEFAULT_HOST_CMD.into());
     let cmdline = format!("\"{}\" {host_cmd}", exe.to_string_lossy());
     let workdir: Vec<u16> = exe
         .parent()
@@ -438,7 +438,7 @@ pub(super) unsafe fn spawn_host(
     }
     .context("SetTokenInformation(TokenSessionId)")?;
 
-    // Session env merged with this process's `PUNKTFUNK_*`/`RUST_LOG` — same merge as interactive
+    // Session env merged with this process's `LILYNK_*`/`RUST_LOG` — same merge as interactive
     // launch, so host.env reaches the child.
     let mut env_block: *mut c_void = std::ptr::null_mut();
     // SAFETY: `env_block` is a live local out-param and `primary` the live token above; on success
@@ -451,7 +451,7 @@ pub(super) unsafe fn spawn_host(
     // Tells the host a restart request is answered (`crate::power::RESTART_EXIT_CODE`). The block
     // ends in its terminating NUL; the entry goes before it.
     merged.pop();
-    merged.extend("PUNKTFUNK_SERVICE_CHILD=1".encode_utf16());
+    merged.extend("LILYNK_SERVICE_CHILD=1".encode_utf16());
     merged.extend([0, 0]);
     if !env_block.is_null() {
         // SAFETY: `env_block` is the live block from the call above, destroyed exactly once and not

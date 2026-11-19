@@ -521,7 +521,7 @@ impl StreamState {
                  Video leaves the same UDP socket toward the same address as control, \
                  so a hop is treating the two differently: one that drops full-size \
                  datagrams (the 'wire MTU' lines say what the path carries), or one \
-                 that drops the video DSCP mark (PUNKTFUNK_DSCP=0 turns it off to \
+                 that drops the video DSCP mark (LILYNK_DSCP=0 turns it off to \
                  test). The client may also have received the datagrams and could not \
                  open them: this counter is incremented AFTER decrypt and replay \
                  checks, so a session whose every datagram failed to open reports \
@@ -580,7 +580,7 @@ impl StreamState {
                  MTU had to be re-keyed mid-stream — a constrained path (VPN/overlay \
                  adapter, lowered NIC MTU) black-holing full-size video is the prime \
                  suspect, NOT a host/display disturbance; see the 'wire MTU' lines \
-                 above, and pin PUNKTFUNK_WIRE_MTU to skip the lossy discovery window \
+                 above, and pin LILYNK_WIRE_MTU to skip the lossy discovery window \
                  on this path"
             );
         } else if cfg!(windows) {
@@ -745,7 +745,7 @@ const LOSS_MODE_HOLD: std::time::Duration = std::time::Duration::from_secs(10);
 /// switch is logged, with the mean reference distance on the way off.
 #[derive(Default)]
 pub(super) struct LossMode {
-    /// `PUNKTFUNK_ACKED_REFS`: `Some` holds the mode all session, `None` follows the link.
+    /// `LILYNK_ACKED_REFS`: `Some` holds the mode all session, `None` follows the link.
     forced: Option<bool>,
     seen: Option<std::time::Instant>,
     on: bool,

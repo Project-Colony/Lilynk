@@ -75,7 +75,7 @@ pub(super) struct ClientCfg {
     /// Run the startup capacity probe. `false` replays a host that declined
     /// it, or a scenario that injects the ceiling instead.
     pub probe: bool,
-    /// `PUNKTFUNK_ABR_PROBE_KBPS`. `None` = `probe_target_kbps(stream_cap)`;
+    /// `LILYNK_ABR_PROBE_KBPS`. `None` = `probe_target_kbps(stream_cap)`;
     /// with `ramp`, the ramp's maximum instead.
     pub probe_target_kbps: Option<u32>,
     /// Host advertises `HOST_CAP2_RAMP`: measure the link during bring-up.

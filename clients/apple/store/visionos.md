@@ -108,7 +108,7 @@ English in both.
 | `settings` | `05-settings` | Display settings |
 
 Capture them with `BUILD_VISIONOS=1 bash scripts/build-xcframework.sh`, then
-`OUT="$TMPDIR/shots" clients/apple/tools/screenshots.sh visionos`, with `PUNKTFUNK_SHOT_HERO`
+`OUT="$TMPDIR/shots" clients/apple/tools/screenshots.sh visionos`, with `LILYNK_SHOT_HERO`
 naming the store images' game frame on the internal disk. The type is set over them, and the
 upload runs, where the other platforms' store images are composed. No fenced block in this
 section: `check-limits.py` reads each one as a field.

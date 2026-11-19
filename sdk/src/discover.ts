@@ -15,7 +15,7 @@ const SCRIPT_EXTENSIONS = new Set([".ts", ".js", ".mjs", ".mts", ".cjs"]);
  * unreadable list names none. `undefined` on every other host.
  */
 const personPlugins = (options: RunnerOptions): Set<string> | undefined => {
-	if (!(options.personOnly ?? process.env.PUNKTFUNK_PERSON_PLUGINS === "1")) return undefined;
+	if (!(options.personOnly ?? process.env.LILYNK_PERSON_PLUGINS === "1")) return undefined;
 	const config = options.configDir ?? configDir();
 	try {
 		const list: unknown = JSON.parse(

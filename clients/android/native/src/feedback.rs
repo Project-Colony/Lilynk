@@ -12,7 +12,7 @@ use jni::errors::LogErrorAndDefault;
 use jni::objects::{JByteBuffer, JObject};
 use jni::sys::{jint, jlong};
 use jni::EnvUnowned;
-use lilynk_core::error::PunktfunkError;
+use lilynk_core::error::LilynkError;
 use lilynk_core::quic::HidOutput;
 use std::time::Duration;
 
@@ -90,7 +90,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeNextRumble(
             // Dropping it here rather than in Kotlin keeps the rule next to the reason.
             Ok(cmd) if crate::pad_audio::haptics_owns_coils((cmd.pad & 0xF) as u8) => -1,
             Ok(cmd) => pack_rumble(cmd.pad, cmd.low, cmd.high, cmd.backstop_ms),
-            Err(PunktfunkError::Closed) => idle_pull(-1),
+            Err(LilynkError::Closed) => idle_pull(-1),
             Err(_) => -1, // timeout — Kotlin loops on its running flag
         }
     })
@@ -128,7 +128,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeNextHidout(
             };
             let ev = match h.client.next_hidout(PULL_TIMEOUT) {
                 Ok(ev) => ev,
-                Err(PunktfunkError::Closed) => return Ok(idle_pull(-1)),
+                Err(LilynkError::Closed) => return Ok(idle_pull(-1)),
                 Err(_) => return Ok(-1), // timeout — Kotlin loops
             };
             // `[pad][tag][head…][tail…]` — the two slices spare a concat per event.

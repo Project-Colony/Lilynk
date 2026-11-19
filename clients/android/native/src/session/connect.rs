@@ -29,8 +29,8 @@ static DIAL_PENDING: AtomicBool = AtomicBool::new(false);
 /// (`ConnectErrors.kt`). A typed host rejection gives its `RejectReason::as_str()` token
 /// ("not-armed", "denied", "approval-timeout", …) and what the host said; transport causes give
 /// "crypto", "timeout" or "io", anything else "error", each with no sentence.
-fn error_token(e: &lilynk_core::error::PunktfunkError) -> (&str, &str) {
-    use lilynk_core::error::PunktfunkError as E;
+fn error_token(e: &lilynk_core::error::LilynkError) -> (&str, &str) {
+    use lilynk_core::error::LilynkError as E;
     match e {
         E::Rejected(r, said) => (r.as_str(), said.as_str()),
         E::Crypto => ("crypto", ""),
@@ -41,7 +41,7 @@ fn error_token(e: &lilynk_core::error::PunktfunkError) -> (&str, &str) {
 }
 
 /// Keep `e`'s token and sentence for `nativeTakeLastError` and `nativeTakeLastSaid`.
-fn note_error(e: &lilynk_core::error::PunktfunkError) {
+fn note_error(e: &lilynk_core::error::LilynkError) {
     let (token, said) = error_token(e);
     *lock_recover(&LAST_ERROR) = token.to_string();
     *lock_recover(&LAST_SAID) = said.to_string();
@@ -546,7 +546,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConnectWith
             }
             // An unlock goes only to a pinned host; refused before its secret is read.
             if parse_hex32(&req.pin_hex).is_none() {
-                let unpinned = lilynk_core::error::PunktfunkError::InvalidArg(
+                let unpinned = lilynk_core::error::LilynkError::InvalidArg(
                     "a profile unlock needs a pinned host",
                 );
                 return Ok(Some((req, Some(Err(unpinned)))));
@@ -985,7 +985,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSessionEnde
     })
 }
 
-/// Return the session's `PunktfunkEndReason` byte for Kotlin's disconnect message.
+/// Return the session's `LilynkEndReason` byte for Kotlin's disconnect message.
 ///
 /// `0` means no reason, including a missing or concurrently closed key. A retained lookup
 /// distinguishes deliberate host closure from network loss without exposing session memory.
@@ -1014,7 +1014,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeRedialDelay
     attempt: jint,
 ) -> jlong {
     jni_guard(-1, || {
-        lilynk_core::client::PunktfunkEndReason::from_u8(end_reason as u8)
+        lilynk_core::client::LilynkEndReason::from_u8(end_reason as u8)
             .redial_delay(attempt.max(0) as u32)
             .map_or(-1, |d| d.as_millis() as jlong)
     })
@@ -1421,7 +1421,7 @@ mod request_vectors {
 #[cfg(test)]
 mod decoder_tests {
     use super::*;
-    use lilynk_core::error::PunktfunkError;
+    use lilynk_core::error::LilynkError;
     use lilynk_core::quic::{
         CLIENT_CAP_CURSOR, CLIENT_CAP_KEEP_HOST_AUDIO, CLIENT_CAP_PAD_AUDIO, CODEC_AV1, CODEC_H264,
         CODEC_HEVC, CODEC_PYROWAVE,
@@ -1431,14 +1431,14 @@ mod decoder_tests {
     /// Tokens Kotlin reads for a transport failure; no typed rejection may take one.
     const TRANSPORT_TOKENS: [&str; 4] = ["crypto", "timeout", "io", "error"];
 
-    fn rejected(reason: RejectReason, said: &str) -> PunktfunkError {
-        PunktfunkError::Rejected(reason, said.to_string())
+    fn rejected(reason: RejectReason, said: &str) -> LilynkError {
+        LilynkError::Rejected(reason, said.to_string())
     }
 
     #[test]
     fn a_failure_maps_to_the_token_kotlin_matches_and_the_hosts_sentence() {
         // (name, error, token, said)
-        let rows: Vec<(&str, PunktfunkError, &str, &str)> = vec![
+        let rows: Vec<(&str, LilynkError, &str, &str)> = vec![
             (
                 "a rejection with no sentence",
                 rejected(RejectReason::PairingNotArmed, ""),
@@ -1459,37 +1459,32 @@ mod decoder_tests {
             ),
             (
                 "a wrong PIN or a changed host",
-                PunktfunkError::Crypto,
+                LilynkError::Crypto,
                 "crypto",
                 "",
             ),
-            (
-                "a handshake timeout",
-                PunktfunkError::Timeout,
-                "timeout",
-                "",
-            ),
+            ("a handshake timeout", LilynkError::Timeout, "timeout", ""),
             (
                 "a socket failure",
-                PunktfunkError::Io(std::io::Error::other("unreachable")),
+                LilynkError::Io(std::io::Error::other("unreachable")),
                 "io",
                 "",
             ),
             (
                 "an invalid argument",
-                PunktfunkError::InvalidArg("x"),
+                LilynkError::InvalidArg("x"),
                 "error",
                 "",
             ),
-            ("a malformed packet", PunktfunkError::BadPacket, "error", ""),
-            ("no frame", PunktfunkError::NoFrame, "error", ""),
+            ("a malformed packet", LilynkError::BadPacket, "error", ""),
+            ("no frame", LilynkError::NoFrame, "error", ""),
             (
                 "an unsupported request",
-                PunktfunkError::Unsupported("x"),
+                LilynkError::Unsupported("x"),
                 "error",
                 "",
             ),
-            ("a closed session", PunktfunkError::Closed, "error", ""),
+            ("a closed session", LilynkError::Closed, "error", ""),
         ];
         for (name, err, token, said) in rows {
             assert_eq!(error_token(&err), (token, said), "{name}");
@@ -1521,7 +1516,7 @@ mod decoder_tests {
         };
         note_error(&rejected(RejectReason::Busy, "one session at a time"));
         assert_eq!(kept(), ("busy".into(), "one session at a time".into()));
-        note_error(&PunktfunkError::Timeout);
+        note_error(&LilynkError::Timeout);
         assert_eq!(kept(), ("timeout".into(), String::new()));
     }
 

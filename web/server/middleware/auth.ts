@@ -152,7 +152,7 @@ export default defineEventHandler(async (event) => {
 	// Misconfigured: refuse everything rather than serve open on the LAN.
 	if (!authConfigured()) {
 		setResponseStatus(event, 503);
-		return { error: "auth not configured: set PUNKTFUNK_UI_PASSWORD_HASH" };
+		return { error: "auth not configured: set LILYNK_UI_PASSWORD_HASH" };
 	}
 
 	const session = await useSession<SessionData>(event, sessionConfig());
@@ -217,7 +217,7 @@ async function personGate(
 function pluginGate(event: H3Event, pathname: string, method: string) {
 	if (!authConfigured()) {
 		setResponseStatus(event, 503);
-		return { error: "auth not configured: set PUNKTFUNK_UI_PASSWORD_HASH" };
+		return { error: "auth not configured: set LILYNK_UI_PASSWORD_HASH" };
 	}
 	// A person's pages, like their console, answer this computer alone.
 	const person = () =>

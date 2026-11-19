@@ -37,7 +37,7 @@ The [stats overlay](/docs/stats) names the decoder at its **Detailed** level. `n
 device's hardware decoder; `software` is the processor.
 
 To pin the hardware decoder or name its device node, set
-[`PUNKTFUNK_DECODER` or `PUNKTFUNK_V4L2_DEVICE`](/docs/configuration#client-side-native-clients).
+[`LILYNK_DECODER` or `LILYNK_V4L2_DEVICE`](/docs/configuration#client-side-native-clients).
 
 ## Steam Frame wireless adapter
 

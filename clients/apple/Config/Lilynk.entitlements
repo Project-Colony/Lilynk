@@ -16,7 +16,7 @@
 	     broadcast/multicast addresses unless the app carries this managed entitlement — it must
 	     be approved by Apple for the App ID and enabled in the provisioning profile. macOS is not
 	     gated by this (its App Sandbox network.client/server cover it), hence its separate file.
-	     Approved and provisioned, so it's enabled here and PunktfunkConnection.wakeOnLANAvailable
+	     Approved and provisioned, so it's enabled here and LilynkConnection.wakeOnLANAvailable
 	     is true on iOS/tvOS too. -->
 	<key>com.apple.developer.networking.multicast</key>
 	<true/>

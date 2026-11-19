@@ -117,9 +117,9 @@ if [ "$1" = "configure" ]; then
     echo "lilynk-web installed. Enable it for your user:"
     echo "    systemctl --user enable --now lilynk-web"
     echo "A login password is generated on first start. Read it once, before you sign in:"
-    echo "    sed -n 's/^PUNKTFUNK_UI_PASSWORD=//p' ~/.config/punktfunk/web-password"
+    echo "    sed -n 's/^LILYNK_UI_PASSWORD=//p' ~/.config/punktfunk/web-password"
     echo "After that the console keeps only a salted hash, so a forgotten password is reset:"
-    echo "put a PUNKTFUNK_UI_PASSWORD=<your-password> line in that file, then"
+    echo "put a LILYNK_UI_PASSWORD=<your-password> line in that file, then"
     echo "    systemctl --user restart lilynk-web"
     echo "Then open https://<host-ip>:47992 (self-signed host cert — trust it once)"
 fi

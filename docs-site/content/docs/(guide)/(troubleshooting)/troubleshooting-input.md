@@ -38,8 +38,8 @@ On a Linux host the log line `asked the compositor whether it reads uinput devic
 whether the stream's mouse is in use. Two switches in [`host.env`](/docs/configuration), read
 when the host starts:
 
-- `PUNKTFUNK_MOUSE=0` moves the pointer one pixel a count again, with no acceleration.
-- `PUNKTFUNK_MOUSE=1` uses the mouse on a desktop that reads input devices and answered
+- `LILYNK_MOUSE=0` moves the pointer one pixel a count again, with no acceleration.
+- `LILYNK_MOUSE=1` uses the mouse on a desktop that reads input devices and answered
   `reads_uinput=false`. On a headless session it leaves the pointer dead.
 
 ## Controllers

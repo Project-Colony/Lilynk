@@ -1,4 +1,4 @@
-//! AU memory the embedder lends ([`punktfunk_connection_set_au_memory`]): the core assembles
+//! AU memory the embedder lends ([`lilynk_connection_set_au_memory`]): the core assembles
 //! each access unit in a buffer the embedder's decoder reads. A data shard whose frame is
 //! already in flight decrypts straight into it; any other is copied in once
 //! ([`lilynk_core::au`]).
@@ -9,9 +9,9 @@ use crate::*;
 use lilynk_core::au::{AuMemory, AuStore};
 use std::ffi::c_void;
 
-/// One buffer the embedder lent for an AU, filled in by [`PunktfunkAuMemory::take`].
+/// One buffer the embedder lent for an AU, filled in by [`LilynkAuMemory::take`].
 #[repr(C)]
-pub struct PunktfunkAuStore {
+pub struct LilynkAuStore {
     /// Writable for `len` bytes until `release`; 4-byte aligned.
     pub data: *mut u8,
     pub len: usize,
@@ -21,13 +21,13 @@ pub struct PunktfunkAuStore {
 
 /// How the embedder lends AU memory. `take` fills `out` with a buffer of at least `len`
 /// bytes and returns true, or returns false for the heap. `release` gives a buffer back:
-/// after the last [`punktfunk_connection_next_au`] pointer into it is dead, on any thread.
+/// after the last [`lilynk_connection_next_au`] pointer into it is dead, on any thread.
 /// Both run on core threads and must return at once.
 #[repr(C)]
 #[derive(Clone, Copy)]
-pub struct PunktfunkAuMemory {
+pub struct LilynkAuMemory {
     pub take: Option<
-        unsafe extern "C" fn(userdata: *mut c_void, len: usize, out: *mut PunktfunkAuStore) -> bool,
+        unsafe extern "C" fn(userdata: *mut c_void, len: usize, out: *mut LilynkAuStore) -> bool,
     >,
     pub release: Option<unsafe extern "C" fn(userdata: *mut c_void, token: u64)>,
     pub userdata: *mut c_void,
@@ -35,9 +35,9 @@ pub struct PunktfunkAuMemory {
 
 /// The embedder's callbacks as the core's lender.
 #[cfg(feature = "quic")]
-struct Lender(PunktfunkAuMemory);
+struct Lender(LilynkAuMemory);
 
-// SAFETY: the `PunktfunkAuMemory` contract: its callbacks and `userdata` serve any thread.
+// SAFETY: the `LilynkAuMemory` contract: its callbacks and `userdata` serve any thread.
 #[cfg(feature = "quic")]
 unsafe impl Send for Lender {}
 // SAFETY: as above.
@@ -48,7 +48,7 @@ unsafe impl Sync for Lender {}
 impl AuMemory for Lender {
     fn take(&self, len: usize) -> Option<Box<dyn AuStore>> {
         let take = self.0.take?;
-        let mut out = PunktfunkAuStore {
+        let mut out = LilynkAuStore {
             data: std::ptr::null_mut(),
             len: 0,
             token: 0,
@@ -73,7 +73,7 @@ struct Lent {
     data: *mut u8,
     len: usize,
     token: u64,
-    memory: PunktfunkAuMemory,
+    memory: LilynkAuMemory,
 }
 
 // SAFETY: the buffer is the embedder's, writable from any thread until `release`.
@@ -109,13 +109,13 @@ impl Drop for Lent {
 ///
 /// # Safety
 /// `c` is a valid connection handle; `memory` is null or readable for one
-/// `PunktfunkAuMemory` whose callbacks keep its contract.
+/// `LilynkAuMemory` whose callbacks keep its contract.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_set_au_memory(
-    c: *mut PunktfunkConnection,
-    memory: *const PunktfunkAuMemory,
-) -> PunktfunkStatus {
+pub unsafe extern "C" fn lilynk_connection_set_au_memory(
+    c: *mut LilynkConnection,
+    memory: *const LilynkAuMemory,
+) -> LilynkStatus {
     with_conn!(c => {
         // SAFETY: null or readable for one struct, per the fn contract.
         let lender = unsafe { memory.as_ref() }.filter(|m| m.take.is_some());
@@ -124,6 +124,6 @@ pub unsafe extern "C" fn punktfunk_connection_set_au_memory(
             None => std::sync::Arc::new(lilynk_core::au::HeapPool::default()),
         };
         c.inner.set_au_memory(memory);
-        PunktfunkStatus::Ok
+        LilynkStatus::Ok
     })
 }

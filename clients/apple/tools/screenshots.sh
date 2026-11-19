@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # App Store screenshot driver for the Punktfunk Apple client.
 #
-# Launches the app in "shot mode" (PUNKTFUNK_SHOT_SCENE=<name> → one mock-populated screen,
-# full-bleed; see Sources/PunktfunkClient/Screenshots/) once per scene per device, and lets the OS
+# Launches the app in "shot mode" (LILYNK_SHOT_SCENE=<name> → one mock-populated screen,
+# full-bleed; see Sources/LilynkClient/Screenshots/) once per scene per device, and lets the OS
 # capture the REAL rendered UI:
 #   • macOS  → the app captures its own windows through the window server, then exits.
 #   • iOS/iPadOS/tvOS → a booted Simulator + `xcrun simctl io booted screenshot` (native pixels =
@@ -34,8 +34,8 @@
 #   tools/screenshots.sh ios ipad tvos  # specific platforms
 #   tools/screenshots.sh visionos       # needs BUILD_VISIONOS=1 xcframework slices; not in `all`
 #   OUT=~/Desktop/shots tools/screenshots.sh all
-#   PUNKTFUNK_SHOT_HERO=~/frame.png tools/screenshots.sh ios   # real captured frame for the hero
-#   PUNKTFUNK_SHOT_FPS=120 tools/screenshots.sh ios ipad       # HUD refresh; Simulators report 60
+#   LILYNK_SHOT_HERO=~/frame.png tools/screenshots.sh ios   # real captured frame for the hero
+#   LILYNK_SHOT_FPS=120 tools/screenshots.sh ios ipad       # HUD refresh; Simulators report 60
 #   PF_SHOT_LANG=de OUT=~/shots/de tools/screenshots.sh ios    # one language per run; default en
 #
 # Keep SCENES in sync with ShotScenes.all.
@@ -88,7 +88,7 @@ shoot_macos() {
   # pixels — SwiftUI has no release-only visuals. xcodebuild, not `swift build`: SwiftPM copies
   # asset catalogs uncompiled, which blanks every OS mark and launcher icon.
   require_xcode
-  # The app target, not the package's `PunktfunkClient` executable: that one records SDK 14 in
+  # The app target, not the package's `LilynkClient` executable: that one records SDK 14 in
   # its binary, and macOS then draws it with the window chrome of that release.
   log "macOS — building (xcodebuild Punktfunk)…"
   local dd="${PF_SHOT_DERIVED_DATA:-$APPLE_DIR/.build/shots-macos}"
@@ -102,8 +102,8 @@ shoot_macos() {
   for scene in "${SCENES[@]}"; do
     local logf; logf="$(mktemp)"
     # The app captures its own windows once the scene has settled, then exits (MacSelfCapture).
-    PUNKTFUNK_SHOT_SCENE="$scene" PUNKTFUNK_SHOT_SELFCAPTURE="$OUT" \
-      PUNKTFUNK_SHOT_DELAY="${PUNKTFUNK_SHOT_DELAY:-$((SETTLE * 1000))}" \
+    LILYNK_SHOT_SCENE="$scene" LILYNK_SHOT_SELFCAPTURE="$OUT" \
+      LILYNK_SHOT_DELAY="${LILYNK_SHOT_DELAY:-$((SETTLE * 1000))}" \
       "$bin" -AppleLanguages "($SHOT_LANG)" -AppleLocale "$SHOT_LOCALE" >"$logf" 2>&1 &
     local pid=$! dest="$OUT/mac-$scene.png"
     for _ in $(seq 1 150); do kill -0 "$pid" 2>/dev/null || break; sleep 0.2; done
@@ -235,12 +235,12 @@ shoot_sim() {
     xcrun simctl terminate "$udid" "$BUNDLE_ID" 2>/dev/null || true
     # `env` with an array: bash decides what is an assignment BEFORE expanding, so a
     # ${VAR:+NAME=...} word would be run as the command name instead.
-    local envs=("SIMCTL_CHILD_PUNKTFUNK_SHOT_SCENE=$scene")
-    [ "$prefix" = ipad-13 ] && envs+=("SIMCTL_CHILD_PUNKTFUNK_SHOT_ORIENTATION=landscape")
-    [ -n "${PUNKTFUNK_SHOT_HERO:-}" ] \
-      && envs+=("SIMCTL_CHILD_PUNKTFUNK_SHOT_HERO=$PUNKTFUNK_SHOT_HERO")
-    [ -n "${PUNKTFUNK_SHOT_FPS:-}" ] \
-      && envs+=("SIMCTL_CHILD_PUNKTFUNK_SHOT_FPS=$PUNKTFUNK_SHOT_FPS")
+    local envs=("SIMCTL_CHILD_LILYNK_SHOT_SCENE=$scene")
+    [ "$prefix" = ipad-13 ] && envs+=("SIMCTL_CHILD_LILYNK_SHOT_ORIENTATION=landscape")
+    [ -n "${LILYNK_SHOT_HERO:-}" ] \
+      && envs+=("SIMCTL_CHILD_LILYNK_SHOT_HERO=$LILYNK_SHOT_HERO")
+    [ -n "${LILYNK_SHOT_FPS:-}" ] \
+      && envs+=("SIMCTL_CHILD_LILYNK_SHOT_FPS=$LILYNK_SHOT_FPS")
     # In OUT, not mktemp: the simulator writes nothing to a file under /var/folders.
     local applog="$OUT/.$prefix-$scene.log"
     rm -f "$applog"

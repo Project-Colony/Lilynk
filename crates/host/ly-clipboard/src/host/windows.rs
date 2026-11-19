@@ -571,7 +571,7 @@ fn create_window() -> anyhow::Result<HWND> {
         let hinstance: HINSTANCE = GetModuleHandleW(PCWSTR::null())
             .context("GetModuleHandleW")?
             .into();
-        let class_name = w!("PunktfunkClipboardWindow");
+        let class_name = w!("LilynkClipboardWindow");
         let wc = WNDCLASSW {
             lpfnWndProc: Some(wndproc),
             hInstance: hinstance,

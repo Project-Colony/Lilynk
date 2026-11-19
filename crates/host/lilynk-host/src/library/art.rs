@@ -7,7 +7,7 @@
 //! CDN for all of them. No warmer and no scan-time fetch: a request is the only trigger.
 //!
 //! Confinement is load-bearing: the proxy runs in the host process and the plugin lane supplies
-//! the path. `PUNKTFUNK_LIBRARY_ART_ROOTS` replaces the default roots; the store is a root on
+//! the path. `LILYNK_LIBRARY_ART_ROOTS` replaces the default roots; the store is a root on
 //! top of whatever they are, and its files are named `sha256(url)`, so no plugin string chooses
 //! a path inside it. A URL the fetch refuses keeps a marker and stays in the catalog verbatim
 //! for the client to fetch itself.
@@ -239,11 +239,11 @@ fn percent_decode(s: &str) -> String {
 /// is the [`users_base`] — SYSTEM's `%USERPROFILE%` is `…\config\systemprofile` and is not where
 /// launchers live — plus the platform's `extra_roots`: on Windows Steam's install and a portable
 /// Playnite (covers beside the exe), elsewhere `$HOME` and the system icon dirs.
-/// `PUNKTFUNK_LIBRARY_ART_ROOTS` (a `PATH`-style list) replaces the whole default.
+/// `LILYNK_LIBRARY_ART_ROOTS` (a `PATH`-style list) replaces the whole default.
 /// [`art_store_dir`] is a root on top of either: its files are named `sha256(url)`, so nothing a
 /// plugin publishes picks a path inside it.
 fn art_roots() -> Vec<PathBuf> {
-    if let Some(configured) = std::env::var_os("PUNKTFUNK_LIBRARY_ART_ROOTS") {
+    if let Some(configured) = std::env::var_os("LILYNK_LIBRARY_ART_ROOTS") {
         let mut roots: Vec<PathBuf> = std::env::split_paths(&configured)
             .filter(|p| !p.as_os_str().is_empty())
             .collect();
@@ -270,7 +270,7 @@ pub(crate) fn users_base() -> Option<PathBuf> {
 }
 
 /// Canonicalize first so a junction out of the root is resolved before the containment test.
-/// The config-dir exclusion is unconditional even if `PUNKTFUNK_LIBRARY_ART_ROOTS` names it.
+/// The config-dir exclusion is unconditional even if `LILYNK_LIBRARY_ART_ROOTS` names it.
 fn art_path_is_confined(path: &Path) -> bool {
     // Refuse UNC before touching the filesystem: `canonicalize` would itself coerce the host's
     // machine account into outbound SMB. Any two leading separators — `\\`, `//`, mixed — count:
@@ -381,7 +381,7 @@ pub fn validate_art_paths(art: &Artwork) -> Result<(), String> {
         if is_local_art_path(v) && !seat_may_serve(v) {
             return Err(format!(
                 "art.{field}: local art must be an image file (jpg/png/webp/gif/bmp/ico/tga) inside \
-                 an allowed art root — set PUNKTFUNK_LIBRARY_ART_ROOTS if the library lives \
+                 an allowed art root — set LILYNK_LIBRARY_ART_ROOTS if the library lives \
                  elsewhere, or send an http(s) URL instead"
             ));
         }
@@ -469,11 +469,11 @@ pub fn local_art_bytes(path: &str) -> Option<(Vec<u8>, String)> {
 /// Where the covers this host fetched live: `<key>.<ext>` beside `<key>.json` ([`ArtMeta`]),
 /// plus a zero-byte `<key>.refused` for a URL a fetch rejected, all keyed by [`art_key`].
 ///
-/// `PUNKTFUNK_LIBRARY_ART_CACHE` moves it; the default is the per-user cache dir, else the
+/// `LILYNK_LIBRARY_ART_CACHE` moves it; the default is the per-user cache dir, else the
 /// temp dir when no absolute one is named. Never the config dir —
 /// [`resolved_art_path_is_confined`] refuses that root unconditionally.
 fn art_store_dir() -> PathBuf {
-    if let Some(dir) = std::env::var_os("PUNKTFUNK_LIBRARY_ART_CACHE").filter(|d| !d.is_empty()) {
+    if let Some(dir) = std::env::var_os("LILYNK_LIBRARY_ART_CACHE").filter(|d| !d.is_empty()) {
         return PathBuf::from(dir);
     }
     #[cfg(windows)]
@@ -486,9 +486,9 @@ fn art_store_dir() -> PathBuf {
         .join("art")
 }
 
-/// Ceiling on the whole store, `PUNKTFUNK_LIBRARY_ART_CACHE_MB` over the 512 MiB default.
+/// Ceiling on the whole store, `LILYNK_LIBRARY_ART_CACHE_MB` over the 512 MiB default.
 fn art_store_cap() -> u64 {
-    std::env::var("PUNKTFUNK_LIBRARY_ART_CACHE_MB")
+    std::env::var("LILYNK_LIBRARY_ART_CACHE_MB")
         .ok()
         .and_then(|v| v.trim().parse::<u64>().ok())
         .unwrap_or(512)
@@ -1038,7 +1038,7 @@ mod tests {
     }
 
     fn confine_art_to(dir: &Path) -> ArtRootsEnv {
-        ArtRootsEnv::set(&[("PUNKTFUNK_LIBRARY_ART_ROOTS", Some(dir))])
+        ArtRootsEnv::set(&[("LILYNK_LIBRARY_ART_ROOTS", Some(dir))])
     }
 
     /// A seat host's environment has `SystemDrive` and no `PUBLIC`: its base is still rooted.
@@ -1325,8 +1325,8 @@ mod tests {
     fn store_in(dir: &Path) -> ArtRootsEnv {
         let no_plugin_roots = std::env::temp_dir().join("pf-art-not-a-root");
         ArtRootsEnv::set(&[
-            ("PUNKTFUNK_LIBRARY_ART_CACHE", Some(dir)),
-            ("PUNKTFUNK_LIBRARY_ART_ROOTS", Some(&no_plugin_roots)),
+            ("LILYNK_LIBRARY_ART_CACHE", Some(dir)),
+            ("LILYNK_LIBRARY_ART_ROOTS", Some(&no_plugin_roots)),
         ])
     }
 
@@ -1610,8 +1610,8 @@ mod tests {
     fn the_store_evicts_the_oldest_file_over_the_cap() {
         let store = tempfile::tempdir().expect("temp store");
         let _env = ArtRootsEnv::set(&[
-            ("PUNKTFUNK_LIBRARY_ART_CACHE", Some(store.path())),
-            ("PUNKTFUNK_LIBRARY_ART_CACHE_MB", Some(Path::new("1"))),
+            ("LILYNK_LIBRARY_ART_CACHE", Some(store.path())),
+            ("LILYNK_LIBRARY_ART_CACHE_MB", Some(Path::new("1"))),
         ]);
         let old = store.path().join("old.png");
         std::fs::write(&old, vec![0u8; 2 * 1024 * 1024]).expect("write a fat blob");

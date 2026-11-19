@@ -114,7 +114,7 @@ impl Drop for PadAudioHandle {
 
 /// Advertise [`HOST_CAP_PAD_AUDIO`](lilynk_core::quic::HOST_CAP_PAD_AUDIO) when the client asked
 /// ([`CLIENT_CAP_PAD_AUDIO`](lilynk_core::quic::CLIENT_CAP_PAD_AUDIO)), the session's
-/// `PUNKTFUNK_PAD_AUDIO` row is on (`enabled`), and a source exists: Windows has a provisioned
+/// `LILYNK_PAD_AUDIO` row is on (`enabled`), and a source exists: Windows has a provisioned
 /// endpoint; Linux has a reachable PipeWire daemon (sinks mint lazily at spawn).
 pub(super) fn host_cap(client_caps: u8, enabled: bool) -> bool {
     plat::host_cap(

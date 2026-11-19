@@ -2,7 +2,7 @@
 # punktfunk seat runner: a headless desktop, then a stock `lilynk-host serve` on it.
 #
 # lilynk-seat@.service runs this as the seat's user inside a logind session. The seat contract
-# (PUNKTFUNK_SEAT_*, the ports, the trust dir, PUNKTFUNK_MGMT_TOKEN) arrives in the environment.
+# (LILYNK_SEAT_*, the ports, the trust dir, LILYNK_MGMT_TOKEN) arrives in the environment.
 # The desktop mirrors scripts/headless/run-headless-kde.sh; without a kwin_wayland that starts the
 # host starts gamescope itself.
 #
@@ -20,20 +20,20 @@
 # PipeWire alone, and their user manager but for another person's seat plugin runner: the
 # desktop and the host sit on a bus of their own, and the person's own lilynk-host and
 # lilynk-kde-session stand down while this runs (their units
-# have ConditionPathExists= on the runtime directory). Two variables say so. PUNKTFUNK_SEAT_OWNER=1 is the box owner's row, which
-# also takes the owner's host.env and stops the owner's own user units. PUNKTFUNK_SEAT_OWN_ACCOUNT=1
+# have ConditionPathExists= on the runtime directory). Two variables say so. LILYNK_SEAT_OWNER=1 is the box owner's row, which
+# also takes the owner's host.env and stops the owner's own user units. LILYNK_SEAT_OWN_ACCOUNT=1
 # is another person's row: a contract seat's host on their account, with no owner's settings and
 # none of their processes stopped. The seat contract wins over any file.
 set -u
 
-HOST="${PUNKTFUNK_HOST_BIN:-/usr/bin/lilynk-host}"
-SIZE="${PUNKTFUNK_SEAT_SIZE:-1920x1080}"
+HOST="${LILYNK_HOST_BIN:-/usr/bin/lilynk-host}"
+SIZE="${LILYNK_SEAT_SIZE:-1920x1080}"
 W="${SIZE%x*}"
 H="${SIZE#*x}"
 
 # Only the host gets the management token; kwin, plasmashell and games never see it.
-TOKEN="${PUNKTFUNK_MGMT_TOKEN:-}"
-unset PUNKTFUNK_MGMT_TOKEN
+TOKEN="${LILYNK_MGMT_TOKEN:-}"
+unset LILYNK_MGMT_TOKEN
 
 # Exports each KEY=value of $1 as systemd's EnvironmentFile= reads the lines host.env and the NixOS
 # settings hold, so the owner's row gets what their user unit gets. `#` and `;` lines are comments;
@@ -74,7 +74,7 @@ if [[ ${1-} == --self-test ]]; then
 #PF_TEST_COMMENTED=1
   ; PF_TEST_COMMENTED=2
 
-PUNKTFUNK_HOST_NAME=Living Room
+LILYNK_HOST_NAME=Living Room
   PF_TEST_PADDED =  two  words
 PF_TEST_SINGLE='a "b" $HOME \n'
 PF_TEST_DOUBLE="say \"hi\" \$HOME \\ \n"
@@ -92,7 +92,7 @@ EOF
         echo "seat-session self-test: $1 is '${!1-unset}', not '$2'" >&2
         fails=1
     }
-    want PUNKTFUNK_HOST_NAME 'Living Room'
+    want LILYNK_HOST_NAME 'Living Room'
     want PF_TEST_PADDED 'two  words'
     want PF_TEST_SINGLE 'a "b" $HOME \n'
     want PF_TEST_DOUBLE 'say "hi" $HOME \ \n'
@@ -104,8 +104,8 @@ EOF
     want PF_TEST_LAST 'no newline'
     # The compositor pick needs a runtime directory and the functions below: a second run.
     run=$(mktemp -d)
-    if ! XDG_SESSION_ID=self-test RUNTIME_DIRECTORY=$run PUNKTFUNK_SEAT_OWNER='' \
-        PUNKTFUNK_SEAT_OWN_ACCOUNT='' bash "$0" --self-test-desktop; then
+    if ! XDG_SESSION_ID=self-test RUNTIME_DIRECTORY=$run LILYNK_SEAT_OWNER='' \
+        LILYNK_SEAT_OWN_ACCOUNT='' bash "$0" --self-test-desktop; then
         echo "seat-session self-test: a KWin that can't start doesn't hand over to gamescope" >&2
         fails=1
     fi
@@ -125,9 +125,9 @@ if [[ -z "${XDG_SESSION_ID:-}" || -z "${RUNTIME_DIRECTORY:-}" ]]; then
 fi
 printf '%s\n' "$XDG_SESSION_ID" >"$RUNTIME_DIRECTORY/session"
 
-OWNER="${PUNKTFUNK_SEAT_OWNER:-}"
+OWNER="${LILYNK_SEAT_OWNER:-}"
 # The person's own account: the owner's row, or another person's.
-OWN="${PUNKTFUNK_SEAT_OWN_ACCOUNT:-$OWNER}"
+OWN="${LILYNK_SEAT_OWN_ACCOUNT:-$OWNER}"
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
 export DBUS_SESSION_BUS_ADDRESS="${DBUS_SESSION_BUS_ADDRESS:-unix:path=$XDG_RUNTIME_DIR/bus}"
 
@@ -137,9 +137,9 @@ SHELL_PID=""
 # Another person's row: the plugin runner its host started in their user manager, which outlives
 # this session, ends with it. Their manager isn't on this session's bus.
 stop_runner() {
-    [[ -n "${PUNKTFUNK_SEAT_OWN_ACCOUNT:-}" && -n "${PUNKTFUNK_SEAT_ID:-}" ]] || return 0
+    [[ -n "${LILYNK_SEAT_OWN_ACCOUNT:-}" && -n "${LILYNK_SEAT_ID:-}" ]] || return 0
     env -u DBUS_SESSION_BUS_ADDRESS systemctl --user --no-block stop \
-        "lilynk-scripting-seat@$PUNKTFUNK_SEAT_ID.service" >/dev/null 2>&1 || true
+        "lilynk-scripting-seat@$LILYNK_SEAT_ID.service" >/dev/null 2>&1 || true
 }
 cleanup() {
     trap - TERM INT
@@ -188,7 +188,7 @@ EOF
     return 0
 }
 
-# The owner's settings, under the seat contract: the files PUNKTFUNK_OWNER_ENV names (a NixOS
+# The owner's settings, under the seat contract: the files LILYNK_OWNER_ENV names (a NixOS
 # module's settings), then host.env, each read as data by read_env_file. The variables the
 # contract file ($1, else the unit's own) names keep its values, but for the token. With no
 # contract to read, no owner file is; an owner file it can't read is skipped.
@@ -201,7 +201,7 @@ load_owner_settings() {
     fi
     # Names only: the sed pattern is the whole parser, and nothing in the file runs.
     while IFS= read -r key; do
-        [[ $key == PUNKTFUNK_MGMT_TOKEN ]] || keep[$key]="${!key-}"
+        [[ $key == LILYNK_MGMT_TOKEN ]] || keep[$key]="${!key-}"
     done < <(sed -n 's/^\([A-Za-z_][A-Za-z0-9_]*\)=.*/\1/p' "$contract" 2>/dev/null)
     if ((${#keep[@]} == 0)); then
         echo "seat-session: no seat contract at '$contract'; the owner's settings stay unread" >&2
@@ -209,10 +209,10 @@ load_owner_settings() {
     fi
     # The contract leaves these two out when the box sets none, and the owner's own must not
     # stand in: they stay what the unit gave, empty if unset.
-    for key in PUNKTFUNK_WEBTRANSPORT_PORT PUNKTFUNK_WEBTRANSPORT_ORIGINS; do
+    for key in LILYNK_WEBTRANSPORT_PORT LILYNK_WEBTRANSPORT_ORIGINS; do
         keep[$key]="${!key-}"
     done
-    read -ra extra <<<"${PUNKTFUNK_OWNER_ENV:-}"
+    read -ra extra <<<"${LILYNK_OWNER_ENV:-}"
     for file in "${extra[@]}" "$HOME/.config/punktfunk/host.env"; do
         [[ -r "$file" ]] && read_env_file "$file"
     done
@@ -270,7 +270,7 @@ unlock_wallet() {
 
 # Marks the headless host as serving once its management port answers, for the supervisor.
 mark_ready_when_serving() {
-    local port="${PUNKTFUNK_MGMT_BIND##*:}"
+    local port="${LILYNK_MGMT_BIND##*:}"
     (
         until (: >"/dev/tcp/127.0.0.1/$port") 2>/dev/null; do sleep 0.5; done
         : >"$RUNTIME_DIRECTORY/ready"
@@ -281,7 +281,7 @@ alive() { [[ -z "$KWIN_PID" ]] || kill -0 "$KWIN_PID" 2>/dev/null; }
 
 # Whether the host finds a gamescope to start, by its own rungs.
 has_gamescope() {
-    [[ -x ${PUNKTFUNK_GAMESCOPE_BIN:-} || -x ${HOST%/*}/lilynk-gamescope ]] ||
+    [[ -x ${LILYNK_GAMESCOPE_BIN:-} || -x ${HOST%/*}/lilynk-gamescope ]] ||
         command -v lilynk-gamescope >/dev/null 2>&1 || command -v gamescope >/dev/null 2>&1
 }
 
@@ -290,7 +290,7 @@ start_desktop() {
     command -v kwin_wayland >/dev/null 2>&1 && start_kwin
     if [[ -z "$KWIN_PID" ]]; then
         [[ -n "$OWN" && -z "$BUS_PID" ]] && start_private_bus
-        export PUNKTFUNK_COMPOSITOR=gamescope
+        export LILYNK_COMPOSITOR=gamescope
     fi
     return 0
 }
@@ -304,10 +304,10 @@ start_kwin() {
     local kde=(XDG_CURRENT_DESKTOP=KDE XDG_MENU_PREFIX=plasma- KDE_FULL_SESSION=true
         KDE_SESSION_VERSION=6 DESKTOP_SESSION=plasma
         WAYLAND_DISPLAY=wayland-pf-seat KWIN_WAYLAND_NO_PERMISSION_CHECKS=1
-        "PUNKTFUNK_COMPOSITOR=${PUNKTFUNK_COMPOSITOR:-kwin}"
-        "PUNKTFUNK_VIDEO_SOURCE=${PUNKTFUNK_VIDEO_SOURCE:-virtual}"
-        "PUNKTFUNK_INPUT_BACKEND=${PUNKTFUNK_INPUT_BACKEND:-libei}"
-        "PUNKTFUNK_KWIN_VIRTUAL_PRIMARY=${PUNKTFUNK_KWIN_VIRTUAL_PRIMARY:-1}")
+        "LILYNK_COMPOSITOR=${LILYNK_COMPOSITOR:-kwin}"
+        "LILYNK_VIDEO_SOURCE=${LILYNK_VIDEO_SOURCE:-virtual}"
+        "LILYNK_INPUT_BACKEND=${LILYNK_INPUT_BACKEND:-libei}"
+        "LILYNK_KWIN_VIRTUAL_PRIMARY=${LILYNK_KWIN_VIRTUAL_PRIMARY:-1}")
     local pair name
     local -A was=()
     for pair in "${kde[@]}"; do
@@ -432,13 +432,13 @@ if [[ ${1-} == --self-test-desktop ]]; then
     printf '#!/bin/sh\nexit 1\n' >"$fake/kwin_wayland"
     chmod 755 "$fake/kwin_wayland"
     HOST=false XDG_RUNTIME_DIR=$RUNTIME_DIRECTORY
-    unset XDG_CURRENT_DESKTOP PUNKTFUNK_COMPOSITOR PUNKTFUNK_GAMESCOPE_BIN
-    export WAYLAND_DISPLAY=theirs PUNKTFUNK_VIDEO_SOURCE=mine
+    unset XDG_CURRENT_DESKTOP LILYNK_COMPOSITOR LILYNK_GAMESCOPE_BIN
+    export WAYLAND_DISPLAY=theirs LILYNK_VIDEO_SOURCE=mine
     (PATH=$fake start_desktop 2>/dev/null) && exit 1
     cp "$fake/kwin_wayland" "$fake/gamescope"
     PATH=$fake start_desktop 2>/dev/null
-    [[ $PUNKTFUNK_COMPOSITOR == gamescope && -z $KWIN_PID && -z ${XDG_CURRENT_DESKTOP+set} &&
-        $WAYLAND_DISPLAY == theirs && $PUNKTFUNK_VIDEO_SOURCE == mine ]]
+    [[ $LILYNK_COMPOSITOR == gamescope && -z $KWIN_PID && -z ${XDG_CURRENT_DESKTOP+set} &&
+        $WAYLAND_DISPLAY == theirs && $LILYNK_VIDEO_SOURCE == mine ]]
     exit
 fi
 
@@ -448,47 +448,47 @@ fi
 if [[ ${1-} == --self-test-owner ]]; then
     (
         off=$RUNTIME_DIRECTORY/off.env
-        echo 'PUNKTFUNK_WEBTRANSPORT="0"' >"$off"
-        printf '%s\n' PUNKTFUNK_WEBTRANSPORT_PORT=4433 \
-            PUNKTFUNK_WEBTRANSPORT_ORIGINS=https://owner.example >"$RUNTIME_DIRECTORY/owner-off.env"
+        echo 'LILYNK_WEBTRANSPORT="0"' >"$off"
+        printf '%s\n' LILYNK_WEBTRANSPORT_PORT=4433 \
+            LILYNK_WEBTRANSPORT_ORIGINS=https://owner.example >"$RUNTIME_DIRECTORY/owner-off.env"
         read_env_file "$off"
-        HOME=$RUNTIME_DIRECTORY PUNKTFUNK_OWNER_ENV=$RUNTIME_DIRECTORY/owner-off.env
+        HOME=$RUNTIME_DIRECTORY LILYNK_OWNER_ENV=$RUNTIME_DIRECTORY/owner-off.env
         load_owner_settings "$off"
-        port=${PUNKTFUNK_WEBTRANSPORT_PORT-unset} origins=${PUNKTFUNK_WEBTRANSPORT_ORIGINS-unset}
+        port=${LILYNK_WEBTRANSPORT_PORT-unset} origins=${LILYNK_WEBTRANSPORT_ORIGINS-unset}
         [[ -z $port$origins ]] && exit 0
         echo "seat-session self-test: the browser keys are '$port' and '$origins', not empty" >&2
         exit 1
     ) || exit 1
     contract=$RUNTIME_DIRECTORY/contract.env
     cat >"$contract" <<'EOF'
-PUNKTFUNK_SEAT_SESSION="1"
-PUNKTFUNK_SEAT_ID="seat-test"
-PUNKTFUNK_SEAT_OWNER="1"
-PUNKTFUNK_TRUST_DIR="/var/lib/punktfunk/seats/test/trust"
-PUNKTFUNK_PAIRING="refused"
-PUNKTFUNK_NATIVE_PORT="47001"
-PUNKTFUNK_MGMT_BIND="127.0.0.1:47002"
-PUNKTFUNK_MDNS="0"
-PUNKTFUNK_WEBTRANSPORT="1"
-PUNKTFUNK_WEBTRANSPORT_PORT="47003"
-PUNKTFUNK_WEBTRANSPORT_ORIGINS="https://a.example,https://b.example"
-PUNKTFUNK_MGMT_TOKEN=00ff
+LILYNK_SEAT_SESSION="1"
+LILYNK_SEAT_ID="seat-test"
+LILYNK_SEAT_OWNER="1"
+LILYNK_TRUST_DIR="/var/lib/punktfunk/seats/test/trust"
+LILYNK_PAIRING="refused"
+LILYNK_NATIVE_PORT="47001"
+LILYNK_MGMT_BIND="127.0.0.1:47002"
+LILYNK_MDNS="0"
+LILYNK_WEBTRANSPORT="1"
+LILYNK_WEBTRANSPORT_PORT="47003"
+LILYNK_WEBTRANSPORT_ORIGINS="https://a.example,https://b.example"
+LILYNK_MGMT_TOKEN=00ff
 EOF
     # What the unit's EnvironmentFile= gives the script; the token is already out of it.
     read_env_file "$contract"
-    unset PUNKTFUNK_MGMT_TOKEN
-    sed -n '/^PUNKTFUNK_MGMT_TOKEN=/!s/=.*/=owner/p' "$contract" >"$RUNTIME_DIRECTORY/owner.env"
-    echo 'PUNKTFUNK_HOST_NAME=Owner Box' >>"$RUNTIME_DIRECTORY/owner.env"
-    HOME=$RUNTIME_DIRECTORY PUNKTFUNK_OWNER_ENV=$RUNTIME_DIRECTORY/owner.env
-    punktfunk_env() { env | grep '^PUNKTFUNK_' | LC_ALL=C sort; }
-    want=$({ punktfunk_env; echo 'PUNKTFUNK_HOST_NAME=Owner Box'; } | LC_ALL=C sort)
+    unset LILYNK_MGMT_TOKEN
+    sed -n '/^LILYNK_MGMT_TOKEN=/!s/=.*/=owner/p' "$contract" >"$RUNTIME_DIRECTORY/owner.env"
+    echo 'LILYNK_HOST_NAME=Owner Box' >>"$RUNTIME_DIRECTORY/owner.env"
+    HOME=$RUNTIME_DIRECTORY LILYNK_OWNER_ENV=$RUNTIME_DIRECTORY/owner.env
+    lilynk_env() { env | grep '^LILYNK_' | LC_ALL=C sort; }
+    want=$({ lilynk_env; echo 'LILYNK_HOST_NAME=Owner Box'; } | LC_ALL=C sort)
     load_owner_settings "$contract"
-    got=$(punktfunk_env)
+    got=$(lilynk_env)
     [[ $got == "$want" ]] || { diff <(echo "$want") <(echo "$got") >&2; exit 1; }
     # The runtime directory's instance names the contract. Another shape names none, and a
     # contract that isn't there leaves the owner's files unread; the seat still starts.
-    unset PUNKTFUNK_HOST_NAME
-    read_with() { RUNTIME_DIRECTORY=$1 load_owner_settings 2>&1; echo "${PUNKTFUNK_HOST_NAME-unset}"; }
+    unset LILYNK_HOST_NAME
+    read_with() { RUNTIME_DIRECTORY=$1 load_owner_settings 2>&1; echo "${LILYNK_HOST_NAME-unset}"; }
     [[ $(read_with /run/lilynk-seat-gone) == *"at '/run/punktfunk/seats/gone.env'"*unset ]] ||
         { echo "seat-session self-test: the runtime directory doesn't name the contract" >&2; exit 1; }
     for dir in /run/lilynk-seat- /run/lilynk-seat-a/b /tmp/lilynk-seat-a ''; do
@@ -509,12 +509,12 @@ install_switch_commands
 start_desktop
 
 # The host restarts on its own, backing off while it fails, for as long as the desktop lives. A
-# desktop that dies ends the seat and the unit's Restart= starts it over. PUNKTFUNK_SEAT_HEADLESS
+# desktop that dies ends the seat and the unit's Restart= starts it over. LILYNK_SEAT_HEADLESS
 # tells the owner's host it runs here, not at the desk, so Game Mode is its own.
 delay=1
 while alive; do
     started=$SECONDS
-    PUNKTFUNK_SEAT_HEADLESS=1 PUNKTFUNK_MGMT_TOKEN="$TOKEN" "$HOST" serve &
+    LILYNK_SEAT_HEADLESS=1 LILYNK_MGMT_TOKEN="$TOKEN" "$HOST" serve &
     wait $!
     echo "seat-session: host exited with $?; restarting in ${delay}s" >&2
     # This loop outlives the host, so systemd won't reap what a dead host started. Its gamescope

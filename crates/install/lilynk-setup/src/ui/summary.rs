@@ -183,7 +183,7 @@ impl Screen {
 
     pub fn set_bool(&mut self, field: Field, on: bool) {
         match field {
-            Field::Group => self.choices.punktfunk_group = on,
+            Field::Group => self.choices.lilynk_group = on,
             Field::Gamestream => self.choices.gamestream = on,
             Field::Clipboard => self.choices.clipboard = on,
             Field::Linger => self.choices.linger = on,
@@ -215,7 +215,7 @@ impl Screen {
 
     /// An off row must not explain a grant it is not making.
     fn rederive(&mut self) {
-        if !self.choices.punktfunk_group {
+        if !self.choices.lilynk_group {
             self.choices.group_why = None;
         }
         if !self.choices.linger {
@@ -276,7 +276,7 @@ impl Screen {
                 Some(from) => format!("{} → {}", from.as_str(), c.channel.as_str()),
                 None => c.channel.as_str().to_string(),
             },
-            Field::Group => match (c.group_why, c.punktfunk_group) {
+            Field::Group => match (c.group_why, c.lilynk_group) {
                 (Some(why), true) => Screen::with_reason(true, &why.text()),
                 (_, true) => Screen::with_reason(true, t::setup_why_group_default()),
                 _ => Screen::with_reason(false, t::setup_why_group_off()),

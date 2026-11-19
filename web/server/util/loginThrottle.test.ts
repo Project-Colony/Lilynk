@@ -9,14 +9,14 @@ import login from "../routes/_auth/login.post";
 import { confirmPassword } from "./confirm";
 
 beforeAll(async () => {
-	process.env.PUNKTFUNK_UI_PASSWORD_HASH = await Bun.password.hash("hunter2", {
+	process.env.LILYNK_UI_PASSWORD_HASH = await Bun.password.hash("hunter2", {
 		algorithm: "argon2id",
 		memoryCost: 1024,
 		timeCost: 1,
 	});
 });
 afterAll(() => {
-	delete process.env.PUNKTFUNK_UI_PASSWORD_HASH;
+	delete process.env.LILYNK_UI_PASSWORD_HASH;
 });
 
 const confirm = defineEventHandler(async (event) => {

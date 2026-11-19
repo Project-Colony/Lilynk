@@ -275,7 +275,7 @@ internal fun HostDetailScreen(
     }
 
     if (confirmUnpair) {
-        PunktfunkDialog(
+        LilynkDialog(
             title = stringResource(R.string.hostcard_forget_identity_title, host.name),
             onDismiss = { confirmUnpair = false },
             actions = listOf(
@@ -288,7 +288,7 @@ internal fun HostDetailScreen(
         ) { PromptText(stringResource(R.string.hostcard_forget_identity_body)) }
     }
     if (confirmRemove) {
-        PunktfunkDialog(
+        LilynkDialog(
             title = stringResource(R.string.hostcard_remove_title, host.name),
             onDismiss = { confirmRemove = false },
             actions = listOf(

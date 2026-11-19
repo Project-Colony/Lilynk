@@ -93,7 +93,7 @@ pub(crate) fn spawn() {
         return;
     }
     DESKTOP_INPUT.get_or_init(|| {
-        std::env::var("PUNKTFUNK_INPUT_BACKEND")
+        std::env::var("LILYNK_INPUT_BACKEND")
             .ok()
             .filter(|v| !v.is_empty())
     });

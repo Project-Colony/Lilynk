@@ -284,7 +284,7 @@ fn pw_thread(
     };
     props.insert(*pw::keys::NODE_LATENCY, node_latency.as_str());
     // Settings speaker pick; unset/empty = PipeWire's default routing.
-    if let Ok(target) = std::env::var("PUNKTFUNK_AUDIO_SINK") {
+    if let Ok(target) = std::env::var("LILYNK_AUDIO_SINK") {
         if !target.is_empty() {
             props.insert("target.object", target);
         }
@@ -505,7 +505,7 @@ impl MicStreamer {
     /// stream is never stopped: unmute would re-prime the device and re-run source
     /// selection, so the first second back is glitchy.
     ///
-    /// `echo_cancel` is the Settings toggle; `PUNKTFUNK_NO_AEC=1` overrides it off.
+    /// `echo_cancel` is the Settings toggle; `LILYNK_NO_AEC=1` overrides it off.
     ///
     /// `Err` when the stream does not connect within [`OPEN_TIMEOUT`]: no uplink runs.
     pub fn spawn(
@@ -558,19 +558,19 @@ struct MicData {
     muted: Arc<std::sync::atomic::AtomicBool>,
 }
 
-/// Settings toggle, with `PUNKTFUNK_NO_AEC=1` as a one-way override off.
+/// Settings toggle, with `LILYNK_NO_AEC=1` as a one-way override off.
 /// The env var wins — escape hatch for a misbehaving canceller; nothing turns AEC back on.
 fn aec_enabled(echo_cancel: bool) -> bool {
-    echo_cancel && crate::env_on("PUNKTFUNK_NO_AEC") != Some(true)
+    echo_cancel && crate::env_on("LILYNK_NO_AEC") != Some(true)
 }
 
-/// Capture `target.object`: Settings pick (`PUNKTFUNK_AUDIO_SOURCE`) first, else
+/// Capture `target.object`: Settings pick (`LILYNK_AUDIO_SOURCE`) first, else
 /// the first echo-cancelled source so a desktop already running `module-echo-cancel`
 /// does not feed the downlink back into the host mic. `None` = PipeWire default.
 ///
 /// Preference only: `pw_context_load_module` is not safely exposed in pipewire 0.10.
 fn mic_capture_target(echo_cancel: bool) -> Option<String> {
-    if let Ok(target) = std::env::var("PUNKTFUNK_AUDIO_SOURCE") {
+    if let Ok(target) = std::env::var("LILYNK_AUDIO_SOURCE") {
         if !target.is_empty() {
             return Some(target);
         }
@@ -582,7 +582,7 @@ fn mic_capture_target(echo_cancel: bool) -> Option<String> {
     tracing::info!(
         source = %name,
         "mic capture targets the echo-cancelled source (Echo cancellation off, or \
-         PUNKTFUNK_NO_AEC=1, disables this)"
+         LILYNK_NO_AEC=1, disables this)"
     );
     Some(name)
 }

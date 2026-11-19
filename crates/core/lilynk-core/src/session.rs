@@ -9,7 +9,7 @@
 
 use crate::config::{Config, Role};
 use crate::crypto::{MediaKeys, SessionCrypto};
-use crate::error::{PunktfunkError, Result};
+use crate::error::{LilynkError, Result};
 use crate::fec::{coder_for, ErasureCoder};
 use crate::packet::{
     encode_v2, PacketHeader, Packetizer, Reassembler, ReassemblerLimits, StreamedAu, V2Stamp,
@@ -87,7 +87,7 @@ pub struct MediaV2 {
 }
 
 /// One end of a stream. Built for a single [`Role`]; the other role's methods return
-/// [`PunktfunkError::InvalidArg`].
+/// [`LilynkError::InvalidArg`].
 ///
 /// Receive-side anti-replay: each opened datagram's AEAD-authenticated sequence is
 /// filtered by [`ReplayWindow`]. Reordering inside the window is accepted; a captured
@@ -121,10 +121,10 @@ pub struct Session {
     /// buffers via [`reclaim_wires`](Self::reclaim_wires). Each buffer keeps its capacity; the
     /// count follows the frame, so the lane split takes exactly the frame's back half.
     wire_pool: Vec<Vec<u8>>,
-    /// Receive-path stage timing (`PUNKTFUNK_PERF`); [`take_pump_perf`](Self::take_pump_perf)
+    /// Receive-path stage timing (`LILYNK_PERF`); [`take_pump_perf`](Self::take_pump_perf)
     /// reads and resets. `None` when off — the hot path then pays one branch per stage.
     perf: Option<PumpPerf>,
-    /// Send-path stage timing (`PUNKTFUNK_PERF`); [`take_seal_perf`](Self::take_seal_perf)
+    /// Send-path stage timing (`LILYNK_PERF`); [`take_seal_perf`](Self::take_seal_perf)
     /// reads and resets. Same arming and branch-cost contract as `perf`.
     seal_perf: Option<SealPerf>,
     /// Second seal lane, spawned by the first frame that crosses
@@ -134,7 +134,7 @@ pub struct Session {
     /// Parity worker of the chunk pipeline, spawned with the seal lane by the first
     /// pipelined frame. Host only.
     parity_lane: Option<ParityLane>,
-    /// Two-lane sealing enabled (default). `PUNKTFUNK_SEAL_LANES=1` forces single-lane.
+    /// Two-lane sealing enabled (default). `LILYNK_SEAL_LANES=1` forces single-lane.
     seal_two_lane: bool,
     /// Reused Vecs for the lane hand-off. The worker's half round-trips here, so
     /// steady-state two-lane frames move `n/2` headers with no allocation.
@@ -269,14 +269,14 @@ impl Session {
             recv_cur: None,
             recv_off: 0,
             wire_pool: Vec::new(),
-            // Read once at construct; set `PUNKTFUNK_PERF` before connecting.
-            perf: (crate::env_on("PUNKTFUNK_PERF") == Some(true)).then(PumpPerf::default),
-            seal_perf: (crate::env_on("PUNKTFUNK_PERF") == Some(true)).then(SealPerf::default),
+            // Read once at construct; set `LILYNK_PERF` before connecting.
+            perf: (crate::env_on("LILYNK_PERF") == Some(true)).then(PumpPerf::default),
+            seal_perf: (crate::env_on("LILYNK_PERF") == Some(true)).then(SealPerf::default),
             seal_lane: None,
             parity_lane: None,
-            // Default two-lane; `PUNKTFUNK_SEAL_LANES=1` is single-lane. Byte-identical;
+            // Default two-lane; `LILYNK_SEAL_LANES=1` is single-lane. Byte-identical;
             // only who seals changes.
-            seal_two_lane: std::env::var("PUNKTFUNK_SEAL_LANES")
+            seal_two_lane: std::env::var("LILYNK_SEAL_LANES")
                 .map(|v| v != "1")
                 .unwrap_or(true),
             lane_scratch: Vec::new(),
@@ -304,18 +304,18 @@ impl Session {
     }
 
     /// Drain receive-path stage timings since the last call (window semantics: the pump
-    /// reads once per report interval). `None` when `PUNKTFUNK_PERF` is off.
+    /// reads once per report interval). `None` when `LILYNK_PERF` is off.
     pub fn take_pump_perf(&mut self) -> Option<PumpPerf> {
         self.perf.as_mut().map(std::mem::take)
     }
 
     /// Drain send-path stage timings since the last call (window semantics: the host send
-    /// loop reads once per perf window). `None` when `PUNKTFUNK_PERF` is off.
+    /// loop reads once per perf window). `None` when `LILYNK_PERF` is off.
     pub fn take_seal_perf(&mut self) -> Option<SealPerf> {
         self.seal_perf.as_mut().map(std::mem::take)
     }
 
-    /// Start or stop timing the send path. `PUNKTFUNK_PERF` starts it at construct; the host's
+    /// Start or stop timing the send path. `LILYNK_PERF` starts it at construct; the host's
     /// recorder starts it for as long as a capture runs.
     pub fn set_seal_perf(&mut self, on: bool) {
         if on != self.seal_perf.is_some() {
@@ -427,7 +427,7 @@ impl Session {
         sink: &mut SealSink<'_>,
     ) -> Result<()> {
         if self.config.role != Role::Host {
-            return Err(PunktfunkError::InvalidArg(
+            return Err(LilynkError::InvalidArg(
                 "seal_frame called on a client session",
             ));
         }
@@ -561,7 +561,7 @@ impl Session {
             });
         let fec_lane_ok = parity.is_some();
         let (fec_ns, parity) =
-            parity.unwrap_or((0, Err(PunktfunkError::Unsupported("parity lane died"))));
+            parity.unwrap_or((0, Err(LilynkError::Unsupported("parity lane died"))));
         let mut result = emitted.and(parity);
         packetizer.put_recovery(recovery);
         if result.is_ok() {
@@ -588,7 +588,7 @@ impl Session {
                 Err(_) => {
                     lane_ok = false;
                     if result.is_ok() {
-                        result = Err(PunktfunkError::Unsupported("seal lane died"));
+                        result = Err(LilynkError::Unsupported("seal lane died"));
                     }
                 }
             }
@@ -632,7 +632,7 @@ impl Session {
         frame_index: u32,
     ) -> Result<StreamedAu> {
         if self.config.role != Role::Host {
-            return Err(PunktfunkError::InvalidArg(
+            return Err(LilynkError::InvalidArg(
                 "seal_frame called on a client session",
             ));
         }
@@ -676,7 +676,7 @@ impl Session {
         ) -> Result<()>,
     ) -> Result<Vec<Vec<u8>>> {
         if self.config.role != Role::Host {
-            return Err(PunktfunkError::InvalidArg(
+            return Err(LilynkError::InvalidArg(
                 "seal_frame called on a client session",
             ));
         }
@@ -798,7 +798,7 @@ impl Session {
     pub fn reseal(&mut self, plaintext: &[u8]) -> Result<Vec<u8>> {
         use crate::packet::{V2_CLEAR_LEN, V2_HEADER_LEN};
         if plaintext.len() < V2_HEADER_LEN {
-            return Err(PunktfunkError::BadPacket);
+            return Err(LilynkError::BadPacket);
         }
         let mut buf = plaintext.to_vec();
         let seq = self.next_seq;
@@ -880,7 +880,7 @@ impl Session {
     /// not exceed `Hello::max_shard_payload`.
     pub fn set_shard_payload(&mut self, shard_payload: usize) -> Result<()> {
         if self.config.role != Role::Host {
-            return Err(PunktfunkError::InvalidArg(
+            return Err(LilynkError::InvalidArg(
                 "set_shard_payload called on a client session",
             ));
         }
@@ -1009,10 +1009,10 @@ impl Session {
     }
 
     /// Client: drain the transport until a whole access unit is recovered, or no more
-    /// packets are pending ([`PunktfunkError::NoFrame`]).
+    /// packets are pending ([`LilynkError::NoFrame`]).
     pub fn poll_frame(&mut self) -> Result<Frame> {
         if self.config.role != Role::Client {
-            return Err(PunktfunkError::InvalidArg(
+            return Err(LilynkError::InvalidArg(
                 "poll_frame called on a host session",
             ));
         }
@@ -1041,7 +1041,7 @@ impl Session {
                         }
                         StatsCounters::add(&self.stats.frames_dropped, 1);
                     }
-                    return Err(PunktfunkError::NoFrame);
+                    return Err(LilynkError::NoFrame);
                 }
                 continue;
             };
@@ -1162,7 +1162,7 @@ impl Session {
     /// line-rate sender outrunning the loop.
     pub fn flush_backlog(&mut self) -> Result<u64> {
         if self.config.role != Role::Client {
-            return Err(PunktfunkError::InvalidArg(
+            return Err(LilynkError::InvalidArg(
                 "flush_backlog called on a host session",
             ));
         }
@@ -1499,7 +1499,7 @@ mod wire_equivalence_tests {
             match client.poll_frame() {
                 Ok(f) if !f.complete => partial = Some(f),
                 Ok(f) => assert_eq!(f.frame_index, 1, "only the clean frame completes"),
-                Err(PunktfunkError::NoFrame) => break,
+                Err(LilynkError::NoFrame) => break,
                 Err(e) => panic!("unexpected: {e}"),
             }
         }
@@ -1600,7 +1600,7 @@ mod wire_equivalence_tests {
             loop {
                 match client.poll_frame() {
                     Ok(f) => got.push((f.frame_index, f.complete)),
-                    Err(PunktfunkError::NoFrame) => return got,
+                    Err(LilynkError::NoFrame) => return got,
                     Err(e) => panic!("unexpected: {e}"),
                 }
             }
@@ -1736,7 +1736,7 @@ mod wire_equivalence_tests {
                 match client.poll_frame() {
                     Ok(f) if !f.complete => got_partial = Some(f),
                     Ok(_) => completes += 1,
-                    Err(PunktfunkError::NoFrame) => break,
+                    Err(LilynkError::NoFrame) => break,
                     Err(e) => panic!("unexpected: {e}"),
                 }
             }
@@ -1774,7 +1774,7 @@ mod wire_equivalence_tests {
             loop {
                 match client2.poll_frame() {
                     Ok(f) => saw_partial |= !f.complete,
-                    Err(PunktfunkError::NoFrame) => break,
+                    Err(LilynkError::NoFrame) => break,
                     Err(e) => panic!("unexpected: {e}"),
                 }
             }
@@ -1825,7 +1825,7 @@ mod wire_equivalence_tests {
                     match client.poll_frame() {
                         Ok(f) if !f.complete => got_partial = Some(f),
                         Ok(_) => completes += 1,
-                        Err(PunktfunkError::NoFrame) => break,
+                        Err(LilynkError::NoFrame) => break,
                         Err(e) => panic!("shard {shard}: unexpected: {e}"),
                     }
                 }
@@ -2138,7 +2138,7 @@ mod wire_equivalence_tests {
                 .map(|(_, w)| w.as_slice())
                 .collect();
             host.send_sealed(&kept).unwrap();
-            assert!(matches!(client.poll_frame(), Err(PunktfunkError::NoFrame)));
+            assert!(matches!(client.poll_frame(), Err(LilynkError::NoFrame)));
             assert_eq!(client.missing_shards(0, 16), Some(vec![3, 4, 5]));
             assert!(client.frame_in_flight(0));
             let resent: Vec<Vec<u8>> = (3..6).map(|i| host.reseal(&plain[i]).unwrap()).collect();
@@ -2201,7 +2201,7 @@ mod wire_equivalence_tests {
             host.send_sealed(&refs).unwrap();
             let f = client.poll_frame().unwrap();
             assert_eq!(f.data, src, "clear {clear}");
-            assert!(matches!(client.poll_frame(), Err(PunktfunkError::NoFrame)));
+            assert!(matches!(client.poll_frame(), Err(LilynkError::NoFrame)));
             assert_eq!(client.stats().packets_received as usize, wires.len());
             assert!(
                 client.stats().packets_dropped >= 1,
@@ -2279,7 +2279,7 @@ mod wire_equivalence_tests {
             host.next_seq = 3 * crate::crypto::MEDIA_KEY_PACKETS;
             host.submit_frame(&pattern(700), 1_700_000_000_000_000_000, 0)
                 .unwrap();
-            assert!(matches!(client.poll_frame(), Err(PunktfunkError::NoFrame)));
+            assert!(matches!(client.poll_frame(), Err(LilynkError::NoFrame)));
             assert!(client.stats().packets_dropped >= 2);
             assert_eq!(client.stats().packets_received, 0);
         }
@@ -2326,7 +2326,7 @@ mod wire_equivalence_tests {
         let (_, mut client) = v2_pair_sealed(0, MediaSuite::Aes128Gcm, false);
         let (mut host, _) = v2_pair(0);
         let mut au = host.begin_streamed_frame_at(1, 0, 0).unwrap();
-        let invalid = |r: Result<Vec<Vec<u8>>>| matches!(r, Err(PunktfunkError::InvalidArg(_)));
+        let invalid = |r: Result<Vec<Vec<u8>>>| matches!(r, Err(LilynkError::InvalidArg(_)));
         assert!(invalid(client.seal_frame(&pattern(100), 0, 0)));
         assert!(invalid(client.seal_streamed_chunk(
             &mut au,
@@ -2472,10 +2472,7 @@ mod wire_equivalence_tests {
         opt.seal_lane = Some(lane);
         let frame = pattern(20000);
         let r = opt.seal_frame(&frame, 7, 0);
-        assert!(matches!(
-            r,
-            Err(PunktfunkError::Unsupported("seal lane died"))
-        ));
+        assert!(matches!(r, Err(LilynkError::Unsupported("seal lane died"))));
         assert!(opt.seal_lane.is_none());
         let s = opt.stats();
         assert_eq!(
@@ -2498,9 +2495,9 @@ mod wire_equivalence_tests {
     #[test]
     fn a_lane_error_fails_the_frame_and_keeps_the_lane() {
         let mut host = host_session(host_cfg(FecScheme::Gf16, 20), true);
-        host.seal_lane = Some(lane_answering(|| Err(PunktfunkError::Crypto)));
+        host.seal_lane = Some(lane_answering(|| Err(LilynkError::Crypto)));
         let r = host.seal_frame(&pattern(20000), 7, 0);
-        assert!(matches!(r, Err(PunktfunkError::Crypto)));
+        assert!(matches!(r, Err(LilynkError::Crypto)));
         assert!(host.seal_lane.is_some());
         assert_eq!(host.stats().frames_submitted, 0);
     }
@@ -2511,16 +2508,16 @@ mod wire_equivalence_tests {
     fn a_failed_chunked_frame_counts_nothing() {
         let frame = pattern(20000);
         let mut host = host_session(host_cfg(FecScheme::Gf16, 20), true);
-        let r = host.seal_frame_chunks_at(&frame, 7, 0, 0, &mut |_, _| Err(PunktfunkError::Crypto));
-        assert!(matches!(r, Err(PunktfunkError::Crypto)));
+        let r = host.seal_frame_chunks_at(&frame, 7, 0, 0, &mut |_, _| Err(LilynkError::Crypto));
+        assert!(matches!(r, Err(LilynkError::Crypto)));
         let none = |h: &Session| {
             let s = h.stats();
             (s.frames_submitted, s.packets_sent, s.bytes_sent)
         };
         assert_eq!(none(&host), (0, 0, 0), "sink refused");
-        host.seal_lane = Some(lane_answering(|| Err(PunktfunkError::Crypto)));
+        host.seal_lane = Some(lane_answering(|| Err(LilynkError::Crypto)));
         let r = host.seal_frame_chunks_at(&frame, 7, 0, 1, &mut |_, _| Ok(()));
-        assert!(matches!(r, Err(PunktfunkError::Crypto)));
+        assert!(matches!(r, Err(LilynkError::Crypto)));
         assert_eq!(none(&host), (0, 0, 0), "lane refused");
         assert!(host.seal_lane.is_some());
         host.seal_lane = None;
@@ -2619,7 +2616,7 @@ mod wire_equivalence_tests {
             let got = chunked(&mut piped, &frame, i);
             assert!(piped.parity_lane.is_some(), "frame {i}");
             if i == 20 {
-                assert!(matches!(got, Err(PunktfunkError::Fec(_))), "frame {i}");
+                assert!(matches!(got, Err(LilynkError::Fec(_))), "frame {i}");
                 whole.next_seq = piped.next_seq;
                 continue;
             }
@@ -2654,7 +2651,7 @@ mod wire_equivalence_tests {
         let r = chunked(&mut piped, &frame, 0);
         assert!(matches!(
             r,
-            Err(PunktfunkError::Unsupported("parity lane died"))
+            Err(LilynkError::Unsupported("parity lane died"))
         ));
         assert!(piped.parity_lane.is_none());
         assert_eq!(piped.stats().frames_submitted, 0);
@@ -2718,7 +2715,7 @@ mod wire_equivalence_tests {
         // 65 537 blocks of 8 shards of 64 bytes: past the u16 block count.
         let huge = vec![0u8; 8 * 64 * 65_537];
         let r = opt.seal_frame(&huge, 7, 0);
-        assert!(matches!(r, Err(PunktfunkError::Unsupported(_))));
+        assert!(matches!(r, Err(LilynkError::Unsupported(_))));
         assert_eq!(opt.next_seq, 0);
         assert_eq!(opt.stats().packets_sent, 0);
         let frame = pattern(300);

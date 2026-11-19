@@ -151,7 +151,7 @@ unwrapped.overrideAttrs (old: {
     cp "$layerSo" "$TMPDIR/pf-layer.so"
     ${python3}/bin/python3 ${manifestRewriter} \
       "$layerJson" "$TMPDIR/pf-layer.json" \
-      "$out/lib/punktfunk/libVkLayer_PUNKTFUNK_gamescope_wsi.so"
+      "$out/lib/punktfunk/libVkLayer_LILYNK_gamescope_wsi.so"
 
     # gamescope's own default_extras_install.sh lays the reshade shaders and textures down under
     # read-only DIRECTORIES (mode 555). `rm` needs write permission on the CONTAINING directory,
@@ -174,9 +174,9 @@ unwrapped.overrideAttrs (old: {
     mv $out/bin/gamescope $out/bin/lilynk-gamescope
 
     install -Dm0755 "$TMPDIR/pf-layer.so" \
-      "$out/lib/punktfunk/libVkLayer_PUNKTFUNK_gamescope_wsi.so"
+      "$out/lib/punktfunk/libVkLayer_LILYNK_gamescope_wsi.so"
     install -Dm0644 "$TMPDIR/pf-layer.json" \
-      "$out/lib/punktfunk/vulkan/implicit_layer.d/punktfunk_gamescope_wsi.json"
+      "$out/lib/punktfunk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json"
   '';
 
   doInstallCheck = true;
@@ -220,7 +220,7 @@ unwrapped.overrideAttrs (old: {
     # path that does not exist is the worst shape of this bug: the loader reads it, finds nothing,
     # and carries on silently, so the box looks healthy and every game renders SDR.
     lib=$(sed -n 's/.*"library_path"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' \
-      $out/lib/punktfunk/vulkan/implicit_layer.d/punktfunk_gamescope_wsi.json)
+      $out/lib/punktfunk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json)
     [ -f "$lib" ] \
       || { echo "lilynk-gamescope: the layer manifest points at $lib, which is not installed"; exit 1; }
     runHook postInstallCheck

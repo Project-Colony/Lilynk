@@ -193,12 +193,12 @@ enum ProfileTarget {
 /// Move the pad's card to a four-channel profile and remember the previous index.
 ///
 /// User-visible, reverted at session end, `save = false` so WirePlumber does not remember it.
-/// `PUNKTFUNK_PAD_AUDIO_PROFILE=0` leaves the card alone.
+/// `LILYNK_PAD_AUDIO_PROFILE=0` leaves the card alone.
 fn ensure_pro_audio(device_id: u32) -> anyhow::Result<()> {
-    if crate::env_on("PUNKTFUNK_PAD_AUDIO_PROFILE") == Some(false) {
+    if crate::env_on("LILYNK_PAD_AUDIO_PROFILE") == Some(false) {
         anyhow::bail!(
             "the DualSense card has no four-channel profile active and \
-             PUNKTFUNK_PAD_AUDIO_PROFILE=0 forbids moving it — switch the controller to \
+             LILYNK_PAD_AUDIO_PROFILE=0 forbids moving it — switch the controller to \
              \"Pro Audio\" in your sound settings to feel haptics"
         );
     }
@@ -437,7 +437,7 @@ fn unity_volume_pod(channels: u32) -> anyhow::Result<Vec<u8>> {
 
 /// Pin the pad sink to unity. WirePlumber (0.4, 0.5) starts new cards at 0.4 (−24 dB, cubed
 /// UI 40%) globally, so both session ends stack. Not restored: putting −24 dB back would restore
-/// the bug. Failures cost attenuation, never audio. `PUNKTFUNK_PAD_SINK_VOLUME=0` skips.
+/// the bug. Failures cost attenuation, never audio. `LILYNK_PAD_SINK_VOLUME=0` skips.
 /// Two rounds under one deadline: registry bind, then `set_param`.
 fn pin_sink_volume(node_id: u32, channels: u32) -> anyhow::Result<()> {
     use anyhow::{anyhow, Context};
@@ -482,7 +482,7 @@ fn pin_sink_volume(node_id: u32, channels: u32) -> anyhow::Result<()> {
 
 /// Pin the picked node to unity on every (re)correlation — a profile change remints nodes.
 fn pin_picked(name: String, sinks: &[SinkNode]) -> String {
-    if crate::env_on("PUNKTFUNK_PAD_SINK_VOLUME") == Some(false) {
+    if crate::env_on("LILYNK_PAD_SINK_VOLUME") == Some(false) {
         return name;
     }
     // `split_parent` is a name on another node's proplist; there may be no bindable object.

@@ -30,9 +30,9 @@ Usage: rewrite-wsi-layer-manifest.py <src.json> <dst.json> <installed-library-pa
 import json
 import sys
 
-LAYER_NAME = "VK_LAYER_PUNKTFUNK_gamescope_wsi"
-ENABLE_VAR = "PUNKTFUNK_GAMESCOPE_WSI"
-DISABLE_VAR = "PUNKTFUNK_GAMESCOPE_WSI_DISABLE"
+LAYER_NAME = "VK_LAYER_LILYNK_gamescope_wsi"
+ENABLE_VAR = "LILYNK_GAMESCOPE_WSI"
+DISABLE_VAR = "LILYNK_GAMESCOPE_WSI_DISABLE"
 
 
 def main(argv):

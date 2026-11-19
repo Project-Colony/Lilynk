@@ -47,7 +47,7 @@ pub fn show_about(parent: &impl IsA<gtk::Widget>) {
         .application_icon(crate::app::APP_ID)
         .developer_name("Lilynk")
         // The package version `--version` prints, canary suffix included (build.rs).
-        .version(env!("PUNKTFUNK_VERSION"))
+        .version(env!("LILYNK_VERSION"))
         .website("https://github.com/Project-Colony/Lilynk")
         .license_type(gtk::License::Custom)
         .license(license.as_str())

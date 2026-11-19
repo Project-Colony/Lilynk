@@ -26,7 +26,7 @@ The client reads its switch when a stream starts, so reconnect after changing it
 **Stream → Share Clipboard** (⌃⌥⇧C) turns it on mid-stream and **Stop Sharing Clipboard** turns
 it off. The same keys work on an iPad with a keyboard.
 
-A `PUNKTFUNK_CLIPBOARD` line in `host.env` overrides step 1 and locks it in the console: see
+A `LILYNK_CLIPBOARD` line in `host.env` overrides step 1 and locks it in the console: see
 [Configuration](/docs/configuration).
 
 ## What crosses
@@ -69,7 +69,7 @@ Work down this list:
 | Cause | Fix |
 |---|---|
 | The host's **Shared clipboard** is **Off** | Step 1 in [Turn it on](#turn-it-on). |
-| The console shows **Set by PUNKTFUNK_CLIPBOARD in host.env.** | Change or remove that line, then restart the host ([Configuration](/docs/configuration)). |
+| The console shows **Set by LILYNK_CLIPBOARD in host.env.** | Change or remove that line, then restart the host ([Configuration](/docs/configuration)). |
 | Your client's switch is off for this host, or you changed it while streaming | Step 3, then reconnect. |
 | Your device's access level lacks **Clipboard** | Step 2. |
 | You're on an Apple TV | tvOS gives apps no clipboard. |

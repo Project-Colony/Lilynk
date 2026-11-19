@@ -35,7 +35,7 @@ InstallationNotes: |-
     Esta instalación generó una contraseña de acceso y no la mostró. Imprímela desde un
     PowerShell con privilegios ELEVADOS, ANTES de tu primer inicio de sesión:   lilynk-host web password
     Después la consola solo conserva un hash con sal en %ProgramData%\punktfunk\web-password, así que una
-    contraseña olvidada se restablece: vuelve a poner una línea PUNKTFUNK_UI_PASSWORD=<tu-contraseña> en ese
+    contraseña olvidada se restablece: vuelve a poner una línea LILYNK_UI_PASSWORD=<tu-contraseña> en ese
     archivo y ejecuta  lilynk-host service restart
 
   Configuración:  %ProgramData%\punktfunk\host.env

@@ -3,7 +3,7 @@
 //! Streaming (decode + present) runs in the spawned `lilynk-session` binary; the shell only
 //! needs the list of real (hardware) adapters to offer on a multi-GPU box (a hybrid laptop or an
 //! eGPU). The picked adapter description is persisted (`crate::trust::Settings::adapter`); the
-//! session binary exports it as `PUNKTFUNK_VK_ADAPTER` at startup unless that is already set.
+//! session binary exports it as `LILYNK_VK_ADAPTER` at startup unless that is already set.
 
 use windows::core::Interface;
 use windows::Win32::dxgi::{CreateDXGIFactory1, IDXGIAdapter, IDXGIFactory1};
@@ -48,7 +48,7 @@ fn all_adapters() -> Vec<IDXGIAdapter> {
 ///
 /// **Deduplicated by description**, because the description IS the identity everywhere
 /// downstream: the pick is persisted as that string (`Settings::adapter`) and matched by
-/// name in the session binary (`PUNKTFUNK_VK_ADAPTER`). So two entries with the same name
+/// name in the session binary (`LILYNK_VK_ADAPTER`). So two entries with the same name
 /// are one selectable choice however many times DXGI enumerates them — listing it twice
 /// only offers the user a meaningless coin flip.
 pub fn adapter_names() -> Vec<String> {

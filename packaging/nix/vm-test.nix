@@ -154,23 +154,23 @@ testers.runNixOSTest {
     # secret lines, the off splices the door's last password line back into web.env.
     machine.succeed(f"runuser -u bob -- rm -f {conf}/web-password")
     machine.succeed(
-        f"runuser -u bob -- sh -c 'printf \"%s\\n\" PUNKTFUNK_UI_BIND=127.0.0.1:47990 "
-        f"PUNKTFUNK_UI_PASSWORD_HASH=bob-1 PUNKTFUNK_UI_SECRET=bob-s > {conf}/web.env'"
+        f"runuser -u bob -- sh -c 'printf \"%s\\n\" LILYNK_UI_BIND=127.0.0.1:47990 "
+        f"LILYNK_UI_PASSWORD_HASH=bob-1 LILYNK_UI_SECRET=bob-s > {conf}/web.env'"
     )
     machine.succeed(switch("bob", "on"))
     machine.wait_for_unit("lilynk-door.service")
     taken = machine.succeed(f"runuser -u punktfunk -- cat {box}/web-password")
-    assert taken == "PUNKTFUNK_UI_PASSWORD_HASH=bob-1\nPUNKTFUNK_UI_SECRET=bob-s\n", taken
+    assert taken == "LILYNK_UI_PASSWORD_HASH=bob-1\nLILYNK_UI_SECRET=bob-s\n", taken
     machine.succeed(
         "runuser -u punktfunk -- sh -c "
-        f"'echo PUNKTFUNK_UI_PASSWORD_HASH=bob-2 >> {box}/web-password'"
+        f"'echo LILYNK_UI_PASSWORD_HASH=bob-2 >> {box}/web-password'"
     )
     machine.succeed(switch("bob", "off"))
     machine.succeed(f"test ! -e {record} && test ! -e {conf}/web-password")
     kept = machine.succeed(f"cat {conf}/web.env")
     assert kept == (
-        "PUNKTFUNK_UI_BIND=127.0.0.1:47990\nPUNKTFUNK_UI_SECRET=bob-s\n"
-        "PUNKTFUNK_UI_PASSWORD_HASH=bob-2\n"
+        "LILYNK_UI_BIND=127.0.0.1:47990\nLILYNK_UI_SECRET=bob-s\n"
+        "LILYNK_UI_PASSWORD_HASH=bob-2\n"
     ), kept
   '';
 }

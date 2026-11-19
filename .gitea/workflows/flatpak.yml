@@ -199,7 +199,7 @@ jobs:
           echo "BUNDLE=lilynk-client-${PF_VERSION}${{ matrix.suffix }}.flatpak" >> "$GITHUB_ENV"
           echo "FLATPAK_BRANCH=$PF_CHANNEL" >> "$GITHUB_ENV"
           echo "ALIAS=$ALIAS" >> "$GITHUB_ENV"
-          # The manifest's cargo step reads this into PUNKTFUNK_BUILD_VERSION (the repo dir is
+          # The manifest's cargo step reads this into LILYNK_BUILD_VERSION (the repo dir is
           # the module source), so the binaries report the package version, canary suffix and all.
           printf '%s\n' "$PF_VERSION" > packaging/flatpak/VERSION
           echo "flatpak version $PF_VERSION -> branch '$PF_CHANNEL' alias '$ALIAS'"

@@ -1,5 +1,5 @@
 //! `cargo run -p gen-headers`: regenerate `include/lilynk_core.h` and
-//! `include/punktfunk_console.h` from each crate's `cbindgen.toml`. A parse failure
+//! `include/lilynk_console.h` from each crate's `cbindgen.toml`. A parse failure
 //! exits non-zero and leaves the checked-in header as it was.
 
 #![forbid(unsafe_code)]
@@ -10,7 +10,7 @@ use std::process::ExitCode;
 /// (crate dir, header) pairs, relative to the workspace root.
 const HEADERS: [(&str, &str); 2] = [
     ("crates/client/lilynk-ffi", "include/lilynk_core.h"),
-    ("clients/apple/native", "include/punktfunk_console.h"),
+    ("clients/apple/native", "include/lilynk_console.h"),
 ];
 
 /// The workspace root. `cargo run` names this checkout at run time. A target dir shared between
@@ -59,7 +59,7 @@ mod tests {
             // Block comments are single-line here; one that spans lines would enter the hash.
             let line = line.split("//").next().unwrap_or("");
             let line = line.split("/*").next().unwrap_or("").trim();
-            if line.is_empty() || line.starts_with("#define PUNKTFUNK_ABI_VERSION ") {
+            if line.is_empty() || line.starts_with("#define LILYNK_ABI_VERSION ") {
                 continue;
             }
             for b in line.bytes().chain([b'\n']) {

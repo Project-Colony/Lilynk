@@ -565,7 +565,7 @@ fn steamos_build(build: &str, choices: &Choices) -> Vec<Step> {
     // This step ends the run, so the conflict phase never gets to move the port.
     if choices.move_mgmt_port {
         steps.push(Step::set_env(
-            "PUNKTFUNK_MGMT_BIND",
+            "LILYNK_MGMT_BIND",
             format!("0.0.0.0:{}", choices.mgmt_port),
         ));
     }

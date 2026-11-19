@@ -76,8 +76,8 @@ A `{"kind":"ctl.resync"}` line means events were missed: re-read the state you n
 To read Server-Sent Events directly, call the management API on the host with its token:
 
 ```sh
-. ~/.config/punktfunk/mgmt-token   # sets PUNKTFUNK_MGMT_TOKEN
-curl -Nk -H "Authorization: Bearer $PUNKTFUNK_MGMT_TOKEN" \
+. ~/.config/punktfunk/mgmt-token   # sets LILYNK_MGMT_TOKEN
+curl -Nk -H "Authorization: Bearer $LILYNK_MGMT_TOKEN" \
   "https://127.0.0.1:47990/api/v1/events?kinds=pairing.*,stream.*"
 ```
 

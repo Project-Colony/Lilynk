@@ -81,7 +81,7 @@ pub(crate) async fn get_webtransport() -> Response {
         }
         None => crate::mgmt::shared::api_error(
             StatusCode::NOT_FOUND,
-            "the WebTransport plane is not enabled (--webtransport / PUNKTFUNK_WEBTRANSPORT)",
+            "the WebTransport plane is not enabled (--webtransport / LILYNK_WEBTRANSPORT)",
         ),
     }
 }

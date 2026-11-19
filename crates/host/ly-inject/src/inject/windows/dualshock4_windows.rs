@@ -67,7 +67,7 @@ impl Ds4WinPad {
 
 /// Slot table, unplug, heartbeat, and `HidoutDedup` live in [`UhidManager`].
 pub struct Ds4WinProto {
-    /// Steam back-grip policy. DS4 has no paddle HID slot; `PUNKTFUNK_STEAM_REMAP=paddles=…`, default drop.
+    /// Steam back-grip policy. DS4 has no paddle HID slot; `LILYNK_STEAM_REMAP=paddles=…`, default drop.
     remap: crate::steam_remap::RemapConfig,
 }
 

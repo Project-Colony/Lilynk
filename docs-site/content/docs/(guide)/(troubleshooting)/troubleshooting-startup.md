@@ -37,18 +37,18 @@ The NVIDIA GL/EGL userspace package is missing. Install it and check its vendor 
 A key is misspelled, or a line points the host at the wrong session. The host reads `host.env` only
 when it starts, so restart after every edit: `systemctl --user restart lilynk-host`.
 
-- Keys are case-sensitive: `punktfunk_gamescope_attach=1` sets nothing.
+- Keys are case-sensitive: `lilynk_gamescope_attach=1` sets nothing.
 - `XDG_RUNTIME_DIR=/run/user/1000` on a box where `id -u` isn't 1000 points the host at another
   user's session. Delete the [session anchors](/docs/configuration#session-anchors); the service
   doesn't need them.
-- `PUNKTFUNK_COMPOSITOR` pins one backend and stops the host following Game Mode ↔ Desktop. Remove
+- `LILYNK_COMPOSITOR` pins one backend and stops the host following Game Mode ↔ Desktop. Remove
   it on a box that switches sessions.
 
 ## Windows
 
 ### Windows: the host or the web console won't start
 
-The `PunktfunkHost` service runs both and restarts either one that stops. Check it from an elevated
+The `LilynkHost` service runs both and restarts either one that stops. Check it from an elevated
 PowerShell:
 
 ```powershell

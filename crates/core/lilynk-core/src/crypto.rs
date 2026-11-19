@@ -8,7 +8,7 @@
 //! lives in `Session`, not here.
 
 use crate::config::Role;
-use crate::error::{PunktfunkError, Result};
+use crate::error::{LilynkError, Result};
 use zeroize::Zeroize;
 
 pub const TAG_LEN: usize = 16;
@@ -25,7 +25,7 @@ mod aws_lc {
     use aws_lc_rs::aead::{Aad, Algorithm, LessSafeKey, Nonce, UnboundKey};
 
     use crate::crypto::TAG_LEN;
-    use crate::error::{PunktfunkError, Result};
+    use crate::error::{LilynkError, Result};
 
     pub struct Key(LessSafeKey);
 
@@ -50,7 +50,7 @@ mod aws_lc {
                     Aad::from(aad),
                     plaintext,
                 )
-                .map_err(|_| PunktfunkError::Crypto)?;
+                .map_err(|_| LilynkError::Crypto)?;
             let mut out = [0u8; TAG_LEN];
             out.copy_from_slice(tag.as_ref());
             Ok(out)
@@ -70,7 +70,7 @@ mod aws_lc {
                     tag,
                     ciphertext,
                 )
-                .map_err(|_| PunktfunkError::Crypto)?;
+                .map_err(|_| LilynkError::Crypto)?;
             Ok(())
         }
 
@@ -86,7 +86,7 @@ mod aws_lc {
             tag: &[u8; TAG_LEN],
         ) -> Result<()> {
             if out.len() != ciphertext.len() {
-                return Err(PunktfunkError::BadPacket);
+                return Err(LilynkError::BadPacket);
             }
             out.copy_from_slice(ciphertext);
             self.open_in_place(nonce, aad, out, tag)
@@ -136,7 +136,7 @@ mod chacha {
         use chacha20poly1305::ChaCha20Poly1305;
 
         use crate::crypto::TAG_LEN;
-        use crate::error::{PunktfunkError, Result};
+        use crate::error::{LilynkError, Result};
 
         pub struct Key(ChaCha20Poly1305);
 
@@ -154,7 +154,7 @@ mod chacha {
                 let tag = self
                     .0
                     .encrypt_inout_detached((&nonce).into(), aad, plaintext.into())
-                    .map_err(|_| PunktfunkError::Crypto)?;
+                    .map_err(|_| LilynkError::Crypto)?;
                 Ok(tag.into())
             }
 
@@ -167,7 +167,7 @@ mod chacha {
             ) -> Result<()> {
                 self.0
                     .decrypt_inout_detached((&nonce).into(), aad, ciphertext.into(), tag.into())
-                    .map_err(|_| PunktfunkError::Crypto)
+                    .map_err(|_| LilynkError::Crypto)
             }
         }
     }
@@ -227,7 +227,7 @@ mod aes {
         use aes_gcm::Aes128Gcm;
 
         use crate::crypto::TAG_LEN;
-        use crate::error::{PunktfunkError, Result};
+        use crate::error::{LilynkError, Result};
 
         pub struct Key(Aes128Gcm);
 
@@ -245,7 +245,7 @@ mod aes {
                 Ok(self
                     .0
                     .encrypt_inout_detached((&nonce).into(), aad, plaintext.into())
-                    .map_err(|_| PunktfunkError::Crypto)?
+                    .map_err(|_| LilynkError::Crypto)?
                     .into())
             }
 
@@ -258,7 +258,7 @@ mod aes {
             ) -> Result<()> {
                 self.0
                     .decrypt_inout_detached((&nonce).into(), aad, ciphertext.into(), tag.into())
-                    .map_err(|_| PunktfunkError::Crypto)
+                    .map_err(|_| LilynkError::Crypto)
             }
 
             /// Open `ciphertext` into `out` (same length). On failure `out` is unspecified.
@@ -271,10 +271,10 @@ mod aes {
                 tag: &[u8; TAG_LEN],
             ) -> Result<()> {
                 let io = aes_gcm::aead::inout::InOutBuf::new(ciphertext, out)
-                    .map_err(|_| PunktfunkError::BadPacket)?;
+                    .map_err(|_| LilynkError::BadPacket)?;
                 self.0
                     .decrypt_inout_detached((&nonce).into(), aad, io, tag.into())
-                    .map_err(|_| PunktfunkError::Crypto)
+                    .map_err(|_| LilynkError::Crypto)
             }
         }
     }
@@ -324,7 +324,7 @@ impl Cipher {
             // No out-of-place open on this backend: the copy is the one the in-place path makes.
             Cipher::ChaCha20Poly1305(c) => {
                 if out.len() != ciphertext.len() {
-                    return Err(PunktfunkError::BadPacket);
+                    return Err(LilynkError::BadPacket);
                 }
                 out.copy_from_slice(ciphertext);
                 c.open_in_place(nonce, aad, out, tag)
@@ -403,11 +403,11 @@ impl SessionCrypto {
     /// as received. On failure `out` is unspecified.
     pub fn open_wire_into(&self, seq: u64, wire: &[u8], out: &mut [u8]) -> Result<()> {
         if wire.len() < self.clear + TAG_LEN {
-            return Err(PunktfunkError::BadPacket);
+            return Err(LilynkError::BadPacket);
         }
         let (aad, rest) = wire.split_at(self.clear);
         let (ciphertext, tag) = rest.split_at(rest.len() - TAG_LEN);
-        let tag: &[u8; TAG_LEN] = tag.try_into().map_err(|_| PunktfunkError::Crypto)?;
+        let tag: &[u8; TAG_LEN] = tag.try_into().map_err(|_| LilynkError::Crypto)?;
         let key = self.recv.key(seq);
         key.cipher
             .open_into(media_nonce(&key.iv, seq), aad, ciphertext, out, tag)
@@ -423,12 +423,12 @@ impl SessionCrypto {
     /// failure the buffer's contents are unspecified.
     pub fn open_media(&self, seq: u64, aad: &[u8], buf: &mut [u8]) -> Result<usize> {
         if buf.len() < TAG_LEN {
-            return Err(PunktfunkError::BadPacket);
+            return Err(LilynkError::BadPacket);
         }
         let key = self.recv.key(seq);
         let split = buf.len() - TAG_LEN;
         let (ciphertext, tag) = buf.split_at_mut(split);
-        let tag: &[u8; TAG_LEN] = (&*tag).try_into().map_err(|_| PunktfunkError::Crypto)?;
+        let tag: &[u8; TAG_LEN] = (&*tag).try_into().map_err(|_| LilynkError::Crypto)?;
         key.cipher
             .open(media_nonce(&key.iv, seq), aad, ciphertext, tag)?;
         Ok(split)
@@ -509,7 +509,7 @@ impl PacketKey {
         let split = buf
             .len()
             .checked_sub(TAG_LEN)
-            .ok_or(PunktfunkError::BadPacket)?;
+            .ok_or(LilynkError::BadPacket)?;
         let (plaintext, tag_slot) = buf.split_at_mut(split);
         let tag = self
             .cipher
@@ -740,7 +740,7 @@ mod tests {
             for len in 0..TAG_LEN {
                 assert!(matches!(
                     client.open_media(0, &aad, &mut vec![0; len]),
-                    Err(PunktfunkError::BadPacket)
+                    Err(LilynkError::BadPacket)
                 ));
             }
         }

@@ -94,7 +94,7 @@ CAP_SYS_NICE_BIT=23
 # regex — the messages contain em dashes and parentheses). If a message is reworded, this block is
 # the single place to fix, and a leg that stops matching FAILS rather than silently passing.
 L_FALLBACK='encoding in-process at default GPU priority'        # the clause EVERY fallback ends with
-L_OFF='pyrowave: PUNKTFUNK_ENCODE_WORKER=off'
+L_OFF='pyrowave: LILYNK_ENCODE_WORKER=off'
 L_NOTFOUND='the encode worker was not found beside the host binary or on PATH'
 L_NOTUP='the encode worker did not come up'
 L_GRANTED='encoding in the capability-carrying worker at an elevated global queue priority'
@@ -142,7 +142,7 @@ usage() {
   Options:
     --host-bin PATH     the INSTALLED lilynk-host (default: from a running host, then the
                         installed .desktop's Exec=, then PATH)
-    --worker-bin PATH   the INSTALLED lilynk-encode-worker (default: $PUNKTFUNK_ENCODE_WORKER,
+    --worker-bin PATH   the INSTALLED lilynk-encode-worker (default: $LILYNK_ENCODE_WORKER,
                         then beside the host binary, then PATH — mirrors the host's own resolution)
     --host-pid PID      inspect this host process only (default: every running lilynk-host)
     --source SRC        spike capture source: kwin-virtual | portal (default: kwin-virtual under
@@ -337,9 +337,9 @@ resolve_binaries() {
   # Mirror the host's own resolution order (ly-zerocopy's ipc::resolve_worker_path).
   if [ -n "$OPT_WORKER_BIN" ]; then
     WORKER_BIN="$OPT_WORKER_BIN"; WORKER_BIN_FROM='--worker-bin'
-  elif [ -n "${PUNKTFUNK_ENCODE_WORKER:-}" ] && \
-       [ "$(printf '%s' "${PUNKTFUNK_ENCODE_WORKER}" | tr 'A-Z' 'a-z')" != off ]; then
-    WORKER_BIN="$PUNKTFUNK_ENCODE_WORKER"; WORKER_BIN_FROM='$PUNKTFUNK_ENCODE_WORKER'
+  elif [ -n "${LILYNK_ENCODE_WORKER:-}" ] && \
+       [ "$(printf '%s' "${LILYNK_ENCODE_WORKER}" | tr 'A-Z' 'a-z')" != off ]; then
+    WORKER_BIN="$LILYNK_ENCODE_WORKER"; WORKER_BIN_FROM='$LILYNK_ENCODE_WORKER'
   elif [ -n "$HOST_BIN" ] && [ -f "$(dirname "$HOST_BIN")/$WORKER_BIN_NAME" ]; then
     WORKER_BIN="$(dirname "$HOST_BIN")/$WORKER_BIN_NAME"; WORKER_BIN_FROM='beside the host binary'
   else
@@ -418,7 +418,7 @@ spike_failure_reason() {
   line="$(log_cat "$log" | LC_ALL=C grep -E 'ERROR' | head -1 | sed 's/^.*ERROR[[:space:]]*//')"
   if [ -n "$line" ]; then printf '%s' "$line"; return 0; fi
   if [ "$(perf_windows "$log")" = 0 ]; then
-    printf '%s' "the spike never encoded a frame — no PUNKTFUNK_PERF window in the log at all"
+    printf '%s' "the spike never encoded a frame — no LILYNK_PERF window in the log at all"
     return 0
   fi
   return 1
@@ -427,7 +427,7 @@ spike_failure_reason() {
 assert_inline_arm() {
   local log="$1" tag="$2" rc=0
   if ! logs_have "$log" "$L_OFF"; then
-    info "$tag: no 'PUNKTFUNK_ENCODE_WORKER=off' line — this arm did not force the in-process path"; rc=1
+    info "$tag: no 'LILYNK_ENCODE_WORKER=off' line — this arm did not force the in-process path"; rc=1
   fi
   if logs_have "$log" "$L_GRANTED" || logs_have "$log" "$L_NOPRIO"; then
     info "$tag: a 'capability-carrying worker' line is present — this arm is not in-process"; rc=1
@@ -437,7 +437,7 @@ assert_inline_arm() {
 
 # --- the perf instrument ----------------------------------------------------------------------------
 #
-# `PUNKTFUNK_PERF` makes the PyroWave encoder emit one summary line every ~2 s over >=30 frames:
+# `LILYNK_PERF` makes the PyroWave encoder emit one summary line every ~2 s over >=30 frames:
 #   frames=30 mean_us=… p50_us=… p99_us=… max_us=… depth=… pyrowave encode, submit->AU (…)
 # The measured quantity is submit→AU: CSC + encode + fence wait + packetize. Per PW1 the FIRST
 # window is warm-up and is dropped, and `encode_fps` is a VACUOUS metric here (a starved capture
@@ -514,7 +514,7 @@ compositor_guess() {
 
 # run_spike <arm-name> <wall-seconds> <env-assignment>...
 #
-# Launches `lilynk-host spike --codec pyrowave` with PUNKTFUNK_PERF armed, captures the combined
+# Launches `lilynk-host spike --codec pyrowave` with LILYNK_PERF armed, captures the combined
 # stderr of the host AND its worker (one inherited stream), waits at most `wall + grace`, then
 # terminates it. Echoes the log path. Returns non-zero only if the spike could not be started.
 #
@@ -530,10 +530,10 @@ run_spike() {
   # plain log is also the one a human greps by hand when a leg goes red, and `p99_us\e[0m\e[2m=…`
   # defeats the obvious grep.
   #
-  # PUNKTFUNK_ENCODER=pyrowave changes no capture route. `--codec pyrowave` makes the virtual
+  # LILYNK_ENCODER=pyrowave changes no capture route. `--codec pyrowave` makes the virtual
   # source pass its dmabuf to PyroWave; the portal source is never a PyroWave session, so on
   # NVIDIA it can resolve `cuda-import`, whose payload PyroWave rejects.
-  local -a envs=(PUNKTFUNK_PERF=1 NO_COLOR=1 PUNKTFUNK_ENCODER=pyrowave)
+  local -a envs=(LILYNK_PERF=1 NO_COLOR=1 LILYNK_ENCODER=pyrowave)
   for kv in "$@"; do envs+=("$kv"); done
   local -a cmd=("$HOST_BIN" spike --codec pyrowave --source "$SPIKE_SOURCE"
                 --width "$OPT_WIDTH" --height "$OPT_HEIGHT" --fps "$OPT_FPS"
@@ -822,7 +822,7 @@ leg_v2() {
   setup_logdir
   # The intent is pinned rather than inherited: a host.env or shell with PYROWAVE_QUEUE_PRIORITY=off
   # in it would produce "no queue priority requested" and read as a failed grant.
-  run_spike v2-grant "$OPT_SECONDS" "PUNKTFUNK_ENCODE_WORKER=$WORKER_BIN" "PYROWAVE_QUEUE_PRIORITY=realtime"
+  run_spike v2-grant "$OPT_SECONDS" "LILYNK_ENCODE_WORKER=$WORKER_BIN" "PYROWAVE_QUEUE_PRIORITY=realtime"
   wait_spike "$OPT_SECONDS"
   local log="$SPIKE_LOG"
 
@@ -860,7 +860,7 @@ ab_report() {
   local tag="$1" a_log="$2" a_name="$3" b_log="$4" b_name="$5" gate_us="${6:-}"
   local a b a50 a99 an b50 b99 bn
   a="$(perf_summary "$a_log")" || { fail "$tag" "$a_name: fewer than 3 usable perf windows — the"
-    info "capture may be starved, or PUNKTFUNK_PERF did not arm. Log: $a_log"; return 1; }
+    info "capture may be starved, or LILYNK_PERF did not arm. Log: $a_log"; return 1; }
   b="$(perf_summary "$b_log")" || { fail "$tag" "$b_name: fewer than 3 usable perf windows. Log: $b_log"; return 1; }
   read -r a50 a99 an <<<"$a"
   read -r b50 b99 bn <<<"$b"
@@ -897,11 +897,11 @@ leg_v3a() {
   resolve_source
 
   # Arm A: in-process, priority explicitly OFF so the two arms differ in nothing but the boundary.
-  run_spike v3a-inline "$OPT_SECONDS" "PUNKTFUNK_ENCODE_WORKER=off" "PYROWAVE_QUEUE_PRIORITY=off"
+  run_spike v3a-inline "$OPT_SECONDS" "LILYNK_ENCODE_WORKER=off" "PYROWAVE_QUEUE_PRIORITY=off"
   wait_spike "$OPT_SECONDS"
   local a_log="$SPIKE_LOG"
   # Arm B: the uncapped worker, same intent.
-  run_spike v3a-worker "$OPT_SECONDS" "PUNKTFUNK_ENCODE_WORKER=$UNCAPPED_COPY" "PYROWAVE_QUEUE_PRIORITY=off"
+  run_spike v3a-worker "$OPT_SECONDS" "LILYNK_ENCODE_WORKER=$UNCAPPED_COPY" "PYROWAVE_QUEUE_PRIORITY=off"
   wait_spike "$OPT_SECONDS"
   local b_log="$SPIKE_LOG"
 
@@ -935,10 +935,10 @@ leg_v3b() {
 
   # Arm A is exactly PW1's "refused" arm: in-process, asking for priority and being refused (the
   # host binary is uncapped by construction, so the ladder walks REALTIME -> HIGH -> default).
-  run_spike v3b-inline "$OPT_SECONDS" "PUNKTFUNK_ENCODE_WORKER=off" "PYROWAVE_QUEUE_PRIORITY=realtime"
+  run_spike v3b-inline "$OPT_SECONDS" "LILYNK_ENCODE_WORKER=off" "PYROWAVE_QUEUE_PRIORITY=realtime"
   wait_spike "$OPT_SECONDS"
   local a_log="$SPIKE_LOG"
-  run_spike v3b-worker "$OPT_SECONDS" "PUNKTFUNK_ENCODE_WORKER=$WORKER_BIN" "PYROWAVE_QUEUE_PRIORITY=realtime"
+  run_spike v3b-worker "$OPT_SECONDS" "LILYNK_ENCODE_WORKER=$WORKER_BIN" "PYROWAVE_QUEUE_PRIORITY=realtime"
   wait_spike "$OPT_SECONDS"
   local b_log="$SPIKE_LOG"
 
@@ -975,10 +975,10 @@ leg_v4() {
   local short=$(( OPT_SECONDS < 20 ? OPT_SECONDS : 20 ))
 
   # --- rung: the binary is not there. Read-only — a path that does not exist, never a deletion.
-  # An operator-set PUNKTFUNK_ENCODE_WORKER is deliberately NOT existence-checked (a named path is
+  # An operator-set LILYNK_ENCODE_WORKER is deliberately NOT existence-checked (a named path is
   # entitled to a failure that names it back), so this lands on the SPAWN rung ("did not come up")
   # rather than the not-found one; both are accepted here because both are the same guarantee.
-  run_spike v4-missing "$short" "PUNKTFUNK_ENCODE_WORKER=$LOG_DIR/definitely-not-here"
+  run_spike v4-missing "$short" "LILYNK_ENCODE_WORKER=$LOG_DIR/definitely-not-here"
   wait_spike "$short"
   local log="$SPIKE_LOG"
   if logs_have "$log" "$L_NOTUP" || logs_have "$log" "$L_NOTFOUND"; then
@@ -991,19 +991,19 @@ leg_v4() {
     fail V4.a "no fallback warn for a worker path that does not exist — see $log"
   fi
 
-  # --- rung: PUNKTFUNK_ENCODE_WORKER=off (the documented escape hatch).
-  run_spike v4-off "$short" "PUNKTFUNK_ENCODE_WORKER=off"
+  # --- rung: LILYNK_ENCODE_WORKER=off (the documented escape hatch).
+  run_spike v4-off "$short" "LILYNK_ENCODE_WORKER=off"
   wait_spike "$short"
   log="$SPIKE_LOG"
   if logs_have "$log" "$L_OFF" && [ "$(perf_windows "$log")" -ge 1 ]; then
-    pass V4.b "PUNKTFUNK_ENCODE_WORKER=off: one info line, encoding in-process, stream up"
+    pass V4.b "LILYNK_ENCODE_WORKER=off: one info line, encoding in-process, stream up"
   else
     fail V4.b "the off escape hatch did not behave — see $log"
   fi
 
   # --- rung: a worker that starts and immediately dies (spawn ok, handshake never completes).
   if [ -x /bin/false ]; then
-    run_spike v4-false "$short" "PUNKTFUNK_ENCODE_WORKER=/bin/false"
+    run_spike v4-false "$short" "LILYNK_ENCODE_WORKER=/bin/false"
     wait_spike "$short"
     log="$SPIKE_LOG"
     if logs_have "$log" "$L_NOTUP" && [ "$(perf_windows "$log")" -ge 1 ]; then
@@ -1021,7 +1021,7 @@ leg_v4() {
   if [ -n "$WORKER_BIN" ] && [ -x "$WORKER_BIN" ] && [ "$(file_caps "$WORKER_BIN")" = "$WANT_WORKER_CAPS" ]; then
     make_uncapped_copy
     if [ $? = 0 ]; then
-      run_spike v4-inert "$short" "PUNKTFUNK_ENCODE_WORKER=$UNCAPPED_COPY" "PYROWAVE_QUEUE_PRIORITY=realtime"
+      run_spike v4-inert "$short" "LILYNK_ENCODE_WORKER=$UNCAPPED_COPY" "PYROWAVE_QUEUE_PRIORITY=realtime"
       wait_spike "$short"
       log="$SPIKE_LOG"
       if logs_have "$log" "$L_INERT" && logs_have "$log" "$L_INERT_WORKER" \
@@ -1051,7 +1051,7 @@ leg_v4() {
     skip V4.e "no worker binary to kill"
   else
     local kwall=$(( short * 3 ))
-    run_spike v4-kill "$kwall" "PUNKTFUNK_ENCODE_WORKER=$WORKER_BIN" "PYROWAVE_QUEUE_PRIORITY=realtime"
+    run_spike v4-kill "$kwall" "LILYNK_ENCODE_WORKER=$WORKER_BIN" "PYROWAVE_QUEUE_PRIORITY=realtime"
     local spike_pid="$SPIKE_PID" wlog="$SPIKE_LOG" wpid='' t=0
     while [ "$t" -lt 30 ] && [ -z "$wpid" ]; do
       wpid="$(worker_pids_of "$spike_pid" | head -1)"
@@ -1136,7 +1136,7 @@ leg_v5() {
   if [ -z "$WORKER_BIN" ] || [ ! -x "$WORKER_BIN" ]; then skip V5 "no worker binary"; return 0; fi
   setup_logdir; resolve_source
   local wall=$(( OPT_MINUTES * 60 ))
-  run_spike v5-fd "$wall" "PUNKTFUNK_ENCODE_WORKER=$WORKER_BIN"
+  run_spike v5-fd "$wall" "LILYNK_ENCODE_WORKER=$WORKER_BIN"
   local spike_pid="$SPIKE_PID" log="$SPIKE_LOG"
   if [ -z "$spike_pid" ]; then skip V5 "the spike did not stay up"; return 0; fi
 
@@ -1439,7 +1439,7 @@ Every fallback rung ends with the same clause, so one grep finds them all whiche
 
          journalctl --user -u lilynk-host -b | grep -F 'encoding in-process at default GPU priority'
 
-⚠ The worker's PUNKTFUNK_PERF p50/p99 summary is written by the WORKER process to inherited stderr.
+⚠ The worker's LILYNK_PERF p50/p99 summary is written by the WORKER process to inherited stderr.
   It reaches journalctl. It does NOT reach the web console's Logs tab — that ring is a tracing layer
   inside the host process and the worker is not in it. Read the journal, not the console.
 EOF

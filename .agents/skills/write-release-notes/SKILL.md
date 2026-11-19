@@ -16,10 +16,10 @@ Ordinary PRs do not run this and do not edit `CHANGELOG.md`.
 3. A `## Unreleased` dump in `CHANGELOG.md`, if one exists, is required reading **after** git log: it carries the "what the reader must do" that pre-footer commits lack. It is not the source. Then replace it with a **short card** (lead + versions + Breaking + knobs). Retitle `## Unreleased` → `## vX.Y.Z` only in the **version-bump** commit. Do not start a new dump. The 0.35 cut may still read the dump: those commits lack `BREAKING CHANGE:` footers.
 4. Versioned surfaces from **code**, vs the previous tag (do not invent numbers):
    - Wire: `WIRE_VERSION` in `crates/core/lilynk-core/src/lib.rs`
-   - C ABI: `ABI_VERSION` / `PUNKTFUNK_ABI_VERSION` in that file and `include/lilynk_core.h`
+   - C ABI: `ABI_VERSION` / `LILYNK_ABI_VERSION` in that file and `include/lilynk_core.h`
    - Driver protocol: `MIN_DRIVER_PROTOCOL_VERSION` in `crates/host/ly-driver-proto/src/lib.rs`
    - Gamepad channel, plugin schema, OpenAPI (`api/openapi.json` info.version), gamescope `+pfhdrN`, SDK / plugin-kit tags — copy the rows the previous CHANGELOG section already lists; mark unchanged.
-5. Knobs, mechanically: `git grep -ohE 'PUNKTFUNK_[A-Z0-9_]+' vPrev -- crates | sort -u` against the same at HEAD; every new name is a Knobs line or a conscious skip. Same for new `punktfunk` / `lilynk-host` subcommands (`docs-site/content/docs/(reference)/host-cli.md` diff).
+5. Knobs, mechanically: `git grep -ohE 'LILYNK_[A-Z0-9_]+' vPrev -- crates | sort -u` against the same at HEAD; every new name is a Knobs line or a conscious skip. Same for new `punktfunk` / `lilynk-host` subcommands (`docs-site/content/docs/(reference)/host-cli.md` diff).
 6. `git diff --stat vPrev HEAD -- docs-site/content` — every changed page is a user-facing fact; a new page is a bullet.
 
 ## Outputs (same bump commit; drafts may exist earlier)

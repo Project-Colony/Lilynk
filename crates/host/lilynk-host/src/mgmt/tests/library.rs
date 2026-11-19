@@ -204,7 +204,7 @@ fn the_built_library_is_kept_until_an_input_moves() {
     assert!(!Arc::ptr_eq(&second, &crate::library::sorted_games()));
 }
 
-/// A Windows seat lists and resolves the box's titles from `PUNKTFUNK_LIBRARY_DIR`, leaves one
+/// A Windows seat lists and resolves the box's titles from `LILYNK_LIBRARY_DIR`, leaves one
 /// account's sources out, rebuilds on its own play stats, and answers a library write with 409.
 #[tokio::test]
 async fn a_seat_plays_the_boxs_library_and_changes_none_of_it() {

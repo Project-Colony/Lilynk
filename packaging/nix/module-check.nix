@@ -147,7 +147,7 @@ let
       openFirewall = true;
       gamescopeHdr = false;
       settings.RUST_LOG = "info";
-      settings.PUNKTFUNK_MGMT_BIND = "0.0.0.0:47991";
+      settings.LILYNK_MGMT_BIND = "0.0.0.0:47991";
     };
     services.lilynk.web.bind = "127.0.0.1";
     services.lilynk.seats.enable = true;
@@ -248,10 +248,10 @@ let
     }
     # ...while the ENCODE WORKER, which nothing ever has to identify, is pointed at the wrapper.
     {
-      name = "host points PUNKTFUNK_ENCODE_WORKER at the capability wrapper";
+      name = "host points LILYNK_ENCODE_WORKER at the capability wrapper";
       ok =
         has desktop "lilynk-host"
-          "PUNKTFUNK_ENCODE_WORKER=/run/wrappers/bin/lilynk-encode-worker";
+          "LILYNK_ENCODE_WORKER=/run/wrappers/bin/lilynk-encode-worker";
     }
     {
       name = "the encode-worker wrapper carries exactly cap_sys_nice=ep";
@@ -323,7 +323,7 @@ let
 
     # --- the console ---------------------------------------------------------------------------
     {
-      # web-init.sh writes a PUNKTFUNK_UI_BIND into host.env; read, it would beat `web.bind`. The
+      # web-init.sh writes a LILYNK_UI_BIND into host.env; read, it would beat `web.bind`. The
       # rest is the shipped list as it stands, mandatory token included.
       name = "the console binds where web.bind says, never host.env";
       ok =
@@ -332,7 +332,7 @@ let
         in
         lib.head files == ""
         && lib.tail files == shippedEnvFiles ../../scripts/lilynk-web.service
-        && has appliance "lilynk-web" "PUNKTFUNK_UI_BIND=0.0.0.0";
+        && has appliance "lilynk-web" "LILYNK_UI_BIND=0.0.0.0";
     }
 
     # --- the packaged units and the runner's drop-in --------------------------------------------
@@ -448,7 +448,7 @@ let
       name = "seats points seat-session at the system's host build";
       ok =
         hasSys seats "lilynk-seat@.service"
-          "PUNKTFUNK_HOST_BIN=/pf-stub/system-lilynk-host/bin/lilynk-host";
+          "LILYNK_HOST_BIN=/pf-stub/system-lilynk-host/bin/lilynk-host";
     }
     {
       # The console turns the door on through the helper templates, which only this group starts.
@@ -470,8 +470,8 @@ let
         let
           env = seats.systemd.services."lilynk-seat@".environment;
         in
-        lib.hasSuffix "-lilynk-owner.env" env.PUNKTFUNK_OWNER_ENV
-        && lib.hasSuffix "/lilynk-encode-worker" env.PUNKTFUNK_ENCODE_WORKER;
+        lib.hasSuffix "-lilynk-owner.env" env.LILYNK_OWNER_ENV
+        && lib.hasSuffix "/lilynk-encode-worker" env.LILYNK_ENCODE_WORKER;
     }
     {
       name = "seats refuses a box with no host";
@@ -528,7 +528,7 @@ let
         let
           env = seats.systemd.services.lilynk-door.environment;
         in
-        env.PUNKTFUNK_MGMT_BIND or null == "0.0.0.0:47991" && !(env ? RUST_LOG);
+        env.LILYNK_MGMT_BIND or null == "0.0.0.0:47991" && !(env ? RUST_LOG);
     }
     {
       # The helper's `systemctl enable` has nowhere to write on NixOS, so the units are wired
@@ -557,7 +557,7 @@ let
         let
           files = seats.systemd.services.lilynk-web-door.serviceConfig.EnvironmentFile;
         in
-        hasSys seats "lilynk-web-door.service" "PUNKTFUNK_UI_BIND=127.0.0.1"
+        hasSys seats "lilynk-web-door.service" "LILYNK_UI_BIND=127.0.0.1"
         && lib.head files == ""
         && lib.tail files == shippedEnvFiles ../linux/lilynk-web-door.service;
     }

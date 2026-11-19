@@ -31,7 +31,7 @@ guide.
 
 `--help` lists every subcommand and flag, and is the only list that cannot go stale: `serve`, `ctl`
 (operator control over the local mgmt API), `plugins`, `tray`, `openapi` (regenerates
-[`api/openapi.json`](../../../api/openapi.json)), `punktfunk1-host` (a standalone native listener for
+[`api/openapi.json`](../../../api/openapi.json)), `lilynk1-host` (a standalone native listener for
 measurement), `probe-compositor`, `list-monitors`, `spike`, plus `service` / `driver` / `web` on
 Windows.
 

@@ -22,7 +22,7 @@ import { diag } from "../lib/diag";
 import { read, write } from "../lib/storage";
 import { stopGameStream } from "../steam/launch";
 import { isGameStreaming, subscribeRunning } from "../steam/running";
-import { Game, PunktfunkMark, streamFrom } from "./game";
+import { Game, LilynkMark, streamFrom } from "./game";
 import { collectElements, createRenderPatcher, describe } from "./patch";
 
 declare const SteamClient: {
@@ -187,7 +187,7 @@ export function openPlayFromMenu(overview: Overview, anchor?: EventTarget): void
           {!host.online && <span style={{ opacity: 0.6 }}> · {t("decky_host_asleep")}</span>}
         </span>
         <span style={{ marginLeft: "auto", paddingLeft: "1em", display: "inline-flex", opacity: 0.85 }}>
-          <PunktfunkMark size={18} />
+          <LilynkMark size={18} />
         </span>
       </MenuItem>,
     );
@@ -288,7 +288,7 @@ const playButtonPatcher = createRenderPatcher((out, self) => {
   const iconIdx = kids.findIndex((k) => k && typeof k === "object" && k.type && typeof k.type !== "string");
   const labelIdx = kids.findIndex((k) => k && k.type === "div");
   if (iconIdx >= 0) {
-    kids[iconIdx] = <PunktfunkMark key="pf-mark" size={26} />;
+    kids[iconIdx] = <LilynkMark key="pf-mark" size={26} />;
   }
   if (labelIdx >= 0) {
     kids[labelIdx] = cloneElement(kids[labelIdx], {}, streaming ? t("decky_play_stop") : t("decky_play_stream"));

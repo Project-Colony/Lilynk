@@ -133,7 +133,7 @@ export interface ProfilesResult extends CliResult {
 }
 
 export interface RunnerInfo {
-  runner: string; // absolute path to bin/punktfunkrun.sh
+  runner: string; // absolute path to bin/lilynkrun.sh
   app_id: string; // flatpak app id
   exists: boolean;
   // Which client the backend resolved: the flatpak, a native install (.deb/rpm/sysext/AUR/nix),

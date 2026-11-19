@@ -7,7 +7,7 @@
 #![forbid(unsafe_code)]
 
 use lilynk_core::config::{Config, FecConfig, FecScheme, Role};
-use lilynk_core::error::PunktfunkError;
+use lilynk_core::error::LilynkError;
 use lilynk_core::packet::{FLAG_PIC, FLAG_SOF, USER_FLAG_CHUNK_ALIGNED};
 use lilynk_core::session::{MediaV2, Session};
 use lilynk_core::transport::loopback_pair;
@@ -89,7 +89,7 @@ fn run(
                     completed += 1;
                 }
             }
-            Err(PunktfunkError::NoFrame) => {} // unrecoverable at this loss rate
+            Err(LilynkError::NoFrame) => {} // unrecoverable at this loss rate
             Err(e) => panic!("unexpected error: {e}"),
         }
     }
@@ -271,7 +271,7 @@ fn run_partial(
                     let e = delivered.entry(got.frame_index).or_insert(false);
                     *e |= got.complete;
                 }
-                Err(PunktfunkError::NoFrame) => break,
+                Err(LilynkError::NoFrame) => break,
                 Err(e) => panic!("unexpected error: {e}"),
             }
         }

@@ -21,7 +21,7 @@ case "$*" in
   To change channel, switch the branch, then run update.sh --pull:
 $SWITCH" ;;
 esac
-[ -d "$SRC/crates/host/lilynk-host" ] || die "no punktfunk source at $SRC (set PUNKTFUNK_SRC)"
+[ -d "$SRC/crates/host/lilynk-host" ] || die "no punktfunk source at $SRC (set LILYNK_SRC)"
 WEB=0; [ -f "$HOME/.config/systemd/user/lilynk-web.service" ] && WEB=1
 
 # Once across the exec below, so a refused password isn't asked for again after the pull.
@@ -52,7 +52,7 @@ $SWITCH"
   one with 'git -C $SRC checkout -- <file>') and re-run. Nothing was rebuilt or restarted."
     ok "pulled"
     # Bash keeps running the text it read before the pull. Build with the pulled tree's recipe.
-    PF_SUDO_OK="$SUDO_OK" PUNKTFUNK_SRC="$SRC" PUNKTFUNK_BOX="$BOX" exec bash "$SRC/scripts/steamdeck/update.sh"
+    PF_SUDO_OK="$SUDO_OK" LILYNK_SRC="$SRC" LILYNK_BOX="$BOX" exec bash "$SRC/scripts/steamdeck/update.sh"
 fi
 
 bash "$SRC/scripts/steamdeck/heal-box.sh" "$BOX"
@@ -62,7 +62,7 @@ log "Rebuilding host (release)"
 # and fall back to the in-process encoder on any mismatch, so an update must never move one
 # without the other. lilynk-seats is the door's supervisor (door.sh).
 distrobox enter "$BOX" -- bash -lc "set -e
-export PATH=\$HOME/.cargo/bin:\$PATH CARGO_TARGET_DIR='$TARGET_DIR' PUNKTFUNK_BUILD_VERSION='$PF_BUILD_VERSION'
+export PATH=\$HOME/.cargo/bin:\$PATH CARGO_TARGET_DIR='$TARGET_DIR' LILYNK_BUILD_VERSION='$PF_BUILD_VERSION'
 cd '$SRC' && cargo build -r -p lilynk-host -p lilynk-encode-worker -p lilynk-seats --features lilynk-host/nvenc,lilynk-host/vulkan-encode"
 MISSING="$({ ldd "$BIN" 2>/dev/null || true; } | awk '/not found/ {print $1}' | sort -u | tr '\n' ' ')"
 [ -z "$MISSING" ] || die "the host rebuilt, but SteamOS still cannot load it. Missing: $MISSING
@@ -103,13 +103,13 @@ ok "plugin runner rebuilt (on or off as you left it; turn it on: systemctl --use
 
 # Status tray: rebuilt with the host, and retrofitted onto installs that predate it.
 log "Rebuilding the status tray"
-PUNKTFUNK_SRC="$SRC" PUNKTFUNK_BOX="$BOX" bash "$SRC/scripts/steamdeck/install-tray.sh"
+LILYNK_SRC="$SRC" LILYNK_BOX="$BOX" bash "$SRC/scripts/steamdeck/install-tray.sh"
 
 # HDR gamescope (lilynk-gamescope): rebuild when the packaging tree changed or the installed
 # binary stopped working — also RETROFITS it onto older installs that predate it (fast no-op
 # otherwise). Best-effort; on failure the host streams SDR (see build-gamescope.sh).
 log "HDR gamescope (lilynk-gamescope)"
-PUNKTFUNK_SRC="$SRC" PUNKTFUNK_BOX="$BOX" bash "$SRC/scripts/steamdeck/build-gamescope.sh"
+LILYNK_SRC="$SRC" LILYNK_BOX="$BOX" bash "$SRC/scripts/steamdeck/build-gamescope.sh"
 
 # Retrofit the post-OS-update rebuild check (install.sh §5) onto older installs: probes the host
 # binary with ldd at session start and re-runs this script when a SteamOS update broke its links.
@@ -144,7 +144,7 @@ if [ -f "$CONFIG/web.env" ] && find "$CONFIG/web.env" -maxdepth 0 -perm /0077 2>
     chmod 600 "$CONFIG/web.env"
     warn "web.env was group/world-readable — an older install wrote it at the default umask."
     warn "Tightened to 0600, but that does NOT un-expose the password it already leaked to every"
-    warn "local account. Reset it: put a PUNKTFUNK_UI_PASSWORD line in $CONFIG/web.env, then"
+    warn "local account. Reset it: put a LILYNK_UI_PASSWORD line in $CONFIG/web.env, then"
     warn "  systemctl --user restart lilynk-web"
 fi
 
@@ -201,7 +201,7 @@ if [ -n "$EXEC" ]; then
     write_host_unit "$EXEC"
 fi
 # An older console unit pinned the port that unit flag held; it reads mgmt-endpoint, as install.sh's does.
-[ "$WEB" = 0 ] || sed -i "s#set +a; export PUNKTFUNK_MGMT_URL=https://127.0.0.1:[0-9]* #[ ! -f $CONFIG/mgmt-endpoint ] || . $CONFIG/mgmt-endpoint; set +a; export #" \
+[ "$WEB" = 0 ] || sed -i "s#set +a; export LILYNK_MGMT_URL=https://127.0.0.1:[0-9]* #[ ! -f $CONFIG/mgmt-endpoint ] || . $CONFIG/mgmt-endpoint; set +a; export #" \
     "$UNITS/lilynk-web.service"
 door_yield_web_unit
 systemctl --user daemon-reload

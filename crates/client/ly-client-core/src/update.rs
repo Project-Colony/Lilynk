@@ -81,25 +81,25 @@ pub struct Status {
     /// Feed answered, but this channel has no release. Not a malfunction.
     /// Unlike the host's `UpdateStatus`, `error` stays set and `--check-update` exits 1:
     /// an empty channel is not evidence this build is current, and a mistyped
-    /// `PUNKTFUNK_UPDATE_FEED` is indistinguishable from here.
+    /// `LILYNK_UPDATE_FEED` is indistinguishable from here.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub not_published: bool,
 }
 
 /// Checks are off unless the env turns them on. Same env name the host honours.
 pub fn check_disabled() -> bool {
-    crate::env_on("PUNKTFUNK_UPDATE_CHECK") != Some(true)
+    crate::env_on("LILYNK_UPDATE_CHECK") != Some(true)
 }
 
 /// Operator kill switch for apply. Status still reports what is available and the hand command.
 pub fn apply_disabled() -> bool {
-    crate::env_on("PUNKTFUNK_UPDATE_APPLY") == Some(false)
+    crate::env_on("LILYNK_UPDATE_APPLY") == Some(false)
 }
 
 /// Client install kind + channel (marker files are per-[`Product`], not shared with the host).
 ///
 /// `current` is a parameter, not `env!`: only the binary is version-stamped
-/// (`clients/linux/build.rs` / `PUNKTFUNK_BUILD_VERSION`, including canary `~ciN`).
+/// (`clients/linux/build.rs` / `LILYNK_BUILD_VERSION`, including canary `~ciN`).
 /// A library `env!` would report the workspace version.
 pub fn detect_install(current: &str) -> (InstallKind, Channel) {
     detect::classify(&detect::gather(Product::Client, current), Product::Client)
@@ -229,8 +229,7 @@ pub fn check(current: &str) -> Status {
     status.applier = applier;
 
     if check_disabled() {
-        status.error =
-            Some("update checks are off (PUNKTFUNK_UPDATE_CHECK=1 turns them on)".into());
+        status.error = Some("update checks are off (LILYNK_UPDATE_CHECK=1 turns them on)".into());
         return status;
     }
 

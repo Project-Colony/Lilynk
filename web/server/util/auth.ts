@@ -1,5 +1,5 @@
 const configDir = (): string =>
-	process.env.PUNKTFUNK_CONFIG_DIR ?? join(homedir(), ".config", "punktfunk");
+	process.env.LILYNK_CONFIG_DIR ?? join(homedir(), ".config", "punktfunk");
 
 /**
  * A revocation marker for issued sessions, PERSISTED across restarts.
@@ -19,7 +19,7 @@ const configDir = (): string =>
  * file is unwritable would be the wrong trade for a LAN console.
  */
 const EPOCH_FILE = (): string =>
-	process.env.PUNKTFUNK_UI_EPOCH_FILE ?? join(configDir(), "web-session-epoch");
+	process.env.LILYNK_UI_EPOCH_FILE ?? join(configDir(), "web-session-epoch");
 
 let epochCache: number | null = null;
 
@@ -50,7 +50,7 @@ export function revokeAllSessions(): void {
 }
 
 // Shared auth helpers for the Nitro server (the deployed Bun server). Single-user,
-// shared-password gate: the user logs in against PUNKTFUNK_UI_PASSWORD_HASH, which sets a SEALED
+// shared-password gate: the user logs in against LILYNK_UI_PASSWORD_HASH, which sets a SEALED
 // cookie (h3 useSession, iron: AES-256-CBC plus an HMAC); every request is gated by
 // server/middleware/auth.ts. The management hop lives in util/mgmt.ts, the path rules in
 // util/paths.ts.
@@ -106,13 +106,13 @@ export function peerAddress(event: H3Event): string {
  * Unquoted on the way out: the password file writes the value single-quoted so the `$` fields
  * survive a shell-sourced env file (SteamOS `. web.env`), and not every launcher strips them. */
 export function uiPasswordHash(): string {
-	const raw = process.env.PUNKTFUNK_UI_PASSWORD_HASH?.trim() ?? "";
+	const raw = process.env.LILYNK_UI_PASSWORD_HASH?.trim() ?? "";
 	return raw.replace(/^(['"])([\s\S]*)\1$/, "$2");
 }
 
 /** The LEGACY clear-text password, accepted for one release. Empty once the file is migrated. */
 export function uiPassword(): string {
-	return process.env.PUNKTFUNK_UI_PASSWORD ?? "";
+	return process.env.LILYNK_UI_PASSWORD ?? "";
 }
 
 /** Whether a password is configured at all. Either key answers; neither ⇒ auth is MISCONFIGURED
@@ -125,7 +125,7 @@ export function authConfigured(): boolean {
  * Check a typed password against what is configured. Constant-time on both branches — the
  * clear-text compare byte-wise, `Bun.password.verify` by construction.
  *
- * The legacy clear text WINS while it is set: an operator who puts a `PUNKTFUNK_UI_PASSWORD=` line
+ * The legacy clear text WINS while it is set: an operator who puts a `LILYNK_UI_PASSWORD=` line
  * back is resetting the password, and that is the whole reset path. A match then migrates the file
  * to a hash, which is the last moment that clear text is readable — so a generated password has to
  * be read off disk before the first login, not after it.
@@ -150,7 +150,7 @@ async function hashMatches(password: string, hash: string): Promise<boolean> {
 		if (!warnedHash) {
 			warnedHash = true;
 			console.warn(
-				"[lilynk-web] PUNKTFUNK_UI_PASSWORD_HASH is not a hash this server can verify — no password is accepted until it is reset",
+				"[lilynk-web] LILYNK_UI_PASSWORD_HASH is not a hash this server can verify — no password is accepted until it is reset",
 			);
 		}
 		return false;
@@ -172,9 +172,9 @@ declare const Bun: {
  * install takes the default. */
 function passwordFile(): string {
 	return (
-		process.env.PUNKTFUNK_UI_PASSWORD_FILE ??
+		process.env.LILYNK_UI_PASSWORD_FILE ??
 		join(
-			process.env.PUNKTFUNK_CONFIG_DIR ??
+			process.env.LILYNK_CONFIG_DIR ??
 				join(homedir(), ".config", "punktfunk"),
 			"web-password",
 		)
@@ -182,7 +182,7 @@ function passwordFile(): string {
 }
 
 /** Matches either password key, so the rewrite drops both and re-adds one. */
-const PASSWORD_LINE = /^\s*PUNKTFUNK_UI_PASSWORD(_HASH)?\s*=/;
+const PASSWORD_LINE = /^\s*LILYNK_UI_PASSWORD(_HASH)?\s*=/;
 let migrated = false;
 
 /**
@@ -220,7 +220,7 @@ async function migratePasswordFile(
 	// The login route stamps the session AFTER this, so whoever just typed the password stays in.
 	if (!same) revokeAllSessions();
 	console.warn(
-		`[lilynk-web] console password stored as a salted hash in ${file} — PUNKTFUNK_UI_PASSWORD is deprecated; reset it by writing a new one back to that file and restarting`,
+		`[lilynk-web] console password stored as a salted hash in ${file} — LILYNK_UI_PASSWORD is deprecated; reset it by writing a new one back to that file and restarting`,
 	);
 }
 
@@ -243,7 +243,7 @@ function rewritePasswordFile(file: string, hash: string): boolean {
 	const kept = body.split("\n").filter((l) => !PASSWORD_LINE.test(l));
 	while (kept.length > 0 && kept[kept.length - 1]?.trim() === "") kept.pop();
 	// Single-quoted: the hash carries `$` fields, and this file is sourced by a shell on SteamOS.
-	const next = `${[...kept, `PUNKTFUNK_UI_PASSWORD_HASH='${hash}'`].join("\n")}\n`;
+	const next = `${[...kept, `LILYNK_UI_PASSWORD_HASH='${hash}'`].join("\n")}\n`;
 	const tmp = `${file}.tmp`;
 	try {
 		writeFileSync(tmp, next, { mode: 0o600 });
@@ -298,7 +298,7 @@ function sessionKey(token: string): string | null {
 
 /**
  * The cookie-sealing key for h3 `useSession` (must be ≥ 32 chars). Precedence:
- *   1. PUNKTFUNK_UI_SECRET — explicit operator override.
+ *   1. LILYNK_UI_SECRET — explicit operator override.
  *   2. The key file ([`sessionKey`]), high-entropy from the management token every packaged
  *      deployment has.
  *   3. Only as a last resort (dev/local with no token) derive from the password.
@@ -312,7 +312,7 @@ function sessionKey(token: string): string | null {
  * does not give two boxes the same seal key.
  */
 export function sessionConfig(): SessionConfig {
-	const explicit = process.env.PUNKTFUNK_UI_SECRET;
+	const explicit = process.env.LILYNK_UI_SECRET;
 	const secret =
 		explicit && explicit.length >= 32
 			? explicit
@@ -337,21 +337,21 @@ export function sessionConfig(): SessionConfig {
 			// h3 defaults Secure to true, which browsers DROP over plain http:// (so login
 			// silently fails on a LAN HTTP server). Only mark Secure when actually behind TLS.
 			//
-			// Derived from whether TLS is CONFIGURED, not from `PUNKTFUNK_UI_SECURE` alone: a
+			// Derived from whether TLS is CONFIGURED, not from `LILYNK_UI_SECURE` alone: a
 			// cookie without `Secure` is also sent over a plain-http downgrade. The entry exits on
-			// `PUNKTFUNK_UI_SECURE` without TLS (nitro-entry/bun-https.mjs), so the flag alone
+			// `LILYNK_UI_SECURE` without TLS (nitro-entry/bun-https.mjs), so the flag alone
 			// takes effect only where that entry does not run.
 			secure: cookieSecure(),
 		},
 	};
 }
 
-/** Whether the console's cookies carry `Secure`: TLS configured here, or `PUNKTFUNK_UI_SECURE`. */
+/** Whether the console's cookies carry `Secure`: TLS configured here, or `LILYNK_UI_SECURE`. */
 export function cookieSecure(): boolean {
 	return (
-		(!!process.env.PUNKTFUNK_UI_TLS_CERT &&
-			!!process.env.PUNKTFUNK_UI_TLS_KEY) ||
-		/^(1|true)$/i.test(process.env.PUNKTFUNK_UI_SECURE ?? "")
+		(!!process.env.LILYNK_UI_TLS_CERT &&
+			!!process.env.LILYNK_UI_TLS_KEY) ||
+		/^(1|true)$/i.test(process.env.LILYNK_UI_SECURE ?? "")
 	);
 }
 

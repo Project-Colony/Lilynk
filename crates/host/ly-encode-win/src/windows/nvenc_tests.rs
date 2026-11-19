@@ -402,7 +402,7 @@ fn nvenc_wave_smoke() {
                 .flat_map(|(_, a)| a.data.iter().copied())
                 .collect()
         };
-        let dir = std::env::var("PUNKTFUNK_SMOKE_DIR").unwrap_or_else(|_| ".".into());
+        let dir = std::env::var("LILYNK_SMOKE_DIR").unwrap_or_else(|_| ".".into());
         std::fs::write(format!("{dir}/nvenc-wave.h265"), &full).expect("write");
         std::fs::write(format!("{dir}/nvenc-wave-dropA.h265"), view(1..3)).expect("write");
         std::fs::write(
@@ -478,7 +478,7 @@ fn nvenc_ltr_soak() {
 
 /// The wave soak ([`crate::smoke_pattern::WaveSoak`], its `PF_WAVE_*` knobs) on the D3D11
 /// session: a fresh texture per frame, 10-bit as R10G10B10A2. The full stream and the view
-/// without the lost frames land in `PUNKTFUNK_SMOKE_DIR`, for mapping each close and the drift
+/// without the lost frames land in `LILYNK_SMOKE_DIR`, for mapping each close and the drift
 /// after it.
 ///
 /// `cargo test -p ly-encode-win --features nvenc nvenc_wave_soak -- --ignored --nocapture`
@@ -766,8 +766,8 @@ fn nvenc_split_reconfigure_in_place() {
 
     // SAFETY: this ignored hardware test is run alone; no other thread touches the env.
     unsafe {
-        std::env::set_var("PUNKTFUNK_NVENC_SUBFRAME", "0");
-        std::env::set_var("PUNKTFUNK_SPLIT_ENCODE", "0");
+        std::env::set_var("LILYNK_NVENC_SUBFRAME", "0");
+        std::env::set_var("LILYNK_SPLIT_ENCODE", "0");
     }
 
     // SAFETY: test-only, same D3D11/DXGI setup as `nvenc_reconfigure_no_idr`.
@@ -895,8 +895,8 @@ fn nvenc_split_reconfigure_in_place() {
 
     // SAFETY: single-threaded manual test; no concurrent env access.
     unsafe {
-        std::env::remove_var("PUNKTFUNK_SPLIT_ENCODE");
-        std::env::remove_var("PUNKTFUNK_NVENC_SUBFRAME");
+        std::env::remove_var("LILYNK_SPLIT_ENCODE");
+        std::env::remove_var("LILYNK_NVENC_SUBFRAME");
     }
 }
 

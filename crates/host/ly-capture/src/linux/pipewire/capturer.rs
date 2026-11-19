@@ -48,7 +48,7 @@ pub struct PortalCapturer {
     /// Set by [`crate::Feed::arrival_poke`] and [`crate::Feed::au_wake`]; `wait_ready` takes
     /// one and returns with no frame.
     nudges: Arc<Nudges>,
-    /// Arrival to take, per frame (`PUNKTFUNK_PERF`).
+    /// Arrival to take, per frame (`LILYNK_PERF`).
     fence_wait: FenceWaitStats,
     shared: StreamShared,
     cursor_slot: CursorSlot,
@@ -380,7 +380,7 @@ fn spawn_pipewire(
     let force_shm = opts.knobs.force_shm;
     let want_hdr = if want_hdr && force_shm {
         tracing::warn!(
-            "HDR capture requested but PUNKTFUNK_FORCE_SHM=1 — the SHM path is 8-bit only; \
+            "HDR capture requested but LILYNK_FORCE_SHM=1 — the SHM path is 8-bit only; \
              offering SDR"
         );
         false
@@ -689,7 +689,7 @@ pub(super) enum TimeoutVerdict {
 
 /// Offer a first-frame timeout implicates. Split out so the latch policy
 /// is testable. A negotiated format clears every offer; forced
-/// `PUNKTFUNK_ZEROCOPY=1` keeps both dmabuf arms erroring (operator asked).
+/// `LILYNK_ZEROCOPY=1` keeps both dmabuf arms erroring (operator asked).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum TimeoutOffer {
     /// Format negotiated; compositor produced no buffers.
@@ -1059,7 +1059,7 @@ mod first_frame_timeout_tests {
 
     #[test]
     fn a_forced_zerocopy_keeps_both_dmabuf_arms_erroring_loudly_instead_of_implicated() {
-        // `PUNKTFUNK_ZEROCOPY=1` is the operator insisting on the path —
+        // `LILYNK_ZEROCOPY=1` is the operator insisting on the path —
         // timeout falls through to the generic diagnosis and never latches.
         let offered = Negotiation {
             gpu_offer: true,

@@ -1,6 +1,6 @@
 //! Windows tray: a hidden top-level window + `Shell_NotifyIconW`, fed by the status poller.
 //!
-//! A separate process from the host: `PunktfunkHost` (LocalSystem, session 0) and its `serve`
+//! A separate process from the host: `LilynkHost` (LocalSystem, session 0) and its `serve`
 //! child (SYSTEM) cannot own a per-user icon. The installer starts this exe from the HKLM
 //! `Run` key; a `Local\` mutex keeps one instance per interactive session.
 //!
@@ -151,9 +151,9 @@ fn another_instance_holds_the_session() -> bool {
     // CreateMutexW handle is never closed (process-lifetime guard); the OpenMutexW one, which
     // only answers a question, is closed here.
     unsafe {
-        match CreateMutexW(None, false, w!("Local\\PunktfunkTray")) {
+        match CreateMutexW(None, false, w!("Local\\LilynkTray")) {
             Ok(_) => GetLastError() == ERROR_ALREADY_EXISTS,
-            Err(_) => match OpenMutexW(SYNCHRONIZE, false, w!("Local\\PunktfunkTray")) {
+            Err(_) => match OpenMutexW(SYNCHRONIZE, false, w!("Local\\LilynkTray")) {
                 Ok(h) => {
                     let _ = CloseHandle(h);
                     true
@@ -176,7 +176,7 @@ pub fn run(args: crate::Args) -> anyhow::Result<()> {
         if args.start_host {
             // SAFETY: as in `quit_existing`; both calls fail harmlessly with no tray window.
             unsafe {
-                if let Ok(hwnd) = FindWindowW(w!("PunktfunkTrayWindow"), PCWSTR::null()) {
+                if let Ok(hwnd) = FindWindowW(w!("LilynkTrayWindow"), PCWSTR::null()) {
                     let _ = PostMessageW(Some(hwnd), WMAPP_START_HOST, WPARAM(0), LPARAM(0));
                 }
             }
@@ -225,7 +225,7 @@ pub fn run(args: crate::Args) -> anyhow::Result<()> {
         let class = WNDCLASSW {
             lpfnWndProc: Some(wndproc),
             hInstance: hinstance.into(),
-            lpszClassName: w!("PunktfunkTrayWindow"),
+            lpszClassName: w!("LilynkTrayWindow"),
             ..Default::default()
         };
         if RegisterClassW(&class) == 0 {
@@ -233,7 +233,7 @@ pub fn run(args: crate::Args) -> anyhow::Result<()> {
         }
         CreateWindowExW(
             WINDOW_EX_STYLE(0),
-            w!("PunktfunkTrayWindow"),
+            w!("LilynkTrayWindow"),
             w!("punktfunk tray"),
             WS_OVERLAPPED,
             0,
@@ -296,7 +296,7 @@ fn quit_existing() -> anyhow::Result<()> {
     // SAFETY: FindWindowW/PostMessageW on a class-name literal; both fail harmlessly when no
     // instance is running.
     unsafe {
-        if let Ok(hwnd) = FindWindowW(w!("PunktfunkTrayWindow"), PCWSTR::null()) {
+        if let Ok(hwnd) = FindWindowW(w!("LilynkTrayWindow"), PCWSTR::null()) {
             let _ = PostMessageW(Some(hwnd), WM_CLOSE, WPARAM(0), LPARAM(0));
         }
     }
@@ -623,7 +623,7 @@ fn open_console(hwnd: HWND) {
 
 /// Open the web console at `path` (`""` = dashboard).
 fn open_web_console(hwnd: HWND, path: &str) {
-    // `127.0.0.1`, not `localhost`: the console binds IPv4 only (`PUNKTFUNK_UI_BIND`) and Windows
+    // `127.0.0.1`, not `localhost`: the console binds IPv4 only (`LILYNK_UI_BIND`) and Windows
     // resolves `localhost` to ::1 first. Same literal as the poller probe.
     shell_open(
         hwnd,

@@ -11,7 +11,7 @@ const SERVICE: &str = "_nvstream._tcp.local.";
 
 pub fn advertise(host: &Host) -> Result<Advert> {
     // Instance name is the display name Moonlight lists; A-record target is a sanitized
-    // DNS label so a free-text `PUNKTFUNK_HOST_NAME` cannot emit an illegal record.
+    // DNS label so a free-text `LILYNK_HOST_NAME` cannot emit an illegal record.
     let host_name = format!("{}.local.", crate::discovery::dns_label(&host.hostname));
     let instance = host.hostname.clone();
     let port = host.http_port;

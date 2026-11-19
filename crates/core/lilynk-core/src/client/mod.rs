@@ -3,7 +3,7 @@
 //! [`NativeClient::connect`] runs QUIC handshake ([`crate::quic`]), the data plane
 //! ([`crate::session::Session`] on a native thread), and input datagrams. The surface is
 //! pull reassembled access units, push input. Platform clients link via the C ABI
-//! (`punktfunk_connect` in `lilynk-ffi`); `lilynk-probe` is the Rust-native consumer.
+//! (`lilynk_connect` in `lilynk-ffi`); `lilynk-probe` is the Rust-native consumer.
 //!
 //! One worker owns a tokio runtime (QUIC control plane only) plus a blocking data-plane
 //! pump. Frames cross to the embedder on a bounded channel. Methods are safe from any
@@ -15,7 +15,7 @@
 
 use crate::clipboard::{ClipCommand, ClipEventCore};
 use crate::config::{CompositorPref, GamepadPref, Mode};
-use crate::error::{PunktfunkError, Result};
+use crate::error::{LilynkError, Result};
 use crate::input::{InputEvent, InputKind, PadMouseMode};
 use crate::quic::{
     endpoint, ClipControl, ClipKind, ClipOffer, ColorInfo, HdrMeta, HidOutput, PadAudioFrame,
@@ -171,13 +171,13 @@ pub(crate) fn access_deadline_from(now_ns: u64, remaining_secs: u32) -> u64 {
     }
 }
 
-/// Why a session ended — [`NativeClient::end_reason`], `punktfunk_connection_end_reason` on C.
+/// Why a session ended — [`NativeClient::end_reason`], `lilynk_connection_end_reason` on C.
 ///
 /// Discriminator for a UI: normal finish vs alarm. Values are C ABI: append only, never
 /// renumber. Ordered from user-initiated to fault.
 #[repr(u8)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PunktfunkEndReason {
+pub enum LilynkEndReason {
     /// Not ended, or unknown future ABI value: an older reader degrades to "no opinion".
     None = 0,
     /// This client closed it (stop or drop). The UI already knows.
@@ -193,7 +193,7 @@ pub enum PunktfunkEndReason {
     Lost = 5,
 }
 
-impl PunktfunkEndReason {
+impl LilynkEndReason {
     /// Decode the wire/ABI byte. Unknown values become [`Self::None`]: the writer may be newer.
     pub fn from_u8(v: u8) -> Self {
         match v {
@@ -227,7 +227,7 @@ impl PunktfunkEndReason {
 }
 
 #[cfg(feature = "quic")]
-impl From<&quinn::ConnectionError> for PunktfunkEndReason {
+impl From<&quinn::ConnectionError> for LilynkEndReason {
     /// Map a QUIC close. Host app codes: `APP_EXITED` → GameExited, `PATH_SHRANK` → Lost
     /// (a redial heals it), `0` → HostEnded. Any other application code is unnamed and
     /// treated as `HostError` (visible) rather than a clean host end. Transport-level
@@ -507,11 +507,11 @@ fn send_recovery(shared: &ClientShared, ask: RecoveryAsk) {
 }
 
 /// Default [`NativeClient::connect`] `name`: `/etc/hostname`, then env, then OS hostname.
-/// Lives here so the C ABI (`punktfunk_connect`) shares it.
+/// Lives here so the C ABI (`lilynk_connect`) shares it.
 ///
 /// Apple GUI processes have neither `COMPUTERNAME` nor `HOSTNAME` (`launchd` does not
 /// export the shell variable), so without `gethostname` every Apple client knocks as
-/// "This device". Pass a better name via `punktfunk_connect_ex10`.
+/// "This device". Pass a better name via `lilynk_connect_ex10`.
 pub fn device_name() -> String {
     #[cfg(target_os = "linux")]
     if let Ok(s) = std::fs::read_to_string("/etc/hostname") {
@@ -638,7 +638,7 @@ pub struct ConnectParams {
     pub launch: Option<String>,
     /// [`crate::quic::Hello::name`], usually [`device_name`]. `None` knocks as "device abcd1234".
     pub name: Option<String>,
-    /// Expected SHA-256 of the host cert; a mismatch is [`PunktfunkError::Crypto`]. `None` =
+    /// Expected SHA-256 of the host cert; a mismatch is [`LilynkError::Crypto`]. `None` =
     /// TOFU: read [`NativeClient::host_fingerprint`] afterwards.
     pub pin: Option<[u8; 32]>,
     /// PEM cert + PKCS#8 key ([`endpoint::generate_identity`]); `None` = anonymous.
@@ -742,7 +742,7 @@ impl ConnectParams {
 
 impl NativeClient {
     /// Dial a `punktfunk/2` host and block until the handshake lands, `timeout` passes or
-    /// `cancel` is set. A host that turns the dial away is [`PunktfunkError::Rejected`]; an
+    /// `cancel` is set. A host that turns the dial away is [`LilynkError::Rejected`]; an
     /// unlock outside the wire's bounds or without a `pin` is `InvalidArg` before any dial.
     ///
     /// The host may answer below the ask: open the audio device from
@@ -751,7 +751,7 @@ impl NativeClient {
     /// from `params`.
     pub fn connect(mut params: ConnectParams) -> Result<NativeClient> {
         if params.unlock.as_ref().is_some_and(|u| !u.is_valid()) {
-            return Err(PunktfunkError::InvalidArg("bad ProfileUnlock"));
+            return Err(LilynkError::InvalidArg("bad ProfileUnlock"));
         }
         // An embedder with an unlock in hand has prompted.
         params.prompts_unlock |= params.unlock.is_some();
@@ -794,7 +794,7 @@ impl NativeClient {
                 {
                     Ok(rt) => rt,
                     Err(e) => {
-                        let _ = ready_tx.send(Err(PunktfunkError::Io(e)));
+                        let _ = ready_tx.send(Err(LilynkError::Io(e)));
                         return;
                     }
                 };
@@ -813,7 +813,7 @@ impl NativeClient {
                     ready_tx,
                 }));
             })
-            .map_err(PunktfunkError::Io)?;
+            .map_err(LilynkError::Io)?;
 
         // Poll so `cancel` can abort; a parked request-access handshake has nothing to wake on.
         const READY_POLL: Duration = Duration::from_millis(50);
@@ -845,7 +845,7 @@ impl NativeClient {
                     // code 0, so the host tears down instead of holding a virtual display.
                     shared.quit.store(true, Ordering::SeqCst);
                     shared.shutdown.store(true, Ordering::SeqCst);
-                    return Err(PunktfunkError::Timeout);
+                    return Err(LilynkError::Timeout);
                 }
             }
         };
@@ -974,7 +974,7 @@ impl NativeClient {
     pub fn request_mode(&self, mode: Mode) -> Result<()> {
         self.ctrl_tx
             .try_send(CtrlRequest::Mode(mode, None))
-            .map_err(|_| PunktfunkError::Closed)
+            .map_err(|_| LilynkError::Closed)
     }
 
     /// [`Self::request_mode`] shown at `view` ([`ConnectParams::view`]). `None` asks for the
@@ -983,7 +983,7 @@ impl NativeClient {
         let view = view.unwrap_or((mode.width, mode.height));
         self.ctrl_tx
             .try_send(CtrlRequest::Mode(mode, Some(view)))
-            .map_err(|_| PunktfunkError::Closed)
+            .map_err(|_| LilynkError::Closed)
     }
 
     /// The format the newest frame from [`next_frame`](Self::next_frame) decodes as: the
@@ -995,14 +995,14 @@ impl NativeClient {
     /// The decoder can't take these `CODEC_*` bits: ask the host to stream on in another codec,
     /// from a new epoch, without a reconnect. The answer is a frame whose [`Frame::new_format`]
     /// names the new codec, or a [`codec_refused`](Self::codec_refused).
-    /// [`PunktfunkError::Unsupported`] when the session has no format epochs.
+    /// [`LilynkError::Unsupported`] when the session has no format epochs.
     pub fn request_codec_change(&self, exclude: u8) -> Result<()> {
         if !self.shared.anchor.lock().unwrap().formats {
-            return Err(PunktfunkError::Unsupported("format epochs"));
+            return Err(LilynkError::Unsupported("format epochs"));
         }
         self.ctrl_tx
             .try_send(CtrlRequest::Codec(exclude))
-            .map_err(|_| PunktfunkError::Closed)
+            .map_err(|_| LilynkError::Closed)
     }
 
     /// The desktop audio format the newest packet from [`next_audio`](Self::next_audio) is in:
@@ -1035,7 +1035,7 @@ impl NativeClient {
             .try_send(CtrlRequest::CursorRender(crate::quic::CursorRenderMode {
                 client_draws,
             }))
-            .map_err(|_| PunktfunkError::Closed)
+            .map_err(|_| LilynkError::Closed)
     }
 
     /// The decoder needs an IDR: a rebuild, a demotion, a damaged AU. Arms the freeze if it
@@ -1210,27 +1210,27 @@ impl NativeClient {
     }
 
     /// QUIC session ended (`conn.closed()`, [`disconnect_quit`](Self::disconnect_quit), or drop).
-    /// Once true, every `next_*` plane returns [`PunktfunkError::Closed`]. Poll-friendly
+    /// Once true, every `next_*` plane returns [`LilynkError::Closed`]. Poll-friendly
     /// counterpart to catching `Closed` in a plane loop.
     pub fn is_session_ended(&self) -> bool {
         self.shared.shutdown.load(Ordering::SeqCst)
     }
 
-    /// Why the session ended — see [`PunktfunkEndReason`].
+    /// Why the session ended — see [`LilynkEndReason`].
     ///
     /// Refinement of [`is_session_ended`](Self::is_session_ended), never a substitute: stays
-    /// [`PunktfunkEndReason::None`] until that is true. Latches through teardown.
-    pub fn end_reason(&self) -> PunktfunkEndReason {
-        PunktfunkEndReason::from_u8(self.shared.end_reason.load(Ordering::SeqCst))
+    /// [`LilynkEndReason::None`] until that is true. Latches through teardown.
+    pub fn end_reason(&self) -> LilynkEndReason {
+        LilynkEndReason::from_u8(self.shared.end_reason.load(Ordering::SeqCst))
     }
 
     pub fn ended_because_game_exited(&self) -> bool {
-        self.end_reason() == PunktfunkEndReason::GameExited
+        self.end_reason() == LilynkEndReason::GameExited
     }
 
     /// Mid-session [`crate::reject::RejectReason`], if any. Access expiry (`0x69`) would
     /// otherwise file as `HostError`. Latches with `end_reason`. Connect-time rejections
-    /// are [`PunktfunkError::Rejected`] from [`connect`](Self::connect).
+    /// are [`LilynkError::Rejected`] from [`connect`](Self::connect).
     pub fn end_reject(&self) -> Option<crate::reject::RejectReason> {
         crate::reject::RejectReason::from_close_code(
             self.shared.end_reject_code.load(Ordering::SeqCst),
@@ -1522,10 +1522,7 @@ impl NativeClient {
             duration_ms,
             ..Default::default()
         };
-        let sent = self
-            .ctrl_tx
-            .try_send(req)
-            .map_err(|_| PunktfunkError::Closed);
+        let sent = self.ctrl_tx.try_send(req).map_err(|_| LilynkError::Closed);
         if sent.is_err() {
             // Send failed: nothing will answer. Leaving `active` would suppress the pump's
             // report tick for the rest of the session.
@@ -1632,7 +1629,7 @@ impl NativeClient {
         }
     }
 
-    /// Next FEC-recovered AU. [`PunktfunkError::NoFrame`] on timeout, `Closed` once ended.
+    /// Next FEC-recovered AU. [`LilynkError::NoFrame`] on timeout, `Closed` once ended.
     /// One thread per plane; `&self` is for sharing across planes, not two consumers of one.
     pub fn next_frame(&self, timeout: Duration) -> Result<Frame> {
         match self.shared.frames.pop(timeout) {
@@ -1648,8 +1645,8 @@ impl NativeClient {
                     .decoder_took(f.frame_index, f.flags, completes_au && f.complete);
                 Ok(f)
             }
-            FramePop::Timeout => Err(PunktfunkError::NoFrame),
-            FramePop::Closed => Err(PunktfunkError::Closed),
+            FramePop::Timeout => Err(LilynkError::NoFrame),
+            FramePop::Closed => Err(LilynkError::Closed),
         }
     }
 
@@ -1684,15 +1681,15 @@ impl NativeClient {
             .flatten();
         let Some(lane) = lane else {
             if self.shared.shutdown.load(Ordering::SeqCst) {
-                return Err(PunktfunkError::Closed);
+                return Err(LilynkError::Closed);
             }
             std::thread::sleep(timeout.min(Duration::from_millis(20)));
-            return Err(PunktfunkError::NoFrame);
+            return Err(LilynkError::NoFrame);
         };
         match lane.frames.pop(timeout) {
             FramePop::Frame(f) => Ok(f),
-            FramePop::Timeout => Err(PunktfunkError::NoFrame),
-            FramePop::Closed => Err(PunktfunkError::Closed),
+            FramePop::Timeout => Err(LilynkError::NoFrame),
+            FramePop::Closed => Err(LilynkError::Closed),
         }
     }
 
@@ -1713,7 +1710,7 @@ impl NativeClient {
     pub fn request_screens(&self, screens: Vec<crate::quic::v2::msg::Screen>) -> Result<()> {
         self.ctrl_tx
             .try_send(CtrlRequest::Screens(screens))
-            .map_err(|_| PunktfunkError::Closed)
+            .map_err(|_| LilynkError::Closed)
     }
 
     /// Next audio packet. Drain on a dedicated thread — Opus packets arrive every 5 ms.
@@ -1786,8 +1783,8 @@ impl NativeClient {
     pub fn next_rumble_command(&self, timeout: Duration) -> Result<RumbleCommand> {
         match self.planes.rumble_sched.next_command(timeout) {
             Ok(Some(c)) => Ok(c),
-            Ok(None) => Err(PunktfunkError::NoFrame),
-            Err(rumble::Closed) => Err(PunktfunkError::Closed),
+            Ok(None) => Err(LilynkError::NoFrame),
+            Err(rumble::Closed) => Err(LilynkError::Closed),
         }
     }
 
@@ -1903,7 +1900,7 @@ impl NativeClient {
                 f.reset();
             }
         }
-        self.input_tx.send(*ev).map_err(|_| PunktfunkError::Closed)
+        self.input_tx.send(*ev).map_err(|_| LilynkError::Closed)
     }
 
     /// Tell the host who the Steam Controller on `id.pad` is, before its arrival: the host's
@@ -1915,11 +1912,11 @@ impl NativeClient {
             || id.replies.len() > crate::quic::PAD_IDENTITY_REPLIES_MAX
             || crate::quic::unpack_identity_replies(&id.replies).is_none()
         {
-            return Err(PunktfunkError::InvalidArg("pad identity out of bounds"));
+            return Err(LilynkError::InvalidArg("pad identity out of bounds"));
         }
         self.ctrl_tx
             .try_send(CtrlRequest::PadIdentity(id))
-            .map_err(|_| PunktfunkError::Closed)
+            .map_err(|_| LilynkError::Closed)
     }
 
     /// How a Steam Controller's raw reports on wire pad `pad` are gated, either generation: the
@@ -2012,7 +2009,7 @@ impl NativeClient {
     pub fn clip_control(&self, enabled: bool, flags: u8) -> Result<()> {
         self.ctrl_tx
             .try_send(CtrlRequest::ClipControl(ClipControl { enabled, flags }))
-            .map_err(|_| PunktfunkError::Closed)
+            .map_err(|_| LilynkError::Closed)
     }
 
     /// Lazy format-list offer. `seq` newest-wins; `kinds` ≤ [`crate::quic::CLIP_MAX_KINDS`].
@@ -2020,7 +2017,7 @@ impl NativeClient {
     pub fn clip_offer(&self, seq: u32, kinds: Vec<ClipKind>) -> Result<()> {
         self.ctrl_tx
             .try_send(CtrlRequest::ClipOffer(ClipOffer { seq, kinds }))
-            .map_err(|_| PunktfunkError::Closed)
+            .map_err(|_| LilynkError::Closed)
     }
 
     /// Pull one format of host offer `seq`. [`crate::quic::CLIP_FILE_INDEX_NONE`] for non-file.
@@ -2036,7 +2033,7 @@ impl NativeClient {
                 file_index,
                 mime,
             })
-            .map_err(|_| PunktfunkError::Closed)?;
+            .map_err(|_| LilynkError::Closed)?;
         Ok(xfer_id)
     }
 
@@ -2048,14 +2045,14 @@ impl NativeClient {
                 bytes,
                 last,
             })
-            .map_err(|_| PunktfunkError::Closed)
+            .map_err(|_| LilynkError::Closed)
     }
 
     /// Cancel outbound fetch (`xfer_id`) or inbound serve (`req_id`).
     pub fn clip_cancel(&self, id: u32) -> Result<()> {
         self.clip_cmd_tx
             .send(ClipCommand::Cancel { id })
-            .map_err(|_| PunktfunkError::Closed)
+            .map_err(|_| LilynkError::Closed)
     }
 
     /// Clipboard events (offer, state, fetch-request, data, cancel, error). Drain on its own
@@ -2078,7 +2075,7 @@ impl NativeClient {
                 tracing::debug!("mic uplink queue full — dropping frame");
                 Ok(())
             }
-            Err(TrySendError::Closed(_)) => Err(PunktfunkError::Closed),
+            Err(TrySendError::Closed(_)) => Err(LilynkError::Closed),
         }
     }
 
@@ -2089,9 +2086,7 @@ impl NativeClient {
     /// clears every mode.
     pub fn set_pad_mouse(&self, mask: u16) -> Result<()> {
         if mask != 0 && self.access_grants() & crate::quic::GRANT_POINTER == 0 {
-            return Err(PunktfunkError::Unsupported(
-                "host did not grant pointer input",
-            ));
+            return Err(LilynkError::Unsupported("host did not grant pointer input"));
         }
         self.shared.pad_mouse.request(mask);
         Ok(())
@@ -2126,9 +2121,7 @@ impl NativeClient {
     /// Needs [`GRANT_POINTER`](crate::quic::GRANT_POINTER).
     pub fn cycle_pad_mouse(&self, target: u16) -> Result<PadMouseMode> {
         if self.access_grants() & crate::quic::GRANT_POINTER == 0 {
-            return Err(PunktfunkError::Unsupported(
-                "host did not grant pointer input",
-            ));
+            return Err(LilynkError::Unsupported("host did not grant pointer input"));
         }
         if target == 0 {
             return Ok(PadMouseMode::Off);
@@ -2178,9 +2171,7 @@ impl NativeClient {
         if full || self.shared.pad_mouse.touchpad_active(grants) & bit != 0 {
             let (contacts, forward) = pad_touch::route(&mut rich, full);
             for c in contacts {
-                self.pad_touch_tx
-                    .send(c)
-                    .map_err(|_| PunktfunkError::Closed)?;
+                self.pad_touch_tx.send(c).map_err(|_| LilynkError::Closed)?;
             }
             if !forward {
                 return Ok(());
@@ -2188,7 +2179,7 @@ impl NativeClient {
         }
         self.rich_input_tx
             .send(rich.encode())
-            .map_err(|_| PunktfunkError::Closed)
+            .map_err(|_| LilynkError::Closed)
     }
 
     /// Stylus batch (`0xCC/0x05`). State-full, oldest-first, ≤ [`crate::quic::PEN_BATCH_MAX`]
@@ -2201,12 +2192,12 @@ impl NativeClient {
     /// returns `Unsupported` so embedders keep pen-as-touch instead of spraying 240 Hz unread.
     pub fn send_pen(&self, samples: &[crate::quic::PenSample]) -> Result<()> {
         if self.host_caps & crate::quic::HOST_CAP_PEN == 0 {
-            return Err(PunktfunkError::Unsupported(
+            return Err(LilynkError::Unsupported(
                 "host did not advertise HOST_CAP_PEN",
             ));
         }
         if samples.is_empty() || samples.len() > crate::quic::PEN_BATCH_MAX {
-            return Err(PunktfunkError::InvalidArg(
+            return Err(LilynkError::InvalidArg(
                 "pen batch must hold 1..=PEN_BATCH_MAX samples",
             ));
         }
@@ -2214,7 +2205,7 @@ impl NativeClient {
         let seq = self.pen_seq.fetch_add(1, Ordering::Relaxed);
         self.rich_input_tx
             .send(crate::quic::PenBatch::new(seq, samples).encode())
-            .map_err(|_| PunktfunkError::Closed)
+            .map_err(|_| LilynkError::Closed)
     }
 
     /// The host presents touchpad frames as a touchpad of its own (`FEATURE_TOUCHPAD`), read
@@ -2249,7 +2240,7 @@ impl NativeClient {
         contacts: &[crate::quic::TouchpadContact],
     ) -> Result<()> {
         let frame = crate::quic::TouchpadFrame::new(0, button, width_dmm, height_dmm, contacts)
-            .ok_or(PunktfunkError::InvalidArg(
+            .ok_or(LilynkError::InvalidArg(
                 "touchpad frame needs at most five contacts with distinct ids 0..=31",
             ))?;
         let mut sources = self.touch_sources.lock().unwrap();
@@ -2318,7 +2309,7 @@ impl NativeClient {
         rotation: f32,
     ) -> Result<()> {
         if !scale.is_finite() || !rotation.is_finite() {
-            return Err(PunktfunkError::InvalidArg(
+            return Err(LilynkError::InvalidArg(
                 "pinch scale and rotation must be finite",
             ));
         }
@@ -2347,7 +2338,7 @@ impl NativeClient {
         if self.host_presents_touchpad() {
             Ok(())
         } else {
-            Err(PunktfunkError::Unsupported(
+            Err(LilynkError::Unsupported(
                 "host touchpad not granted, or scroll inverted",
             ))
         }
@@ -2359,7 +2350,7 @@ impl NativeClient {
         }
         self.touchpad_tx
             .send(frame)
-            .map_err(|_| PunktfunkError::Closed)
+            .map_err(|_| LilynkError::Closed)
     }
 
     /// User stop: close with [`crate::quic::QUIT_CLOSE_CODE`] so the host skips keep-alive
@@ -2385,11 +2376,11 @@ impl Drop for NativeClient {
     }
 }
 
-/// `PUNKTFUNK_CLIENT_PEAK_NITS=<nits>` synthesizes [`Hello::display_hdr`](crate::quic::Hello::display_hdr)
+/// `LILYNK_CLIENT_PEAK_NITS=<nits>` synthesizes [`Hello::display_hdr`](crate::quic::Hello::display_hdr)
 /// at that peak (BT.2020, D65, 0.005-nit floor) so EDID tone-map can be pinned. `None` if
 /// unset/unparsable/zero.
 pub fn display_hdr_env_override() -> Option<HdrMeta> {
-    let nits: u32 = std::env::var("PUNKTFUNK_CLIENT_PEAK_NITS")
+    let nits: u32 = std::env::var("LILYNK_CLIENT_PEAK_NITS")
         .ok()?
         .trim()
         .parse()
@@ -2397,7 +2388,7 @@ pub fn display_hdr_env_override() -> Option<HdrMeta> {
         .filter(|&n| n > 0)?;
     tracing::info!(
         nits,
-        "PUNKTFUNK_CLIENT_PEAK_NITS: overriding the advertised display volume"
+        "LILYNK_CLIENT_PEAK_NITS: overriding the advertised display volume"
     );
     Some(HdrMeta {
         display_primaries: [[8500, 39850], [6550, 2300], [35400, 14600]], // BT.2020 G, B, R
@@ -2432,14 +2423,14 @@ fn expires_in_secs(deadline_unix: Option<u64>, now_unix: u64) -> u32 {
 
 #[cfg(all(test, feature = "quic"))]
 mod end_reason_tests {
-    use super::PunktfunkEndReason;
+    use super::LilynkEndReason;
 
-    fn closed_with(code: u32) -> PunktfunkEndReason {
+    fn closed_with(code: u32) -> LilynkEndReason {
         let e = quinn::ConnectionError::ApplicationClosed(quinn::ApplicationClose {
             error_code: quinn::VarInt::from_u32(code),
             reason: Default::default(),
         });
-        PunktfunkEndReason::from(&e)
+        LilynkEndReason::from(&e)
     }
 
     /// A path too small for the stream redials like a dropped connection.
@@ -2447,35 +2438,35 @@ mod end_reason_tests {
     fn a_shrunk_path_reads_as_lost() {
         assert_eq!(
             closed_with(crate::quic::PATH_SHRANK_CLOSE_CODE),
-            PunktfunkEndReason::Lost
+            LilynkEndReason::Lost
         );
         assert_eq!(
             closed_with(crate::quic::APP_EXITED_CLOSE_CODE),
-            PunktfunkEndReason::GameExited
+            LilynkEndReason::GameExited
         );
-        assert_eq!(closed_with(0x6B), PunktfunkEndReason::HostError);
+        assert_eq!(closed_with(0x6B), LilynkEndReason::HostError);
     }
 }
 
 #[cfg(test)]
 mod redial_tests {
-    use super::PunktfunkEndReason;
+    use super::LilynkEndReason;
 
     /// Only a lost connection redials, five times, with the waits growing.
     #[test]
     fn only_a_lost_session_redials() {
-        let lost = PunktfunkEndReason::Lost;
+        let lost = LilynkEndReason::Lost;
         let waits: Vec<u64> = (0..)
             .map_while(|a| lost.redial_delay(a))
             .map(|d| d.as_secs())
             .collect();
         assert_eq!(waits, [0, 1, 2, 4, 8]);
         for other in [
-            PunktfunkEndReason::None,
-            PunktfunkEndReason::Local,
-            PunktfunkEndReason::GameExited,
-            PunktfunkEndReason::HostEnded,
-            PunktfunkEndReason::HostError,
+            LilynkEndReason::None,
+            LilynkEndReason::Local,
+            LilynkEndReason::GameExited,
+            LilynkEndReason::HostEnded,
+            LilynkEndReason::HostError,
         ] {
             assert_eq!(other.redial_delay(0), None);
         }
@@ -2525,11 +2516,11 @@ mod touchpad_use_tests {
     }
 }
 
-/// A plane's timeout is [`PunktfunkError::NoFrame`]; a dropped worker is `Closed`.
-fn plane_err(e: RecvTimeoutError) -> PunktfunkError {
+/// A plane's timeout is [`LilynkError::NoFrame`]; a dropped worker is `Closed`.
+fn plane_err(e: RecvTimeoutError) -> LilynkError {
     match e {
-        RecvTimeoutError::Timeout => PunktfunkError::NoFrame,
-        RecvTimeoutError::Disconnected => PunktfunkError::Closed,
+        RecvTimeoutError::Timeout => LilynkError::NoFrame,
+        RecvTimeoutError::Disconnected => LilynkError::Closed,
     }
 }
 

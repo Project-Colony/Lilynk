@@ -356,9 +356,9 @@ pub(super) async fn run_pump(mut args: WorkerArgs) {
         tokio::spawn(async move {
             let why = conn.closed().await;
             // Reason before `shutdown`: different threads observe the two; the flag must not win.
-            let reason = crate::client::PunktfunkEndReason::from(&why);
+            let reason = crate::client::LilynkEndReason::from(&why);
             let lost_v2 = *shared.v2_session.lock().unwrap_or_else(|e| e.into_inner());
-            if let (crate::client::PunktfunkEndReason::Lost, Some(id)) = (reason, lost_v2) {
+            if let (crate::client::LilynkEndReason::Lost, Some(id)) = (reason, lost_v2) {
                 crate::client::resume::note_lost(&host, port, id);
             }
             // Mid-session typed close (access expiry, …) beside the coarse reason, same order.

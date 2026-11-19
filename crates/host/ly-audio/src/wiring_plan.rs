@@ -8,8 +8,8 @@
 //! the mic is assigned first (a cable can never be a loopback), except that game audio
 //! outranks the optional mic: the Steam Streaming Microphone render side is also the
 //! only silent client-only sink, so the mic may take it only while the loopback still
-//! gets a preferred pick ([`Wiring::mic_withheld`]). `PUNKTFUNK_MIC_DEVICE` still wins.
-//! `PUNKTFUNK_LOOPBACK_DEVICE` pins the loopback above every tier and the automatic mic
+//! gets a preferred pick ([`Wiring::mic_withheld`]). `LILYNK_MIC_DEVICE` still wins.
+//! `LILYNK_LOOPBACK_DEVICE` pins the loopback above every tier and the automatic mic
 //! yields it; a pin the mic override took, or one matching nothing, falls back to the ladder.
 //!
 //! Default loopback prefers a silent working sink (Streaming Microphone, not Speakers);
@@ -226,8 +226,8 @@ pub fn plan(
     )
 }
 
-/// Assign endpoints. `mic_want` (`PUNKTFUNK_MIC_DEVICE`) and `loopback_want`
-/// (`PUNKTFUNK_LOOPBACK_DEVICE`) are lowercased name substrings that beat their
+/// Assign endpoints. `mic_want` (`LILYNK_MIC_DEVICE`) and `loopback_want`
+/// (`LILYNK_LOOPBACK_DEVICE`) are lowercased name substrings that beat their
 /// ladders. `host_audio` prefers real hardware; default prefers the silent sink.
 ///
 /// A silent sink must earn preference: if [`MixFormat::narrowing`] fires it
@@ -290,7 +290,7 @@ pub fn plan_with_formats(
     };
     // Game audio outranks the optional mic: Streaming Microphone render is also
     // the only silent client-only sink. Keep it only while loopback still gets a
-    // preferred pick without it. Override is exempt (`PUNKTFUNK_MIC_DEVICE`).
+    // preferred pick without it. Override is exempt (`LILYNK_MIC_DEVICE`).
     let mut mic_withheld = false;
     let mic_render = match mic_render {
         Some((name, id)) if mic_want.is_none() && silent_sink(&name.to_lowercase()) => {

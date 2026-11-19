@@ -1,6 +1,6 @@
 //! The console's C ABI: the shared shell drawn by Skia's Metal backend into a texture Swift
 //! hands over each display-link tick. Swift keeps the device, the queue and the drawables, and
-//! presents after `punktfunk_console_frame` returns; Skia's work is already on that queue.
+//! presents after `lilynk_console_frame` returns; Skia's work is already on that queue.
 //!
 //! The shell is bound to the thread that created it: `frame`, `menu`, `at_root`, `holds_launch`,
 //! `pointer`, `key`, `text`, `phase` and `free` run there (the main thread). `push`, `art`,
@@ -41,77 +41,77 @@ const COLOR_TYPES: [ColorType; 3] = [
 /// Safe-area insets in texture pixels.
 #[repr(C)]
 #[derive(Clone, Copy, Default)]
-pub struct PunktfunkInsets {
+pub struct LilynkInsets {
     pub left: f32,
     pub top: f32,
     pub right: f32,
     pub bottom: f32,
 }
 
-// `punktfunk_console_push` kinds, each with the JSON it takes.
+// `lilynk_console_push` kinds, each with the JSON it takes.
 
 /// `[HostRow]` — the home carousel.
-pub const PUNKTFUNK_CONSOLE_PUSH_HOSTS: u8 = 0;
+pub const LILYNK_CONSOLE_PUSH_HOSTS: u8 = 0;
 /// `{"req": …, "phase": "Busy" | {"Failed": "why"} | {"Paired": {"key": "…"}}}`, `req` the
 /// `Pair` or `RequestAccess` command's.
-pub const PUNKTFUNK_CONSOLE_PUSH_PAIR: u8 = 1;
+pub const LILYNK_CONSOLE_PUSH_PAIR: u8 = 1;
 /// `WakeStatus` under the `Wake`'s `req`, or `null` when the wake ended.
-pub const PUNKTFUNK_CONSOLE_PUSH_WAKE: u8 = 2;
+pub const LILYNK_CONSOLE_PUSH_WAKE: u8 = 2;
 /// A JSON string: a one-shot toast.
-pub const PUNKTFUNK_CONSOLE_PUSH_NOTICE: u8 = 3;
+pub const LILYNK_CONSOLE_PUSH_NOTICE: u8 = 3;
 /// `{"key": "…", "phase": SpeedPhase}` — the speed test on that host moved on.
-pub const PUNKTFUNK_CONSOLE_PUSH_SPEED: u8 = 4;
+pub const LILYNK_CONSOLE_PUSH_SPEED: u8 = 4;
 /// Any JSON: a library fetch is starting for the shelf on screen.
-pub const PUNKTFUNK_CONSOLE_PUSH_LIBRARY_BEGIN: u8 = 5;
+pub const LILYNK_CONSOLE_PUSH_LIBRARY_BEGIN: u8 = 5;
 /// `{"req": …, "phase": "Loading" | "Empty" | "Ready" | {"Error": {"title", "body",
 /// "can_retry"}}}`, `req` the `FetchLibrary`'s.
-pub const PUNKTFUNK_CONSOLE_PUSH_LIBRARY_PHASE: u8 = 6;
+pub const LILYNK_CONSOLE_PUSH_LIBRARY_PHASE: u8 = 6;
 /// `{"req": …, "games": [LibraryGame]}` — the fetched catalog for that `FetchLibrary`.
-pub const PUNKTFUNK_CONSOLE_PUSH_LIBRARY_GAMES: u8 = 7;
+pub const LILYNK_CONSOLE_PUSH_LIBRARY_GAMES: u8 = 7;
 /// `{"req": …, "games": [LibraryGame]}` — the cached catalog, shown while the fetch runs.
-pub const PUNKTFUNK_CONSOLE_PUSH_LIBRARY_CACHED: u8 = 8;
+pub const LILYNK_CONSOLE_PUSH_LIBRARY_CACHED: u8 = 8;
 /// `[{"app_id": "steam:570", "state": "running"}]` — the host's running games.
-pub const PUNKTFUNK_CONSOLE_PUSH_LIBRARY_RUNNING: u8 = 9;
+pub const LILYNK_CONSOLE_PUSH_LIBRARY_RUNNING: u8 = 9;
 /// `0` fresh, `1` waking, `2` offline.
-pub const PUNKTFUNK_CONSOLE_PUSH_LIBRARY_STALE: u8 = 10;
+pub const LILYNK_CONSOLE_PUSH_LIBRARY_STALE: u8 = 10;
 /// `{"downloads": [{"app_id", "state", "done_bytes", …}], "grants": n}` — the host's
-/// downloads, pushed before the same read's [`PUNKTFUNK_CONSOLE_PUSH_LIBRARY_RUNNING`].
-pub const PUNKTFUNK_CONSOLE_PUSH_LIBRARY_DOWNLOADS: u8 = 19;
+/// downloads, pushed before the same read's [`LILYNK_CONSOLE_PUSH_LIBRARY_RUNNING`].
+pub const LILYNK_CONSOLE_PUSH_LIBRARY_DOWNLOADS: u8 = 19;
 /// `Settings` changed elsewhere; the shell reads it on its next mutation. Not a save.
-pub const PUNKTFUNK_CONSOLE_PUSH_SETTINGS: u8 = 11;
+pub const LILYNK_CONSOLE_PUSH_SETTINGS: u8 = 11;
 /// `[{id, name, overrides}]` — the preset catalog.
-pub const PUNKTFUNK_CONSOLE_PUSH_PRESETS: u8 = 12;
+pub const LILYNK_CONSOLE_PUSH_PRESETS: u8 = 12;
 /// `KnownHosts` — the records `punktfunk://` links are built from.
-pub const PUNKTFUNK_CONSOLE_PUSH_KNOWN_HOSTS: u8 = 13;
+pub const LILYNK_CONSOLE_PUSH_KNOWN_HOSTS: u8 = 13;
 /// `{"label", "pref", "pads": [..], "others": [..]}` — the connected controllers and the other
 /// input devices; `ly_console_ui::bridge::PadsJson` has the fields.
-pub const PUNKTFUNK_CONSOLE_PUSH_PADS: u8 = 14;
+pub const LILYNK_CONSOLE_PUSH_PADS: u8 = 14;
 /// `{}` for Home, else one key holding a `HostRow`: `library` (its shelf), `stream` (the shelf
 /// plus a connect to its desktop) or `pair` (its Pair screen). Re-roots on the next frame.
-pub const PUNKTFUNK_CONSOLE_PUSH_NAVIGATE: u8 = 15;
+pub const LILYNK_CONSOLE_PUSH_NAVIGATE: u8 = 15;
 /// `{"id", "title", "message", "choices": [..]}` — a question over the top screen; the
 /// answer comes back as the `PromptAnswer` command.
-pub const PUNKTFUNK_CONSOLE_PUSH_PROMPT: u8 = 16;
+pub const LILYNK_CONSOLE_PUSH_PROMPT: u8 = 16;
 /// `[{"heading", "text"}]` — what this app bundles, for the Licences screen. The answer to
 /// the `LoadLicenses` command.
-pub const PUNKTFUNK_CONSOLE_PUSH_LICENSES: u8 = 17;
+pub const LILYNK_CONSOLE_PUSH_LICENSES: u8 = 17;
 /// `{"held": [..], "axes": [[name, v]]}` — the pad's reading while the `PadTest` command is on.
-pub const PUNKTFUNK_CONSOLE_PUSH_PAD_TEST: u8 = 18;
+pub const LILYNK_CONSOLE_PUSH_PAD_TEST: u8 = 18;
 /// `{"fp_hex": "…", "answer": ProfilesAnswer}` — the answer to the `FetchProfiles` command:
 /// `{"Listed": [rows]}`, `"NoProfiles"` or `{"Failed": "why"}`.
-pub const PUNKTFUNK_CONSOLE_PUSH_PROFILES: u8 = 20;
+pub const LILYNK_CONSOLE_PUSH_PROFILES: u8 = 20;
 /// `{"fp_hex": "…", "profile": "…", "answer": HiddenAnswer}` — the answer to the `FetchHidden`
 /// command: `{"Listed": [LibraryGame]}` or `{"Failed": "why"}`.
-pub const PUNKTFUNK_CONSOLE_PUSH_HIDDEN: u8 = 21;
+pub const LILYNK_CONSOLE_PUSH_HIDDEN: u8 = 21;
 /// `HideAnswer` — the answer to the `SetHidden` command, echoing its host, profile and title.
-pub const PUNKTFUNK_CONSOLE_PUSH_HIDE: u8 = 22;
+pub const LILYNK_CONSOLE_PUSH_HIDE: u8 = 22;
 
-/// The room `punktfunk_console_take_unlock` needs: the longest password the wire takes.
-pub const PUNKTFUNK_CONSOLE_UNLOCK_MAX: usize = 512;
-const _: () = assert!(PUNKTFUNK_CONSOLE_UNLOCK_MAX == UNLOCK_PASSWORD_MAX);
+/// The room `lilynk_console_take_unlock` needs: the longest password the wire takes.
+pub const LILYNK_CONSOLE_UNLOCK_MAX: usize = 512;
+const _: () = assert!(LILYNK_CONSOLE_UNLOCK_MAX == UNLOCK_PASSWORD_MAX);
 
 /// One console. Opaque to C.
-pub struct PunktfunkConsole {
+pub struct LilynkConsole {
     owner: ThreadId,
     shell: Mutex<Shell>,
     handles: ConsoleHandles,
@@ -146,11 +146,11 @@ fn lock<T>(m: &Mutex<T>) -> MutexGuard<'_, T> {
 /// # Safety
 /// `c` is NULL or live; `name` is NULL or a NUL-terminated string; `bytes` is `len` readable bytes.
 unsafe fn image_args<'a>(
-    c: *const PunktfunkConsole,
+    c: *const LilynkConsole,
     name: *const c_char,
     bytes: *const u8,
     len: usize,
-) -> Option<(&'a PunktfunkConsole, &'a str, Vec<u8>)> {
+) -> Option<(&'a LilynkConsole, &'a str, Vec<u8>)> {
     // SAFETY: live and NUL-terminated per this function's contract.
     let (c, name) = (unsafe { c.as_ref() }?, unsafe { str_arg(name) }?);
     if bytes.is_null() || len == 0 {
@@ -190,7 +190,7 @@ fn out_string(s: String) -> *mut c_char {
     CString::new(s).map_or(std::ptr::null_mut(), CString::into_raw)
 }
 
-impl PunktfunkConsole {
+impl LilynkConsole {
     /// The shell, if this is its thread.
     fn shell(&self) -> Option<MutexGuard<'_, Shell>> {
         if std::thread::current().id() != self.owner {
@@ -222,11 +222,11 @@ impl PunktfunkConsole {
 /// `options_json` is a NUL-terminated string. `mtl_device` and `mtl_queue` are a live
 /// `id<MTLDevice>` and an `id<MTLCommandQueue>` on it; the console retains both.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_console_new(
+pub unsafe extern "C" fn lilynk_console_new(
     options_json: *const c_char,
     mtl_device: *mut c_void,
     mtl_queue: *mut c_void,
-) -> *mut PunktfunkConsole {
+) -> *mut LilynkConsole {
     guard(std::ptr::null_mut(), || {
         // SAFETY: NUL-terminated per this function's contract.
         let Some(opts) = unsafe { str_arg(options_json) }.and_then(json::<CreateOptions>) else {
@@ -255,7 +255,7 @@ pub unsafe extern "C" fn punktfunk_console_new(
             }
         };
         let published = Published::new(&console, &store);
-        Box::into_raw(Box::new(PunktfunkConsole {
+        Box::into_raw(Box::new(LilynkConsole {
             owner: std::thread::current().id(),
             shell: Mutex::new(Shell {
                 console,
@@ -279,14 +279,14 @@ pub unsafe extern "C" fn punktfunk_console_new(
 /// shell there.
 ///
 /// # Safety
-/// `c` is NULL or from `punktfunk_console_new`, and is not used again.
+/// `c` is NULL or from `lilynk_console_new`, and is not used again.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_console_free(c: *mut PunktfunkConsole) {
+pub unsafe extern "C" fn lilynk_console_free(c: *mut LilynkConsole) {
     guard((), || {
         if c.is_null() {
             return;
         }
-        // SAFETY: from `punktfunk_console_new` and not used again, per the contract.
+        // SAFETY: from `lilynk_console_new` and not used again, per the contract.
         let c = unsafe { Box::from_raw(c) };
         if std::thread::current().id() != c.owner {
             tracing::error!("console: freed off the thread that created it; leaked");
@@ -303,12 +303,12 @@ pub unsafe extern "C" fn punktfunk_console_free(c: *mut PunktfunkConsole) {
 /// `c` is live. `mtl_texture` is an `id<MTLTexture>` from the console's device, render-target
 /// usable, BGR10A2Unorm, RGB10A2Unorm or BGRA8Unorm, at least `width`×`height`.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_console_frame(
-    c: *const PunktfunkConsole,
+pub unsafe extern "C" fn lilynk_console_frame(
+    c: *const LilynkConsole,
     mtl_texture: *mut c_void,
     width: u32,
     height: u32,
-    insets: PunktfunkInsets,
+    insets: LilynkInsets,
     scale: f64,
 ) -> bool {
     guard(false, || {
@@ -410,8 +410,8 @@ pub unsafe extern "C" fn punktfunk_console_frame(
 /// # Safety
 /// `c` is live.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_console_menu(
-    c: *const PunktfunkConsole,
+pub unsafe extern "C" fn lilynk_console_menu(
+    c: *const LilynkConsole,
     event: u8,
     source: u8,
 ) -> bool {
@@ -448,7 +448,7 @@ pub unsafe extern "C" fn punktfunk_console_menu(
 /// # Safety
 /// `c` is live.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_console_at_root(c: *const PunktfunkConsole) -> bool {
+pub unsafe extern "C" fn lilynk_console_at_root(c: *const LilynkConsole) -> bool {
     guard(true, || {
         // SAFETY: live per the contract.
         let Some(c) = (unsafe { c.as_ref() }) else {
@@ -464,7 +464,7 @@ pub unsafe extern "C" fn punktfunk_console_at_root(c: *const PunktfunkConsole) -
 /// # Safety
 /// `c` is live.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_console_holds_launch(c: *const PunktfunkConsole) -> bool {
+pub unsafe extern "C" fn lilynk_console_holds_launch(c: *const LilynkConsole) -> bool {
     guard(false, || {
         // SAFETY: live per the contract.
         let Some(c) = (unsafe { c.as_ref() }) else {
@@ -481,8 +481,8 @@ pub unsafe extern "C" fn punktfunk_console_holds_launch(c: *const PunktfunkConso
 /// # Safety
 /// `c` is live.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_console_pointer(
-    c: *const PunktfunkConsole,
+pub unsafe extern "C" fn lilynk_console_pointer(
+    c: *const LilynkConsole,
     kind: u8,
     x: f32,
     y: f32,
@@ -511,8 +511,8 @@ pub unsafe extern "C" fn punktfunk_console_pointer(
 /// # Safety
 /// `c` is live.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_console_key(
-    c: *const PunktfunkConsole,
+pub unsafe extern "C" fn lilynk_console_key(
+    c: *const LilynkConsole,
     key: u8,
     shift: bool,
     repeat: bool,
@@ -539,7 +539,7 @@ pub unsafe extern "C" fn punktfunk_console_key(
 /// # Safety
 /// `c` is live; `utf8` is a NUL-terminated string.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_console_text(c: *const PunktfunkConsole, utf8: *const c_char) {
+pub unsafe extern "C" fn lilynk_console_text(c: *const LilynkConsole, utf8: *const c_char) {
     guard((), || {
         // SAFETY: live and NUL-terminated per the contract.
         let (Some(c), Some(text)) = (unsafe { c.as_ref() }, unsafe { str_arg(utf8) }) else {
@@ -560,8 +560,8 @@ pub unsafe extern "C" fn punktfunk_console_text(c: *const PunktfunkConsole, utf8
 /// # Safety
 /// `c` is live; `message` is NULL or a NUL-terminated string.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_console_phase(
-    c: *const PunktfunkConsole,
+pub unsafe extern "C" fn lilynk_console_phase(
+    c: *const LilynkConsole,
     phase: u8,
     message: *const c_char,
 ) {
@@ -591,8 +591,8 @@ pub unsafe extern "C" fn punktfunk_console_phase(
 /// # Safety
 /// `c` is live; `out` is NULL or `cap` writable bytes; `stay` is NULL or a writable `bool`.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_console_take_unlock(
-    c: *const PunktfunkConsole,
+pub unsafe extern "C" fn lilynk_console_take_unlock(
+    c: *const LilynkConsole,
     out: *mut u8,
     cap: usize,
     stay: *mut bool,
@@ -643,14 +643,14 @@ struct HiddenJson {
     answer: HiddenAnswer,
 }
 
-/// Hand the console a model update; `kind` is a `PUNKTFUNK_CONSOLE_PUSH_*`. A bad kind or bad
+/// Hand the console a model update; `kind` is a `LILYNK_CONSOLE_PUSH_*`. A bad kind or bad
 /// JSON is a logged no-op.
 ///
 /// # Safety
 /// `c` is live; `json_text` is a NUL-terminated string.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_console_push(
-    c: *const PunktfunkConsole,
+pub unsafe extern "C" fn lilynk_console_push(
+    c: *const LilynkConsole,
     kind: u8,
     json_text: *const c_char,
 ) {
@@ -661,65 +661,61 @@ pub unsafe extern "C" fn punktfunk_console_push(
         };
         let (console, library) = (&c.handles.console, &c.handles.library);
         match kind {
-            PUNKTFUNK_CONSOLE_PUSH_HOSTS => {
-                json::<Vec<HostRow>>(text).map(|v| console.set_hosts(v))
-            }
-            PUNKTFUNK_CONSOLE_PUSH_PAIR => json::<PairStatus>(text).map(|v| console.set_pair(v)),
-            PUNKTFUNK_CONSOLE_PUSH_WAKE => {
+            LILYNK_CONSOLE_PUSH_HOSTS => json::<Vec<HostRow>>(text).map(|v| console.set_hosts(v)),
+            LILYNK_CONSOLE_PUSH_PAIR => json::<PairStatus>(text).map(|v| console.set_pair(v)),
+            LILYNK_CONSOLE_PUSH_WAKE => {
                 json::<Option<WakeStatus>>(text).map(|v| console.set_wake(v))
             }
-            PUNKTFUNK_CONSOLE_PUSH_NOTICE => json::<String>(text).map(|v| console.set_notice(v)),
-            PUNKTFUNK_CONSOLE_PUSH_SPEED => {
+            LILYNK_CONSOLE_PUSH_NOTICE => json::<String>(text).map(|v| console.set_notice(v)),
+            LILYNK_CONSOLE_PUSH_SPEED => {
                 json::<SpeedJson>(text).map(|v| console.advance_speed(&v.key, v.phase))
             }
-            PUNKTFUNK_CONSOLE_PUSH_PROFILES => {
+            LILYNK_CONSOLE_PUSH_PROFILES => {
                 json::<ProfilesJson>(text).map(|v| console.set_profiles(&v.fp_hex, v.answer))
             }
-            PUNKTFUNK_CONSOLE_PUSH_HIDDEN => json::<HiddenJson>(text)
+            LILYNK_CONSOLE_PUSH_HIDDEN => json::<HiddenJson>(text)
                 .map(|v| console.set_hidden_list(&v.fp_hex, &v.profile, v.answer)),
-            PUNKTFUNK_CONSOLE_PUSH_HIDE => {
+            LILYNK_CONSOLE_PUSH_HIDE => {
                 json::<HideAnswer>(text).map(|v| console.set_hide_answer(v))
             }
-            PUNKTFUNK_CONSOLE_PUSH_LIBRARY_BEGIN => {
+            LILYNK_CONSOLE_PUSH_LIBRARY_BEGIN => {
                 library.begin_fetch();
                 Some(())
             }
-            PUNKTFUNK_CONSOLE_PUSH_LIBRARY_PHASE => {
+            LILYNK_CONSOLE_PUSH_LIBRARY_PHASE => {
                 json::<PhasePush>(text).map(|v| library.set_phase(&v.req, v.phase))
             }
-            PUNKTFUNK_CONSOLE_PUSH_LIBRARY_GAMES => {
+            LILYNK_CONSOLE_PUSH_LIBRARY_GAMES => {
                 json::<GamesPush>(text).map(|v| library.set_games(&v.req, v.games))
             }
-            PUNKTFUNK_CONSOLE_PUSH_LIBRARY_CACHED => {
+            LILYNK_CONSOLE_PUSH_LIBRARY_CACHED => {
                 json::<GamesPush>(text).map(|v| library.set_games_cached(&v.req, v.games))
             }
-            PUNKTFUNK_CONSOLE_PUSH_LIBRARY_RUNNING => {
+            LILYNK_CONSOLE_PUSH_LIBRARY_RUNNING => {
                 json::<Vec<ly_client_core::library::RunningGame>>(text)
                     .map(|v| library.set_running(&v))
             }
-            PUNKTFUNK_CONSOLE_PUSH_LIBRARY_DOWNLOADS => json::<ly_console_ui::DownloadsPush>(text)
+            LILYNK_CONSOLE_PUSH_LIBRARY_DOWNLOADS => json::<ly_console_ui::DownloadsPush>(text)
                 .map(|p| library.set_downloads(&p.downloads, p.grants)),
-            PUNKTFUNK_CONSOLE_PUSH_LIBRARY_STALE => {
+            LILYNK_CONSOLE_PUSH_LIBRARY_STALE => {
                 json::<u8>(text).map(|v| library.set_stale(bridge::stale_code(v)))
             }
-            PUNKTFUNK_CONSOLE_PUSH_SETTINGS => json(text).map(|v| c.store.set(v)),
-            PUNKTFUNK_CONSOLE_PUSH_PRESETS => json::<Vec<PresetJson>>(text)
+            LILYNK_CONSOLE_PUSH_SETTINGS => json(text).map(|v| c.store.set(v)),
+            LILYNK_CONSOLE_PUSH_PRESETS => json::<Vec<PresetJson>>(text)
                 .map(|v| c.store.set_presets(v.into_iter().map(Into::into).collect())),
-            PUNKTFUNK_CONSOLE_PUSH_KNOWN_HOSTS => json(text).map(|v| c.store.set_known_hosts(v)),
-            PUNKTFUNK_CONSOLE_PUSH_PADS => json::<PadsJson>(text).map(|mut v| {
+            LILYNK_CONSOLE_PUSH_KNOWN_HOSTS => json(text).map(|v| c.store.set_known_hosts(v)),
+            LILYNK_CONSOLE_PUSH_PADS => json::<PadsJson>(text).map(|mut v| {
                 c.handles.console.set_other_devices(v.take_others());
                 *lock(&c.pads) = v.into_pads();
             }),
-            PUNKTFUNK_CONSOLE_PUSH_NAVIGATE => {
+            LILYNK_CONSOLE_PUSH_NAVIGATE => {
                 json::<EntryJson>(text).map(|v| *lock(&c.navigate) = Some(v.into_entry()))
             }
-            PUNKTFUNK_CONSOLE_PUSH_PROMPT => {
-                json::<Prompt>(text).map(|v| *lock(&c.prompt) = Some(v))
-            }
-            PUNKTFUNK_CONSOLE_PUSH_LICENSES => {
+            LILYNK_CONSOLE_PUSH_PROMPT => json::<Prompt>(text).map(|v| *lock(&c.prompt) = Some(v)),
+            LILYNK_CONSOLE_PUSH_LICENSES => {
                 json::<Vec<LicenseSection>>(text).map(|v| c.handles.console.set_licenses(v))
             }
-            PUNKTFUNK_CONSOLE_PUSH_PAD_TEST => {
+            LILYNK_CONSOLE_PUSH_PAD_TEST => {
                 json::<PadTestState>(text).map(|v| c.handles.console.set_pad_test(v))
             }
             _ => {
@@ -735,8 +731,8 @@ pub unsafe extern "C" fn punktfunk_console_push(
 /// # Safety
 /// `c` is live; `id` is a NUL-terminated string; `bytes` is `len` readable bytes.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_console_art(
-    c: *const PunktfunkConsole,
+pub unsafe extern "C" fn lilynk_console_art(
+    c: *const LilynkConsole,
     id: *const c_char,
     bytes: *const u8,
     len: usize,
@@ -755,8 +751,8 @@ pub unsafe extern "C" fn punktfunk_console_art(
 /// # Safety
 /// `c` is live; `url` is a NUL-terminated string; `bytes` is `len` readable bytes.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_console_avatar(
-    c: *const PunktfunkConsole,
+pub unsafe extern "C" fn lilynk_console_avatar(
+    c: *const LilynkConsole,
     url: *const c_char,
     bytes: *const u8,
     len: usize,
@@ -772,12 +768,12 @@ pub unsafe extern "C" fn punktfunk_console_avatar(
 
 /// The next event the shell raised, or NULL when there is none: `{"action": OverlayAction}`,
 /// `{"pulse": "move"|"confirm"|"boundary"}`, `{"editing": bool}`, `{"announce": "…"}` or
-/// `{"settings": Settings}` (persist it). Free with `punktfunk_console_string_free`.
+/// `{"settings": Settings}` (persist it). Free with `lilynk_console_string_free`.
 ///
 /// # Safety
 /// `c` is live.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_console_next_event(c: *const PunktfunkConsole) -> *mut c_char {
+pub unsafe extern "C" fn lilynk_console_next_event(c: *const LilynkConsole) -> *mut c_char {
     guard(std::ptr::null_mut(), || {
         // SAFETY: live per the contract.
         let Some(c) = (unsafe { c.as_ref() }) else {
@@ -789,12 +785,12 @@ pub unsafe extern "C" fn punktfunk_console_next_event(c: *const PunktfunkConsole
 }
 
 /// Every `ConsoleCmd` queued since the last call, as a JSON array (`[]` when none). Free with
-/// `punktfunk_console_string_free`.
+/// `lilynk_console_string_free`.
 ///
 /// # Safety
 /// `c` is live.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_console_drain_cmds(c: *const PunktfunkConsole) -> *mut c_char {
+pub unsafe extern "C" fn lilynk_console_drain_cmds(c: *const LilynkConsole) -> *mut c_char {
     guard(std::ptr::null_mut(), || {
         // SAFETY: live per the contract.
         let Some(c) = (unsafe { c.as_ref() }) else {
@@ -806,9 +802,9 @@ pub unsafe extern "C" fn punktfunk_console_drain_cmds(c: *const PunktfunkConsole
 }
 
 /// The console's background palettes in cycle order, as `[{"id", "name"}]`: what a native
-/// picker offers for `ui_palette`. Free with `punktfunk_console_string_free`.
+/// picker offers for `ui_palette`. Free with `lilynk_console_string_free`.
 #[unsafe(no_mangle)]
-pub extern "C" fn punktfunk_console_palettes() -> *mut c_char {
+pub extern "C" fn lilynk_console_palettes() -> *mut c_char {
     guard(std::ptr::null_mut(), || {
         let list: Vec<_> = (ly_console_ui::palette::PALETTES.iter())
             .map(|p| serde_json::json!({ "id": p.id, "name": (p.name)() }))
@@ -818,14 +814,14 @@ pub extern "C" fn punktfunk_console_palettes() -> *mut c_char {
 }
 
 /// Word the Rust side's text in the first of `languages_json` that Punktfunk ships, a JSON
-/// array of BCP-47 tags, most preferred first. `punktfunk_console_new` does this from its
+/// array of BCP-47 tags, most preferred first. `lilynk_console_new` does this from its
 /// `languages`; call it first when the palettes or the PyroWave warning are read with no
 /// console. NULL or bad JSON leaves the language as it was.
 ///
 /// # Safety
 /// `languages_json` is NULL or a NUL-terminated string.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_console_set_languages(languages_json: *const c_char) {
+pub unsafe extern "C" fn lilynk_console_set_languages(languages_json: *const c_char) {
     guard((), || {
         // SAFETY: NULL or NUL-terminated per this function's contract.
         if let Some(tags) = unsafe { str_arg(languages_json) }.and_then(json::<Vec<String>>) {
@@ -834,13 +830,13 @@ pub unsafe extern "C" fn punktfunk_console_set_languages(languages_json: *const 
     })
 }
 
-/// Free a string from `punktfunk_console_next_event`, `punktfunk_console_drain_cmds` or
-/// `punktfunk_console_palettes`.
+/// Free a string from `lilynk_console_next_event`, `lilynk_console_drain_cmds` or
+/// `lilynk_console_palettes`.
 ///
 /// # Safety
 /// `s` is NULL or one of those strings, freed once.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_console_string_free(s: *mut c_char) {
+pub unsafe extern "C" fn lilynk_console_string_free(s: *mut c_char) {
     if !s.is_null() {
         // SAFETY: from `CString::into_raw` in this module, freed once, per the contract.
         drop(unsafe { CString::from_raw(s) });
@@ -861,11 +857,11 @@ mod tests {
     fn palette_names_are_worded_from_messages() {
         let names = |tag: &str| {
             ly_l10n::with_language(tag, || {
-                let raw = punktfunk_console_palettes();
-                // SAFETY: a NUL-terminated string from `punktfunk_console_palettes`, freed once.
+                let raw = lilynk_console_palettes();
+                // SAFETY: a NUL-terminated string from `lilynk_console_palettes`, freed once.
                 let text = unsafe { CStr::from_ptr(raw) }.to_str().unwrap().to_owned();
                 // SAFETY: as above, and not used again.
-                unsafe { punktfunk_console_string_free(raw) };
+                unsafe { lilynk_console_string_free(raw) };
                 serde_json::from_str::<Vec<serde_json::Value>>(&text).unwrap()
             })
         };
@@ -884,10 +880,10 @@ mod tests {
         let before = ly_l10n::language();
         // SAFETY: NULL, or a NUL-terminated literal.
         unsafe {
-            punktfunk_console_set_languages(std::ptr::null());
-            punktfunk_console_set_languages(c"not json".as_ptr());
+            lilynk_console_set_languages(std::ptr::null());
+            lilynk_console_set_languages(c"not json".as_ptr());
             assert_eq!(ly_l10n::language(), before);
-            punktfunk_console_set_languages(c"[\"en-GB\"]".as_ptr());
+            lilynk_console_set_languages(c"[\"en-GB\"]".as_ptr());
         }
         assert_eq!(ly_l10n::language(), "en");
     }

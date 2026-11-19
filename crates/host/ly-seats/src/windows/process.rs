@@ -503,7 +503,7 @@ fn session_system_token(session_id: u32) -> WinResult<OwnedHandle> {
 /// `steam` is the seat's own `steam.exe` ([`super::steam::seat_exe`]), set when the box has Steam.
 /// `isolate` false extends the virtual display instead: the quality gate exits inside its linger,
 /// so an isolate it made is never restored and leaves the session with no lit display. A row on a
-/// person's own account gets `PUNKTFUNK_SEAT_OWN_ACCOUNT=1`, as a Linux one does.
+/// person's own account gets `LILYNK_SEAT_OWN_ACCOUNT=1`, as a Linux one does.
 pub(super) fn seat_environment(
     host_root: &Path,
     seat: &Seat,
@@ -538,53 +538,47 @@ pub(super) fn seat_environment(
     let rust_log = std::env::var_os("RUST_LOG").unwrap_or_else(|| OsString::from("punktfunk=info"));
     entries.insert("RUST_LOG".into(), rust_log);
     let values = [
-        ("PUNKTFUNK_CONFIG_DIR", host_root.as_os_str().to_owned()),
+        ("LILYNK_CONFIG_DIR", host_root.as_os_str().to_owned()),
         // The box's identity, pairing, profiles and overlays, read only: the service's own
         // config dir is the box's.
-        (
-            "PUNKTFUNK_TRUST_DIR",
-            ly_paths::config_dir().into_os_string(),
-        ),
+        ("LILYNK_TRUST_DIR", ly_paths::config_dir().into_os_string()),
         // The box's catalog, read only: the seat's own plugins live in its config dir.
         (
-            "PUNKTFUNK_LIBRARY_DIR",
+            "LILYNK_LIBRARY_DIR",
             ly_paths::config_dir().into_os_string(),
         ),
-        ("PUNKTFUNK_PAIRING", OsString::from("refused")),
-        ("PUNKTFUNK_SEAT_ID", OsString::from(seat.id.as_str())),
-        ("PUNKTFUNK_SEAT_SESSION", OsString::from("1")),
+        ("LILYNK_PAIRING", OsString::from("refused")),
+        ("LILYNK_SEAT_ID", OsString::from(seat.id.as_str())),
+        ("LILYNK_SEAT_SESSION", OsString::from("1")),
         (
-            "PUNKTFUNK_SEAT_DISPLAY_SLOT",
+            "LILYNK_SEAT_DISPLAY_SLOT",
             OsString::from(seat.display_slot.to_string()),
         ),
         (
-            "PUNKTFUNK_NATIVE_PORT",
+            "LILYNK_NATIVE_PORT",
             OsString::from(seat.native_port.to_string()),
         ),
         (
-            "PUNKTFUNK_MGMT_BIND",
+            "LILYNK_MGMT_BIND",
             OsString::from(format!("127.0.0.1:{}", seat.mgmt_port)),
         ),
-        ("PUNKTFUNK_HOST_NAME", OsString::from(&seat.name)),
-        ("PUNKTFUNK_GAMESTREAM", OsString::from("0")),
+        ("LILYNK_HOST_NAME", OsString::from(&seat.name)),
+        ("LILYNK_GAMESTREAM", OsString::from("0")),
         // Only the box advertises; a client reaches a seat through its redirect.
-        ("PUNKTFUNK_MDNS", OsString::from("0")),
-        (
-            "PUNKTFUNK_AUDIO_OUTPUT_MODE",
-            OsString::from("follow_default"),
-        ),
+        ("LILYNK_MDNS", OsString::from("0")),
+        ("LILYNK_AUDIO_OUTPUT_MODE", OsString::from("follow_default")),
     ];
     for (name, value) in values {
         entries.insert(name.into(), value);
     }
     if let Some(exe) = steam {
-        entries.insert("PUNKTFUNK_SEAT_STEAM".into(), exe.as_os_str().to_owned());
+        entries.insert("LILYNK_SEAT_STEAM".into(), exe.as_os_str().to_owned());
     }
     if seat.kind.is_person() {
-        entries.insert("PUNKTFUNK_SEAT_OWN_ACCOUNT".into(), OsString::from("1"));
+        entries.insert("LILYNK_SEAT_OWN_ACCOUNT".into(), OsString::from("1"));
     }
     if !isolate {
-        entries.insert("PUNKTFUNK_NO_ISOLATE".into(), OsString::from("1"));
+        entries.insert("LILYNK_NO_ISOLATE".into(), OsString::from("1"));
     }
     let mut block = Vec::new();
     for (name, value) in entries {
@@ -681,7 +675,7 @@ mod tests {
             let block = seat_environment(Path::new(r"C:\seat"), seat, None, true).unwrap();
             String::from_utf16_lossy(&block)
                 .split('\0')
-                .any(|entry| entry == "PUNKTFUNK_SEAT_OWN_ACCOUNT=1")
+                .any(|entry| entry == "LILYNK_SEAT_OWN_ACCOUNT=1")
         };
         assert!(marked(&adopted));
         assert!(!marked(&made));

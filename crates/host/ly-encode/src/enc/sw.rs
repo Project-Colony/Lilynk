@@ -1,5 +1,5 @@
 //! Software H.264 encoder (openh264): the GPU-less path, Linux only. A `software` pin of
-//! `PUNKTFUNK_ENCODER` or `open_software_h264` opens it; `auto` never does. Low-latency
+//! `LILYNK_ENCODER` or `open_software_h264` opens it; `auto` never does. Low-latency
 //! screen-content config: single-reference, Baseline (no B-frames), bitrate RC, in-band
 //! SPS/PPS each IDR. `submit` encodes immediately and stashes the AU for `poll`.
 //!
@@ -247,7 +247,7 @@ impl Encoder for OpenH264Encoder {
 }
 
 /// Rare automatic IDRs (recovery is `request_keyframe`; this encoder has no RFI). `gop`
-/// (`PUNKTFUNK_OH264_GOP`) overrides (0 = encoder-auto).
+/// (`LILYNK_OH264_GOP`) overrides (0 = encoder-auto).
 fn intra_period_frames(fps: u32, gop: Option<u32>) -> u32 {
     gop.unwrap_or_else(|| fps.max(1).saturating_mul(600)) // ~10 min between automatic IDRs
 }

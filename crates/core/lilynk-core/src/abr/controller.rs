@@ -232,7 +232,7 @@ pub(crate) struct BitrateController {
     /// settles it ([`set_ceiling`](Self::set_ceiling),
     /// [`no_link_evidence`](Self::no_link_evidence)).
     pub(super) ceiling_kbps: u32,
-    /// `PUNKTFUNK_ABR_MAX_MBPS` in kbps, injected so tests never touch the env.
+    /// `LILYNK_ABR_MAX_MBPS` in kbps, injected so tests never touch the env.
     /// `None` = no cap.
     ceiling_cap_kbps: Option<u32>,
     /// The ceiling is still the rate the Welcome resolved blind — nothing has

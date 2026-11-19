@@ -43,8 +43,8 @@ pub fn connect_reject_message(reason: lilynk_core::reject::RejectReason) -> Stri
 
 /// User-facing sentence for a failed [`pair_with_host`](super::pair_with_host). Crypto is a
 /// wrong PIN; do not report a dead path or a disarmed host as one.
-pub fn pair_error_message(err: &lilynk_core::PunktfunkError) -> String {
-    use lilynk_core::PunktfunkError as E;
+pub fn pair_error_message(err: &lilynk_core::LilynkError) -> String {
+    use lilynk_core::LilynkError as E;
     match err {
         E::Crypto => ly_l10n::client::pair_wrong_pin().into(),
         E::Rejected(reason, said) => reject_message(*reason, Some(said)),
@@ -59,9 +59,9 @@ pub fn pair_error_message(err: &lilynk_core::PunktfunkError) -> String {
 
 /// One sentence for a failed access request. A request has no PIN, so a crypto failure is
 /// the host not matching its advert.
-pub fn access_error_message(err: &lilynk_core::PunktfunkError) -> String {
+pub fn access_error_message(err: &lilynk_core::LilynkError) -> String {
     match err {
-        lilynk_core::PunktfunkError::Crypto => ly_l10n::client::pair_identity_mismatch().into(),
+        lilynk_core::LilynkError::Crypto => ly_l10n::client::pair_identity_mismatch().into(),
         other => pair_error_message(other),
     }
 }

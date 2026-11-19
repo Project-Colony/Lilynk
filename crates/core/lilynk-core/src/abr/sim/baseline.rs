@@ -47,7 +47,7 @@ mod tests {
     /// where pacing at 3× the budget is itself a sustained overrun (the shared
     /// 18 Mbit/s tunnel, the WAN rows, PyroWave's 1.5 Gbit/s wall and 600 Mbit/s on
     /// 1 GbE). `Smooth` is for a LAN receiver that drops the head of a line-rate burst;
-    /// a real host takes it only from `PUNKTFUNK_DELIVERY`, never from a client.
+    /// a real host takes it only from `LILYNK_DELIVERY`, never from a client.
     const SMOOTH_COSTS: &[&str] = &[
         "decoder_noise",
         "pyrowave_auto_floor",

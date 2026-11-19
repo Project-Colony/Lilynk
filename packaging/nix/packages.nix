@@ -75,7 +75,7 @@
 let
   gbm = if libgbm != null then libgbm else mesa;
 
-  # Build provenance stamped into the binary (build.rs reads PUNKTFUNK_BUILD_VERSION for
+  # Build provenance stamped into the binary (build.rs reads LILYNK_BUILD_VERSION for
   # `--version` / mgmt /health). A main checkout keeps Cargo.toml's last stable version, so
   # only the commit tells two Nix builds apart. `+g<rev>` is the Deck's source-build shape:
   # no `ci` in it, so the update check never reads it as a CI run.
@@ -138,7 +138,7 @@ let
     // {
       pname = "lilynk-tray";
       cargoExtraArgs = "--locked -p lilynk-tray";
-      PUNKTFUNK_BUILD_VERSION = buildVersion;
+      LILYNK_BUILD_VERSION = buildVersion;
       # Pure-Rust leaf: ksni/zbus talk to the dbus socket, ureq+rustls(aws-lc-rs) + lilynk-core
       # `tls` — nothing to link (no buildInputs) and no GPU driver runpath (it never dlopens
       # libcuda/EGL/vulkan).
@@ -168,7 +168,7 @@ in
         "--locked -p lilynk-host -p lilynk-encode-worker "
         + "--features lilynk-host/nvenc,lilynk-host/vulkan-encode";
 
-      PUNKTFUNK_BUILD_VERSION = buildVersion;
+      LILYNK_BUILD_VERSION = buildVersion;
 
       buildInputs = [
         pipewire # libpipewire-0.3 + libspa-0.2 (portal capture + the `pipewire` crate)

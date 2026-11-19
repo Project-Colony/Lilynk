@@ -106,7 +106,7 @@ mod tests {
     use super::super::tests::{file_url, ArtRootsEnv, PNG};
     use super::*;
 
-    /// A Steam cover under Program Files is servable with no `PUNKTFUNK_LIBRARY_ART_ROOTS`.
+    /// A Steam cover under Program Files is servable with no `LILYNK_LIBRARY_ART_ROOTS`.
     /// Hermetic: `%ProgramFiles(x86)%` is pointed at a temp tree. Asserting over whatever
     /// Steam this box has would pass vacuously on CI.
     #[test]
@@ -124,7 +124,7 @@ mod tests {
 
         // No configured roots; `%ProgramFiles(x86)%` is a real variable later tests may read.
         let _env = ArtRootsEnv::set(&[
-            ("PUNKTFUNK_LIBRARY_ART_ROOTS", None),
+            ("LILYNK_LIBRARY_ART_ROOTS", None),
             ("ProgramFiles(x86)", Some(&base)),
         ]);
 
@@ -178,11 +178,11 @@ mod tests {
         let _ = std::fs::remove_dir_all(&base);
     }
 
-    /// Playnite roots must be in the default confinement with no `PUNKTFUNK_LIBRARY_ART_ROOTS`.
+    /// Playnite roots must be in the default confinement with no `LILYNK_LIBRARY_ART_ROOTS`.
     /// Vacuous on a box with no Playnite — the registry half cannot be faked from here.
     #[test]
     fn playnite_roots_reach_the_art_confinement() {
-        let _env = ArtRootsEnv::set(&[("PUNKTFUNK_LIBRARY_ART_ROOTS", None)]);
+        let _env = ArtRootsEnv::set(&[("LILYNK_LIBRARY_ART_ROOTS", None)]);
         let roots = art_roots();
         for root in crate::library::launch::playnite_art_roots() {
             assert!(root.is_dir(), "{root:?} is offered as an art root");

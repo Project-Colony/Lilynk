@@ -54,7 +54,7 @@ pub struct SessionParams {
     pub max_num_reorder_frames: u32,
     pub initial_qp: u8,
     /// VBV depth in frames of bits. One holds picture size roughly constant and
-    /// takes motion as a QP dip. Filled from `PUNKTFUNK_VBV_FRAMES`.
+    /// takes motion as a QP dip. Filled from `LILYNK_VBV_FRAMES`.
     pub vbv_frames: f32,
     /// The range the VPP writes and the VUI states, either codec; `false` is studio.
     pub full_range: bool,

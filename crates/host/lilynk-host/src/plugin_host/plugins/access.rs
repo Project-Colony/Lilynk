@@ -831,7 +831,7 @@ fn refusal_rule(
         protected = protected
             || within(canonical, &home.join(".ssh"))
             || within(canonical, &home.join(".gnupg"))
-            || punktfunk_dot_config(home, canonical);
+            || lilynk_dot_config(home, canonical);
     }
     #[cfg(unix)]
     {
@@ -887,7 +887,7 @@ fn bind_refusal(
 
 /// `~/.config/<anything starting with punktfunk>` — the host's own dir and any sibling a
 /// future component adds there stay ungrantable.
-fn punktfunk_dot_config(home: &Path, canonical: &Path) -> bool {
+fn lilynk_dot_config(home: &Path, canonical: &Path) -> bool {
     let cfg_root = home.join(".config");
     let Some(rel) = rel_after(canonical, &cfg_root) else {
         return false;

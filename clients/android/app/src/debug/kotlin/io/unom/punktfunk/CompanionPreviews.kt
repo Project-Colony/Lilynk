@@ -50,7 +50,7 @@ private val previewStats = listOf(
 @Composable
 private fun PreviewPanel(page: CompanionPage, onPage: (CompanionPage) -> Unit = {}) {
     var view by remember { mutableStateOf(StatsView.GRAPHS) }
-    MaterialTheme(colorScheme = BrandDark, typography = PunktfunkTypography) {
+    MaterialTheme(colorScheme = BrandDark, typography = LilynkTypography) {
         CompanionPanel(
             pages = CompanionPage.entries,
             page = page,

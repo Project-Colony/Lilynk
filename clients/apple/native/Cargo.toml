@@ -9,8 +9,8 @@ authors.workspace = true
 repository.workspace = true
 
 [lib]
-# `liblilynk_apple.a` — scripts/build-xcframework.sh ships it as PunktfunkCore.xcframework's
-# library. It links lilynk-ffi whole, so the `punktfunk_*` C ABI is in it unchanged.
+# `liblilynk_apple.a` — scripts/build-xcframework.sh ships it as LilynkCore.xcframework's
+# library. It links lilynk-ffi whole, so the `lilynk_*` C ABI is in it unchanged.
 name = "lilynk_apple"
 crate-type = ["staticlib"]
 
@@ -27,13 +27,13 @@ ly-console-ui = { path = "../../../crates/client/ly-console-ui", default-feature
 ly-client-core = { path = "../../../crates/client/ly-client-core", default-features = false }
 # The unlock the console's password prompt hands to the app's dial.
 lilynk-core = { path = "../../../crates/core/lilynk-core" }
-# `punktfunk_console_set_languages`: the language for text read with no console.
+# `lilynk_console_set_languages`: the language for text read with no console.
 ly-l10n = { path = "../../../l10n" }
 skia-safe = { version = "0.153", features = ["metal", "ganesh", "textlayout"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 # The shell logs through `tracing`; with no subscriber, its `log` feature forwards each event
-# to the `log` backend `punktfunk_set_log_callback` installs, which hands it to Swift.
+# to the `log` backend `lilynk_set_log_callback` installs, which hands it to Swift.
 tracing = { version = "0.1", default-features = false, features = ["std", "log"] }
 
 # `en-XA`, the pseudo-language the tests read the palette names in.

@@ -20,7 +20,7 @@ from the AUR if it isn't in your repos). bun is also the **runtime** — the con
 never on PATH (no `nodejs` dependency). A default `makepkg` builds only host+client with no JS
 tooling — mirroring the RPM spec's `%bcond_with web`.
 
-> **Host encode: NVENC on NVIDIA, VAAPI on AMD/Intel** (`PUNKTFUNK_ENCODER=auto` picks one). The host
+> **Host encode: NVENC on NVIDIA, VAAPI on AMD/Intel** (`LILYNK_ENCODER=auto` picks one). The host
 > now has a VAAPI encoder + zero-copy dmabuf path alongside NVENC/CUDA, so `lilynk-host` works on
 > Arch + NVIDIA **and** AMD/Intel (incl. the Steam Deck — see the on-device path above). The client
 > decodes via VAAPI on AMD/Intel with a software fallback.

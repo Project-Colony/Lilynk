@@ -71,7 +71,7 @@
          and console surfaces vote their own rate. ADPF carries the decode hints. localeConfig
          lists the shipped languages for Android 13+'s per-app language; :kit generates it. -->
     <application
-        android:name=".PunktfunkApplication"
+        android:name=".LilynkApplication"
         android:allowBackup="false"
         android:appCategory="game"
         android:isGame="true"
@@ -81,7 +81,7 @@
         android:label="@string/app_name"
         android:localeConfig="@xml/locales_config"
         android:supportsRtl="true"
-        android:theme="@style/Theme.PunktfunkAndroid">
+        android:theme="@style/Theme.LilynkAndroid">
 
         <!-- Android 13+: no platform downscale or FPS cap on the host's exact mode. -->
         <meta-data
@@ -99,7 +99,7 @@
             android:name=".MainActivity"
             android:exported="true"
             android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|screenLayout|density|navigation|uiMode|fontScale|fontWeightAdjustment|locale|layoutDirection"
-            android:theme="@style/Theme.PunktfunkAndroid">
+            android:theme="@style/Theme.LilynkAndroid">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

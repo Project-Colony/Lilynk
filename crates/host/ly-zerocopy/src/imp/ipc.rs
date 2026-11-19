@@ -257,14 +257,14 @@ pub const ENCODE_WORKER_BIN: &str = "lilynk-encode-worker";
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum WorkerPath {
-    /// `PUNKTFUNK_ENCODE_WORKER=off` — debug hatch so worker vs in-process is a one-line change.
+    /// `LILYNK_ENCODE_WORKER=off` — debug hatch so worker vs in-process is a one-line change.
     Off,
     Found(PathBuf),
     /// Not beside the host binary and not on `PATH`.
     Missing,
 }
 
-/// Resolve [`ENCODE_WORKER_BIN`]: `PUNKTFUNK_ENCODE_WORKER` → alongside `/proc/self/exe` → `PATH`.
+/// Resolve [`ENCODE_WORKER_BIN`]: `LILYNK_ENCODE_WORKER` → alongside `/proc/self/exe` → `PATH`.
 ///
 /// The env override is load-bearing on NixOS: a file capability cannot live on a read-only store
 /// path, so the module exposes the worker through `security.wrappers` and points this variable at
@@ -309,7 +309,7 @@ pub fn resolve_worker_path() -> WorkerPath {
     let exe_dir = std::env::current_exe().ok();
     let path_var = std::env::var("PATH").ok();
     resolve_worker_path_in(
-        std::env::var("PUNKTFUNK_ENCODE_WORKER").ok().as_deref(),
+        std::env::var("LILYNK_ENCODE_WORKER").ok().as_deref(),
         exe_dir.as_deref().and_then(Path::parent),
         path_var.as_deref(),
         &|p| p.is_file(),

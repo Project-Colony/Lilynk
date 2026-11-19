@@ -17,13 +17,13 @@ const host = Bun.serve({
 const handle = toWebHandler(createApp().use(catchAll));
 
 beforeEach(() => {
-	process.env.PUNKTFUNK_MGMT_URL = `http://127.0.0.1:${host.port}`;
-	process.env.PUNKTFUNK_MGMT_TOKEN = "t0k";
+	process.env.LILYNK_MGMT_URL = `http://127.0.0.1:${host.port}`;
+	process.env.LILYNK_MGMT_TOKEN = "t0k";
 });
 afterEach(() => {
 	hits.length = 0;
-	delete process.env.PUNKTFUNK_MGMT_URL;
-	delete process.env.PUNKTFUNK_MGMT_TOKEN;
+	delete process.env.LILYNK_MGMT_URL;
+	delete process.env.LILYNK_MGMT_TOKEN;
 });
 afterAll(() => host.stop(true));
 

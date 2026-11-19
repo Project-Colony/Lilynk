@@ -1,5 +1,5 @@
 // The Punktfunk "funk" wordmark — vectorised from
-// Export/Punktfunk_Logo-Text_No-Border_Dark.svg (the white export background is
+// Export/Lilynk_Logo-Text_No-Border_Dark.svg (the white export background is
 // dropped). Inline SVG using currentColor so it recolours per theme: the
 // deep-violet brand on light, the light-violet lens highlight on dark (matching
 // the marketing site). Size via height (e.g. `h-4`); width follows the viewBox.

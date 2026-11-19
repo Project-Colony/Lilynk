@@ -5,7 +5,7 @@
 # also under test.
 #
 # It drives the SHIPPED path end to end: scripts/install.sh, the stub, with
-# PUNKTFUNK_SETUP_BIN pointed at a lilynk-setup built FROM THIS TREE. So the stub's argument
+# LILYNK_SETUP_BIN pointed at a lilynk-setup built FROM THIS TREE. So the stub's argument
 # passing is under test alongside the installer, and the published binary is never involved —
 # only the probe job touches that (design/installer-v2.md §6 and M4).
 #
@@ -116,7 +116,7 @@ jobs:
       image: archlinux:base
     env:
       PF: sh scripts/install.sh
-      PUNKTFUNK_SETUP_BIN: /usr/local/bin/lilynk-setup
+      LILYNK_SETUP_BIN: /usr/local/bin/lilynk-setup
     steps:
       - name: Prepare the container
         run: pacman -Syu --noconfirm --needed curl git nodejs && (pacman-key --init >/dev/null 2>&1 || true)
@@ -138,9 +138,9 @@ jobs:
     timeout-minutes: 25
     env:
       # The stub is the entry point users get, so it is the entry point under test. It execs
-      # whatever PUNKTFUNK_SETUP_BIN names, which is this pull request's own build.
+      # whatever LILYNK_SETUP_BIN names, which is this pull request's own build.
       PF: sh scripts/install.sh
-      PUNKTFUNK_SETUP_BIN: /usr/local/bin/lilynk-setup
+      LILYNK_SETUP_BIN: /usr/local/bin/lilynk-setup
     strategy:
       fail-fast: false
       matrix:

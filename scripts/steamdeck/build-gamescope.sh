@@ -6,7 +6,7 @@
 # the gamescope backend stays 8-bit SDR. This builds gamescope + punktfunk's `pipewire-hdr`
 # patches (the ONE canonical recipe, packaging/gamescope/build-lilynk-gamescope.sh) inside the
 # same Debian-trixie distrobox the host is built in, installs it as
-# ~/.local/bin/lilynk-gamescope, and pins the host to it via PUNKTFUNK_GAMESCOPE_BIN in
+# ~/.local/bin/lilynk-gamescope, and pins the host to it via LILYNK_GAMESCOPE_BIN in
 # host.env. HDR is on by default in the host; with this binary present a 10-bit-capable client
 # streams true HDR10 from Game Mode.
 #
@@ -26,8 +26,8 @@ log()  { printf '\033[1;36m==>\033[0m %s\n' "$*"; }
 ok()   { printf '\033[1;32m  ok\033[0m %s\n' "$*"; }
 warn() { printf '\033[1;33m  !!\033[0m %s\n' "$*" >&2; }
 
-SRC="${PUNKTFUNK_SRC:-$HOME/punktfunk}"
-BOX="${PUNKTFUNK_BOX:-pf2}"
+SRC="${LILYNK_SRC:-$HOME/punktfunk}"
+BOX="${LILYNK_BOX:-pf2}"
 GS_BIN="$HOME/.local/bin/lilynk-gamescope"
 STAMP="$HOME/.local/share/punktfunk/gamescope.stamp"
 HOST_ENV="$HOME/.config/punktfunk/host.env"
@@ -37,16 +37,16 @@ PKGDIR="$SRC/packaging/gamescope"
 # file is ours (install.sh §3) and the line is one this script wrote.
 unwire() {
     [ -f "$HOST_ENV" ] || return 0
-    if grep -q '^PUNKTFUNK_GAMESCOPE_BIN=' "$HOST_ENV"; then
-        sed -i '/^# HDR gamescope built by scripts\/steamdeck/d;/^PUNKTFUNK_GAMESCOPE_BIN=/d' "$HOST_ENV"
-        warn "host.env: removed PUNKTFUNK_GAMESCOPE_BIN (no working lilynk-gamescope) — sessions stream SDR"
+    if grep -q '^LILYNK_GAMESCOPE_BIN=' "$HOST_ENV"; then
+        sed -i '/^# HDR gamescope built by scripts\/steamdeck/d;/^LILYNK_GAMESCOPE_BIN=/d' "$HOST_ENV"
+        warn "host.env: removed LILYNK_GAMESCOPE_BIN (no working lilynk-gamescope) — sessions stream SDR"
     fi
 }
 wire() {
     [ -f "$HOST_ENV" ] || return 0 # install.sh runs this after §3 wrote host.env; by-hand runs may predate it
-    grep -q '^PUNKTFUNK_GAMESCOPE_BIN=' "$HOST_ENV" && return 0
-    printf '\n# HDR gamescope built by scripts/steamdeck/build-gamescope.sh (10-bit BT.2020 PQ capture;\n# rebuilt by update.sh; PUNKTFUNK_GAMESCOPE_HDR=0 forces SDR).\nPUNKTFUNK_GAMESCOPE_BIN=%s\n' "$GS_BIN" >> "$HOST_ENV"
-    ok "host.env: PUNKTFUNK_GAMESCOPE_BIN=$GS_BIN"
+    grep -q '^LILYNK_GAMESCOPE_BIN=' "$HOST_ENV" && return 0
+    printf '\n# HDR gamescope built by scripts/steamdeck/build-gamescope.sh (10-bit BT.2020 PQ capture;\n# rebuilt by update.sh; LILYNK_GAMESCOPE_HDR=0 forces SDR).\nLILYNK_GAMESCOPE_BIN=%s\n' "$GS_BIN" >> "$HOST_ENV"
+    ok "host.env: LILYNK_GAMESCOPE_BIN=$GS_BIN"
 }
 # The on-glass truth: the binary must RUN ON STEAMOS (not merely in the build container — this is
 # the ABI seam the whole distrobox approach exists for) and carry the +pfhdr banner marker.

@@ -203,7 +203,7 @@ impl V2Message for ClientHello {
         let mut r = FieldReader::new(body);
         while let Some((tag, v)) = r.next_field()? {
             if seen.contains(&tag) {
-                return Err(crate::error::PunktfunkError::InvalidArg("repeated field"));
+                return Err(crate::error::LilynkError::InvalidArg("repeated field"));
             }
             seen.push(tag);
             match tag {
@@ -293,8 +293,8 @@ impl V2Message for ClientHello {
     }
 }
 
-fn bad() -> crate::error::PunktfunkError {
-    crate::error::PunktfunkError::InvalidArg("bad handshake field")
+fn bad() -> crate::error::LilynkError {
+    crate::error::LilynkError::InvalidArg("bad handshake field")
 }
 
 fn label(v: &[u8], max: usize) -> Option<String> {
@@ -609,7 +609,7 @@ impl V2Message for ServerHello {
         let mut r = FieldReader::new(body);
         while let Some((tag, v)) = r.next_field()? {
             if seen.contains(&tag) {
-                return Err(crate::error::PunktfunkError::InvalidArg("repeated field"));
+                return Err(crate::error::LilynkError::InvalidArg("repeated field"));
             }
             seen.push(tag);
             match tag {

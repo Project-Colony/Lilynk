@@ -18,7 +18,7 @@ from pathlib import Path
 import decky
 
 CONTROLLER_TEMPLATE = "lilynk.vdf"
-TRITON_TEMPLATE = "punktfunk_triton.vdf"
+TRITON_TEMPLATE = "lilynk_triton.vdf"
 
 # Steam's controller type → the template its configset entry names. The Steam Controller 2
 # (triton) has the Deck's inputs, so it takes our layout retyped; the 2015 one (gordon) takes

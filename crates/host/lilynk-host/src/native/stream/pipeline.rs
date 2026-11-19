@@ -41,7 +41,7 @@ pub(in crate::native) type PrepHandle = (
 #[derive(Clone)]
 pub(super) struct BuildRequest {
     /// What the handshake settled: the encode resolution capture and the encoder open on,
-    /// whatever the Encoder row says now, the `PUNKTFUNK_PYROWAVE_MAX_MBPS` cap for a pin
+    /// whatever the Encoder row says now, the `LILYNK_PYROWAVE_MAX_MBPS` cap for a pin
     /// re-resolved at the delivered size, and the client's panel.
     pub(super) terms: Arc<super::super::handshake::SessionTerms>,
     /// The mode the display is asked for, and the picture its rate is priced at.
@@ -210,7 +210,7 @@ pub(in crate::native) fn spawn_display_prep(
 ) -> Option<PrepHandle> {
     let (ctx_tx, ctx_rx) = std::sync::mpsc::sync_channel::<SessionContext>(1);
     std::thread::Builder::new()
-        .name("punktfunk1-stream".into())
+        .name("lilynk1-stream".into())
         .spawn(move || -> Result<()> {
             // Declared first, so it drops last: after the display this thread built.
             let scope_done = scope_done;
@@ -374,7 +374,7 @@ fn is_driver_no_device(e: &anyhow::Error) -> bool {
 pub(super) fn is_permanent_build_error(chain: &str) -> bool {
     const PERMANENT: &[&str] = &[
         "virtual displays require linux",
-        "unknown punktfunk_compositor",
+        "unknown lilynk_compositor",
         "compositor not detected",
         "kwin virtual output failed",
         "must be a node id",
@@ -1179,7 +1179,7 @@ mod tests {
             "create virtual output: KWin virtual output failed: Não foi possível encontrar saída"
         ));
         assert!(is_permanent_build_error(
-            "unknown PUNKTFUNK_COMPOSITOR 'foo' (kwin|wlroots|mutter|gamescope)"
+            "unknown LILYNK_COMPOSITOR 'foo' (kwin|wlroots|mutter|gamescope)"
         ));
         assert!(is_permanent_build_error(
             "spawn gamescope (is it installed? `apt install gamescope`)"

@@ -8,7 +8,7 @@
 //! Every length is checked before it slices, and a frame's length against its type's bound
 //! before anything allocates: these bytes arrive before the peer is trusted.
 
-use crate::error::{PunktfunkError, Result};
+use crate::error::{LilynkError, Result};
 
 /// Largest value a varint holds.
 pub const VARINT_MAX: u64 = (1 << 62) - 1;
@@ -132,7 +132,7 @@ pub fn split_frame(b: &[u8], bound: impl Fn(u64) -> usize) -> Result<Option<(u64
         return Ok(None);
     };
     if len > bound(ty) as u64 {
-        return Err(PunktfunkError::InvalidArg("frame over its type's bound"));
+        return Err(LilynkError::InvalidArg("frame over its type's bound"));
     }
     let end = hdr + len as usize;
     Ok(b.get(hdr..end).map(|body| (ty, body, end)))
@@ -154,7 +154,7 @@ impl<'a> FieldReader<'a> {
         if self.rest.is_empty() {
             return Ok(None);
         }
-        let bad = || PunktfunkError::InvalidArg("truncated field");
+        let bad = || LilynkError::InvalidArg("truncated field");
         let (tag, a) = get_varint(self.rest).ok_or_else(bad)?;
         let (len, c) = get_varint(&self.rest[a..]).ok_or_else(bad)?;
         let start = a + c;
@@ -170,21 +170,21 @@ impl<'a> FieldReader<'a> {
 /// An unsigned integer of one to eight little-endian bytes.
 pub fn uint(v: &[u8]) -> Result<u64> {
     if v.is_empty() || v.len() > 8 {
-        return Err(PunktfunkError::InvalidArg("bad integer field"));
+        return Err(LilynkError::InvalidArg("bad integer field"));
     }
     Ok(v.iter().rev().fold(0u64, |n, &b| (n << 8) | u64::from(b)))
 }
 
 pub fn u8_of(v: &[u8]) -> Result<u8> {
-    u8::try_from(uint(v)?).map_err(|_| PunktfunkError::InvalidArg("integer field out of range"))
+    u8::try_from(uint(v)?).map_err(|_| LilynkError::InvalidArg("integer field out of range"))
 }
 
 pub fn u16_of(v: &[u8]) -> Result<u16> {
-    u16::try_from(uint(v)?).map_err(|_| PunktfunkError::InvalidArg("integer field out of range"))
+    u16::try_from(uint(v)?).map_err(|_| LilynkError::InvalidArg("integer field out of range"))
 }
 
 pub fn u32_of(v: &[u8]) -> Result<u32> {
-    u32::try_from(uint(v)?).map_err(|_| PunktfunkError::InvalidArg("integer field out of range"))
+    u32::try_from(uint(v)?).map_err(|_| LilynkError::InvalidArg("integer field out of range"))
 }
 
 pub fn u64_of(v: &[u8]) -> Result<u64> {
@@ -198,15 +198,15 @@ pub fn bool_of(v: &[u8]) -> Result<bool> {
 /// UTF-8 of at most `max` bytes.
 pub fn str_of(v: &[u8], max: usize) -> Result<&str> {
     if v.len() > max {
-        return Err(PunktfunkError::InvalidArg("string field too long"));
+        return Err(LilynkError::InvalidArg("string field too long"));
     }
-    std::str::from_utf8(v).map_err(|_| PunktfunkError::InvalidArg("string field not UTF-8"))
+    std::str::from_utf8(v).map_err(|_| LilynkError::InvalidArg("string field not UTF-8"))
 }
 
 /// Fill `slot` once. A tag the message declares single may not repeat.
 pub fn set_once<T>(slot: &mut Option<T>, v: T) -> Result<()> {
     if slot.is_some() {
-        return Err(PunktfunkError::InvalidArg("repeated field"));
+        return Err(LilynkError::InvalidArg("repeated field"));
     }
     *slot = Some(v);
     Ok(())
@@ -215,7 +215,7 @@ pub fn set_once<T>(slot: &mut Option<T>, v: T) -> Result<()> {
 /// One more value of a repeated field; past `max` the message is refused.
 pub fn push_bounded<T>(list: &mut Vec<T>, v: T, max: usize) -> Result<()> {
     if list.len() == max {
-        return Err(PunktfunkError::InvalidArg("repeated field past its bound"));
+        return Err(LilynkError::InvalidArg("repeated field past its bound"));
     }
     list.push(v);
     Ok(())
@@ -223,7 +223,7 @@ pub fn push_bounded<T>(list: &mut Vec<T>, v: T, max: usize) -> Result<()> {
 
 /// A field the message cannot do without.
 pub fn required<T>(slot: Option<T>, what: &'static str) -> Result<T> {
-    slot.ok_or(PunktfunkError::InvalidArg(what))
+    slot.ok_or(LilynkError::InvalidArg(what))
 }
 
 #[cfg(test)]

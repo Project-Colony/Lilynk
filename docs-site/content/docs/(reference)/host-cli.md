@@ -15,7 +15,7 @@ Look up a `lilynk-host` command or flag here. Most behaviour comes from
 | [`library`](#library) | Print the resolved [game library](/docs/game-library) as JSON. | all |
 | [`detect-conflicts`](#detect-conflicts) | Report other Moonlight-compatible hosts on this machine. | all |
 | `openapi` | Print the management API's OpenAPI document. | all |
-| [`punktfunk1-host`](#punktfunk1-host) | Standalone native-only test host. | all |
+| [`lilynk1-host`](#lilynk1-host) | Standalone native-only test host. | all |
 | `--version` | Print the host version. | all |
 | [`list-monitors`](#list-monitors) | List the physical monitors by connector name. | Linux |
 | [`mirror-test`](#list-monitors) | Capture one of them with no client, to prove the path works. | Linux |
@@ -45,14 +45,14 @@ lilynk-host serve
 
 | Flag | `host.env` twin | Meaning |
 |---|---|---|
-| `--gamestream` / `--moonlight` | `PUNKTFUNK_GAMESTREAM=1` | Also serve stock [Moonlight](/docs/moonlight) clients. Trusted LAN only: GameStream pairs over plain HTTP. |
-| `--native-port <PORT>` | `PUNKTFUNK_NATIVE_PORT` | Native QUIC port (default `9777`). |
-| `--mgmt-bind <IP:PORT>` | `PUNKTFUNK_MGMT_BIND` | Management API address (default `0.0.0.0:47990`). `127.0.0.1:47990` keeps it off the LAN, and paired clients can't browse your library. |
-| `--webtransport` | `PUNKTFUNK_WEBTRANSPORT=1` | Also accept the [browser client](/docs/browser-client) (preview). |
-| `--webtransport-port <PORT>` | `PUNKTFUNK_WEBTRANSPORT_PORT` | Its UDP port (default `9778`). |
-| `--webtransport-bind <IP>` | `PUNKTFUNK_WEBTRANSPORT_BIND` | Its interface (default: all). |
-| `--open` | — | Serve unpaired devices. Trusted single-user setups only. With the browser client on, it also needs `PUNKTFUNK_WEBTRANSPORT_ORIGINS`, or the host refuses to start. |
-| `--no-mdns` | `PUNKTFUNK_MDNS=0` | Skip the mDNS adverts; add the host on the client by address. |
+| `--gamestream` / `--moonlight` | `LILYNK_GAMESTREAM=1` | Also serve stock [Moonlight](/docs/moonlight) clients. Trusted LAN only: GameStream pairs over plain HTTP. |
+| `--native-port <PORT>` | `LILYNK_NATIVE_PORT` | Native QUIC port (default `9777`). |
+| `--mgmt-bind <IP:PORT>` | `LILYNK_MGMT_BIND` | Management API address (default `0.0.0.0:47990`). `127.0.0.1:47990` keeps it off the LAN, and paired clients can't browse your library. |
+| `--webtransport` | `LILYNK_WEBTRANSPORT=1` | Also accept the [browser client](/docs/browser-client) (preview). |
+| `--webtransport-port <PORT>` | `LILYNK_WEBTRANSPORT_PORT` | Its UDP port (default `9778`). |
+| `--webtransport-bind <IP>` | `LILYNK_WEBTRANSPORT_BIND` | Its interface (default: all). |
+| `--open` | — | Serve unpaired devices. Trusted single-user setups only. With the browser client on, it also needs `LILYNK_WEBTRANSPORT_ORIGINS`, or the host refuses to start. |
+| `--no-mdns` | `LILYNK_MDNS=0` | Skip the mDNS adverts; add the host on the client by address. |
 | `--door` | — | Linux: the box's host as a system service. It advertises, pairs, serves the console and places every connect on a seat, and opens no display. The [**Reachable without logging in**](/docs/profiles#on-linux) switch runs it. |
 | `--native` | — | No-op. |
 
@@ -157,13 +157,13 @@ host; read [Plugins](/docs/plugins) first.
 quick answer to "does the host see my games?". `lilynk-host library art --clear` deletes the
 covers the host cached for clients.
 
-## `punktfunk1-host`
+## `lilynk1-host`
 
 A standalone native-only host for testing the `punktfunk/2` path, with no GameStream and no console.
 Pairing is required; it logs a PIN at startup.
 
 ```sh
-lilynk-host punktfunk1-host --source virtual
+lilynk-host lilynk1-host --source virtual
 ```
 
 | Flag | Meaning |
@@ -199,14 +199,14 @@ lilynk-host service start | stop | restart | status | uninstall
 
 | Subcommand or option | What it does |
 |---|---|
-| `install` | Registers the auto-start `PunktfunkHost` service, adds the firewall rules, and writes `%ProgramData%\punktfunk\host.env` if missing. Re-run it to change an option. |
+| `install` | Registers the auto-start `LilynkHost` service, adds the firewall rules, and writes `%ProgramData%\punktfunk\host.env` if missing. Re-run it to change an option. |
 | `--gamestream=on\|off` | The GameStream setting, as in the console. |
 | `--allow-public-network[=on\|off]` | Also open the ports on networks Windows calls **Public**. Default: Private and Domain only; left out, the previous choice stays. |
-| `--mgmt-bind=IP:PORT` | Sets `PUNKTFUNK_MGMT_BIND` and opens that port. |
-| `--web-bind=ADDR` | Sets `PUNKTFUNK_UI_BIND`, the console's address: `127.0.0.1`, `0.0.0.0`, or one of yours. |
+| `--mgmt-bind=IP:PORT` | Sets `LILYNK_MGMT_BIND` and opens that port. |
+| `--web-bind=ADDR` | Sets `LILYNK_UI_BIND`, the console's address: `127.0.0.1`, `0.0.0.0`, or one of yours. |
 | `uninstall` | Stops and deletes the service and its firewall rules. The host stays — see [Uninstalling](/docs/uninstall). |
 | `start` / `stop` / `restart` | Service control. `restart` waits for the old process, so it picks up a `host.env` edit. |
-| `status` | Same as `sc query PunktfunkHost`. |
+| `status` | Same as `sc query LilynkHost`. |
 
 See [Running as a Service](/docs/running-as-a-service) and [Windows Host](/docs/windows-host).
 
@@ -247,7 +247,7 @@ elevated: the file is readable by Administrators and SYSTEM only. A silent insta
 
 ## `list-monitors`
 
-Prints the physical monitors by connector name, the name `PUNKTFUNK_CAPTURE_MONITOR` takes to
+Prints the physical monitors by connector name, the name `LILYNK_CAPTURE_MONITOR` takes to
 [stream a real monitor](/docs/stream-a-monitor). Run it inside the
 session you want to stream.
 
@@ -268,7 +268,7 @@ a still screen produces almost no frames.
 `lilynk-host anchor-test --monitor <CONNECTOR> [--width W --height H]` walks the pointer to the
 centre and four corners of that monitor, one second apart; `--none` walks it unanchored for
 comparison. The log line `libei: absolute input maps into this output` names the monitor it hit.
-It needs the libei input backend (GNOME, or `PUNKTFUNK_INPUT_BACKEND=libei`).
+It needs the libei input backend (GNOME, or `LILYNK_INPUT_BACKEND=libei`).
 
 ## `hdr-probe` and `probe-compositor`
 

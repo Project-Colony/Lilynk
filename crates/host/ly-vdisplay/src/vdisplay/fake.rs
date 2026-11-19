@@ -394,7 +394,7 @@ const CHILD_DIR: &str = "PF_VDISPLAY_TEST_DIR";
 
 /// Run `body` in a child of this test binary and pass when it does. `module` is the caller's
 /// `module_path!()`, `test` its name. The child is an unconfigured host on a box of its own: one
-/// empty scratch dir for config, state, runtime dir and home, no inherited `PUNKTFUNK_*`, then
+/// empty scratch dir for config, state, runtime dir and home, no inherited `LILYNK_*`, then
 /// `env`. Nothing it writes or `systemctl --user` reaches the box's.
 pub(crate) fn in_child(module: &str, test: &str, env: &[(&str, &str)], body: fn()) {
     if let Some(dir) = std::env::var_os(CHILD_DIR) {
@@ -410,13 +410,13 @@ pub(crate) fn in_child(module: &str, test: &str, env: &[(&str, &str)], body: fn(
     let test = format!("{module}::{test}");
     child.args(["--exact", &test, "--include-ignored", "--nocapture"]);
     for (key, _) in std::env::vars_os() {
-        if key.to_string_lossy().starts_with("PUNKTFUNK_") {
+        if key.to_string_lossy().starts_with("LILYNK_") {
             child.env_remove(key);
         }
     }
     for var in [
         CHILD_DIR,
-        "PUNKTFUNK_CONFIG_DIR",
+        "LILYNK_CONFIG_DIR",
         "XDG_STATE_HOME",
         "XDG_RUNTIME_DIR",
         "HOME",

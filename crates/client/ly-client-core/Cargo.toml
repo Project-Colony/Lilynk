@@ -190,7 +190,7 @@ d3d11va = ["dep:ly-client-video", "ly-client-video/d3d11va"]
 discovery = ["dep:mdns-sd", "dep:async-channel"]
 # PyroWave client decode ships in every default build (flatpak included; pyrowave-sys is a
 # vendored in-repo tree, offline-safe, and an empty stub off Linux/Windows). The codec is
-# still strictly per-session opt-in (Settings codec pick / PUNKTFUNK_PREFER_PYROWAVE=1).
+# still strictly per-session opt-in (Settings codec pick / LILYNK_PREFER_PYROWAVE=1).
 # Forwards to ly-client-video, which `desktop` pulls.
 pyrowave = ["ly-client-video?/pyrowave"]
 

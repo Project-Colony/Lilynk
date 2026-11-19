@@ -9,7 +9,7 @@
 //! die with the connection, so a keepalive thread owns it.
 //!
 //! Needs a live Mutter (`gnome-shell`, or `gnome-shell --headless`) on
-//! the session bus. [`crate::detect`] picks it from the `PUNKTFUNK_COMPOSITOR=mutter`
+//! the session bus. [`crate::detect`] picks it from the `LILYNK_COMPOSITOR=mutter`
 //! pin, a live `gnome-shell`, or else the stored `XDG_CURRENT_DESKTOP=GNOME`.
 //!
 //! GNOME cannot rematch a virtual monitor (Mutter mints a fresh EDID
@@ -1891,7 +1891,7 @@ mod tests {
     }
 
     /// Live GNOME create/drop. Needs gnome-shell on the session bus.
-    /// `PUNKTFUNK_MUTTER_VIRTUAL_PRIMARY=0` unless Exclusive is the point.
+    /// `LILYNK_MUTTER_VIRTUAL_PRIMARY=0` unless Exclusive is the point.
     #[test]
     #[ignore = "needs a live gnome-shell on the session bus; run with --ignored"]
     fn live_mutter_create_drop() {

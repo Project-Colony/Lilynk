@@ -35,7 +35,7 @@ pub(crate) fn fresh_facts(id: &str, family: Family) -> Facts {
         has_omarchy_bin: false,
         has_ujust: false,
         in_input_group: false,
-        in_punktfunk_group: false,
+        in_lilynk_group: false,
         has_input_group: true,
         nvidia: Nvidia::Absent,
         firewall: Firewall::None,

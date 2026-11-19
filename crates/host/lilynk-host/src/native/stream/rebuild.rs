@@ -172,7 +172,7 @@ impl CaptureLossRebuild for StreamState {
         None
     }
 
-    /// Re-detect the live compositor unless `PUNKTFUNK_COMPOSITOR` pins it, then build once.
+    /// Re-detect the live compositor unless `LILYNK_COMPOSITOR` pins it, then build once.
     fn build(&mut self, first: bool) -> Result<Pipeline> {
         if ly_host_config::config().compositor.is_none() {
             self.retarget_to_live_session();
@@ -677,7 +677,7 @@ impl StreamState {
                 tracing::warn!(
                     pinned = self.display.compositor.id(),
                     live = ?active.kind,
-                    "capture lost while PUNKTFUNK_COMPOSITOR pins the backend and the \
+                    "capture lost while LILYNK_COMPOSITOR pins the backend and the \
                      live session no longer matches it — the pin disables \
                      session-following, so this rebuild can only retry the pinned \
                      backend; remove the pin to let the stream follow session switches"

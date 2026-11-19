@@ -8,7 +8,7 @@
 //! few pixels of difference become a bar or a crop, and the frame shows 1:1 or
 //! pixel-replicated instead of resampled by 1.0005×.
 //!
-//! Twins: `PunktfunkShared/VideoFit.swift`, Android `VideoFit.kt`. All run
+//! Twins: `LilynkShared/VideoFit.swift`, Android `VideoFit.kt`. All run
 //! `clients/shared/video-fit-vectors.json`.
 
 /// How a frame whose aspect differs from the view fills it. Settings key `video_fit`.

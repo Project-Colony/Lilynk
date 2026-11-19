@@ -43,7 +43,7 @@ native_libs="$(cargo $toolchain rustc $target_args -p lilynk-ffi --lib --crate-t
 echo ">> native libs: ${native_libs:-<none>}"
 
 # Not mktemp: a debug+ASAN static binary can exceed a tmpfs /tmp; target/ is real disk.
-out="$ws/target/${target_sub}$profile/punktfunk_harness"
+out="$ws/target/${target_sub}$profile/lilynk_harness"
 cc="${CC:-cc}"
 cflags=""
 if [ -n "$san" ]; then

@@ -47,22 +47,22 @@ any field report against the table, not against prose here.
 
 ## Dev knobs
 
-`PUNKTFUNK_DECODER` and `PUNKTFUNK_PRESENT_MODE` are user-facing and documented on the
+`LILYNK_DECODER` and `LILYNK_PRESENT_MODE` are user-facing and documented on the
 [docs site](https://docs.punktfunk.unom.io/docs/configuration). These are not:
 
 | Variable | Effect |
 | --- | --- |
-| `PUNKTFUNK_VK_DEVICE=<index>` | Pick the GPU on a multi-GPU box. |
-| `PUNKTFUNK_TONEMAP_PEAK` | Rolloff for tone-mapping PQ to an SDR swapchain (default ≈1000 nits). |
-| `PUNKTFUNK_HW_FAULT=import` | Fault every VAAPI dmabuf import — proves the three-strike demotion to software on healthy hardware. |
-| `PUNKTFUNK_AU_FAULT=drop\|truncate\|flip[:period]` | Corrupt decoder input on the native Vulkan lane (default period 60). |
-| `PUNKTFUNK_FAKE_LIBRARY=<file.json>` | Feed `--browse` canned entries with no host. |
+| `LILYNK_VK_DEVICE=<index>` | Pick the GPU on a multi-GPU box. |
+| `LILYNK_TONEMAP_PEAK` | Rolloff for tone-mapping PQ to an SDR swapchain (default ≈1000 nits). |
+| `LILYNK_HW_FAULT=import` | Fault every VAAPI dmabuf import — proves the three-strike demotion to software on healthy hardware. |
+| `LILYNK_AU_FAULT=drop\|truncate\|flip[:period]` | Corrupt decoder input on the native Vulkan lane (default period 60). |
+| `LILYNK_FAKE_LIBRARY=<file.json>` | Feed `--browse` canned entries with no host. |
 
 The three `AU_FAULT` modes fail in different places on purpose: `drop` swallows an AU so the next
 one references a picture that was never decoded — the bitstream planner catches it immediately;
 `truncate` and `flip` both parse perfectly, so only the driver's per-frame decode-status query sees
 them, and neither is visible at all on a driver without `queryResultStatusSupport`. Watch the
-Detailed stats line's `integrity:` term. Note that `PUNKTFUNK_AU_DUMP` records the AU as it arrived
+Detailed stats line's `integrity:` term. Note that `LILYNK_AU_DUMP` records the AU as it arrived
 from the host, *before* the injector runs, so a faulted run's dump is the clean bitstream.
 
 `fixtures/mixed-platform-library.json` is the standing asset for library grouping and sorting:

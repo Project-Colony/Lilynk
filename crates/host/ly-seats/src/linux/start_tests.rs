@@ -120,8 +120,8 @@ fn run_files(account: &str, uid: u32, state: &Path) -> Vec<(String, u32, String)
                 .replace(&state, "<state>");
             let text = text
                 .lines()
-                .map(|line| match line.strip_prefix("PUNKTFUNK_MGMT_TOKEN=") {
-                    Some(token) if token.len() == 64 => "PUNKTFUNK_MGMT_TOKEN=<token>",
+                .map(|line| match line.strip_prefix("LILYNK_MGMT_TOKEN=") {
+                    Some(token) if token.len() == 64 => "LILYNK_MGMT_TOKEN=<token>",
                     _ => line,
                 })
                 .map(|line| format!("{line}\n"))
@@ -159,7 +159,7 @@ fn rig() -> Rig {
         std::fs::create_dir_all(dir).unwrap();
     }
     shared::ensure_layout(&state).unwrap();
-    std::fs::write(box_dir.join("punktfunk1-paired.json"), "{\"clients\":[]}").unwrap();
+    std::fs::write(box_dir.join("lilynk1-paired.json"), "{\"clients\":[]}").unwrap();
     let backend = LinuxBackend::detached(&box_dir, &state);
     Rig {
         _temp: temp,
@@ -459,19 +459,19 @@ fn a_made_seat_s_cold_and_warm_start_run_exactly_these() {
     );
     let manager = binds.replacen("[Service]\n", "", 1);
     let env = format!(
-        "PUNKTFUNK_SEAT_SESSION=\"1\"\n\
-         PUNKTFUNK_SEAT_ID=\"{id}\"\n\
-         PUNKTFUNK_CONFIG_DIR=\"{seat_dir}/home/.config/punktfunk\"\n\
-         PUNKTFUNK_TRUST_DIR=\"<state>/trust/{id}\"\n\
-         PUNKTFUNK_PAIRING=\"refused\"\n\
-         PUNKTFUNK_LIBRARY_DIR=\"<state>/trust/{id}\"\n\
-         PUNKTFUNK_NATIVE_PORT=\"9779\"\n\
-         PUNKTFUNK_MGMT_BIND=\"127.0.0.1:48123\"\n\
-         PUNKTFUNK_HOST_NAME=\"Desk\"\n\
-         PUNKTFUNK_GAMESTREAM=\"0\"\n\
-         PUNKTFUNK_MDNS=\"0\"\n\
-         PUNKTFUNK_WEBTRANSPORT=\"0\"\n\
-         PUNKTFUNK_MGMT_TOKEN=<token>\n"
+        "LILYNK_SEAT_SESSION=\"1\"\n\
+         LILYNK_SEAT_ID=\"{id}\"\n\
+         LILYNK_CONFIG_DIR=\"{seat_dir}/home/.config/punktfunk\"\n\
+         LILYNK_TRUST_DIR=\"<state>/trust/{id}\"\n\
+         LILYNK_PAIRING=\"refused\"\n\
+         LILYNK_LIBRARY_DIR=\"<state>/trust/{id}\"\n\
+         LILYNK_NATIVE_PORT=\"9779\"\n\
+         LILYNK_MGMT_BIND=\"127.0.0.1:48123\"\n\
+         LILYNK_HOST_NAME=\"Desk\"\n\
+         LILYNK_GAMESTREAM=\"0\"\n\
+         LILYNK_MDNS=\"0\"\n\
+         LILYNK_WEBTRANSPORT=\"0\"\n\
+         LILYNK_MGMT_TOKEN=<token>\n"
     );
     assert_eq!(
         files,
@@ -543,16 +543,16 @@ fn the_owner_s_cold_and_warm_start_run_exactly_these() {
 
     let id = OWNER_ID;
     let env = format!(
-        "PUNKTFUNK_SEAT_SESSION=\"1\"\n\
-         PUNKTFUNK_SEAT_ID=\"{id}\"\n\
-         PUNKTFUNK_SEAT_OWNER=\"1\"\n\
-         PUNKTFUNK_TRUST_DIR=\"<state>/trust/{id}\"\n\
-         PUNKTFUNK_PAIRING=\"refused\"\n\
-         PUNKTFUNK_NATIVE_PORT=\"9779\"\n\
-         PUNKTFUNK_MGMT_BIND=\"127.0.0.1:48123\"\n\
-         PUNKTFUNK_MDNS=\"0\"\n\
-         PUNKTFUNK_WEBTRANSPORT=\"0\"\n\
-         PUNKTFUNK_MGMT_TOKEN=<token>\n"
+        "LILYNK_SEAT_SESSION=\"1\"\n\
+         LILYNK_SEAT_ID=\"{id}\"\n\
+         LILYNK_SEAT_OWNER=\"1\"\n\
+         LILYNK_TRUST_DIR=\"<state>/trust/{id}\"\n\
+         LILYNK_PAIRING=\"refused\"\n\
+         LILYNK_NATIVE_PORT=\"9779\"\n\
+         LILYNK_MGMT_BIND=\"127.0.0.1:48123\"\n\
+         LILYNK_MDNS=\"0\"\n\
+         LILYNK_WEBTRANSPORT=\"0\"\n\
+         LILYNK_MGMT_TOKEN=<token>\n"
     );
     assert_eq!(
         files,
@@ -617,20 +617,20 @@ fn a_person_s_cold_start_runs_exactly_these() {
     assert_eq!(*logins.lock().unwrap(), [false]);
     let id = PERSON_ID;
     let env = format!(
-        "PUNKTFUNK_SEAT_SESSION=\"1\"\n\
-         PUNKTFUNK_SEAT_ID=\"{id}\"\n\
-         PUNKTFUNK_SEAT_OWN_ACCOUNT=\"1\"\n\
-         PUNKTFUNK_CONFIG_DIR=\"<state>/seats/{id}/config\"\n\
-         PUNKTFUNK_TRUST_DIR=\"<state>/trust/{id}\"\n\
-         PUNKTFUNK_PAIRING=\"refused\"\n\
-         PUNKTFUNK_LIBRARY_DIR=\"<state>/trust/{id}\"\n\
-         PUNKTFUNK_NATIVE_PORT=\"9779\"\n\
-         PUNKTFUNK_MGMT_BIND=\"127.0.0.1:48123\"\n\
-         PUNKTFUNK_HOST_NAME=\"Desk\"\n\
-         PUNKTFUNK_GAMESTREAM=\"0\"\n\
-         PUNKTFUNK_MDNS=\"0\"\n\
-         PUNKTFUNK_WEBTRANSPORT=\"0\"\n\
-         PUNKTFUNK_MGMT_TOKEN=<token>\n"
+        "LILYNK_SEAT_SESSION=\"1\"\n\
+         LILYNK_SEAT_ID=\"{id}\"\n\
+         LILYNK_SEAT_OWN_ACCOUNT=\"1\"\n\
+         LILYNK_CONFIG_DIR=\"<state>/seats/{id}/config\"\n\
+         LILYNK_TRUST_DIR=\"<state>/trust/{id}\"\n\
+         LILYNK_PAIRING=\"refused\"\n\
+         LILYNK_LIBRARY_DIR=\"<state>/trust/{id}\"\n\
+         LILYNK_NATIVE_PORT=\"9779\"\n\
+         LILYNK_MGMT_BIND=\"127.0.0.1:48123\"\n\
+         LILYNK_HOST_NAME=\"Desk\"\n\
+         LILYNK_GAMESTREAM=\"0\"\n\
+         LILYNK_MDNS=\"0\"\n\
+         LILYNK_WEBTRANSPORT=\"0\"\n\
+         LILYNK_MGMT_TOKEN=<token>\n"
     );
     assert_eq!(
         files,

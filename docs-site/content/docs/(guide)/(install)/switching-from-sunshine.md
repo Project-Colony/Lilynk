@@ -14,7 +14,7 @@ Move Punktfunk's in `host.env` (`~/.config/punktfunk/host.env`, on Windows
 `%ProgramData%\punktfunk\host.env`):
 
 ```sh
-PUNKTFUNK_MGMT_BIND=0.0.0.0:47991
+LILYNK_MGMT_BIND=0.0.0.0:47991
 ```
 
 Then restart the host: `systemctl --user restart lilynk-host`, or on Windows
@@ -68,7 +68,7 @@ Running both is fine for a trial. If something acts up, stop the other host firs
    display driver.
 4. **Turn on Moonlight compatibility** if you still use Moonlight clients
    ([Moonlight](/docs/moonlight)). They pair again, with Punktfunk this time.
-5. **Undo the port move** if you like: delete the `PUNKTFUNK_MGMT_BIND` line and restart the host.
+5. **Undo the port move** if you like: delete the `LILYNK_MGMT_BIND` line and restart the host.
 
 Something not behaving?
 [Troubleshooting → Another streaming host is installed](/docs/troubleshooting-connect#another-streaming-host-sunshine-apollo--is-installed).

@@ -485,7 +485,7 @@ fn is_elevated() -> bool {
     }
 }
 
-const TASK: &str = "PunktfunkScripting";
+const TASK: &str = "LilynkScripting";
 
 pub(super) fn usage_note() {
     eprintln!(
@@ -1001,7 +1001,7 @@ mod tests {
     }
 }
 
-/// The `PunktfunkScripting` task's state, or a seat's own runner's ([`seat::status`]).
+/// The `LilynkScripting` task's state, or a seat's own runner's ([`seat::status`]).
 pub(super) fn runtime_status() -> RuntimeStatus {
     if seat_runner() {
         return seat::status();
@@ -1035,10 +1035,10 @@ pub(super) fn runtime_status() -> RuntimeStatus {
 }
 
 /// The host's word to the runner that the operator turned the sandbox off: `host.env`'s
-/// `PUNKTFUNK_PLUGIN_SANDBOX`, which the runner's task never sees.
+/// `LILYNK_PLUGIN_SANDBOX`, which the runner's task never sees.
 const SANDBOX_OFF_MARKER: &str = "sandbox-off";
 
-/// Is `PUNKTFUNK_PLUGIN_SANDBOX` off in `host.env`? Read from the marker the host published,
+/// Is `LILYNK_PLUGIN_SANDBOX` off in `host.env`? Read from the marker the host published,
 /// so a CLI process reads the host's answer and not its own environment.
 pub(super) fn runner_sandbox_off() -> bool {
     ly_paths::config_dir()
@@ -1050,12 +1050,12 @@ pub(super) fn runner_sandbox_off() -> bool {
 /// Write or remove [`SANDBOX_OFF_MARKER`] from this process's environment. The serving host
 /// alone calls it: its environment is `host.env`.
 pub(super) fn publish_sandbox_override() {
-    let off = ly_host_config::env_on("PUNKTFUNK_PLUGIN_SANDBOX") == Some(false);
+    let off = ly_host_config::env_on("LILYNK_PLUGIN_SANDBOX") == Some(false);
     let marker = ly_paths::config_dir()
         .join(RUNNER_DATA_DIR)
         .join(SANDBOX_OFF_MARKER);
     let result = if off {
-        tracing::warn!("PUNKTFUNK_PLUGIN_SANDBOX=off — plugins run outside their AppContainers");
+        tracing::warn!("LILYNK_PLUGIN_SANDBOX=off — plugins run outside their AppContainers");
         std::fs::write(&marker, b"")
     } else {
         match std::fs::remove_file(&marker) {

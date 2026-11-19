@@ -121,7 +121,7 @@ pub enum Codec {
     PyroWave,
 }
 
-/// Chroma the encoder emits (`PUNKTFUNK_444` + client `VIDEO_CAP_444` + GPU
+/// Chroma the encoder emits (`LILYNK_444` + client `VIDEO_CAP_444` + GPU
 /// probe). `Yuv420` is the default. `Yuv444` is HEVC or PyroWave only: the native
 /// protocol takes it after `ly_encode::can_encode_444`, GameStream for a PyroWave client.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
@@ -291,7 +291,7 @@ pub trait Encoder: Send {
     ///
     /// `false` requests wind-back to sync-retrieve at the next safe point,
     /// usually a rebuild whose first frame is an IDR. Caller polls until it
-    /// reads `false`. `PUNKTFUNK_NVENC_ASYNC=1` refuses the wind-back.
+    /// reads `false`. `LILYNK_NVENC_ASYNC=1` refuses the wind-back.
     fn set_pipelined(&mut self, _on: bool) -> bool {
         false
     }
@@ -475,7 +475,7 @@ pub const SPLIT_DISABLE: u32 = 15;
 /// direct-SDK backends. Precedence:
 /// 0. `client_slices` ≤ 1 → DISABLE. Split-frame encode emits one slice per
 ///    engine, which a client that never asked for multi-slice cannot take.
-/// 1. `PUNKTFUNK_SPLIT_ENCODE` = `0`/`disable` | `1`/`auto` (AUTO_FORCED) |
+/// 1. `LILYNK_SPLIT_ENCODE` = `0`/`disable` | `1`/`auto` (AUTO_FORCED) |
 ///    `2` | `3` — operator override, always wins. `2`/`3` clamp to the GPU's
 ///    engine count ([`clamp_to_engines`]); the driver honours an over-ask
 ///    and silently encodes narrower.
@@ -548,7 +548,7 @@ pub fn max_forced_split_mode(engines: u32) -> u32 {
     }
 }
 
-/// Hold `PUNKTFUNK_SPLIT_ENCODE=2|3` to what the hardware can deliver.
+/// Hold `LILYNK_SPLIT_ENCODE=2|3` to what the hardware can deliver.
 /// Without this the driver honours the knob as a silent narrower encode
 /// (see [`max_forced_split_mode`]).
 // Split-policy cfg — see the constants above.
@@ -564,7 +564,7 @@ pub fn clamp_to_engines(requested: u32, hw_max: u32, engines: u32) -> u32 {
         tracing::warn!(
             requested,
             engines,
-            "PUNKTFUNK_SPLIT_ENCODE asks for a split on a single-NVENC GPU — disabling it"
+            "LILYNK_SPLIT_ENCODE asks for a split on a single-NVENC GPU — disabling it"
         );
         return SPLIT_DISABLE;
     }
@@ -573,7 +573,7 @@ pub fn clamp_to_engines(requested: u32, hw_max: u32, engines: u32) -> u32 {
             requested,
             engines,
             using = hw_max,
-            "PUNKTFUNK_SPLIT_ENCODE asks for more NVENC engines than this GPU has — clamping. \
+            "LILYNK_SPLIT_ENCODE asks for more NVENC engines than this GPU has — clamping. \
              (The driver would ACCEPT the over-ask and silently encode with fewer, so the log \
              would otherwise claim a split width that never happened.)"
         );
@@ -582,7 +582,7 @@ pub fn clamp_to_engines(requested: u32, hw_max: u32, engines: u32) -> u32 {
     requested
 }
 
-/// `PUNKTFUNK_VBV_FRAMES` — HRD/VBV size in frame intervals (default 1.0:
+/// `LILYNK_VBV_FRAMES` — HRD/VBV size in frame intervals (default 1.0:
 /// each frame must fit its rate share, keeping sizes uniform for the pacer).
 /// Direct-NVENC, AMF and native VAAPI read it; Vulkan Video through `vbv_window_ms`.
 /// Larger values let complex frames borrow bits at the cost of size variance.
@@ -607,7 +607,7 @@ pub fn vbv_frames_env() -> f64 {
 pub fn vbv_window_ms(fps: u32) -> (u32, u32) {
     let frames = vbv_frames_env();
     let ms = (frames * 1000.0 / fps.max(1) as f64).round();
-    // `f64 as u32` saturates at the bounds, so an absurd `PUNKTFUNK_VBV_FRAMES` cannot wrap.
+    // `f64 as u32` saturates at the bounds, so an absurd `LILYNK_VBV_FRAMES` cannot wrap.
     let window = (ms as u32).max(1);
     (window, window / 2)
 }

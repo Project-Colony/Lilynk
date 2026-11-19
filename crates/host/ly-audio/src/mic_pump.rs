@@ -79,7 +79,7 @@ const PUMP_TUNING: PumpTuning = PumpTuning {
 ///
 /// Opens at host start (games bind capture once). Reopens on push-fail or idle heartbeat
 /// without invalidating senders. Discards buffered audio after an uplink gap. De-jitters via
-/// [`MicDejitter`](super::mic_jitter) (`PUNKTFUNK_MIC_LEGACY_BUFFER=1` pins the old fixed prime).
+/// [`MicDejitter`](super::mic_jitter) (`LILYNK_MIC_LEGACY_BUFFER=1` pins the old fixed prime).
 /// Per-frame decode errors drop that frame. Exits when every sender is dropped.
 pub struct MicPump {
     tx: std::sync::mpsc::SyncSender<MicFrame>,
@@ -200,7 +200,7 @@ struct PumpLife {
     mic: Box<dyn VirtualMic>,
     decoder: opus::Decoder,
     tuning: PumpTuning,
-    /// `PUNKTFUNK_MIC_LEGACY_BUFFER=1`: the backend keeps its fixed prime, and nothing trims.
+    /// `LILYNK_MIC_LEGACY_BUFFER=1`: the backend keeps its fixed prime, and nothing trims.
     legacy: bool,
     jitter: MicDejitter,
     pcm: Vec<f32>,

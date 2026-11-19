@@ -61,7 +61,7 @@ The task list, the silent-install flags and the uninstall behaviour are on the
 here, because nothing else records them:
 
 - **Upgrades never overwrite `host.env`.** A default is written only if absent, and a hand-edited
-  `PUNKTFUNK_HOST_CMD` survives. The one rewrite is `serve --gamestream` (or no line) to `serve`
+  `LILYNK_HOST_CMD` survives. The one rewrite is `serve --gamestream` (or no line) to `serve`
   with the GameStream setting kept on. On an upgrade the GameStream task is inert (the flag is
   omitted), so change an installed host in the web console or with
   `lilynk-host service install --gamestream=on|off`, not by re-running the wizard.
@@ -242,7 +242,7 @@ root — recoverable, but only by re-running the install.
 ## Dev iteration on the test box (driver)
 
 Two helpers wrap the painful manual steps of iterating on the ly-vdisplay driver against a live host
-service. Run **elevated**; both default to the `PunktfunkHost` service. (The `C:\t-goal1\...` probe
+service. Run **elevated**; both default to the `LilynkHost` service. (The `C:\t-goal1\...` probe
 path below is the maintainer's test box — substitute your own `lilynk-probe.exe` build.)
 
 ```powershell

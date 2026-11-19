@@ -42,7 +42,7 @@ impl crate::audio::AudioCapturer for LinuxPadCapture {
 
 /// Open capture lazily on the streamer thread (open-with-backoff, same as Windows). `edge`
 /// selects DualSense Edge for a minted sink. `None` only for empty kinds, a slot past
-/// `PUNKTFUNK_PAD_AUDIO_SLOTS`, or spawn failure; the pad still works, without audio.
+/// `LILYNK_PAD_AUDIO_SLOTS`, or spawn failure; the pad still works, without audio.
 ///
 /// Capture follows the pad transport flag, not whether a stream is published yet — otherwise
 /// the race between pad arrival and this thread would mint a duplicate node graph over a
@@ -66,14 +66,14 @@ pub(in crate::native) fn spawn(
         tracing::debug!(
             pad,
             slot,
-            "pad-audio slot past PUNKTFUNK_PAD_AUDIO_SLOTS — not streaming"
+            "pad-audio slot past LILYNK_PAD_AUDIO_SLOTS — not streaming"
         );
         return None;
     }
     let stop_t = stop.clone();
     let usb = ly_inject::dualsense_usbip::usbip_preferred();
     match std::thread::Builder::new()
-        .name(format!("punktfunk1-pad{pad}"))
+        .name(format!("lilynk1-pad{pad}"))
         .spawn(move || {
             pad_audio_thread(
                 conn,

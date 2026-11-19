@@ -5,9 +5,9 @@
 //! its factor, `L` the session's link rate ([`LinkRate::resolve`]), `cap` ([`cap_bps`]) the
 //! least of a measured `L`, 0.9 × the ports' speed `L_hard` and 0.9 × a pinned stream's link.
 //! Packets leave in groups of [`group_bytes`]; a wait under the sleep floor spins, so the
-//! clock holds at multi-gigabit rates. `PUNKTFUNK_DELIVERY` is the operator's A/B ([`forced`]).
+//! clock holds at multi-gigabit rates. `LILYNK_DELIVERY` is the operator's A/B ([`forced`]).
 //!
-//! The frame-driven tick wait ([`wait_next_tick`]), `PUNKTFUNK_VIDEO_DROP` and the
+//! The frame-driven tick wait ([`wait_next_tick`]), `LILYNK_VIDEO_DROP` and the
 //! percentile helper live here too.
 
 use std::time::{Duration, Instant};
@@ -20,7 +20,7 @@ macro_rules! env_once {
     }};
 }
 
-/// Native feeds this to the PUNKTFUNK_PERF histogram (pacing tail per frame).
+/// Native feeds this to the LILYNK_PERF histogram (pacing tail per frame).
 pub(crate) struct PaceStat {
     pub(crate) spread_us: u32,
     pub(crate) paced: bool,
@@ -48,12 +48,12 @@ const SLEEP_FLOOR: Duration = Duration::from_micros(500);
 /// Waits under this are not worth a spin: the clock keeps the debt.
 const SPIN_FLOOR: Duration = Duration::from_micros(20);
 
-/// `PUNKTFUNK_PACE_FACTOR`: the multiple of the stream rate a frame may leave at (default 3;
+/// `LILYNK_PACE_FACTOR`: the multiple of the stream rate a frame may leave at (default 3;
 /// the link carries 1× sustained, so a bounded 3× excursion is safe).
 pub(crate) fn pace_factor() -> f64 {
     env_once!(
         f64,
-        std::env::var("PUNKTFUNK_PACE_FACTOR")
+        std::env::var("LILYNK_PACE_FACTOR")
             .ok()
             .and_then(|s| s.parse().ok())
             .filter(|f: &f64| f.is_finite() && *f >= 0.0)
@@ -62,7 +62,7 @@ pub(crate) fn pace_factor() -> f64 {
 }
 
 /// How a session's frames leave. `Auto` and `Wake` are what a client asks for; `Burst` and
-/// `Smooth` only `PUNKTFUNK_DELIVERY` sets.
+/// `Smooth` only `LILYNK_DELIVERY` sets.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 #[repr(u8)]
 pub(crate) enum Shape {
@@ -89,7 +89,7 @@ impl Shape {
     }
 }
 
-/// What `PUNKTFUNK_DELIVERY` pins for every session of both planes.
+/// What `LILYNK_DELIVERY` pins for every session of both planes.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum Forced {
     Shape(Shape),
@@ -108,18 +108,18 @@ impl Forced {
     }
 }
 
-/// `PUNKTFUNK_DELIVERY=auto|wake|burst|capped|smooth`. Unset leaves the shape to the client.
+/// `LILYNK_DELIVERY=auto|wake|burst|capped|smooth`. Unset leaves the shape to the client.
 pub(crate) fn forced() -> Option<Forced> {
     env_once!(Option<Forced>, {
-        let s = ly_host_config::knob("PUNKTFUNK_DELIVERY");
+        let s = ly_host_config::knob("LILYNK_DELIVERY");
         let f = s.as_deref().and_then(parse_forced);
         match (&s, f) {
             (Some(_), Some(f)) => {
-                tracing::info!(delivery = ?f, "PUNKTFUNK_DELIVERY pins the delivery")
+                tracing::info!(delivery = ?f, "LILYNK_DELIVERY pins the delivery")
             }
             (Some(s), None) => tracing::warn!(
                 value = %s,
-                "PUNKTFUNK_DELIVERY not recognised — auto, wake, burst, capped or smooth"
+                "LILYNK_DELIVERY not recognised — auto, wake, burst, capped or smooth"
             ),
             (None, _) => {}
         }
@@ -561,14 +561,14 @@ fn group_len<T: AsRef<[u8]>>(pkts: &[T], max_bytes: usize, max_packets: usize) -
     n
 }
 
-/// `PUNKTFUNK_FRAME_DRIVEN=0` restores the fixed-cadence tick. On, the loop wakes on
+/// `LILYNK_FRAME_DRIVEN=0` restores the fixed-cadence tick. On, the loop wakes on
 /// a feed's arrival ([`ly_capture::Feed::wait_arrival`]) or on the
 /// next access unit of an encoder that publishes its own; a backend with neither
 /// keeps the tick. Shared by both video planes.
 pub(crate) fn frame_driven_enabled() -> bool {
     env_once!(
         bool,
-        ly_host_config::env_on("PUNKTFUNK_FRAME_DRIVEN").unwrap_or(true)
+        ly_host_config::env_on("LILYNK_FRAME_DRIVEN").unwrap_or(true)
     )
 }
 
@@ -850,11 +850,11 @@ fn sleep_to_grid(next: &mut Instant) {
     }
 }
 
-/// Parsed-once `PUNKTFUNK_VIDEO_DROP` (1..=90, else off): discard N % of
+/// Parsed-once `LILYNK_VIDEO_DROP` (1..=90, else off): discard N % of
 /// sealed wire packets before send. Honored by both video planes.
 pub(crate) fn video_drop_pct() -> u32 {
     env_once!(u32, {
-        let pct = std::env::var("PUNKTFUNK_VIDEO_DROP")
+        let pct = std::env::var("LILYNK_VIDEO_DROP")
             .ok()
             .and_then(|s| s.parse::<u32>().ok())
             .filter(|p| (1..=90).contains(p))
@@ -862,7 +862,7 @@ pub(crate) fn video_drop_pct() -> u32 {
         if pct > 0 {
             tracing::warn!(
                 pct,
-                "PUNKTFUNK_VIDEO_DROP: injecting wire-packet loss (FEC test)"
+                "LILYNK_VIDEO_DROP: injecting wire-packet loss (FEC test)"
             );
         }
         pct

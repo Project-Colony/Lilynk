@@ -8,7 +8,7 @@
 #
 # Installed as /usr/bin/lilynk-gamescope — it does NOT replace the distro's gamescope, and does
 # not Provide/Conflict with it. Only the sessions lilynk-host starts itself resolve this binary
-# (PUNKTFUNK_GAMESCOPE_BIN > lilynk-gamescope > gamescope).
+# (LILYNK_GAMESCOPE_BIN > lilynk-gamescope > gamescope).
 #
 # `--stage` is the DESTDIR build-lilynk-gamescope.sh wrote, not a single binary: that tree carries
 # the compositor AND the Vulkan WSI layer built beside it, and a game nested under gamescope gets its
@@ -35,8 +35,8 @@ done
 # The layout build-lilynk-gamescope.sh writes under its --destdir/--prefix.
 BINARY="$SRC_STAGE/usr/bin/lilynk-gamescope"
 REAPER="$SRC_STAGE/usr/lib/punktfunk/gamescope/gamescopereaper"
-LAYER_SO="$SRC_STAGE/usr/lib/punktfunk/libVkLayer_PUNKTFUNK_gamescope_wsi.so"
-LAYER_JSON="$SRC_STAGE/usr/lib/punktfunk/vulkan/implicit_layer.d/punktfunk_gamescope_wsi.json"
+LAYER_SO="$SRC_STAGE/usr/lib/punktfunk/libVkLayer_LILYNK_gamescope_wsi.so"
+LAYER_JSON="$SRC_STAGE/usr/lib/punktfunk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json"
 [ -x "$BINARY" ] || { echo "ERROR: $BINARY is not an executable file" >&2; exit 1; }
 # gamescope starts every session's first child through its reaper.
 [ -x "$REAPER" ] || { echo "ERROR: $REAPER missing from the stage — a session would run nothing" >&2; exit 1; }
@@ -82,9 +82,9 @@ install -Dm0755 "$REAPER" "$STAGE/usr/lib/punktfunk/gamescope/gamescopereaper"
 # /usr/lib/punktfunk, not a multiarch triplet dir: the layer manifest carries that absolute path
 # baked in at build time, so the two have to agree. Nothing links the .so by soname — the Vulkan
 # loader dlopens it by exactly that path — so multiarch has no say here.
-install -Dm0755 "$LAYER_SO" "$STAGE/usr/lib/punktfunk/libVkLayer_PUNKTFUNK_gamescope_wsi.so"
+install -Dm0755 "$LAYER_SO" "$STAGE/usr/lib/punktfunk/libVkLayer_LILYNK_gamescope_wsi.so"
 install -Dm0644 "$LAYER_JSON" \
-  "$STAGE/usr/lib/punktfunk/vulkan/implicit_layer.d/punktfunk_gamescope_wsi.json"
+  "$STAGE/usr/lib/punktfunk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json"
 # gamescope's notice as Debian's `copyright`, the bundled libraries' own beside it.
 DOC_SRC="$SRC_STAGE/usr/share/doc/lilynk-gamescope"
 if [ -d "$DOC_SRC" ]; then
@@ -104,7 +104,7 @@ if command -v dpkg-shlibdeps >/dev/null 2>&1; then
   mkdir -p "$STAGE/debian"
   : > "$STAGE/debian/control"
   ( cd "$STAGE" && dpkg-shlibdeps -O --ignore-missing-info usr/bin/lilynk-gamescope \
-      usr/lib/punktfunk/libVkLayer_PUNKTFUNK_gamescope_wsi.so 2>/dev/null ) \
+      usr/lib/punktfunk/libVkLayer_LILYNK_gamescope_wsi.so 2>/dev/null ) \
     > "$STAGE/.shlibdeps" || true
   DEPS="$(sed -n 's/^shlibs:Depends=//p' "$STAGE/.shlibdeps" | head -1)"
   rm -rf "$STAGE/debian" "$STAGE/.shlibdeps"

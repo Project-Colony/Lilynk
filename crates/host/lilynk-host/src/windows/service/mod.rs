@@ -48,12 +48,12 @@ use windows::Win32::System::Threading::{
 };
 
 /// SCM key under `HKLM\SYSTEM\CurrentControlSet\Services`. Do not rename.
-const SERVICE_NAME: &str = "PunktfunkHost";
+const SERVICE_NAME: &str = "LilynkHost";
 const SERVICE_DISPLAY: &str = "Punktfunk Host";
 const SERVICE_DESCRIPTION: &str =
     "Low-latency desktop/game streaming host. Launches the ordinary host into the active console session.";
 
-/// `PUNKTFUNK_HOST_CMD` when host.env names none. Only a host.env from before the setting has no
+/// `LILYNK_HOST_CMD` when host.env names none. Only a host.env from before the setting has no
 /// line; `service install` moves its GameStream into the settings store and writes `serve`.
 const DEFAULT_HOST_CMD: &str = "serve --gamestream";
 
@@ -87,7 +87,7 @@ pub fn main(args: &[String]) -> Result<()> {
                  \x20   lilynk-host service install [--gamestream=on|off] [--web-bind=ADDR]\n\
                  \x20                                      register the auto-start service + firewall rules\n\
                  \x20                                      (--gamestream sets the console's GameStream setting;\n\
-                 \x20                                       --web-bind sets PUNKTFUNK_UI_BIND, the console's\n\
+                 \x20                                       --web-bind sets LILYNK_UI_BIND, the console's\n\
                  \x20                                       address: 127.0.0.1, 0.0.0.0, or one of yours)\n\
                  \x20   lilynk-host service uninstall   stop + remove the service + firewall rules\n\
                  \x20   lilynk-host service start       start the service now\n\

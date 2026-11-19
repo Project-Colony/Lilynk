@@ -105,7 +105,7 @@ impl Client {
         Self::connect(Some(CALL_TIMEOUT))
     }
 
-    /// Explicit config dir so pin-mismatch tests need no `PUNKTFUNK_CONFIG_DIR`
+    /// Explicit config dir so pin-mismatch tests need no `LILYNK_CONFIG_DIR`
     /// (`unsafe` since edition 2024).
     pub fn connect_in(dir: &Path, global_timeout: Option<Duration>) -> Result<Client> {
         let port = ly_paths::published_mgmt_port_in(dir).unwrap_or(crate::mgmt::DEFAULT_PORT);
@@ -412,14 +412,10 @@ mod tests {
         let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
         let port = listener.local_addr().unwrap().port();
         std::fs::write(dir.join("native-cert.pem"), &ours.cert_pem).unwrap();
-        std::fs::write(
-            dir.join("mgmt-token"),
-            "PUNKTFUNK_MGMT_TOKEN=s3kr1t-token\n",
-        )
-        .unwrap();
+        std::fs::write(dir.join("mgmt-token"), "LILYNK_MGMT_TOKEN=s3kr1t-token\n").unwrap();
         std::fs::write(
             dir.join("mgmt-endpoint"),
-            format!("PUNKTFUNK_MGMT_URL=https://127.0.0.1:{port}\n"),
+            format!("LILYNK_MGMT_URL=https://127.0.0.1:{port}\n"),
         )
         .unwrap();
 
@@ -464,7 +460,7 @@ mod tests {
         let dir = std::env::temp_dir().join(format!("pf-ctl-nocert-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&dir);
         std::fs::create_dir_all(&dir).unwrap();
-        std::fs::write(dir.join("mgmt-token"), "PUNKTFUNK_MGMT_TOKEN=deadbeef\n").unwrap();
+        std::fs::write(dir.join("mgmt-token"), "LILYNK_MGMT_TOKEN=deadbeef\n").unwrap();
         // `.err()` not `expect_err`: `Client` has no `Debug` so a derived one
         // cannot print the bearer into a panic or `{:?}`.
         let err = Client::connect_in(&dir, None)

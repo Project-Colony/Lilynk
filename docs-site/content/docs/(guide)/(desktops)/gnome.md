@@ -18,7 +18,7 @@ It needs GNOME 48 or newer on a **Wayland** session.
 
 Nothing is required: the host finds Mutter on every connect.
 
-Don't set `PUNKTFUNK_COMPOSITOR`, `WAYLAND_DISPLAY` or `XDG_CURRENT_DESKTOP`. A pinned compositor
+Don't set `LILYNK_COMPOSITOR`, `WAYLAND_DISPLAY` or `XDG_CURRENT_DESKTOP`. A pinned compositor
 turns off detection and session following, and stale session values point the host at dead
 sockets. Every other option is in [Configuration](/docs/configuration).
 

@@ -21,7 +21,7 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 import kotlin.concurrent.thread
 
-private const val TAG = "PunktfunkIdentity"
+private const val TAG = "LilynkIdentity"
 
 /** The delimiter the JNI uses to join the two PEMs; collision-free (PEM bodies never contain it). */
 private const val PEM_DELIM = "\n-----PUNKTFUNK-KEY-----\n"
@@ -226,7 +226,7 @@ private fun mint(store: IdentityStore): ClientIdentity {
 class IdentityStore(context: Context) {
     private val appCtx = context.applicationContext
     private val file = File(appCtx.filesDir, "pf_identity.bin")
-    private val alias = "punktfunk_identity_v1"
+    private val alias = "lilynk_identity_v1"
 
     fun load(): IdentityLoad {
         if (!file.exists()) return IdentityLoad.Absent

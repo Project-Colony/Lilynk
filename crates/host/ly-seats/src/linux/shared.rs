@@ -37,7 +37,7 @@ use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 
 /// The box's pairing list: who a seat host admits. A person's seat gets it filtered.
-const PAIRED: &str = "punktfunk1-paired.json";
+const PAIRED: &str = "lilynk1-paired.json";
 
 /// Box files a seat host reads; any may not exist yet. Never the box's identity: a seat host
 /// mints its own, and clients reach it through the pin the box's `Redirect` carries.
@@ -116,7 +116,7 @@ pub(super) fn games_dir(state: &Path) -> PathBuf {
     state.join("games")
 }
 
-/// The box's library, the door's `PUNKTFUNK_LIBRARY_DIR` (`lilynk-door.service`).
+/// The box's library, the door's `LILYNK_LIBRARY_DIR` (`lilynk-door.service`).
 pub(super) fn box_library_dir(state: &Path) -> PathBuf {
     state.join("library")
 }
@@ -936,7 +936,7 @@ pub(super) fn refresh_box_library(
 }
 
 /// Brings the box's library in a seat's trust copy level with [`box_library_dir`]: the seat's
-/// `PUNKTFUNK_LIBRARY_DIR`. Of [`LIBRARY_PROFILES`] it holds only the folder of the profile the
+/// `LILYNK_LIBRARY_DIR`. Of [`LIBRARY_PROFILES`] it holds only the folder of the profile the
 /// door's `profiles.json` in `box_dir` puts on this seat ([`seat_profile`]). Never the owner's
 /// row, whose host writes the library it reads.
 pub(super) fn refresh_seat_library(
@@ -2439,14 +2439,14 @@ mod tests {
         }
         let gid = own_gid(&box_dir);
         let reader = Reader::group(gid);
-        std::fs::write(box_dir.join("punktfunk1-paired.json"), "[1]").unwrap();
+        std::fs::write(box_dir.join("lilynk1-paired.json"), "[1]").unwrap();
         std::fs::write(box_dir.join("profiles.json"), "{}").unwrap();
         assert!(refresh_trust(&box_dir, &state, &id(), reader).unwrap());
         let trust = trust_dir(&state, &id());
 
         // A second link makes the paired list unreadable to the copy; profiles still follow.
         std::fs::hard_link(
-            box_dir.join("punktfunk1-paired.json"),
+            box_dir.join("lilynk1-paired.json"),
             temp.path().join("backup"),
         )
         .unwrap();
@@ -2454,7 +2454,7 @@ mod tests {
         let error = refresh_trust(&box_dir, &state, &id(), reader).unwrap_err();
         assert_eq!(error.code, "trust_copy");
         assert_eq!(
-            std::fs::read_to_string(trust.join("punktfunk1-paired.json")).unwrap(),
+            std::fs::read_to_string(trust.join("lilynk1-paired.json")).unwrap(),
             "[1]"
         );
         assert_eq!(
@@ -2464,7 +2464,7 @@ mod tests {
 
         let gone = temp.path().join("gone");
         assert!(!refresh_trust(&gone, &state, &id(), reader).unwrap());
-        assert!(trust.join("punktfunk1-paired.json").exists());
+        assert!(trust.join("lilynk1-paired.json").exists());
         assert!(trust.join("profiles.json").exists());
     }
 
@@ -2486,7 +2486,7 @@ mod tests {
     }
 
     #[test]
-    fn the_token_belongs_to_the_punktfunk_user_when_there_is_one() {
+    fn the_token_belongs_to_the_lilynk_user_when_there_is_one() {
         let user = Passwd {
             name: "punktfunk".into(),
             uid: 972,
@@ -2506,15 +2506,15 @@ mod tests {
         let box_dir = temp.path();
         let me = std::fs::metadata(box_dir).unwrap();
         let owner = (me.uid(), me.gid());
-        write_host_token(box_dir, &id(), "PUNKTFUNK_MGMT_TOKEN=aa\n", owner).unwrap();
-        write_host_token(box_dir, &id(), "PUNKTFUNK_MGMT_TOKEN=bb\n", owner).unwrap();
+        write_host_token(box_dir, &id(), "LILYNK_MGMT_TOKEN=aa\n", owner).unwrap();
+        write_host_token(box_dir, &id(), "LILYNK_MGMT_TOKEN=bb\n", owner).unwrap();
         let dir = host_dir(box_dir, &id());
         assert_eq!(mode(&dir), 0o700);
         assert_eq!(mode(&hosts_dir(box_dir)), 0o711);
         assert_eq!(mode(&dir.join("mgmt-token")), 0o600);
         assert_eq!(
             std::fs::read_to_string(dir.join("mgmt-token")).unwrap(),
-            "PUNKTFUNK_MGMT_TOKEN=bb\n"
+            "LILYNK_MGMT_TOKEN=bb\n"
         );
         assert!(!dir.join("mgmt-token.tmp").exists());
         remove_seat_dirs(box_dir, &id()).unwrap();

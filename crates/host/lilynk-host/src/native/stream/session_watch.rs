@@ -42,7 +42,7 @@ impl SessionSwitch {
     }
 }
 
-/// The session's `PUNKTFUNK_SESSION_WATCH` (`row`) on/off wins. Auto is on where the box has a
+/// The session's `LILYNK_SESSION_WATCH` (`row`) on/off wins. Auto is on where the box has a
 /// Game Mode to flip to mid-stream, and off elsewhere.
 pub(super) fn session_watch_enabled(row: Option<bool>) -> bool {
     row.unwrap_or_else(has_game_mode)
@@ -134,7 +134,7 @@ impl ContentFollow {
         let target = ContentTarget::default();
         let seen = target.clone();
         let watcher = std::thread::Builder::new()
-            .name("punktfunk1-content".into())
+            .name("lilynk1-content".into())
             .spawn(move || content_watcher_loop(tx, seen, stop))
             .ok();
         ContentFollow {

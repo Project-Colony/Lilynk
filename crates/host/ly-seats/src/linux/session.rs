@@ -73,7 +73,7 @@ fn quoted(key: &str, value: &str) -> String {
     format!("{key}=\"{escaped}\"\n")
 }
 
-const TOKEN_KEY: &str = "PUNKTFUNK_MGMT_TOKEN=";
+const TOKEN_KEY: &str = "LILYNK_MGMT_TOKEN=";
 
 /// The management token as the one `KEY=value` line the box's client and `EnvironmentFile=` both
 /// read. Hex, so it needs no quoting.
@@ -106,9 +106,9 @@ pub(super) fn mint_token() -> String {
 /// advertises, so no seat does.
 ///
 /// The owner's row keeps the owner's own config directory, library, host name and GameStream
-/// setting: it is the owner's host, behind the door. `PUNKTFUNK_SEAT_OWNER` tells the runner and
+/// setting: it is the owner's host, behind the door. `LILYNK_SEAT_OWNER` tells the runner and
 /// the host so. Every other seat plays the box's library, from its trust copy. A person's row
-/// is such a seat on an account that is theirs: `PUNKTFUNK_SEAT_OWN_ACCOUNT` tells the runner
+/// is such a seat on an account that is theirs: `LILYNK_SEAT_OWN_ACCOUNT` tells the runner
 /// alone, and its host keeps its identity in the row's directory, not in their home.
 pub(super) fn render_env(
     seat: &Seat,
@@ -122,57 +122,51 @@ pub(super) fn render_env(
         .to_string_lossy()
         .into_owned();
     let mut rows = vec![
-        ("PUNKTFUNK_SEAT_SESSION", "1".to_owned()),
-        ("PUNKTFUNK_SEAT_ID", seat.id.to_string()),
+        ("LILYNK_SEAT_SESSION", "1".to_owned()),
+        ("LILYNK_SEAT_ID", seat.id.to_string()),
     ];
     let owner = kind == Own::Owner;
     let config = match kind {
         Own::Owner => {
-            rows.push(("PUNKTFUNK_SEAT_OWNER", "1".to_owned()));
+            rows.push(("LILYNK_SEAT_OWNER", "1".to_owned()));
             None
         }
         Own::Person => {
-            rows.push(("PUNKTFUNK_SEAT_OWN_ACCOUNT", "1".to_owned()));
+            rows.push(("LILYNK_SEAT_OWN_ACCOUNT", "1".to_owned()));
             Some(shared::person_config_dir(state, &seat.id))
         }
         Own::Seat => Some(home.join(".config/punktfunk")),
     };
     if let Some(config) = config {
-        rows.push((
-            "PUNKTFUNK_CONFIG_DIR",
-            config.to_string_lossy().into_owned(),
-        ));
+        rows.push(("LILYNK_CONFIG_DIR", config.to_string_lossy().into_owned()));
     }
     rows.extend([
-        ("PUNKTFUNK_TRUST_DIR", trust.clone()),
-        ("PUNKTFUNK_PAIRING", "refused".to_owned()),
+        ("LILYNK_TRUST_DIR", trust.clone()),
+        ("LILYNK_PAIRING", "refused".to_owned()),
     ]);
     if !owner {
-        rows.push(("PUNKTFUNK_LIBRARY_DIR", trust));
+        rows.push(("LILYNK_LIBRARY_DIR", trust));
     }
     rows.extend([
-        ("PUNKTFUNK_NATIVE_PORT", seat.native_port.to_string()),
-        (
-            "PUNKTFUNK_MGMT_BIND",
-            format!("127.0.0.1:{}", seat.mgmt_port),
-        ),
+        ("LILYNK_NATIVE_PORT", seat.native_port.to_string()),
+        ("LILYNK_MGMT_BIND", format!("127.0.0.1:{}", seat.mgmt_port)),
     ]);
     if !owner {
-        rows.push(("PUNKTFUNK_HOST_NAME", seat.name.clone()));
-        rows.push(("PUNKTFUNK_GAMESTREAM", "0".to_owned()));
+        rows.push(("LILYNK_HOST_NAME", seat.name.clone()));
+        rows.push(("LILYNK_GAMESTREAM", "0".to_owned()));
     }
-    rows.push(("PUNKTFUNK_MDNS", "0".to_owned()));
+    rows.push(("LILYNK_MDNS", "0".to_owned()));
     // Off unless the box streams to browsers: an owner whose own setting has it on would
     // otherwise bind the door's port.
     let port = seat.browser_port().filter(|_| browser.on);
     rows.push((
-        "PUNKTFUNK_WEBTRANSPORT",
+        "LILYNK_WEBTRANSPORT",
         if port.is_some() { "1" } else { "0" }.to_owned(),
     ));
     if let Some(port) = port {
-        rows.push(("PUNKTFUNK_WEBTRANSPORT_PORT", port.to_string()));
+        rows.push(("LILYNK_WEBTRANSPORT_PORT", port.to_string()));
         if !browser.origins.is_empty() {
-            rows.push(("PUNKTFUNK_WEBTRANSPORT_ORIGINS", browser.origins.join(",")));
+            rows.push(("LILYNK_WEBTRANSPORT_ORIGINS", browser.origins.join(",")));
         }
     }
     let mut out: String = rows.iter().map(|(key, value)| quoted(key, value)).collect();
@@ -693,16 +687,16 @@ mod tests {
         );
         assert_eq!(
             text,
-            "PUNKTFUNK_SEAT_SESSION=\"1\"\n\
-             PUNKTFUNK_SEAT_ID=\"0123456789abcdef0123456789abcdef\"\n\
-             PUNKTFUNK_SEAT_OWNER=\"1\"\n\
-             PUNKTFUNK_TRUST_DIR=\"/var/lib/lilynk-seats/trust/0123456789abcdef0123456789abcdef\"\n\
-             PUNKTFUNK_PAIRING=\"refused\"\n\
-             PUNKTFUNK_NATIVE_PORT=\"9779\"\n\
-             PUNKTFUNK_MGMT_BIND=\"127.0.0.1:47995\"\n\
-             PUNKTFUNK_MDNS=\"0\"\n\
-             PUNKTFUNK_WEBTRANSPORT=\"0\"\n\
-             PUNKTFUNK_MGMT_TOKEN=ab12\n"
+            "LILYNK_SEAT_SESSION=\"1\"\n\
+             LILYNK_SEAT_ID=\"0123456789abcdef0123456789abcdef\"\n\
+             LILYNK_SEAT_OWNER=\"1\"\n\
+             LILYNK_TRUST_DIR=\"/var/lib/lilynk-seats/trust/0123456789abcdef0123456789abcdef\"\n\
+             LILYNK_PAIRING=\"refused\"\n\
+             LILYNK_NATIVE_PORT=\"9779\"\n\
+             LILYNK_MGMT_BIND=\"127.0.0.1:47995\"\n\
+             LILYNK_MDNS=\"0\"\n\
+             LILYNK_WEBTRANSPORT=\"0\"\n\
+             LILYNK_MGMT_TOKEN=ab12\n"
         );
         assert!(!text.contains("CONFIG_DIR"));
         assert!(!text.contains("LIBRARY_DIR"));
@@ -781,20 +775,20 @@ mod tests {
         assert_eq!(
             text,
             format!(
-                "PUNKTFUNK_SEAT_SESSION=\"1\"\n\
-                 PUNKTFUNK_SEAT_ID=\"{id}\"\n\
-                 PUNKTFUNK_SEAT_OWN_ACCOUNT=\"1\"\n\
-                 PUNKTFUNK_CONFIG_DIR=\"/var/lib/lilynk-seats/seats/{id}/config\"\n\
-                 PUNKTFUNK_TRUST_DIR=\"/var/lib/lilynk-seats/trust/{id}\"\n\
-                 PUNKTFUNK_PAIRING=\"refused\"\n\
-                 PUNKTFUNK_LIBRARY_DIR=\"/var/lib/lilynk-seats/trust/{id}\"\n\
-                 PUNKTFUNK_NATIVE_PORT=\"9779\"\n\
-                 PUNKTFUNK_MGMT_BIND=\"127.0.0.1:47995\"\n\
-                 PUNKTFUNK_HOST_NAME=\"Jane\"\n\
-                 PUNKTFUNK_GAMESTREAM=\"0\"\n\
-                 PUNKTFUNK_MDNS=\"0\"\n\
-                 PUNKTFUNK_WEBTRANSPORT=\"0\"\n\
-                 PUNKTFUNK_MGMT_TOKEN=ab12\n"
+                "LILYNK_SEAT_SESSION=\"1\"\n\
+                 LILYNK_SEAT_ID=\"{id}\"\n\
+                 LILYNK_SEAT_OWN_ACCOUNT=\"1\"\n\
+                 LILYNK_CONFIG_DIR=\"/var/lib/lilynk-seats/seats/{id}/config\"\n\
+                 LILYNK_TRUST_DIR=\"/var/lib/lilynk-seats/trust/{id}\"\n\
+                 LILYNK_PAIRING=\"refused\"\n\
+                 LILYNK_LIBRARY_DIR=\"/var/lib/lilynk-seats/trust/{id}\"\n\
+                 LILYNK_NATIVE_PORT=\"9779\"\n\
+                 LILYNK_MGMT_BIND=\"127.0.0.1:47995\"\n\
+                 LILYNK_HOST_NAME=\"Jane\"\n\
+                 LILYNK_GAMESTREAM=\"0\"\n\
+                 LILYNK_MDNS=\"0\"\n\
+                 LILYNK_WEBTRANSPORT=\"0\"\n\
+                 LILYNK_MGMT_TOKEN=ab12\n"
             )
         );
         assert!(!text.contains("/home/jdoe") && !text.contains("SEAT_OWNER"));
@@ -813,19 +807,19 @@ mod tests {
         );
         assert_eq!(
             text,
-            "PUNKTFUNK_SEAT_SESSION=\"1\"\n\
-             PUNKTFUNK_SEAT_ID=\"0123456789abcdef0123456789abcdef\"\n\
-             PUNKTFUNK_CONFIG_DIR=\"/var/lib/lilynk-seats/seats/0123456789abcdef0123456789abcdef/home/.config/punktfunk\"\n\
-             PUNKTFUNK_TRUST_DIR=\"/var/lib/lilynk-seats/trust/0123456789abcdef0123456789abcdef\"\n\
-             PUNKTFUNK_PAIRING=\"refused\"\n\
-             PUNKTFUNK_LIBRARY_DIR=\"/var/lib/lilynk-seats/trust/0123456789abcdef0123456789abcdef\"\n\
-             PUNKTFUNK_NATIVE_PORT=\"9779\"\n\
-             PUNKTFUNK_MGMT_BIND=\"127.0.0.1:47995\"\n\
-             PUNKTFUNK_HOST_NAME=\"Mara\"\n\
-             PUNKTFUNK_GAMESTREAM=\"0\"\n\
-             PUNKTFUNK_MDNS=\"0\"\n\
-             PUNKTFUNK_WEBTRANSPORT=\"0\"\n\
-             PUNKTFUNK_MGMT_TOKEN=ab12\n"
+            "LILYNK_SEAT_SESSION=\"1\"\n\
+             LILYNK_SEAT_ID=\"0123456789abcdef0123456789abcdef\"\n\
+             LILYNK_CONFIG_DIR=\"/var/lib/lilynk-seats/seats/0123456789abcdef0123456789abcdef/home/.config/punktfunk\"\n\
+             LILYNK_TRUST_DIR=\"/var/lib/lilynk-seats/trust/0123456789abcdef0123456789abcdef\"\n\
+             LILYNK_PAIRING=\"refused\"\n\
+             LILYNK_LIBRARY_DIR=\"/var/lib/lilynk-seats/trust/0123456789abcdef0123456789abcdef\"\n\
+             LILYNK_NATIVE_PORT=\"9779\"\n\
+             LILYNK_MGMT_BIND=\"127.0.0.1:47995\"\n\
+             LILYNK_HOST_NAME=\"Mara\"\n\
+             LILYNK_GAMESTREAM=\"0\"\n\
+             LILYNK_MDNS=\"0\"\n\
+             LILYNK_WEBTRANSPORT=\"0\"\n\
+             LILYNK_MGMT_TOKEN=ab12\n"
         );
     }
 
@@ -845,11 +839,10 @@ mod tests {
             "ab12",
             &browser,
         );
-        assert!(text.contains("PUNKTFUNK_WEBTRANSPORT=\"1\"\n"));
-        assert!(text.contains("PUNKTFUNK_WEBTRANSPORT_PORT=\"9783\"\n"));
-        assert!(text.contains(
-            "PUNKTFUNK_WEBTRANSPORT_ORIGINS=\"https://box:47992,https://web.example\"\n"
-        ));
+        assert!(text.contains("LILYNK_WEBTRANSPORT=\"1\"\n"));
+        assert!(text.contains("LILYNK_WEBTRANSPORT_PORT=\"9783\"\n"));
+        assert!(text
+            .contains("LILYNK_WEBTRANSPORT_ORIGINS=\"https://box:47992,https://web.example\"\n"));
         let off = render_env(
             &seat("Mara"),
             Own::Seat,
@@ -858,8 +851,8 @@ mod tests {
             "ab12",
             &Browser::default(),
         );
-        assert!(off.contains("PUNKTFUNK_WEBTRANSPORT=\"0\"\n"));
-        assert!(!off.contains("PUNKTFUNK_WEBTRANSPORT_PORT"));
+        assert!(off.contains("LILYNK_WEBTRANSPORT=\"0\"\n"));
+        assert!(!off.contains("LILYNK_WEBTRANSPORT_PORT"));
     }
 
     /// A minted token reads back from the file it was rendered into; any other doesn't.
@@ -875,10 +868,10 @@ mod tests {
             &Browser::default(),
         );
         assert_eq!(token_in(&text), Some(token.as_str()));
-        assert_eq!(token_in("PUNKTFUNK_MGMT_TOKEN=ab12\n"), None);
-        let not_hex = format!("PUNKTFUNK_MGMT_TOKEN={}\n", "z".repeat(64));
+        assert_eq!(token_in("LILYNK_MGMT_TOKEN=ab12\n"), None);
+        let not_hex = format!("LILYNK_MGMT_TOKEN={}\n", "z".repeat(64));
         assert_eq!(token_in(&not_hex), None);
-        assert_eq!(token_in("PUNKTFUNK_SEAT_ID=\"x\"\n"), None);
+        assert_eq!(token_in("LILYNK_SEAT_ID=\"x\"\n"), None);
     }
 
     /// The box's Seat defaults name its browser plane; a box that wrote none streams to none.
@@ -923,16 +916,16 @@ mod tests {
         );
         let line = text
             .lines()
-            .find(|l| l.starts_with("PUNKTFUNK_HOST_NAME="))
+            .find(|l| l.starts_with("LILYNK_HOST_NAME="))
             .unwrap();
-        assert_eq!(line, r#"PUNKTFUNK_HOST_NAME="A \"B\" \\ $HOME 100%""#);
+        assert_eq!(line, r#"LILYNK_HOST_NAME="A \"B\" \\ $HOME 100%""#);
         assert_eq!(text.lines().count(), 13);
     }
 
     /// The token line is the exact form the box's client parses, and every mint differs.
     #[test]
     fn the_token_line_and_a_minted_token_have_the_shape_the_client_reads() {
-        assert_eq!(token_line("deadbeef"), "PUNKTFUNK_MGMT_TOKEN=deadbeef\n");
+        assert_eq!(token_line("deadbeef"), "LILYNK_MGMT_TOKEN=deadbeef\n");
         let (a, b) = (mint_token(), mint_token());
         assert_eq!(a.len(), 64);
         assert!(a.bytes().all(|c| c.is_ascii_hexdigit()));

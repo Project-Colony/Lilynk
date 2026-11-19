@@ -6,7 +6,7 @@
 //! The virtual-display loop itself is [`state::StreamState`]: bring-up in `new`, the tick loop
 //! in `run`, one file per concern under `stream/`.
 //!
-//! Pin `PUNKTFUNK_IDD_ADAPTIVE=0`, `PUNKTFUNK_DELIVERY=burst`, `PUNKTFUNK_STREAMED_AU=0` for
+//! Pin `LILYNK_IDD_ADAPTIVE=0`, `LILYNK_DELIVERY=burst`, `LILYNK_STREAMED_AU=0` for
 //! the rebuild-free A/B levers.
 
 use super::wiring::{SessionShared, StreamEnds};

@@ -146,8 +146,8 @@ interface Call {
 
 describe("defineMetadataPlugin", () => {
 	test("pushes, serves the Choose dialog, and re-resolves on a pin", async () => {
-		const previous = process.env.PUNKTFUNK_CONFIG_DIR;
-		process.env.PUNKTFUNK_CONFIG_DIR = fs.mkdtempSync(
+		const previous = process.env.LILYNK_CONFIG_DIR;
+		process.env.LILYNK_CONFIG_DIR = fs.mkdtempSync(
 			path.join(os.tmpdir(), "pf-metadata-"),
 		);
 		const library: LibraryEntry[] = [
@@ -295,8 +295,8 @@ describe("defineMetadataPlugin", () => {
 		} finally {
 			process.emit("SIGTERM");
 			await done;
-			if (previous === undefined) delete process.env.PUNKTFUNK_CONFIG_DIR;
-			else process.env.PUNKTFUNK_CONFIG_DIR = previous;
+			if (previous === undefined) delete process.env.LILYNK_CONFIG_DIR;
+			else process.env.LILYNK_CONFIG_DIR = previous;
 		}
 	});
 });

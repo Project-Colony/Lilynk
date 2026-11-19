@@ -61,7 +61,7 @@ running as long as its screen does.
 - **Stay on**: the stream is an extra screen beside your monitors.
 - **Stay on, stream is main**: the stream becomes the main screen.
 - **Turn off**: the stream is the only screen until streaming ends.
-- **Automatic**: **Turn off**, or **Stay on** when `PUNKTFUNK_COMPOSITOR` pins a compositor.
+- **Automatic**: **Turn off**, or **Stay on** when `LILYNK_COMPOSITOR` pins a compositor.
 
 Devices that may [choose their screen](/docs/access-levels#individual-grants) can pick otherwise
 ([Per-device settings](#per-device-settings)).

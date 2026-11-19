@@ -141,16 +141,16 @@ const upstream = Bun.serve({
 afterAll(() => upstream.stop(true));
 afterEach(() => {
 	calls.length = 0;
-	delete process.env.PUNKTFUNK_MGMT_URL;
-	delete process.env.PUNKTFUNK_MGMT_TOKEN;
+	delete process.env.LILYNK_MGMT_URL;
+	delete process.env.LILYNK_MGMT_TOKEN;
 });
 
 /** `route`'s file mounted as the console mounts it, with no console password configured. */
 async function mount(route: Route) {
-	process.env.PUNKTFUNK_MGMT_URL = `http://127.0.0.1:${upstream.port}`;
-	process.env.PUNKTFUNK_MGMT_TOKEN = "t0k";
-	delete process.env.PUNKTFUNK_UI_PASSWORD;
-	delete process.env.PUNKTFUNK_UI_PASSWORD_HASH;
+	process.env.LILYNK_MGMT_URL = `http://127.0.0.1:${upstream.port}`;
+	process.env.LILYNK_MGMT_TOKEN = "t0k";
+	delete process.env.LILYNK_UI_PASSWORD;
+	delete process.env.LILYNK_UI_PASSWORD_HASH;
 	const file = await import(join(routes, `${routeFile(route)}.ts`));
 	const router = createRouter();
 	const path = `/api/v1/${route.pattern.replace(/\{(\w+)\}/g, ":$1")}`;
@@ -202,8 +202,8 @@ describe.each(
 	),
 )("%s", (_file, route, asks, passes) => {
 	test("its condition reads the body", async () => {
-		process.env.PUNKTFUNK_MGMT_URL = `http://127.0.0.1:${upstream.port}`;
-		process.env.PUNKTFUNK_MGMT_TOKEN = "t0k";
+		process.env.LILYNK_MGMT_URL = `http://127.0.0.1:${upstream.port}`;
+		process.env.LILYNK_MGMT_TOKEN = "t0k";
 		const call = (body: unknown) => ({
 			body: body as Record<string, unknown>,
 			params: { id: "ab12", plugin: "ab12", fingerprint: "AB12" },

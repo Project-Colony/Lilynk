@@ -18,7 +18,7 @@ use crate::vdisplay::{DriverHealth, TakeoverInapplicable, TakeoverVerdict};
 use std::process::Command;
 
 /// Privilege-helper allowlist and vhci attach-node owner — one group, two gates.
-const PUNKTFUNK_GROUP: &str = "punktfunk";
+const LILYNK_GROUP: &str = "punktfunk";
 /// udev grants uinput/uhid here; not the same group as the vhci nodes.
 const INPUT_GROUP: &str = "input";
 
@@ -160,8 +160,9 @@ fn plugin_sandbox() -> HostCheck {
                 .to_string(),
         )
         .with_remedy(Remedy {
-            text: "Remove PUNKTFUNK_PLUGIN_SANDBOX from the plugin runner's override, then restart it."
-                .into(),
+            text:
+                "Remove LILYNK_PLUGIN_SANDBOX from the plugin runner's override, then restart it."
+                    .into(),
             command: Some("systemctl --user edit lilynk-scripting".into()),
             relogin_required: false,
         })
@@ -397,7 +398,7 @@ fn plugin_sandbox() -> HostCheck {
                 .to_string(),
         )
         .with_remedy(Remedy {
-            text: "Remove PUNKTFUNK_PLUGIN_SANDBOX from host.env, then restart the host.".into(),
+            text: "Remove LILYNK_PLUGIN_SANDBOX from host.env, then restart the host.".into(),
             command: None,
             relogin_required: false,
         })
@@ -408,7 +409,7 @@ fn plugin_sandbox() -> HostCheck {
         );
     }
     match runner_refusal(&status) {
-        Some(why) => runner_stopped(id, &why, "Start-ScheduledTask -TaskName PunktfunkScripting"),
+        Some(why) => runner_stopped(id, &why, "Start-ScheduledTask -TaskName LilynkScripting"),
         None => HostCheck::ok(id, "Each plugin runs in its own AppContainer.").worded(
             "diag_plugin_sandbox_ok_windows_summary",
             None,
@@ -1107,7 +1108,7 @@ fn usbip_gate_open() -> bool {
 
 fn virtual_deck_vhci() -> HostCheck {
     let id = ids::VIRTUAL_DECK_VHCI;
-    let group = PUNKTFUNK_GROUP;
+    let group = LILYNK_GROUP;
     match crate::inject::vhci_probe() {
         // ly-inject's only inapplicable verdict is a host that isn't Linux.
         VhciVerdict::Inapplicable { why } => HostCheck::inapplicable(id, why).worded(
@@ -1602,14 +1603,14 @@ mod tests {
     #[test]
     fn vhci_not_writable_shapes_produce_distinct_remedies() {
         let path = "/sys/devices/platform/vhci_hcd.0/attach".to_string();
-        let check = not_writable_check(ids::VIRTUAL_DECK_VHCI, PUNKTFUNK_GROUP, path.clone());
+        let check = not_writable_check(ids::VIRTUAL_DECK_VHCI, LILYNK_GROUP, path.clone());
         assert_eq!(check.status, CheckStatus::Fail);
         assert_eq!(check.severity, Severity::Warning);
         assert!(check.remedy.is_some());
         assert!(!check.impact.is_empty());
         assert_eq!(
             check.params.get("group").map(String::as_str),
-            Some(PUNKTFUNK_GROUP)
+            Some(LILYNK_GROUP)
         );
     }
 

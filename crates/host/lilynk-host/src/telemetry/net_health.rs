@@ -12,7 +12,7 @@ use std::net::{IpAddr, UdpSocket};
 #[derive(Default, Debug, Clone, Copy)]
 pub struct WireWindow {
     /// Peak bytes the kernel still held for the data socket, sampled once per frame only
-    /// under `PUNKTFUNK_PERF` or an armed stats capture; `0` otherwise.
+    /// under `LILYNK_PERF` or an armed stats capture; `0` otherwise.
     pub outq_max_kb: u32,
     pub tx_dropped: u64,
     pub tx_errors: u64,

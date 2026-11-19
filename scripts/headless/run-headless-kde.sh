@@ -14,7 +14,7 @@
 #
 # Then in another shell:
 #   WAYLAND_DISPLAY=wayland-kde XDG_CURRENT_DESKTOP=KDE \
-#     lilynk-host punktfunk1-host --source virtual --seconds 14400   # zero-copy is on by default
+#     lilynk-host lilynk1-host --source virtual --seconds 14400   # zero-copy is on by default
 set -euo pipefail
 
 RES="${1:-1920x1080}"

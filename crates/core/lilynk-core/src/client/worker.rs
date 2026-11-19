@@ -21,7 +21,7 @@ use std::sync::{Arc, Mutex};
 pub(crate) struct ClientShared {
     pub(crate) frames: FrameChannel,
     pub(crate) shutdown: Arc<AtomicBool>,
-    /// [`PunktfunkEndReason`] as `u8`, latched beside `shutdown`.
+    /// [`LilynkEndReason`] as `u8`, latched beside `shutdown`.
     pub(crate) end_reason: AtomicU8,
     /// [`NativeClient::disconnect_quit`] → [`crate::quic::QUIT_CLOSE_CODE`] (skip keep-alive
     /// linger). A plain drop leaves this false → close code 0.
@@ -155,7 +155,7 @@ impl ClientShared {
         ClientShared {
             frames: FrameChannel::new(),
             shutdown: Arc::new(AtomicBool::new(false)),
-            end_reason: AtomicU8::new(PunktfunkEndReason::None as u8),
+            end_reason: AtomicU8::new(LilynkEndReason::None as u8),
             quit: AtomicBool::new(false),
             mode: Mutex::new(mode),
             probe: Mutex::default(),

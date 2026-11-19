@@ -1,11 +1,11 @@
 # punktfunk headless Steam session — systemd USER unit (Bazzite / SteamOS-like hosts).
 #
-# DEPRECATED — superseded by the host-managed session (`PUNKTFUNK_GAMESCOPE_SESSION=steam` in
+# DEPRECATED — superseded by the host-managed session (`LILYNK_GAMESCOPE_SESSION=steam` in
 # host.env). The host now LAUNCHES gamescope-session-plus on demand AT THE CLIENT'S mode (so games
 # see the client's exact resolution + refresh, dynamically per connection) and relaunches it on a
 # mode change. Do NOT enable this fixed-resolution unit alongside the host-managed path — two
 # gamescope sessions publish two Video/Source nodes and break node discovery. Kept only for the
-# legacy fixed-mode ATTACH setup (`PUNKTFUNK_GAMESCOPE_NODE=auto`); it caps every game at this
+# legacy fixed-mode ATTACH setup (`LILYNK_GAMESCOPE_NODE=auto`); it caps every game at this
 # unit's resolution. The PREREQS below still apply to the host-managed path too.
 #
 # Prereq — free Steam from the local gaming session (so this owns it), on a headless box:

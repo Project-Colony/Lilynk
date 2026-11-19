@@ -137,11 +137,11 @@ impl Features {
 /// field resolves afresh and no answer outlives its inputs.
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct ResolveInputs {
-    /// The Encoder row (`PUNKTFUNK_ENCODER`, lower-cased) as the host config holds it.
+    /// The Encoder row (`LILYNK_ENCODER`, lower-cased) as the host config holds it.
     pub(crate) pref: String,
     /// [`ly_gpu::selection_key`]: the selected GPU, a manual pick included.
     pub(crate) gpu: String,
-    /// The Vulkan encoding row (`PUNKTFUNK_VULKAN_ENCODE`, default on). Linux only.
+    /// The Vulkan encoding row (`LILYNK_VULKAN_ENCODE`, default on). Linux only.
     pub(crate) vulkan_row: bool,
     /// NVIDIA's device nodes exist, which `auto` reads. Linux only.
     pub(crate) nvidia: bool,
@@ -155,7 +155,7 @@ impl ResolveInputs {
             pref: ly_host_config::config().encoder_pref.clone(),
             gpu: ly_gpu::selection_key(),
             vulkan_row: cfg!(target_os = "linux")
-                && ly_host_config::row_bool("PUNKTFUNK_VULKAN_ENCODE"),
+                && ly_host_config::row_bool("LILYNK_VULKAN_ENCODE"),
             #[cfg(target_os = "linux")]
             nvidia: ly_gpu::nvidia_present(),
             #[cfg(not(target_os = "linux"))]
@@ -246,7 +246,7 @@ impl Resolved {
     }
 
     /// Whether the backend can emit 10-bit for `codec` (HEVC Main10 / AV1), asked before
-    /// Welcome. Without this gate `PUNKTFUNK_10BIT` would negotiate 10-bit and then emit 8-bit
+    /// Welcome. Without this gate `LILYNK_10BIT` would negotiate 10-bit and then emit 8-bit
     /// (label HDR / stream SDR). A verdict whose probe could not ask is `false` for this call,
     /// and asked again once [`RETRY_AFTER`] has passed.
     pub fn can_encode_10bit(&self, codec: Codec) -> bool {
@@ -469,7 +469,7 @@ pub(crate) fn windows_backend_vendor_id(backend: WindowsBackend) -> Option<u32> 
     }
 }
 
-/// Pure half of the Windows backend resolution: reconcile an explicit `PUNKTFUNK_ENCODER` pin
+/// Pure half of the Windows backend resolution: reconcile an explicit `LILYNK_ENCODER` pin
 /// with the selected adapter. A hardware pin whose vendor contradicts the selected GPU is
 /// overridden (`derived` is lazy) — honoring it can only fail. Software has no vendor and is
 /// always honored; with no selected GPU a pin is trusted as-is. Compiled everywhere so its

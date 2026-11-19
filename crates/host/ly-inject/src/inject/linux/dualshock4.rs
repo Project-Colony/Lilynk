@@ -92,7 +92,7 @@ impl DualShock4Pad {
 /// the lightbar on every OUTPUT (including rumble-only); `Led` is compared to the last
 /// forwarded value and re-armed on create/unplug.
 pub struct Ds4LinuxProto {
-    /// Steam back-grip fold. DS4 has no paddle HID slot; `PUNKTFUNK_STEAM_REMAP=paddles=…`, default drop.
+    /// Steam back-grip fold. DS4 has no paddle HID slot; `LILYNK_STEAM_REMAP=paddles=…`, default drop.
     remap: crate::steam_remap::RemapConfig,
     /// The session may not move the pointer: its pads' touchpads move none.
     gamepad_only: bool,
@@ -167,7 +167,7 @@ impl PadProto for Ds4LinuxProto {
     }
 }
 
-/// `PUNKTFUNK_GAMEPAD=ps4`. [`UhidManager`] heartbeats report `0x01` through input silence;
+/// `LILYNK_GAMEPAD=ps4`. [`UhidManager`] heartbeats report `0x01` through input silence;
 /// `hid-playstation`/SDL treat a multi-second gap as unplug.
 pub type DualShock4Manager = UhidManager<Ds4LinuxProto>;
 

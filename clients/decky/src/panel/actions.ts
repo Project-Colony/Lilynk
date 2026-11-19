@@ -23,7 +23,7 @@ import { recreateShortcuts } from "../steam/shortcuts";
 // Recovery action for "the Punktfunk library entry vanished" — recreates the visible shortcut
 // and sweeps duplicate entries. Self-heal waits for the next mount; this works in-session.
 // Always ends in a toast so the tap has feedback.
-export async function recreatePunktfunkShortcut(): Promise<void> {
+export async function recreateLilynkShortcut(): Promise<void> {
   const { appId, removedDuplicates } = await recreateShortcuts();
   toast(
     appId == null

@@ -302,9 +302,9 @@ impl SteamUsbip {
     }
 }
 
-/// Default on. `PUNKTFUNK_STEAM_USBIP=0` skips usbip; `open` still degrades if `vhci_hcd` is missing.
+/// Default on. `LILYNK_STEAM_USBIP=0` skips usbip; `open` still degrades if `vhci_hcd` is missing.
 pub fn usbip_preferred() -> bool {
-    ly_host_config::env_on("PUNKTFUNK_STEAM_USBIP") != Some(false)
+    ly_host_config::env_on("LILYNK_STEAM_USBIP") != Some(false)
 }
 
 #[cfg(test)]

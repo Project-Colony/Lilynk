@@ -111,10 +111,10 @@ pub(super) fn install(args: &[String]) -> Result<()> {
     apply_gamestream_choice(gamestream);
     // Before the rules below: the mgmt rule reads its port back from host.env.
     if let Some(addr) = mgmt_bind {
-        set_host_env_line("PUNKTFUNK_MGMT_BIND", &addr.to_string())?;
+        set_host_env_line("LILYNK_MGMT_BIND", &addr.to_string())?;
     }
     if let Some(ip) = web_bind {
-        set_host_env_line("PUNKTFUNK_UI_BIND", &ip.to_string())?;
+        set_host_env_line("LILYNK_UI_BIND", &ip.to_string())?;
     }
     // Remove prior rules first so an upgrade tightens scope instead of leaving a stale
     // all-profiles rule. Flag absent (upgrades) keeps the recorded choice.

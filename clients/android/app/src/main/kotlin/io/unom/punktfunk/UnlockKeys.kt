@@ -98,7 +98,7 @@ class KeystoreUnlockKeys(context: Context) : UnlockKeys {
 
     /** The alias hashes the host's id for the profile, so nothing the host names reaches it. */
     private fun alias(hostFp: String, profile: String): String =
-        "punktfunk_unlock_v1_" + MessageDigest.getInstance("SHA-256")
+        "lilynk_unlock_v1_" + MessageDigest.getInstance("SHA-256")
             .digest("${hostFp.lowercase()}\n$profile".toByteArray())
             .joinToString("") { "%02x".format(it) }
 }

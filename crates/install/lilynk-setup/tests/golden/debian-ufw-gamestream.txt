@@ -14,7 +14,7 @@
 ==> Checking for Sunshine / Apollo / Vibeshine
   ok No conflicting game-streaming host detected.
 ==> Options (each one can be changed later)
-  ok would set PUNKTFUNK_UI_BIND=0.0.0.0 in /box/config/punktfunk/host.env
+  ok would set LILYNK_UI_BIND=0.0.0.0 in /box/config/punktfunk/host.env
   ok would set gamestream=true in /box/config/punktfunk/host-settings.json
   ok would set clipboard="files" in /box/config/punktfunk/host-settings.json
 ==> Controller access
@@ -32,7 +32,7 @@
   Done. Next: let a device in.
   On the device you play on, open Punktfunk and pick this host. Approve it in the notification on this device, or in the web console.
   Web console: https://192.168.1.10:47992  (its certificate is this host's own)
-  Password — this prints it, until you first sign in: sed -n 's/^PUNKTFUNK_UI_PASSWORD=//p' ~/.config/punktfunk/web-password
+  Password — this prints it, until you first sign in: sed -n 's/^LILYNK_UI_PASSWORD=//p' ~/.config/punktfunk/web-password
   Group changes apply after a restart of this device (controllers won't work until then).
   https://docs.punktfunk.unom.io/docs/troubleshooting · https://docs.punktfunk.unom.io/docs/debian
 

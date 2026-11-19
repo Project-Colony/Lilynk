@@ -23,16 +23,16 @@ async fn a_person_s_own_account_refuses_what_would_run_code_as_them() {
             std::process::Command::new(std::env::current_exe().expect("this test binary"));
         child.args(["--exact", &test, "--nocapture"]);
         for (key, _) in std::env::vars_os() {
-            if key.to_string_lossy().starts_with("PUNKTFUNK_") {
+            if key.to_string_lossy().starts_with("LILYNK_") {
                 child.env_remove(key);
             }
         }
         let out = child
             .env(CHILD, config.path())
-            .env("PUNKTFUNK_CONFIG_DIR", config.path())
-            .env("PUNKTFUNK_SEAT_SESSION", "1")
-            .env("PUNKTFUNK_SEAT_ID", "0123456789abcdef0123456789abcdef")
-            .env("PUNKTFUNK_SEAT_OWN_ACCOUNT", "1")
+            .env("LILYNK_CONFIG_DIR", config.path())
+            .env("LILYNK_SEAT_SESSION", "1")
+            .env("LILYNK_SEAT_ID", "0123456789abcdef0123456789abcdef")
+            .env("LILYNK_SEAT_OWN_ACCOUNT", "1")
             .output()
             .expect("run the child");
         let stdout = String::from_utf8_lossy(&out.stdout);
@@ -130,19 +130,19 @@ pub(super) fn on_seat(path: &str, marker: &str, own: bool) -> String {
     let mut child = std::process::Command::new(std::env::current_exe().expect("this test binary"));
     child.args(["--exact", path, "--nocapture"]);
     for (key, _) in std::env::vars_os() {
-        if key.to_string_lossy().starts_with("PUNKTFUNK_") {
+        if key.to_string_lossy().starts_with("LILYNK_") {
             child.env_remove(key);
         }
     }
     if own {
-        child.env("PUNKTFUNK_SEAT_OWN_ACCOUNT", "1");
+        child.env("LILYNK_SEAT_OWN_ACCOUNT", "1");
     }
     let out = child
         .env(marker, library.path())
-        .env("PUNKTFUNK_CONFIG_DIR", config.path())
-        .env("PUNKTFUNK_LIBRARY_DIR", library.path())
-        .env("PUNKTFUNK_SEAT_SESSION", "1")
-        .env("PUNKTFUNK_SEAT_ID", "0123456789abcdef0123456789abcdef")
+        .env("LILYNK_CONFIG_DIR", config.path())
+        .env("LILYNK_LIBRARY_DIR", library.path())
+        .env("LILYNK_SEAT_SESSION", "1")
+        .env("LILYNK_SEAT_ID", "0123456789abcdef0123456789abcdef")
         .env("HOME", home.path())
         .env("XDG_CONFIG_HOME", home.path().join(".config"))
         .env("XDG_DATA_HOME", home.path().join(".local/share"))

@@ -1,10 +1,10 @@
-// Where each patch attempt got to, readable from the CEF debugger as `window.__punktfunkDiag`
+// Where each patch attempt got to, readable from the CEF debugger as `window.__lilynkDiag`
 // and echoed to the console. Steam's tree is not an API; when it moves, this says which step.
 import { read } from "./storage";
 
 declare global {
   interface Window {
-    __punktfunkDiag?: string[];
+    __lilynkDiag?: string[];
   }
 }
 
@@ -23,9 +23,9 @@ export function diag(msg: string): void {
   const line = `${new Date().toISOString().slice(11, 19)} ${msg}`;
   console.warn(`punktfunk: ${msg}`);
   try {
-    (window.__punktfunkDiag ??= []).push(line);
-    if (window.__punktfunkDiag.length > 60) {
-      window.__punktfunkDiag.shift();
+    (window.__lilynkDiag ??= []).push(line);
+    if (window.__lilynkDiag.length > 60) {
+      window.__lilynkDiag.shift();
     }
   } catch {
     /* ignore */

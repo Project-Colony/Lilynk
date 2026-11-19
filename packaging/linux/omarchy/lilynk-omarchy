@@ -120,7 +120,7 @@ ufw_unrule() {  # ufw_unrule <source> <to-any spec…>
 # 47990 only. Last line wins and a blank value is the default, as the host reads it.
 moved_mgmt_port() {  # moved_mgmt_port <host.env>
   local bind port
-  bind=$(sed -n 's/^[[:space:]]*PUNKTFUNK_MGMT_BIND=//p' "$1" 2>/dev/null | tail -n1 | tr -d '"[:space:]') || true
+  bind=$(sed -n 's/^[[:space:]]*LILYNK_MGMT_BIND=//p' "$1" 2>/dev/null | tail -n1 | tr -d '"[:space:]') || true
   port=${bind##*:}
   [[ "$bind" == *:* && "$port" =~ ^[0-9]+$ && "$port" != 47990 ]] && printf '%s\n' "$port" || true
 }
@@ -140,7 +140,7 @@ open_firewall() {
   # `omarchy install service sunshine` claims, so opening them by default invites a bind conflict
   # and a confusing "which host answered?" on a box that has both.
   # The store line is the host's own pretty-printed JSON.
-  if grep -qs '^PUNKTFUNK_GAMESTREAM=1' "$HOST_ENV" ||
+  if grep -qs '^LILYNK_GAMESTREAM=1' "$HOST_ENV" ||
      grep -qs '"gamestream": true' "${HOST_ENV%/*}/host-settings.json"; then
     profiles+=(lilynk-gamestream)
   fi
@@ -650,7 +650,7 @@ check_conflicts() {
     say "  client and the web console work with Sunshine running and untouched."
   else
     say "  Both want TCP 47990 (Sunshine's web UI, our management API), and whichever starts second"
-    say "  fails. Put PUNKTFUNK_MGMT_BIND=0.0.0.0:47991 in $HOST_ENV, then re-run this setup."
+    say "  fails. Put LILYNK_MGMT_BIND=0.0.0.0:47991 in $HOST_ENV, then re-run this setup."
   fi
   say "  They COLLIDE on the GameStream/Moonlight ports (47984/47989/48010, 47998-48010) — ours are"
   say "  off by default, so leave them off unless you are migrating."
@@ -879,7 +879,7 @@ try:
     with open(env_path, encoding="utf-8") as f:
         for raw in f:
             line = raw.lstrip()
-            if line.startswith("PUNKTFUNK_CAPTURE_MONITOR="):
+            if line.startswith("LILYNK_CAPTURE_MONITOR="):
                 override = line.split("=", 1)[1].strip().strip("\"'")
 except OSError:
     pass
@@ -909,7 +909,7 @@ with open(path, encoding="utf-8") as f:
     lines = f.readlines()
 kept = [
     line for line in lines
-    if not line.lstrip().startswith("PUNKTFUNK_CAPTURE_MONITOR=")
+    if not line.lstrip().startswith("LILYNK_CAPTURE_MONITOR=")
 ]
 if kept == lines:
     raise SystemExit(0)
@@ -1178,9 +1178,9 @@ cmd_unpair() {
 enable_gamestream() {
   local f tmp
   f="$(host_env_file)"
-  if [[ -f "$f" ]] && grep -q '^PUNKTFUNK_GAMESTREAM=' "$f"; then
+  if [[ -f "$f" ]] && grep -q '^LILYNK_GAMESTREAM=' "$f"; then
     tmp="$(mktemp "${f}.XXXXXX")"
-    sed '/^PUNKTFUNK_GAMESTREAM=/d' "$f" > "$tmp"
+    sed '/^LILYNK_GAMESTREAM=/d' "$f" > "$tmp"
     mv -f "$tmp" "$f"
   fi
   lilynk-host settings set gamestream true >/dev/null

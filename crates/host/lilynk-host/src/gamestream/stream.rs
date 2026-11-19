@@ -2,7 +2,7 @@
 //!
 //! On RTSP PLAY the client pings [`VIDEO_PORT`]; we learn that UDP endpoint and run
 //! capture → encode → [`VideoPacketizer`] → UDP. Source is a compositor virtual output
-//! (`PUNKTFUNK_VIDEO_SOURCE=virtual`, the default), portal PipeWire (`portal`), or a
+//! (`LILYNK_VIDEO_SOURCE=virtual`, the default), portal PipeWire (`portal`), or a
 //! synthetic test pattern (any other value).
 //!
 //! Runs on its own native thread. Encode, FEC packetize, and paced send are
@@ -1182,7 +1182,7 @@ fn spawn_packetizer(
 /// Paced send thread: every frame on one [`Pacer`](crate::send_pacing::Pacer) at the link
 /// rate, bounded to ~2 frame intervals. Moonlight says nothing about its link, so `L` is
 /// this host's port, else [`FLOOR_KBPS`](crate::send_pacing::FLOOR_KBPS), and
-/// `PUNKTFUNK_DELIVERY` the only other way to shape it. Send failure ends the whole session
+/// `LILYNK_DELIVERY` the only other way to shape it. Send failure ends the whole session
 /// via `on_lost` — audio would otherwise keep streaming at the dead endpoint.
 #[allow(clippy::too_many_arguments)]
 fn spawn_sender(
@@ -1470,9 +1470,9 @@ fn stream_body(
              what it negotiated (a virtual-display backend fault — see the vdisplay lines above)"
         );
     }
-    // Sunshine default 20. `PUNKTFUNK_FEC_PCT=0` is data-only. Read before the encoder opens:
+    // Sunshine default 20. `LILYNK_FEC_PCT=0` is data-only. Read before the encoder opens:
     // encoder rate is derived under this parity.
-    let fec_pct: u8 = std::env::var("PUNKTFUNK_FEC_PCT")
+    let fec_pct: u8 = std::env::var("LILYNK_FEC_PCT")
         .ok()
         .and_then(|v| v.parse().ok())
         .unwrap_or(20);
@@ -2279,12 +2279,12 @@ fn gs_encoder_bps(cfg: &StreamConfig, bitrate_kbps: u32, fec_pct: u8) -> u64 {
     bps.min(frame_cap * 8 * u64::from(cfg.fps.max(1)))
 }
 
-/// `PUNKTFUNK_GAMESTREAM_ADAPT` off pins the GameStream plane's loss adaptation off — FEC
+/// `LILYNK_GAMESTREAM_ADAPT` off pins the GameStream plane's loss adaptation off — FEC
 /// percent and wire budget stay at their configured values for the whole session (the A/B
 /// lever). A restart-class row, so the first read holds.
 fn gs_adapt_enabled() -> bool {
     static ON: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    *ON.get_or_init(|| ly_host_config::row_bool("PUNKTFUNK_GAMESTREAM_ADAPT"))
+    *ON.get_or_init(|| ly_host_config::row_bool("LILYNK_GAMESTREAM_ADAPT"))
 }
 
 /// Loss-driven FEC percent and wire budget, stepped ~1 s from client `0x0201` reports.

@@ -12,7 +12,7 @@ import android.util.Log
 import io.unom.punktfunk.kit.NativeBridge
 import io.unom.punktfunk.kit.nameOrder
 
-private const val TAG = "PunktfunkMdns"
+private const val TAG = "LilynkMdns"
 
 /** One resolved host fit for the picker. [key] is the stable dedup id. */
 data class DiscoveredHost(

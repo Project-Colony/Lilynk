@@ -5,7 +5,7 @@
 # behaviour lives in the binary. These gates are not in check-docs-drift.sh because that gate
 # runs in a bun container with no cargo, and this needs a built installer.
 #
-# Two test seams: PUNKTFUNK_INSTALL_OS_RELEASE fakes the distro, PUNKTFUNK_INSTALL_ETC fakes the
+# Two test seams: LILYNK_INSTALL_OS_RELEASE fakes the distro, LILYNK_INSTALL_ETC fakes the
 # repo config. Stub binaries on PATH fake an installed host.
 #
 # Exit: 0 all cases held · 1 a case drifted · 2 the installer could not be built.
@@ -13,7 +13,7 @@ set -u
 cd "$(dirname "$0")/../.." || exit 2
 
 # CI passes a built binary; a developer running this by hand gets a debug build.
-PF=${PUNKTFUNK_SETUP_BIN:-}
+PF=${LILYNK_SETUP_BIN:-}
 if [ -z "$PF" ]; then
     cargo build -q -p lilynk-setup || exit 2
     PF=target/debug/lilynk-setup
@@ -36,7 +36,7 @@ upstream_feed() {   # output -> 0 when it names an upstream package host
 }
 installer_case() {   # name os-release-body expected-substring [extra args...]
     name=$1; printf '%b' "$2" > "$osr/$name"; want=$3; shift 3
-    out=$(PATH="${pfpath:+$pfpath:}$PATH" PUNKTFUNK_INSTALL_OS_RELEASE="$osr/$name" \
+    out=$(PATH="${pfpath:+$pfpath:}$PATH" LILYNK_INSTALL_OS_RELEASE="$osr/$name" \
           "$PF" --dry-run --yes --no-start "$@" 2>&1)
     case "$out" in *"$want"*) ;; *)
         echo "::error::lilynk-setup --dry-run $* on a fake $name os-release did not print '$want':"
@@ -84,13 +84,13 @@ installer_case bazzite-rm 'ID=bazzite\nID_LIKE="fedora"\nVERSION_ID=43\n' 'lilyn
 # Nothing on SteamOS is a package, so --uninstall must say so instead of claiming a removal.
 installer_case steamos-rm 'ID=steamos\nID_LIKE=arch\n'                  'no uninstall script' --uninstall
 
-PUNKTFUNK_SETUP_BIN="$PF" sh scripts/ci/check-install-defaults.sh || fail=1
+LILYNK_SETUP_BIN="$PF" sh scripts/ci/check-install-defaults.sh || fail=1
 
 # --------------------------------------------------------------- an installed box, wiring only
 # All three binaries on PATH and no repo config: the box goes on to the setup phases and installs
 # nothing. A repo config left on the box (an upstream install) stops the run instead, so no
 # channel switch rewrites a repo. Two fakes make this reachable under --dry-run: stub binaries on
-# PATH, and PUNKTFUNK_INSTALL_ETC pointing at the repo config the box is supposedly on.
+# PATH, and LILYNK_INSTALL_ETC pointing at the repo config the box is supposedly on.
 mkdir -p "$sw/bin"
 for b in lilynk-host lilynk-web-server lilynk-scripting; do
     printf '#!/bin/sh\necho 0.0.0-test\n' > "$sw/bin/$b"; chmod +x "$sw/bin/$b"
@@ -106,7 +106,7 @@ pfpath=
 switch_case() {   # name os-release-body config-path config-body expected-substring [extra args...]
     name=$1; printf '%b' "$2" > "$osr/$name"
     mkdir -p "$sw/$name/$(dirname "$3")"; printf '%b' "$4" > "$sw/$name/$3"; want=$5; shift 5
-    out=$(PATH="$sw/bin:$PATH" PUNKTFUNK_INSTALL_OS_RELEASE="$osr/$name" PUNKTFUNK_INSTALL_ETC="$sw/$name" \
+    out=$(PATH="$sw/bin:$PATH" LILYNK_INSTALL_OS_RELEASE="$osr/$name" LILYNK_INSTALL_ETC="$sw/$name" \
           "$PF" --dry-run --yes --no-start "$@" 2>&1)
     case "$out" in *"$want"*) ;; *)
         echo "::error::lilynk-setup --dry-run $* on an installed $name box did not print '$want':"

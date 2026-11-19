@@ -146,14 +146,14 @@ struct Live {
 pub struct NativePairingStatus {
     pub armed: bool,
     pub pin: Option<String>,
-    /// Seconds left. `None` = no expiry (the `punktfunk1-host` start-up arm).
+    /// Seconds left. `None` = no expiry (the `lilynk1-host` start-up arm).
     pub expires_in_secs: Option<u64>,
     pub paired_clients: u32,
 }
 
 impl NativePairing {
     /// Load the trust store. `store_path = None` uses the default path. `arm_at_start` (the
-    /// standalone `punktfunk1-host` CLI) arms immediately with `fixed_pin` or a random PIN and
+    /// standalone `lilynk1-host` CLI) arms immediately with `fixed_pin` or a random PIN and
     /// no expiry.
     pub fn load_with(
         store_path: Option<PathBuf>,

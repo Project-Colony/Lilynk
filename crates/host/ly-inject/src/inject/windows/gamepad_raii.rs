@@ -57,7 +57,7 @@ static BOOT_SEQ: AtomicU32 = AtomicU32::new(1);
 /// Opt-in fallback when there is no `SwDeviceCreate` instance id (`devgen`/`devcon`).
 /// Trusts the mailbox `driver_pid` — the path [`PadChannel::pump`] otherwise refuses.
 /// Per-boot, logged loudly. Normal pads and the resident mouse never need it.
-pub(super) const TRUST_MAILBOX_ENV: &str = "PUNKTFUNK_PAD_CHANNEL_TRUST_MAILBOX";
+pub(super) const TRUST_MAILBOX_ENV: &str = "LILYNK_PAD_CHANNEL_TRUST_MAILBOX";
 
 /// Mailbox names this process created and still holds. [`crate::pad_pool`] skips an index
 /// only when another process serves it; our own pad inside its unplug grace is not that.

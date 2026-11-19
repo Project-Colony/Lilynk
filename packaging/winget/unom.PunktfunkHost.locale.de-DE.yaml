@@ -37,7 +37,7 @@ InstallationNotes: |-
       lilynk-host web password
     Danach behält die Konsole nur einen gesalzenen Hash in %ProgramData%\punktfunk\web-password.
     Ein vergessenes Passwort setzt du zurück: Schreib wieder eine Zeile
-    PUNKTFUNK_UI_PASSWORD=<dein-passwort> in diese Datei und führe danach aus:
+    LILYNK_UI_PASSWORD=<dein-passwort> in diese Datei und führe danach aus:
       lilynk-host service restart
 
   Konfiguration:  %ProgramData%\punktfunk\host.env

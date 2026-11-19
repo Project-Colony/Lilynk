@@ -1,4 +1,4 @@
-//! Linux backend selection: the `PUNKTFUNK_ENCODER` resolver, the open ladder (direct-SDK
+//! Linux backend selection: the `LILYNK_ENCODER` resolver, the open ladder (direct-SDK
 //! NVENC, Vulkan Video, native VAAPI, PyroWave, openh264) and every capability answer that
 //! must agree with it, each read off one [`Resolved`].
 
@@ -112,7 +112,7 @@ pub(crate) fn ingests_rgb_444(_: &Resolved) -> bool {
 
 /// [`Resolved::rgb_full_range`] on Linux. Vulkan Video's EFC converts BT.709 at narrow range
 /// only on a two-pair VCN; an SDR session there is planned narrow so the chip still converts.
-/// `PUNKTFUNK_VULKAN_RGB_DIRECT=0` takes the EFC out, and the range goes back to the ask.
+/// `LILYNK_VULKAN_RGB_DIRECT=0` takes the EFC out, and the range goes back to the ask.
 pub(crate) fn rgb_full_range(r: &Resolved, codec: Codec) -> RgbFullRange {
     let two_pairs = r.vulkan_encodes(codec)
         && r.vulkan(codec).efc == Some(crate::vcn_firmware::EfcPairs::TwoPairs)
@@ -179,7 +179,7 @@ pub(crate) fn open(
         full_range,
         ..
     } = *p;
-    // Negotiated PyroWave bypasses `PUNKTFUNK_ENCODER` (that pref is a lab override).
+    // Negotiated PyroWave bypasses `LILYNK_ENCODER` (that pref is a lab override).
     if codec == Codec::PyroWave {
         debug_assert!(full_range, "PyroWave converts at full range only");
         #[cfg(feature = "pyrowave")]
@@ -233,7 +233,7 @@ pub(crate) fn open(
                     tracing::info!(
                         codec = ?codec,
                         "Linux Vulkan Video encode (real RFI via DPB reference slots) — \
-                         set PUNKTFUNK_VULKAN_ENCODE=0 for VAAPI"
+                         set LILYNK_VULKAN_ENCODE=0 for VAAPI"
                     );
                     return Ok((Box::new(e) as Box<dyn Encoder>, "vulkan"));
                 }
@@ -279,7 +279,7 @@ pub(crate) fn open(
             #[cfg(not(feature = "vulkan-encode"))]
             {
                 anyhow::bail!(
-                    "PUNKTFUNK_ENCODER=vulkan requires a build with --features vulkan-encode"
+                    "LILYNK_ENCODER=vulkan requires a build with --features vulkan-encode"
                 )
             }
         }
@@ -304,7 +304,7 @@ pub(crate) fn open(
             .map(|e| (Box::new(e) as Box<dyn Encoder>, "software"))
         }
         None => anyhow::bail!(
-            "unknown PUNKTFUNK_ENCODER={pref:?} — use auto (default), nvenc, vaapi, vulkan, pyrowave, or software"
+            "unknown LILYNK_ENCODER={pref:?} — use auto (default), nvenc, vaapi, vulkan, pyrowave, or software"
         ),
     }
 }
@@ -879,7 +879,7 @@ fn narrow_to_openable(
 
 /// Open the software H.264 encoder by name, bypassing the backend ladder.
 ///
-/// [`crate::open_video`] opens the backend [`Resolved`] names from `PUNKTFUNK_ENCODER`, and
+/// [`crate::open_video`] opens the backend [`Resolved`] names from `LILYNK_ENCODER`, and
 /// `auto` never picks software. The browser plane decides later and wants this encoder
 /// specifically: it serves a GPU-less host, at full range. Like [`crate::open_video`], it reads
 /// the env knobs once per open.
@@ -969,7 +969,7 @@ mod tests {
         assert!(cursor_blend_capable_for(Some(AmdIntel), false, true));
         assert!(
             !cursor_blend_capable_for(Some(AmdIntel), false, false),
-            "no eligible Vulkan CSC arm (H.264, PUNKTFUNK_VULKAN_ENCODE=0, unsupported \
+            "no eligible Vulkan CSC arm (H.264, LILYNK_VULKAN_ENCODE=0, unsupported \
              device) resolves to native VAAPI, which cannot blend"
         );
         assert!(cursor_blend_capable_for(Some(Vulkan), false, true));
@@ -1222,7 +1222,7 @@ mod tests {
             Err(e) => e,
         };
         assert!(
-            err.to_string().contains("unknown PUNKTFUNK_ENCODER"),
+            err.to_string().contains("unknown LILYNK_ENCODER"),
             "{err:#}"
         );
     }

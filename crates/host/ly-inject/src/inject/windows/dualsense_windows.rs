@@ -115,7 +115,7 @@ impl DsWinPad {
 /// Windows DualSense [`PadProto`]: sealed-channel open, the same [`DsState`] mappers as
 /// `linux/dualsense.rs`, section feedback poll. Lifecycle lives in [`UhidManager`].
 pub struct DsWinProto {
-    /// Steam back grips have no DualSense HID slot. `PUNKTFUNK_STEAM_REMAP=paddles=…`; default drop.
+    /// Steam back grips have no DualSense HID slot. `LILYNK_STEAM_REMAP=paddles=…`; default drop.
     remap: crate::steam_remap::RemapConfig,
 }
 

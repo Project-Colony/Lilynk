@@ -6,7 +6,7 @@ defaults, and the result shapes are the frontend's contract. Decky appends ``py_
 not: nothing may import ``main``.
 
 The stream never starts here. The frontend runs it through Steam (``RunGame`` on a hidden
-shortcut to ``bin/punktfunkrun.sh``), because gamescope only focuses and fullscreens windows
+shortcut to ``bin/lilynkrun.sh``), because gamescope only focuses and fullscreens windows
 Steam launched via ``reaper`` (gamescope#484). Settings, add-host-by-address and preset editing
 live in the client's own console home.
 """

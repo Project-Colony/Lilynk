@@ -2,7 +2,7 @@
 //! equal-size packets leave in one syscall per 512. The Linux twin is `sendmmsg_all` in
 //! [`super::stream`]. The batch logic builds on every OS so its tests run.
 
-/// Process-wide UDP Send Offload. On by default; `PUNKTFUNK_GSO=0` kills it.
+/// Process-wide UDP Send Offload. On by default; `LILYNK_GSO=0` kills it.
 /// Support latches from the first send error, not a `setsockopt` probe — the
 /// probe would set a socket-wide segment size and fragment larger plain `send`s.
 #[cfg(target_os = "windows")]
@@ -15,11 +15,11 @@ mod state {
             1 => true,
             2 => false,
             _ => {
-                let off = ly_host_config::env_on("PUNKTFUNK_GSO") == Some(false);
+                let off = ly_host_config::env_on("LILYNK_GSO") == Some(false);
                 STATE.store(if off { 2 } else { 1 }, Ordering::Relaxed);
                 tracing::info!(
                     enabled = !off,
-                    "Windows UDP Send Offload (USO) resolved (the 1 Gbps+ send lever; PUNKTFUNK_GSO=0 disables)"
+                    "Windows UDP Send Offload (USO) resolved (the 1 Gbps+ send lever; LILYNK_GSO=0 disables)"
                 );
                 !off
             }

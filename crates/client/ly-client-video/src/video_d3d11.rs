@@ -1109,7 +1109,7 @@ fn drain_releases(rx: &mpsc::Receiver<SliceRelease>, ledger: &mut SurfaceLedger)
     }
 }
 
-/// One-second window of hand-off costs. `info` under `PUNKTFUNK_PRESENT_DEBUG=1` or when
+/// One-second window of hand-off costs. `info` under `LILYNK_PRESENT_DEBUG=1` or when
 /// a frame stalled; `debug` otherwise.
 struct HandoffWindow {
     start: Instant,
@@ -1135,7 +1135,7 @@ impl HandoffWindow {
             begin_retries: 0,
             begin_wait: Duration::ZERO,
             blt_us: Vec::with_capacity(256),
-            debug: lilynk_core::env_on("PUNKTFUNK_PRESENT_DEBUG") == Some(true),
+            debug: lilynk_core::env_on("LILYNK_PRESENT_DEBUG") == Some(true),
         }
     }
 
@@ -1627,7 +1627,7 @@ pub fn adapter_driver_version(luid: [u8; 8]) -> Option<[u16; 4]> {
 /// window's `HMONITOR`, for Hello `display_hdr`, so the host EDID matches this panel. No
 /// `monitor` or no match uses the output at the desktop origin. `None` when advanced color
 /// is off — claiming HDR for an SDR desktop would steer host tone-mapping wrong.
-/// `PUNKTFUNK_CLIENT_PEAK_NITS` still overrides; see
+/// `LILYNK_CLIENT_PEAK_NITS` still overrides; see
 /// `lilynk_core::client::display_hdr_env_override`.
 pub fn display_hdr_volume(monitor: Option<isize>) -> Option<lilynk_core::quic::HdrMeta> {
     use windows::Win32::dxgi::{IDXGIOutput6, DXGI_OUTPUT_DESC1};

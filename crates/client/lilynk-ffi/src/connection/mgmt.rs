@@ -7,7 +7,7 @@ use crate::*;
 /// but `pin_sha256`: `method` `path` with `body`, sent as `content_type` unless that is NULL.
 /// Blocks for the reply. One connection per host serves every call; a new one is dialled for at
 /// most `timeout_ms`. On `OK` the reply's HTTP status is in `status_out` and its body in
-/// `body_out`/`body_len_out`; free that with [`punktfunk_mgmt_body_free`]. `CRYPTO`: the host is
+/// `body_out`/`body_len_out`; free that with [`lilynk_mgmt_body_free`]. `CRYPTO`: the host is
 /// not the pinned one, so do not retry it over HTTPS. Any other failure: the host may still
 /// answer on its management port.
 ///
@@ -17,7 +17,7 @@ use crate::*;
 /// for `body_len` bytes; the three out-pointers are writable.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_mgmt_request(
+pub unsafe extern "C" fn lilynk_mgmt_request(
     host: *const std::os::raw::c_char,
     port: u16,
     client_cert_pem: *const std::os::raw::c_char,
@@ -32,7 +32,7 @@ pub unsafe extern "C" fn punktfunk_mgmt_request(
     status_out: *mut u16,
     body_out: *mut *mut u8,
     body_len_out: *mut usize,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     guard(|| {
         // SAFETY: each pointer is caller-supplied and null-checked by `opt_cstr`.
         let strs = unsafe {
@@ -54,13 +54,13 @@ pub unsafe extern "C" fn punktfunk_mgmt_request(
             Ok(content_type),
         ) = strs
         else {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         };
         if pin_sha256.is_null() || status_out.is_null() || body_out.is_null() {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         if body_len_out.is_null() || (body.is_null() && body_len > 0) {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         let mut pin = [0u8; 32];
         // SAFETY: `pin_sha256` is non-null and valid for 32 bytes (caller contract).
@@ -93,21 +93,21 @@ pub unsafe extern "C" fn punktfunk_mgmt_request(
             put(body_out, ptr);
             put(body_len_out, len);
         }
-        PunktfunkStatus::Ok
+        LilynkStatus::Ok
     })
 }
 
-/// Free a reply body from [`punktfunk_mgmt_request`]. NULL is a no-op.
+/// Free a reply body from [`lilynk_mgmt_request`]. NULL is a no-op.
 ///
 /// # Safety
-/// `body`/`len` are exactly what one `punktfunk_mgmt_request` wrote, freed once.
+/// `body`/`len` are exactly what one `lilynk_mgmt_request` wrote, freed once.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_mgmt_body_free(body: *mut u8, len: usize) {
+pub unsafe extern "C" fn lilynk_mgmt_body_free(body: *mut u8, len: usize) {
     if body.is_null() {
         return;
     }
-    // SAFETY: `body`/`len` came from `Box::<[u8]>::into_raw` in `punktfunk_mgmt_request`.
+    // SAFETY: `body`/`len` came from `Box::<[u8]>::into_raw` in `lilynk_mgmt_request`.
     drop(unsafe { Box::from_raw(std::ptr::slice_from_raw_parts_mut(body, len)) });
 }
 
@@ -122,7 +122,7 @@ mod tests {
         let s = c"x";
         // SAFETY: every non-null pointer is a live C string or a writable local.
         let got = unsafe {
-            punktfunk_mgmt_request(
+            lilynk_mgmt_request(
                 s.as_ptr(),
                 9777,
                 s.as_ptr(),
@@ -139,9 +139,9 @@ mod tests {
                 &mut len,
             )
         };
-        assert_eq!(got, PunktfunkStatus::NullPointer);
+        assert_eq!(got, LilynkStatus::NullPointer);
         assert!(body.is_null());
         // SAFETY: NULL is the documented no-op.
-        unsafe { punktfunk_mgmt_body_free(std::ptr::null_mut(), 0) };
+        unsafe { lilynk_mgmt_body_free(std::ptr::null_mut(), 0) };
     }
 }

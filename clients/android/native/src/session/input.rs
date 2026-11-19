@@ -825,7 +825,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendPadHidR
 }
 
 /// `NativeBridge.nativeSetSc2Gate(handle, pad, gate)` — what core holds back of a Steam
-/// Controller 2's raw reports on wire pad `pad`: `PUNKTFUNK_SC2_GATE_*` bits, latest wins.
+/// Controller 2's raw reports on wire pad `pad`: `LILYNK_SC2_GATE_*` bits, latest wins.
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSetSc2Gate(
     _env: EnvUnowned,
@@ -1168,10 +1168,10 @@ mod tests {
 
     #[test]
     fn a_refusal_reads_apart_from_a_kept_gesture() {
-        use lilynk_core::PunktfunkError;
+        use lilynk_core::LilynkError;
         assert_eq!(surface_status(Ok(true)), SURFACE_FORWARDED);
         assert_eq!(surface_status(Ok(false)), SURFACE_KEPT);
-        let refused = Err(PunktfunkError::Unsupported("no touchpad"));
+        let refused = Err(LilynkError::Unsupported("no touchpad"));
         assert_eq!(surface_status(refused), SURFACE_REFUSED);
         assert_eq!(
             SURFACE_REFUSED,

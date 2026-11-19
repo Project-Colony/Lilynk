@@ -4,7 +4,7 @@
 //! reaches its lane on the stream port alone, without TCP 47990. Blocking, for the shells'
 //! worker threads; [`request`] keeps one connection per host for the whole process.
 
-use crate::error::{PunktfunkError, Result};
+use crate::error::{LilynkError, Result};
 use crate::quic::endpoint;
 use crate::quic::v2::{io, registry};
 use std::collections::HashMap;
@@ -34,8 +34,8 @@ fn runtime() -> Result<&'static tokio::runtime::Runtime> {
     RT.as_ref().map_err(|e| io_err(e))
 }
 
-fn io_err(e: &dyn std::fmt::Display) -> PunktfunkError {
-    PunktfunkError::Io(std::io::Error::other(e.to_string()))
+fn io_err(e: &dyn std::fmt::Display) -> LilynkError {
+    LilynkError::Io(std::io::Error::other(e.to_string()))
 }
 
 /// One host's management connection.
@@ -69,13 +69,13 @@ impl MgmtTunnel {
             let (ep, _media) = made.map_err(|e| io_err(&e))?;
             let connecting = ep.connect(addr, "punktfunk").map_err(|e| io_err(&e))?;
             match tokio::time::timeout(timeout, connecting).await {
-                Err(_) => Err(PunktfunkError::Timeout),
+                Err(_) => Err(LilynkError::Timeout),
                 Ok(Ok(conn)) => Ok(MgmtTunnel { _ep: ep, conn }),
                 Ok(Err(e)) => {
                     let wrong_host =
                         pin.is_some() && observed.lock().unwrap().is_some_and(|fp| Some(fp) != pin);
                     Err(match wrong_host {
-                        true => PunktfunkError::Crypto,
+                        true => LilynkError::Crypto,
                         false => io_err(&e),
                     })
                 }
@@ -108,7 +108,7 @@ impl MgmtTunnel {
         runtime()?.block_on(async {
             tokio::time::timeout(REQUEST_TIMEOUT, exchange)
                 .await
-                .map_err(|_| PunktfunkError::Timeout)?
+                .map_err(|_| LilynkError::Timeout)?
         })
     }
 }
@@ -161,7 +161,7 @@ pub fn request(
                 Slot::Open(t) if t.conn.close_reason().is_none() => (t.clone(), false),
                 Slot::Failed(at, crypto) if at.elapsed() < DIAL_BACKOFF => {
                     return Err(match crypto {
-                        true => PunktfunkError::Crypto,
+                        true => LilynkError::Crypto,
                         false => io_err(&"the stream port did not answer a moment ago"),
                     });
                 }
@@ -172,7 +172,7 @@ pub fn request(
                         (t, true)
                     }
                     Err(e) => {
-                        *s = Slot::Failed(Instant::now(), matches!(e, PunktfunkError::Crypto));
+                        *s = Slot::Failed(Instant::now(), matches!(e, LilynkError::Crypto));
                         return Err(e);
                     }
                 },

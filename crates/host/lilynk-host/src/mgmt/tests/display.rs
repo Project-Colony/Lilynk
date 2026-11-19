@@ -292,7 +292,7 @@ async fn host_settings_surface() {
     assert_eq!(name["source"], "default");
     assert_eq!(name["kind"], "text");
     assert_eq!(name["apply"], "restart");
-    assert_eq!(name["env"], "PUNKTFUNK_HOST_NAME");
+    assert_eq!(name["env"], "LILYNK_HOST_NAME");
     let ids: Vec<&str> = body["settings"]
         .as_array()
         .unwrap()
@@ -349,7 +349,7 @@ async fn host_settings_surface() {
 /// The per-device overlay routes (`design/web-console-overhaul.md` §6.1).
 ///
 /// **Read-only on purpose.** `policy::prefs()` is a process-global `OnceLock`
-/// bound to whatever `PUNKTFUNK_CONFIG_DIR` said at its FIRST use anywhere in
+/// bound to whatever `LILYNK_CONFIG_DIR` said at its FIRST use anywhere in
 /// this binary, so `ConfigDirOverride` cannot move it afterwards — a test that
 /// PUT a policy here wrote to the developer's real `display-settings.json`.
 /// Resolution, sanitisation and the insert/remove round-trip are covered
@@ -800,7 +800,7 @@ async fn display_monitors_answers_even_with_no_compositor() {
         "an empty list must carry an error, an absent compositor, or a nested one: {body}"
     );
     // Pin is reported so the console can flag a missing monitor; unset here.
-    assert!(body["pinned"].is_null(), "no PUNKTFUNK_CAPTURE_MONITOR set");
+    assert!(body["pinned"].is_null(), "no LILYNK_CAPTURE_MONITOR set");
 }
 
 /// Inventory GET always answers (empty on a GPU-less box). Preference PUT validates

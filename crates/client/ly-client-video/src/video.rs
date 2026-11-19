@@ -4,7 +4,7 @@
 //! platform and GPU vendor is `video_ladder`; [`Decoder::new`] walks it and a rung
 //! that keeps failing demotes along it. [`native_evidence`] records which
 //! pairs have hardware validation; [`native_rung_admitted`] yields an unverified
-//! rung only to a verified rung usable on the same device. `PUNKTFUNK_DECODER`
+//! rung only to a verified rung usable on the same device. `LILYNK_DECODER`
 //! pins skip that rule and still fall through after init failure.
 //! [`migrate_decoder_pref`] rewrites stored libavcodec names onto native pins.
 //!
@@ -768,11 +768,11 @@ fn build_rung(
     Ok(built)
 }
 
-/// Log what `PUNKTFUNK_AU_FAULT` will do, including when the answer is nothing.
+/// Log what `LILYNK_AU_FAULT` will do, including when the answer is nothing.
 /// The injector lives on the native Vulkan decode entry; silence on any other
 /// rung is indistinguishable from "injected and nothing detected it".
 fn report_au_fault_env(native_rung: bool) {
-    let Ok(spec) = std::env::var("PUNKTFUNK_AU_FAULT") else {
+    let Ok(spec) = std::env::var("LILYNK_AU_FAULT") else {
         return;
     };
     if spec.is_empty() {
@@ -783,12 +783,12 @@ fn report_au_fault_env(native_rung: bool) {
         Some(_) if native_rung => {}
         Some(_) => tracing::warn!(
             value = %spec,
-            "PUNKTFUNK_AU_FAULT is armed, but this session is NOT on the native \
+            "LILYNK_AU_FAULT is armed, but this session is NOT on the native \
              Vulkan rung — no AU will be corrupted and no detector will fire"
         ),
         None => tracing::warn!(
             value = %spec,
-            "PUNKTFUNK_AU_FAULT not understood (want drop|truncate|flip[:period]) \
+            "LILYNK_AU_FAULT not understood (want drop|truncate|flip[:period]) \
              — ignored"
         ),
     }
@@ -836,7 +836,7 @@ fn log_note(note: Note, choice: &str, wire: u8, vk: Option<&VulkanDecodeDevice>)
             decode_video_caps = format_args!("0x{:X}", vk.map_or(0, |v| v.decode_video_caps)),
             codec_op_needed = format_args!("0x{:X}", native_codec(wire).map_or(0, |(_, op)| op)),
             device = vk.map_or("", |v| v.device_name.as_str()),
-            "PUNKTFUNK_DECODER=native-vulkan refused (needs an H.264, HEVC or AV1 \
+            "LILYNK_DECODER=native-vulkan refused (needs an H.264, HEVC or AV1 \
              session and a presenter device whose decode family advertises that \
              codec) — standard ladder"
         ),
@@ -846,14 +846,14 @@ fn log_note(note: Note, choice: &str, wire: u8, vk: Option<&VulkanDecodeDevice>)
             "native VAAPI is this device's first hardware rung, but it has decoded \
              nothing on any hardware and the rung below it — native Vulkan Video — \
              has, for this codec, on this device: taking Vulkan first \
-             (PUNKTFUNK_DECODER=native-vaapi runs it anyway)"
+             (LILYNK_DECODER=native-vaapi runs it anyway)"
         ),
         Note::VaapiGated => tracing::info!(
             "native VAAPI outside the presenter's automatic safety gate (pin overrides)"
         ),
         // A stored "software" preference otherwise skips hardware in silence.
         Note::SoftwareOnly => tracing::info!(
-            "software decode by preference (Settings decoder / PUNKTFUNK_DECODER) — \
+            "software decode by preference (Settings decoder / LILYNK_DECODER) — \
              hardware decode not attempted"
         ),
         // A typo would otherwise decode as `auto` in silence.
@@ -872,7 +872,7 @@ impl Decoder {
 
     /// Build the decode ladder. `wire` is the Welcome `quic::CODEC_*`; `pref` is
     /// Settings (`hardware` reads as auto); `vk` is the presenter's device.
-    /// `PUNKTFUNK_DECODER` wins, then the setting; both default to auto.
+    /// `LILYNK_DECODER` wins, then the setting; both default to auto.
     ///
     /// The order is `video_ladder::ladder`'s; the CPU rung follows it. `stream` is
     /// the construction-time shape probe.
@@ -882,7 +882,7 @@ impl Decoder {
         vk: Option<&VulkanDecodeDevice>,
         stream: StreamFormat,
     ) -> Result<Decoder> {
-        let stored = resolve_decoder_pref(std::env::var("PUNKTFUNK_DECODER").ok().as_deref(), pref);
+        let stored = resolve_decoder_pref(std::env::var("LILYNK_DECODER").ok().as_deref(), pref);
         let choice = migrate_decoder_pref(&stored);
         if choice != stored {
             // Once per session, at `warn`: the stored name no longer exists, and
@@ -897,7 +897,7 @@ impl Decoder {
         }
         let rung = first_rung(&choice, wire, stream, vk, &[])?;
         // One exit every rung leaves through, so a session that never reaches the native
-        // constructor still reports `PUNKTFUNK_AU_FAULT`.
+        // constructor still reports `LILYNK_AU_FAULT`.
         report_au_fault_env(rung.id() == Some(NativeRung::Vulkan));
         log_rung(rung.as_ref(), wire);
         Ok(Decoder {
@@ -1220,7 +1220,7 @@ mod tests {
     #[test]
     fn a_new_format_rebuilds_the_decoder_or_leaves_it() {
         use lilynk_core::quic::{CODEC_H264, CODEC_HEVC};
-        if std::env::var_os("PUNKTFUNK_DECODER").is_some() {
+        if std::env::var_os("LILYNK_DECODER").is_some() {
             return;
         }
         let sdr = StreamFormat::SDR_420_8;

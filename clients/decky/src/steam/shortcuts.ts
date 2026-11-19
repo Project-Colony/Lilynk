@@ -1,6 +1,6 @@
 // The two fixed Punktfunk shortcuts. gamescope focuses and fullscreens only the window tree Steam
 // launched, so a stream starts as a non-Steam shortcut whose exe is `/bin/sh` running the wrapper
-// (bin/punktfunkrun.sh), via RunGame. Both share the name "Punktfunk", so Steam keys them to one
+// (bin/lilynkrun.sh), via RunGame. Both share the name "Punktfunk", so Steam keys them to one
 // controller layout:
 //
 //   • STREAM — hidden, stateful: its launch options carry the host reference and per-stream

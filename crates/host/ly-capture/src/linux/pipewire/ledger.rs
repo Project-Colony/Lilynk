@@ -295,7 +295,7 @@ impl UserData {
                 pool_depth = pool_live,
                 "zero-copy: withholding each published buffer from the producer until the \
                  encoder releases it (deferred requeue — the producer can no longer rewrite a \
-                 frame mid-encode); PUNKTFUNK_ZEROCOPY_HOLD=0 restores the immediate requeue"
+                 frame mid-encode); LILYNK_ZEROCOPY_HOLD=0 restores the immediate requeue"
             );
         }
         Some(Arc::new(BufferHold {

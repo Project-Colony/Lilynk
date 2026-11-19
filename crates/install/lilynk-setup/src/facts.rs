@@ -261,7 +261,7 @@ pub struct Facts {
     pub has_omarchy_bin: bool,
     pub has_ujust: bool,
     pub in_input_group: bool,
-    pub in_punktfunk_group: bool,
+    pub in_lilynk_group: bool,
     pub has_input_group: bool,
     pub nvidia: Nvidia,
     pub firewall: Firewall,
@@ -271,11 +271,11 @@ pub struct Facts {
     /// A console login password already lives in the user's config dir (`web.env` on SteamOS);
     /// a re-run must not ask about one it would only overwrite.
     pub web_password_present: bool,
-    /// `PUNKTFUNK_UI_BIND` as host.env already names it. A re-run defaults to this, so pressing
+    /// `LILYNK_UI_BIND` as host.env already names it. A re-run defaults to this, so pressing
     /// Enter through the question can never move a console the operator already placed.
     #[serde(default)]
     pub web_bind: Option<String>,
-    /// `PUNKTFUNK_MGMT_BIND` as host.env already names it. Coexistence with Sunshine leaves
+    /// `LILYNK_MGMT_BIND` as host.env already names it. Coexistence with Sunshine leaves
     /// an operator's bind alone, as on Windows.
     #[serde(default)]
     pub mgmt_bind: Option<String>,
@@ -349,7 +349,7 @@ impl Facts {
             has_omarchy_bin: run.which("lilynk-omarchy"),
             has_ujust: run.which("ujust"),
             in_input_group: groups.iter().any(|g| g == "input"),
-            in_punktfunk_group: groups.iter().any(|g| g == "punktfunk"),
+            in_lilynk_group: groups.iter().any(|g| g == "punktfunk"),
             has_input_group: run
                 .probe("getent", &["group", "input"])
                 .is_some_and(|o| o.ok()),
@@ -365,8 +365,8 @@ impl Facts {
             web_password_present: ["web-password", "web.env"].iter().any(|f| {
                 std::fs::metadata(paths.config.join("punktfunk").join(f)).is_ok_and(|m| m.len() > 0)
             }),
-            web_bind: env_line(&paths.host_env(), "PUNKTFUNK_UI_BIND"),
-            mgmt_bind: env_line(&paths.host_env(), "PUNKTFUNK_MGMT_BIND"),
+            web_bind: env_line(&paths.host_env(), "LILYNK_UI_BIND"),
+            mgmt_bind: env_line(&paths.host_env(), "LILYNK_MGMT_BIND"),
             ip: local_ip(run),
             host_name: run.first_line("uname", &["-n"]),
             user,
@@ -589,7 +589,7 @@ fn local_ip(run: &dyn CommandRunner) -> Option<String> {
 #[cfg(test)]
 mod tests {
     // host.env is hand-edited: the last non-empty assignment wins, a comment is not one, and a
-    // blank value means unset (the rule `PUNKTFUNK_MGMT_BIND` takes in ly-host-config). Getting
+    // blank value means unset (the rule `LILYNK_MGMT_BIND` takes in ly-host-config). Getting
     // it wrong here moves a console on the next re-run.
     #[test]
     fn env_line_reads_the_file_the_way_the_unit_will() {
@@ -598,27 +598,27 @@ mod tests {
         let path = dir.join("host.env");
         let write = |body: &str| std::fs::write(&path, body).unwrap();
 
-        write("PUNKTFUNK_UI_BIND=0.0.0.0\n");
+        write("LILYNK_UI_BIND=0.0.0.0\n");
         assert_eq!(
-            super::env_line(&path, "PUNKTFUNK_UI_BIND").as_deref(),
+            super::env_line(&path, "LILYNK_UI_BIND").as_deref(),
             Some("0.0.0.0")
         );
-        write("  PUNKTFUNK_UI_BIND=\"100.64.0.3\"\n");
+        write("  LILYNK_UI_BIND=\"100.64.0.3\"\n");
         assert_eq!(
-            super::env_line(&path, "PUNKTFUNK_UI_BIND").as_deref(),
+            super::env_line(&path, "LILYNK_UI_BIND").as_deref(),
             Some("100.64.0.3")
         );
-        write("PUNKTFUNK_UI_BIND=0.0.0.0\nPUNKTFUNK_UI_BIND=127.0.0.1\n");
+        write("LILYNK_UI_BIND=0.0.0.0\nLILYNK_UI_BIND=127.0.0.1\n");
         assert_eq!(
-            super::env_line(&path, "PUNKTFUNK_UI_BIND").as_deref(),
+            super::env_line(&path, "LILYNK_UI_BIND").as_deref(),
             Some("127.0.0.1")
         );
-        write("# PUNKTFUNK_UI_BIND=0.0.0.0\n");
-        assert_eq!(super::env_line(&path, "PUNKTFUNK_UI_BIND"), None);
-        write("PUNKTFUNK_UI_BIND=\n");
-        assert_eq!(super::env_line(&path, "PUNKTFUNK_UI_BIND"), None);
+        write("# LILYNK_UI_BIND=0.0.0.0\n");
+        assert_eq!(super::env_line(&path, "LILYNK_UI_BIND"), None);
+        write("LILYNK_UI_BIND=\n");
+        assert_eq!(super::env_line(&path, "LILYNK_UI_BIND"), None);
         assert_eq!(
-            super::env_line(&dir.join("nope.env"), "PUNKTFUNK_UI_BIND"),
+            super::env_line(&dir.join("nope.env"), "LILYNK_UI_BIND"),
             None
         );
         let _ = std::fs::remove_dir_all(&dir);

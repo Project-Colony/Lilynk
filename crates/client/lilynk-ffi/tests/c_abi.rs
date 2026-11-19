@@ -70,7 +70,7 @@ fn c_abi_harness_round_trips() {
     );
 
     let cc = std::env::var("CC").unwrap_or_else(|_| "cc".into());
-    let out = profile_dir.join("punktfunk_c_harness");
+    let out = profile_dir.join("lilynk_c_harness");
 
     let mut compile = Command::new(&cc);
     compile
@@ -80,7 +80,7 @@ fn c_abi_harness_round_trips() {
             "-Wall",
             "-Wextra",
             "-O2",
-            "-DPUNKTFUNK_FEATURE_QUIC",
+            "-DLILYNK_FEATURE_QUIC",
             "-I",
         ])
         .arg(&include);

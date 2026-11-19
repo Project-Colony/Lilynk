@@ -194,13 +194,13 @@ pub(super) fn hand_chunk(
         result: Ok(()),
     };
     if lane.to_worker.send(job).is_err() {
-        return Err(crate::error::PunktfunkError::Unsupported("seal lane died"));
+        return Err(crate::error::LilynkError::Unsupported("seal lane died"));
     }
     if std::mem::replace(in_flight, true) {
         let mut prev = lane
             .from_worker
             .recv()
-            .map_err(|_| crate::error::PunktfunkError::Unsupported("seal lane died"))?;
+            .map_err(|_| crate::error::LilynkError::Unsupported("seal lane died"))?;
         *seal_ns += prev.ns;
         let r = prev.result.and_then(|()| sink(&prev.bufs, send));
         done.append(&mut prev.bufs);
@@ -293,7 +293,7 @@ fn seal_split(
         // The worker died holding the back half: those packets are gone, so fail the
         // frame rather than return half an AU.
         front?;
-        return Err(crate::error::PunktfunkError::Unsupported("seal lane died"));
+        return Err(crate::error::LilynkError::Unsupported("seal lane died"));
     };
     *lane = Some(taken);
     wires.append(&mut done.bufs);

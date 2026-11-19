@@ -69,7 +69,7 @@ fn box_of(id: &str, pretty: &str, version: &str, family: Family, docs: &str) -> 
         has_omarchy_bin: id == "omarchy",
         has_ujust: false,
         in_input_group: false,
-        in_punktfunk_group: false,
+        in_lilynk_group: false,
         has_input_group: true,
         nvidia: Nvidia::Absent,
         firewall: Firewall::None,

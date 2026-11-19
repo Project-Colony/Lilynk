@@ -147,7 +147,7 @@ pub fn set_enabled(on: bool) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use ly_client_core::omarchy::{parse_hex, parse_punktfunk_json};
+    use ly_client_core::omarchy::{parse_hex, parse_lilynk_json};
 
     fn theme() -> OsTheme {
         OsTheme {
@@ -190,7 +190,7 @@ mod tests {
         // Everforest Light's shape: the accent is handsome as a fill and illegible as text.
         // The text form moves (see ly-client-core's `readable` tests); the fill must not.
         let raw = r##"{"schema":1,"mode":"light","background":"#fdf6e3","foreground":"#5c6a72","accent":"#dfa000"}"##;
-        let t = parse_punktfunk_json(raw).unwrap();
+        let t = parse_lilynk_json(raw).unwrap();
         assert!(css(&t).contains("@define-color accent_bg_color #dfa000;"));
     }
 

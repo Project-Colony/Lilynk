@@ -94,7 +94,7 @@ is read out of freed memory and falls off the end of the `switch`. A zeroed slot
 variant of the same fault instead. Two traps when triaging it:
 
 * **It is not HDR-specific.** The abort was first seen right after a 10-bit stream negotiated, so
-  it looked like the HDR path and `PUNKTFUNK_GAMESCOPE_HDR=0` looked like a workaround. It is not
+  it looked like the HDR path and `LILYNK_GAMESCOPE_HDR=0` looked like a workaround. It is not
   — the same abort reproduces on an SDR session with no `--hdr-enabled` in the command line.
   Check the failing process's actual argv before believing an HDR association.
 * **`gamescope-session-plus` hides it.** When our binary crash-loops, the session script retries
@@ -203,7 +203,7 @@ The check fails **open** at every ambiguity: no flags expected, or no readable g
 Resolution order, applied identically by the bare spawn, the `GAMESCOPE_BIN` wrapper
 (gamescope-session-plus) and the SteamOS PATH shim:
 
-1. `PUNKTFUNK_GAMESCOPE_BIN` — absolute path override
+1. `LILYNK_GAMESCOPE_BIN` — absolute path override
 2. `lilynk-gamescope` on `PATH`
 3. `gamescope`
 
@@ -340,7 +340,7 @@ import subprocess
 import sys
 import time
 
-env = dict(os.environ, DISABLE_GAMESCOPE_WSI="1", PUNKTFUNK_GAMESCOPE_WSI_DISABLE="1",
+env = dict(os.environ, DISABLE_GAMESCOPE_WSI="1", LILYNK_GAMESCOPE_WSI_DISABLE="1",
            MESA_VK_WSI_PRESENT_MODE="fifo")
 for adaptive_sync in (False, True):
     args = [sys.argv[1], "--backend", "headless", "-W", "1280", "-H", "720",

@@ -5,7 +5,7 @@
 //! presses that hotkey on the user's desktop and reads the flip back from the same file.
 //! Never more than one press per call: the file, not the keystroke, is the truth.
 //!
-//! `PUNKTFUNK_INSTANT_REPLAY_PAUSE`: `auto` pauses once a stream falls behind cadence while
+//! `LILYNK_INSTANT_REPLAY_PAUSE`: `auto` pauses once a stream falls behind cadence while
 //! another app encodes ([`on_encoder_shared`]); `on` pauses at the first stream; `off` never
 //! presses. Whatever this module paused it resumes when the last stream ends, or at the next
 //! host start after a crash (the owed marker in the config dir).
@@ -33,7 +33,7 @@ enum Mode {
 }
 
 fn mode() -> Mode {
-    match ly_host_config::row_tri("PUNKTFUNK_INSTANT_REPLAY_PAUSE") {
+    match ly_host_config::row_tri("LILYNK_INSTANT_REPLAY_PAUSE") {
         Some(true) => Mode::On,
         Some(false) => Mode::Off,
         None => Mode::Auto,

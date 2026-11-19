@@ -10,7 +10,7 @@ use anyhow::{Context, Result};
 use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
 
-const REJECTED_SLOT: &str = "ly-vdisplay refused this process's connector slot; see the log for the PUNKTFUNK_SEAT_DISPLAY_SLOT or reservation problem";
+const REJECTED_SLOT: &str = "ly-vdisplay refused this process's connector slot; see the log for the LILYNK_SEAT_DISPLAY_SLOT or reservation problem";
 
 /// Reserve this client's connector slot before `create`, so a prior session on the same slot
 /// is the only one preempted. A rejected slot means this host would drive a connector that

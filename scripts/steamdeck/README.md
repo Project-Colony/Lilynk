@@ -21,7 +21,7 @@ So the host is built **natively inside a Debian-trixie distrobox** (`pf2`), chos
 glibc ABI matches SteamOS's — the resulting binary runs **natively on SteamOS** (the container
 is only the build environment; `lilynk-host` is launched directly, not via `distrobox enter`). A
 rebuild always matches the running OS. Encode is **VAAPI** on the Deck's AMD GPU (NVENC on NVIDIA),
-auto-selected by `PUNKTFUNK_ENCODER=auto`.
+auto-selected by `LILYNK_ENCODER=auto`.
 
 The honest trade-off: on-device building costs a slow first install (~10–15 min, ~1 GB of image +
 toolchain) and adds moving parts (apt mirrors, rustup, bun) — the price of an install that can
@@ -48,7 +48,7 @@ serving HTTPS (HTTP/1.1 over TLS) with the host's identity cert), so its service
 | `build-version.sh` | The version a build reports: a release tag's `X.Y.Z`, else the canary base (`scripts/ci/ly-version.sh`) plus the commit, so the console and the channel's feed agree. |
 | `heal-box.sh` | Run by `install.sh` and `update.sh` before they enter the box: if its `fuse-overlayfs` helper died, podman reuses the dead mount on every start (`transport endpoint is not connected`). This detaches it so the next start remounts. A no-op on a healthy box. |
 | `install-tray.sh` | Run by `install.sh` and `update.sh`: build the status tray (`lilynk-tray`) in its own cargo run and install it user-scoped. The host writes its autostart entry, so it shows in the Desktop-mode panel from the next login. Best-effort: a failure warns and the host runs without it. |
-| `build-gamescope.sh` | Build gamescope + the `pipewire-hdr` patches (`packaging/gamescope`) in the same distrobox and install it as `~/.local/bin/lilynk-gamescope`, wiring `PUNKTFUNK_GAMESCOPE_BIN` into `host.env` — what lets Game Mode stream **10-bit BT.2020 PQ (HDR)** instead of 8-bit SDR. Best-effort: a failure warns and the host streams SDR. Content-stamped — a no-op unless `packaging/gamescope/` changed or the binary broke. |
+| `build-gamescope.sh` | Build gamescope + the `pipewire-hdr` patches (`packaging/gamescope`) in the same distrobox and install it as `~/.local/bin/lilynk-gamescope`, wiring `LILYNK_GAMESCOPE_BIN` into `host.env` — what lets Game Mode stream **10-bit BT.2020 PQ (HDR)** instead of 8-bit SDR. Best-effort: a failure warns and the host streams SDR. Content-stamped — a no-op unless `packaging/gamescope/` changed or the binary broke. |
 | `rebuild-check.sh` | The post-OS-update self-heal (run by `lilynk-rebuild-check.service` before the host at session start): `ldd`-probes the host binary **and the HDR gamescope** — milliseconds when healthy, a full `update.sh` rebuild only when a SteamOS update actually broke library links. |
 
 ```sh
@@ -63,15 +63,15 @@ bash ~/punktfunk/scripts/steamdeck/update.sh --pull      # pull the followed bra
 Note: the Deck install matches a bare `serve` — native-only, PIN pairing required. `--gamestream` and
 `--no-gamestream` set the console's **GameStream** setting; change it later under Host → Settings.
 
-Env overrides: `PUNKTFUNK_SRC` (source dir, default `~/punktfunk`), `PUNKTFUNK_BOX` (container name,
-default `pf2`), `PUNKTFUNK_MGMT_PORT` (writes `PUNKTFUNK_MGMT_BIND` to `host.env`; default 47990),
-`PUNKTFUNK_WEB_PORT` (47992).
+Env overrides: `LILYNK_SRC` (source dir, default `~/punktfunk`), `LILYNK_BOX` (container name,
+default `pf2`), `LILYNK_MGMT_PORT` (writes `LILYNK_MGMT_BIND` to `host.env`; default 47990),
+`LILYNK_WEB_PORT` (47992).
 
 ## What gets installed
 
 - **Binary:** `~/punktfunk/target-steamos/release/lilynk-host` (built in `pf2`, run natively).
 - **Config:** `~/.config/punktfunk/host.env` (encoder/compositor) and `web.env` (generated web login
-  password + session secret). Trust material (`cert.pem`, `mgmt-token`, `punktfunk1-paired.json`) lives
+  password + session secret). Trust material (`cert.pem`, `mgmt-token`, `lilynk1-paired.json`) lives
   here too and persists across updates.
 - **Services:** `~/.config/systemd/user/lilynk-host.service` — `scripts/lilynk-host.service`
   with the Deck's `ExecStart` (`serve`, `+ --open` if chosen; the port is `host.env`'s — the native
@@ -91,10 +91,10 @@ default `pf2`), `PUNKTFUNK_MGMT_PORT` (writes `PUNKTFUNK_MGMT_BIND` to `host.env
   `~/.local/share/applications/`, and its icons under `~/.local/share/icons/hicolor/`.
 - **HDR gamescope:** `~/.local/bin/lilynk-gamescope` (gamescope + the `pipewire-hdr` patches,
   built in `pf2`, run natively — it does **not** replace the system gamescope; only the sessions
-  the host spawns use it). `host.env` gains `PUNKTFUNK_GAMESCOPE_BIN=` pointing at it — a line
+  the host spawns use it). `host.env` gains `LILYNK_GAMESCOPE_BIN=` pointing at it — a line
   `build-gamescope.sh` maintains and removes again if the binary ever stops working, because a
   stale absolute override would break session spawning, not just HDR. HDR is attempted by
-  default when present; `PUNKTFUNK_GAMESCOPE_HDR=0` in `host.env` forces SDR. Verify with
+  default when present; `LILYNK_GAMESCOPE_HDR=0` in `host.env` forces SDR. Verify with
   `lilynk-host hdr-probe`.
 - **System tuning (sudo, re-applied by every `install.sh` and `update.sh` run):**
   `/etc/sysctl.d/99-lilynk-net.conf` (32 MB UDP buffers — the #1 high-bitrate lever),
@@ -141,7 +141,7 @@ host advertises over mDNS as `_punktfunk._udp`, so clients discover it automatic
   the console password and session secret leaked to every local account. `install.sh`/`update.sh`
   now tighten `~/.config/punktfunk` to `0700` and `web.env` to `0600` on every run and say so —
   but reset the password afterwards, because a chmod does not un-leak a read secret: put a
-  `PUNKTFUNK_UI_PASSWORD=<new>` line in `web.env` and `systemctl --user restart lilynk-web`.
+  `LILYNK_UI_PASSWORD=<new>` line in `web.env` and `systemctl --user restart lilynk-web`.
 - **Game Mode auto-suspend** drops the host off the network on idle — disable it (Settings → Power)
   for a headless host.
 - **WiFi tx ceiling** ≈ 250 Mbps goodput (a Deck hardware/driver packet-rate limit, band-independent);

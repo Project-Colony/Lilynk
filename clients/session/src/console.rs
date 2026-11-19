@@ -10,7 +10,7 @@
 //! raises [`ConsoleCmd`]s; worker threads here run everything that blocks — mDNS
 //! discovery, reachability probes, the SPAKE2 pairing ceremony, wake-on-LAN loops,
 //! library fetches, known-hosts persistence — and write results into the shared
-//! models. `PUNKTFUNK_FAKE_LIBRARY=<file.json>` feeds canned entries with no host
+//! models. `LILYNK_FAKE_LIBRARY=<file.json>` feeds canned entries with no host
 //! (portrait paths starting with `/` load from disk), the GPU-only dev path.
 
 // Windows counts `Instant` from boot, so `now - 60 s` panics in a console started at log-in.
@@ -283,7 +283,7 @@ pub fn run(target: Option<&str>) -> u8 {
         }
     };
 
-    let fake = std::env::var_os("PUNKTFUNK_FAKE_LIBRARY").is_some();
+    let fake = std::env::var_os("LILYNK_FAKE_LIBRARY").is_some();
     let known = trust::KnownHosts::load();
     let Entry {
         entry,
@@ -772,7 +772,7 @@ impl ServiceState {
                         Some(pin) => {
                             trust::request_access_to_host(a, p, id, pin, &device_name, None)
                         }
-                        None => Err(lilynk_core::PunktfunkError::InvalidArg("fingerprint")),
+                        None => Err(lilynk_core::LilynkError::InvalidArg("fingerprint")),
                     },
                 )
             }
@@ -1270,8 +1270,8 @@ impl ServiceState {
         addr: String,
         port: u16,
         req: RequestKey,
-        wording: fn(&lilynk_core::PunktfunkError) -> String,
-        ask: impl FnOnce(&str, u16, &(String, String)) -> Result<[u8; 32], lilynk_core::PunktfunkError>
+        wording: fn(&lilynk_core::LilynkError) -> String,
+        ask: impl FnOnce(&str, u16, &(String, String)) -> Result<[u8; 32], lilynk_core::LilynkError>
             + Send
             + 'static,
     ) {
@@ -1871,7 +1871,7 @@ fn spawn_fetch(
             // the player can be two hosts further on by the time it answers. Every write below
             // asks first whether this fetch still owns the model.
             let mine = || shared.fetch_epoch() == req.epoch;
-            if let Ok(path) = std::env::var("PUNKTFUNK_FAKE_LIBRARY") {
+            if let Ok(path) = std::env::var("LILYNK_FAKE_LIBRARY") {
                 load_fake(&shared, &req, &path);
                 return;
             }

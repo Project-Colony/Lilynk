@@ -566,17 +566,17 @@ pub(crate) fn is_available() -> bool {
 }
 
 /// An absolute path when one resolves, since the session-plus wrapper and the SteamOS PATH shim
-/// run outside this `PATH`. Rungs: `PUNKTFUNK_GAMESCOPE_BIN` (taken as given) →
+/// run outside this `PATH`. Rungs: `LILYNK_GAMESCOPE_BIN` (taken as given) →
 /// `lilynk-gamescope` on `PATH`, then beside the host → stock `gamescope` on `PATH`, else the
 /// bare name. A SteamOS seat's host finds the owner's build only beside itself.
 pub(crate) fn gamescope_bin() -> &'static str {
     static BIN: std::sync::OnceLock<String> = std::sync::OnceLock::new();
     BIN.get_or_init(|| {
         // Shared env lock: a concurrent session `set_var` must not race this read.
-        let over = crate::with_env_lock(|| std::env::var("PUNKTFUNK_GAMESCOPE_BIN").ok())
+        let over = crate::with_env_lock(|| std::env::var("LILYNK_GAMESCOPE_BIN").ok())
             .filter(|s| !s.trim().is_empty());
         if let Some(path) = over {
-            tracing::info!(bin = %path, "gamescope: PUNKTFUNK_GAMESCOPE_BIN override");
+            tracing::info!(bin = %path, "gamescope: LILYNK_GAMESCOPE_BIN override");
             return path;
         }
         let host_dir = std::env::current_exe()
@@ -926,7 +926,7 @@ fn check_gamescope_version_now() -> Option<(u32, u32, u32)> {
             min = %format!("{}.{}.{}", MIN_GAMESCOPE.0, MIN_GAMESCOPE.1, MIN_GAMESCOPE.2),
             "gamescope is older than the minimum for reliable headless capture — expect a \
              capture deadlock against PipeWire ≥ 1.6 (a wedged link head-blocks the daemon); \
-             upgrade gamescope or use PUNKTFUNK_COMPOSITOR=kwin|mutter"
+             upgrade gamescope or use LILYNK_COMPOSITOR=kwin|mutter"
         );
     } else if ver < MIN_GAMESCOPE_OVERLAY {
         tracing::warn!(

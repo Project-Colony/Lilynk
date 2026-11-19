@@ -2711,7 +2711,7 @@ fn process_slot_plan(
         std::result::Result<super::identity::WindowsSlotPlan, super::identity::WindowsSlotError>,
     > = OnceLock::new();
     *PLAN.get_or_init(|| {
-        let seat_override = std::env::var_os("PUNKTFUNK_SEAT_DISPLAY_SLOT");
+        let seat_override = std::env::var_os("LILYNK_SEAT_DISPLAY_SLOT");
         super::identity::windows_slot_plan(
             seat_override.as_deref(),
             ly_win_display::seats_addon_reserves_display_slots(),
@@ -3462,7 +3462,7 @@ mod tests {
         }
         assert!(inner.group.pnp_disabled.is_empty());
 
-        // `PUNKTFUNK_STANDBY_SINK_KEEP` opts the park out, and a test sets no environment; so
+        // `LILYNK_STANDBY_SINK_KEEP` opts the park out, and a test sets no environment; so
         // does the operator's `pnp_disable_monitors: false`.
         let prefs = crate::policy::prefs();
         let parks = prefs.standby_sink_neutralise() && prefs.pnp_disable_monitors();

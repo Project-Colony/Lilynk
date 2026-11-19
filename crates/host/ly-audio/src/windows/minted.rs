@@ -5,10 +5,10 @@
 //! * Microphone (`SteamStreamingMicrophone.inf`): host writes decoded voice to render; capture
 //!   is the mic host apps record.
 //!
-//! A background worker mints one `ROOT\MEDIA` devnode per role; `PunktfunkAudioRole` owns it.
+//! A background worker mints one `ROOT\MEDIA` devnode per role; `LilynkAudioRole` owns it.
 //! [`minted_ids`] publishes the endpoint ids for the wiring plan. A seat host mints nothing
 //! ([`mints_nothing`]); the console host removes the nodes seat hosts once marked
-//! `PunktfunkAudioSeat`. Missing Steam drivers, a denied install, or `PUNKTFUNK_NO_AUDIO_MINT`
+//! `LilynkAudioSeat`. Missing Steam drivers, a denied install, or `LILYNK_NO_AUDIO_MINT`
 //! leaves the ids empty and keeps the name-based ladder.
 //!
 //! Endpoints persist across host restarts and re-resolve by marker. The Speakers hide
@@ -27,10 +27,10 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 /// Durable ownership marker. The uninstall sweep matches every minted role on it.
-pub const ROLE_MARKER: &str = "PunktfunkAudioRole";
+pub const ROLE_MARKER: &str = "LilynkAudioRole";
 /// Secondary marker of a node a seat host minted. A seat host mints nothing ([`mints_nothing`]),
 /// so each such node is a leftover ([`remove_seat_devnodes`]).
-pub const SEAT_MARKER: &str = "PunktfunkAudioSeat";
+pub const SEAT_MARKER: &str = "LilynkAudioSeat";
 const SEAT_MARKER_DOMAIN: &[u8] = b"punktfunk/audio-seat/v1\0";
 /// Audiosrv can take this long to register a freshly minted endpoint.
 const ENDPOINT_WAIT: Duration = Duration::from_secs(15);
@@ -231,11 +231,11 @@ fn gave_up() -> bool {
 }
 
 /// Nothing is minted on a seat host, whose remote session lists no machine-wide devnode: its
-/// audio is the session's own. Nor with `PUNKTFUNK_NO_AUDIO_MINT=1`, which keeps the name-based
+/// audio is the session's own. Nor with `LILYNK_NO_AUDIO_MINT=1`, which keeps the name-based
 /// ladder; `=0` mints as if unset.
 fn mints_nothing() -> bool {
     ly_paths::seat::role().is_seat_host()
-        || ly_host_config::env_on("PUNKTFUNK_NO_AUDIO_MINT") == Some(true)
+        || ly_host_config::env_on("LILYNK_NO_AUDIO_MINT") == Some(true)
 }
 
 /// Wiring-plan tier-0: minted endpoint ids, or all-empty while nothing is provisioned.

@@ -206,7 +206,7 @@ const HDR_ADVERT_TTL: std::time::Duration = std::time::Duration::from_secs(30);
 /// Whether a GameStream launch can deliver HDR (10-bit BT.2020 PQ). `pin` is the entry's
 /// own compositor; `launches` is whether it runs a command, which the game-session policy
 /// routes on. Gates the entry's `IsHdrSupported` and, with the live capture checks at
-/// RTSP, honoring `dynamicRangeMode`. Behind `PUNKTFUNK_10BIT` (default on).
+/// RTSP, honoring `dynamicRangeMode`. Behind `LILYNK_10BIT` (default on).
 ///
 /// Windows: always true once the policy is on — the IDD capturer can enable PQ on the
 /// virtual display. Linux: portal sessions claim yes (HDR is a live monitor fact, rechecked
@@ -257,7 +257,7 @@ pub fn launch_hdr_capable(
 
 /// The compositor a launch lands on, and whether gamescope runs it as a dedicated spawn:
 /// the entry's own compositor, else a dedicated gamescope when the policy asks and no
-/// `PUNKTFUNK_COMPOSITOR` pin outranks it, else the `live` session. The order
+/// `LILYNK_COMPOSITOR` pin outranks it, else the `live` session. The order
 /// `stream::open_gs_virtual_source` and `compositor_route::resolve_compositor` resolve in.
 #[cfg(any(target_os = "linux", test))]
 fn launch_compositor(
@@ -439,7 +439,7 @@ pub(crate) fn start(state: &Arc<AppState>, mdns: bool) -> Result<Option<crate::d
     let advert = if mdns {
         Some(mdns::advertise(&state.host).context("mDNS advertise")?)
     } else {
-        tracing::info!("GameStream mDNS advertisement disabled (--no-mdns / PUNKTFUNK_MDNS)");
+        tracing::info!("GameStream mDNS advertisement disabled (--no-mdns / LILYNK_MDNS)");
         None
     };
     rtsp::spawn(state.clone()).context("start RTSP server")?;
@@ -651,7 +651,7 @@ mod route_tests {
             launch_compositor(None, false, || true, kwin),
             Some((Gamescope, true))
         );
-        // `PUNKTFUNK_COMPOSITOR` outranks the policy; `detect()` then answers the pin.
+        // `LILYNK_COMPOSITOR` outranks the policy; `detect()` then answers the pin.
         assert_eq!(
             launch_compositor(None, true, || true, kwin),
             Some((Kwin, false))

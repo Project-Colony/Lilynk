@@ -64,4 +64,4 @@ Plugin pages come from their own port, TCP 47993, next to the console's 47992.
 
   On Windows, run the setup again; it adds both console rules.
 - **Plugin interfaces are unavailable**: the console couldn't open that port. Set another with
-  `PUNKTFUNK_UI_PLUGIN_PORT` in `host.env` and restart the console.
+  `LILYNK_UI_PLUGIN_PORT` in `host.env` and restart the console.

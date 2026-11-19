@@ -238,7 +238,7 @@ struct Step {
 /// rules fires.
 struct Ramp {
     /// The ramp never asks above this: what the stream can use, or
-    /// `PUNKTFUNK_ABR_PROBE_KBPS`.
+    /// `LILYNK_ABR_PROBE_KBPS`.
     max_kbps: u32,
     /// Rate the next step asks for.
     next_kbps: u32,
@@ -636,7 +636,7 @@ impl Ramp {
 /// The measurement's whole life: the ramp before the first frame, or the
 /// legacy burst armed, in flight, answered or abandoned.
 pub(crate) struct CapacityProbe {
-    /// Burst target. `PUNKTFUNK_ABR_PROBE_KBPS`, or twice the stream cap.
+    /// Burst target. `LILYNK_ABR_PROBE_KBPS`, or twice the stream cap.
     target_kbps: u32,
     /// The bring-up ramp, against a host that serves it.
     ramp: Option<Ramp>,
@@ -663,7 +663,7 @@ pub(crate) struct CapacityProbe {
 impl CapacityProbe {
     /// `target_kbps` of `None` sizes the burst from the stream cap, and caps
     /// the ramp at what the stream can use — or, `probe_only`, at the link's
-    /// wall. `armed` is `PUNKTFUNK_ABR_PROBE` plus the session being
+    /// wall. `armed` is `LILYNK_ABR_PROBE` plus the session being
     /// Automatic at all; `ramp` is the host's
     /// [`HOST_CAP2_RAMP`](crate::quic::HOST_CAP2_RAMP).
     pub(crate) fn new(
@@ -696,7 +696,7 @@ impl CapacityProbe {
     /// The ramp of a PyroWave session or an explicit H.26x rate. It climbs to
     /// [`PINNED_RAMP_HEADROOM`] times `pin_kbps`: what it proves is the link
     /// the host paces at, and no rate moves with it. `armed` is
-    /// `PUNKTFUNK_ABR_PROBE` plus the host's `HOST_CAP2_RAMP`; an old host runs
+    /// `LILYNK_ABR_PROBE` plus the host's `HOST_CAP2_RAMP`; an old host runs
     /// no measurement.
     ///
     /// No burst follows: a stream already near the link loses frames to one,
@@ -965,7 +965,7 @@ pub(crate) fn probe_target_kbps(stream_cap_kbps: u32) -> u32 {
 }
 
 /// Where the ramp stops climbing: the rate that proves the stream cap
-/// (`cap / 0.7`), or `PUNKTFUNK_ABR_PROBE_KBPS` when it is lower. Capacity
+/// (`cap / 0.7`), or `LILYNK_ABR_PROBE_KBPS` when it is lower. Capacity
 /// above what the stream can use is not this session's business, so the ramp
 /// bounds itself and needs no absolute constant.
 fn ramp_max_kbps(stream_cap_kbps: u32, env_kbps: Option<u32>) -> u32 {
@@ -985,7 +985,7 @@ const LINK_RAMP_MAX_KBPS: u32 = 10_000_000;
 const PINNED_RAMP_HEADROOM: u32 = 8;
 
 /// A pinned ramp's ceiling: the pin times [`PINNED_RAMP_HEADROOM`], or
-/// `PUNKTFUNK_ABR_PROBE_KBPS` when it is lower.
+/// `LILYNK_ABR_PROBE_KBPS` when it is lower.
 fn pinned_ramp_max_kbps(pin_kbps: u32, env_kbps: Option<u32>) -> u32 {
     let by_pin = pin_kbps.saturating_mul(PINNED_RAMP_HEADROOM);
     env_kbps.map_or(by_pin, |k| k.min(by_pin))
@@ -1242,7 +1242,7 @@ mod tests {
         );
     }
 
-    /// `PUNKTFUNK_ABR_PROBE_KBPS` is the ramp's maximum — webOS pins 320 Mbps
+    /// `LILYNK_ABR_PROBE_KBPS` is the ramp's maximum — webOS pins 320 Mbps
     /// against a 4K165 stream cap of ~1 Gbps.
     #[test]
     fn the_env_target_caps_the_ramp() {
@@ -1771,7 +1771,7 @@ mod tests {
         );
     }
 
-    /// `PUNKTFUNK_ABR_PROBE=0` measures nothing, whatever the host serves.
+    /// `LILYNK_ABR_PROBE=0` measures nothing, whatever the host serves.
     #[test]
     fn a_disabled_probe_neither_ramps_nor_bursts() {
         let now = Instant::now();

@@ -11,7 +11,7 @@
 //!
 //! The driver's enumeration is the only truth: [`caps`] lists a codec only
 //! where a node takes it and offers a picture format this client can show.
-//! Pin with `PUNKTFUNK_DECODER=native-v4l2`; `PUNKTFUNK_V4L2_DEVICE` names
+//! Pin with `LILYNK_DECODER=native-v4l2`; `LILYNK_V4L2_DEVICE` names
 //! the node.
 
 use std::collections::VecDeque;
@@ -52,7 +52,7 @@ use crate::video_color::ColorDesc;
 use crate::video_types::display_of;
 use crate::video_types::AnyPlanner;
 
-/// `PUNKTFUNK_DECODER=native-v4l2`.
+/// `LILYNK_DECODER=native-v4l2`.
 pub(crate) const DECODER_PIN: &str = "native-v4l2";
 
 /// `DRM_FORMAT_MOD_LINEAR`. V4L2 buffers carry no modifier; the linear
@@ -217,9 +217,9 @@ fn frame_based(path: &Path) -> bool {
     }
 }
 
-/// `PUNKTFUNK_V4L2_DEVICE`, else every `/dev/video*` in numeric order.
+/// `LILYNK_V4L2_DEVICE`, else every `/dev/video*` in numeric order.
 fn candidate_nodes() -> Vec<PathBuf> {
-    if let Some(forced) = std::env::var_os("PUNKTFUNK_V4L2_DEVICE").filter(|v| !v.is_empty()) {
+    if let Some(forced) = std::env::var_os("LILYNK_V4L2_DEVICE").filter(|v| !v.is_empty()) {
         return vec![PathBuf::from(forced)];
     }
     let Ok(dir) = std::fs::read_dir("/dev") else {

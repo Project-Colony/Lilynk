@@ -59,7 +59,7 @@ pub struct ActuatorQuirks {
     /// is at this command layer.
     pub keepalive_ms: u16,
     /// Floor for `backstop_ms` on non-zero commands. C ABI
-    /// (`punktfunk_connection_set_rumble_quirks`) for duration APIs that reject
+    /// (`lilynk_connection_set_rumble_quirks`) for duration APIs that reject
     /// short values.
     pub min_pulse_ms: u16,
     /// Flip the low motor's LSB on re-emits so an SDL-class layer that no-ops
@@ -766,7 +766,7 @@ mod tests {
         assert_eq!(e.poll(t0 + ms(500)), (None, None));
     }
 
-    /// Pre-trigger C API (`punktfunk_connection_next_rumble_cmd`) has no
+    /// Pre-trigger C API (`lilynk_connection_next_rumble_cmd`) has no
     /// trigger slots. Silent handles is correct for that actuator. Those
     /// commands are not [`SILENT`], so redundant-stop suppression does not
     /// drop them.

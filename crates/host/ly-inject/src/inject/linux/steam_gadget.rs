@@ -575,9 +575,9 @@ pub fn ensure_modules() {
 }
 
 /// Auto is on for SteamOS (ships the modules and runs Steam Input) and off elsewhere;
-/// `PUNKTFUNK_STEAM_GADGET` on/off forces it. A host with a Deck controller of its own gets
-/// DualSense instead (`degrade_steam_on_conflict`), unless `PUNKTFUNK_STEAM_FORCE` is set.
+/// `LILYNK_STEAM_GADGET` on/off forces it. A host with a Deck controller of its own gets
+/// DualSense instead (`degrade_steam_on_conflict`), unless `LILYNK_STEAM_FORCE` is set.
 pub fn gadget_preferred() -> bool {
-    ly_host_config::row_tri("PUNKTFUNK_STEAM_GADGET")
+    ly_host_config::row_tri("LILYNK_STEAM_GADGET")
         .unwrap_or_else(|| ly_host_config::os_release::os_release().is("steamos"))
 }

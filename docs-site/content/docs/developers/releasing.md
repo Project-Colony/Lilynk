@@ -20,7 +20,7 @@ to a channel is [Release channels](/docs/channels).
 `scripts/ci/ly-version.sh` (and its PowerShell twin `ly-version.ps1`) derives every version, so
 nothing is bumped by hand to move canary: cutting `v0.40.0` moves the next canary to `0.41.0`.
 Where a store needs a numeric version (MSIX, the App Store), a `-rc` or `+meta` suffix is dropped.
-The Linux packages hand the version to the build as `PUNKTFUNK_BUILD_VERSION`, which `--version`
+The Linux packages hand the version to the build as `LILYNK_BUILD_VERSION`, which `--version`
 reports; the Windows packer stamps it into the finished binary.
 
 ## Cut a stable release

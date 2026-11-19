@@ -21,15 +21,15 @@
   ok would add C:\Program Files\punktfunk to the machine PATH
 ==> Checking for Sunshine / Apollo / Vibeshine
   !! SunshineService is active on this device — both want TCP 47990 (its web UI, Punktfunk's management API)
-  ok PUNKTFUNK_MGMT_BIND=0.0.0.0:47991 — the service step writes it to host.env and opens the firewall for it
+  ok LILYNK_MGMT_BIND=0.0.0.0:47991 — the service step writes it to host.env and opens the firewall for it
   ok Clients learn the port from discovery; the web console and plugins read it from mgmt-endpoint. Details: https://docs.punktfunk.unom.io/docs/switching-from-sunshine
   ok Moonlight compatibility stays off — the other host owns those ports while it runs
 ==> Drivers (a hiccup warns and never aborts)
   + "C:\Program Files\punktfunk\lilynk-host.exe" driver install --dir <staging>\pfvdisplay
   + "C:\Program Files\punktfunk\lilynk-host.exe" driver install --gamepad --dir <staging>\gamepad
 ==> Plugin runner
-  + schtasks /Create /TN PunktfunkScripting /XML <generated> /F
-  + schtasks /Run /TN PunktfunkScripting
+  + schtasks /Create /TN LilynkScripting /XML <generated> /F
+  + schtasks /Run /TN LilynkScripting
 ==> Service
   + "C:\Program Files\punktfunk\lilynk-host.exe" service install --gamestream=off --allow-public-network=off --mgmt-bind=0.0.0.0:47991 --web-bind=0.0.0.0
   + "C:\Program Files\punktfunk\lilynk-host.exe" service start

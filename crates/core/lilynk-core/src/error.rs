@@ -1,13 +1,13 @@
 //! Core error type and the C ABI status codes it maps to.
 //!
-//! `PunktfunkStatus` is stable: `Ok` is 0, errors are negative, existing
+//! `LilynkStatus` is stable: `Ok` is 0, errors are negative, existing
 //! variants must not be renumbered. Rejection codes live in the -20 block.
 
 use thiserror::Error;
 
-/// Internal error. Crosses the C ABI as a [`PunktfunkStatus`] code.
+/// Internal error. Crosses the C ABI as a [`LilynkStatus`] code.
 #[derive(Debug, Error)]
-pub enum PunktfunkError {
+pub enum LilynkError {
     #[error("invalid argument: {0}")]
     InvalidArg(&'static str),
     #[error("fec error: {0}")]
@@ -34,13 +34,13 @@ pub enum PunktfunkError {
     Rejected(crate::reject::RejectReason, String),
 }
 
-pub type Result<T> = core::result::Result<T, PunktfunkError>;
+pub type Result<T> = core::result::Result<T, LilynkError>;
 
 /// Stable C ABI status codes. `Ok` is 0; errors are negative so callers can
 /// test `rc < 0`. Existing variants must not be renumbered — only append.
 #[repr(i32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PunktfunkStatus {
+pub enum LilynkStatus {
     Ok = 0,
     InvalidArg = -1,
     Fec = -2,
@@ -78,39 +78,39 @@ pub enum PunktfunkStatus {
     Panic = -99,
 }
 
-impl PunktfunkError {
-    pub fn status(&self) -> PunktfunkStatus {
+impl LilynkError {
+    pub fn status(&self) -> LilynkStatus {
         match self {
-            PunktfunkError::InvalidArg(_) => PunktfunkStatus::InvalidArg,
-            PunktfunkError::Fec(_) => PunktfunkStatus::Fec,
-            PunktfunkError::Crypto => PunktfunkStatus::Crypto,
-            PunktfunkError::BadPacket => PunktfunkStatus::BadPacket,
-            PunktfunkError::NoFrame => PunktfunkStatus::NoFrame,
-            PunktfunkError::Unsupported(_) => PunktfunkStatus::Unsupported,
-            PunktfunkError::Io(_) => PunktfunkStatus::Io,
-            PunktfunkError::Timeout => PunktfunkStatus::Timeout,
-            PunktfunkError::Closed => PunktfunkStatus::Closed,
-            PunktfunkError::Rejected(r, _) => {
+            LilynkError::InvalidArg(_) => LilynkStatus::InvalidArg,
+            LilynkError::Fec(_) => LilynkStatus::Fec,
+            LilynkError::Crypto => LilynkStatus::Crypto,
+            LilynkError::BadPacket => LilynkStatus::BadPacket,
+            LilynkError::NoFrame => LilynkStatus::NoFrame,
+            LilynkError::Unsupported(_) => LilynkStatus::Unsupported,
+            LilynkError::Io(_) => LilynkStatus::Io,
+            LilynkError::Timeout => LilynkStatus::Timeout,
+            LilynkError::Closed => LilynkStatus::Closed,
+            LilynkError::Rejected(r, _) => {
                 use crate::reject::RejectReason as R;
                 match r {
-                    R::PairingNotArmed => PunktfunkStatus::RejectedNotArmed,
-                    R::PairingBoundToOtherDevice => PunktfunkStatus::RejectedBoundOther,
-                    R::PairingRateLimited => PunktfunkStatus::RejectedRateLimited,
-                    R::IdentityRequired => PunktfunkStatus::RejectedIdentityRequired,
-                    R::Denied => PunktfunkStatus::RejectedDenied,
-                    R::ApprovalTimeout => PunktfunkStatus::RejectedApprovalTimeout,
-                    R::Superseded => PunktfunkStatus::RejectedSuperseded,
-                    R::WireVersionMismatch => PunktfunkStatus::RejectedWireVersion,
-                    R::Busy => PunktfunkStatus::RejectedBusy,
-                    R::SetupFailed => PunktfunkStatus::RejectedSetupFailed,
-                    R::AccessExpired => PunktfunkStatus::RejectedAccessExpired,
-                    R::LaunchNotPermitted => PunktfunkStatus::RejectedLaunchNotPermitted,
-                    R::HostPower => PunktfunkStatus::RejectedHostPower,
-                    R::ProfileUnknown => PunktfunkStatus::RejectedProfileUnknown,
-                    R::NoSeat => PunktfunkStatus::RejectedNoSeat,
-                    R::SeatOccupied => PunktfunkStatus::RejectedSeatOccupied,
-                    R::SeatUnavailable => PunktfunkStatus::RejectedSeatUnavailable,
-                    R::ProfileLocked => PunktfunkStatus::RejectedProfileLocked,
+                    R::PairingNotArmed => LilynkStatus::RejectedNotArmed,
+                    R::PairingBoundToOtherDevice => LilynkStatus::RejectedBoundOther,
+                    R::PairingRateLimited => LilynkStatus::RejectedRateLimited,
+                    R::IdentityRequired => LilynkStatus::RejectedIdentityRequired,
+                    R::Denied => LilynkStatus::RejectedDenied,
+                    R::ApprovalTimeout => LilynkStatus::RejectedApprovalTimeout,
+                    R::Superseded => LilynkStatus::RejectedSuperseded,
+                    R::WireVersionMismatch => LilynkStatus::RejectedWireVersion,
+                    R::Busy => LilynkStatus::RejectedBusy,
+                    R::SetupFailed => LilynkStatus::RejectedSetupFailed,
+                    R::AccessExpired => LilynkStatus::RejectedAccessExpired,
+                    R::LaunchNotPermitted => LilynkStatus::RejectedLaunchNotPermitted,
+                    R::HostPower => LilynkStatus::RejectedHostPower,
+                    R::ProfileUnknown => LilynkStatus::RejectedProfileUnknown,
+                    R::NoSeat => LilynkStatus::RejectedNoSeat,
+                    R::SeatOccupied => LilynkStatus::RejectedSeatOccupied,
+                    R::SeatUnavailable => LilynkStatus::RejectedSeatUnavailable,
+                    R::ProfileLocked => LilynkStatus::RejectedProfileLocked,
                 }
             }
         }

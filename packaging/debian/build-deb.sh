@@ -34,9 +34,9 @@ WORKER_BIN="target/release/lilynk-encode-worker"
 # the rpm spec, the PKGBUILD). Without them the host has no NVENC and no Vulkan encode.
 if [ ! -x "$BIN" ] || [ ! -x "$WORKER_BIN" ]; then
   echo "==> building $PKG + lilynk-encode-worker (release)"
-  PUNKTFUNK_BUILD_VERSION="$VERSION" cargo build --release --locked \
+  LILYNK_BUILD_VERSION="$VERSION" cargo build --release --locked \
     --features lilynk-host/nvenc,lilynk-host/vulkan-encode \
-    -p "$PKG" -p lilynk-encode-worker   # PUNKTFUNK_BUILD_VERSION stamps --version (build.rs)
+    -p "$PKG" -p lilynk-encode-worker   # LILYNK_BUILD_VERSION stamps --version (build.rs)
 fi
 TRAY_BIN="target/release/lilynk-tray"
 # ALWAYS built here, in its OWN cargo invocation, even when the artifact already exists. Cargo

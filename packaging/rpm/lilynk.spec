@@ -266,7 +266,7 @@ RUSTFLAGS="$(printf '%s' "$RUSTFLAGS" | sed -E 's/ ?-C(debuginfo|codegen-units)=
 # neither re-resolves the channel nor adds components — it just builds with what's installed.
 export RUSTUP_TOOLCHAIN=stable
 # Stamp the exact NVR into the binary for --version / mgmt /health provenance (build.rs reads it).
-export PUNKTFUNK_BUILD_VERSION="%{version}-%{release}"
+export LILYNK_BUILD_VERSION="%{version}-%{release}"
 # --locked: reproducible from (commit + Cargo.lock), matching the .deb build path.
 # lilynk-client-session is the Vulkan/Skia streamer the shell execs for a connect — both
 # client binaries must ship or streaming from the desktop client breaks.
@@ -277,7 +277,7 @@ export PUNKTFUNK_BUILD_VERSION="%{version}-%{release}"
 # VAAPI regardless. Without this feature an NVIDIA box has no NVENC at all.
 # --features lilynk-host/vulkan-encode: the AMD/Intel twin — a raw VK_KHR_video_encode_h265 backend
 # with real RFI (clean P-frame recovery anchor via DPB reference slots; design/linux-vulkan-video-encode.md).
-# Pure Rust `ash` (no new lib / no link-time dep); default on for HEVC (PUNKTFUNK_VULKAN_ENCODE=0 opts
+# Pure Rust `ash` (no new lib / no link-time dep); default on for HEVC (LILYNK_VULKAN_ENCODE=0 opts
 # back to the native VAAPI session), and a failed open falls back to it so unsupported devices
 # degrade gracefully.
 # -p lilynk-encode-worker: the capability-carrying PyroWave encode worker, shipped next to the
@@ -859,9 +859,9 @@ echo "A login password is generated on first start. Read it once, before you sig
 # From the 0600 file, NOT the journal: the journal is persistent and group-readable (adm /
 # systemd-journal on Debian-family), so telling people to fish a password out of it published the
 # secret to every member of those groups. The read works until the console hashes the line.
-echo "    sed -n 's/^PUNKTFUNK_UI_PASSWORD=//p' \${XDG_CONFIG_HOME:-\$HOME/.config}/punktfunk/web-password"
+echo "    sed -n 's/^LILYNK_UI_PASSWORD=//p' \${XDG_CONFIG_HOME:-\$HOME/.config}/punktfunk/web-password"
 echo "After that the console keeps only a salted hash, so a forgotten password is reset: put a"
-echo "PUNKTFUNK_UI_PASSWORD=<your-password> line in that file and restart lilynk-web."
+echo "LILYNK_UI_PASSWORD=<your-password> line in that file and restart lilynk-web."
 echo "Then open https://<host-ip>:47992"
 %endif
 

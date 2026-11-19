@@ -143,7 +143,7 @@ impl AudioCapturer for WasapiLoopbackCapturer {
 enum TargetMode {
     /// Plan's loopback endpoint; parks default playback on it (client-only when the sink is silent).
     Assert,
-    /// Current default render — operator changed it mid-stream, or `PUNKTFUNK_KEEP_DEFAULT`.
+    /// Current default render — operator changed it mid-stream, or `LILYNK_KEEP_DEFAULT`.
     Follow,
 }
 
@@ -463,7 +463,7 @@ fn choose_endpoint(
     }
     let Some(lb) = wiring.loopback_render.clone() else {
         // Not [`PlanUnsatisfiable`]: Follow's inputs include the default, which the
-        // operator can change without a topology change (esp. `PUNKTFUNK_KEEP_DEFAULT`).
+        // operator can change without a topology change (esp. `LILYNK_KEEP_DEFAULT`).
         anyhow::bail!(
             "the default render endpoint is reserved for the virtual mic (capturing it \
              would echo the client's voice back) — {}",
@@ -569,7 +569,7 @@ impl DefaultWatch {
             return None;
         }
         if keep_default {
-            tracing::info!("default render device changed (PUNKTFUNK_KEEP_DEFAULT) — following it");
+            tracing::info!("default render device changed (LILYNK_KEEP_DEFAULT) — following it");
             return Some(Next::Reopen(TargetMode::Follow));
         }
         match judge_default(wiring, &nid) {
@@ -827,7 +827,7 @@ fn host_output(
         NOTED.call_once(|| {
             tracing::warn!(
                 "voice chat on the host is set, but this capture parked no host output to pin \
-                 voice apps to (PUNKTFUNK_KEEP_DEFAULT, a seat, or the default already was the \
+                 voice apps to (LILYNK_KEEP_DEFAULT, a seat, or the default already was the \
                  sink) — voice apps stay on the default and reach the stream"
             )
         });
@@ -985,7 +985,7 @@ fn run_loop(
                 tracing::info!(device = %opened.dev_name,
                     "no audio captured in the first 30 s — fine if the host is quiet; if it \
                      should be playing audio, this endpoint's loopback may be broken (set \
-                     PUNKTFUNK_HOST_AUDIO=1 to prefer real hardware)");
+                     LILYNK_HOST_AUDIO=1 to prefer real hardware)");
             }
         }
         let whole = (bytes.len() / block_align) * block_align;

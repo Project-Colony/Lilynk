@@ -63,15 +63,12 @@ impl Shell {
         // ioctl that taking master is, so this stays an explicit operator choice.
         if let Some(card) = knobs.drm_card.as_deref() {
             if card.chars().all(|c| c.is_ascii_digit()) && !card.is_empty() {
-                tracing::info!(
-                    card,
-                    "PUNKTFUNK_DRM_CARD: pinning SDL's KMSDRM device index"
-                );
+                tracing::info!(card, "LILYNK_DRM_CARD: pinning SDL's KMSDRM device index");
                 sdl3::hint::set("SDL_KMSDRM_DEVICE_INDEX", card);
             } else {
                 tracing::warn!(
                     card,
-                    "PUNKTFUNK_DRM_CARD must be a card NUMBER (e.g. 0) — ignoring"
+                    "LILYNK_DRM_CARD must be a card NUMBER (e.g. 0) — ignoring"
                 );
             }
         }
@@ -127,7 +124,7 @@ impl Shell {
 
         let arrival_override = knobs.presenter_arrival;
         let present_priority = if arrival_override {
-            tracing::info!("PUNKTFUNK_PRESENTER=arrival — presentation pacing disabled");
+            tracing::info!("LILYNK_PRESENTER=arrival — presentation pacing disabled");
             PresentPriority::Latency
         } else {
             opts.present_priority

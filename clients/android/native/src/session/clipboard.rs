@@ -21,7 +21,7 @@ use jni::objects::{JObject, JString};
 use jni::sys::{jboolean, jint, jlong};
 use jni::EnvUnowned;
 use lilynk_core::clipboard::ClipEventCore;
-use lilynk_core::error::PunktfunkError;
+use lilynk_core::error::LilynkError;
 use lilynk_core::quic::{ClipKind, CLIP_FILE_INDEX_NONE, HOST_CAP_CLIPBOARD};
 
 use super::{jni_guard, SessionHandle, SESSIONS};
@@ -186,7 +186,7 @@ fn is_text(mime: &str) -> bool {
 /// delivers a whole payload in ONE event (`last = true`), so a chunk boundary can never split a
 /// UTF-8 sequence. Any pull error but `NoFrame`, the poll timeout, means the plane is gone:
 /// `closed`.
-fn clip_poll(pulled: Result<ClipEventCore, PunktfunkError>) -> ClipPoll {
+fn clip_poll(pulled: Result<ClipEventCore, LilynkError>) -> ClipPoll {
     use ClipPoll::{CancelFetch, Line, Nothing};
     match pulled {
         Ok(ClipEventCore::State { enabled, .. }) => Line(format!("state:{}", u8::from(enabled))),
@@ -209,7 +209,7 @@ fn clip_poll(pulled: Result<ClipEventCore, PunktfunkError>) -> ClipPoll {
         )),
         Ok(ClipEventCore::Cancelled { id }) => Line(format!("cancel:{id}")),
         Ok(ClipEventCore::Error { id, code }) => Line(format!("error:{id}:{code}")),
-        Err(PunktfunkError::NoFrame) => Nothing,
+        Err(LilynkError::NoFrame) => Nothing,
         Err(_) => Line("closed".into()),
     }
 }
@@ -246,7 +246,7 @@ mod tests {
     use lilynk_core::clipboard::INBOUND_REQ_FLAG;
     use ClipPoll::{CancelFetch, Line, Nothing};
 
-    type Pulled = Result<ClipEventCore, PunktfunkError>;
+    type Pulled = Result<ClipEventCore, LilynkError>;
 
     fn line(s: &str) -> ClipPoll {
         Line(s.to_string())
@@ -283,20 +283,16 @@ mod tests {
     #[test]
     fn a_poll_that_ends_the_stream_or_needs_a_cancel_says_so_first() {
         let rows: Vec<(&str, Pulled, ClipPoll)> = vec![
-            ("a poll timeout", Err(PunktfunkError::NoFrame), Nothing),
-            (
-                "a dropped plane",
-                Err(PunktfunkError::Closed),
-                line("closed"),
-            ),
+            ("a poll timeout", Err(LilynkError::NoFrame), Nothing),
+            ("a dropped plane", Err(LilynkError::Closed), line("closed")),
             (
                 "a timeout error is the plane gone",
-                Err(PunktfunkError::Timeout),
+                Err(LilynkError::Timeout),
                 line("closed"),
             ),
             (
                 "a socket error is the plane gone",
-                Err(PunktfunkError::Io(std::io::Error::other("reset"))),
+                Err(LilynkError::Io(std::io::Error::other("reset"))),
                 line("closed"),
             ),
             (

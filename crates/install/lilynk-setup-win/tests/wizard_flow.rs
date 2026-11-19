@@ -430,7 +430,7 @@ fn the_sunshine_demo_shows_the_coexistence_row_and_moves_the_mgmt_port() {
     wiz.click("Install");
     wiz.wait_for_done();
     assert!(
-        wiz.has_text("PUNKTFUNK_MGMT_BIND=0.0.0.0:47991"),
+        wiz.has_text("LILYNK_MGMT_BIND=0.0.0.0:47991"),
         "the move is announced"
     );
 }

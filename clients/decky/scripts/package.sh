@@ -34,8 +34,8 @@ mkdir -p "$DEST/py_modules/ly_decky"
 cp py_modules/ly_decky/*.py "$DEST/py_modules/ly_decky/"
 # The stream-launch wrapper (target of the Steam shortcut). Shipped 0755, though the shortcut
 # runs it through /bin/sh and never needs the bit.
-cp bin/punktfunkrun.sh "$DEST/bin/punktfunkrun.sh"
-chmod 0755 "$DEST/bin/punktfunkrun.sh"
+cp bin/lilynkrun.sh "$DEST/bin/lilynkrun.sh"
+chmod 0755 "$DEST/bin/lilynkrun.sh"
 # Steam-shortcut artwork (grid/gridwide/hero/logo/icon — committed under assets/).
 cp assets/*.png "$DEST/assets/"
 # The Steam Input controller layout (native touchscreen `ts_n` + gamepad passthrough) the

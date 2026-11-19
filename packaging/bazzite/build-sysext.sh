@@ -104,14 +104,14 @@ rm -rf "${STAGE:?}/var"   # rpm ghosts etc. — nothing outside /usr may remain
 # its banner and its WSI layer rather than trusted by filename.
 if [ -n "$GAMESCOPE" ]; then
   GS_BIN="$GAMESCOPE/usr/bin/lilynk-gamescope"
-  GS_LAYER_SO="$GAMESCOPE/usr/lib/punktfunk/libVkLayer_PUNKTFUNK_gamescope_wsi.so"
-  GS_LAYER_JSON="$GAMESCOPE/usr/lib/punktfunk/vulkan/implicit_layer.d/punktfunk_gamescope_wsi.json"
+  GS_LAYER_SO="$GAMESCOPE/usr/lib/punktfunk/libVkLayer_LILYNK_gamescope_wsi.so"
+  GS_LAYER_JSON="$GAMESCOPE/usr/lib/punktfunk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json"
   pf_verify_gamescope "$GAMESCOPE" "the gamescope stage $GAMESCOPE"
   install -Dm0755 "$GS_BIN" "$STAGE/usr/bin/lilynk-gamescope"
   install -Dm0755 "$GS_LAYER_SO" \
-    "$STAGE/usr/lib/punktfunk/libVkLayer_PUNKTFUNK_gamescope_wsi.so"
+    "$STAGE/usr/lib/punktfunk/libVkLayer_LILYNK_gamescope_wsi.so"
   install -Dm0644 "$GS_LAYER_JSON" \
-    "$STAGE/usr/lib/punktfunk/vulkan/implicit_layer.d/punktfunk_gamescope_wsi.json"
+    "$STAGE/usr/lib/punktfunk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json"
 fi
 
 # Enable the plugin/script runner for every user, by baking its `[Install] WantedBy=default.target`

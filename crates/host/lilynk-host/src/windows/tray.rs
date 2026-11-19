@@ -82,7 +82,7 @@ pub fn is_running() -> bool {
     const SYNCHRONIZE: SYNCHRONIZATION_ACCESS_RIGHTS = SYNCHRONIZATION_ACCESS_RIGHTS(0x0010_0000);
     // SAFETY: a static NUL-terminated name; the handle, when one comes back, is closed here.
     unsafe {
-        match OpenMutexW(SYNCHRONIZE, false, w!("Local\\PunktfunkTray")) {
+        match OpenMutexW(SYNCHRONIZE, false, w!("Local\\LilynkTray")) {
             Ok(h) => {
                 let _ = CloseHandle(h);
                 true
@@ -97,7 +97,7 @@ const WATCH_TICK: std::time::Duration = std::time::Duration::from_secs(30);
 
 /// The `tray_autostart` setting, read each tick so a console change stops or resumes the watch.
 fn wanted() -> bool {
-    ly_host_config::row_bool("PUNKTFUNK_TRAY_AUTOSTART")
+    ly_host_config::row_bool("LILYNK_TRAY_AUTOSTART")
 }
 
 /// Keeps the console status tray alive while the ordinary host runs and Tray autostart is on.
@@ -156,7 +156,7 @@ pub fn start() -> Result<(Option<u32>, &'static str)> {
     };
     // The fallback below runs the tray under THIS token, which is only ever right for an
     // interactive caller. As SYSTEM it plants a tray with no usable icon that holds the
-    // session's `Local\PunktfunkTray` for good, and the user's own tray then has to fight it
+    // session's `Local\LilynkTray` for good, and the user's own tray then has to fight it
     // for the name. Nothing to do but wait for a signed-in user; the watcher retries.
     if crate::hooks::running_as_system() {
         return Err(declined).context("no signed-in user in this session yet");

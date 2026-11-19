@@ -10,7 +10,7 @@
 //! Speakers devnode per slot (`ROOT\SteamStreamingSpeakers`). Register with
 //! `SetupDiRegisterDeviceInfo`, not `DIF_REGISTERDEVICE` — that needs an
 //! interactive window station and fails with 1459 from a service. Persist the
-//! slot in `Device Parameters\PunktfunkPadIndex`; the INF rewrites DeviceDesc.
+//! slot in `Device Parameters\LilynkPadIndex`; the INF rewrites DeviceDesc.
 //! Stamp only description, name, PFDS container, and the 4 ch/48 kHz triplet.
 //! Hardware-id or devicepath writes make AudioEndpointBuilder delete and remint
 //! under a new GUID. [`super::pad_capture`] captures. [`set_visibility`] parks
@@ -49,7 +49,7 @@ const DEVNODE_DESC: &str = "Punktfunk Pad Audio";
 const DEVICE_NAME: &str = "DualSense Wireless Controller";
 const SSS_HWID: &str = "ROOT\\SteamStreamingSpeakers";
 /// Devnode `Device Parameters` slot (REG_DWORD). The uninstall sweep matches on it.
-pub const PAD_INDEX_VALUE: &str = "PunktfunkPadIndex";
+pub const PAD_INDEX_VALUE: &str = "LilynkPadIndex";
 pub const MMDEV_RENDER_PATH: &str =
     r"SOFTWARE\Microsoft\Windows\CurrentVersion\MMDevices\Audio\Render";
 pub const MMDEV_CAPTURE_PATH: &str =
@@ -197,7 +197,7 @@ fn stamps_for(pad_index: u8) -> [Stamp; 7] {
     ]
 }
 
-/// Stamps to apply, honouring `PUNKTFUNK_PAD_AUDIO_STAMPS`.
+/// Stamps to apply, honouring `LILYNK_PAD_AUDIO_STAMPS`.
 ///
 /// Unset means all seven. Set to a comma-separated label list and only those
 /// are written. A fully stamped endpoint fails `IAudioClient::Initialize` with
@@ -206,7 +206,7 @@ fn stamps_for(pad_index: u8) -> [Stamp; 7] {
 /// poison stamp is found by re-provisioning subsets.
 fn active_stamps(pad_index: u8) -> Vec<Stamp> {
     let all = stamps_for(pad_index);
-    match std::env::var("PUNKTFUNK_PAD_AUDIO_STAMPS") {
+    match std::env::var("LILYNK_PAD_AUDIO_STAMPS") {
         Err(_) => all.into_iter().collect(),
         Ok(list) => {
             let want: HashSet<&str> = list.split(',').map(str::trim).collect();
@@ -874,7 +874,7 @@ pub fn print_status(pad_index: u8) -> Result<()> {
 /// Is this render endpoint a pad speaker (never a mic target, loopback
 /// source, or default)? Registry-only, callable off COM threads. Either:
 /// the stored ContainerId is PFDS (`Data1 == "PFDS"`), or the owning
-/// devnode carries `PunktfunkPadIndex` (or pre-install, the creation
+/// devnode carries `LilynkPadIndex` (or pre-install, the creation
 /// DeviceDesc). Positives are cached; negatives are recomputed because an
 /// endpoint seen before `ensure()` stamped it must flip on the next pass.
 pub fn is_pad_render_endpoint(endpoint_id: &str) -> bool {
@@ -928,11 +928,11 @@ fn compute_is_pad_endpoint(endpoint_id: &str) -> bool {
 }
 
 fn pad_audio_enabled() -> bool {
-    ly_host_config::row_bool("PUNKTFUNK_PAD_AUDIO")
+    ly_host_config::row_bool("LILYNK_PAD_AUDIO")
 }
 
 fn pad_audio_slots() -> u8 {
-    std::env::var("PUNKTFUNK_PAD_AUDIO_SLOTS")
+    std::env::var("LILYNK_PAD_AUDIO_SLOTS")
         .ok()
         .and_then(|s| s.parse::<u8>().ok())
         .unwrap_or(1)
@@ -1173,7 +1173,7 @@ pub fn health() -> PadAudioHealth {
 /// [`ensure_provisioned`] re-enters this from a live session.
 pub fn provision_at_startup(startup: bool) {
     if !pad_audio_enabled() {
-        tracing::info!("pad audio disabled (PUNKTFUNK_PAD_AUDIO=0)");
+        tracing::info!("pad audio disabled (LILYNK_PAD_AUDIO=0)");
         // Previous-run endpoints persist and stay visible; idle libScePad
         // titles stall on them. Turning the feature off must park leftovers.
         hide_leftover_endpoints();
@@ -1279,7 +1279,7 @@ pub fn set_visibility(endpoint_id: &str, pad_index: u8, visible: bool) {
     }
 }
 
-/// Hide leftovers on the `PUNKTFUNK_PAD_AUDIO=0` path, where the worker never
+/// Hide leftovers on the `LILYNK_PAD_AUDIO=0` path, where the worker never
 /// runs but persisted endpoints would stay visible and stall idle libScePad titles.
 fn hide_leftover_endpoints() {
     let spawned = thread::Builder::new()

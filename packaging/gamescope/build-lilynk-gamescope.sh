@@ -5,7 +5,7 @@
 # the RPM and the Bazzite sysext, an operator building by hand); the nix derivation expresses the
 # same thing declaratively. It never
 # touches the distro's own `gamescope` — the binary lands under a different name, and the host's
-# resolution order (PUNKTFUNK_GAMESCOPE_BIN > lilynk-gamescope > gamescope) picks it up.
+# resolution order (LILYNK_GAMESCOPE_BIN > lilynk-gamescope > gamescope) picks it up.
 #
 # Usage:
 #   bash build-lilynk-gamescope.sh [--rev <git-rev>] [--prefix /usr] [--destdir DIR]
@@ -251,8 +251,8 @@ LAYER_SRC_JSON=$(find "$LAYER_BUILD" -type f -name '*gamescope_wsi*.json' | head
   echo "it no game in a punktfunk gamescope session can get an HDR10 swapchain" >&2
   exit 1
 }
-LAYER_LIB_PATH="${PREFIX}/lib/punktfunk/libVkLayer_PUNKTFUNK_gamescope_wsi.so"
-LAYER_DEST_JSON="${DESTDIR}${PREFIX}/lib/punktfunk/vulkan/implicit_layer.d/punktfunk_gamescope_wsi.json"
+LAYER_LIB_PATH="${PREFIX}/lib/punktfunk/libVkLayer_LILYNK_gamescope_wsi.so"
+LAYER_DEST_JSON="${DESTDIR}${PREFIX}/lib/punktfunk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json"
 echo "==> installing ${DESTDIR}${LAYER_LIB_PATH}"
 install -Dm755 "$LAYER_SO" "${DESTDIR}${LAYER_LIB_PATH}"
 install -d "$(dirname "$LAYER_DEST_JSON")"

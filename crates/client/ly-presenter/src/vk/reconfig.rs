@@ -31,9 +31,9 @@ fn kmsdrm_swapchain_hint(drm_card: Option<&str>) -> String {
     }
     let card = drm_card.unwrap_or("unset");
     format!(
-        " — under SDL_VIDEODRIVER=kmsdrm (PUNKTFUNK_DRM_CARD={card}). Check, in order: the card \
+        " — under SDL_VIDEODRIVER=kmsdrm (LILYNK_DRM_CARD={card}). Check, in order: the card \
          has a CONNECTED connector (`cat /sys/class/drm/card*-*/status`); nothing else holds DRM \
-         master on it (a running compositor does — pin another card with PUNKTFUNK_DRM_CARD=<n>); \
+         master on it (a running compositor does — pin another card with LILYNK_DRM_CARD=<n>); \
          and the driver is Mesa. NVIDIA's proprietary direct-display path is known to fail here \
          even as root with a display Vulkan can enumerate."
     )

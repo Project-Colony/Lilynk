@@ -7,7 +7,7 @@ pub(super) fn host_env_path() -> PathBuf {
     ly_paths::config_dir().join("host.env")
 }
 
-/// Load host.env into this process so the host child inherits `PUNKTFUNK_*` / `RUST_LOG`.
+/// Load host.env into this process so the host child inherits `LILYNK_*` / `RUST_LOG`.
 pub(super) fn load_host_env() {
     let path = host_env_path();
     let Ok(contents) = std::fs::read_to_string(&path) else {
@@ -18,11 +18,11 @@ pub(super) fn load_host_env() {
     for (k, v) in ly_paths::env_file::parse(&contents) {
         // Allow-list matches `interactive::merged_env_block`. A planted host.env must not
         // override `SystemRoot` — `icacls_path` / the powershell warner resolve through it.
-        // `PUNKTFUNK_HOST_CMD` still passes; a non-admin-owned host.env is rejected at install.
+        // `LILYNK_HOST_CMD` still passes; a non-admin-owned host.env is rejected at install.
         // Credentials are excluded outright: they live in their own owner-only files, and an
         // environment copy is what every child process inherits.
         let secret = k.contains("TOKEN") || k.contains("PASSWORD");
-        let allowed = (k.starts_with("PUNKTFUNK_") || k == "RUST_LOG") && !secret;
+        let allowed = (k.starts_with("LILYNK_") || k == "RUST_LOG") && !secret;
         if allowed {
             // SAFETY: std documents `set_var` as always safe on Windows: the OS serializes
             // environment access, so the SCM dispatcher thread cannot see a torn write.
@@ -77,30 +77,30 @@ pub(super) fn ensure_default_host_env() -> Result<()> {
         # Encode backend: auto (default) detects the GPU vendor — NVIDIA->nvenc, AMD->amf, Intel->qsv.\n\
         # Force one with nvenc | amf | qsv | mf (no software encoder: the driver encodes). amf/qsv need an FFmpeg-built\n\
         # host; mf is Media Foundation, any vendor's hardware encoder, 8-bit 4:2:0 only.\n\
-        PUNKTFUNK_ENCODER=auto\n\
-        PUNKTFUNK_VIDEO_SOURCE=virtual\n\
+        LILYNK_ENCODER=auto\n\
+        LILYNK_VIDEO_SOURCE=virtual\n\
         # The virtual display is the bundled ly-vdisplay driver, which also encodes; there is no\n\
         # other capture path, and the secure desktop (UAC / lock / login) is always captured.\n\
         RUST_LOG=info\n\
         \n\
         # The host subcommand the service launches. GameStream (Moonlight) is a setting in the web\n\
         # console; `serve --gamestream` here would lock it on.\n\
-        PUNKTFUNK_HOST_CMD=serve\n\
+        LILYNK_HOST_CMD=serve\n\
         \n\
         # The web management console (https://<this-PC>:47992) runs as a child of the service.\n\
         # Set to off to disable it:\n\
-        # PUNKTFUNK_WEB_CONSOLE=off\n\
+        # LILYNK_WEB_CONSOLE=off\n\
         \n\
         # Where that console listens: 0.0.0.0 (your network, never the internet), 127.0.0.1 (this\n\
         # PC only), or one address, e.g. a VPN interface. The plugin-UI origin on 47993 follows it.\n\
-        PUNKTFUNK_UI_BIND=0.0.0.0\n\
+        LILYNK_UI_BIND=0.0.0.0\n\
         \n\
         # Force a specific render GPU by name substring (multi-GPU boxes only):\n\
-        # PUNKTFUNK_RENDER_ADAPTER=4090\n\
+        # LILYNK_RENDER_ADAPTER=4090\n\
         \n\
         # The name this host shows up under in Moonlight and the Punktfunk clients\n\
         # (default: the machine's own computer name):\n\
-        # PUNKTFUNK_HOST_NAME=Living Room\n";
+        # LILYNK_HOST_NAME=Living Room\n";
     // DACL-locked: host.env is the SYSTEM service's environment and launched command line.
     ly_paths::write_secret_file(&path, default.as_bytes())
         .with_context(|| format!("write {}", path.display()))?;
@@ -108,7 +108,7 @@ pub(super) fn ensure_default_host_env() -> Result<()> {
     Ok(())
 }
 
-/// Name the console's bind in a host.env that predates `PUNKTFUNK_UI_BIND`, once.
+/// Name the console's bind in a host.env that predates `LILYNK_UI_BIND`, once.
 ///
 /// The value is the default the console already runs with, so nothing moves; the line is there so
 /// the operator finds the setting. `--web-bind` (applied after this) changes it in the same run.
@@ -118,7 +118,7 @@ pub(super) fn name_web_console_bind(path: &Path) {
     };
     if text
         .lines()
-        .any(|l| l.trim_start().starts_with("PUNKTFUNK_UI_BIND="))
+        .any(|l| l.trim_start().starts_with("LILYNK_UI_BIND="))
     {
         return;
     }
@@ -126,10 +126,10 @@ pub(super) fn name_web_console_bind(path: &Path) {
     next.push_str(concat!(
         "\n# Where the web console listens: 0.0.0.0 (your network, never the internet), 127.0.0.1\n",
         "# (this PC only), or one address, e.g. a VPN interface.\n",
-        "PUNKTFUNK_UI_BIND=0.0.0.0\n",
+        "LILYNK_UI_BIND=0.0.0.0\n",
     ));
     match ly_paths::write_secret_file(path, next.as_bytes()) {
-        Ok(()) => println!("PUNKTFUNK_UI_BIND=0.0.0.0 → {}", path.display()),
+        Ok(()) => println!("LILYNK_UI_BIND=0.0.0.0 → {}", path.display()),
         Err(e) => {
             tracing::warn!(error = %e, path = %path.display(), "name the console bind in host.env")
         }
@@ -165,12 +165,12 @@ pub(super) fn apply_gamestream_choice(choice: Option<bool>) {
     if let Some(next) = host_env {
         // `write_secret_file` re-asserts the SYSTEM/Administrators DACL.
         match ly_paths::write_secret_file(&path, next.as_bytes()) {
-            Ok(()) => println!("PUNKTFUNK_HOST_CMD=serve → {}", path.display()),
+            Ok(()) => println!("LILYNK_HOST_CMD=serve → {}", path.display()),
             Err(e) => eprintln!("warning: {} not written: {e}", path.display()),
         }
     }
     if pinned && choice == Some(false) {
-        println!("host.env's PUNKTFUNK_HOST_CMD passes --gamestream, which keeps GameStream on");
+        println!("host.env's LILYNK_HOST_CMD passes --gamestream, which keeps GameStream on");
     }
 }
 
@@ -182,12 +182,12 @@ pub(super) fn gamestream_migration(
     let cmd = text
         .lines()
         .rev()
-        .find_map(|l| l.trim_start().strip_prefix("PUNKTFUNK_HOST_CMD="))
+        .find_map(|l| l.trim_start().strip_prefix("LILYNK_HOST_CMD="))
         .map(|v| v.trim().trim_matches('"'));
     match cmd {
         None | Some("serve --gamestream") => (
             choice.or(Some(true)),
-            Some(with_env_line(text, "PUNKTFUNK_HOST_CMD", "serve")),
+            Some(with_env_line(text, "LILYNK_HOST_CMD", "serve")),
             false,
         ),
         Some(cmd) => (
@@ -236,12 +236,12 @@ mod tests {
     /// The installer's `--gamestream` moves to the store without turning GameStream off.
     #[test]
     fn gamestream_moves_from_the_host_command_to_the_store() {
-        let legacy = "# PUNKTFUNK_HOST_CMD=serve\nPUNKTFUNK_HOST_CMD=serve --gamestream\n";
+        let legacy = "# LILYNK_HOST_CMD=serve\nLILYNK_HOST_CMD=serve --gamestream\n";
         let (store, text, pinned) = gamestream_migration(legacy, None);
         assert_eq!(store, Some(true));
         assert_eq!(
             text.as_deref(),
-            Some("# PUNKTFUNK_HOST_CMD=serve\nPUNKTFUNK_HOST_CMD=serve\n")
+            Some("# LILYNK_HOST_CMD=serve\nLILYNK_HOST_CMD=serve\n")
         );
         assert!(!pinned);
         // No line ran `serve --gamestream`.
@@ -249,23 +249,20 @@ mod tests {
         assert_eq!(store, Some(true));
         assert_eq!(
             text.as_deref(),
-            Some("RUST_LOG=info\nPUNKTFUNK_HOST_CMD=serve\n")
+            Some("RUST_LOG=info\nLILYNK_HOST_CMD=serve\n")
         );
         assert_eq!(gamestream_migration(legacy, Some(false)).0, Some(false));
         // `serve` keeps whatever the store holds unless the installer chose.
         assert_eq!(
-            gamestream_migration("PUNKTFUNK_HOST_CMD=serve\n", None),
+            gamestream_migration("LILYNK_HOST_CMD=serve\n", None),
             (None, None, false)
         );
         assert_eq!(
-            gamestream_migration("PUNKTFUNK_HOST_CMD=serve\n", Some(true)),
+            gamestream_migration("LILYNK_HOST_CMD=serve\n", Some(true)),
             (Some(true), None, false)
         );
         assert_eq!(
-            gamestream_migration(
-                "PUNKTFUNK_HOST_CMD=serve --gamestream --open\n",
-                Some(false)
-            ),
+            gamestream_migration("LILYNK_HOST_CMD=serve --gamestream --open\n", Some(false)),
             (Some(false), None, true)
         );
     }

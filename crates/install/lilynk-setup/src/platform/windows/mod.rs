@@ -149,7 +149,7 @@ pub struct WinFacts {
     pub host_env_present: bool,
     /// Web install already wrote a password; skip the password page and step.
     pub web_password_present: bool,
-    /// Operator already set `PUNKTFUNK_MGMT_BIND`; coexistence must not rewrite it.
+    /// Operator already set `LILYNK_MGMT_BIND`; coexistence must not rewrite it.
     pub mgmt_bind_set: bool,
     /// Competing GameStream services with `Start ≤ 2` (boot/system/auto). Disabled/manual do not count.
     pub competing_hosts: Vec<String>,
@@ -201,13 +201,13 @@ impl WinFacts {
             tray_autostart: reg_value(
                 run,
                 r"HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run",
-                "PunktfunkTray",
+                "LilynkTray",
             )
             .is_some(),
             vulkan_layer_registered: reg_query(run, r"HKLM\SOFTWARE\Khronos\Vulkan\ImplicitLayers")
                 .is_some_and(|t| t.contains("ly_vkhdr_layer.json")),
-            web_task: task_state(run, "PunktfunkWeb"),
-            scripting_task: task_state(run, "PunktfunkScripting"),
+            web_task: task_state(run, "LilynkWeb"),
+            scripting_task: task_state(run, "LilynkScripting"),
             inno_uninstaller,
             client_installed: arp_install_at(run, plan::CLIENT_ARP_KEY),
         }
@@ -280,7 +280,7 @@ fn competing_hosts(run: &dyn CommandRunner) -> Vec<String> {
 
 /// Read as the service reads host.env, so setup and host agree on where the API listens.
 fn mgmt_bind_set(host_env: &str) -> bool {
-    ly_paths::env_file::get(host_env, "PUNKTFUNK_MGMT_BIND").is_some_and(|v| !v.is_empty())
+    ly_paths::env_file::get(host_env, "LILYNK_MGMT_BIND").is_some_and(|v| !v.is_empty())
 }
 
 /// Steam streaming-audio drivers the host mic capture needs. Absence is a warning, not a fail.
@@ -623,7 +623,7 @@ mod tests {
         let net = FakeNet::default();
         let dir = tmp.path().join("config/punktfunk");
         std::fs::create_dir_all(&dir).unwrap();
-        std::fs::write(dir.join("host.env"), "PUNKTFUNK_MGMT_BIND=0.0.0.0:48123\n").unwrap();
+        std::fs::write(dir.join("host.env"), "LILYNK_MGMT_BIND=0.0.0.0:48123\n").unwrap();
         let facts = probe(&run, &env, &net, tmp.path());
         assert!(facts.mgmt_bind_set);
         assert!(!facts.needs_coexistence());
@@ -631,42 +631,39 @@ mod tests {
 
     #[test]
     fn a_commented_or_empty_mgmt_bind_does_not_count() {
-        assert!(!mgmt_bind_set("# PUNKTFUNK_MGMT_BIND=0.0.0.0:48123\n"));
-        assert!(!mgmt_bind_set("PUNKTFUNK_MGMT_BIND=\n"));
-        assert!(mgmt_bind_set("  PUNKTFUNK_MGMT_BIND=0.0.0.0:47991\n"));
+        assert!(!mgmt_bind_set("# LILYNK_MGMT_BIND=0.0.0.0:48123\n"));
+        assert!(!mgmt_bind_set("LILYNK_MGMT_BIND=\n"));
+        assert!(mgmt_bind_set("  LILYNK_MGMT_BIND=0.0.0.0:47991\n"));
     }
 
     /// The service accepts spaces around `=` and quotes, and a later line wins.
     #[test]
     fn mgmt_bind_reads_the_service_grammar() {
-        assert!(mgmt_bind_set("PUNKTFUNK_MGMT_BIND = \"0.0.0.0:48123\"\n"));
+        assert!(mgmt_bind_set("LILYNK_MGMT_BIND = \"0.0.0.0:48123\"\n"));
         assert!(!mgmt_bind_set(
-            "PUNKTFUNK_MGMT_BIND=0.0.0.0:48123\nPUNKTFUNK_MGMT_BIND=\n"
+            "LILYNK_MGMT_BIND=0.0.0.0:48123\nLILYNK_MGMT_BIND=\n"
         ));
     }
 
     #[test]
     fn task_state_reads_the_xml_not_the_localized_table() {
         let enabled = FakeRunner::new().answer(
-            "schtasks /Query /TN PunktfunkScripting /XML",
+            "schtasks /Query /TN LilynkScripting /XML",
             0,
             "<Task><Settings><Enabled>true</Enabled></Settings></Task>",
         );
-        assert_eq!(
-            task_state(&enabled, "PunktfunkScripting"),
-            TaskState::Enabled
-        );
+        assert_eq!(task_state(&enabled, "LilynkScripting"), TaskState::Enabled);
         let disabled = FakeRunner::new().answer(
-            "schtasks /Query /TN PunktfunkScripting /XML",
+            "schtasks /Query /TN LilynkScripting /XML",
             0,
             "<Task><Settings><Enabled>false</Enabled></Settings></Task>",
         );
         assert_eq!(
-            task_state(&disabled, "PunktfunkScripting"),
+            task_state(&disabled, "LilynkScripting"),
             TaskState::Disabled
         );
         let absent = FakeRunner::new().with_path("schtasks");
-        assert_eq!(task_state(&absent, "PunktfunkScripting"), TaskState::Absent);
+        assert_eq!(task_state(&absent, "LilynkScripting"), TaskState::Absent);
     }
 
     #[test]

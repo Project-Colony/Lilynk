@@ -12,7 +12,7 @@ use crate::abr::probe::wall_ceiling_kbps;
 use crate::abr::stream_ceiling_kbps;
 use crate::quic::{CODEC_H264, CODEC_HEVC};
 
-/// `PUNKTFUNK_ABR_PROBE_KBPS` on the webOS client: the burst target it pins
+/// `LILYNK_ABR_PROBE_KBPS` on the webOS client: the burst target it pins
 /// so a 2 Gbps default does not take the picture with it.
 const WEBOS_PROBE_KBPS: u32 = 320_000;
 

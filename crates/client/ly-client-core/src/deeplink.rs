@@ -1,5 +1,5 @@
 //! The `punktfunk://` URL grammar: one parser/emitter for every native client
-//! (`design/client-deep-links.md`). Swift (`PunktfunkShared/DeepLink.swift`) and
+//! (`design/client-deep-links.md`). Swift (`LilynkShared/DeepLink.swift`) and
 //! Kotlin keep their own ports; all three consume
 //! `clients/shared/deeplink-vectors.json`.
 //!

@@ -14,20 +14,20 @@
 #   bash scripts/steamdeck/install.sh --open          # trusted LAN: accept unpaired clients (TOFU)
 #   bash scripts/steamdeck/install.sh --no-web        # skip the management web console
 #   bash scripts/steamdeck/install.sh --web-bind=127.0.0.1  # console on this Deck only (default: your network)
-#   PUNKTFUNK_SRC=~/src/punktfunk bash scripts/steamdeck/install.sh   # source elsewhere
+#   LILYNK_SRC=~/src/punktfunk bash scripts/steamdeck/install.sh   # source elsewhere
 #
 set -euo pipefail
 # shellcheck source-path=SCRIPTDIR source=lib.sh
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 # --- options ---------------------------------------------------------------
-BOX_IMAGE="${PUNKTFUNK_BOX_IMAGE:-docker.io/library/debian:trixie}"
-MGMT_PORT="${PUNKTFUNK_MGMT_PORT:-}" # empty keeps host.env's port
-WEB_PORT="${PUNKTFUNK_WEB_PORT:-47992}"
+BOX_IMAGE="${LILYNK_BOX_IMAGE:-docker.io/library/debian:trixie}"
+MGMT_PORT="${LILYNK_MGMT_PORT:-}" # empty keeps host.env's port
+WEB_PORT="${LILYNK_WEB_PORT:-47992}"
 # Where the console listens. Your network by default, since a Deck in Game Mode has no browser;
 # the console refuses peers off the local network. --web-bind=127.0.0.1 keeps it to this Deck.
-WEB_BIND="${PUNKTFUNK_UI_BIND:-0.0.0.0}"
-[ -n "${PUNKTFUNK_UI_BIND:-}" ] && WEB_BIND_SET=1 || WEB_BIND_SET=0
+WEB_BIND="${LILYNK_UI_BIND:-0.0.0.0}"
+[ -n "${LILYNK_UI_BIND:-}" ] && WEB_BIND_SET=1 || WEB_BIND_SET=0
 OPEN=0
 WITH_WEB=1
 GAMESTREAM="" # the console's setting; empty leaves it as stored (off on a fresh install)
@@ -129,7 +129,7 @@ PF_BUILD_VERSION="$(bash "$SRC/scripts/steamdeck/build-version.sh" "$SRC")"
 # lilynk-seats is the seat supervisor behind Reachable without logging in (door.sh).
 distrobox enter "$BOX" -- bash -lc "
 set -e
-export PATH=\$HOME/.cargo/bin:\$PATH CARGO_TARGET_DIR='$TARGET_DIR' PUNKTFUNK_BUILD_VERSION='$PF_BUILD_VERSION'
+export PATH=\$HOME/.cargo/bin:\$PATH CARGO_TARGET_DIR='$TARGET_DIR' LILYNK_BUILD_VERSION='$PF_BUILD_VERSION'
 cd '$SRC' && cargo build -r -p lilynk-host -p lilynk-encode-worker -p lilynk-seats --features lilynk-host/nvenc,lilynk-host/vulkan-encode
 "
 [ -x "$BIN" ] || die "build did not produce $BIN"
@@ -194,7 +194,7 @@ ok "plugin runner: ~/.local/bin/lilynk-scripting"
 
 # --- 2c. status tray (best-effort) -----------------------------------------
 log "Building the status tray"
-PUNKTFUNK_SRC="$SRC" PUNKTFUNK_BOX="$BOX" bash "$SRC/scripts/steamdeck/install-tray.sh"
+LILYNK_SRC="$SRC" LILYNK_BOX="$BOX" bash "$SRC/scripts/steamdeck/install-tray.sh"
 
 # --- 3. config -------------------------------------------------------------
 log "Configuration ($CONFIG)"
@@ -208,21 +208,21 @@ if [ ! -f "$CONFIG/host.env" ]; then
     cat > "$CONFIG/host.env" <<'EOF'
 # punktfunk Steam Deck host config (sourced by the lilynk-host user service).
 # Auto encoder: Vulkan Video (or VAAPI fallback) on the Deck's AMD GPU, NVENC on NVIDIA.
-PUNKTFUNK_ENCODER=auto
+LILYNK_ENCODER=auto
 # Van Gogh (LCD/OLED Deck) RADV still gates VK_KHR_video_encode_* behind this perftest flag;
 # without it the Vulkan backend can't open and sessions fall back to VAAPI. Harmless on
 # GPUs where encode is exposed by default.
 RADV_PERFTEST=video_encode
 # The host auto-detects the live session (Game Mode gamescope / Desktop KDE) per connect.
-# Override the compositor only if detection misbehaves: PUNKTFUNK_COMPOSITOR=gamescope
+# Override the compositor only if detection misbehaves: LILYNK_COMPOSITOR=gamescope
 EOF
     ok "wrote host.env"
 else
     ok "host.env exists (left as-is)"
 fi
 if [ -n "$MGMT_PORT" ]; then
-    sed -i '/^[[:space:]]*PUNKTFUNK_MGMT_BIND[[:space:]]*=/d' "$CONFIG/host.env"
-    echo "PUNKTFUNK_MGMT_BIND=0.0.0.0:$MGMT_PORT" >>"$CONFIG/host.env"
+    sed -i '/^[[:space:]]*LILYNK_MGMT_BIND[[:space:]]*=/d' "$CONFIG/host.env"
+    echo "LILYNK_MGMT_BIND=0.0.0.0:$MGMT_PORT" >>"$CONFIG/host.env"
     ok "management port $MGMT_PORT (host.env)"
 fi
 
@@ -261,7 +261,7 @@ if [ "$WITH_WEB" = 1 ] && [ ! -f "$CONFIG/web.env" ]; then
     # Login password + session secret for the web console, once. The password is the one the
     # guided installer left in web-password, else random; that file then goes. `%q` because a
     # shell sources web.env. `|| true`: a missing file and tr's SIGPIPE must not trip pipefail.
-    WEB_PW="$(sed -n 's/^PUNKTFUNK_UI_PASSWORD=//p' "$CONFIG/web-password" 2>/dev/null || true)"
+    WEB_PW="$(sed -n 's/^LILYNK_UI_PASSWORD=//p' "$CONFIG/web-password" 2>/dev/null || true)"
     [ -n "$WEB_PW" ] || WEB_PW="$(LC_ALL=C tr -dc 'a-z0-9' </dev/urandom 2>/dev/null | head -c 12 || true)"
     WEB_SECRET="$(LC_ALL=C tr -dc 'A-Za-z0-9' </dev/urandom 2>/dev/null | head -c 32 || true)"
     # `umask 077` around the redirect, not `chmod 600` after it: the heredoc CREATES the file at
@@ -269,12 +269,12 @@ if [ "$WITH_WEB" = 1 ] && [ ! -f "$CONFIG/web.env" ]; then
     # secret would be group/world-readable between the redirect and the chmod.
     # Setting the mask first means the file is never readable at all. The chmod stays as the
     # idempotent belt for a pre-existing file. The console swaps the clear password for a salted
-    # hash in this same file on the first sign-in, keeping PUNKTFUNK_UI_SECRET beside it.
+    # hash in this same file on the first sign-in, keeping LILYNK_UI_SECRET beside it.
     (umask 077; cat > "$CONFIG/web.env" <<EOF
-PUNKTFUNK_UI_PASSWORD=$(printf %q "$WEB_PW")
-PUNKTFUNK_UI_SECRET=$WEB_SECRET
+LILYNK_UI_PASSWORD=$(printf %q "$WEB_PW")
+LILYNK_UI_SECRET=$WEB_SECRET
 # Where the console listens: 127.0.0.1 (this Deck), 0.0.0.0 (your network), or one address.
-PUNKTFUNK_UI_BIND=$WEB_BIND
+LILYNK_UI_BIND=$WEB_BIND
 EOF
     )
     chmod 600 "$CONFIG/web.env"
@@ -290,28 +290,28 @@ elif [ "$WITH_WEB" = 1 ] && [ -f "$CONFIG/web.env" ]; then
         chmod 600 "$CONFIG/web.env"
         warn "web.env was group/world-readable — an older install wrote it at the default umask."
         warn "Tightened to 0600, but that does NOT un-expose the password it already leaked to every"
-        warn "local account. Reset it: put a PUNKTFUNK_UI_PASSWORD line in $CONFIG/web.env, then"
+        warn "local account. Reset it: put a LILYNK_UI_PASSWORD line in $CONFIG/web.env, then"
         warn "  systemctl --user restart lilynk-web"
     else
         ok "web.env exists (login password unchanged, mode already 0600)"
     fi
     # Name the bind once so the operator finds it; --web-bind on a re-run picks the value. An
     # existing line always wins — edit web.env to change it.
-    if ! grep -q '^[[:space:]]*PUNKTFUNK_UI_BIND=' "$CONFIG/web.env"; then
-        printf '# Where the console listens: 0.0.0.0 (your network), 127.0.0.1 (this Deck), or one address.\nPUNKTFUNK_UI_BIND=%s\n' "$WEB_BIND" >> "$CONFIG/web.env"
+    if ! grep -q '^[[:space:]]*LILYNK_UI_BIND=' "$CONFIG/web.env"; then
+        printf '# Where the console listens: 0.0.0.0 (your network), 127.0.0.1 (this Deck), or one address.\nLILYNK_UI_BIND=%s\n' "$WEB_BIND" >> "$CONFIG/web.env"
         ok "web.env: console bind is now $WEB_BIND"
     elif [ "$WEB_BIND_SET" = 1 ]; then
-        warn "web.env already names PUNKTFUNK_UI_BIND — --web-bind was ignored; edit $CONFIG/web.env"
+        warn "web.env already names LILYNK_UI_BIND — --web-bind was ignored; edit $CONFIG/web.env"
     fi
 fi
 
 # --- 3b. HDR gamescope (lilynk-gamescope, best-effort) ------------------
 # Stock gamescope offers only 8-bit capture, so Game Mode streams SDR. The punktfunk build adds
 # the 10-bit BT.2020 PQ formats, and the host attempts HDR by default the moment it is present
-# (PUNKTFUNK_GAMESCOPE_HDR=0 forces SDR). Best-effort by design: on any failure this warns and
-# the host streams SDR — see build-gamescope.sh, which also wires PUNKTFUNK_GAMESCOPE_BIN into
+# (LILYNK_GAMESCOPE_HDR=0 forces SDR). Best-effort by design: on any failure this warns and
+# the host streams SDR — see build-gamescope.sh, which also wires LILYNK_GAMESCOPE_BIN into
 # host.env only while the binary provably runs on SteamOS.
-PUNKTFUNK_SRC="$SRC" PUNKTFUNK_BOX="$BOX" bash "$SRC/scripts/steamdeck/build-gamescope.sh"
+LILYNK_SRC="$SRC" LILYNK_BOX="$BOX" bash "$SRC/scripts/steamdeck/build-gamescope.sh"
 
 # --- 4. system tuning (needs sudo: UDP buffers + udev rule + vhci-hcd + input/punktfunk groups) -----
 log "System tuning (UDP buffers + gamepad rules + vhci-hcd + input/punktfunk groups)"
@@ -359,7 +359,7 @@ ok "lilynk-host.service ($SERVE_ARGS)"
 if [ "$WITH_WEB" = 1 ]; then
     # The console is a Nitro server run by bun (Bun.serve, HTTPS — HTTP/1.1 over TLS — with the host's
     # identity cert); it lives in the build container and proxies to the host's loopback HTTPS mgmt API.
-    # No HOST/NITRO_HOST in the export below: web.env is sourced first and carries PUNKTFUNK_UI_BIND,
+    # No HOST/NITRO_HOST in the export below: web.env is sourced first and carries LILYNK_UI_BIND,
     # which the server prefers — an export here would silently out-rank the file the operator edits.
     cat > "$UNITS/lilynk-web.service" <<EOF
 # Generated by scripts/steamdeck/install.sh — punktfunk web console (bun in the '$BOX' distrobox).
@@ -368,7 +368,7 @@ Description=punktfunk management web console
 After=lilynk-host.service
 
 [Service]
-ExecStart=$DISTROBOX enter $BOX -- bash -lc 'cd $SRC/web; set -a; . $CONFIG/mgmt-token; . $CONFIG/web.env; [ ! -f $CONFIG/mgmt-endpoint ] || . $CONFIG/mgmt-endpoint; set +a; export PORT=$WEB_PORT NITRO_PORT=$WEB_PORT PUNKTFUNK_UI_TLS_CERT=$CONFIG/cert.pem PUNKTFUNK_UI_TLS_KEY=$CONFIG/key.pem PUNKTFUNK_UI_SECURE=1 PUNKTFUNK_UI_PASSWORD_FILE=$CONFIG/web.env; exec bun .output/server/index.mjs'
+ExecStart=$DISTROBOX enter $BOX -- bash -lc 'cd $SRC/web; set -a; . $CONFIG/mgmt-token; . $CONFIG/web.env; [ ! -f $CONFIG/mgmt-endpoint ] || . $CONFIG/mgmt-endpoint; set +a; export PORT=$WEB_PORT NITRO_PORT=$WEB_PORT LILYNK_UI_TLS_CERT=$CONFIG/cert.pem LILYNK_UI_TLS_KEY=$CONFIG/key.pem LILYNK_UI_SECURE=1 LILYNK_UI_PASSWORD_FILE=$CONFIG/web.env; exec bun .output/server/index.mjs'
 Restart=on-failure
 RestartSec=3
 

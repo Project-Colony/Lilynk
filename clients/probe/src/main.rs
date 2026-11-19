@@ -31,7 +31,7 @@ use lilynk_core::quic::{
     ProbeRequest, ProbeResult, Reconfigure, Reconfigured, SetBitrate, Welcome,
 };
 use lilynk_core::session::test_frame;
-use lilynk_core::{CompositorPref, Mode, PunktfunkError, Session};
+use lilynk_core::{CompositorPref, LilynkError, Mode, Session};
 use std::io::Write;
 use std::sync::atomic::{AtomicBool, AtomicU32, AtomicU64};
 use std::sync::Arc;
@@ -51,7 +51,7 @@ struct Args {
     /// `--type TEXT` — type TEXT as committed text, one scalar per event (the soft-keyboard path).
     type_text: Option<String>,
     /// `--rich-input-test` — drive the DualSense touchpad + motion over 0xCC (host needs
-    /// `PUNKTFUNK_GAMEPAD=dualsense`); also logs the 0xCD HID-output feedback that comes back.
+    /// `LILYNK_GAMEPAD=dualsense`); also logs the 0xCD HID-output feedback that comes back.
     rich_input_test: bool,
     /// `--pad-audio-test` — declare pads DualSenses that render haptics and speaker, and count
     /// the `0xD1` pad-audio datagrams the host streams back, per pad and lane.
@@ -242,7 +242,7 @@ fn parse_mode(m: &str) -> Option<Mode> {
 }
 
 /// This probe's identity. The same files as the desktop client, including
-/// `PUNKTFUNK_CONFIG_DIR`.
+/// `LILYNK_CONFIG_DIR`.
 fn load_or_create_identity() -> Result<(String, String)> {
     ly_client_core::trust::load_or_create_identity()
 }
@@ -620,7 +620,7 @@ struct Counters {
     pad_audio_pkts: [[AtomicU64; 2]; PAD_AUDIO_PADS],
     pad_audio_voiced: AtomicU64,
     /// A self-terminating v2 rumble envelope (0xCA with the seq+ttl tail) arrived. Asserted at
-    /// report time under `PUNKTFUNK_TEST_FEEDBACK`; a legacy v1 datagram leaves it false.
+    /// report time under `LILYNK_TEST_FEEDBACK`; a legacy v1 datagram leaves it false.
     saw_v2_rumble: AtomicBool,
     /// The connection closed; the blocking receive loop stops once the tail has drained.
     closed: AtomicBool,
@@ -665,7 +665,7 @@ async fn session(mut args: Args) -> Result<()> {
     let mut recv: CtlRx = v2io::FrameReader::new(recv);
     let extra = Extra {
         resume: None,
-        suites: if std::env::var_os("PUNKTFUNK_CLIENT_CHACHA20").is_some() {
+        suites: if std::env::var_os("LILYNK_CLIENT_CHACHA20").is_some() {
             vec![
                 lilynk_core::crypto::MediaSuite::ChaCha20Poly1305,
                 lilynk_core::crypto::MediaSuite::Aes128Gcm,
@@ -771,17 +771,17 @@ async fn session(mut args: Args) -> Result<()> {
     .await?;
     report_side_planes(&counters);
 
-    // Under PUNKTFUNK_TEST_FEEDBACK (a loopback harness scripts a feedback burst), a run with no
+    // Under LILYNK_TEST_FEEDBACK (a loopback harness scripts a feedback burst), a run with no
     // v2 rumble tail (seq + TTL) fails: a host sending v1 level datagrams bumps the rumble counter
     // identically. Only tightens an otherwise-OK run; a video failure stays the primary error.
-    let result = if std::env::var("PUNKTFUNK_TEST_FEEDBACK").as_deref() == Ok("1")
+    let result = if std::env::var("LILYNK_TEST_FEEDBACK").as_deref() == Ok("1")
         && result.is_ok()
         && !counters
             .saw_v2_rumble
             .load(std::sync::atomic::Ordering::Relaxed)
     {
         Err(anyhow::anyhow!(
-            "PUNKTFUNK_TEST_FEEDBACK: expected a v2 rumble envelope (0xCA seq+ttl tail), received none"
+            "LILYNK_TEST_FEEDBACK: expected a v2 rumble envelope (0xCA seq+ttl tail), received none"
         ))
     } else {
         result
@@ -863,7 +863,7 @@ async fn handshake(
             // `--launch ID` — host resolves it against its own library and runs it this session.
             launch: args.launch.clone(),
             // This headless tool dumps the bitstream (no decode), so it can claim 10-bit / 4:4:4.
-            // Each PUNKTFUNK_CLIENT_* switch in this block counts when set, any value (even 0);
+            // Each LILYNK_CLIENT_* switch in this block counts when set, any value (even 0);
             // unset keeps latency runs on 8-bit 4:2:0. _10BIT advertises VIDEO_CAP_10BIT (Main10),
             // _444 VIDEO_CAP_444 (HEVC 4:4:4): check its chroma with `ffprobe` on the `--out` file.
             video_caps: {
@@ -876,23 +876,23 @@ async fn handshake(
                 let mut caps = lilynk_core::quic::VIDEO_CAP_HOST_TIMING
                     | lilynk_core::quic::VIDEO_CAP_PROBE_SEQ
                     | lilynk_core::quic::VIDEO_CAP_STREAMED_AU;
-                if std::env::var_os("PUNKTFUNK_CLIENT_10BIT").is_some() {
+                if std::env::var_os("LILYNK_CLIENT_10BIT").is_some() {
                     caps |= lilynk_core::quic::VIDEO_CAP_10BIT;
                 }
-                if std::env::var_os("PUNKTFUNK_CLIENT_444").is_some() {
+                if std::env::var_os("LILYNK_CLIENT_444").is_some() {
                     caps |= lilynk_core::quic::VIDEO_CAP_444;
                 }
-                // PUNKTFUNK_CLIENT_HDR advertises VIDEO_CAP_HDR (BT.2020 PQ), and 10-bit
+                // LILYNK_CLIENT_HDR advertises VIDEO_CAP_HDR (BT.2020 PQ), and 10-bit
                 // with it — the host needs both for an HDR session. Pairs with
-                // PUNKTFUNK_CLIENT_PEAK_NITS, which carries the panel's ST.2086 volume.
-                if std::env::var_os("PUNKTFUNK_CLIENT_HDR").is_some() {
+                // LILYNK_CLIENT_PEAK_NITS, which carries the panel's ST.2086 volume.
+                if std::env::var_os("LILYNK_CLIENT_HDR").is_some() {
                     caps |= lilynk_core::quic::VIDEO_CAP_HDR | lilynk_core::quic::VIDEO_CAP_10BIT;
                 }
-                // PUNKTFUNK_CLIENT_CHACHA20 advertises VIDEO_CAP_CHACHA20 — drives the
+                // LILYNK_CLIENT_CHACHA20 advertises VIDEO_CAP_CHACHA20 — drives the
                 // host's ChaCha20-Poly1305 session-cipher resolution (the soft-AES armv7
                 // negotiation, design/chacha20-session-cipher.md §7) without a webOS build;
                 // the negotiated cipher is reported in the welcome log line below.
-                if std::env::var_os("PUNKTFUNK_CLIENT_CHACHA20").is_some() {
+                if std::env::var_os("LILYNK_CLIENT_CHACHA20").is_some() {
                     caps |= lilynk_core::quic::VIDEO_CAP_CHACHA20;
                 }
                 caps
@@ -908,7 +908,7 @@ async fn handshake(
             audio_bitstreams: 0,
             // The probe just dumps the bitstream (no decode), so it advertises every codec — HEVC
             // (first on `resolve_codec`'s ladder) AND H.264 (so it can drive a GPU-less software
-            // host, `PUNKTFUNK_ENCODER=software`) AND AV1. The host picks one and reports it in
+            // host, `LILYNK_ENCODER=software`) AND AV1. The host picks one and reports it in
             // `Welcome::codec`; the dump extension follows that.
             video_codecs: lilynk_core::quic::CODEC_H264
                 | lilynk_core::quic::CODEC_HEVC
@@ -922,7 +922,7 @@ async fn handshake(
                 },
             // `--codec` soft preference (0 = auto). The host honors it when it can emit it.
             preferred_codec: args.preferred_codec,
-            // PUNKTFUNK_CLIENT_PEAK_NITS=<nits> advertises a synthetic display volume — the host
+            // LILYNK_CLIENT_PEAK_NITS=<nits> advertises a synthetic display volume — the host
             // writes it into the virtual display's EDID (CTA HDR block), so the EDID-forwarding
             // path can be validated headlessly (check the host's monitor caps / ADD log line).
             display_hdr: lilynk_core::client::display_hdr_env_override(),
@@ -1756,7 +1756,7 @@ fn spawn_pad_soak(conn: &Wire, secs: u64, hz: u32) {
 /// Rich-input plane: instantiate pad 0 on the host (a gamepad event creates the virtual
 /// DualSense), then drive its touchpad (drag a finger across) + motion (gyro wobble) over the
 /// 0xCC plane. Proves the rich client→host path; the 0xCD feedback is logged by the receive
-/// loop below. Requires the host on the DualSense backend (`PUNKTFUNK_GAMEPAD=dualsense`).
+/// loop below. Requires the host on the DualSense backend (`LILYNK_GAMEPAD=dualsense`).
 fn spawn_rich_input_test(conn: &Wire) {
     let conn2 = conn.clone();
     tokio::spawn(async move {
@@ -2159,7 +2159,7 @@ impl VideoTally {
     }
 }
 
-/// PUNKTFUNK_PERF: the cumulative receive-path stage split for the whole run — where the
+/// LILYNK_PERF: the cumulative receive-path stage split for the whole run — where the
 /// receive core's time went (batch take vs media-suite open vs reassembly+FEC), the
 /// measurement tool's view of the client-pump wall.
 fn report_pump_perf(session: &mut Session) {
@@ -2175,7 +2175,7 @@ fn report_pump_perf(session: &mut Session) {
         pkts_per_batch = p.packets.checked_div(p.batches.max(1)).unwrap_or(0),
         decrypt_ns_pkt = per_pkt(p.decrypt_ns),
         reasm_ns_pkt = per_pkt(p.reasm_ns),
-        "receive stage split (whole run, PUNKTFUNK_PERF)"
+        "receive stage split (whole run, LILYNK_PERF)"
     );
 }
 
@@ -2262,7 +2262,7 @@ fn spawn_datagram_rx(
                         );
                     }
                     // A v2 tail was present: the seq/ttl contract check for
-                    // PUNKTFUNK_TEST_FEEDBACK, asserted at report time.
+                    // LILYNK_TEST_FEEDBACK, asserted at report time.
                     if u.envelope.is_some() {
                         c.saw_v2_rumble.store(true, Relaxed);
                     }
@@ -2437,7 +2437,7 @@ fn data_plane(
         }
         let frame = match session.poll_frame() {
             Ok(frame) => frame,
-            Err(PunktfunkError::NoFrame) => {
+            Err(LilynkError::NoFrame) => {
                 std::thread::sleep(std::time::Duration::from_micros(300));
                 continue;
             }

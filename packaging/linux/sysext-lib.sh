@@ -57,8 +57,8 @@ pf_verify_gamescope() {
     err "$what: lilynk-gamescope has no +pfhdr marker — it is not a punktfunk HDR build"
     return 1
   }
-  for f in usr/lib/punktfunk/libVkLayer_PUNKTFUNK_gamescope_wsi.so \
-           usr/lib/punktfunk/vulkan/implicit_layer.d/punktfunk_gamescope_wsi.json; do
+  for f in usr/lib/punktfunk/libVkLayer_LILYNK_gamescope_wsi.so \
+           usr/lib/punktfunk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json; do
     [ -f "$root/$f" ] || { err "$what has no $f — no game HDR without it"; return 1; }
   done
 }

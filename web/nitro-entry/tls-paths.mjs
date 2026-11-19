@@ -72,8 +72,8 @@ function usable(p) {
 }
 
 /**
- * @param {string | undefined} cert  PUNKTFUNK_UI_TLS_CERT, verbatim.
- * @param {string | undefined} key   PUNKTFUNK_UI_TLS_KEY, verbatim.
+ * @param {string | undefined} cert  LILYNK_UI_TLS_CERT, verbatim.
+ * @param {string | undefined} key   LILYNK_UI_TLS_KEY, verbatim.
  * @param {(p: string) => boolean} [exists]  injected by the test; defaults to a real stat.
  * @returns {{cert: string | undefined, key: string | undefined}}
  */

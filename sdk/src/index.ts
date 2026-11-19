@@ -11,7 +11,7 @@
 //   });
 import type { Effect } from "effect";
 import { type HostApi, makeHostApi } from "./api.js";
-import type { PunktfunkHost } from "./client.js";
+import type { LilynkHost } from "./client.js";
 import {
 	type ConnectOptions,
 	type ResolvedConfig,
@@ -59,7 +59,7 @@ interface Listener {
 	cb: (ev: never) => unknown;
 }
 
-export interface PunktfunkEvents {
+export interface LilynkEvents {
 	/**
 	 * Subscribe to lifecycle events. `pattern` is an exact kind (`"stream.started"` — the
 	 * callback is typed to it), a `domain.*` prefix, `"*"` (every known event), `"dropped"`
@@ -86,7 +86,7 @@ export interface Punktfunk {
 	/** Untyped escape hatch: one raw `/api/v1` request (`request("GET", "/status")`). */
 	request(method: string, path: string, body?: unknown): Promise<unknown>;
 	/** The lifecycle-event subscription surface. */
-	readonly events: PunktfunkEvents;
+	readonly events: LilynkEvents;
 	/** Stop the event stream and release the connection. */
 	close(): void;
 }
@@ -149,7 +149,7 @@ export const connect = async (options?: ConnectOptions): Promise<Punktfunk> => {
 				startPump();
 				return () => listeners.delete(l);
 			},
-		} as PunktfunkEvents,
+		} as LilynkEvents,
 		close() {
 			closed = true;
 			stop.abort();
@@ -162,13 +162,13 @@ export const connect = async (options?: ConnectOptions): Promise<Punktfunk> => {
 
 /**
  * A plugin's `main`: either a plain async function receiving the connected client, or an
- * Effect requiring the `PunktfunkHost` service (`@punktfunk/host/effect`) — the shape that
+ * Effect requiring the `LilynkHost` service (`@punktfunk/host/effect`) — the shape that
  * makes it well-behaved under the managed runner's supervision (structured interruption,
  * scoped finalizers).
  */
 export type PluginMain =
 	| ((pf: Punktfunk) => Promise<unknown> | unknown)
-	| Effect.Effect<unknown, unknown, PunktfunkHost>;
+	| Effect.Effect<unknown, unknown, LilynkHost>;
 
 export interface PluginDef {
 	/** Package-convention name (`lilynk-plugin-*` drops the prefix): kebab-case. */

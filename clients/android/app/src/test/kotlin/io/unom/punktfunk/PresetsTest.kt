@@ -163,7 +163,7 @@ class PresetsTest {
     @Test
     fun aPreRenameCatalogMovesOverOnce() {
         val app = RuntimeEnvironment.getApplication()
-        val legacy = app.getSharedPreferences("punktfunk_profiles", Context.MODE_PRIVATE)
+        val legacy = app.getSharedPreferences("lilynk_profiles", Context.MODE_PRIVATE)
         val game = """{"id":"a1b2c3d4e5f6","name":"Game"}"""
         legacy.edit().putString("a1b2c3d4e5f6", game).commit()
         val store = PresetStore(app)
@@ -360,7 +360,7 @@ class PresetsTest {
      * format was specified", not on "the format differs from the default", because 48 kHz/16-bit is
      * both the legacy pair AND the cheapest lossless rung and the other rule would make that rung
      * unrequestable. The host's gate then accepts 48 kHz/16-bit as a perfectly supported format,
-     * and `PUNKTFUNK_AUDIO_HIRES` defaults on. So a client that sends the legacy-looking numbers
+     * and `LILYNK_AUDIO_HIRES` defaults on. So a client that sends the legacy-looking numbers
      * as its stand-in for "default" opts every one of its users in on every host that leaves it
      * on, with no surface saying so: a declined session and a silently granted one look
      * identical from the settings screen. The rule is restated here rather than reached through

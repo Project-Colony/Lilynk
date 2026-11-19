@@ -1,6 +1,6 @@
 //! PipeWire desktop-audio capture through a host-owned virtual sink.
 //!
-//! Default (`PUNKTFUNK_STREAM_SINK` unset): create a `support.null-audio-sink`
+//! Default (`LILYNK_STREAM_SINK` unset): create a `support.null-audio-sink`
 //! adapter and capture its monitor. That node is a **driver** (`timerfd` in the
 //! daemon data loop), so the capture group owns its clock. A stream node is a
 //! follower; PipeWire would schedule the group on any running driver on the box.
@@ -83,7 +83,7 @@ impl CaptureMode {
 }
 
 /// Whether capture owns a per-capturer sink that isolation can env-route into.
-/// Monitor mode (`PUNKTFUNK_STREAM_SINK=0`) has none, so isolation's audio
+/// Monitor mode (`LILYNK_STREAM_SINK=0`) has none, so isolation's audio
 /// half degrades to shared.
 pub fn sink_capture_active() -> bool {
     capture_mode().owns_sink()
@@ -95,11 +95,11 @@ fn capture_mode() -> CaptureMode {
     {
         // `CLIENT_CAP_KEEP_HOST_AUDIO` or `audio.output_mode = follow_default`:
         // follow the operator's default sink, no default-sink claim. Wins over
-        // `PUNKTFUNK_STREAM_SINK` — "don't touch my devices" is the more
+        // `LILYNK_STREAM_SINK` — "don't touch my devices" is the more
         // restrictive promise.
         return CaptureMode::Monitor;
     }
-    capture_mode_from(std::env::var("PUNKTFUNK_STREAM_SINK").ok().as_deref())
+    capture_mode_from(std::env::var("LILYNK_STREAM_SINK").ok().as_deref())
 }
 
 /// What an open read from the audio settings. A parked capturer serves the next session only
@@ -153,7 +153,7 @@ struct CaptureNodes {
 /// adapter, or the stream's negotiated format), so the rate we claim is the
 /// rate we get — [`Declared`](super::CaptureRate::Declared), no probe.
 ///
-/// Monitor mode (`PUNKTFUNK_STREAM_SINK=0`) captures through PipeWire's
+/// Monitor mode (`LILYNK_STREAM_SINK=0`) captures through PipeWire's
 /// resampler, which reports a clean rate whatever the node upstream really
 /// runs at. The answer comes from the monitored node via
 /// [`monitor_rate::monitored_sink_rate`], as an
@@ -180,7 +180,7 @@ pub(super) fn probe_capture_rate() -> super::CaptureRate {
             tracing::debug!(
                 reason = %format!("{e:#}"),
                 "hi-res capture-rate probe: the monitored sink's own rate is not readable — \
-                 declining hi-res (PUNKTFUNK_STREAM_SINK=0 captures through PipeWire's resampler, \
+                 declining hi-res (LILYNK_STREAM_SINK=0 captures through PipeWire's resampler, \
                  so the rate our own stream reports proves nothing)"
             );
             super::CaptureRate::Unknown
@@ -775,7 +775,7 @@ fn create_null_sink(
                 res,
                 message,
                 "the punktfunk stream sink was not created — no desktop audio \
-                 capture until it is. Set PUNKTFUNK_STREAM_SINK=stream for the 0.30 \
+                 capture until it is. Set LILYNK_STREAM_SINK=stream for the 0.30 \
                  topology (no created sink)"
             );
         })
@@ -1263,7 +1263,7 @@ fn pw_thread(
 
 /// Open a live capturer for system output. Default: host-owned null sink claimed as
 /// the default, advertising `channels` so apps can produce real surround.
-/// `PUNKTFUNK_STREAM_SINK=0`: default-sink monitor, missing positions filled with
+/// `LILYNK_STREAM_SINK=0`: default-sink monitor, missing positions filled with
 /// silence. `rate_hz` is a request; the grant is [`AudioCapturer::sample_rate`].
 pub(super) fn open_audio_capture(channels: u32, rate_hz: u32) -> Result<Box<dyn AudioCapturer>> {
     PwAudioCapturer::open(channels, rate_hz).map(|c| Box::new(c) as Box<dyn AudioCapturer>)
@@ -1310,7 +1310,7 @@ pub(super) fn wiring_snapshot() -> Option<super::wiring_plan::Wiring> {
 mod tests {
     use super::*;
 
-    /// Three spellings of `PUNKTFUNK_STREAM_SINK`; anything else is the default
+    /// Three spellings of `LILYNK_STREAM_SINK`; anything else is the default
     /// so a typo in a debug lever cannot be why a session has no audio.
     #[test]
     fn capture_mode_grammar() {

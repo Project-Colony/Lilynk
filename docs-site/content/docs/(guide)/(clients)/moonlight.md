@@ -18,7 +18,7 @@ turn on **GameStream**, then click **Restart Punktfunk**. Or:
 | Guided installer (Linux, SteamOS) | Add `--gamestream` |
 | NixOS | `services.lilynk.host.gamestream = true;` (also opens the firewall) |
 | `serve` by hand | `lilynk-host serve --gamestream` |
-| `host.env` | `PUNKTFUNK_GAMESTREAM=1`, then restart the host |
+| `host.env` | `LILYNK_GAMESTREAM=1`, then restart the host |
 
 The installers set the console's setting, so you can turn it off there later. NixOS,
 `serve --gamestream` and the `host.env` line lock it.

@@ -51,10 +51,10 @@ const withService = <A>(
 
 beforeEach(() => {
 	tmp = fs.mkdtempSync(path.join(os.tmpdir(), "pf-kit-config-"));
-	process.env.PUNKTFUNK_CONFIG_DIR = tmp;
+	process.env.LILYNK_CONFIG_DIR = tmp;
 });
 afterEach(() => {
-	delete process.env.PUNKTFUNK_CONFIG_DIR;
+	delete process.env.LILYNK_CONFIG_DIR;
 	fs.rmSync(tmp, { recursive: true, force: true });
 });
 

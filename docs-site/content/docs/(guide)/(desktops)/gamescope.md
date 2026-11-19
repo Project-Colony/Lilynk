@@ -12,7 +12,7 @@ runs one. Install the host first: [Bazzite](/docs/bazzite) or [SteamOS (Host)](/
   [below](#how-the-host-gets-a-gamescope)).
 - On a box with Steam Gaming Mode (Bazzite, SteamOS, Nobara) it follows **Switch to Desktop**
   and back mid-stream, with no reconnect. Elsewhere, turn on **Follow mode switches** in the
-  console (`PUNKTFUNK_SESSION_WATCH=1`). The desktop streams at 60 Hz until its KWin reaches 6.6
+  console (`LILYNK_SESSION_WATCH=1`). The desktop streams at 60 Hz until its KWin reaches 6.6
   ([KDE](/docs/kde#known-limits)); SteamOS 3.8 ships 6.4. Gaming Mode keeps your client's refresh
   rate.
 - Controllers, including a virtual Steam Deck pad when you are in the
@@ -57,8 +57,8 @@ The host picks one of three modes per session and logs it:
 
 | Mode | When | What happens |
 |---|---|---|
-| **Managed** | Default on a box with a gamescope session (Bazzite, SteamOS, Nobara). Force it with `PUNKTFUNK_GAMESCOPE_MANAGED=1`. | The host takes Gaming Mode over and relaunches it headless at the client's resolution and refresh. A Steam running on the desktop is shut down to free it. Your screens drop out; the box gets its session back after you disconnect. |
-| **Attach** | A gamescope already runs on a box without a gamescope session, or `host.env` sets `PUNKTFUNK_GAMESCOPE_ATTACH=1`. | The host streams the running gamescope and never stops it. A box with a monitor serves a mirror of it at the monitor's resolution, not a display of the client's own; only a headless box on its own autologin session restarts at the client's resolution. |
+| **Managed** | Default on a box with a gamescope session (Bazzite, SteamOS, Nobara). Force it with `LILYNK_GAMESCOPE_MANAGED=1`. | The host takes Gaming Mode over and relaunches it headless at the client's resolution and refresh. A Steam running on the desktop is shut down to free it. Your screens drop out; the box gets its session back after you disconnect. |
+| **Attach** | A gamescope already runs on a box without a gamescope session, or `host.env` sets `LILYNK_GAMESCOPE_ATTACH=1`. | The host streams the running gamescope and never stops it. A box with a monitor serves a mirror of it at the monitor's resolution, not a display of the client's own; only a headless box on its own autologin session restarts at the client's resolution. |
 | **Bare spawn** | No gamescope session and none running, or a [dedicated game session](/docs/virtual-displays#dedicated-game-sessions). | The host starts its own headless gamescope at the client's mode, running the launched game. Nothing on the box is touched. |
 
 ### Nobara and other autologin display managers
@@ -70,7 +70,7 @@ works while you stream. A reboot undoes it.
 If nothing lights the box's screen 25 seconds after the host hands it back, the host restarts the
 session, then the display manager. The display manager restart needs the
 [`punktfunk` group](#the-punktfunk-group). If both fail, the host runs
-`PUNKTFUNK_RECOVER_SESSION_CMD` when you set one.
+`LILYNK_RECOVER_SESSION_CMD` when you set one.
 
 ### The `punktfunk` group
 
@@ -88,7 +88,7 @@ default; `--no-lilynk-group` opts out.
 ## Stream the screen the box is already driving
 
 To stream Gaming Mode exactly as the TV shows it, pick that screen under **Displays** →
-**Stream this monitor** in the console, or set `PUNKTFUNK_CAPTURE_MONITOR=HDMI-A-1` (names from
+**Stream this monitor** in the console, or set `LILYNK_CAPTURE_MONITOR=HDMI-A-1` (names from
 `lilynk-host list-monitors`). Nothing is stopped or relaunched and no mode is imposed. A headless
 gamescope has no screen to list. See
 [Stream a real monitor instead](/docs/stream-a-monitor).
@@ -120,7 +120,7 @@ The log then says `using the punktfunk build (10-bit HDR capture available)` ins
 `gamescope has no +pfhdr marker`.
 
 HDR is on by default once the build is present; **Game Mode HDR** in the console
-(`PUNKTFUNK_GAMESCOPE_HDR=0`) forces SDR. `PUNKTFUNK_GAMESCOPE_BIN` picks one binary; unset, the
+(`LILYNK_GAMESCOPE_HDR=0`) forces SDR. `LILYNK_GAMESCOPE_BIN` picks one binary; unset, the
 host prefers `lilynk-gamescope` over `gamescope`.
 
 The build only reaches sessions the host starts: managed and bare spawn. An attached session runs
@@ -134,7 +134,7 @@ chain, and what to check when a stream comes out SDR, is on [HDR](/docs/hdr#linu
 - **On a stock gamescope, Steam shows one refresh rate and no resolutions** — 60 Hz if the launch
   lost its flag — and games that pace to the display hold there, though the stream runs at the
   client's rate. `lilynk-gamescope` reports the real mode;
-  `PUNKTFUNK_GAMESCOPE_REFRESH_RATES=60,90,120` adds rates to Steam's menu.
+  `LILYNK_GAMESCOPE_REFRESH_RATES=60,90,120` adds rates to Steam's menu.
 - **The performance overlay** (mangoapp) reaches the stream only with `lilynk-gamescope`.
   A gamescope the host starts runs it when mangoapp is installed, hidden at first. In Steam,
   the Quick Access Menu shows it; elsewhere, MangoHud's toggle key does (Right Shift+F12, or
@@ -160,7 +160,7 @@ A file in `/etc/gamescope-session-plus/sessions.d/` overrides `GAMESCOPE_BIN` or
 ### The box's screen stays dark after a stream
 
 The hand-back failed. Join the [`punktfunk` group](#the-punktfunk-group), or set
-`PUNKTFUNK_RECOVER_SESSION_CMD`. To get the screen back now:
+`LILYNK_RECOVER_SESSION_CMD`. To get the screen back now:
 `sudo systemctl restart display-manager.service`.
 
 ### The stream is black on connect, or stuck at the box's resolution
@@ -169,6 +169,6 @@ The session streamed the box's own screen at its own mode. Check
 `journalctl --user -u lilynk-host | grep 'gamescope sub-mode'`.
 
 1. Under **Displays**, click **Stream this monitor** on the streamed screen again to clear it.
-2. If `~/.config/punktfunk/host.env` sets `PUNKTFUNK_GAMESCOPE_ATTACH`, delete that line, and any
-   `PUNKTFUNK_GAMESCOPE_NODE` line, then `systemctl --user restart lilynk-host`.
+2. If `~/.config/punktfunk/host.env` sets `LILYNK_GAMESCOPE_ATTACH`, delete that line, and any
+   `LILYNK_GAMESCOPE_NODE` line, then `systemctl --user restart lilynk-host`.
 3. If the log says `managed takeover unavailable`, the reason is on the same line.

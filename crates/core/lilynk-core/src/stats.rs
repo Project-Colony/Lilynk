@@ -13,7 +13,7 @@ pub(crate) fn now_monotonic_ns() -> u64 {
     (EPOCH.get_or_init(Instant::now).elapsed().as_nanos() as u64).max(1)
 }
 
-/// Immutable snapshot, copied across the C ABI as `PunktfunkStats`.
+/// Immutable snapshot, copied across the C ABI as `LilynkStats`.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct Stats {
     pub frames_submitted: u64,
@@ -29,28 +29,28 @@ pub struct Stats {
     /// Recovered shards that later arrived: reordering reconstructed the block
     /// from parity while the originals were still in flight. Loss estimators
     /// must net this out (`recovered - late`, see [`window_loss_ppm`](crate::quic::window_loss_ppm))
-    /// or reordering reads as loss. Not mirrored into the C-ABI `PunktfunkStats`.
+    /// or reordering reads as loss. Not mirrored into the C-ABI `LilynkStats`.
     pub fec_late_shards: u64,
     /// Data shards a partial frame went to the decoder without: lost, and no parity rebuilt
     /// them. Link loss beside `fec_recovered_shards`, for frames that carry no tail parity
     /// ([`window_loss_ppm`](crate::quic::window_loss_ppm)). Not mirrored into the C-ABI
-    /// `PunktfunkStats`.
+    /// `LilynkStats`.
     pub partial_shards_lost: u64,
     /// Data shards a frame that aged out dead never got, in blocks no parity rebuilt. Link
     /// loss beside `partial_shards_lost`; a frame counts in one of the two, never both. Not
-    /// mirrored into the C-ABI `PunktfunkStats`.
+    /// mirrored into the C-ABI `LilynkStats`.
     pub dead_shards_lost: u64,
     pub bytes_sent: u64,
     pub bytes_received: u64,
     /// DATA-shard payload delivered to the video reassembler — no headers, FEC
     /// parity, probe filler, or audio. `bytes_received` includes FEC redundancy,
     /// so a utilization gate built from it inflates on lossy links. Not mirrored
-    /// into the C-ABI `PunktfunkStats`.
+    /// into the C-ABI `LilynkStats`.
     pub media_bytes_received: u64,
     /// Wire packets / plaintext bytes carrying [`FLAG_PROBE`](crate::packet::FLAG_PROBE).
     /// `bytes_received` counts every accepted datagram, so a speed-test numerator
     /// built from it inherits in-flight video. Not mirrored into the C-ABI
-    /// `PunktfunkStats` (probe measurements surface via `ProbeOutcome`).
+    /// `LilynkStats` (probe measurements surface via `ProbeOutcome`).
     pub probe_packets_received: u64,
     pub probe_bytes_received: u64,
     /// First / last probe-packet arrival (monotonic ns, see [`now_monotonic_ns`];
@@ -65,7 +65,7 @@ pub struct Stats {
     /// Probe packets that arrived behind a later one.
     pub probe_reorders: u32,
     /// Short frames that asked the host for their missing shards, and those the resend
-    /// completed in time. Not mirrored into the C-ABI `PunktfunkStats`.
+    /// completed in time. Not mirrored into the C-ABI `LilynkStats`.
     pub nack_sent: u64,
     pub nack_filled: u64,
 }

@@ -38,7 +38,7 @@ class DialogAction(
  * `confirmButton`, the rest lay out beside it.
  */
 @Composable
-fun PunktfunkDialog(
+fun LilynkDialog(
     title: String,
     onDismiss: () -> Unit,
     actions: List<DialogAction>,
@@ -91,7 +91,7 @@ fun TrustNewHostPrompt(
     onPairInstead: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    PunktfunkDialog(
+    LilynkDialog(
         title = stringResource(R.string.trust_title),
         onDismiss = onDismiss,
         actions = listOf(
@@ -115,7 +115,7 @@ fun FingerprintChangedPrompt(
     onRepair: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    PunktfunkDialog(
+    LilynkDialog(
         title = stringResource(R.string.trust_mismatch_title),
         onDismiss = onDismiss,
         actions = listOf(
@@ -141,7 +141,7 @@ fun RequestAccessPrompt(
     onDismiss: () -> Unit,
 ) {
     val canRequest = !pt.advertisedFp.isNullOrBlank()
-    PunktfunkDialog(
+    LilynkDialog(
         title = stringResource(R.string.pair_required_title),
         onDismiss = onDismiss,
         actions = listOfNotNull(
@@ -168,7 +168,7 @@ fun LinkConnectPrompt(
     onConnect: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    PunktfunkDialog(
+    LilynkDialog(
         title = stringResource(R.string.link_confirm_title),
         onDismiss = onDismiss,
         actions = listOf(
@@ -192,7 +192,7 @@ fun LinkConnectPrompt(
  */
 @Composable
 fun AwaitingApprovalPrompt(hostLabel: String, deviceCode: String?, onCancel: () -> Unit) {
-    PunktfunkDialog(
+    LilynkDialog(
         title = stringResource(R.string.pair_waiting_for_approval),
         onDismiss = onCancel,
         actions = listOf(DialogAction(stringResource(R.string.common_cancel), primary = true, onClick = onCancel)),
@@ -235,7 +235,7 @@ fun LocalNetworkPrompt(
     onSettings: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    PunktfunkDialog(
+    LilynkDialog(
         title = stringResource(R.string.android_local_network_title),
         onDismiss = onDismiss,
         actions = listOf(
@@ -262,7 +262,7 @@ fun SpeedTestPrompt(
     onDismiss: () -> Unit,
 ) {
     val done = phase as? SpeedTestPhase.Done
-    PunktfunkDialog(
+    LilynkDialog(
         title = stringResource(R.string.speedtest_title),
         onDismiss = onDismiss,
         // Measuring runs probes for several seconds; a tap outside must not abandon it midway.

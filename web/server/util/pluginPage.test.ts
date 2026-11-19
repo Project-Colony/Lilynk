@@ -138,22 +138,22 @@ const login = toWebHandler(
 );
 
 const ENV = {
-	PUNKTFUNK_UI_SECRET: KEY,
-	PUNKTFUNK_UI_PASSWORD: "pw",
-	PUNKTFUNK_UI_EPOCH_FILE: join(
+	LILYNK_UI_SECRET: KEY,
+	LILYNK_UI_PASSWORD: "pw",
+	LILYNK_UI_EPOCH_FILE: join(
 		mkdtempSync(join(tmpdir(), "pf-page-")),
 		"epoch",
 	),
-	PUNKTFUNK_MGMT_TOKEN: "t0k",
+	LILYNK_MGMT_TOKEN: "t0k",
 };
 beforeEach(() => {
 	Object.assign(process.env, ENV, {
-		PUNKTFUNK_MGMT_URL: `http://127.0.0.1:${host.port}`,
+		LILYNK_MGMT_URL: `http://127.0.0.1:${host.port}`,
 	});
 });
 afterEach(() => {
 	seen.length = 0;
-	for (const k of [...Object.keys(ENV), "PUNKTFUNK_MGMT_URL"])
+	for (const k of [...Object.keys(ENV), "LILYNK_MGMT_URL"])
 		delete process.env[k];
 });
 afterAll(() => {

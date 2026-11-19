@@ -28,14 +28,14 @@ pub enum NetworkAnswer {
 
 /// Same `1`/`0` reading as the Linux env twins.
 const ENV_TWINS: [(&str, Task); 8] = [
-    ("PUNKTFUNK_INSTALL_DRIVER", Task::Driver),
-    ("PUNKTFUNK_INSTALL_GAMEPAD", Task::Gamepad),
-    ("PUNKTFUNK_INSTALL_HDR_LAYER", Task::HdrLayer),
-    ("PUNKTFUNK_INSTALL_GAMESTREAM", Task::Gamestream),
-    ("PUNKTFUNK_INSTALL_PUBLIC_FIREWALL", Task::AllowPublicFw),
-    ("PUNKTFUNK_INSTALL_START_SERVICE", Task::StartService),
-    ("PUNKTFUNK_INSTALL_TRAY", Task::TrayIcon),
-    ("PUNKTFUNK_INSTALL_DESKTOP_ICON", Task::DesktopIcon),
+    ("LILYNK_INSTALL_DRIVER", Task::Driver),
+    ("LILYNK_INSTALL_GAMEPAD", Task::Gamepad),
+    ("LILYNK_INSTALL_HDR_LAYER", Task::HdrLayer),
+    ("LILYNK_INSTALL_GAMESTREAM", Task::Gamestream),
+    ("LILYNK_INSTALL_PUBLIC_FIREWALL", Task::AllowPublicFw),
+    ("LILYNK_INSTALL_START_SERVICE", Task::StartService),
+    ("LILYNK_INSTALL_TRAY", Task::TrayIcon),
+    ("LILYNK_INSTALL_DESKTOP_ICON", Task::DesktopIcon),
 ];
 
 /// `/MERGETASKS` names are a published contract (winget, troubleshooting docs). Never rename.
@@ -82,7 +82,7 @@ pub struct WinChoices {
     pub desktop_icon: bool,
     /// Fresh only. `None` = executor generates 24 hex chars. Never render into a transcript or argv.
     pub web_password: Option<String>,
-    /// Where the web console listens (`PUNKTFUNK_UI_BIND`). `None` = pass nothing: `service
+    /// Where the web console listens (`LILYNK_UI_BIND`). `None` = pass nothing: `service
     /// install` then keeps host.env's answer, which on an upgrade is the reach the box already had.
     pub web_bind: Option<String>,
     /// Upgrades pre-fill the ARP location and ignore `/DIR` (Inno `UsePreviousAppDir`).
@@ -164,12 +164,9 @@ impl WinChoices {
         // Address, not a task flag, so it takes the same spelling as the Linux `--web-bind`:
         // an address, or `localhost` / `lan`. A value we cannot read warns and changes nothing —
         // an unattended install must not fail on it, and must not guess either (D5).
-        for raw in [
-            env.get("PUNKTFUNK_INSTALL_WEB_BIND"),
-            args.web_bind.as_deref(),
-        ]
-        .into_iter()
-        .flatten()
+        for raw in [env.get("LILYNK_INSTALL_WEB_BIND"), args.web_bind.as_deref()]
+            .into_iter()
+            .flatten()
         {
             match parse_web_bind(raw) {
                 Some(addr) => self.web_bind = Some(addr),
@@ -298,7 +295,7 @@ mod tests {
     #[test]
     fn env_twins_read_one_and_zero_and_flags_overwrite_them() {
         let mut c = WinChoices::derive(&fresh_facts(), Artifact::Host);
-        let env = Env::of(&[("PUNKTFUNK_INSTALL_TRAY", "0")]);
+        let env = Env::of(&[("LILYNK_INSTALL_TRAY", "0")]);
         c.apply(&InnoArgs::parse(&[]), &env);
         assert!(!c.tray_autostart);
 

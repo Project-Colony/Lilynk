@@ -3,8 +3,8 @@
 # helpers, the system tuning both installers apply, and the host's user unit. The variables it sets
 # are for those scripts.
 
-SRC="${PUNKTFUNK_SRC:-$HOME/punktfunk}"
-BOX="${PUNKTFUNK_BOX:-pf2}"
+SRC="${LILYNK_SRC:-$HOME/punktfunk}"
+BOX="${LILYNK_BOX:-pf2}"
 UNITS="$HOME/.config/systemd/user"
 
 # pf_set_src <dir>: the source checkout and the build output under it.
@@ -127,8 +127,8 @@ write_host_unit() {
     local xrd="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}" bind env="$HOME/.config/punktfunk/host.env"
     bind=$(sed -n 's/^ExecStart=.* --mgmt-bind \([^ ]*\).*/\1/p' "$UNITS/lilynk-host.service" 2>/dev/null || true)
     if [ -n "$bind" ] && [ "$bind" != 0.0.0.0:47990 ] \
-        && ! grep -qs '^[[:space:]]*PUNKTFUNK_MGMT_BIND[[:space:]]*=' "$env"; then
-        echo "PUNKTFUNK_MGMT_BIND=$bind" >>"$env"
+        && ! grep -qs '^[[:space:]]*LILYNK_MGMT_BIND[[:space:]]*=' "$env"; then
+        echo "LILYNK_MGMT_BIND=$bind" >>"$env"
         ok "management port $bind moved to host.env"
     fi
     mkdir -p "$UNITS/lilynk-host.service.d"

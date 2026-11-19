@@ -88,7 +88,7 @@ jobs:
       # It has to actually run, not merely link. x86_64 only: the runner cannot execute arm64.
       - name: Smoke the artifact
         if: matrix.arch == 'x86_64'
-        run: ./lilynk-setup_${{ matrix.arch }} --help | grep -q 'PUNKTFUNK_INSTALL_OMARCHY_SETUP'
+        run: ./lilynk-setup_${{ matrix.arch }} --help | grep -q 'LILYNK_INSTALL_OMARCHY_SETUP'
       # v3: Gitea's API rejects upload-artifact@v4 (see apple.yml). Download is a zip.
       - uses: actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5 # v3
         with:
@@ -123,7 +123,7 @@ jobs:
       - name: Prepare the container
         run: apt-get update -qq && apt-get install -y -qq --no-install-recommends ca-certificates curl git nodejs
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      # No PUNKTFUNK_SETUP_BIN: the stub downloads `latest` and verifies its checksum, exactly
+      # No LILYNK_SETUP_BIN: the stub downloads `latest` and verifies its checksum, exactly
       # as it does on a user's box. --dry-run so nothing is installed.
       - name: The stub fetches the published binary and runs it
         run: |

@@ -1,6 +1,6 @@
 # ly-vkhdr-layer — HDR Vulkan layer for the virtual display
 
-A tiny Vulkan **implicit layer** (`VK_LAYER_PUNKTFUNK_hdr_inject`) that lets **Vulkan games enable
+A tiny Vulkan **implicit layer** (`VK_LAYER_LILYNK_hdr_inject`) that lets **Vulkan games enable
 HDR while streaming over the punktfunk virtual display**.
 
 ## The problem it solves

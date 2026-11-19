@@ -23,7 +23,7 @@ val Geist = FontFamily(
  * `defaultFontFamily` shortcut (that was Material 2), so each of the 15 roles is re-emitted with the
  * Geist family while keeping Material's sizes, line heights, letter spacing and per-role weights.
  */
-val PunktfunkTypography: Typography = Typography().run {
+val LilynkTypography: Typography = Typography().run {
     Typography(
         displayLarge = displayLarge.copy(fontFamily = Geist),
         displayMedium = displayMedium.copy(fontFamily = Geist),

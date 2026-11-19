@@ -28,7 +28,7 @@ cd "$(dirname "$0")/.."
 MASTERS=assets/launcher-icons
 GTK=clients/linux/data/icons/scalable/actions
 WIN=clients/windows/assets/launchers
-APPLE=clients/apple/Sources/PunktfunkKit/Resources/LauncherIcons.xcassets
+APPLE=clients/apple/Sources/LilynkKit/Resources/LauncherIcons.xcassets
 
 # Mid-grey: the Windows shell shows these in an `Image`, which takes no theme tint, so one colour
 # has to stay legible on both the light and dark WinUI theme. The OS marks bake white instead
@@ -133,7 +133,7 @@ echo
 log "Remember: a NEW token also has to be added to each client's shipped-token list —"
 log "  clients/linux/src/library/poster.rs, clients/linux/data/resources.gresource.xml,"
 log "  clients/windows/src/app/launcher_icons.rs,"
-log "  clients/apple/.../PunktfunkKit/LauncherIcon.swift,"
+log "  clients/apple/.../LilynkKit/LauncherIcon.swift,"
 log "  crates/host/lilynk-host/src/gamestream/apps.rs (tile_png)"
 log "  (the three inline registries above pick it up automatically)"
 log "  — and to the plugin that emits the tile."

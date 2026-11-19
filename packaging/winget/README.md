@@ -54,7 +54,7 @@ All three live in `crates/install/lilynk-setup/src/platform/windows/` and also f
 double-click upgrade path:
 
 - **A competing host moves our port; it never aborts.** Sunshine/Apollo on the box means both want
-  TCP 47990, so `coexist_steps` writes `PUNKTFUNK_MGMT_BIND=0.0.0.0:47991` and carries on. The Inno
+  TCP 47990, so `coexist_steps` writes `LILYNK_MGMT_BIND=0.0.0.0:47991` and carries on. The Inno
   installer put up a modal and failed the install instead, which under `/VERYSILENT` was an
   unattended run blocking on an invisible dialog.
 - **The GameStream flag is fresh-install-only.** On an upgrade the flag is omitted entirely, which

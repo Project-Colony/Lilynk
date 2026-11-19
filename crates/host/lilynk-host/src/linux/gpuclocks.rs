@@ -3,7 +3,7 @@
 //! Adaptive P-states drop clocks between bursty encode frames, so the next
 //! frame re-pays spin-up. [`session_pin`] arms the vendor pin on the first live
 //! client (native and GameStream share one refcount) and restores idle PM when
-//! the last handle drops. Off unless `PUNKTFUNK_PIN_CLOCKS=1`: the pin is
+//! the last handle drops. Off unless `LILYNK_PIN_CLOCKS=1`: the pin is
 //! box-wide and wrong on battery.
 //!
 //! **AMD** (root via sysfs): write `high` into each amdgpu
@@ -11,7 +11,7 @@
 //!
 //! **NVIDIA** — two independent halves, both no-ops off NVIDIA:
 //! 1. `CudaNoStablePerfLimit` profile in `~/.nv/nvidia-application-profiles-rc.d/`
-//!    lifts the P2 memory-clock cap (`PUNKTFUNK_NV_PROFILE=0` opts out). Do not
+//!    lifts the P2 memory-clock cap (`LILYNK_NV_PROFILE=0` opts out). Do not
 //!    set `CUDA_DISABLE_PERF_BOOST`: that blocks the boost *to* P2; the profile
 //!    lifts the cap *at* P2 so the process can reach P0.
 //! 2. `nvmlDeviceSetGpuLockedClocks(TDP, UNLIMITED)` floors the core at TDP
@@ -166,14 +166,14 @@ fn pin_refcount() -> &'static Mutex<PinRefcount> {
 }
 
 /// Holds the box-wide pin armed. Last drop restores idle downclocking.
-/// No-op unless `PUNKTFUNK_PIN_CLOCKS` is on; blank or junk stays off.
+/// No-op unless `LILYNK_PIN_CLOCKS` is on; blank or junk stays off.
 pub struct SessionClockPin {
     /// False: opt-in gate off, this handle did not tick the refcount.
     counted: bool,
 }
 
 pub fn session_pin() -> SessionClockPin {
-    let asked = ly_host_config::knob("PUNKTFUNK_PIN_CLOCKS")
+    let asked = ly_host_config::knob("LILYNK_PIN_CLOCKS")
         .and_then(|v| ly_host_config::registry::parse_bool(&v.trim().to_ascii_lowercase()));
     if asked != Some(true) {
         return SessionClockPin { counted: false };
@@ -265,7 +265,7 @@ fn pin_amdgpu() -> Vec<AmdPin> {
     }
     if denied {
         tracing::warn!(
-            "PUNKTFUNK_PIN_CLOCKS: writing power_dpm_force_performance_level requires root — \
+            "LILYNK_PIN_CLOCKS: writing power_dpm_force_performance_level requires root — \
              grant it via a boot oneshot / udev rule chowning the attribute, or run the host as \
              a system service. The host keeps running unpinned"
         );
@@ -278,7 +278,7 @@ fn pin_nvidia() -> Option<NvmlPin> {
     let nvml = match Nvml::load() {
         Some(n) => n,
         None => {
-            tracing::warn!("PUNKTFUNK_PIN_CLOCKS: libnvidia-ml not loadable — clocks not pinned");
+            tracing::warn!("LILYNK_PIN_CLOCKS: libnvidia-ml not loadable — clocks not pinned");
             return None;
         }
     };
@@ -292,7 +292,7 @@ fn pin_nvidia() -> Option<NvmlPin> {
         if r != NVML_SUCCESS {
             tracing::warn!(
                 error = nvml.err_str(r),
-                "PUNKTFUNK_PIN_CLOCKS: NVML init failed — clocks not pinned"
+                "LILYNK_PIN_CLOCKS: NVML init failed — clocks not pinned"
             );
             return None;
         }
@@ -326,7 +326,7 @@ fn pin_nvidia() -> Option<NvmlPin> {
         }
         if denied {
             tracing::warn!(
-                "PUNKTFUNK_PIN_CLOCKS: the driver requires root for locked clocks \
+                "LILYNK_PIN_CLOCKS: the driver requires root for locked clocks \
                  (NVML_ERROR_NO_PERMISSION). Grant it via a boot oneshot (`nvidia-smi -lgc \
                  tdp,unlimited`) or sudoers (`<user> ALL=(ALL) NOPASSWD: /usr/bin/nvidia-smi`) — \
                  the host keeps running unpinned"
@@ -349,7 +349,7 @@ fn pin_nvidia() -> Option<NvmlPin> {
 /// `~/.nv/nvidia-application-profiles-rc.d/`. Never overwrite: the file is the
 /// operator's once it exists.
 fn ensure_cuda_perf_profile() {
-    if ly_host_config::env_on("PUNKTFUNK_NV_PROFILE") == Some(false) {
+    if ly_host_config::env_on("LILYNK_NV_PROFILE") == Some(false) {
         return;
     }
     let Some(home) = std::env::var_os("HOME") else {
@@ -378,7 +378,7 @@ fn ensure_cuda_perf_profile() {
         Ok(()) => tracing::info!(
             path = %path.display(),
             "installed the CudaNoStablePerfLimit driver profile (lifts the P2 memory-clock cap \
-             for NVENC/CUDA; read when the driver next initializes — PUNKTFUNK_NV_PROFILE=0 opts \
+             for NVENC/CUDA; read when the driver next initializes — LILYNK_NV_PROFILE=0 opts \
              out)"
         ),
         Err(e) => tracing::debug!(error = %e, "NVIDIA application profile not installed"),

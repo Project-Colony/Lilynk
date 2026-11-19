@@ -3,7 +3,7 @@
 //! Leaf crate so `ly-vdisplay`, `ly-capture`, and the orchestrator share these
 //! without depending on `gamestream`. Std + `tracing`; on Windows, `ly-paths-win` for ACLs.
 //!
-//! [`config_dir`] is XDG / `%ProgramData%`, overridable with `PUNKTFUNK_CONFIG_DIR`.
+//! [`config_dir`] is XDG / `%ProgramData%`, overridable with `LILYNK_CONFIG_DIR`.
 //! [`seat_home`] is where a profile's Steam from Own Steam stays until it is erased.
 //! [`create_private_dir`] / [`write_secret_file`] apply 0700 / 0600 on Unix and a
 //! SYSTEM/Administrators DACL on Windows. [`replace_file`] / [`replace_secret_file`] /
@@ -134,9 +134,9 @@ fn xdg_home_from(
 ///
 /// Windows uses `%ProgramData%` so the SYSTEM service and the interactive
 /// user share one dir that survives logout. Elsewhere `$XDG_CONFIG_HOME`, ignored
-/// when empty or relative. `PUNKTFUNK_CONFIG_DIR` overrides.
+/// when empty or relative. `LILYNK_CONFIG_DIR` overrides.
 pub fn config_dir() -> PathBuf {
-    if let Some(dir) = std::env::var_os("PUNKTFUNK_CONFIG_DIR").filter(|s| !s.is_empty()) {
+    if let Some(dir) = std::env::var_os("LILYNK_CONFIG_DIR").filter(|s| !s.is_empty()) {
         return PathBuf::from(dir);
     }
     #[cfg(target_os = "windows")]
@@ -149,9 +149,9 @@ pub fn config_dir() -> PathBuf {
     base.join("punktfunk")
 }
 
-/// `lilynk-host serve` writes `PUNKTFUNK_MGMT_URL=https://127.0.0.1:<port>`
+/// `lilynk-host serve` writes `LILYNK_MGMT_URL=https://127.0.0.1:<port>`
 /// on start. The tray cannot read `host.env` on Windows (SYSTEM/Administrators
-/// DACL); this file is Users-readable so a `PUNKTFUNK_MGMT_BIND` move still
+/// DACL); this file is Users-readable so a `LILYNK_MGMT_BIND` move still
 /// reaches loopback consumers. `None` if absent or unparsable.
 pub fn published_mgmt_port() -> Option<u16> {
     published_mgmt_port_in(&config_dir())
@@ -853,18 +853,18 @@ mod tests {
 
     #[test]
     fn env_file_reads_host_env_as_the_service_does() {
-        let text = "# PUNKTFUNK_MGMT_BIND=commented\n  PUNKTFUNK_MGMT_BIND = \"0.0.0.0:48123\" \n\
+        let text = "# LILYNK_MGMT_BIND=commented\n  LILYNK_MGMT_BIND = \"0.0.0.0:48123\" \n\
                     no equals\n=orphan\nRUST_LOG=info\nRUST_LOG=debug\n";
         assert_eq!(
             env_file::parse(text).collect::<Vec<_>>(),
             [
-                ("PUNKTFUNK_MGMT_BIND", "0.0.0.0:48123"),
+                ("LILYNK_MGMT_BIND", "0.0.0.0:48123"),
                 ("RUST_LOG", "info"),
                 ("RUST_LOG", "debug"),
             ]
         );
         assert_eq!(env_file::get(text, "RUST_LOG"), Some("debug"));
-        assert_eq!(env_file::get(text, "PUNKTFUNK_UI_BIND"), None);
+        assert_eq!(env_file::get(text, "LILYNK_UI_BIND"), None);
     }
 
     #[cfg(target_os = "linux")]
@@ -954,7 +954,7 @@ mod tests {
 
         std::fs::write(
             dir.join("mgmt-endpoint"),
-            "PUNKTFUNK_MGMT_URL=https://127.0.0.1:47995\n",
+            "LILYNK_MGMT_URL=https://127.0.0.1:47995\n",
         )
         .unwrap();
         assert_eq!(published_mgmt_port_in(&dir), Some(47995));
@@ -966,7 +966,7 @@ mod tests {
             "blank reads as unset, not port 0"
         );
 
-        std::fs::write(dir.join("mgmt-endpoint"), "PUNKTFUNK_MGMT_URL=\n").unwrap();
+        std::fs::write(dir.join("mgmt-endpoint"), "LILYNK_MGMT_URL=\n").unwrap();
         assert_eq!(published_mgmt_port_in(&dir), None);
 
         let _ = std::fs::remove_dir_all(&dir);
@@ -1210,7 +1210,7 @@ mod tests {
         assert_eq!(mode(&dir), 0o700, "a secrets dir is owner-only");
 
         let shared = dir.join("tray-token");
-        replace_users_readable_file(&shared, b"PUNKTFUNK_TRAY_TOKEN=abc\n").unwrap();
+        replace_users_readable_file(&shared, b"LILYNK_TRAY_TOKEN=abc\n").unwrap();
         assert_eq!(
             mode(&shared),
             0o600,
@@ -1219,7 +1219,7 @@ mod tests {
         assert_eq!(
             env_file::get(
                 &std::fs::read_to_string(&shared).unwrap(),
-                "PUNKTFUNK_TRAY_TOKEN"
+                "LILYNK_TRAY_TOKEN"
             ),
             Some("abc")
         );

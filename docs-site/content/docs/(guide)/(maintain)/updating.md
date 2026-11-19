@@ -94,15 +94,15 @@ A host left running on a replaced binary fails every new KDE desktop session wit
   ```
 
 - `refusing to downgrade`: the feed's newest image is older than yours. Roll back on purpose with
-  `sudo PUNKTFUNK_SYSEXT_ALLOW_DOWNGRADE=1 lilynk-sysext update`, or the file you kept.
+  `sudo LILYNK_SYSEXT_ALLOW_DOWNGRADE=1 lilynk-sysext update`, or the file you kept.
 - The script checks the feed's signature with `gpg`. If it reports a bad signature, a foreign feed
   or an older serial, don't install: download the script again and retry.
 
 ## Turn the check off
 
-Turn off **Check for updates** under **Host → System** (`PUNKTFUNK_UPDATE_CHECK=0` in
+Turn off **Check for updates** under **Host → System** (`LILYNK_UPDATE_CHECK=0` in
 `host.env`). To keep the check but drop the button, turn off **Console updates** under
-**Show advanced** (`PUNKTFUNK_UPDATE_APPLY=0`). The check contacts `git.unom.io`, which hands the file over to Cloudflare R2.
+**Show advanced** (`LILYNK_UPDATE_APPLY=0`). The check contacts `git.unom.io`, which hands the file over to Cloudflare R2.
 
 ## Troubleshooting
 

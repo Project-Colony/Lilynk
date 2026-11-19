@@ -1,4 +1,4 @@
-//! `PUNKTFUNK_PERF` stage timings for the client pump and host send thread.
+//! `LILYNK_PERF` stage timings for the client pump and host send thread.
 //! Accumulated per report window; drain with
 //! [`Session::take_pump_perf`](super::Session::take_pump_perf) /
 //! [`Session::take_seal_perf`](super::Session::take_seal_perf).
@@ -38,7 +38,7 @@ pub struct SealPerf {
     pub packets: u64,
 }
 
-/// Times `encode_into` into [`SealPerf`] when `PUNKTFUNK_PERF` is armed. `ns` is
+/// Times `encode_into` into [`SealPerf`] when `LILYNK_PERF` is armed. `ns` is
 /// atomic only to satisfy [`ErasureCoder`]'s `Sync` bound; it lives on one thread.
 pub(super) struct TimedCoder<'a> {
     pub(super) inner: &'a dyn ErasureCoder,

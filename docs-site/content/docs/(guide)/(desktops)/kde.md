@@ -23,7 +23,7 @@ permission file when you log in, so **log out and back in once** after installin
 
 Nothing is required: the host finds KWin on every connect.
 
-Don't set `PUNKTFUNK_COMPOSITOR`, `WAYLAND_DISPLAY` or `XDG_CURRENT_DESKTOP`. A pinned compositor
+Don't set `LILYNK_COMPOSITOR`, `WAYLAND_DISPLAY` or `XDG_CURRENT_DESKTOP`. A pinned compositor
 turns off detection and session following, and stale session values point the host at dead
 sockets. The [headless session](#headless-session) pins them on purpose. Every other option is in
 [Configuration](/docs/configuration).
@@ -92,12 +92,12 @@ host enables a disabled one and retries on its own. If it keeps failing:
   enable one more display beside your monitors.
 
 Meanwhile, stream a real monitor instead: **Stream this monitor** under **Displays** in the
-console, or `PUNKTFUNK_CAPTURE_MONITOR` — see
+console, or `LILYNK_CAPTURE_MONITOR` — see
 [Stream a real monitor](/docs/stream-a-monitor).
 
-### "Allow remote control?" appears, or input does nothing, with `PUNKTFUNK_INPUT_BACKEND=libei`
+### "Allow remote control?" appears, or input does nothing, with `LILYNK_INPUT_BACKEND=libei`
 
-The libei input path, and portal capture (`PUNKTFUNK_VIDEO_SOURCE=portal`), go through KDE's
+The libei input path, and portal capture (`LILYNK_VIDEO_SOURCE=portal`), go through KDE's
 RemoteDesktop portal, which needs a one-time grant. Seed it, then log out and back in:
 
 ```sh

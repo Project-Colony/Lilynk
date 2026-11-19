@@ -10,7 +10,7 @@ changing one. During a session the stream follows the host's picture between HDR
 
 ## The chain
 
-1. **The host allows it.** **Host → Video → 10-bit and HDR** (`PUNKTFUNK_10BIT`), on
+1. **The host allows it.** **Host → Video → 10-bit and HDR** (`LILYNK_10BIT`), on
    by default.
 2. **The source delivers 10-bit PQ.** This is the link that fails most — see [Per host](#per-host).
 3. **The codec has a 10-bit path:** HEVC, AV1 or [PyroWave](/docs/pyrowave). H.264 has none, so
@@ -48,7 +48,7 @@ desktop stream stays SDR.
 2. Restart the host. It reads what the gamescope build can do once, at startup.
 3. Let the host start the gamescope session, which is the default. A session it attaches to
    instead streams SDR: clear **Stream this monitor** under **Displays**, and delete any
-   `PUNKTFUNK_GAMESCOPE_ATTACH` line from `host.env`.
+   `LILYNK_GAMESCOPE_ATTACH` line from `host.env`.
 4. For Steam's own HDR setting to be available, the build must be `+pfhdr14` or newer. Check with
    `lilynk-gamescope --version`.
 
@@ -61,11 +61,11 @@ switch during a session, and every session on a host that lets devices
 [share one screen](/docs/play-together).
 
 SDR content in an HDR picture (the Steam overlay, or everything in a session that stays HDR)
-starts at **Host → Game Mode → SDR brightness** (advanced, `PUNKTFUNK_GAMESCOPE_SDR_NITS`):
+starts at **Host → Game Mode → SDR brightness** (advanced, `LILYNK_GAMESCOPE_SDR_NITS`):
 203 nits, the level the clients expect. Steam's SDR brightness setting moves it during the
 session. Builds older than `+pfhdr16` ignore both and show SDR content oversaturated.
 
-**Game Mode HDR** (`PUNKTFUNK_GAMESCOPE_HDR`) on the same page, turned off, keeps gamescope
+**Game Mode HDR** (`LILYNK_GAMESCOPE_HDR`) on the same page, turned off, keeps gamescope
 sessions SDR.
 
 A session that follows the switch between Game Mode and the desktop streams SDR on the desktop
@@ -76,11 +76,11 @@ and HDR in Game Mode again, whichever of the two it started in.
 GNOME HDR reaches [Moonlight](/docs/moonlight) only, by mirroring a real monitor (GNOME 50+).
 A Punktfunk app connecting to a GNOME host gets SDR.
 
-1. Add `PUNKTFUNK_VIDEO_SOURCE=portal` to [`host.env`](/docs/configuration) and restart the host.
+1. Add `LILYNK_VIDEO_SOURCE=portal` to [`host.env`](/docs/configuration) and restart the host.
 2. Put the monitor in HDR mode in GNOME **Settings → Displays**.
 3. Connect with HDR on in Moonlight.
 
-With `PUNKTFUNK_CAPTURE_MONITOR=<connector>` set, only that monitor's HDR mode counts. If no
+With `LILYNK_CAPTURE_MONITOR=<connector>` set, only that monitor's HDR mode counts. If no
 monitor is in HDR mode, the session streams SDR and says so in the host log.
 
 ### Linux + Hyprland
@@ -130,7 +130,7 @@ desktop's own bits past 8, wherever a game or app renders them.
 Other desktops hand the host only 8 bits of SDR, so the host could only widen each frame:
 smoother gradients after the encoder, one more colour pass on the GPU, no detail the desktop
 didn't have. There the host streams 8-bit SDR unless **Host → Video → Allow 10-bit
-SDR** (`PUNKTFUNK_10BIT_SDR_WIDEN`, advanced, off by default) is on.
+SDR** (`LILYNK_10BIT_SDR_WIDEN`, advanced, off by default) is on.
 
 ## HDR and 4:4:4
 
@@ -188,7 +188,7 @@ restart.
 ### A Vulkan game on Windows says HDR isn't supported
 
 NVIDIA and AMD Vulkan drivers hide HDR from games on a virtual display. The installer's **HDR
-Vulkan layer** option (`VK_LAYER_PUNKTFUNK_hdr_inject`) shows it to them again; re-run the
+Vulkan layer** option (`VK_LAYER_LILYNK_hdr_inject`) shows it to them again; re-run the
 installer with it ticked. The layer does nothing in an SDR session or on a physical monitor, and
 skips a built-in list of anti-cheat titles. To turn it off for one game, set `DISABLE_PF_VKHDR=1` in its environment, or
 list executables in `PF_VKHDR_EXCLUDE=foo.exe,bar.exe`. D3D11 and D3D12 games don't need it.

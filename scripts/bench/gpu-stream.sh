@@ -7,7 +7,7 @@
 #   scripts/bench/gpu-stream.sh [WxHxHz] [seconds]      # measure + compare to the baseline
 #   scripts/bench/gpu-stream.sh 1920x1080x120 12 --update   # (re)write scripts/bench/gpu-baseline.json
 #
-# Metrics (host PUNKTFUNK_PERF + client report): encode_us_p50/p99, tx_mbps, send_dropped, and the
+# Metrics (host LILYNK_PERF + client report): encode_us_p50/p99, tx_mbps, send_dropped, and the
 # client's capture→received lat_p50/p95/p99_us. Lower is better for latency/encode/drops, higher
 # for throughput. Regressions are flagged ⚠ but the script exits 0 (gate decisions stay human).
 set -uo pipefail
@@ -24,8 +24,8 @@ BASELINE="scripts/bench/gpu-baseline.json" # not in the repo — mint it on the 
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
 export WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-wayland-kde}"
 export XDG_CURRENT_DESKTOP="${XDG_CURRENT_DESKTOP:-KDE}"
-export PUNKTFUNK_COMPOSITOR="${PUNKTFUNK_COMPOSITOR:-kwin}"
-export PUNKTFUNK_VIDEO_SOURCE=virtual PUNKTFUNK_ZEROCOPY=1 PUNKTFUNK_PERF=1
+export LILYNK_COMPOSITOR="${LILYNK_COMPOSITOR:-kwin}"
+export LILYNK_VIDEO_SOURCE=virtual LILYNK_ZEROCOPY=1 LILYNK_PERF=1
 OWN_KWIN=""
 if [[ ! -S "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY" ]]; then
   echo "==> no $WAYLAND_DISPLAY — bringing up a headless KWin session"
@@ -40,8 +40,8 @@ cargo build -rq -p lilynk-host -p lilynk-probe
 HOST_LOG="$(mktemp)"; CLI_LOG="$(mktemp)"
 trap 'kill "$HOST_PID" 2>/dev/null; [[ -n "$OWN_KWIN" ]] && pkill -f "kwin_wayland --virtual" 2>/dev/null; rm -f "$HOST_LOG" "$CLI_LOG"' EXIT
 
-echo "==> host: punktfunk1-host --source virtual ($MODE, ${SECS}s)"
-target/release/lilynk-host punktfunk1-host --source virtual --seconds "$SECS" --max-sessions 1 \
+echo "==> host: lilynk1-host --source virtual ($MODE, ${SECS}s)"
+target/release/lilynk-host lilynk1-host --source virtual --seconds "$SECS" --max-sessions 1 \
   >"$HOST_LOG" 2>&1 &
 HOST_PID=$!
 sleep 3

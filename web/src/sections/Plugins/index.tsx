@@ -329,7 +329,7 @@ const OfflineCard: FC<{ title: string; onRetry: () => void }> = ({
 			<pre className="w-full overflow-x-auto rounded-md bg-muted p-3 text-left text-xs text-muted-foreground">
 				<code>
 					systemctl --user status lilynk-scripting{"\n"}
-					Get-ScheduledTask PunktfunkScripting{"  # Windows"}
+					Get-ScheduledTask LilynkScripting{"  # Windows"}
 				</code>
 			</pre>
 			<Button variant="outline" size="sm" onClick={onRetry}>

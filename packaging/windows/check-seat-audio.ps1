@@ -13,7 +13,7 @@
   Without them a seat has nothing to capture and the host retries forever, so this asserts the
   prerequisite rather than the symptom. VB-Audio Virtual Cable does NOT substitute: the wiring
   plan refuses a cable as a loopback source (capturing one re-records what is written into it),
-  and `PUNKTFUNK_MIC_DEVICE` only pins the microphone. Both address the mic leg alone.
+  and `LILYNK_MIC_DEVICE` only pins the microphone. Both address the mic leg alone.
 
   Exit 0 = a seat can mint. Exit 1 = it cannot, and the verdict says what to install.
 

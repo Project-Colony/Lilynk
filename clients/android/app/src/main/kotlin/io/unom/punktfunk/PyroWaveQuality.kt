@@ -15,7 +15,7 @@ object PyroWaveQuality {
     val RANGE = 0.5f..2.0f
     const val STEPS = 14
 
-    /** `PUNKTFUNK_IFACE_KIND_*`. */
+    /** `LILYNK_IFACE_KIND_*`. */
     private const val KIND_UNKNOWN = 0
     private const val KIND_ETHERNET = 1
     private const val KIND_WIFI = 2

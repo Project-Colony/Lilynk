@@ -18,39 +18,39 @@
 /// own default.
 #[derive(Clone, Debug)]
 pub(crate) struct Knobs {
-    /// `PUNKTFUNK_VULKAN_INFLIGHT`: Vulkan Video captures in flight, clamped to 2..=6.
+    /// `LILYNK_VULKAN_INFLIGHT`: Vulkan Video captures in flight, clamped to 2..=6.
     pub(crate) vulkan_inflight: Option<usize>,
-    /// `PUNKTFUNK_VULKAN_QUALITY`: the Vulkan Video quality level, fastest first. The open clamps
+    /// `LILYNK_VULKAN_QUALITY`: the Vulkan Video quality level, fastest first. The open clamps
     /// it below the driver's `maxQualityLevels`; unset is 0.
     pub(crate) vulkan_quality: Option<u32>,
-    /// `PUNKTFUNK_VULKAN_RGB_DIRECT`: the RGB-direct (EFC) encode source
+    /// `LILYNK_VULKAN_RGB_DIRECT`: the RGB-direct (EFC) encode source
     /// (`design/vulkan-rgb-direct-encode.md`). `Some(false)` turns it off. `Some(true)` acts as
     /// `None`, the default: on wherever the probe passes, and on a session that composites the
     /// pointer only while no cursor is visible, since EFC cannot blend. An unrecognised value is
     /// `None`.
     pub(crate) vulkan_rgb_direct: Option<bool>,
-    /// `PUNKTFUNK_VULKAN_RGB_TRUE_EXTENT`, default on: an unaligned EFC source imports at its true
+    /// `LILYNK_VULKAN_RGB_TRUE_EXTENT`, default on: an unaligned EFC source imports at its true
     /// size so RADV pads it in firmware. Off restores the padded copy.
     pub(crate) vulkan_rgb_true_extent: bool,
-    /// `PUNKTFUNK_VULKAN_DIRECT_PLANES`, default on: the CSC writes the picture planes where the
+    /// `LILYNK_VULKAN_DIRECT_PLANES`, default on: the CSC writes the picture planes where the
     /// driver lists the format as a storage target. Off keeps the scratch-plane copies (the A/B
     /// for a driver that lists it and misrenders).
     pub(crate) vulkan_direct_planes: bool,
-    /// `PUNKTFUNK_VULKAN_RC`: `cbr` forces CBR; anything else lets the driver's VBR win.
+    /// `LILYNK_VULKAN_RC`: `cbr` forces CBR; anything else lets the driver's VBR win.
     pub(crate) vulkan_rc: Option<String>,
-    /// `PUNKTFUNK_VAAPI_DUMP=<file>`: every native VAAPI access unit, for a decoder to look at.
+    /// `LILYNK_VAAPI_DUMP=<file>`: every native VAAPI access unit, for a decoder to look at.
     pub(crate) vaapi_dump: Option<String>,
-    /// `PUNKTFUNK_OH264_GOP`: openh264's intra period in frames (0 = encoder-auto).
+    /// `LILYNK_OH264_GOP`: openh264's intra period in frames (0 = encoder-auto).
     pub(crate) oh264_gop: Option<u32>,
-    /// `PUNKTFUNK_OH264_THREADS`: openh264 encode threads.
+    /// `LILYNK_OH264_THREADS`: openh264 encode threads.
     pub(crate) oh264_threads: Option<u16>,
-    /// `PUNKTFUNK_NVENC_STREAM_ORDERED`, default on: stream-ordered NVENC submit. Off is
+    /// `LILYNK_NVENC_STREAM_ORDERED`, default on: stream-ordered NVENC submit. Off is
     /// blocking copies.
     pub(crate) nvenc_stream_ordered: bool,
     /// `PYROWAVE_QUEUE_PRIORITY`: the raw global-priority intent, resolved by the PyroWave open
     /// (in this process or forwarded to the encode worker).
     pub(crate) queue_priority: Option<String>,
-    /// `PUNKTFUNK_AMF_FULL_RANGE`: whether AMF's own RGB conversion on this GPU writes full
+    /// `LILYNK_AMF_FULL_RANGE`: whether AMF's own RGB conversion on this GPU writes full
     /// range. Unset measures it; off streams studio; on trusts the GPU without measuring.
     #[cfg_attr(not(windows), allow(dead_code))]
     pub(crate) amf_full_range: Option<bool>,
@@ -60,22 +60,21 @@ impl Knobs {
     pub(crate) fn from_env() -> Self {
         let var = |name: &str| std::env::var(name).ok();
         Self {
-            vulkan_inflight: parse::<usize>(var("PUNKTFUNK_VULKAN_INFLIGHT"))
-                .map(|n| n.clamp(2, 6)),
-            vulkan_quality: parse(var("PUNKTFUNK_VULKAN_QUALITY")),
-            vulkan_rgb_direct: parse_rgb_request(var("PUNKTFUNK_VULKAN_RGB_DIRECT").as_deref()),
-            vulkan_rgb_true_extent: ly_host_config::env_on("PUNKTFUNK_VULKAN_RGB_TRUE_EXTENT")
+            vulkan_inflight: parse::<usize>(var("LILYNK_VULKAN_INFLIGHT")).map(|n| n.clamp(2, 6)),
+            vulkan_quality: parse(var("LILYNK_VULKAN_QUALITY")),
+            vulkan_rgb_direct: parse_rgb_request(var("LILYNK_VULKAN_RGB_DIRECT").as_deref()),
+            vulkan_rgb_true_extent: ly_host_config::env_on("LILYNK_VULKAN_RGB_TRUE_EXTENT")
                 .unwrap_or(true),
-            vulkan_direct_planes: ly_host_config::env_on("PUNKTFUNK_VULKAN_DIRECT_PLANES")
+            vulkan_direct_planes: ly_host_config::env_on("LILYNK_VULKAN_DIRECT_PLANES")
                 .unwrap_or(true),
-            vulkan_rc: var("PUNKTFUNK_VULKAN_RC"),
-            vaapi_dump: var("PUNKTFUNK_VAAPI_DUMP"),
-            oh264_gop: parse(var("PUNKTFUNK_OH264_GOP")),
-            oh264_threads: parse(var("PUNKTFUNK_OH264_THREADS")),
-            nvenc_stream_ordered: ly_host_config::env_on("PUNKTFUNK_NVENC_STREAM_ORDERED")
+            vulkan_rc: var("LILYNK_VULKAN_RC"),
+            vaapi_dump: var("LILYNK_VAAPI_DUMP"),
+            oh264_gop: parse(var("LILYNK_OH264_GOP")),
+            oh264_threads: parse(var("LILYNK_OH264_THREADS")),
+            nvenc_stream_ordered: ly_host_config::env_on("LILYNK_NVENC_STREAM_ORDERED")
                 != Some(false),
             queue_priority: var("PYROWAVE_QUEUE_PRIORITY"),
-            amf_full_range: ly_host_config::env_on("PUNKTFUNK_AMF_FULL_RANGE"),
+            amf_full_range: ly_host_config::env_on("LILYNK_AMF_FULL_RANGE"),
         }
     }
 
@@ -100,7 +99,7 @@ fn parse_rgb_request(raw: Option<&str>) -> Option<bool> {
 mod tests {
     use super::*;
 
-    /// `PUNKTFUNK_VULKAN_RGB_DIRECT` accepts the same spellings as every sibling knob, trimmed,
+    /// `LILYNK_VULKAN_RGB_DIRECT` accepts the same spellings as every sibling knob, trimmed,
     /// in any case.
     #[test]
     fn rgb_direct_knob_accepts_the_house_spellings() {

@@ -44,8 +44,8 @@ done
 # The layout build-lilynk-gamescope.sh writes under its --destdir/--prefix.
 BINARY="$STAGE/usr/bin/lilynk-gamescope"
 REAPER="$STAGE/usr/lib/punktfunk/gamescope/gamescopereaper"
-LAYER_SO="$STAGE/usr/lib/punktfunk/libVkLayer_PUNKTFUNK_gamescope_wsi.so"
-LAYER_JSON="$STAGE/usr/lib/punktfunk/vulkan/implicit_layer.d/punktfunk_gamescope_wsi.json"
+LAYER_SO="$STAGE/usr/lib/punktfunk/libVkLayer_LILYNK_gamescope_wsi.so"
+LAYER_JSON="$STAGE/usr/lib/punktfunk/vulkan/implicit_layer.d/lilynk_gamescope_wsi.json"
 [ -x "$BINARY" ] || { echo "ERROR: $BINARY is not an executable file" >&2; exit 1; }
 # gamescope starts every session's first child through its reaper.
 [ -x "$REAPER" ] || { echo "ERROR: $REAPER missing from the stage — a session would run nothing" >&2; exit 1; }
@@ -85,8 +85,8 @@ trap 'rm -rf "$TOP"' EXIT
 mkdir -p "$TOP"/{SOURCES,SPECS,BUILD,BUILDROOT,RPMS,SRPMS}
 install -m0755 "$BINARY" "$TOP/SOURCES/lilynk-gamescope"
 install -m0755 "$REAPER" "$TOP/SOURCES/gamescopereaper"
-install -m0755 "$LAYER_SO" "$TOP/SOURCES/libVkLayer_PUNKTFUNK_gamescope_wsi.so"
-install -m0644 "$LAYER_JSON" "$TOP/SOURCES/punktfunk_gamescope_wsi.json"
+install -m0755 "$LAYER_SO" "$TOP/SOURCES/libVkLayer_LILYNK_gamescope_wsi.so"
+install -m0644 "$LAYER_JSON" "$TOP/SOURCES/lilynk_gamescope_wsi.json"
 
 mkdir -p "$OUTDIR"
 rpmbuild \

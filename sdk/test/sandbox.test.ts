@@ -413,8 +413,8 @@ describe("bwrapArgv", () => {
 		// The spawn env does not survive it: without these the plugin has no HOME and no socket.
 		const joined = argv.join(" ");
 		expect(joined).toContain("--setenv HOME");
-		expect(joined).toContain("--setenv PUNKTFUNK_MGMT_UNIX /run/punktfunk/host.sock");
-		expect(joined).toContain("--setenv PUNKTFUNK_CONFIG_DIR /run/punktfunk");
+		expect(joined).toContain("--setenv LILYNK_MGMT_UNIX /run/punktfunk/host.sock");
+		expect(joined).toContain("--setenv LILYNK_CONFIG_DIR /run/punktfunk");
 		expect(binds(argv, "--proc")).toBeDefined();
 		expect(argv.join(" ")).toContain("--proc /proc");
 		// The unit allows netlink and writable tunables for bwrap's setup; the plugin gets neither.
@@ -469,7 +469,7 @@ describe("bwrapArgv", () => {
 		for (const network of [false, true]) {
 			const argv = bwrapArgv(manifest({ network }), { ...paths, ui }).join(" ");
 			expect(argv).toContain(`--bind ${ui.dir} /run/punktfunk/ui`);
-			expect(argv).toContain("--setenv PUNKTFUNK_UI_PORT 41234");
+			expect(argv).toContain("--setenv LILYNK_UI_PORT 41234");
 		}
 	});
 
@@ -620,9 +620,9 @@ describe("sandboxEnv", () => {
 		const env = sandboxEnv("/home/u");
 		// The real home, so a `~/...` read the manifest declared is where os.homedir() looks.
 		expect(env.HOME).toBe("/home/u");
-		expect(env.PUNKTFUNK_CONFIG_DIR).toBe("/run/punktfunk");
-		expect(env.PUNKTFUNK_MGMT_UNIX).toBe("/run/punktfunk/host.sock");
-		expect(env.PUNKTFUNK_MGMT_TOKEN).toBeUndefined();
+		expect(env.LILYNK_CONFIG_DIR).toBe("/run/punktfunk");
+		expect(env.LILYNK_MGMT_UNIX).toBe("/run/punktfunk/host.sock");
+		expect(env.LILYNK_MGMT_TOKEN).toBeUndefined();
 	});
 });
 

@@ -141,7 +141,7 @@ const SHRINK_PROBE_MS: u32 = 5_000;
 const DEPRIME_DEBT_MS: u32 = GROW_STEP_MS;
 /// Floor under `JitterTuning::deprime_ms`, in callbacks. A device whose quantum is already
 /// `deprime_ms` would otherwise de-prime on the first short read. Not `pub`: cbindgen would
-/// export it unprefixed next to `PUNKTFUNK_AUDIO_*`.
+/// export it unprefixed next to `LILYNK_AUDIO_*`.
 const MIN_DEPRIME_CALLBACKS: u32 = 2;
 // A de-prime on the first short read is the defect the hysteresis exists to prevent, so hold
 // the floor at build time rather than in a test: tuning it to 1 should not compile.

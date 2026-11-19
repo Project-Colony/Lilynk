@@ -1,4 +1,4 @@
-//! Voice chat on the host (`PUNKTFUNK_AUDIO_VOICE_CHAT=host`), the Windows half.
+//! Voice chat on the host (`LILYNK_AUDIO_VOICE_CHAT=host`), the Windows half.
 //!
 //! Windows routes per application through the store `mmsys.cpl`'s "App volume and
 //! device preferences" page writes: `AudioPolicyConfig::SetPersistedDefaultAudioEndpoint

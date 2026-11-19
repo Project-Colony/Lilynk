@@ -1,28 +1,28 @@
 //! C wrapper for [`AuAdmission`]: one per elementary stream, every AU in receive order. The
-//! freeze itself has no handle: a client reports through `punktfunk_connection_recovery_*`.
+//! freeze itself has no handle: a client reports through `lilynk_connection_recovery_*`.
 
 use crate::*;
 use lilynk_core::reanchor::{AuAdmission, DecoderClass};
 
-/// [`punktfunk_au_admission_note`]'s `concealed`: the lane has no concealer.
-pub const PUNKTFUNK_CONCEALED_NONE: u32 = 0;
+/// [`lilynk_au_admission_note`]'s `concealed`: the lane has no concealer.
+pub const LILYNK_CONCEALED_NONE: u32 = 0;
 /// The concealer left every reference on a picture the decoder holds.
-pub const PUNKTFUNK_CONCEALED_DECODABLE: u32 = 1;
+pub const LILYNK_CONCEALED_DECODABLE: u32 = 1;
 /// Nothing can stand in for the lost reference.
-pub const PUNKTFUNK_CONCEALED_UNRECOVERABLE: u32 = 2;
+pub const LILYNK_CONCEALED_UNRECOVERABLE: u32 = 2;
 
-/// Create an admission rule. Free with [`punktfunk_au_admission_free`]. Never returns NULL.
+/// Create an admission rule. Free with [`lilynk_au_admission_free`]. Never returns NULL.
 #[unsafe(no_mangle)]
-pub extern "C" fn punktfunk_au_admission_new() -> *mut AuAdmission {
+pub extern "C" fn lilynk_au_admission_new() -> *mut AuAdmission {
     Box::into_raw(Box::default())
 }
 
-/// Free a rule created by [`punktfunk_au_admission_new`]. NULL is a no-op.
+/// Free a rule created by [`lilynk_au_admission_new`]. NULL is a no-op.
 ///
 /// # Safety
-/// `a` was returned by [`punktfunk_au_admission_new`] and is not used after this call.
+/// `a` was returned by [`lilynk_au_admission_new`] and is not used after this call.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_au_admission_free(a: *mut AuAdmission) {
+pub unsafe extern "C" fn lilynk_au_admission_free(a: *mut AuAdmission) {
     guard_void(|| {
         if !a.is_null() {
             // SAFETY: pointers are caller-supplied and null-checked on this path.
@@ -32,15 +32,15 @@ pub unsafe extern "C" fn punktfunk_au_admission_free(a: *mut AuAdmission) {
 }
 
 /// Fold one AU: its frame index, the index gap ahead of it (0 for none), its wire flags,
-/// whether the decoder is strict, and a `PUNKTFUNK_CONCEALED_*`. Writes whether to keep the
+/// whether the decoder is strict, and a `LILYNK_CONCEALED_*`. Writes whether to keep the
 /// AU off the decoder and whether to ask for a keyframe. An unknown `concealed` returns
-/// [`PunktfunkStatus::InvalidArg`].
+/// [`LilynkStatus::InvalidArg`].
 ///
 /// # Safety
 /// `a` is a valid handle; the out pointers are writable or NULL.
 #[unsafe(no_mangle)]
 #[allow(clippy::too_many_arguments)]
-pub unsafe extern "C" fn punktfunk_au_admission_note(
+pub unsafe extern "C" fn lilynk_au_admission_note(
     a: *mut AuAdmission,
     index: u32,
     gap: u32,
@@ -49,19 +49,19 @@ pub unsafe extern "C" fn punktfunk_au_admission_note(
     concealed: u32,
     out_withhold: *mut bool,
     out_ask_keyframe: *mut bool,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     guard(|| {
         // SAFETY: caller handle or null; `as_mut` never dereferences null.
         let Some(a) = (unsafe { a.as_mut() }) else {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         };
         let verdict = match concealed {
-            PUNKTFUNK_CONCEALED_NONE => None,
-            PUNKTFUNK_CONCEALED_DECODABLE => Some(lilynk_core::reanchor::Concealment::Decodable),
-            PUNKTFUNK_CONCEALED_UNRECOVERABLE => {
+            LILYNK_CONCEALED_NONE => None,
+            LILYNK_CONCEALED_DECODABLE => Some(lilynk_core::reanchor::Concealment::Decodable),
+            LILYNK_CONCEALED_UNRECOVERABLE => {
                 Some(lilynk_core::reanchor::Concealment::Unrecoverable)
             }
-            _ => return PunktfunkStatus::InvalidArg,
+            _ => return LilynkStatus::InvalidArg,
         };
         let class = if strict {
             DecoderClass::Strict
@@ -75,6 +75,6 @@ pub unsafe extern "C" fn punktfunk_au_admission_note(
             put(out_withhold, step.withhold);
             put(out_ask_keyframe, step.ask_keyframe);
         }
-        PunktfunkStatus::Ok
+        LilynkStatus::Ok
     })
 }

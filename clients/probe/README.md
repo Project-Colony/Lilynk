@@ -25,4 +25,4 @@ logging the HID-output feedback that comes back). Negotiation knobs
 
 The full flag reference is the module doc-comment at the top of [`src/main.rs`](src/main.rs), which
 cannot drift from the parser the way a table here would. Probe against a persistent listener with
-`lilynk-host punktfunk1-host`.
+`lilynk-host lilynk1-host`.

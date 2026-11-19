@@ -67,7 +67,7 @@ setting at **Restart Punktfunk**.
 
 The web console and its plugin port answer this machine, private and link-local addresses, and a
 Tailscale or NetBird network. A peer from the internet is refused even with the
-port forwarded. `PUNKTFUNK_UI_BIND=127.0.0.1` in `host.env` keeps both to this machine; one address
+port forwarded. `LILYNK_UI_BIND=127.0.0.1` in `host.env` keeps both to this machine; one address
 limits them to one interface.
 
 NetBird counts on its default interface, `wt0`. Any other VPN that hands out 100.64/10 addresses
@@ -80,6 +80,6 @@ machine with Sunshine — see [Switching from Sunshine](/docs/switching-from-sun
 
 | Port | Setting | Clients |
 |---|---|---|
-| Management API | `PUNKTFUNK_MGMT_BIND=IP:PORT` | Relearn it from discovery. The console, plugin runner and tray read it from `mgmt-endpoint`, which the host rewrites on every start. |
-| Native control | `PUNKTFUNK_NATIVE_PORT` | Relearn it over mDNS. A host added by address keeps the port it was added with. Video moves with it. |
-| Browser client | `PUNKTFUNK_WEBTRANSPORT_PORT` | Default 9778. |
+| Management API | `LILYNK_MGMT_BIND=IP:PORT` | Relearn it from discovery. The console, plugin runner and tray read it from `mgmt-endpoint`, which the host rewrites on every start. |
+| Native control | `LILYNK_NATIVE_PORT` | Relearn it over mDNS. A host added by address keeps the port it was added with. Video moves with it. |
+| Browser client | `LILYNK_WEBTRANSPORT_PORT` | Default 9778. |

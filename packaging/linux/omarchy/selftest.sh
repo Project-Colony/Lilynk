@@ -279,11 +279,11 @@ while IFS='|' read -r body want; do
     printf '  FAIL %s -> %s, want %s\n' "$body" "${got:-none}" "${want:-none}"; fails=$((fails + 1))
   fi
 done <<'EOF'
-PUNKTFUNK_MGMT_BIND=0.0.0.0:47991\n|47991
-PUNKTFUNK_MGMT_BIND="[::]:48123"\n|48123
-PUNKTFUNK_MGMT_BIND=0.0.0.0:47990\n|
-# PUNKTFUNK_MGMT_BIND=0.0.0.0:48123\n|
-PUNKTFUNK_MGMT_BIND=0.0.0.0:47991\nPUNKTFUNK_MGMT_BIND=\n|
+LILYNK_MGMT_BIND=0.0.0.0:47991\n|47991
+LILYNK_MGMT_BIND="[::]:48123"\n|48123
+LILYNK_MGMT_BIND=0.0.0.0:47990\n|
+# LILYNK_MGMT_BIND=0.0.0.0:48123\n|
+LILYNK_MGMT_BIND=0.0.0.0:47991\nLILYNK_MGMT_BIND=\n|
 EOF
 if [[ -z "$(moved_mgmt_port "$WORK/absent.env")" ]]; then
   printf '  ok   no host.env -> none\n'
@@ -310,7 +310,7 @@ else
   printf '  FAIL mode --status null pin: %s\n' "${got:-<empty>}"; fails=$((fails + 1))
 fi
 
-printf 'PUNKTFUNK_MGMT_BIND=127.0.0.1:47990\nPUNKTFUNK_CAPTURE_MONITOR=DP-9\n' \
+printf 'LILYNK_MGMT_BIND=127.0.0.1:47990\nLILYNK_CAPTURE_MONITOR=DP-9\n' \
   > "$mod/punktfunk/host.env"
 if got=$(XDG_CONFIG_HOME="$mod" "$SCRIPT" mode --status) && [[ "$got" == "mirror" ]]; then
   printf '  ok   mode --status honors the stronger host.env screen pin\n'
@@ -320,8 +320,8 @@ fi
 
 XDG_CONFIG_HOME="$mod" write_capture_monitor "$mod/punktfunk/display-settings.json" "" >/dev/null
 if got=$(XDG_CONFIG_HOME="$mod" "$SCRIPT" mode --status) && [[ "$got" == "dedicated" ]] &&
-   grep -qx 'PUNKTFUNK_MGMT_BIND=127.0.0.1:47990' "$mod/punktfunk/host.env" &&
-   ! grep -q '^PUNKTFUNK_CAPTURE_MONITOR=' "$mod/punktfunk/host.env"; then
+   grep -qx 'LILYNK_MGMT_BIND=127.0.0.1:47990' "$mod/punktfunk/host.env" &&
+   ! grep -q '^LILYNK_CAPTURE_MONITOR=' "$mod/punktfunk/host.env"; then
   printf '  ok   dedicated clears the stronger host.env screen pin\n'
 else
   printf '  FAIL dedicated left the host.env screen pin active\n'; fails=$((fails + 1))
@@ -368,13 +368,13 @@ chmod +x "$WORK/bin/systemctl" "$WORK/bin/lilynk-host"
 
 SYSTEMCTL_LOG="$WORK/systemctl.log"
 : > "$SYSTEMCTL_LOG"
-printf 'PUNKTFUNK_CAPTURE_MONITOR=DP-9\n' > "$mod/punktfunk/host.env"
+printf 'LILYNK_CAPTURE_MONITOR=DP-9\n' > "$mod/punktfunk/host.env"
 if PATH="$WORK/bin:$PATH" SYSTEMCTL_LOG="$SYSTEMCTL_LOG" XDG_CONFIG_HOME="$mod" \
      "$SCRIPT" mode mirror >/dev/null &&
    got=$(XDG_CONFIG_HOME="$mod" "$SCRIPT" mode --status) && [[ "$got" == "mirror" ]] &&
    python3 -c 'import json,sys; assert json.load(open(sys.argv[1]))["capture_monitor"]=="eDP-1"' \
      "$mod/punktfunk/display-settings.json" &&
-   ! grep -q '^PUNKTFUNK_CAPTURE_MONITOR=' "$mod/punktfunk/host.env"; then
+   ! grep -q '^LILYNK_CAPTURE_MONITOR=' "$mod/punktfunk/host.env"; then
   printf '  ok   mode mirror pins the primary connector and clears host.env\n'
 else
   printf '  FAIL mode mirror did not pin the primary\n'; fails=$((fails + 1))
@@ -406,10 +406,10 @@ fi
 gs="$WORK/gs/punktfunk"
 mkdir -p "$gs"
 lilynk-host() { printf '%s\n' "$*" > "$WORK/gs/host-cmd"; }
-printf 'PUNKTFUNK_MGMT_BIND=127.0.0.1:47990\nPUNKTFUNK_GAMESTREAM=0\n' > "$gs/host.env"
+printf 'LILYNK_MGMT_BIND=127.0.0.1:47990\nLILYNK_GAMESTREAM=0\n' > "$gs/host.env"
 XDG_CONFIG_HOME="$WORK/gs" enable_gamestream
-if ! grep -q '^PUNKTFUNK_GAMESTREAM=' "$gs/host.env" &&
-   grep -qx 'PUNKTFUNK_MGMT_BIND=127.0.0.1:47990' "$gs/host.env" &&
+if ! grep -q '^LILYNK_GAMESTREAM=' "$gs/host.env" &&
+   grep -qx 'LILYNK_MGMT_BIND=127.0.0.1:47990' "$gs/host.env" &&
    grep -qx 'settings set gamestream true' "$WORK/gs/host-cmd"; then
   printf '  ok   GameStream opt-in stores the setting and drops the host.env pin\n'
 else

@@ -302,7 +302,7 @@ mod aim_tests {
 /// Pin absolute coordinates to a specific output. `None` keeps size-matching.
 ///
 /// Host-level, not per-session: the injector is host-lifetime and every session shares it, so
-/// a per-session write would re-aim every other pointer. Fine for `PUNKTFUNK_CAPTURE_MONITOR`
+/// a per-session write would re-aim every other pointer. Fine for `LILYNK_CAPTURE_MONITOR`
 /// (host-wide pin; `design/per-monitor-portal-capture.md`). Do not call from a session path.
 ///
 /// The wlroots backend ignores this and aims via `stream_output::set_stream_output`, which
@@ -333,7 +333,7 @@ fn session_backend() -> Option<Backend> {
     *SESSION_BACKEND.read().unwrap_or_else(|e| e.into_inner())
 }
 
-/// The [`Backend`] an id names, in every spelling `PUNKTFUNK_INPUT_BACKEND` accepts.
+/// The [`Backend`] an id names, in every spelling `LILYNK_INPUT_BACKEND` accepts.
 /// Shared by that knob and [`set_backend_id`], so the two cannot drift.
 #[cfg(target_os = "linux")]
 fn backend_from_id(id: &str) -> Option<Backend> {
@@ -350,8 +350,8 @@ fn backend_from_id(id: &str) -> Option<Backend> {
 /// Point input at the backend this session's video resolved to; the two must not diverge.
 /// `id` is `ly_vdisplay::input_backend_id` (`gamescope`/`kwin`/`libei`/`wlr`/`wlr-layout`).
 ///
-/// Host-threaded, not `PUNKTFUNK_INPUT_BACKEND`. Call wherever a session compositor is
-/// decided. The operator-pinned `PUNKTFUNK_COMPOSITOR` path deliberately does not, so that
+/// Host-threaded, not `LILYNK_INPUT_BACKEND`. Call wherever a session compositor is
+/// decided. The operator-pinned `LILYNK_COMPOSITOR` path deliberately does not, so that
 /// knob stays in charge.
 #[cfg(target_os = "linux")]
 pub fn set_backend_id(id: &str) {
@@ -378,7 +378,7 @@ pub fn set_backend_id(_id: &str) {}
 /// `org.gnome.Mutter.RemoteDesktop` (`libei_ei_source`), so headless-capable.
 ///
 /// Order: live [`set_backend_id`] (from `ly_vdisplay::input_backend_id`), then
-/// `PUNKTFUNK_INPUT_BACKEND`, then `PUNKTFUNK_COMPOSITOR`, then the session's desktop name.
+/// `LILYNK_INPUT_BACKEND`, then `LILYNK_COMPOSITOR`, then the session's desktop name.
 /// Env rungs run only before a session publishes (and on the operator-pinned path, which
 /// publishes nothing), so a live stream never `getenv`s — see [`SESSION_BACKEND`].
 #[cfg(target_os = "linux")]
@@ -386,12 +386,12 @@ pub fn default_backend() -> Backend {
     if let Some(b) = session_backend() {
         return b;
     }
-    if let Ok(v) = std::env::var("PUNKTFUNK_INPUT_BACKEND") {
+    if let Ok(v) = std::env::var("LILYNK_INPUT_BACKEND") {
         match backend_from_id(&v) {
             Some(b) => return b,
             None => tracing::warn!(
                 value = v.trim(),
-                "unknown PUNKTFUNK_INPUT_BACKEND — auto-detecting"
+                "unknown LILYNK_INPUT_BACKEND — auto-detecting"
             ),
         }
     }
@@ -505,11 +505,11 @@ pub fn scroll_supported() -> bool {
 
 /// Full-fidelity stylus (`HOST_CAP_PEN`). Linux: [`pen::VirtualPen`] uinput tablet.
 /// Probe is "can we open the kernel's /dev/uinput" (same permission as virtual gamepads) plus
-/// the `PUNKTFUNK_PEN` row. A seat's proxy there refuses a tablet. Welcome-time; clients
+/// the `LILYNK_PEN` row. A seat's proxy there refuses a tablet. Welcome-time; clients
 /// without the bit fold pen into touch/pointer.
 #[cfg(target_os = "linux")]
 pub fn pen_supported() -> bool {
-    if !ly_host_config::row_bool("PUNKTFUNK_PEN") {
+    if !ly_host_config::row_bool("LILYNK_PEN") {
         return false;
     }
     let node = std::path::Path::new("/dev/uinput");
@@ -517,11 +517,11 @@ pub fn pen_supported() -> bool {
 }
 
 /// Synthetic PT_PEN/PT_TOUCH on Win10 1809+. Probe creates then destroys a PT_PEN device.
-/// Same `PUNKTFUNK_PEN` kill-switch. Result also stands in for PT_TOUCH (both APIs arrived
+/// Same `LILYNK_PEN` kill-switch. Result also stands in for PT_TOUCH (both APIs arrived
 /// in 1809).
 #[cfg(target_os = "windows")]
 pub fn pen_supported() -> bool {
-    if !ly_host_config::row_bool("PUNKTFUNK_PEN") {
+    if !ly_host_config::row_bool("LILYNK_PEN") {
         return false;
     }
     pen::synthetic_pen_available()
@@ -1130,7 +1130,7 @@ pub mod usbip;
 #[cfg(target_os = "linux")]
 #[path = "inject/linux/usbip_relay.rs"]
 pub mod usbip_relay;
-/// Byte-level tracing of the USB/IP socket (`PUNKTFUNK_USBIP_TRACE`). A framing bug in that
+/// Byte-level tracing of the USB/IP socket (`LILYNK_USBIP_TRACE`). A framing bug in that
 /// stream is only visible as damage the kernel notices later, so the wire itself has to be
 /// recoverable.
 #[cfg(target_os = "linux")]

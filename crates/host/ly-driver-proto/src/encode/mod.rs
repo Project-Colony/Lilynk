@@ -201,55 +201,55 @@ pub const SET_ENCODE_REQUEST_LEGACY_SIZE: usize = 120;
 #[repr(C)]
 #[derive(Clone, Copy, Pod, Zeroable, Debug, Default, PartialEq, Eq)]
 pub struct EncodeKnobs {
-    /// `PUNKTFUNK_IR_PERIOD_FRAMES`: intra-refresh wave length in frames, `>= 2`; `0` = the
+    /// `LILYNK_IR_PERIOD_FRAMES`: intra-refresh wave length in frames, `>= 2`; `0` = the
     /// default `ly_encode_core::policy::intra_refresh_period` picks.
     pub ir_period_frames: u16,
-    /// `PUNKTFUNK_LTR_INTERVAL_FRAMES`: frames between LTR marks; `0` = the backend's tuning.
+    /// `LILYNK_LTR_INTERVAL_FRAMES`: frames between LTR marks; `0` = the backend's tuning.
     pub ltr_interval_frames: u16,
-    /// `PUNKTFUNK_LTR_FORCE_AT`: spike-only self-triggered RFI at this frame; `0` = off.
+    /// `LILYNK_LTR_FORCE_AT`: spike-only self-triggered RFI at this frame; `0` = off.
     pub ltr_force_at: u16,
-    /// `PUNKTFUNK_SPLIT_ENCODE`: `0` = by pixel rate, `1` = disable, `2` = auto-forced,
+    /// `LILYNK_SPLIT_ENCODE`: `0` = by pixel rate, `1` = disable, `2` = auto-forced,
     /// `3` = two engines, `4` = three engines.
     pub split_encode: u8,
-    /// `PUNKTFUNK_NVENC_ASYNC`: `1` = the two-thread retrieve, `2` = never pipelined (a falsy
+    /// `LILYNK_NVENC_ASYNC`: `1` = the two-thread retrieve, `2` = never pipelined (a falsy
     /// value), `0` = unset: the Linux backend escalates on demand.
     pub nvenc_async: u8,
-    /// `PUNKTFUNK_NVENC_ASYNC_DEPTH`: in-flight encodes in async mode; `0` = the default
+    /// `LILYNK_NVENC_ASYNC_DEPTH`: in-flight encodes in async mode; `0` = the default
     /// `ly_encode_core::nvenc_session::async_inflight_cap` picks.
     pub nvenc_async_depth: u8,
-    /// `PUNKTFUNK_NVENC_SLICES`: H.264/HEVC slices, `1..=32`; `0` = the session's default.
+    /// `LILYNK_NVENC_SLICES`: H.264/HEVC slices, `1..=32`; `0` = the session's default.
     pub nvenc_slices: u8,
-    /// `PUNKTFUNK_NVENC_SUBFRAME`: `0` = the GPU's cap decides, `1` = never, `2` = force.
+    /// `LILYNK_NVENC_SUBFRAME`: `0` = the GPU's cap decides, `1` = never, `2` = force.
     pub nvenc_subframe: u8,
-    /// `PUNKTFUNK_NVENC_MAX_SESSIONS`: concurrent-session budget; `0` = the default the
+    /// `LILYNK_NVENC_MAX_SESSIONS`: concurrent-session budget; `0` = the default the
     /// Windows NVENC backend's `session_cap` picks.
     pub nvenc_max_sessions: u8,
-    /// `PUNKTFUNK_NVENC_SPLIT_ARBITRATE`: `1` = arm the live split experiment.
+    /// `LILYNK_NVENC_SPLIT_ARBITRATE`: `1` = arm the live split experiment.
     pub nvenc_split_arbitrate: u8,
-    /// `PUNKTFUNK_INTRA_REFRESH`: `0` = the on-demand wave only, `1` = the periodic wave on
+    /// `LILYNK_INTRA_REFRESH`: `0` = the on-demand wave only, `1` = the periodic wave on
     /// AMF/QSV too, `2` = no wave, IDR on every loss.
     pub intra_refresh: u8,
-    /// `PUNKTFUNK_AMF_USAGE`: `0` = ultralowlatency, `1` = lowlatency,
+    /// `LILYNK_AMF_USAGE`: `0` = ultralowlatency, `1` = lowlatency,
     /// `2` = lowlatency_high_quality, `3` = transcoding, `4` = highquality.
     pub amf_usage: u8,
-    /// `PUNKTFUNK_NO_AMF_LTR`: `1` = IDR-only loss recovery on AMF.
+    /// `LILYNK_NO_AMF_LTR`: `1` = IDR-only loss recovery on AMF.
     pub no_amf_ltr: u8,
-    /// `PUNKTFUNK_NO_QSV_LTR`: `1` = IDR-only loss recovery on QSV.
+    /// `LILYNK_NO_QSV_LTR`: `1` = IDR-only loss recovery on QSV.
     pub no_qsv_ltr: u8,
-    /// `PUNKTFUNK_VBV_FRAMES` in tenths of a frame interval; `0` = 10 (one frame).
+    /// `LILYNK_VBV_FRAMES` in tenths of a frame interval; `0` = 10 (one frame).
     pub vbv_tenths: u8,
-    /// `PUNKTFUNK_PYROWAVE_STREAMED_AU`: `1` = arm streamed PyroWave AUs.
+    /// `LILYNK_PYROWAVE_STREAMED_AU`: `1` = arm streamed PyroWave AUs.
     pub pyrowave_streamed_au: u8,
-    /// `PUNKTFUNK_PYROWAVE_CHUNK_KIB` / 64: streamed-AU chunk target; `0` =
+    /// `LILYNK_PYROWAVE_CHUNK_KIB` / 64: streamed-AU chunk target; `0` =
     /// `ly_encode_core::pyrowave_wire::STREAM_CHUNK_TARGET_BYTES`.
     pub pyrowave_chunk_64kib: u8,
-    /// `PUNKTFUNK_NVENC_PRESET`: `1..=7` = P1..P7; `0` = P1.
+    /// `LILYNK_NVENC_PRESET`: `1..=7` = P1..P7; `0` = P1.
     pub nvenc_preset: u8,
     /// Reserved; send `0`.
     pub _reserved: [u8; 3],
 }
 
-/// The trimmed, case-folded truthy set every `PUNKTFUNK_*` flag shares.
+/// The trimmed, case-folded truthy set every `LILYNK_*` flag shares.
 #[must_use]
 pub fn truthy(v: &str) -> bool {
     let v = v.trim();
@@ -262,24 +262,24 @@ pub fn truthy(v: &str) -> bool {
 impl EncodeKnobs {
     /// Every variable [`Self::apply_env`] knows, for a caller that walks the environment.
     pub const ENV_NAMES: [&'static str; 18] = [
-        "PUNKTFUNK_SPLIT_ENCODE",
-        "PUNKTFUNK_NVENC_ASYNC",
-        "PUNKTFUNK_NVENC_ASYNC_DEPTH",
-        "PUNKTFUNK_NVENC_SLICES",
-        "PUNKTFUNK_NVENC_SUBFRAME",
-        "PUNKTFUNK_NVENC_MAX_SESSIONS",
-        "PUNKTFUNK_NVENC_SPLIT_ARBITRATE",
-        "PUNKTFUNK_INTRA_REFRESH",
-        "PUNKTFUNK_IR_PERIOD_FRAMES",
-        "PUNKTFUNK_LTR_INTERVAL_FRAMES",
-        "PUNKTFUNK_LTR_FORCE_AT",
-        "PUNKTFUNK_AMF_USAGE",
-        "PUNKTFUNK_NO_AMF_LTR",
-        "PUNKTFUNK_NO_QSV_LTR",
-        "PUNKTFUNK_VBV_FRAMES",
-        "PUNKTFUNK_PYROWAVE_STREAMED_AU",
-        "PUNKTFUNK_PYROWAVE_CHUNK_KIB",
-        "PUNKTFUNK_NVENC_PRESET",
+        "LILYNK_SPLIT_ENCODE",
+        "LILYNK_NVENC_ASYNC",
+        "LILYNK_NVENC_ASYNC_DEPTH",
+        "LILYNK_NVENC_SLICES",
+        "LILYNK_NVENC_SUBFRAME",
+        "LILYNK_NVENC_MAX_SESSIONS",
+        "LILYNK_NVENC_SPLIT_ARBITRATE",
+        "LILYNK_INTRA_REFRESH",
+        "LILYNK_IR_PERIOD_FRAMES",
+        "LILYNK_LTR_INTERVAL_FRAMES",
+        "LILYNK_LTR_FORCE_AT",
+        "LILYNK_AMF_USAGE",
+        "LILYNK_NO_AMF_LTR",
+        "LILYNK_NO_QSV_LTR",
+        "LILYNK_VBV_FRAMES",
+        "LILYNK_PYROWAVE_STREAMED_AU",
+        "LILYNK_PYROWAVE_CHUNK_KIB",
+        "LILYNK_NVENC_PRESET",
     ];
 
     /// Set the knob `name` names from its environment spelling. An unparseable value leaves a
@@ -288,7 +288,7 @@ impl EncodeKnobs {
         let v = value.trim();
         let num = |lo: u32, hi: u32| v.parse::<u32>().ok().filter(|n| (lo..=hi).contains(n));
         match name {
-            "PUNKTFUNK_SPLIT_ENCODE" => {
+            "LILYNK_SPLIT_ENCODE" => {
                 self.split_encode = match v {
                     "0" | "disable" => 1,
                     "1" | "auto" => 2,
@@ -297,7 +297,7 @@ impl EncodeKnobs {
                     _ => self.split_encode,
                 }
             }
-            "PUNKTFUNK_NVENC_ASYNC" => {
+            "LILYNK_NVENC_ASYNC" => {
                 let falsy = ["0", "false", "no", "off"]
                     .iter()
                     .any(|f| v.eq_ignore_ascii_case(f));
@@ -309,36 +309,36 @@ impl EncodeKnobs {
                     0
                 }
             }
-            "PUNKTFUNK_NVENC_ASYNC_DEPTH" => {
+            "LILYNK_NVENC_ASYNC_DEPTH" => {
                 if let Some(n) = num(1, 255) {
                     self.nvenc_async_depth = n as u8;
                 }
             }
-            "PUNKTFUNK_NVENC_SLICES" => {
+            "LILYNK_NVENC_SLICES" => {
                 if let Some(n) = num(1, 32) {
                     self.nvenc_slices = n as u8;
                 }
             }
-            "PUNKTFUNK_NVENC_SUBFRAME" => {
+            "LILYNK_NVENC_SUBFRAME" => {
                 self.nvenc_subframe = match v {
                     "0" => 1,
                     "1" => 2,
                     _ => self.nvenc_subframe,
                 }
             }
-            "PUNKTFUNK_NVENC_PRESET" => {
+            "LILYNK_NVENC_PRESET" => {
                 let n = v.strip_prefix(['p', 'P']).unwrap_or(v);
                 if let Some(n) = n.parse::<u8>().ok().filter(|n| (1..=7).contains(n)) {
                     self.nvenc_preset = n;
                 }
             }
-            "PUNKTFUNK_NVENC_MAX_SESSIONS" => {
+            "LILYNK_NVENC_MAX_SESSIONS" => {
                 if let Some(n) = num(1, 255) {
                     self.nvenc_max_sessions = n as u8;
                 }
             }
-            "PUNKTFUNK_NVENC_SPLIT_ARBITRATE" => self.nvenc_split_arbitrate = (v == "1") as u8,
-            "PUNKTFUNK_INTRA_REFRESH" => {
+            "LILYNK_NVENC_SPLIT_ARBITRATE" => self.nvenc_split_arbitrate = (v == "1") as u8,
+            "LILYNK_INTRA_REFRESH" => {
                 self.intra_refresh = if v == "0" {
                     2
                 } else if truthy(v) {
@@ -347,22 +347,22 @@ impl EncodeKnobs {
                     0
                 }
             }
-            "PUNKTFUNK_IR_PERIOD_FRAMES" => {
+            "LILYNK_IR_PERIOD_FRAMES" => {
                 if let Some(n) = num(2, u16::MAX as u32) {
                     self.ir_period_frames = n as u16;
                 }
             }
-            "PUNKTFUNK_LTR_INTERVAL_FRAMES" => {
+            "LILYNK_LTR_INTERVAL_FRAMES" => {
                 if let Some(n) = num(1, u16::MAX as u32) {
                     self.ltr_interval_frames = n as u16;
                 }
             }
-            "PUNKTFUNK_LTR_FORCE_AT" => {
+            "LILYNK_LTR_FORCE_AT" => {
                 if let Some(n) = num(1, u16::MAX as u32) {
                     self.ltr_force_at = n as u16;
                 }
             }
-            "PUNKTFUNK_AMF_USAGE" => {
+            "LILYNK_AMF_USAGE" => {
                 self.amf_usage = match v {
                     "ultralowlatency" => 0,
                     "lowlatency" => 1,
@@ -372,16 +372,16 @@ impl EncodeKnobs {
                     _ => self.amf_usage,
                 }
             }
-            "PUNKTFUNK_NO_AMF_LTR" => self.no_amf_ltr = truthy(v) as u8,
-            "PUNKTFUNK_NO_QSV_LTR" => self.no_qsv_ltr = truthy(v) as u8,
-            "PUNKTFUNK_VBV_FRAMES" => {
+            "LILYNK_NO_AMF_LTR" => self.no_amf_ltr = truthy(v) as u8,
+            "LILYNK_NO_QSV_LTR" => self.no_qsv_ltr = truthy(v) as u8,
+            "LILYNK_VBV_FRAMES" => {
                 // Tenths, so `1.5` survives the byte; `0` and garbage keep the default.
                 if let Some(t) = parse_tenths(v).filter(|t| (1..=255).contains(t)) {
                     self.vbv_tenths = t as u8;
                 }
             }
-            "PUNKTFUNK_PYROWAVE_STREAMED_AU" => self.pyrowave_streamed_au = (v == "1") as u8,
-            "PUNKTFUNK_PYROWAVE_CHUNK_KIB" => {
+            "LILYNK_PYROWAVE_STREAMED_AU" => self.pyrowave_streamed_au = (v == "1") as u8,
+            "LILYNK_PYROWAVE_CHUNK_KIB" => {
                 // 4..=8192 KiB in the encoder; the byte carries 64 KiB steps, so the floor
                 // rounds up to one step.
                 if let Some(k) = num(4, 8192) {
@@ -393,7 +393,7 @@ impl EncodeKnobs {
         true
     }
 
-    /// `PUNKTFUNK_VBV_FRAMES` as the encoders read it: frame intervals, default one.
+    /// `LILYNK_VBV_FRAMES` as the encoders read it: frame intervals, default one.
     #[must_use]
     pub fn vbv_frames(&self) -> f64 {
         if self.vbv_tenths == 0 {
@@ -1108,7 +1108,7 @@ mod tests {
         req.wire_seq_base = 0x7FFF_FFFF;
         req.backends = [1, 2, 0, 0];
 
-        req.knobs.apply_env("PUNKTFUNK_NVENC_SLICES", "4");
+        req.knobs.apply_env("LILYNK_NVENC_SLICES", "4");
         (req.encode_width, req.encode_height) = (1920, 1080);
 
         let bytes = bytemuck::bytes_of(&req);
@@ -1185,7 +1185,7 @@ mod tests {
     #[test]
     fn encode_knobs_parse_their_env_spellings() {
         let mut k = EncodeKnobs::default();
-        assert!(!k.apply_env("PUNKTFUNK_NOT_A_KNOB", "1"));
+        assert!(!k.apply_env("LILYNK_NOT_A_KNOB", "1"));
         for name in EncodeKnobs::ENV_NAMES {
             assert!(k.apply_env(name, ""), "{name} must be a knob name");
         }
@@ -1195,46 +1195,46 @@ mod tests {
             "empty values leave every default"
         );
 
-        assert!(k.apply_env("PUNKTFUNK_SPLIT_ENCODE", "disable"));
+        assert!(k.apply_env("LILYNK_SPLIT_ENCODE", "disable"));
         assert_eq!(k.split_encode, 1);
-        k.apply_env("PUNKTFUNK_SPLIT_ENCODE", "3");
+        k.apply_env("LILYNK_SPLIT_ENCODE", "3");
         assert_eq!(k.split_encode, 4);
-        k.apply_env("PUNKTFUNK_SPLIT_ENCODE", "garbage");
+        k.apply_env("LILYNK_SPLIT_ENCODE", "garbage");
         assert_eq!(k.split_encode, 4, "garbage keeps the last value");
-        k.apply_env("PUNKTFUNK_NVENC_ASYNC", " yes ");
+        k.apply_env("LILYNK_NVENC_ASYNC", " yes ");
         assert_eq!(k.nvenc_async, 1);
-        k.apply_env("PUNKTFUNK_NVENC_ASYNC", "Off");
+        k.apply_env("LILYNK_NVENC_ASYNC", "Off");
         assert_eq!(k.nvenc_async, 2, "a falsy value vetoes pipelining");
-        k.apply_env("PUNKTFUNK_NVENC_ASYNC", "maybe");
+        k.apply_env("LILYNK_NVENC_ASYNC", "maybe");
         assert_eq!(k.nvenc_async, 0);
-        k.apply_env("PUNKTFUNK_NVENC_SUBFRAME", "0");
+        k.apply_env("LILYNK_NVENC_SUBFRAME", "0");
         assert_eq!(k.nvenc_subframe, 1);
-        k.apply_env("PUNKTFUNK_NVENC_PRESET", "P4");
+        k.apply_env("LILYNK_NVENC_PRESET", "P4");
         assert_eq!(k.nvenc_preset, 4);
-        k.apply_env("PUNKTFUNK_NVENC_PRESET", "8");
+        k.apply_env("LILYNK_NVENC_PRESET", "8");
         assert_eq!(k.nvenc_preset, 4, "past P7 is ignored");
-        k.apply_env("PUNKTFUNK_NVENC_SLICES", "33");
+        k.apply_env("LILYNK_NVENC_SLICES", "33");
         assert_eq!(k.nvenc_slices, 0, "out of range is ignored");
-        k.apply_env("PUNKTFUNK_INTRA_REFRESH", "0");
+        k.apply_env("LILYNK_INTRA_REFRESH", "0");
         assert_eq!(k.intra_refresh, 2);
-        k.apply_env("PUNKTFUNK_INTRA_REFRESH", "on");
+        k.apply_env("LILYNK_INTRA_REFRESH", "on");
         assert_eq!(k.intra_refresh, 1);
-        k.apply_env("PUNKTFUNK_INTRA_REFRESH", "maybe");
+        k.apply_env("LILYNK_INTRA_REFRESH", "maybe");
         assert_eq!(k.intra_refresh, 0);
-        k.apply_env("PUNKTFUNK_IR_PERIOD_FRAMES", "1");
+        k.apply_env("LILYNK_IR_PERIOD_FRAMES", "1");
         assert_eq!(k.ir_period_frames, 0, "a one-frame wave is not a wave");
-        k.apply_env("PUNKTFUNK_IR_PERIOD_FRAMES", "60");
+        k.apply_env("LILYNK_IR_PERIOD_FRAMES", "60");
         assert_eq!(k.ir_period_frames, 60);
-        k.apply_env("PUNKTFUNK_AMF_USAGE", "highquality");
+        k.apply_env("LILYNK_AMF_USAGE", "highquality");
         assert_eq!(k.amf_usage, 4);
-        k.apply_env("PUNKTFUNK_VBV_FRAMES", "1.5");
+        k.apply_env("LILYNK_VBV_FRAMES", "1.5");
         assert_eq!(k.vbv_tenths, 15);
         assert_eq!(k.vbv_frames(), 1.5);
-        k.apply_env("PUNKTFUNK_VBV_FRAMES", "-1");
+        k.apply_env("LILYNK_VBV_FRAMES", "-1");
         assert_eq!(k.vbv_tenths, 15);
-        k.apply_env("PUNKTFUNK_PYROWAVE_CHUNK_KIB", "4");
+        k.apply_env("LILYNK_PYROWAVE_CHUNK_KIB", "4");
         assert_eq!(k.pyrowave_chunk_64kib, 1, "the floor rounds up to one step");
-        k.apply_env("PUNKTFUNK_PYROWAVE_CHUNK_KIB", "8192");
+        k.apply_env("LILYNK_PYROWAVE_CHUNK_KIB", "8192");
         assert_eq!(k.pyrowave_chunk_64kib, 128);
         assert!(truthy("TRUE") && truthy(" 1") && !truthy("2") && !truthy(""));
     }

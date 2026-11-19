@@ -34,7 +34,7 @@ import sys
 SURFACES = {
     "kit": ["crates/client/ly-console-ui/src"],
     "core": ["crates/client/ly-client-core/src"],
-    "apple": ["clients/apple/Sources", "clients/apple/PunktfunkWidgets"],
+    "apple": ["clients/apple/Sources", "clients/apple/LilynkWidgets"],
     "android": ["clients/android/app/src/main", "clients/android/kit/src/main"],
     "linux": ["clients/linux/src"],
     "windows": ["clients/windows/src"],

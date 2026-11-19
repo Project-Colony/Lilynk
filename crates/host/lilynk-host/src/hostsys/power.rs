@@ -237,7 +237,7 @@ fn os_probe(verb: PowerVerb) -> Availability {
             }
         }
         PowerVerb::Reboot | PowerVerb::Shutdown => Availability::yes(),
-        PowerVerb::Restart if std::env::var_os("PUNKTFUNK_SERVICE_CHILD").is_some() => {
+        PowerVerb::Restart if std::env::var_os("LILYNK_SERVICE_CHILD").is_some() => {
             Availability::yes()
         }
         PowerVerb::Restart => Availability::refused(

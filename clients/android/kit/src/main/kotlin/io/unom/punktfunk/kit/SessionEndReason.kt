@@ -1,7 +1,7 @@
 package io.unom.punktfunk.kit
 
 /**
- * Why a stream session ended — the Kotlin mirror of `lilynk_core::client::PunktfunkEndReason`,
+ * Why a stream session ended — the Kotlin mirror of `lilynk_core::client::LilynkEndReason`,
  * read via [NativeBridge.nativeEndReason].
  *
  * The distinction that matters to a UI is **normal vs alarming**, and it is not a spectrum: a

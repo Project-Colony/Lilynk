@@ -149,7 +149,7 @@ fn rig_for(account: &str, uid: u32, getent: Option<Getent>) -> Rig {
         .map(|n| serde_json::json!({ "name": format!("Device {n}"), "fingerprint": device(n).fingerprint, "grants": 7 }))
         .collect();
     let paired = serde_json::json!({ "clients": records }).to_string();
-    std::fs::write(box_dir.join("punktfunk1-paired.json"), paired).unwrap();
+    std::fs::write(box_dir.join("lilynk1-paired.json"), paired).unwrap();
     std::fs::write(box_dir.join("native-cert.pem"), CERT).unwrap();
 
     let request = CreateSeat {
@@ -319,7 +319,7 @@ impl Rig {
 
     /// The devices the seat's host admits, by number: its trust copy's pairing list.
     fn on_seat(&self) -> Vec<u8> {
-        let path = shared::trust_dir(&self.state(), &self.seat.id).join("punktfunk1-paired.json");
+        let path = shared::trust_dir(&self.state(), &self.seat.id).join("lilynk1-paired.json");
         let paired: serde_json::Value =
             serde_json::from_slice(&std::fs::read(path).unwrap()).unwrap();
         let clients = paired["clients"].as_array().unwrap();
@@ -702,7 +702,7 @@ fn the_seat_s_pairing_list_is_the_box_s_filtered() {
         { "name": "Tablet", "fingerprint": tablet.fingerprint.to_ascii_uppercase() },
         { "name": "No print" },
     ]});
-    std::fs::write(box_dir.join("punktfunk1-paired.json"), records.to_string()).unwrap();
+    std::fs::write(box_dir.join("lilynk1-paired.json"), records.to_string()).unwrap();
     let admitted = BTreeSet::from([
         device(1).fingerprint,
         tablet.fingerprint,
@@ -711,8 +711,7 @@ fn the_seat_s_pairing_list_is_the_box_s_filtered() {
     shared::refresh_person_trust(&box_dir, &state, &id, reader, &admitted).unwrap();
     let trust = shared::trust_dir(&state, &id);
     let copy: serde_json::Value =
-        serde_json::from_slice(&std::fs::read(trust.join("punktfunk1-paired.json")).unwrap())
-            .unwrap();
+        serde_json::from_slice(&std::fs::read(trust.join("lilynk1-paired.json")).unwrap()).unwrap();
     assert_eq!(
         copy["clients"],
         serde_json::json!([records["clients"][0], records["clients"][2]])
@@ -725,13 +724,13 @@ fn the_seat_s_pairing_list_is_the_box_s_filtered() {
     let empty = serde_json::json!({ "clients": [] });
     let oversized = vec![b' '; shared::MAX_TRUST_BYTES as usize + 1];
     for bad in [b"not json".to_vec(), b"[1]".to_vec(), oversized] {
-        std::fs::write(box_dir.join("punktfunk1-paired.json"), bad).unwrap();
+        std::fs::write(box_dir.join("lilynk1-paired.json"), bad).unwrap();
         assert!(shared::rewrite_admitted(&box_dir, &state, &id, &admitted).unwrap());
         let copy: serde_json::Value =
-            serde_json::from_slice(&std::fs::read(trust.join("punktfunk1-paired.json")).unwrap())
+            serde_json::from_slice(&std::fs::read(trust.join("lilynk1-paired.json")).unwrap())
                 .unwrap();
         assert_eq!(copy, empty);
-        std::fs::write(box_dir.join("punktfunk1-paired.json"), records.to_string()).unwrap();
+        std::fs::write(box_dir.join("lilynk1-paired.json"), records.to_string()).unwrap();
         assert!(shared::rewrite_admitted(&box_dir, &state, &id, &admitted).unwrap());
     }
     assert!(

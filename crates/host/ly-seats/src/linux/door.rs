@@ -20,11 +20,7 @@ use std::io::Read;
 use std::path::{Path, PathBuf};
 
 /// The keys the door takes from the owner's files, in the order it writes them.
-const PORT_KEYS: [&str; 3] = [
-    "PUNKTFUNK_MGMT_BIND",
-    "PUNKTFUNK_NATIVE_PORT",
-    "PUNKTFUNK_UI_BIND",
-];
+const PORT_KEYS: [&str; 3] = ["LILYNK_MGMT_BIND", "LILYNK_NATIVE_PORT", "LILYNK_UI_BIND"];
 
 /// The most [`ports`] reads: the owner's two env files, theirs to make any size.
 const MAX_PORT_INPUT: u64 = 1 << 20;
@@ -175,15 +171,15 @@ const FILES: [&str; 8] = [
     "native-cert.pem",
     "native-key.pem",
     "uniqueid",
-    "punktfunk1-paired.json",
+    "lilynk1-paired.json",
     "profiles.json",
     "web-password",
     "web-session-key",
     "web-session-epoch",
 ];
 /// SteamOS keeps the console's password in `web.env`, beside its session secret and bind.
-const PASSWORD_LINE: &str = "^[[:space:]]*PUNKTFUNK_UI_PASSWORD(_HASH)?=";
-const SECRET_LINE: &str = "^[[:space:]]*PUNKTFUNK_UI_SECRET=";
+const PASSWORD_LINE: &str = "^[[:space:]]*LILYNK_UI_PASSWORD(_HASH)?=";
+const SECRET_LINE: &str = "^[[:space:]]*LILYNK_UI_SECRET=";
 /// A write as one side: stdin beside `$1`, which [`hand_over`] moves over it or drops.
 const TO_DOOR: &str = r#"umask 077; cat >"$1.tmp""#;
 const TO_OWNER: &str = r#"umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp""#;
@@ -1314,84 +1310,84 @@ mod tests {
         let rows: [(&str, &[u8], &str); 24] = [
             (
                 "the three keys, in the door's order (9c97fefed)",
-                b"PUNKTFUNK_UI_BIND=127.0.0.1:47990\nPUNKTFUNK_NATIVE_PORT=48000\nPUNKTFUNK_MGMT_BIND=0.0.0.0:48001\n",
-                "PUNKTFUNK_MGMT_BIND=0.0.0.0:48001\nPUNKTFUNK_NATIVE_PORT=48000\nPUNKTFUNK_UI_BIND=127.0.0.1:47990\n",
+                b"LILYNK_UI_BIND=127.0.0.1:47990\nLILYNK_NATIVE_PORT=48000\nLILYNK_MGMT_BIND=0.0.0.0:48001\n",
+                "LILYNK_MGMT_BIND=0.0.0.0:48001\nLILYNK_NATIVE_PORT=48000\nLILYNK_UI_BIND=127.0.0.1:47990\n",
             ),
             (
                 "no other key",
-                b"PUNKTFUNK_LOG=debug\nRUST_LOG=trace\nPUNKTFUNK_NATIVE_PORT=48000\nPUNKTFUNK_UI_PASSWORD=x\n",
-                "PUNKTFUNK_NATIVE_PORT=48000\n",
+                b"LILYNK_LOG=debug\nRUST_LOG=trace\nLILYNK_NATIVE_PORT=48000\nLILYNK_UI_PASSWORD=x\n",
+                "LILYNK_NATIVE_PORT=48000\n",
             ),
             (
                 "the last line wins",
-                b"PUNKTFUNK_NATIVE_PORT=48000\nPUNKTFUNK_NATIVE_PORT=49000\n",
-                "PUNKTFUNK_NATIVE_PORT=49000\n",
+                b"LILYNK_NATIVE_PORT=48000\nLILYNK_NATIVE_PORT=49000\n",
+                "LILYNK_NATIVE_PORT=49000\n",
             ),
             (
                 "a dropped last line drops the key",
-                b"PUNKTFUNK_NATIVE_PORT=48000\nPUNKTFUNK_NATIVE_PORT=48 000\n",
+                b"LILYNK_NATIVE_PORT=48000\nLILYNK_NATIVE_PORT=48 000\n",
                 "",
             ),
             (
                 "an empty last line drops the key",
-                b"PUNKTFUNK_NATIVE_PORT=48000\nPUNKTFUNK_NATIVE_PORT=\n",
+                b"LILYNK_NATIVE_PORT=48000\nLILYNK_NATIVE_PORT=\n",
                 "",
             ),
-            ("double quotes off", b"PUNKTFUNK_NATIVE_PORT=\"48000\"\n", "PUNKTFUNK_NATIVE_PORT=48000\n"),
-            ("single quotes off", b"PUNKTFUNK_MGMT_BIND='[::1]:48001'\n", "PUNKTFUNK_MGMT_BIND=[::1]:48001\n"),
-            ("one pair only", b"PUNKTFUNK_NATIVE_PORT=\"\"48000\"\"\n", ""),
-            ("quotes that don't match stay", b"PUNKTFUNK_NATIVE_PORT=\"48000'\n", ""),
-            ("a lone quote", b"PUNKTFUNK_NATIVE_PORT=\"\n", ""),
-            ("empty quotes are an empty value", b"PUNKTFUNK_NATIVE_PORT=\"\"\n", ""),
+            ("double quotes off", b"LILYNK_NATIVE_PORT=\"48000\"\n", "LILYNK_NATIVE_PORT=48000\n"),
+            ("single quotes off", b"LILYNK_MGMT_BIND='[::1]:48001'\n", "LILYNK_MGMT_BIND=[::1]:48001\n"),
+            ("one pair only", b"LILYNK_NATIVE_PORT=\"\"48000\"\"\n", ""),
+            ("quotes that don't match stay", b"LILYNK_NATIVE_PORT=\"48000'\n", ""),
+            ("a lone quote", b"LILYNK_NATIVE_PORT=\"\n", ""),
+            ("empty quotes are an empty value", b"LILYNK_NATIVE_PORT=\"\"\n", ""),
             (
                 "blanks around the key and the value, and a CR",
-                b" \tPUNKTFUNK_NATIVE_PORT \t= 48000 \r\n",
-                "PUNKTFUNK_NATIVE_PORT=48000\n",
+                b" \tLILYNK_NATIVE_PORT \t= 48000 \r\n",
+                "LILYNK_NATIVE_PORT=48000\n",
             ),
             (
                 "blanks outside the quotes go, inside they stay",
-                b"PUNKTFUNK_NATIVE_PORT= \"48000\" \nPUNKTFUNK_UI_BIND=\" 127.0.0.1:47990\"\n",
-                "PUNKTFUNK_NATIVE_PORT=48000\n",
+                b"LILYNK_NATIVE_PORT= \"48000\" \nLILYNK_UI_BIND=\" 127.0.0.1:47990\"\n",
+                "LILYNK_NATIVE_PORT=48000\n",
             ),
             (
                 "VT and FF are blanks",
-                b"\x0bPUNKTFUNK_NATIVE_PORT\x0c=\x0b48000\x0c\n",
-                "PUNKTFUNK_NATIVE_PORT=48000\n",
+                b"\x0bLILYNK_NATIVE_PORT\x0c=\x0b48000\x0c\n",
+                "LILYNK_NATIVE_PORT=48000\n",
             ),
             (
                 "address characters",
-                b"PUNKTFUNK_MGMT_BIND=fe80::1%eth0\nPUNKTFUNK_UI_BIND=box-1.lan_x:47990\n",
-                "PUNKTFUNK_MGMT_BIND=fe80::1%eth0\nPUNKTFUNK_UI_BIND=box-1.lan_x:47990\n",
+                b"LILYNK_MGMT_BIND=fe80::1%eth0\nLILYNK_UI_BIND=box-1.lan_x:47990\n",
+                "LILYNK_MGMT_BIND=fe80::1%eth0\nLILYNK_UI_BIND=box-1.lan_x:47990\n",
             ),
             (
                 "anything else drops the line",
-                b"PUNKTFUNK_NATIVE_PORT=$(reboot)\nPUNKTFUNK_MGMT_BIND=0.0.0.0:48001 # lan\nPUNKTFUNK_UI_BIND=a=b\n",
+                b"LILYNK_NATIVE_PORT=$(reboot)\nLILYNK_MGMT_BIND=0.0.0.0:48001 # lan\nLILYNK_UI_BIND=a=b\n",
                 "",
             ),
-            ("a byte past ASCII drops the line", "PUNKTFUNK_UI_BIND=b\u{fc}:1\n".as_bytes(), ""),
+            ("a byte past ASCII drops the line", "LILYNK_UI_BIND=b\u{fc}:1\n".as_bytes(), ""),
             (
                 "only a line that is the key",
-                b"export PUNKTFUNK_NATIVE_PORT=1\n#PUNKTFUNK_NATIVE_PORT=2\nPUNKTFUNK_NATIVE_PORTS=3\npunktfunk_native_port=4\nPUNKTFUNK NATIVE_PORT=5\n",
+                b"export LILYNK_NATIVE_PORT=1\n#LILYNK_NATIVE_PORT=2\nLILYNK_NATIVE_PORTS=3\nlilynk_native_port=4\nPUNKTFUNK NATIVE_PORT=5\n",
                 "",
             ),
             (
                 "web.env is read after host.env (9c97fefed)",
-                b"PUNKTFUNK_UI_BIND=0.0.0.0:47990\nPUNKTFUNK_UI_BIND=127.0.0.1:47990\n",
-                "PUNKTFUNK_UI_BIND=127.0.0.1:47990\n",
+                b"LILYNK_UI_BIND=0.0.0.0:47990\nLILYNK_UI_BIND=127.0.0.1:47990\n",
+                "LILYNK_UI_BIND=127.0.0.1:47990\n",
             ),
             (
                 "web.env without host.env",
-                b"PUNKTFUNK_UI_PASSWORD_HASH=x\nPUNKTFUNK_UI_BIND=127.0.0.1:47990\n",
-                "PUNKTFUNK_UI_BIND=127.0.0.1:47990\n",
+                b"LILYNK_UI_PASSWORD_HASH=x\nLILYNK_UI_BIND=127.0.0.1:47990\n",
+                "LILYNK_UI_BIND=127.0.0.1:47990\n",
             ),
             (
                 "a host.env without its last newline joins web.env's first line",
-                b"PUNKTFUNK_NATIVE_PORT=48000PUNKTFUNK_UI_BIND=127.0.0.1:47990\n",
+                b"LILYNK_NATIVE_PORT=48000LILYNK_UI_BIND=127.0.0.1:47990\n",
                 "",
             ),
-            ("a last line without a newline", b"PUNKTFUNK_NATIVE_PORT=48000", "PUNKTFUNK_NATIVE_PORT=48000\n"),
+            ("a last line without a newline", b"LILYNK_NATIVE_PORT=48000", "LILYNK_NATIVE_PORT=48000\n"),
             ("nothing, an empty file", b"", ""),
-            ("a NUL anywhere: grep passes no line", b"PUNKTFUNK_NATIVE_PORT=48000\n\0\n", ""),
+            ("a NUL anywhere: grep passes no line", b"LILYNK_NATIVE_PORT=48000\n\0\n", ""),
         ];
         for (row, input, want) in rows {
             assert_eq!(port_lines(input), want, "{row}");
@@ -1404,7 +1400,7 @@ mod tests {
         use std::os::unix::fs::PermissionsExt;
         let dir = tempfile::tempdir().unwrap();
         let to = dir.path().join("host.env");
-        let kept = "PUNKTFUNK_NATIVE_PORT=48000\n";
+        let kept = "LILYNK_NATIVE_PORT=48000\n";
         ports(kept.as_bytes(), &to).unwrap();
         assert_eq!(std::fs::read_to_string(&to).unwrap(), kept);
         let mode = std::fs::metadata(&to).unwrap().permissions().mode();
@@ -1464,12 +1460,9 @@ mod tests {
         ("native-cert.pem", "cert-alice"),
         ("native-key.pem", "key-alice"),
         ("uniqueid", "id-alice"),
-        ("web-password", "PUNKTFUNK_UI_PASSWORD_HASH=alice-1"),
+        ("web-password", "LILYNK_UI_PASSWORD_HASH=alice-1"),
         ("host-settings.json", "{\"alice\":1}"),
-        (
-            "host.env",
-            "PUNKTFUNK_NATIVE_PORT=48100\nPUNKTFUNK_LOG=debug",
-        ),
+        ("host.env", "LILYNK_NATIVE_PORT=48100\nLILYNK_LOG=debug"),
         ("profiles/alice.png", "png-alice"),
         ("profiles/a b.png", "png-ab"),
         ("profiles/c%d.png", "png-cd"),
@@ -1478,16 +1471,16 @@ mod tests {
         ("native-cert.pem", "cert-door"),
         ("native-key.pem", "key-door"),
         ("uniqueid", "id-door"),
-        ("punktfunk1-paired.json", "[]"),
+        ("lilynk1-paired.json", "[]"),
         (
             "web-password",
-            "PUNKTFUNK_UI_PASSWORD_HASH=door-1\nPUNKTFUNK_UI_SECRET=s-1\nPUNKTFUNK_UI_PASSWORD_HASH=door-2",
+            "LILYNK_UI_PASSWORD_HASH=door-1\nLILYNK_UI_SECRET=s-1\nLILYNK_UI_PASSWORD_HASH=door-2",
         ),
         ("web-session-epoch", "7"),
         ("profiles/alice.png", "png-door"),
         ("profiles/c%d.png", "png-cd"),
     ];
-    const STEAMOS_WEB_ENV: &str = "PUNKTFUNK_UI_BIND=127.0.0.1:47990\nPUNKTFUNK_UI_PASSWORD_HASH=alice-1\n  PUNKTFUNK_UI_SECRET=s-1\nPUNKTFUNK_LOG=debug";
+    const STEAMOS_WEB_ENV: &str = "LILYNK_UI_BIND=127.0.0.1:47990\nLILYNK_UI_PASSWORD_HASH=alice-1\n  LILYNK_UI_SECRET=s-1\nLILYNK_LOG=debug";
 
     fn world(has: &[&str], active: bool) -> World {
         World {
@@ -1574,7 +1567,7 @@ mod tests {
         let mut world = world(&ALL_HAS, true);
         world.owner = vec![(
             "web.env",
-            "PUNKTFUNK_UI_BIND=127.0.0.1:47990\nPUNKTFUNK_UI_PASSWORD_HASH=alice-1\nPUNKTFUNK_UI_SECRET=s-1",
+            "LILYNK_UI_BIND=127.0.0.1:47990\nLILYNK_UI_PASSWORD_HASH=alice-1\nLILYNK_UI_SECRET=s-1",
         )];
         world.door = DOOR_FILES.to_vec();
         Scenario {
@@ -1598,10 +1591,10 @@ mod tests {
     fn ports_owner() -> Scenario {
         let mut world = world(&ALL_HAS, true);
         world.owner = vec![
-            ("host.env", "PUNKTFUNK_NATIVE_PORT=48100"),
-            ("web.env", "PUNKTFUNK_UI_BIND=127.0.0.1:47990"),
+            ("host.env", "LILYNK_NATIVE_PORT=48100"),
+            ("web.env", "LILYNK_UI_BIND=127.0.0.1:47990"),
         ];
-        world.door = vec![("host.env", "PUNKTFUNK_MGMT_BIND=0.0.0.0:48001")];
+        world.door = vec![("host.env", "LILYNK_MGMT_BIND=0.0.0.0:48001")];
         Scenario {
             record: Some("alice"),
             port_file: true,
@@ -1612,8 +1605,8 @@ mod tests {
     /// The first door start since the port file: the box directory still holds the last copy.
     fn ports_legacy() -> Scenario {
         let mut world = world(&ALL_HAS, true);
-        world.owner = vec![("host.env", "PUNKTFUNK_NATIVE_PORT=48100")];
-        world.door = vec![("host.env", "PUNKTFUNK_MGMT_BIND=0.0.0.0:48001")];
+        world.owner = vec![("host.env", "LILYNK_NATIVE_PORT=48100")];
+        world.door = vec![("host.env", "LILYNK_MGMT_BIND=0.0.0.0:48001")];
         Scenario {
             record: Some("alice"),
             ..scenario("ports", "", world)
@@ -1622,7 +1615,7 @@ mod tests {
 
     fn ports_gone() -> Scenario {
         let mut world = world(&ALL_HAS, true);
-        world.door = vec![("host.env", "PUNKTFUNK_MGMT_BIND=0.0.0.0:48001")];
+        world.door = vec![("host.env", "LILYNK_MGMT_BIND=0.0.0.0:48001")];
         Scenario {
             record: Some("dave"),
             ..scenario("ports", "", world)
@@ -1678,8 +1671,8 @@ mod tests {
                     let lines = self.tree("/var/lib/punktfunk/web-password").unwrap_or("");
                     let last = lines.lines().rev().find(|l| {
                         let l = l.trim_start();
-                        l.starts_with("PUNKTFUNK_UI_PASSWORD=")
-                            || l.starts_with("PUNKTFUNK_UI_PASSWORD_HASH=")
+                        l.starts_with("LILYNK_UI_PASSWORD=")
+                            || l.starts_with("LILYNK_UI_PASSWORD_HASH=")
                     });
                     (0, last.map(|l| format!("{l}\n")).unwrap_or_default())
                 }
@@ -1784,7 +1777,7 @@ mod tests {
             std::fs::create_dir(state.join("library")).unwrap();
         }
         if scenario.port_file {
-            std::fs::write(state.join("host.env"), "PUNKTFUNK_NATIVE_PORT=1\n").unwrap();
+            std::fs::write(state.join("host.env"), "LILYNK_NATIVE_PORT=1\n").unwrap();
         }
         let path = |p: PathBuf| p.into_os_string().into_string().unwrap();
         let door = Door {
@@ -1880,19 +1873,19 @@ mod tests {
                 "the owner's, over the last copy",
                 ports_owner,
                 PORTS,
-                Some("PUNKTFUNK_NATIVE_PORT=48100\nPUNKTFUNK_UI_BIND=127.0.0.1:47990\n"),
+                Some("LILYNK_NATIVE_PORT=48100\nLILYNK_UI_BIND=127.0.0.1:47990\n"),
             ),
             (
                 "the box's legacy copy, then the owner's",
                 ports_legacy,
                 PORTS_LEGACY,
-                Some("PUNKTFUNK_NATIVE_PORT=48100\n"),
+                Some("LILYNK_NATIVE_PORT=48100\n"),
             ),
             (
                 "a gone owner: the legacy copy only",
                 ports_gone,
                 PORTS_GONE,
-                Some("PUNKTFUNK_MGMT_BIND=0.0.0.0:48001\n"),
+                Some("LILYNK_MGMT_BIND=0.0.0.0:48001\n"),
             ),
             ("no record: the account only", ports_none, PORTS_NONE, None),
         ];
@@ -2056,14 +2049,14 @@ mod tests {
         let avatars = format!("runuser -u punktfunk -- rm -rf {BOX_DIR}/profiles");
         let mut stale = on_fresh();
         stale.world.door = vec![
-            ("punktfunk1-paired.json", "[\"carol's phone\"]"),
+            ("lilynk1-paired.json", "[\"carol's phone\"]"),
             ("web-session-key", "carol"),
             ("profiles/carol.png", "png-carol"),
         ];
         let ran = switch(stale);
         assert_eq!(ran.exit, 0);
         let lacks = [
-            "punktfunk1-paired.json",
+            "lilynk1-paired.json",
             "profiles.json",
             "web-session-key",
             "web-session-epoch",
@@ -2139,8 +2132,8 @@ mod tests {
         "runuser -u alice -- cat -- /home/alice/.config/punktfunk/uniqueid",
         r#"runuser -u punktfunk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/punktfunk/uniqueid"#,
         r#"runuser -u punktfunk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/punktfunk/uniqueid"#,
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/punktfunk1-paired.json",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/punktfunk1-paired.json",
+        "runuser -u alice -- test -f /home/alice/.config/punktfunk/lilynk1-paired.json",
+        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/lilynk1-paired.json",
         "runuser -u alice -- test -f /home/alice/.config/punktfunk/profiles.json",
         "runuser -u punktfunk -- rm -f /var/lib/punktfunk/profiles.json",
         "runuser -u alice -- test -f /home/alice/.config/punktfunk/web-password",
@@ -2223,7 +2216,7 @@ mod tests {
         "runuser -u bob -- cat -- /home/bob/.config/punktfunk/uniqueid",
         r#"runuser -u punktfunk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/punktfunk/uniqueid"#,
         r#"runuser -u punktfunk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/punktfunk/uniqueid"#,
-        "runuser -u bob -- test -f /home/bob/.config/punktfunk/punktfunk1-paired.json",
+        "runuser -u bob -- test -f /home/bob/.config/punktfunk/lilynk1-paired.json",
         "runuser -u bob -- test -f /home/bob/.config/punktfunk/profiles.json",
         "runuser -u bob -- cat -- /home/bob/.config/punktfunk/profiles.json",
         r#"runuser -u punktfunk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/punktfunk/profiles.json"#,
@@ -2267,8 +2260,8 @@ mod tests {
         "runuser -u alice -- cat -- /home/alice/.config/punktfunk/uniqueid",
         r#"runuser -u punktfunk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/punktfunk/uniqueid"#,
         r#"runuser -u punktfunk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/punktfunk/uniqueid"#,
-        "runuser -u alice -- test -f /home/alice/.config/punktfunk/punktfunk1-paired.json",
-        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/punktfunk1-paired.json",
+        "runuser -u alice -- test -f /home/alice/.config/punktfunk/lilynk1-paired.json",
+        "runuser -u punktfunk -- rm -f /var/lib/punktfunk/lilynk1-paired.json",
         "runuser -u alice -- test -f /home/alice/.config/punktfunk/profiles.json",
         "runuser -u punktfunk -- rm -f /var/lib/punktfunk/profiles.json",
         "runuser -u alice -- test -f /home/alice/.config/punktfunk/web-password",
@@ -2282,7 +2275,7 @@ mod tests {
         "runuser -u alice -- test -f /home/alice/.config/punktfunk/web.env",
         "runuser -u alice -- test -f /home/alice/.config/punktfunk/web-password",
         "runuser -u alice -- cat -- /home/alice/.config/punktfunk/web.env",
-        "grep -E ^[[:space:]]*PUNKTFUNK_UI_PASSWORD(_HASH)?=|^[[:space:]]*PUNKTFUNK_UI_SECRET=",
+        "grep -E ^[[:space:]]*LILYNK_UI_PASSWORD(_HASH)?=|^[[:space:]]*LILYNK_UI_SECRET=",
         r#"runuser -u punktfunk -- sh -c umask 077; cat >"$1.tmp" sh /var/lib/punktfunk/web-password"#,
         r#"runuser -u punktfunk -- sh -c mv -f "$1.tmp" "$1" sh /var/lib/punktfunk/web-password"#,
         "runuser -u punktfunk -- rm -rf /var/lib/punktfunk/profiles",
@@ -2315,10 +2308,10 @@ mod tests {
         "runuser -u punktfunk -- cat -- /var/lib/punktfunk/uniqueid",
         r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/punktfunk/uniqueid"#,
         r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/punktfunk/uniqueid"#,
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/punktfunk1-paired.json",
-        "runuser -u punktfunk -- cat -- /var/lib/punktfunk/punktfunk1-paired.json",
-        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/punktfunk/punktfunk1-paired.json"#,
-        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/punktfunk/punktfunk1-paired.json"#,
+        "runuser -u punktfunk -- test -f /var/lib/punktfunk/lilynk1-paired.json",
+        "runuser -u punktfunk -- cat -- /var/lib/punktfunk/lilynk1-paired.json",
+        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/punktfunk/lilynk1-paired.json"#,
+        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/punktfunk/lilynk1-paired.json"#,
         "runuser -u punktfunk -- test -f /var/lib/punktfunk/profiles.json",
         "runuser -u punktfunk -- test -f /var/lib/punktfunk/web-session-key",
         "runuser -u punktfunk -- test -f /var/lib/punktfunk/web-session-epoch",
@@ -2361,10 +2354,10 @@ mod tests {
         "runuser -u punktfunk -- cat -- /var/lib/punktfunk/uniqueid",
         r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/punktfunk/uniqueid"#,
         r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/punktfunk/uniqueid"#,
-        "runuser -u punktfunk -- test -f /var/lib/punktfunk/punktfunk1-paired.json",
-        "runuser -u punktfunk -- cat -- /var/lib/punktfunk/punktfunk1-paired.json",
-        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/punktfunk/punktfunk1-paired.json"#,
-        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/punktfunk/punktfunk1-paired.json"#,
+        "runuser -u punktfunk -- test -f /var/lib/punktfunk/lilynk1-paired.json",
+        "runuser -u punktfunk -- cat -- /var/lib/punktfunk/lilynk1-paired.json",
+        r#"runuser -u alice -- sh -c umask 077; mkdir -p "$(dirname "$1")"; cat >"$1.tmp" sh /home/alice/.config/punktfunk/lilynk1-paired.json"#,
+        r#"runuser -u alice -- sh -c mv -f "$1.tmp" "$1" sh /home/alice/.config/punktfunk/lilynk1-paired.json"#,
         "runuser -u punktfunk -- test -f /var/lib/punktfunk/profiles.json",
         "runuser -u punktfunk -- test -f /var/lib/punktfunk/web-session-key",
         "runuser -u punktfunk -- test -f /var/lib/punktfunk/web-session-epoch",
@@ -2374,9 +2367,9 @@ mod tests {
         "runuser -u alice -- test -f /home/alice/.config/punktfunk/web.env",
         "runuser -u alice -- test -f /home/alice/.config/punktfunk/web-password",
         "runuser -u punktfunk -- cat -- /var/lib/punktfunk/web-password",
-        "grep -E ^[[:space:]]*PUNKTFUNK_UI_PASSWORD(_HASH)?=",
+        "grep -E ^[[:space:]]*LILYNK_UI_PASSWORD(_HASH)?=",
         "tail -n1",
-        r#"runuser -u alice -- sh -c umask 077; { grep -vE "$3" "$1" || true; } >"$1.tmp" && printf "%s\n" "$2" >>"$1.tmp" && mv -f "$1.tmp" "$1" sh /home/alice/.config/punktfunk/web.env PUNKTFUNK_UI_PASSWORD_HASH=door-2 ^[[:space:]]*PUNKTFUNK_UI_PASSWORD(_HASH)?="#,
+        r#"runuser -u alice -- sh -c umask 077; { grep -vE "$3" "$1" || true; } >"$1.tmp" && printf "%s\n" "$2" >>"$1.tmp" && mv -f "$1.tmp" "$1" sh /home/alice/.config/punktfunk/web.env LILYNK_UI_PASSWORD_HASH=door-2 ^[[:space:]]*LILYNK_UI_PASSWORD(_HASH)?="#,
         "runuser -u punktfunk -- ls -1 -- /var/lib/punktfunk/profiles",
         "runuser -u punktfunk -- test -f /var/lib/punktfunk/profiles/alice.png",
         "runuser -u punktfunk -- cat -- /var/lib/punktfunk/profiles/alice.png",

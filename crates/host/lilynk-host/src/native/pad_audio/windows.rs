@@ -21,7 +21,7 @@ pub(super) fn host_cap(asked: bool, enabled: bool) -> bool {
 
 /// Stream `kinds` (bit 0 = haptics, bit 1 = speaker) toward `conn`. `stop` is this handle's own
 /// flag. `None` if the slot has no endpoint (failed/still-running provision, or slot ≥
-/// `PUNKTFUNK_PAD_AUDIO_SLOTS`) or spawn fails; the pad still works, without audio.
+/// `LILYNK_PAD_AUDIO_SLOTS`) or spawn fails; the pad still works, without audio.
 ///
 /// `pad` addresses the client's wire pad; `slot` is the host-wide OS slot whose endpoint —
 /// stamped with the virtual pad's own container — is the thing being captured. They differ
@@ -77,7 +77,7 @@ pub(in crate::native) fn spawn(
     let endpoint_id = ep.endpoint_id;
     let vis_id = endpoint_id.clone();
     match std::thread::Builder::new()
-        .name(format!("punktfunk1-pad{pad}"))
+        .name(format!("lilynk1-pad{pad}"))
         .spawn(move || {
             // COM for the visibility flips; capturer opens run on their own thread.
             let _ = wasapi::initialize_mta();
@@ -144,7 +144,7 @@ fn spawn_seat(
     };
     let stop_t = stop.clone();
     match std::thread::Builder::new()
-        .name(format!("punktfunk1-pad{pad}"))
+        .name(format!("lilynk1-pad{pad}"))
         .spawn(move || {
             pad_audio_thread(conn, pad, kinds, || Ok(source.capturer()), stop_t);
             drop(source);

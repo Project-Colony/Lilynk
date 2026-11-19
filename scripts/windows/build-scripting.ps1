@@ -1,6 +1,6 @@
 <#
   Rebuild the plugin/script runner bundle from the CURRENT sdk/ source and lay it out next to the
-  host exe, so `lilynk-host plugins ...` works and the PunktfunkScripting task runs new code.
+  host exe, so `lilynk-host plugins ...` works and the LilynkScripting task runs new code.
 
     powershell -ExecutionPolicy Bypass -File scripts\windows\build-scripting.ps1
     powershell -ExecutionPolicy Bypass -File scripts\windows\build-scripting.ps1 -EnableTask
@@ -11,18 +11,18 @@
   crates\host\lilynk-host\src\plugin_host\plugins\windows.rs). deploy-host.ps1 runs the
   service out of target\release, so a bundle sitting only in the installed {app} leaves the freshly
   built exe reporting "the plugin runner isn't installed". We therefore deploy next to EVERY host exe
-  we can find: the built one, and whatever the PunktfunkHost service actually runs.
+  we can find: the built one, and whatever the LilynkHost service actually runs.
 
-  The PunktfunkScripting task ships DISABLED (opt-in). We do not silently enable it - pass
+  The LilynkScripting task ships DISABLED (opt-in). We do not silently enable it - pass
   -EnableTask on a dev box you are validating plugins on.
 #>
 param(
-    [switch]$EnableTask                              # enable + restart PunktfunkScripting (opt-in)
+    [switch]$EnableTask                              # enable + restart LilynkScripting (opt-in)
 )
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path (Split-Path $PSScriptRoot)        # scripts\windows -> repo root
 $sdk  = Join-Path $repo 'sdk'
-$task = 'PunktfunkScripting'
+$task = 'LilynkScripting'
 
 # bun is both the bundler AND the runtime the runner ships on. Honor $env:BUN_EXE (what CI sets)
 # before falling back to the dev box's portable copy - the same one build-web.ps1 uses.
@@ -71,7 +71,7 @@ Add-Target (Join-Path $repo 'target\release\lilynk-host.exe')
 
 # b) whatever the service actually runs (an installed {app} on a box set up via setup.exe). The
 #    binPath carries args and may be quoted, so pull the .exe out with a regex.
-$qc = & sc.exe qc 'PunktfunkHost' 2>$null
+$qc = & sc.exe qc 'LilynkHost' 2>$null
 if ($qc) {
     $line = $qc | Select-String 'BINARY_PATH_NAME' | Select-Object -First 1
     if ($line -and "$line" -match '([A-Za-z]:\\[^"]*?lilynk-host\.exe)') { Add-Target $Matches[1] }

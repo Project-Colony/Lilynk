@@ -1,6 +1,6 @@
 //! Session configuration: role, FEC, shard/MTU knobs, and `Config`.
 
-use crate::error::{PunktfunkError, Result};
+use crate::error::{LilynkError, Result};
 use crate::packet::{MAX_DATAGRAM_BYTES, WIRE_OVERHEAD};
 
 #[repr(C)]
@@ -203,12 +203,12 @@ impl CompositorPref {
 }
 
 /// Client gamepad preference on [`Hello`](crate::quic::Hello); [`Welcome`](crate::quic::Welcome)
-/// echoes the backend actually chosen. `Auto` uses `PUNKTFUNK_GAMEPAD` else Xbox 360. UHID
+/// echoes the backend actually chosen. `Auto` uses `LILYNK_GAMEPAD` else Xbox 360. UHID
 /// backends (DualSense family, Switch Pro, Steam pads) fold if the host cannot build them.
 /// Older peers omit the byte; unknown bytes decode to `Auto`.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
 pub enum GamepadPref {
-    /// `PUNKTFUNK_GAMEPAD`, else Xbox 360.
+    /// `LILYNK_GAMEPAD`, else Xbox 360.
     #[default]
     Auto,
     /// Universal default: every game speaks XInput.
@@ -608,13 +608,13 @@ pub fn shard_payload_for_wire_mtu(wire_mtu: usize, peer: core::net::IpAddr) -> u
 
 /// Jumbo target on-wire IP MTU (`design/shard-payload-reneg.md`), or `None` = never probe or
 /// grow above the 1500 default. `adapter_mtu` is what the OS reports for the adapter toward
-/// the peer (`0` = unknown); above 1500 it is the target. `PUNKTFUNK_WIRE_MTU` pins it (above
-/// 1500 that number, else no jumbo); `PUNKTFUNK_JUMBO=1` forces 9000 and `0` turns it off.
+/// the peer (`0` = unknown); above 1500 it is the target. `LILYNK_WIRE_MTU` pins it (above
+/// 1500 that number, else no jumbo); `LILYNK_JUMBO=1` forces 9000 and `0` turns it off.
 /// Sessions still start at the family default; growth waits for the path to prove it.
 pub fn jumbo_wire_mtu(adapter_mtu: u32) -> Option<usize> {
     jumbo_decision(
-        std::env::var("PUNKTFUNK_WIRE_MTU").ok().as_deref(),
-        std::env::var("PUNKTFUNK_JUMBO").ok().as_deref(),
+        std::env::var("LILYNK_WIRE_MTU").ok().as_deref(),
+        std::env::var("LILYNK_JUMBO").ok().as_deref(),
         adapter_mtu,
     )
 }
@@ -671,12 +671,12 @@ impl Config {
     /// Keeps receive-side allocations bounded.
     pub fn validate(&self) -> Result<()> {
         if self.shard_payload == 0 || self.shard_payload % 2 != 0 {
-            return Err(PunktfunkError::InvalidArg(
+            return Err(LilynkError::InvalidArg(
                 "shard_payload must be even and > 0",
             ));
         }
         if self.shard_payload > max_shard_payload() {
-            return Err(PunktfunkError::InvalidArg(
+            return Err(LilynkError::InvalidArg(
                 "shard_payload too large to fit a datagram (header + crypto overhead)",
             ));
         }
@@ -684,29 +684,29 @@ impl Config {
         // 2-byte Welcome would otherwise be accepted for the whole session. Hosts
         // derive locally (helpers already clamp); a hand-set host below the floor stays legal.
         if self.role == Role::Client && self.shard_payload < MIN_SHARD_PAYLOAD {
-            return Err(PunktfunkError::InvalidArg(
+            return Err(LilynkError::InvalidArg(
                 "negotiated shard_payload below MIN_SHARD_PAYLOAD",
             ));
         }
         if self.fec.max_data_per_block == 0 {
-            return Err(PunktfunkError::InvalidArg("max_data_per_block must be > 0"));
+            return Err(LilynkError::InvalidArg("max_data_per_block must be > 0"));
         }
         // Per-block total must fit the field ceiling and the u16 wire fields.
         let k = self.fec.max_data_per_block as usize;
         let total = k + self.fec.recovery_for(k);
         if total > self.fec.scheme.max_total_shards() {
-            return Err(PunktfunkError::InvalidArg(
+            return Err(LilynkError::InvalidArg(
                 "max_data_per_block + recovery exceeds the FEC scheme's shard ceiling",
             ));
         }
         if self.max_frame_bytes == 0 {
-            return Err(PunktfunkError::InvalidArg("max_frame_bytes must be > 0"));
+            return Err(LilynkError::InvalidArg("max_frame_bytes must be > 0"));
         }
         // Block count is a u16 on the wire.
         let total_data = self.max_frame_bytes.div_ceil(self.shard_payload).max(1);
         let max_blocks = total_data.div_ceil(k).max(1);
         if max_blocks > u16::MAX as usize {
-            return Err(PunktfunkError::InvalidArg(
+            return Err(LilynkError::InvalidArg(
                 "max_frame_bytes too large for this shard/block configuration (block count overflows u16)",
             ));
         }

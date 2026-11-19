@@ -100,7 +100,7 @@
       makepri rejects the whole manifest ("Appx manifest not found or is invalid") — which
       is exactly how the console flag spelled out here broke the v0.15.0 MSIX build.
     -->
-    <Application Id="PunktfunkConsole" Executable="lilynk-console.exe"
+    <Application Id="LilynkConsole" Executable="lilynk-console.exe"
                  EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements
         DisplayName="Punktfunk Console"
@@ -117,7 +117,7 @@
       out of the Start menu: it is a command, not a tile. Its alias is what a plugin or a
       script types, and what the Playnite importer shells to for `punktfunk library`.
     -->
-    <Application Id="PunktfunkCli" Executable="lilynk.exe"
+    <Application Id="LilynkCli" Executable="lilynk.exe"
                  EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements AppListEntry="none"
         DisplayName="Punktfunk CLI"

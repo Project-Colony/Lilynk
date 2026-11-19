@@ -301,7 +301,7 @@ describe("writePluginToken", () => {
 		const file = writePluginToken(config, state, "demo");
 		expect(file).toBe(path.join(state, ".plugin-token"));
 		expect(fs.lstatSync(file as string).isSymbolicLink()).toBe(false);
-		expect(fs.readFileSync(file as string, "utf8")).toBe("PUNKTFUNK_PLUGIN_TOKEN=demo-token\n");
+		expect(fs.readFileSync(file as string, "utf8")).toBe("LILYNK_PLUGIN_TOKEN=demo-token\n");
 		expect(fs.readFileSync(victim, "utf8")).toBe("untouched");
 	});
 });
@@ -497,8 +497,8 @@ describe("supervision", () => {
 		);
 		const logs: string[] = [];
 		// The child re-execs the runner bundle; here that is the CLI source, which bun runs as is.
-		const entry = process.env.PUNKTFUNK_RUNNER_ENTRY;
-		process.env.PUNKTFUNK_RUNNER_ENTRY = path.join(import.meta.dir, "..", "src", "runner-cli.ts");
+		const entry = process.env.LILYNK_RUNNER_ENTRY;
+		process.env.LILYNK_RUNNER_ENTRY = path.join(import.meta.dir, "..", "src", "runner-cli.ts");
 		try {
 			const fiber = Effect.runFork(
 				runner({
@@ -525,8 +525,8 @@ describe("supervision", () => {
 			}
 			await Effect.runPromise(Fiber.interrupt(fiber));
 		} finally {
-			if (entry === undefined) delete process.env.PUNKTFUNK_RUNNER_ENTRY;
-			else process.env.PUNKTFUNK_RUNNER_ENTRY = entry;
+			if (entry === undefined) delete process.env.LILYNK_RUNNER_ENTRY;
+			else process.env.LILYNK_RUNNER_ENTRY = entry;
 		}
 		const failed = logs.find((l) => l.includes("[lilynk-plugin-lonely] failed: "));
 		expect(failed).toContain("plugin process exited with 3");
@@ -912,23 +912,23 @@ describe("a Windows plugin child's way to the host", () => {
 
 	// It sends a bearer, and a pipe's server is whoever holds the name first.
 	test("a process of its own never gets a pipe", () => {
-		const saved = process.env.PUNKTFUNK_MGMT_UNIX;
-		process.env.PUNKTFUNK_MGMT_UNIX = pipeName("steam", undefined);
+		const saved = process.env.LILYNK_MGMT_UNIX;
+		process.env.LILYNK_MGMT_UNIX = pipeName("steam", undefined);
 		try {
 			const env = ownProcessEnv({ configDir: "/cfg" });
-			expect(env.PUNKTFUNK_MGMT_UNIX).toBeUndefined();
-			expect(env.PUNKTFUNK_CONFIG_DIR).toBe("/cfg");
+			expect(env.LILYNK_MGMT_UNIX).toBeUndefined();
+			expect(env.LILYNK_CONFIG_DIR).toBe("/cfg");
 		} finally {
-			if (saved === undefined) delete process.env.PUNKTFUNK_MGMT_UNIX;
-			else process.env.PUNKTFUNK_MGMT_UNIX = saved;
+			if (saved === undefined) delete process.env.LILYNK_MGMT_UNIX;
+			else process.env.LILYNK_MGMT_UNIX = saved;
 		}
 	});
 
 	test("a container keeps its pipe, and its page goes over it", () => {
 		const env = containerEnv(unit, {}, () => true);
-		expect(env.PUNKTFUNK_MGMT_UNIX).toBe(pipeName("steam", process.env.PUNKTFUNK_SEAT_ID));
-		expect(env.PUNKTFUNK_MGMT_URL).toBe("http://punktfunk.host");
-		expect(env.PUNKTFUNK_UI_CHANNEL).toBe("steam");
-		expect(containerEnv(unit, {}, () => false).PUNKTFUNK_MGMT_UNIX).toBeUndefined();
+		expect(env.LILYNK_MGMT_UNIX).toBe(pipeName("steam", process.env.LILYNK_SEAT_ID));
+		expect(env.LILYNK_MGMT_URL).toBe("http://punktfunk.host");
+		expect(env.LILYNK_UI_CHANNEL).toBe("steam");
+		expect(containerEnv(unit, {}, () => false).LILYNK_MGMT_UNIX).toBeUndefined();
 	});
 });

@@ -538,7 +538,7 @@ impl PlaneFormat {
     }
 }
 
-/// Operator capture gain (`PUNKTFUNK_AUDIO_GAIN`, default 1.0). WASAPI loopback taps upstream
+/// Operator capture gain (`LILYNK_AUDIO_GAIN`, default 1.0). WASAPI loopback taps upstream
 /// of the endpoint master volume, so this is the host-side lift. Read once per run: an operator
 /// setting, not a live control.
 fn operator_gain() -> f32 {

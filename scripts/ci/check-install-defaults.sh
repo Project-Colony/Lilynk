@@ -10,7 +10,7 @@ set -u
 cd "$(dirname "$0")/../.." || exit 2
 
 # CI passes a built binary; a developer running this by hand gets a debug build.
-PF=${PUNKTFUNK_SETUP_BIN:-}
+PF=${LILYNK_SETUP_BIN:-}
 if [ -z "$PF" ]; then
     cargo build -q -p lilynk-setup || exit 2
     PF=target/debug/lilynk-setup
@@ -38,13 +38,13 @@ defaults_case() {
     case "$seat" in
         desktop)  _env="DISPLAY=:0 WAYLAND_DISPLAY= XDG_SESSION_TYPE=x11" ;;
         # An empty root as /: no session files, so the box reads as desktop-less too.
-        headless) _env="DISPLAY= WAYLAND_DISPLAY= XDG_SESSION_TYPE= PUNKTFUNK_INSTALL_ETC=$osr" ;;
+        headless) _env="DISPLAY= WAYLAND_DISPLAY= XDG_SESSION_TYPE= LILYNK_INSTALL_ETC=$osr" ;;
         *) echo "::error::defaults_case $name: seat must be desktop or headless, got '$seat'"; fail=1; return ;;
     esac
     # $_env is expanded on purpose: the seat pins must override a graphical session on the
     # machine running the gate. Quoted "$@" are extra installer flags (e.g. --no-lilynk-group).
     out=$(env $_env PATH="${extra:+$extra:}$pfbin:$PATH" \
-          PUNKTFUNK_INSTALL_OS_RELEASE="$osr/$name" \
+          LILYNK_INSTALL_OS_RELEASE="$osr/$name" \
           "$PF" --dry-run --yes --no-start "$@" 2>&1) || {
         echo "::error::lilynk-setup --dry-run --yes --no-start on fake $name ($seat) exited $?"
         printf '%s\n' "$out" | sed 's/^/    /'
@@ -95,7 +95,7 @@ defaults_case debian-desk4 "$DEB"  desktop '' 'Start at boot with nobody logged 
 defaults_case debian-desk5 "$DEB"  desktop '' 'Web console reachable from: This local network'
 defaults_case bazzite-desk5 "$BAZ" desktop '' 'Web console reachable from: This local network'
 defaults_case debian-bind  "$DEB"  desktop '' 'Web console reachable from: This device only' --web-bind=localhost
-defaults_case debian-bind2 "$DEB"  desktop '' 'would set PUNKTFUNK_UI_BIND=100.64.0.3' --web-bind=100.64.0.3
+defaults_case debian-bind2 "$DEB"  desktop '' 'would set LILYNK_UI_BIND=100.64.0.3' --web-bind=100.64.0.3
 defaults_case fedora-desk  "$FED"  desktop '' 'Full controller (joins the punktfunk group — grants usbip attach): yes'
 defaults_case fedora-desk2 "$FED"  desktop '' 'Start at boot with nobody logged in: no'
 defaults_case arch-desk    "$ARCH" desktop '' 'Full controller (joins the punktfunk group — grants usbip attach): yes'
@@ -119,7 +119,7 @@ defaults_case bazzite-flag "$BAZ" desktop '' 'Full controller (joins the punktfu
 defaults_case debian-ssh  "$DEB" headless '' 'Start at boot with nobody logged in: yes  (no graphical session)'
 defaults_case debian-ssh2 "$DEB" headless '' 'Full controller (joins the punktfunk group — grants usbip attach): yes'
 # No desktop installed either → the host is pinned to gamescope, the backend that brings its own session.
-defaults_case debian-ssh3 "$DEB" headless '' 'would set PUNKTFUNK_COMPOSITOR=gamescope'
+defaults_case debian-ssh3 "$DEB" headless '' 'would set LILYNK_COMPOSITOR=gamescope'
 
 # Active Sunshine-family host (detect-conflicts exit 1) → Moonlight compat stays off: both
 # hosts bind the Moonlight ports.
@@ -161,7 +161,7 @@ defaults_case bazzite-linger "$BAZ" desktop '' '+ sudo loginctl enable-linger'
 # package-manager flags only; nothing may touch sudo itself.
 # The shim itself is exercised by installer-smoke, which runs as root with no sudo present.
 printf 'ID=debian\nVERSION_ID=13\n' > "$osr/sudoflags"
-out=$(PATH="$pfbin:$PATH" PUNKTFUNK_INSTALL_OS_RELEASE="$osr/sudoflags" "$PF" --dry-run --yes --no-start 2>&1)
+out=$(PATH="$pfbin:$PATH" LILYNK_INSTALL_OS_RELEASE="$osr/sudoflags" "$PF" --dry-run --yes --no-start 2>&1)
 case "$out" in
     *'sudo -n '*)
         echo "::error::a flag was injected into a sudo line, which the root shim cannot run:"

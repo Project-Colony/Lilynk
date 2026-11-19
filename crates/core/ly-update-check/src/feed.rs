@@ -46,11 +46,11 @@ impl std::fmt::Display for FeedError {
 
 impl std::error::Error for FeedError {}
 
-/// `PUNKTFUNK_UPDATE_FEED` override, else [`DEFAULT_FEED_BASE`]. Operator config, not
+/// `LILYNK_UPDATE_FEED` override, else [`DEFAULT_FEED_BASE`]. Operator config, not
 /// request-time input. Only `https://` or `http://127.0.0.1` — anything else would
 /// silently drop TLS.
 pub fn feed_base() -> String {
-    std::env::var("PUNKTFUNK_UPDATE_FEED")
+    std::env::var("LILYNK_UPDATE_FEED")
         .ok()
         .filter(|s| s.starts_with("https://") || s.starts_with("http://127.0.0.1"))
         .unwrap_or_else(|| DEFAULT_FEED_BASE.to_string())

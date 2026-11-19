@@ -123,8 +123,8 @@ pub fn send_bundle(
     fp_hex: &str,
 ) -> Result<String, String> {
     // The package version where the build stamped one (every packager sets
-    // PUNKTFUNK_BUILD_VERSION), else the crate's: a bundle names the build it came from.
-    let version = option_env!("PUNKTFUNK_BUILD_VERSION")
+    // LILYNK_BUILD_VERSION), else the crate's: a bundle names the build it came from.
+    let version = option_env!("LILYNK_BUILD_VERSION")
         .filter(|v| !v.trim().is_empty())
         .unwrap_or(env!("CARGO_PKG_VERSION"));
     let header = format!(

@@ -191,5 +191,5 @@ pub use ly_client_video::{video_d3d11, video_d3d11_native};
 
 pub mod wol;
 
-/// The `PUNKTFUNK_*` switch grammar every process shares.
+/// The `LILYNK_*` switch grammar every process shares.
 pub use lilynk_core::env_on;

@@ -284,10 +284,10 @@ fn gamepad_wire_bits_are_pinned() {
 }
 
 /// Pull and byte-verify `count` synthetic frames through the C ABI connection.
-unsafe fn pull_verified(conn: *mut lilynk_ffi::PunktfunkConnection, count: u32) {
-    use lilynk_core::error::PunktfunkStatus;
+unsafe fn pull_verified(conn: *mut lilynk_ffi::LilynkConnection, count: u32) {
+    use lilynk_core::error::LilynkStatus;
     let mut got = 0u32;
-    // SAFETY: `PunktfunkFrame` is `#[repr(C)]` POD; all-zero is valid (null `data`, `len == 0`).
+    // SAFETY: `LilynkFrame` is `#[repr(C)]` POD; all-zero is valid (null `data`, `len == 0`).
     // Read only after `next_au` overwrites it on `Ok`.
     let mut frame = unsafe { std::mem::zeroed() };
     // A host that stops sending fails the test instead of holding it to the job's timeout.
@@ -297,11 +297,11 @@ unsafe fn pull_verified(conn: *mut lilynk_ffi::PunktfunkConnection, count: u32) 
             std::time::Instant::now() < deadline,
             "{got} of {count} frames before the deadline"
         );
-        // SAFETY: `conn` is the live handle from `punktfunk_connect` (caller asserts non-null,
+        // SAFETY: `conn` is the live handle from `lilynk_connect` (caller asserts non-null,
         // does not close until after return). `&mut frame` outlives this call. This thread is
         // the only video puller.
-        match unsafe { lilynk_ffi::punktfunk_connection_next_au(conn, &mut frame, 2000) } {
-            PunktfunkStatus::Ok => {
+        match unsafe { lilynk_ffi::lilynk_connection_next_au(conn, &mut frame, 2000) } {
+            LilynkStatus::Ok => {
                 // SAFETY: on `Ok`, `frame.data`/`len` is the connection-owned AU, valid until the
                 // next `next_au` on this handle. We read the whole slice before that next call.
                 let data = unsafe { std::slice::from_raw_parts(frame.data, frame.len) };
@@ -313,7 +313,7 @@ unsafe fn pull_verified(conn: *mut lilynk_ffi::PunktfunkConnection, count: u32) 
                 );
                 got += 1;
             }
-            PunktfunkStatus::NoFrame => continue,
+            LilynkStatus::NoFrame => continue,
             other => panic!("next_au: {other:?} after {got} of {count} frames"),
         }
     }
@@ -382,16 +382,16 @@ fn up(port: u16, host: std::thread::JoinHandle<Result<()>>) -> std::thread::Join
 fn c_abi_connection_roundtrip() {
     let _registry = crate::session_status::tests::registry_lock();
     let _serial = SESSION_TEST_LOCK.lock().unwrap_or_else(|p| p.into_inner());
-    use lilynk_core::error::PunktfunkStatus;
+    use lilynk_core::error::LilynkStatus;
     use lilynk_ffi::{
-        punktfunk_connect, punktfunk_connection_close, punktfunk_connection_mode,
-        punktfunk_connection_send_input,
+        lilynk_connect, lilynk_connection_close, lilynk_connection_mode,
+        lilynk_connection_send_input,
     };
 
     let host = std::thread::spawn(|| {
-        run_ephemeral(Punktfunk1Options {
+        run_ephemeral(Lilynk1Options {
             port: 19777,
-            source: Punktfunk1Source::Synthetic,
+            source: Lilynk1Source::Synthetic,
             seconds: 0,
             // Until each client closes. A mode change discards what is queued at the old mode
             // and a puller that falls behind jumps to live, so no count is sure to cover the
@@ -415,7 +415,7 @@ fn c_abi_connection_roundtrip() {
     // SAFETY: `addr` is a live NUL-terminated host string; pin/cert/key are NULL (permitted);
     // `observed` is 32 writable bytes. All locals outlive the blocking connect.
     let conn = unsafe {
-        punktfunk_connect(
+        lilynk_connect(
             addr.as_ptr(),
             19777,
             1280,
@@ -428,24 +428,24 @@ fn c_abi_connection_roundtrip() {
             10_000,
         )
     };
-    assert!(!conn.is_null(), "punktfunk_connect failed");
+    assert!(!conn.is_null(), "lilynk_connect failed");
     assert_ne!(observed, [0u8; 32], "fingerprint not reported");
 
     let (mut w, mut h, mut hz) = (0u32, 0u32, 0u32);
     // SAFETY: `conn` is the live handle; `&mut w/h/hz` outlive this call.
-    let st = unsafe { punktfunk_connection_mode(conn, &mut w, &mut h, &mut hz) };
-    assert_eq!(st, PunktfunkStatus::Ok);
+    let st = unsafe { lilynk_connection_mode(conn, &mut w, &mut h, &mut hz) };
+    assert_eq!(st, LilynkStatus::Ok);
     assert_eq!((w, h, hz), (1280, 720, 60));
 
-    // Mid-stream renegotiation: request a new mode; `punktfunk_connection_mode` reflects it.
+    // Mid-stream renegotiation: request a new mode; `lilynk_connection_mode` reflects it.
     // SAFETY: `conn` is the live handle; remaining args are by-value. Handle outlives enqueue.
-    let st = unsafe { lilynk_ffi::punktfunk_connection_request_mode(conn, 1920, 1080, 144) };
-    assert_eq!(st, PunktfunkStatus::Ok);
+    let st = unsafe { lilynk_ffi::lilynk_connection_request_mode(conn, 1920, 1080, 144) };
+    assert_eq!(st, LilynkStatus::Ok);
     let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
     loop {
-        // SAFETY: same as the earlier `punktfunk_connection_mode` call.
-        let st = unsafe { punktfunk_connection_mode(conn, &mut w, &mut h, &mut hz) };
-        assert_eq!(st, PunktfunkStatus::Ok);
+        // SAFETY: same as the earlier `lilynk_connection_mode` call.
+        let st = unsafe { lilynk_connection_mode(conn, &mut w, &mut h, &mut hz) };
+        assert_eq!(st, LilynkStatus::Ok);
         if (w, h, hz) == (1920, 1080, 144) {
             break;
         }
@@ -468,15 +468,15 @@ fn c_abi_connection_roundtrip() {
         flags: 0,
     };
     // SAFETY: `conn` is live; `&ev` is a valid `InputEvent` for this enqueue.
-    let st = unsafe { punktfunk_connection_send_input(conn, &ev) };
-    assert_eq!(st, PunktfunkStatus::Ok);
+    let st = unsafe { lilynk_connection_send_input(conn, &ev) };
+    assert_eq!(st, LilynkStatus::Ok);
     // SAFETY: `conn` is unused after this; `close` frees it once. Session 2 uses `conn2`.
-    unsafe { punktfunk_connection_close(conn) };
+    unsafe { lilynk_connection_close(conn) };
 
     // Session 2 (same host process): pin the fingerprint.
     // SAFETY: as session 1 — `observed.as_ptr()` is the 32-byte pin; out/cert/key are NULL.
     let conn2 = unsafe {
-        punktfunk_connect(
+        lilynk_connect(
             addr.as_ptr(),
             19777,
             1280,
@@ -493,13 +493,13 @@ fn c_abi_connection_roundtrip() {
     // SAFETY: `conn2` is the live pinned handle; this thread is the only puller.
     unsafe { pull_verified(conn2, 25) };
     // SAFETY: `conn2` is unused after this; `close` frees it once.
-    unsafe { punktfunk_connection_close(conn2) };
+    unsafe { lilynk_connection_close(conn2) };
 
     // Session 3: a wrong pin must be rejected.
     let bad = [0xAAu8; 32];
     // SAFETY: `bad.as_ptr()` is the 32-byte pin; out/cert/key are NULL. Expected to return NULL.
     let conn3 = unsafe {
-        punktfunk_connect(
+        lilynk_connect(
             addr.as_ptr(),
             19777,
             1280,
@@ -518,7 +518,7 @@ fn c_abi_connection_roundtrip() {
     // One more TOFU connect completes the host's third session.
     // SAFETY: same as session 1 — pin/out/cert/key all NULL.
     let conn4 = unsafe {
-        punktfunk_connect(
+        lilynk_connect(
             addr.as_ptr(),
             19777,
             1280,
@@ -535,7 +535,7 @@ fn c_abi_connection_roundtrip() {
     // SAFETY: `conn4` is live; this thread is the only puller.
     unsafe { pull_verified(conn4, 25) };
     // SAFETY: `conn4` is unused after this; `close` frees it once.
-    unsafe { punktfunk_connection_close(conn4) };
+    unsafe { lilynk_connection_close(conn4) };
 
     host.join().unwrap().unwrap();
 }
@@ -551,9 +551,9 @@ fn a_synthetic_abr_session_registers_while_it_streams() {
     use lilynk_core::client::{ConnectParams, NativeClient};
 
     let spawned = std::thread::spawn(|| {
-        run_ephemeral(Punktfunk1Options {
+        run_ephemeral(Lilynk1Options {
             port: 19782,
-            source: Punktfunk1Source::SyntheticAbr(SynthAbrShape {
+            source: Lilynk1Source::SyntheticAbr(SynthAbrShape {
                 content: Content::Steady { fill_pct: 100 },
                 recovery: std::time::Duration::ZERO,
                 answer: KeyframeAnswer::Idr,
@@ -632,13 +632,13 @@ fn clipboard_control_and_fetch_decline_over_session() {
             std::process::Command::new(std::env::current_exe().expect("this test binary"));
         child.args(["--exact", &test, "--nocapture"]);
         for (key, _) in std::env::vars_os() {
-            if key.to_string_lossy().starts_with("PUNKTFUNK_") {
+            if key.to_string_lossy().starts_with("LILYNK_") {
                 child.env_remove(key);
             }
         }
         let out = child
             .env(CLIPBOARD_CHILD, "1")
-            .env("PUNKTFUNK_CLIPBOARD", "1")
+            .env("LILYNK_CLIPBOARD", "1")
             .output()
             .expect("run the child");
         let stdout = String::from_utf8_lossy(&out.stdout);
@@ -662,9 +662,9 @@ fn clipboard_control_and_fetch_decline_over_session() {
     };
 
     let host = std::thread::spawn(|| {
-        run_ephemeral(Punktfunk1Options {
+        run_ephemeral(Lilynk1Options {
             port: 19781,
-            source: Punktfunk1Source::Synthetic,
+            source: Lilynk1Source::Synthetic,
             seconds: 0,
             frames: 600, // outlive the control exchange
             max_sessions: 1,
@@ -706,7 +706,7 @@ fn clipboard_control_and_fetch_decline_over_session() {
             match client.next_clip(std::time::Duration::from_millis(200)) {
                 Ok(ev) if pred(&ev) => return Some(ev),
                 Ok(_) => {}
-                Err(lilynk_core::PunktfunkError::NoFrame) => {}
+                Err(lilynk_core::LilynkError::NoFrame) => {}
                 Err(_) => break,
             }
         }
@@ -732,7 +732,7 @@ fn clipboard_control_and_fetch_decline_over_session() {
             assert_ne!(
                 policy & CLIP_POLICY_FILES,
                 0,
-                "PUNKTFUNK_CLIPBOARD=1 permits files"
+                "LILYNK_CLIPBOARD=1 permits files"
             );
         }
         _ => unreachable!(),
@@ -755,7 +755,7 @@ fn clipboard_control_and_fetch_decline_over_session() {
 /// client leaves, so a test never races it.
 fn synthetic_session(
     port: u16,
-    source: Punktfunk1Source,
+    source: Lilynk1Source,
     params: impl FnOnce(lilynk_core::client::ConnectParams) -> lilynk_core::client::ConnectParams,
 ) -> (
     lilynk_core::client::NativeClient,
@@ -763,7 +763,7 @@ fn synthetic_session(
 ) {
     use lilynk_core::client::{ConnectParams, NativeClient};
     let spawned = std::thread::spawn(move || {
-        run_ephemeral(Punktfunk1Options {
+        run_ephemeral(Lilynk1Options {
             port,
             source,
             seconds: 0,
@@ -808,7 +808,7 @@ fn wait_for(pred: impl Fn() -> bool) -> bool {
 fn the_stream_config_carries_the_hosts_link_facts() {
     let _registry = crate::session_status::tests::registry_lock();
     let _serial = SESSION_TEST_LOCK.lock().unwrap_or_else(|p| p.into_inner());
-    let (client, host) = synthetic_session(19783, Punktfunk1Source::Synthetic, |p| p);
+    let (client, host) = synthetic_session(19783, Lilynk1Source::Synthetic, |p| p);
     assert!(
         wait_for(|| client.host_link().sndbuf_kb > 0),
         "the data socket has a send buffer"
@@ -825,7 +825,7 @@ fn a_codec_ask_moves_the_stream_to_another_codec_on_a_new_epoch() {
     use lilynk_core::quic::{CODEC_H264, CODEC_HEVC};
     let _registry = crate::session_status::tests::registry_lock();
     let _serial = SESSION_TEST_LOCK.lock().unwrap_or_else(|p| p.into_inner());
-    let (client, host) = synthetic_session(19789, Punktfunk1Source::Synthetic, |p| {
+    let (client, host) = synthetic_session(19789, Lilynk1Source::Synthetic, |p| {
         lilynk_core::client::ConnectParams {
             video_codecs: CODEC_H264 | CODEC_HEVC,
             rebuilds_decoder: true,
@@ -862,7 +862,7 @@ fn a_codec_ask_moves_the_stream_to_another_codec_on_a_new_epoch() {
 fn a_refused_mode_switch_is_counted() {
     let _registry = crate::session_status::tests::registry_lock();
     let _serial = SESSION_TEST_LOCK.lock().unwrap_or_else(|p| p.into_inner());
-    let (client, host) = synthetic_session(19792, Punktfunk1Source::Synthetic, |p| p);
+    let (client, host) = synthetic_session(19792, Lilynk1Source::Synthetic, |p| p);
     let before = client.mode();
     let odd = lilynk_core::Mode {
         width: 1281,
@@ -886,7 +886,7 @@ fn a_refused_mode_switch_is_counted() {
 fn a_keyframe_ask_rides_the_feedback_datagram() {
     let _registry = crate::session_status::tests::registry_lock();
     let _serial = SESSION_TEST_LOCK.lock().unwrap_or_else(|p| p.into_inner());
-    let source = Punktfunk1Source::SyntheticAbr(SynthAbrShape {
+    let source = Lilynk1Source::SyntheticAbr(SynthAbrShape {
         content: Content::Steady { fill_pct: 100 },
         recovery: std::time::Duration::ZERO,
         answer: KeyframeAnswer::Idr,
@@ -925,9 +925,9 @@ fn a_reconnect_waits_for_the_release_not_a_timer() {
     let _serial = SESSION_TEST_LOCK.lock().unwrap_or_else(|p| p.into_inner());
     use lilynk_core::client::{ConnectParams, NativeClient};
     let spawned = std::thread::spawn(|| {
-        run_ephemeral(Punktfunk1Options {
+        run_ephemeral(Lilynk1Options {
             port: 19793,
-            source: Punktfunk1Source::Synthetic,
+            source: Lilynk1Source::Synthetic,
             seconds: 0,
             // Until each client leaves: neither stream ends under the test.
             frames: u32::MAX,
@@ -961,7 +961,7 @@ fn a_reconnect_waits_for_the_release_not_a_timer() {
     let second = dial();
     second.next_frame(HANG).expect("the second session streams");
     assert!(
-        wait_for(|| first.end_reason() != lilynk_core::client::PunktfunkEndReason::None),
+        wait_for(|| first.end_reason() != lilynk_core::client::LilynkEndReason::None),
         "the first session was retired, not kept beside the second"
     );
     drop((first, second));
@@ -1011,10 +1011,10 @@ async fn a_drain_ends_once_nothing_can_leave() {
 /// the host's byte for byte. Each frame's `HostTiming` names it by the
 /// session-clock pts it arrived with. Control round trips keep working.
 #[test]
-fn a_punktfunk_2_session_streams_end_to_end() {
+fn a_lilynk_2_session_streams_end_to_end() {
     let _registry = crate::session_status::tests::registry_lock();
     let _serial = SESSION_TEST_LOCK.lock().unwrap_or_else(|p| p.into_inner());
-    let (client, host) = synthetic_session(19791, Punktfunk1Source::Synthetic, |p| p);
+    let (client, host) = synthetic_session(19791, Lilynk1Source::Synthetic, |p| p);
     // Sixty frames, and fifty of the frames seen named by a `HostTiming`. Both are counted
     // as they come: a timing is a datagram and may be lost, or land after its frame.
     let (mut frames, mut timed) = (
@@ -1054,7 +1054,7 @@ fn a_punktfunk_2_session_streams_end_to_end() {
 fn a_probe_only_start_serves_probes_without_a_pipeline() {
     let _registry = crate::session_status::tests::registry_lock();
     let _serial = SESSION_TEST_LOCK.lock().unwrap_or_else(|p| p.into_inner());
-    let (client, host) = synthetic_session(19787, Punktfunk1Source::Synthetic, |p| {
+    let (client, host) = synthetic_session(19787, Lilynk1Source::Synthetic, |p| {
         lilynk_core::client::ConnectParams {
             probe_only: true,
             ..p
@@ -1076,7 +1076,7 @@ fn a_probe_only_start_serves_probes_without_a_pipeline() {
     }
     assert!(matches!(
         client.next_frame(std::time::Duration::from_millis(500)),
-        Err(lilynk_core::PunktfunkError::NoFrame)
+        Err(lilynk_core::LilynkError::NoFrame)
     ));
     drop(client);
     host.join().unwrap().unwrap();
@@ -1089,7 +1089,7 @@ fn the_network_check_runs_its_legs_over_a_probe_only_session() {
     let _registry = crate::session_status::tests::registry_lock();
     let _serial = SESSION_TEST_LOCK.lock().unwrap_or_else(|p| p.into_inner());
     use lilynk_core::client::health::{self, LegShape};
-    let source = Punktfunk1Source::SyntheticAbr(SynthAbrShape {
+    let source = Lilynk1Source::SyntheticAbr(SynthAbrShape {
         content: Content::Steady { fill_pct: 100 },
         recovery: std::time::Duration::ZERO,
         answer: KeyframeAnswer::Idr,
@@ -1126,7 +1126,7 @@ fn a_host_without_a_ramp_keeps_the_single_burst() {
     let _registry = crate::session_status::tests::registry_lock();
     let _serial = SESSION_TEST_LOCK.lock().unwrap_or_else(|p| p.into_inner());
     use lilynk_core::client::health;
-    let (client, host) = synthetic_session(19785, Punktfunk1Source::Synthetic, |p| p);
+    let (client, host) = synthetic_session(19785, Lilynk1Source::Synthetic, |p| p);
     assert_eq!(
         client.host_caps2() & lilynk_core::quic::HOST_CAP2_RAMP,
         0,
@@ -1149,7 +1149,7 @@ fn the_clean_round_runs_under_the_ceiling_over_a_session() {
     let _registry = crate::session_status::tests::registry_lock();
     let _serial = SESSION_TEST_LOCK.lock().unwrap_or_else(|p| p.into_inner());
     use lilynk_core::client::health;
-    let source = Punktfunk1Source::SyntheticAbr(SynthAbrShape {
+    let source = Lilynk1Source::SyntheticAbr(SynthAbrShape {
         content: Content::Steady { fill_pct: 100 },
         recovery: std::time::Duration::ZERO,
         answer: KeyframeAnswer::Idr,
@@ -1193,9 +1193,9 @@ fn delegated_approval_admits_after_knock() {
             .build()
             .unwrap();
         rt.block_on(serve(
-            Punktfunk1Options {
+            Lilynk1Options {
                 port: 19779,
-                source: Punktfunk1Source::Synthetic,
+                source: Lilynk1Source::Synthetic,
                 seconds: 0,
                 frames: 25,
                 max_sessions: 1,
@@ -1335,9 +1335,9 @@ fn access_request_pairs_without_a_session() {
             .build()
             .unwrap();
         rt.block_on(serve(
-            Punktfunk1Options {
+            Lilynk1Options {
                 port: 19795,
-                source: Punktfunk1Source::Synthetic,
+                source: Lilynk1Source::Synthetic,
                 seconds: 0,
                 frames: 25,
                 max_sessions: 2,
@@ -1436,9 +1436,9 @@ fn pairing_ceremony_and_gate() {
     let store = crate::test_support::scratch().join("lilynk-paired-test.json");
     let paired_store = Some(store.clone());
     let host = std::thread::spawn(move || {
-        run_ephemeral(Punktfunk1Options {
+        run_ephemeral(Lilynk1Options {
             port: 19778,
-            source: Punktfunk1Source::Synthetic,
+            source: Lilynk1Source::Synthetic,
             seconds: 0,
             frames: 25,
             max_sessions: 4,
@@ -1481,7 +1481,7 @@ fn pairing_ceremony_and_gate() {
     })
     .expect("paired session");
     assert_eq!(client.host_fingerprint, host_fp);
-    // Welcome reports a concrete backend. Do not pin which: `PUNKTFUNK_GAMEPAD` may be set.
+    // Welcome reports a concrete backend. Do not pin which: `LILYNK_GAMEPAD` may be set.
     assert_ne!(client.resolved_gamepad, GamepadPref::Auto);
     drop(client);
 
@@ -1587,9 +1587,9 @@ fn spawn_logged_host(
             .build()
             .unwrap();
         rt.block_on(serve(
-            Punktfunk1Options {
+            Lilynk1Options {
                 port,
-                source: Punktfunk1Source::Synthetic,
+                source: Lilynk1Source::Synthetic,
                 seconds: 0,
                 frames: u32::MAX, // until the typed close or the client's leaving ends it
                 max_sessions,
@@ -1759,9 +1759,9 @@ fn a_pkf1_client_pairs_and_is_told_to_update() {
     let host = std::thread::spawn({
         let store = store.clone();
         move || {
-            run_ephemeral(Punktfunk1Options {
+            run_ephemeral(Lilynk1Options {
                 port: 19784,
-                source: Punktfunk1Source::Synthetic,
+                source: Lilynk1Source::Synthetic,
                 seconds: 0,
                 frames: 25,
                 max_sessions: 2,
@@ -2027,7 +2027,7 @@ fn launch_refused_without_grant_but_session_admitted() {
     });
     match refused {
         Ok(_) => panic!("a launch without the grant must be refused"),
-        Err(lilynk_core::PunktfunkError::Rejected(r, _)) => assert_eq!(
+        Err(lilynk_core::LilynkError::Rejected(r, _)) => assert_eq!(
             r,
             lilynk_core::reject::RejectReason::LaunchNotPermitted,
             "the refusal must carry the typed launch reason"
@@ -2103,7 +2103,7 @@ fn a_profile_is_resolved_in_the_handshake() {
     drop(owner);
     match dial(Some("ffffffffffff")) {
         Ok(_) => panic!("an unknown profile must be refused"),
-        Err(lilynk_core::PunktfunkError::Rejected(r, _)) => {
+        Err(lilynk_core::LilynkError::Rejected(r, _)) => {
             assert_eq!(r, lilynk_core::reject::RejectReason::ProfileUnknown)
         }
         Err(other) => panic!("expected a typed rejection, got {other:?}"),
@@ -2233,13 +2233,13 @@ fn a_refused_launch_runs_none_of_its_prep() {
             std::process::Command::new(std::env::current_exe().expect("this test binary"));
         child.args(["--exact", &test, "--nocapture"]);
         for (key, _) in std::env::vars_os() {
-            if key.to_string_lossy().starts_with("PUNKTFUNK_") {
+            if key.to_string_lossy().starts_with("LILYNK_") {
                 child.env_remove(key);
             }
         }
         let out = child
             .env(PREP_CHILD, "1")
-            .env("PUNKTFUNK_CONFIG_DIR", dir.path())
+            .env("LILYNK_CONFIG_DIR", dir.path())
             .output()
             .expect("run the child");
         let stdout = String::from_utf8_lossy(&out.stdout);
@@ -2450,9 +2450,9 @@ fn a_session_that_fails_after_its_planes_start() {
     let fp = endpoint::fingerprint_of_pem(&cert).unwrap();
     *FAIL_AT_LAUNCH.lock().unwrap_or_else(|p| p.into_inner()) = Some((fp, None));
     let spawned = std::thread::spawn(|| {
-        run_ephemeral(Punktfunk1Options {
+        run_ephemeral(Lilynk1Options {
             port: 19796,
-            source: Punktfunk1Source::Synthetic,
+            source: Lilynk1Source::Synthetic,
             seconds: 0,
             frames: 600,
             max_sessions: 1,
@@ -3047,7 +3047,7 @@ fn dial_host(
         {"id": SHARER_PROFILE, "display_name": "Guest", "os_account": {"kind": "operator"}},
     ]});
     std::fs::write(dir.join("profiles.json"), file.to_string()).unwrap();
-    let np = NativePairing::load_with(Some(dir.join("punktfunk1-paired.json")), None, false);
+    let np = NativePairing::load_with(Some(dir.join("lilynk1-paired.json")), None, false);
     let np = Arc::new(np.unwrap());
     let (cert, key) = endpoint::generate_identity().unwrap();
     let fp = hex::encode(endpoint::fingerprint_of_pem(&cert).unwrap());
@@ -3355,7 +3355,7 @@ fn signing_a_device_out_ends_its_session() {
         Some(dir.join("profiles.json")),
         None,
     ));
-    let np = NativePairing::load_with(Some(dir.join("punktfunk1-paired.json")), None, false);
+    let np = NativePairing::load_with(Some(dir.join("lilynk1-paired.json")), None, false);
     let np = Arc::new(np.unwrap());
     np.add_with_access("Kid's tablet", &fp, None).unwrap();
     let host = spawn_profile_host(19804, 1, np, profiles.clone());
@@ -3421,7 +3421,7 @@ fn a_dial_starts_a_stopped_seat_only_as_a_wake_would() {
         Some(dir.join("profiles.json")),
         None,
     ));
-    let np = NativePairing::load_with(Some(dir.join("punktfunk1-paired.json")), None, false);
+    let np = NativePairing::load_with(Some(dir.join("lilynk1-paired.json")), None, false);
     let np = Arc::new(np.unwrap());
     let pad = endpoint::generate_identity().unwrap();
     let couch = endpoint::generate_identity().unwrap();

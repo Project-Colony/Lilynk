@@ -15,7 +15,7 @@
 //! [`NativeVaapiDecoder::decode`] hands the pump at most one frame. Surplus waits in
 //! `deliverable`, bounded by [`max_deliverable`]; [`flush`] drains the tail. Hosts
 //! emit zero-reorder low-delay, so the queue is empty on the wire. Pin with
-//! `PUNKTFUNK_DECODER=native-vaapi`. Evidence: `video::native_evidence` and the
+//! `LILYNK_DECODER=native-vaapi`. Evidence: `video::native_evidence` and the
 //! ignored tests in this file.
 
 use std::os::fd::AsFd as _;
@@ -43,7 +43,7 @@ use crate::video_types::display_of;
 use crate::video_types::trim_deliverable;
 use crate::video_types::AnyPlanner;
 
-/// `PUNKTFUNK_DECODER=native-vaapi`. Skips the vendor order so a box that would
+/// `LILYNK_DECODER=native-vaapi`. Skips the vendor order so a box that would
 /// pick Vulkan first can still reach this rung; gating the pin would make the
 /// missing `video::native_evidence` ungeneratable.
 pub(crate) const DECODER_PIN: &str = "native-vaapi";
@@ -339,7 +339,7 @@ fn codec_decodable(codec: ly_vaapi::Codec, name: &str, presenter_vendor: u32) ->
 }
 
 impl NativeVaapiDecoder {
-    /// Tests use render-node name order unless they set `PUNKTFUNK_VAAPI_DEVICE`.
+    /// Tests use render-node name order unless they set `LILYNK_VAAPI_DEVICE`.
     #[cfg(test)]
     pub(crate) fn new(codec: ly_vaapi::Codec, stream: StreamFormat) -> Result<NativeVaapiDecoder> {
         Self::new_for_presenter(codec, stream, None)
@@ -1271,7 +1271,7 @@ fn finish(
 }
 
 /// How the importer learns the decode is done. The kernel fence on the surface's
-/// dma-buf is the default; `PUNKTFUNK_VAAPI_EXPLICIT_SYNC=0`, or a kernel without
+/// dma-buf is the default; `LILYNK_VAAPI_EXPLICIT_SYNC=0`, or a kernel without
 /// `DMA_BUF_IOCTL_EXPORT_SYNC_FILE`, falls back to `vaSyncSurface` on the pump.
 /// Process-wide: a kernel fact, not a per-decoder one.
 static SYNC_MODE: std::sync::atomic::AtomicU8 = std::sync::atomic::AtomicU8::new(SYNC_UNDECIDED);
@@ -1283,7 +1283,7 @@ fn sync_mode() -> u8 {
     use std::sync::atomic::Ordering;
     match SYNC_MODE.load(Ordering::Relaxed) {
         SYNC_UNDECIDED => {
-            let off = lilynk_core::env_on("PUNKTFUNK_VAAPI_EXPLICIT_SYNC") == Some(false);
+            let off = lilynk_core::env_on("LILYNK_VAAPI_EXPLICIT_SYNC") == Some(false);
             let mode = if off { SYNC_CPU } else { SYNC_EXPLICIT };
             SYNC_MODE.store(mode, Ordering::Relaxed);
             mode
@@ -2710,7 +2710,7 @@ mod tests {
 mod parity {
     //! Ignored frame-parity tests against libavcodec goldens in `ly-vkdecode/tests/data`.
     //! Run: `cargo test -p ly-client-video --lib video_vaapi_native -- --include-ignored --nocapture`.
-    //! Pin a GPU with `PUNKTFUNK_VAAPI_DEVICE=/dev/dri/renderD…`.
+    //! Pin a GPU with `LILYNK_VAAPI_DEVICE=/dev/dri/renderD…`.
     //!
     //! Seven H.264 / H.265 / Main10 / AV1 legs hash every delivered frame, flush
     //! included. Hidden AV1 frames are observed only through later displayed

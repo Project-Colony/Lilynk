@@ -351,7 +351,7 @@ jobs:
             # Canary: <major>.<minor>.<run> — major.minor track one minor ahead of stable, run climbs monotonically.
             "$($pf.PF_MAJOR).$($pf.PF_MINOR).$($env:GITHUB_RUN_NUMBER)"
           }
-          # Not PUNKTFUNK_BUILD_VERSION: the packer stamps $v into the finished exe, so a new run
+          # Not LILYNK_BUILD_VERSION: the packer stamps $v into the finished exe, so a new run
           # number never recompiles the host (packaging/windows/stamp-version.ps1).
           "HOST_VERSION=$v" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
           Write-Output "host version $v"
@@ -568,7 +568,7 @@ jobs:
           Pop-Location
           # Gate the installer on a real boot under the pinned bun (the release it ships), serving
           # /login.
-          $env:PORT = '3009'; $env:HOST = '127.0.0.1'; $env:PUNKTFUNK_UI_PASSWORD = 'ci'
+          $env:PORT = '3009'; $env:HOST = '127.0.0.1'; $env:LILYNK_UI_PASSWORD = 'ci'
           $server = (Resolve-Path 'web\.output\server\index.mjs').Path
           $p = Start-Process -FilePath $bun -ArgumentList $server -PassThru -WindowStyle Hidden
           Start-Sleep -Seconds 4
@@ -594,7 +594,7 @@ jobs:
         # `bun build --target=bun` bundles the SDK's runner CLI to ONE self-contained JS (effect +
         # the SDK inlined; the dynamic plugin import stays a runtime import).
         # pack-host-installer.ps1 ships it (+ the shared bun); the installer registers its
-        # PunktfunkScripting task. The SDK's deps are public npm (effect), so no @unom token is
+        # LilynkScripting task. The SDK's deps are public npm (effect), so no @unom token is
         # needed here.
         run: |
           $bun = $env:BUN_EXE

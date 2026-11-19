@@ -1,6 +1,6 @@
 // Punktfunk brand mark: two overlapping circles forming a lens — the violet
 // brand identity. Copied verbatim from the marketing site (flattened from the
-// clients/apple punktfunk_Logo.icon). Back-to-front: large light-violet circle,
+// clients/apple lilynk_Logo.icon). Back-to-front: large light-violet circle,
 // deep-violet circle, light highlight where they overlap.
 export default function BrandMark({ className }: { className?: string }) {
   return (

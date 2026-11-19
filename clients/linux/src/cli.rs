@@ -61,7 +61,7 @@ fn parse_host_port(target: &str) -> (String, Option<u16>) {
 /// `--connect` / `--browse`: streams and the console library live in the
 /// `lilynk-session` Vulkan binary — replace this process with it, forwarding the
 /// relevant argv verbatim. With neither flag (a [`couch_launch`]) it opens the console home.
-/// The Decky wrapper launches the SHELL with `--browse` (`clients/decky/bin/punktfunkrun.sh`).
+/// The Decky wrapper launches the SHELL with `--browse` (`clients/decky/bin/lilynkrun.sh`).
 pub fn exec_session() -> glib::ExitCode {
     use std::os::unix::process::CommandExt as _;
     let forward = [
@@ -368,7 +368,7 @@ pub fn headless_forget_host(selector: &str) -> glib::ExitCode {
 /// The version this binary was built as — the CI-stamped string (`0.23.0~ci10250.gab12cd34`
 /// and friends) when built by a packaging job, the crate version otherwise. See `build.rs`.
 pub fn version_string() -> &'static str {
-    env!("PUNKTFUNK_VERSION")
+    env!("LILYNK_VERSION")
 }
 
 /// `--version` — one line, so a script can ask "what is installed here?" without a display
@@ -411,7 +411,7 @@ fn headless_check_update() -> glib::ExitCode {
             // Says what it is, in words, instead of a raw HTTP status. The exit code still
             // reports "could not tell" (see the doc comment above): an empty channel is the
             // absence of evidence that this build is current, and a mistyped
-            // PUNKTFUNK_UPDATE_FEED is indistinguishable from one out here.
+            // LILYNK_UPDATE_FEED is indistinguishable from one out here.
             println!(
                 "update     nothing published on the {} channel yet",
                 status.channel

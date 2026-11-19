@@ -3,7 +3,7 @@
 //! stream carries control — the same split the native plane uses, because WebTransport *is* QUIC
 //! and a browser cannot open ours.
 //!
-//! **Off unless asked for** (`--webtransport` / `PUNKTFUNK_WEBTRANSPORT=1`), the stance
+//! **Off unless asked for** (`--webtransport` / `LILYNK_WEBTRANSPORT=1`), the stance
 //! `--gamestream` takes: a new externally-reachable transport does not appear on an upgrade.
 //!
 //! This plane mints its OWN ECDSA P-256 certificate, valid 13 days, and rotates it.
@@ -553,7 +553,7 @@ async fn session(
         let _ = tokio::time::timeout_at(deadline, request.forbidden()).await;
         tracing::warn!(
             origin = origin.as_deref().unwrap_or("<none>"),
-            "WebTransport session refused: origin not in PUNKTFUNK_WEBTRANSPORT_ORIGINS"
+            "WebTransport session refused: origin not in LILYNK_WEBTRANSPORT_ORIGINS"
         );
         return Ok(());
     }

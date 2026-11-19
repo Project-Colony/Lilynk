@@ -141,7 +141,7 @@ pub struct SessionRef {
 }
 
 /// Why a session ended, in the client's own words
-/// ([`lilynk_core::client::PunktfunkEndReason`]) so both ends name the same end the
+/// ([`lilynk_core::client::LilynkEndReason`]) so both ends name the same end the
 /// same way. The bytes match that ABI where the two overlap.
 ///
 /// [`Self::StoppedByOperator`] from a console stop and [`Self::Stolen`] close as code 0, which
@@ -866,7 +866,7 @@ mod tests {
     /// The host names an end with the byte the client already decodes from the QUIC close.
     #[test]
     fn the_end_reason_bytes_are_the_clients_own() {
-        use lilynk_core::client::PunktfunkEndReason as Client;
+        use lilynk_core::client::LilynkEndReason as Client;
 
         for (host, client) in [
             (SessionEndReason::Local, Client::Local),

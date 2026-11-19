@@ -52,12 +52,12 @@ const GENERIC_WRITE: u32 = 0x4000_0000;
 const DRIVER_STALE: Duration = Duration::from_secs(1);
 /// Between doorbell lookups while hidclass has not published the collection yet.
 const DOORBELL_RETRY: Duration = Duration::from_secs(1);
-/// `PUNKTFUNK_HID_INPUT=0` keeps every event on `SendInput`.
-const HID_INPUT_ENV: &str = "PUNKTFUNK_HID_INPUT";
+/// `LILYNK_HID_INPUT=0` keeps every event on `SendInput`.
+const HID_INPUT_ENV: &str = "LILYNK_HID_INPUT";
 
 /// The reserved display connector a seat host owns; unset on the console.
 /// `docs-site/content/docs/developers/multi-seat-contract.md` is the contract of record.
-const SEAT_SLOT_ENV: &str = "PUNKTFUNK_SEAT_DISPLAY_SLOT";
+const SEAT_SLOT_ENV: &str = "LILYNK_SEAT_DISPLAY_SLOT";
 const FIRST_SEAT_SLOT: u8 = 12;
 const LAST_SEAT_SLOT: u8 = 15;
 
@@ -462,14 +462,14 @@ pub(crate) fn release_hid() {
 /// [`InjectorService`](crate::InjectorService) start; native + GameStream share it.
 /// The keeper thread owns the devnode for the process lifetime.
 ///
-/// `PUNKTFUNK_NO_VIRTUAL_MOUSE=1` opts out.
+/// `LILYNK_NO_VIRTUAL_MOUSE=1` opts out.
 pub(crate) fn ensure_resident() {
     use std::sync::OnceLock;
     static STARTED: OnceLock<()> = OnceLock::new();
     STARTED.get_or_init(|| {
-        if ly_host_config::env_on("PUNKTFUNK_NO_VIRTUAL_MOUSE") == Some(true) {
+        if ly_host_config::env_on("LILYNK_NO_VIRTUAL_MOUSE") == Some(true) {
             tracing::info!(
-                "virtual HID mouse disabled (PUNKTFUNK_NO_VIRTUAL_MOUSE) — with no physical \
+                "virtual HID mouse disabled (LILYNK_NO_VIRTUAL_MOUSE) — with no physical \
                  pointer attached, Windows will not draw a cursor into the stream"
             );
             return;

@@ -50,7 +50,7 @@ pub struct Options {
     pub out: PathBuf,
     pub loopback: bool,
     /// Shard payload for [`Encoder::set_wire_chunking`]. `None` is one packet per AU.
-    /// Set this and `PUNKTFUNK_PYROWAVE_STREAMED_AU=1` to drain via `poll_chunk` and
+    /// Set this and `LILYNK_PYROWAVE_STREAMED_AU=1` to drain via `poll_chunk` and
     /// the streamed-AU loopback; without both, that path cannot run here.
     pub wire_chunk: Option<usize>,
 }
@@ -115,7 +115,7 @@ pub fn parse_spike(args: &[String]) -> Result<Options> {
                     "h264" => Codec::H264,
                     "h265" | "hevc" => Codec::H265,
                     "av1" => Codec::Av1,
-                    // Needs `pyrowave` and `PUNKTFUNK_ENCODER=pyrowave` (raw-dmabuf passthrough).
+                    // Needs `pyrowave` and `LILYNK_ENCODER=pyrowave` (raw-dmabuf passthrough).
                     "pyrowave" => Codec::PyroWave,
                     other => bail!("unknown --codec '{other}' (h264|h265|av1|pyrowave)"),
                 }
@@ -175,7 +175,7 @@ pub fn parse_spike(args: &[String]) -> Result<Options> {
 
 pub fn run(opts: Options) -> Result<()> {
     let resolved = encode::resolve();
-    let hdr = opts.hdr || std::env::var("PUNKTFUNK_SPIKE_HDR").as_deref() == Ok("1");
+    let hdr = opts.hdr || std::env::var("LILYNK_SPIKE_HDR").as_deref() == Ok("1");
     if hdr && matches!(opts.source, Source::Synthetic | Source::SyntheticNv12) {
         anyhow::bail!("--hdr needs a real source: --source portal or --source virtual");
     }
@@ -203,8 +203,8 @@ pub fn run(opts: Options) -> Result<()> {
         }
         Source::SyntheticNv12 => plat::open_synthetic_nv12(&opts)?,
         Source::Portal => {
-            // `PUNKTFUNK_SPIKE_HDR=1` asks the portal for 10-bit PQ dmabufs (GNOME HDR offer).
-            let want_hdr = std::env::var("PUNKTFUNK_SPIKE_HDR").as_deref() == Ok("1");
+            // `LILYNK_SPIKE_HDR=1` asks the portal for 10-bit PQ dmabufs (GNOME HDR offer).
+            let want_hdr = std::env::var("LILYNK_SPIKE_HDR").as_deref() == Ok("1");
             tracing::info!(
                 want_hdr,
                 "spike source: xdg ScreenCast portal (live monitor)"
@@ -309,13 +309,13 @@ pub fn run(opts: Options) -> Result<()> {
         .context("open encoder")?
     };
 
-    // Also the gate for `supports_chunked_poll()` (needs `PUNKTFUNK_PYROWAVE_STREAMED_AU=1`).
+    // Also the gate for `supports_chunked_poll()` (needs `LILYNK_PYROWAVE_STREAMED_AU=1`).
     if let Some(c) = opts.wire_chunk {
         encoder.set_wire_chunking(c);
         tracing::info!(
             shard_payload = c,
             chunked_poll = encoder.supports_chunked_poll(),
-            "spike: wire chunking on (chunked_poll=false means PUNKTFUNK_PYROWAVE_STREAMED_AU \
+            "spike: wire chunking on (chunked_poll=false means LILYNK_PYROWAVE_STREAMED_AU \
              is not armed — the AU still goes out whole)"
         );
     }
@@ -604,7 +604,7 @@ impl Loopback {
                         );
                     }
                 }
-                Err(lilynk_core::PunktfunkError::NoFrame) => break,
+                Err(lilynk_core::LilynkError::NoFrame) => break,
                 Err(e) => return Err(anyhow!("client poll_frame: {e:?}")),
             }
         }
@@ -637,7 +637,7 @@ impl Loopback {
                         );
                     }
                 }
-                Err(lilynk_core::PunktfunkError::NoFrame) => break,
+                Err(lilynk_core::LilynkError::NoFrame) => break,
                 Err(e) => return Err(anyhow!("client poll_frame: {e:?}")),
             }
         }

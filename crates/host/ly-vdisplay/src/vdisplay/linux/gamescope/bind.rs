@@ -28,7 +28,7 @@ fn gamescope_bin_wrapper_script(bin: &str) -> String {
 }
 
 /// Hardcoded by some session scripts instead of `GAMESCOPE_BIN`. Env, PATH shim, and
-/// `PUNKTFUNK_GAMESCOPE_BIN` all miss at once.
+/// `LILYNK_GAMESCOPE_BIN` all miss at once.
 pub(super) const DISTRO_GAMESCOPE_PATH: &str = "/usr/bin/gamescope";
 
 /// The socket directory every Xwayland — and so every gamescope — insists on before it will open a
@@ -82,7 +82,7 @@ enum BindOff {
     /// The session script could not be read — fail closed rather than arm a mechanism we cannot
     /// show is needed.
     ScriptUnreadable,
-    /// `PUNKTFUNK_GAMESCOPE_BIND=0`.
+    /// `LILYNK_GAMESCOPE_BIND=0`.
     OperatorOff,
     /// [`note_bind_hazard`] fired: a session launched with the bind armed never came up.
     Disarmed,
@@ -475,7 +475,7 @@ pub(super) fn arm_session_bind(wrapper: &std::path::Path) -> Option<SessionBind>
                 "gamescope: the resolved gamescope is a bare name, not an absolute path — not \
                  redirecting {DISTRO_GAMESCOPE_PATH}, because the wrapper resolves that name \
                  through PATH inside the unit and would land back on the redirect itself. Put the \
-                 binary on the host's PATH, or set PUNKTFUNK_GAMESCOPE_BIN to an absolute path."
+                 binary on the host's PATH, or set LILYNK_GAMESCOPE_BIN to an absolute path."
             );
             return None;
         }
@@ -489,7 +489,7 @@ pub(super) fn arm_session_bind(wrapper: &std::path::Path) -> Option<SessionBind>
         }
         BindPlan::Off(BindOff::OperatorOff) => {
             tracing::info!(
-                "gamescope: PUNKTFUNK_GAMESCOPE_BIND=0 — never redirecting {DISTRO_GAMESCOPE_PATH}. \
+                "gamescope: LILYNK_GAMESCOPE_BIND=0 — never redirecting {DISTRO_GAMESCOPE_PATH}. \
                  On a distro whose gamescope-session-plus hardcodes that path the session runs the \
                  distro's stock gamescope: no HDR, no in-node cursor, and games see gamescope's \
                  60 Hz headless default."
@@ -736,7 +736,7 @@ mod tests {
         assert!(!plain.unit_lines().contains("BindPaths="));
     }
 
-    /// A `PUNKTFUNK_GAMESCOPE_BIN` with a space stays one word. `sh` reads the wrapper, and the
+    /// A `LILYNK_GAMESCOPE_BIN` with a space stays one word. `sh` reads the wrapper, and the
     /// stand-in gamescope is written before it, so no `execve` meets a file still open for write.
     #[test]
     fn the_wrapper_runs_a_binary_whose_path_has_a_space() {

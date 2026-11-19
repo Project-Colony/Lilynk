@@ -848,20 +848,20 @@ fn run_seat_child(
     let mut run = std::process::Command::new(std::env::current_exe().expect("this test binary"));
     run.args(["--exact", &test, "--nocapture"]);
     for (key, _) in std::env::vars_os() {
-        if key.to_string_lossy().starts_with("PUNKTFUNK_") {
+        if key.to_string_lossy().starts_with("LILYNK_") {
             run.env_remove(key);
         }
     }
     if own_account {
-        run.env("PUNKTFUNK_SEAT_OWN_ACCOUNT", "1");
+        run.env("LILYNK_SEAT_OWN_ACCOUNT", "1");
     }
     let out = run
         .env(CHILD, child)
-        .env("PUNKTFUNK_CONFIG_DIR", config)
-        .env("PUNKTFUNK_SEAT_SESSION", "1")
-        .env("PUNKTFUNK_SEAT_ID", SEAT)
-        .env("PUNKTFUNK_TRUST_DIR", library)
-        .env("PUNKTFUNK_LIBRARY_DIR", library)
+        .env("LILYNK_CONFIG_DIR", config)
+        .env("LILYNK_SEAT_SESSION", "1")
+        .env("LILYNK_SEAT_ID", SEAT)
+        .env("LILYNK_TRUST_DIR", library)
+        .env("LILYNK_LIBRARY_DIR", library)
         .output()
         .expect("run the child");
     let stdout = String::from_utf8_lossy(&out.stdout);

@@ -97,7 +97,7 @@ struct PumpLoop {
     last_epoch: Option<u8>,
     /// When the socket's drop count was last read.
     sock_read: Instant,
-    /// `PUNKTFUNK_PERF`: recv/decrypt/reassemble split plus AU inter-arrival
+    /// `LILYNK_PERF`: recv/decrypt/reassemble split plus AU inter-arrival
     /// jitter. Jump-to-live only fires after the stream is already behind.
     perf: Option<PerfWindow>,
 }
@@ -133,7 +133,7 @@ impl PumpLoop {
     }
 }
 
-/// One report window of AU inter-arrival gaps, for `PUNKTFUNK_PERF`.
+/// One report window of AU inter-arrival gaps, for `LILYNK_PERF`.
 #[derive(Default)]
 struct PerfWindow {
     arrivals_us: Vec<u32>,
@@ -196,7 +196,7 @@ impl DataPump {
             awaiting_idr: false,
             last_epoch: None,
             sock_read: Instant::now(),
-            perf: std::env::var("PUNKTFUNK_PERF")
+            perf: std::env::var("LILYNK_PERF")
                 .is_ok_and(|v| v != "0")
                 .then(PerfWindow::default),
         };
@@ -249,7 +249,7 @@ impl DataPump {
             match polled {
                 Ok(frame) => self.on_frame(&mut lp, frame, clock_offset_ns, probe_active),
                 // Idle wire: a datagram wakes this at once; 1 ms bounds the timers above.
-                Err(PunktfunkError::NoFrame) => {
+                Err(LilynkError::NoFrame) => {
                     if self.session.wait_packets(Duration::from_millis(1)).is_err() {
                         break;
                     }

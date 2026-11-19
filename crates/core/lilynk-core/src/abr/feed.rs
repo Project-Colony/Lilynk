@@ -114,8 +114,7 @@ impl Feed {
                 } else {
                     0
                 },
-                ceiling_cap_kbps: env_u32("PUNKTFUNK_ABR_MAX_MBPS")
-                    .map(|m| m.saturating_mul(1_000)),
+                ceiling_cap_kbps: env_u32("LILYNK_ABR_MAX_MBPS").map(|m| m.saturating_mul(1_000)),
                 stream_cap_kbps: facts.stream_cap_kbps,
                 refresh_hz: facts.refresh_hz,
                 codec: facts.codec,
@@ -123,8 +122,8 @@ impl Feed {
                 chroma_format: facts.chroma_format,
                 audio_reserved_kbps: facts.audio_reserved_kbps,
                 marks_repeats: facts.marks_repeats,
-                probe: std::env::var("PUNKTFUNK_ABR_PROBE").map_or(true, |v| v != "0"),
-                probe_target_kbps: env_u32("PUNKTFUNK_ABR_PROBE_KBPS"),
+                probe: std::env::var("LILYNK_ABR_PROBE").map_or(true, |v| v != "0"),
+                probe_target_kbps: env_u32("LILYNK_ABR_PROBE_KBPS"),
                 ramp: facts.serves_ramp,
                 probe_only: facts.probe_only,
                 pin_kbps: explicit.filter(|_| pyrowave),

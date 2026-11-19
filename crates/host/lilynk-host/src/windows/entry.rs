@@ -138,7 +138,7 @@ pub(crate) fn print_usage() {
         \x20   lilynk-host hooks elevated on|off  let hooks and prep steps marked elevated run as\n\
         \x20                                     administrator (run it from an administrator prompt)\n\
         \nWINDOWS DIAGNOSTICS:\n\
-        \x20   lilynk-host hdr-p010-selftest  GPU colour check for the PUNKTFUNK_HDR_SHADER_P010 path\n\
+        \x20   lilynk-host hdr-p010-selftest  GPU colour check for the LILYNK_HDR_SHADER_P010 path\n\
         \x20                                     (scRGB FP16 -> P010 BT.2020 PQ shader vs an f64 reference)"
     );
 }

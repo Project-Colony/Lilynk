@@ -21,9 +21,9 @@ Type=simple
 User=punktfunk
 # Its own group: `punktfunk` owns the usbip attach nodes, which the door never opens.
 Group=lilynk-door
-Environment=PUNKTFUNK_CONFIG_DIR=/var/lib/punktfunk
+Environment=LILYNK_CONFIG_DIR=/var/lib/punktfunk
 # The box's library: the seat supervisor's copy of the owner's, which every client reads here.
-Environment=PUNKTFUNK_LIBRARY_DIR=/var/lib/lilynk-seats/library
+Environment=LILYNK_LIBRARY_DIR=/var/lib/lilynk-seats/library
 # The ports the owner moved in their host.env: door-helper copies them to the file below before
 # each start, so an update or a later edit reaches the door. `+` runs it as root, to read the
 # owner's file and keep the door's account in `lilynk-door`. That root line gets the file's

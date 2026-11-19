@@ -5,7 +5,7 @@
 // - **Plugins** — a file whose default export is a [`PluginDef`] (`definePlugin`), from the
 //   scripts dir or an installed plugin package. Supervised: a failure restarts
 //   it with capped exponential backoff; a clean return completes it. The Effect `main` shape
-//   runs with the `PunktfunkHost` layer provided and is interrupted STRUCTURALLY on shutdown
+//   runs with the `LilynkHost` layer provided and is interrupted STRUCTURALLY on shutdown
 //   (scoped finalizers run — release the preset, deregister cleanly); the async-fn shape gets
 //   a connected facade client whose close is guaranteed by the same scope.
 // - **Bare scripts** — any other `.ts`/`.js` file in the scripts dir: importing it IS the run
@@ -29,7 +29,7 @@ import {
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { pathToFileURL } from "node:url";
-import { PunktfunkHost } from "./client.js";
+import { LilynkHost } from "./client.js";
 import { discoverUnits } from "./discover.js";
 import { layer as hostLayer } from "./effect.js";
 import { type ConnectOptions, configDir } from "./config.js";
@@ -68,7 +68,7 @@ export interface RunnerOptions {
 	configDir?: string;
 	/**
 	 * A person's own account: run only the plugins their own lane installed, and no loose script.
-	 * Default: `PUNKTFUNK_PERSON_PLUGINS=1`, which their seat's runner unit sets.
+	 * Default: `LILYNK_PERSON_PLUGINS=1`, which their seat's runner unit sets.
 	 */
 	personOnly?: boolean;
 	/** Grants poll period. Default 2 seconds; tests shorten it. */
@@ -110,7 +110,7 @@ export interface Unit {
  * will see it — never a silent downgrade because a box could not manage a namespace.
  */
 export const sandboxMode = (): "on" | "off" =>
-	/^(0|off|false)$/i.test(process.env.PUNKTFUNK_PLUGIN_SANDBOX ?? "") ||
+	/^(0|off|false)$/i.test(process.env.LILYNK_PLUGIN_SANDBOX ?? "") ||
 	// The Windows host publishes `host.env`'s answer here; the runner's task never sees host.env.
 	(process.platform === "win32" &&
 		fs.existsSync(path.join(configDir(), "plugin-run", "sandbox-off")))
@@ -221,7 +221,7 @@ const attemptUnit = (
 				if (Effect.isEffect(def.main)) {
 					// The well-behaved shape: interruption reaches it structurally, its scoped
 					// finalizers run on shutdown.
-					yield* (def.main as Effect.Effect<unknown, unknown, PunktfunkHost>).pipe(
+					yield* (def.main as Effect.Effect<unknown, unknown, LilynkHost>).pipe(
 						Effect.provide(hostLayer(own)),
 					);
 				} else {
@@ -387,7 +387,7 @@ const watchGrantChanges = (
 
 /**
  * The runner ended at start: the sandbox is on, this box builds none, and a plugin is installed.
- * Running one without its sandbox is the operator's choice (`PUNKTFUNK_PLUGIN_SANDBOX=off`),
+ * Running one without its sandbox is the operator's choice (`LILYNK_PLUGIN_SANDBOX=off`),
  * never a fallback.
  */
 export class SandboxRefused extends Error {}
@@ -443,7 +443,7 @@ const sandboxRefusal = (
 	noteRefusal(config, probe.reason);
 	log(`[runner] plugins can't be sandboxed here: ${probe.reason}`, "error");
 	log(
-		`[runner] stopping instead of running ${plugins.join(", ")} unsandboxed — repair the sandbox and start the runner again, or set PUNKTFUNK_PLUGIN_SANDBOX=off to accept that`,
+		`[runner] stopping instead of running ${plugins.join(", ")} unsandboxed — repair the sandbox and start the runner again, or set LILYNK_PLUGIN_SANDBOX=off to accept that`,
 		"error",
 	);
 	return new SandboxRefused(probe.reason);
@@ -475,7 +475,7 @@ export const runner = (
 			const sandbox = options.sandbox ?? (confines ? sandboxMode() : "off");
 			if (sandbox === "off" && confines) {
 				log(
-					"[runner] PUNKTFUNK_PLUGIN_SANDBOX=off — plugins run with the runner's whole access",
+					"[runner] LILYNK_PLUGIN_SANDBOX=off — plugins run with the runner's whole access",
 					"warn",
 				);
 			}

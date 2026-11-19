@@ -211,7 +211,7 @@ pub const DEFAULT_SLICES: u32 = 4;
 
 /// Slices per frame a native client takes: 1 without
 /// [`VIDEO_CAP_MULTI_SLICE`](lilynk_core::quic::VIDEO_CAP_MULTI_SLICE), else its
-/// `ClientHello` ask, else [`DEFAULT_SLICES`]. An ask past 32 (the `PUNKTFUNK_NVENC_SLICES`
+/// `ClientHello` ask, else [`DEFAULT_SLICES`]. An ask past 32 (the `LILYNK_NVENC_SLICES`
 /// range) is no ask.
 pub fn client_slices(video_caps: u8, asked: u8) -> u32 {
     if video_caps & lilynk_core::quic::VIDEO_CAP_MULTI_SLICE == 0 {
@@ -306,18 +306,18 @@ impl SessionPlan {
                 // passthrough.
                 if self.codec == crate::encode::Codec::PyroWave {
                     tracing::warn!(
-                        "4:4:4 PyroWave session with PUNKTFUNK_ZEROCOPY off: zero-copy GPU \
+                        "4:4:4 PyroWave session with LILYNK_ZEROCOPY off: zero-copy GPU \
                          capture DISABLED — the wavelet encoder loses its raw-dmabuf passthrough \
                          and every frame becomes a full-resolution CPU readback plus an upload \
                          into its own Vulkan device; expect a materially lower fps ceiling (set \
-                         PUNKTFUNK_ZEROCOPY=1 to restore the passthrough)"
+                         LILYNK_ZEROCOPY=1 to restore the passthrough)"
                     );
                 } else {
                     tracing::warn!(
-                        "4:4:4 session on the NVENC path without PUNKTFUNK_ZEROCOPY: zero-copy \
+                        "4:4:4 session on the NVENC path without LILYNK_ZEROCOPY: zero-copy \
                          GPU capture DISABLED — every frame is CPU RGB + swscale RGB→YUV444P; \
                          expect a lower fps ceiling than 4:2:0 at this mode (set \
-                         PUNKTFUNK_ZEROCOPY=1 for the GPU 4:4:4 convert)"
+                         LILYNK_ZEROCOPY=1 for the GPU 4:4:4 convert)"
                     );
                 }
             }

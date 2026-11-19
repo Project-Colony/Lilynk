@@ -12,13 +12,13 @@ use. This page gets you a first authenticated call and shows where the full refe
 
 - The listener binds all interfaces. Admin calls are accepted from loopback only; from the LAN,
   only a paired device gets in (see [Credentials](#credentials)).
-- Move it with `--mgmt-bind <IP:PORT>` or `PUNKTFUNK_MGMT_BIND` in `host.env`
+- Move it with `--mgmt-bind <IP:PORT>` or `LILYNK_MGMT_BIND` in `host.env`
   ([Host CLI](/docs/host-cli)). `127.0.0.1:47990` makes it loopback-only.
 - On every start the host writes the URL it bound to `<config>/mgmt-endpoint`, as
-  `PUNKTFUNK_MGMT_URL=https://127.0.0.1:<port>`. Read that instead of assuming 47990.
+  `LILYNK_MGMT_URL=https://127.0.0.1:<port>`. Read that instead of assuming 47990.
 
 `<config>` is `~/.config/punktfunk` on Linux and `%ProgramData%\punktfunk` on Windows
-(`PUNKTFUNK_CONFIG_DIR` overrides it).
+(`LILYNK_CONFIG_DIR` overrides it).
 
 ## Credentials
 
@@ -32,10 +32,10 @@ Send a bearer token as `Authorization: Bearer <token>`. Which token decides what
 | Tray token | `<config>/tray-token`, minted fresh at every start; every local account but a seat's may read it | loopback | `GET /local/summary` and nothing else |
 | Paired device | a paired client certificate over mTLS, or a browser's device-key token | anywhere | `GET` host, status, compositors, actions, display targets and library; the profile list and pictures, waking a profile's seat and a profile's unlock challenge; picking its own screen; installing, pausing and removing a library title; ending its own game; log upload; invoking an action it holds the grant for |
 
-The token files hold one `KEY=<hex>` line (`PUNKTFUNK_MGMT_TOKEN=…`, `PUNKTFUNK_TRAY_TOKEN=…`),
+The token files hold one `KEY=<hex>` line (`LILYNK_MGMT_TOKEN=…`, `LILYNK_TRAY_TOKEN=…`),
 so a shell or a systemd `EnvironmentFile` can source them. Send only the value after `=`. The
 admin file is owner-only: your user on Linux, Administrators on Windows. To pin a token of your
-own, see `PUNKTFUNK_MGMT_TOKEN` in [Configuration](/docs/configuration).
+own, see `LILYNK_MGMT_TOKEN` in [Configuration](/docs/configuration).
 
 `GET /api/v1/health`, `GET /api/v1/webtransport`, the device-key exchange
 (`POST /api/v1/auth/device/challenge` and `/token`), the spec and the reference UI need no
@@ -51,15 +51,15 @@ also carries `code`, naming the host message `apierr_<code>`, and the `params` i
 On the host, as the user that runs it:
 
 ```sh
-. ~/.config/punktfunk/mgmt-endpoint   # sets PUNKTFUNK_MGMT_URL
-. ~/.config/punktfunk/mgmt-token      # sets PUNKTFUNK_MGMT_TOKEN
-curl -k -H "Authorization: Bearer $PUNKTFUNK_MGMT_TOKEN" "$PUNKTFUNK_MGMT_URL/api/v1/status"
+. ~/.config/punktfunk/mgmt-endpoint   # sets LILYNK_MGMT_URL
+. ~/.config/punktfunk/mgmt-token      # sets LILYNK_MGMT_TOKEN
+curl -k -H "Authorization: Bearer $LILYNK_MGMT_TOKEN" "$LILYNK_MGMT_URL/api/v1/status"
 ```
 
 On Windows, from an elevated PowerShell:
 
 ```powershell
-$t = (Get-Content "$env:ProgramData\punktfunk\mgmt-token") -replace '^PUNKTFUNK_MGMT_TOKEN=', ''
+$t = (Get-Content "$env:ProgramData\punktfunk\mgmt-token") -replace '^LILYNK_MGMT_TOKEN=', ''
 curl.exe -k -H "Authorization: Bearer $t" https://127.0.0.1:47990/api/v1/status
 ```
 
@@ -103,12 +103,12 @@ pf.events.on("pairing.pending", async (e) => {
 
 | Setting | Order |
 |---|---|
-| URL | `{ url }`, `PUNKTFUNK_MGMT_URL`, `<config>/mgmt-endpoint`, `https://127.0.0.1:47990` |
-| Token | `{ token }`, `PUNKTFUNK_MGMT_TOKEN`, `PUNKTFUNK_PLUGIN_TOKEN`, `<config>/plugin-token` |
-| Certificate pin | `{ ca }`, `PUNKTFUNK_MGMT_CA` (a path), `<config>/native-cert.pem`, `<config>/cert.pem` |
+| URL | `{ url }`, `LILYNK_MGMT_URL`, `<config>/mgmt-endpoint`, `https://127.0.0.1:47990` |
+| Token | `{ token }`, `LILYNK_MGMT_TOKEN`, `LILYNK_PLUGIN_TOKEN`, `<config>/plugin-token` |
+| Certificate pin | `{ ca }`, `LILYNK_MGMT_CA` (a path), `<config>/native-cert.pem`, `<config>/cert.pem` |
 
 It never reads `mgmt-token` on its own. A script that needs admin routes, such as the pairing
-approval above, sets `PUNKTFUNK_MGMT_TOKEN` or passes `{ token }`.
+approval above, sets `LILYNK_MGMT_TOKEN` or passes `{ token }`.
 
 `pf.events.on()` takes an event kind, a `domain.*` prefix or `*`, plus `dropped` (you missed
 events; re-read state over REST) and `unknown` (a kind newer than the SDK). It starts at the live

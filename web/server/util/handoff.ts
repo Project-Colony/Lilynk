@@ -106,7 +106,7 @@ export async function verifyHandoff(
  * token each time it starts.
  */
 export function ownerHandoffKeys(
-	dir: string = process.env.PUNKTFUNK_CONFIG_DIR ?? "",
+	dir: string = process.env.LILYNK_CONFIG_DIR ?? "",
 ): string[] {
 	if (!dir) return [];
 	try {

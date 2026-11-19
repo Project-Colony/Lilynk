@@ -10,7 +10,7 @@
 #
 # Needs bubblewrap and unprivileged user namespaces, so it runs on Linux only.
 set -u
-W=${PUNKTFUNK_REPO:-/w}
+W=${LILYNK_REPO:-/w}
 apt-get update -qq >/dev/null 2>&1
 apt-get install -y -qq bubblewrap iproute2 >/dev/null 2>&1 || { echo "FAIL: no bubblewrap"; exit 1; }
 
@@ -54,8 +54,8 @@ o.push(say("procs", fs.readdirSync("/proc").filter((d) => /^\d+$/.test(d)).lengt
 const ip = (await import("node:child_process")).spawnSync("ip", ["-o", "link"]);
 o.push(say("netlink", ip.error ? "NO_IP" : ip.status === 0 ? "OPEN" : "refused"));
 o.push(say("tunables", (() => { try { fs.writeFileSync("/proc/sys/kernel/sysrq", "1"); return "WRITABLE"; } catch (e) { return e.code; } })()));
-o.push(say("cfgdir", process.env.PUNKTFUNK_CONFIG_DIR ?? "UNSET"));
-o.push(say("sock", process.env.PUNKTFUNK_MGMT_UNIX ?? "UNSET"));
+o.push(say("cfgdir", process.env.LILYNK_CONFIG_DIR ?? "UNSET"));
+o.push(say("sock", process.env.LILYNK_MGMT_UNIX ?? "UNSET"));
 console.log("PROBE " + o.join(" "));
 JS
 

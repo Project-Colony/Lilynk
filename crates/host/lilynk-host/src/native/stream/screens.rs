@@ -136,7 +136,7 @@ fn desktop_axis(d: i32, reach: i64, scale: f64, (own_px, own_scale): (u32, f64))
 #[derive(Clone)]
 pub(super) struct ScreenBase {
     /// What the handshake settled: the encode resolution every screen opens on, and the
-    /// `PUNKTFUNK_PYROWAVE_MAX_MBPS` cap.
+    /// `LILYNK_PYROWAVE_MAX_MBPS` cap.
     pub(super) terms: Arc<super::super::handshake::SessionTerms>,
     pub(super) compositor: crate::vdisplay::Compositor,
     /// The first screen's display request; each screen swaps in its own identity.

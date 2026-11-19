@@ -351,7 +351,7 @@ mod tests {
         let _ = std::fs::remove_dir_all(&dir);
     }
 
-    /// A `PUNKTFUNK_GAMESCOPE_BIN` with a space stays one word on both launch lines.
+    /// A `LILYNK_GAMESCOPE_BIN` with a space stays one word on both launch lines.
     #[test]
     fn headless_shim_runs_a_binary_whose_path_has_a_space() {
         let (status, _, dir) = run_shim(

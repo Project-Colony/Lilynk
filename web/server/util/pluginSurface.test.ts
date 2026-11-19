@@ -85,10 +85,10 @@ const save = (
 	);
 
 beforeEach(async () => {
-	process.env.PUNKTFUNK_MGMT_URL = `http://127.0.0.1:${host.port}`;
-	process.env.PUNKTFUNK_MGMT_TOKEN = "t0k";
-	delete process.env.PUNKTFUNK_UI_PASSWORD;
-	process.env.PUNKTFUNK_UI_PASSWORD_HASH = await Bun.password.hash("typed", {
+	process.env.LILYNK_MGMT_URL = `http://127.0.0.1:${host.port}`;
+	process.env.LILYNK_MGMT_TOKEN = "t0k";
+	delete process.env.LILYNK_UI_PASSWORD;
+	process.env.LILYNK_UI_PASSWORD_HASH = await Bun.password.hash("typed", {
 		algorithm: "argon2id",
 	});
 	bustCredential("demo");
@@ -98,9 +98,9 @@ afterEach(() => {
 	reads.length = 0;
 	saves.length = 0;
 	access.length = 0;
-	delete process.env.PUNKTFUNK_MGMT_URL;
-	delete process.env.PUNKTFUNK_MGMT_TOKEN;
-	delete process.env.PUNKTFUNK_UI_PASSWORD_HASH;
+	delete process.env.LILYNK_MGMT_URL;
+	delete process.env.LILYNK_MGMT_TOKEN;
+	delete process.env.LILYNK_UI_PASSWORD_HASH;
 });
 afterAll(() => {
 	plugin.stop(true);

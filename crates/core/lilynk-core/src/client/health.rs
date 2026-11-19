@@ -62,7 +62,7 @@ pub struct SpeedReport {
 
 #[derive(Debug)]
 pub enum SpeedError {
-    Request(crate::PunktfunkError),
+    Request(crate::LilynkError),
     /// The host answered a round with an all-zero report.
     Declined,
     Timeout,
@@ -141,7 +141,7 @@ fn wait_for_video(c: &NativeClient) {
     while Instant::now() < deadline {
         match c.next_frame(Duration::from_millis(100)) {
             Ok(_) => return,
-            Err(crate::PunktfunkError::NoFrame) => {}
+            Err(crate::LilynkError::NoFrame) => {}
             Err(_) => return,
         }
     }

@@ -66,7 +66,7 @@ The C PoC's transport is ported to a Rust host gamepad backend:
 (`inject/linux/steam_controller.rs`) selects per-pad between **UHID** (universal) and the **USB
 gadget**: the gadget is the **default on SteamOS hosts** (`gadget_preferred()` → `ID=steamos`;
 best-effort `modprobe dummy_hcd raw_gadget`, graceful fallback to UHID if `/dev/raw-gadget` is
-unusable), and off elsewhere where UHID stays the default. `PUNKTFUNK_STEAM_GADGET=1`/`0` forces it.
+unusable), and off elsewhere where UHID stays the default. `LILYNK_STEAM_GADGET=1`/`0` forces it.
 A Deck-as-host with a *physical* Deck never uses it — `resolve_gamepad`'s conflict gate degrades
 `SteamDeck` → DualSense first.
 

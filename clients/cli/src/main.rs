@@ -815,8 +815,8 @@ from the config directory for a true factory reset."
     }
 
     impl PairFailure {
-        fn new(err: &lilynk_core::PunktfunkError, msg: String) -> Self {
-            use lilynk_core::PunktfunkError as E;
+        fn new(err: &lilynk_core::LilynkError, msg: String) -> Self {
+            use lilynk_core::LilynkError as E;
             let (kind, reject) = match err {
                 E::Rejected(reason, _) => ("rejected", Some(reason.as_str())),
                 E::Crypto => ("crypto", None),
@@ -2621,8 +2621,8 @@ from the config directory for a true factory reset."
         #[test]
         fn pair_json_carries_the_kind_and_the_reject_token() {
             use lilynk_core::reject::RejectReason;
-            use lilynk_core::PunktfunkError;
-            let json = |err: PunktfunkError| {
+            use lilynk_core::LilynkError;
+            let json = |err: LilynkError| {
                 let failure = PairFailure::new(&err, String::new());
                 serde_json::from_str::<serde_json::Value>(&pair_json(
                     "10.0.0.5",
@@ -2631,7 +2631,7 @@ from the config directory for a true factory reset."
                 ))
                 .expect("one JSON object")
             };
-            let refused = json(PunktfunkError::Rejected(
+            let refused = json(LilynkError::Rejected(
                 RejectReason::PairingNotArmed,
                 String::new(),
             ));
@@ -2639,12 +2639,12 @@ from the config directory for a true factory reset."
                 refused,
                 serde_json::json!({"ok": false, "kind": "rejected", "reject": "not-armed"})
             );
-            let wrong_pin = json(PunktfunkError::Crypto);
+            let wrong_pin = json(LilynkError::Crypto);
             assert_eq!(
                 wrong_pin,
                 serde_json::json!({"ok": false, "kind": "crypto", "reject": null})
             );
-            let silent = json(PunktfunkError::Timeout);
+            let silent = json(LilynkError::Timeout);
             assert_eq!(silent["kind"], "timeout");
         }
 

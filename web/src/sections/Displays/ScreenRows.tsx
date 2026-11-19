@@ -33,7 +33,7 @@ export const monitorOf = (
 	t: DisplayTarget | null | undefined,
 ): string | null => (t && t !== "own" ? t.monitor : null);
 
-/** `PUNKTFUNK_CAPTURE_MONITOR` outranks the stored policy and every device row. */
+/** `LILYNK_CAPTURE_MONITOR` outranks the stored policy and every device row. */
 export const pinLocked = (pinned: string | null, policy?: DisplayPolicy) =>
 	!!pinned && !!policy && monitorOf(screenOf(policy)) !== pinned;
 
@@ -80,7 +80,7 @@ export const ScreenRows: FC<{
 		)
 			? pinned
 			: null;
-	// `PUNKTFUNK_CAPTURE_MONITOR` outranks the stored policy: a pin from the unit's environment is
+	// `LILYNK_CAPTURE_MONITOR` outranks the stored policy: a pin from the unit's environment is
 	// read-only here, not a control that silently loses.
 	const envLocked = pinLocked(pinned, policy);
 	const locked = busy || envLocked;

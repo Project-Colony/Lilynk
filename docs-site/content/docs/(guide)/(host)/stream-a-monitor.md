@@ -32,14 +32,14 @@ On Linux, monitors are named by connector (`HDMI-A-1`, `DP-2`); `lilynk-host lis
 lists them ([Host CLI](/docs/host-cli#list-monitors)). On Windows they carry the Windows display
 name (`\\.\DISPLAY1`), which the console shows.
 
-To pin it from the host instead, set `PUNKTFUNK_CAPTURE_MONITOR=HDMI-A-1` in
+To pin it from the host instead, set `LILYNK_CAPTURE_MONITOR=HDMI-A-1` in
 [`host.env`](/docs/configuration). It wins over the console, which then shows the choice as locked.
 
 ## Troubleshooting
 
 ### The console won't let me pick a monitor
 
-`PUNKTFUNK_CAPTURE_MONITOR` is set in `host.env`. Remove it and restart the host.
+`LILYNK_CAPTURE_MONITOR` is set in `host.env`. Remove it and restart the host.
 
 ### A device streams its own screen instead of the monitor I picked
 

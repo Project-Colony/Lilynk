@@ -58,7 +58,7 @@ resolution and frame rate.
 Set it on the client under **PyroWave quality**, 0.5 to 2, shown as the rate it needs at your
 stream's mode ([Client settings](/docs/client-settings)). For a client without that row, set the
 host's value in the web console under **Host → Video → PyroWave quality**, or
-with `PUNKTFUNK_PYROWAVE_BPP` in `host.env`: 0.25 to 4, from the next session. The client's
+with `LILYNK_PYROWAVE_BPP` in `host.env`: 0.25 to 4, from the next session. The client's
 **Bitrate** then offers **Automatic** or **Fixed** (on the Apple apps, the **Automatic bitrate**
 switch): Fixed streams at the quality, and with **Automatic** the quality is the most a session
 uses ([Fitting the link](#fitting-the-link)).
@@ -114,7 +114,7 @@ set for another codec counts as **Fixed** here, so a player who kept one streams
 until **Bitrate** goes back to **Automatic**.
 
 To hold every session under a fixed rate, set **PyroWave bitrate cap** (under **Show advanced**,
-`PUNKTFUNK_PYROWAVE_MAX_MBPS`, 0 for no cap).
+`LILYNK_PYROWAVE_MAX_MBPS`, 0 for no cap).
 
 ## Checking a Linux host is zero-copy
 
@@ -125,7 +125,7 @@ capture pipeline resolved: dmabuf-passthrough → pyrowave
 ```
 
 `dmabuf-passthrough` is zero-copy. `cpu` means every frame is copied, which lowers the frame-rate
-ceiling and raises CPU use; the warning after it names the cause, such as `PUNKTFUNK_ZEROCOPY` set
+ceiling and raises CPU use; the warning after it names the cause, such as `LILYNK_ZEROCOPY` set
 to `0` or a compositor that would not hand over a dmabuf.
 
 ## Limits

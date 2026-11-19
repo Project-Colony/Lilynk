@@ -43,7 +43,7 @@ pub(super) fn audio_budget(
             WARNED.call_once(|| {
                 tracing::warn!(
                     value = %s,
-                    "audio.quality (PUNKTFUNK_AUDIO_QUALITY) is not one of low/standard/high — \
+                    "audio.quality (LILYNK_AUDIO_QUALITY) is not one of low/standard/high — \
                      using the default"
                 );
             });
@@ -264,9 +264,9 @@ pub(super) fn resolve_audio_plane(
     }
     if !operator_allows {
         tracing::info!(
-            // Reaching here means PUNKTFUNK_AUDIO_HIRES=0. Name the variable so the operator finds it.
+            // Reaching here means LILYNK_AUDIO_HIRES=0. Name the variable so the operator finds it.
             "hi-res audio requested by the client but it is disabled on this host by \
-             PUNKTFUNK_AUDIO_HIRES=0 — the session uses Opus 48 kHz (remove that line, or set it \
+             LILYNK_AUDIO_HIRES=0 — the session uses Opus 48 kHz (remove that line, or set it \
              to 1, to allow the lossless plane; it costs 1.4–8.5 Mbps in stereo and up to 33.9 in \
              7.1, off the top of the link and outside the ABR loop)"
         );
@@ -292,7 +292,7 @@ pub(super) fn resolve_audio_plane(
              that rate — the session uses Opus 48 kHz. On Windows the endpoint's own engine rate \
              is authoritative (autoconvert would silently hand us an upsampled copy), so set the \
              rate in that device's Windows properties; on Linux the default stream-sink mode \
-             delivers any supported rate, while PUNKTFUNK_STREAM_SINK=0 can only offer the rate \
+             delivers any supported rate, while LILYNK_STREAM_SINK=0 can only offer the rate \
              the monitored sink itself runs at — and declines outright when that sink is idle or \
              cannot be read"
         );
@@ -521,7 +521,7 @@ pub(super) struct Negotiation<'a> {
     pub(super) conn: &'a super::link::SessionLink,
     /// The already-read `ClientHello`.
     pub(super) first: &'a ClientHello,
-    pub(super) source: Punktfunk1Source,
+    pub(super) source: Lilynk1Source,
     pub(super) frames: u32,
     /// `welcome` / `start` stamps; Welcome-time display prep threads this into pipeline-build.
     pub(super) bringup: &'a Arc<crate::bringup::Trace>,
@@ -566,7 +566,7 @@ pub(in crate::native) struct SessionTerms {
     pub(in crate::native) studio_asked: crate::session_plan::StudioAsk,
     /// PyroWave's bits per pixel for this session: the client's quality, else the host's.
     pub(in crate::native) pyrowave_bpp: f64,
-    /// `PUNKTFUNK_PYROWAVE_MAX_MBPS`, kbps, over every PyroWave pin of the session.
+    /// `LILYNK_PYROWAVE_MAX_MBPS`, kbps, over every PyroWave pin of the session.
     pub(in crate::native) pyrowave_max_kbps: Option<u32>,
     /// H.264/HEVC slices per frame ([`crate::session_plan::client_slices`]); 1 = single-slice.
     /// Amlogic decoders (Chromecast with Google TV) are reported to wedge on multi-slice.
@@ -658,7 +658,7 @@ pub(super) async fn negotiate(
     let intent = Intent::at_hello(hello.mode, asked.view(), &tenure, codec);
 
     // Library launch is resolved after Welcome into `SessionContext.launch`. Do not write
-    // `PUNKTFUNK_GAMESCOPE_APP`: process env races concurrent sessions and only gamescope's bare spawn reads it.
+    // `LILYNK_GAMESCOPE_APP`: process env races concurrent sessions and only gamescope's bare spawn reads it.
 
     // Env/cfg only; pads are created lazily by the input thread.
     let gamepad = resolve_gamepad(hello.gamepad, n.knobs.steam_force);
@@ -824,7 +824,7 @@ async fn session_screen(
 ) -> Result<SessionScreen> {
     let may_choose = n.grants & lilynk_core::quic::GRANT_DISPLAY != 0;
     let wish = n.first.screen_wish.clone();
-    let settled = if matches!(n.source, Punktfunk1Source::Virtual) {
+    let settled = if matches!(n.source, Lilynk1Source::Virtual) {
         let client = n.conn.peer_fingerprint();
         let wish = wish.clone();
         tokio::task::spawn_blocking(move || {
@@ -993,16 +993,14 @@ fn welcome(n: &Negotiation<'_>, t: &SessionTerms) -> Welcome {
             fec_percent: n.knobs.fec_pct.unwrap_or(FEC_ADAPTIVE_START),
             max_data_per_block: 4096,
         },
-        // Order: jumbo re-proof, `PUNKTFUNK_WIRE_MTU`, a prior session's learned path
+        // Order: jumbo re-proof, `LILYNK_WIRE_MTU`, a prior session's learned path
         // budget, then the address family's default (`config::mtu1500_shard_payload_for`).
         // A browser's datagram size clamps it after. See `wire_mtu.rs`.
         shard_payload: t.shard_payload as u16,
         frames: match n.source {
-            Punktfunk1Source::Synthetic => n.frames,
+            Lilynk1Source::Synthetic => n.frames,
             // Unbounded; the client streams until we close.
-            Punktfunk1Source::SyntheticAbr(..)
-            | Punktfunk1Source::Virtual
-            | Punktfunk1Source::Software => 0,
+            Lilynk1Source::SyntheticAbr(..) | Lilynk1Source::Virtual | Lilynk1Source::Software => 0,
         },
         // Auto for the synthetic source (no compositor).
         compositor: t
@@ -1080,7 +1078,7 @@ fn server_hello(n: &Negotiation<'_>, t: &SessionTerms, welcome: Welcome) -> Serv
         ));
     // Further screens only where this session builds displays of its own on a compositor with
     // more than one output: not gamescope.
-    if matches!(n.source, Punktfunk1Source::Virtual)
+    if matches!(n.source, Lilynk1Source::Virtual)
         && t.compositor
             .is_some_and(|c| c != crate::vdisplay::Compositor::Gamescope)
         && t.tenure.offers_screens()
@@ -1117,7 +1115,7 @@ fn prepare_at_welcome(
     t: &Arc<SessionTerms>,
     welcome: &Welcome,
 ) -> Option<super::stream::PrepHandle> {
-    if !(matches!(n.source, Punktfunk1Source::Virtual)
+    if !(matches!(n.source, Lilynk1Source::Virtual)
         && t.compositor.is_some()
         && cfg!(target_os = "windows"))
     {
@@ -1493,7 +1491,7 @@ fn welcome_host_caps(n: &Negotiation<'_>, t: &SessionTerms) -> u8 {
 }
 
 /// `Welcome::host_caps2`.
-fn welcome_host_caps2(source: Punktfunk1Source) -> u8 {
+fn welcome_host_caps2(source: Lilynk1Source) -> u8 {
     // Idle-keepalive re-encodes are marked `USER_FLAG_REPEAT` so client ABR treats an
     // unflagged AU as new content.
     lilynk_core::quic::HOST_CAP2_REPEAT_MARK
@@ -1520,8 +1518,8 @@ fn welcome_host_caps2(source: Punktfunk1Source) -> u8 {
         // rate-following source holds its first frame back (`--bringup-ms`) to match. The
         // byte-pattern source has no such gap: video leaves at once.
         | match source {
-            Punktfunk1Source::Virtual => lilynk_core::quic::HOST_CAP2_RAMP,
-            Punktfunk1Source::SyntheticAbr(shape) if shape.serve_ramp => {
+            Lilynk1Source::Virtual => lilynk_core::quic::HOST_CAP2_RAMP,
+            Lilynk1Source::SyntheticAbr(shape) if shape.serve_ramp => {
                 lilynk_core::quic::HOST_CAP2_RAMP
             }
             _ => 0,
@@ -1542,10 +1540,10 @@ async fn negotiate_compositor(
     // Blocking probes → spawn_blocking.
     let compositor = match n.source {
         #[cfg(target_os = "linux")]
-        Punktfunk1Source::Virtual if super::plays_seat_mode() => {
+        Lilynk1Source::Virtual if super::plays_seat_mode() => {
             Some(crate::seats::session_switch::connect_route())
         }
-        Punktfunk1Source::Virtual => {
+        Lilynk1Source::Virtual => {
             let game_mode = game_mode_pref(hello.launch.as_deref());
             if game_mode.is_some() {
                 tracing::info!(
@@ -1580,9 +1578,9 @@ async fn negotiate_compositor(
                 .context("resolve compositor task")??,
             )
         }
-        Punktfunk1Source::Synthetic
-        | Punktfunk1Source::SyntheticAbr(..)
-        | Punktfunk1Source::Software => None,
+        Lilynk1Source::Synthetic | Lilynk1Source::SyntheticAbr(..) | Lilynk1Source::Software => {
+            None
+        }
     };
     // Split the pair: compositor for Welcome/cursor; gamescope route as a value, not process env.
     let gamescope_route = compositor.as_ref().and_then(|(_, r)| r.clone());
@@ -1611,7 +1609,7 @@ pub(super) struct FormatFacts {
     pub(super) video_caps: u8,
     pub(super) compositor: Option<crate::vdisplay::Compositor>,
     pub(super) gamescope_route: Option<crate::vdisplay::GamescopeRoute>,
-    /// The session's `PUNKTFUNK_10BIT_SDR_WIDEN` row.
+    /// The session's `LILYNK_10BIT_SDR_WIDEN` row.
     pub(super) sdr10_widen: bool,
     /// The colours the client asked to get at studio range.
     pub(super) studio_asked: crate::session_plan::StudioAsk,

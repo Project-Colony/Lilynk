@@ -499,7 +499,7 @@ fn dispatch(
             fire_webhook(url.to_string(), h.hmac_secret_file.clone(), ev, sem);
         }
     }
-    // Env-var mirrors of `PUNKTFUNK_ON_CONNECT_CMD` / `PUNKTFUNK_ON_DISCONNECT_CMD`.
+    // Env-var mirrors of `LILYNK_ON_CONNECT_CMD` / `LILYNK_ON_DISCONNECT_CMD`.
     let mirror = match kind {
         "client.connected" => ly_host_config::config().on_connect_cmd.clone(),
         "client.disconnected" => ly_host_config::config().on_disconnect_cmd.clone(),

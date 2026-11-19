@@ -1,5 +1,5 @@
-// The Effect-native surface (RFC §7): the `PunktfunkHost` service — a typed management-API
-// client plus the lifecycle-event `Stream` — provided by [`PunktfunkHostLive`]. Wire shapes
+// The Effect-native surface (RFC §7): the `LilynkHost` service — a typed management-API
+// client plus the lifecycle-event `Stream` — provided by [`LilynkHostLive`]. Wire shapes
 // are the generated Effect Schemas in ./gen/lilynk.ts, events included; `get` validates a
 // response against its schema, so host/SDK version skew surfaces as a typed [`VersionSkew`]
 // instead of an `undefined` three frames later.
@@ -47,7 +47,7 @@ export class EventStreamError extends Data.TaggedError("EventStreamError")<{
 
 export type RequestError = AuthError | ApiError | TransportError;
 
-export interface PunktfunkHostService {
+export interface LilynkHostService {
 	readonly config: Connection;
 	/** One management-API request under `/api/v1`; the parsed JSON body. */
 	readonly request: (
@@ -75,10 +75,10 @@ export interface PunktfunkHostService {
 	) => Stream.Stream<SseFrame, EventStreamError>;
 }
 
-export class PunktfunkHost extends Context.Service<
-	PunktfunkHost,
-	PunktfunkHostService
->()("@punktfunk/host/PunktfunkHost") {}
+export class LilynkHost extends Context.Service<
+	LilynkHost,
+	LilynkHostService
+>()("@punktfunk/host/LilynkHost") {}
 
 const toRequestError = (path: string, cause: unknown): RequestError => {
 	if (cause instanceof HttpStatusError) {
@@ -89,7 +89,7 @@ const toRequestError = (path: string, cause: unknown): RequestError => {
 	return new TransportError({ cause });
 };
 
-export const makeService = (cfg: Connection): PunktfunkHostService => {
+export const makeService = (cfg: Connection): LilynkHostService => {
 	const request = (method: string, path: string, body?: unknown) =>
 		Effect.tryPromise({
 			try: () => httpRequest(cfg, method, path, body),
@@ -151,7 +151,7 @@ export const makeService = (cfg: Connection): PunktfunkHostService => {
  * stub, anything. The Node-resolving [`layer`] lives beside `config.ts`, because resolving a
  * connection from files is the one part of this that is not platform-neutral.
  */
-export const layerFrom = (conn: Connection): Layer.Layer<PunktfunkHost> =>
-	Layer.succeed(PunktfunkHost, makeService(conn));
+export const layerFrom = (conn: Connection): Layer.Layer<LilynkHost> =>
+	Layer.succeed(LilynkHost, makeService(conn));
 
 export { SseAuthError };

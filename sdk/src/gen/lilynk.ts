@@ -42,7 +42,7 @@ export const UnpairAllResult = Schema.StructWithRest(Schema.Struct({ "unpaired":
 export type RenameClient = { readonly "label"?: string | null } & { readonly [x: string]: Schema.Json }
 export const RenameClient = Schema.StructWithRest(Schema.Struct({ "label": Schema.optionalKey(Schema.Union([Schema.String, Schema.Null]).annotate({ "description": "Display name. `null` or empty/whitespace clears it (listed by fingerprint alone).\n\nScrubbed with the native-plane sanitizer: control characters and Unicode bidi\noverrides stripped (one device could impersonate another in this list), whitespace\ncollapsed, capped at 64 bytes of UTF-8.", "examples": ["Living Room TV"] })) }), [Schema.Record(Schema.String, Schema.Json.annotate({ "expected": "JSON value" }))]).annotate({ "description": "Body of `PATCH /clients/{fingerprint}` — the device's display name.", "identifier": "RenameClient" })
 export type AvailableCompositor = { readonly "available": boolean, readonly "default": boolean, readonly "id": string, readonly "label": string } & { readonly [x: string]: Schema.Json }
-export const AvailableCompositor = Schema.StructWithRest(Schema.Struct({ "available": Schema.Boolean.annotate({ "description": "Usable now: the live session's compositor, the `PUNKTFUNK_COMPOSITOR` pin, or a backend\nwhose own probe passes." }), "default": Schema.Boolean.annotate({ "description": "True for the backend an `Auto` (unspecified) request resolves to right now." }), "id": Schema.String.annotate({ "description": "Stable id (`kwin` | `gamescope` | `mutter` | `wlroots` | `hyprland` | `niri` | `umbriel`);\npass to `--compositor`." }), "label": Schema.String }), [Schema.Record(Schema.String, Schema.Json.annotate({ "expected": "JSON value" }))]).annotate({ "description": "A compositor backend and whether it is usable now.", "identifier": "AvailableCompositor" })
+export const AvailableCompositor = Schema.StructWithRest(Schema.Struct({ "available": Schema.Boolean.annotate({ "description": "Usable now: the live session's compositor, the `LILYNK_COMPOSITOR` pin, or a backend\nwhose own probe passes." }), "default": Schema.Boolean.annotate({ "description": "True for the backend an `Auto` (unspecified) request resolves to right now." }), "id": Schema.String.annotate({ "description": "Stable id (`kwin` | `gamescope` | `mutter` | `wlroots` | `hyprland` | `niri` | `umbriel`);\npass to `--compositor`." }), "label": Schema.String }), [Schema.Record(Schema.String, Schema.Json.annotate({ "expected": "JSON value" }))]).annotate({ "description": "A compositor backend and whether it is usable now.", "identifier": "AvailableCompositor" })
 export type Remedy = { readonly "command"?: string | null, readonly "relogin_required": boolean, readonly "text": string } & { readonly [x: string]: Schema.Json }
 export const Remedy = Schema.StructWithRest(Schema.Struct({ "command": Schema.optionalKey(Schema.Union([Schema.String, Schema.Null])), "relogin_required": Schema.Boolean.annotate({ "description": "Fix takes effect only after logout. `systemd --user` keeps the group set it started with." }), "text": Schema.String.annotate({ "description": "English fallback. The console overrides it by check id." }) }), [Schema.Record(Schema.String, Schema.Json.annotate({ "expected": "JSON value" }))]).annotate({ "description": "Operator action. Copy-paste only: the host is unprivileged and does not run the command.\nJoining `punktfunk` is opt-in — write on the vhci `attach` node materialises arbitrary USB.", "identifier": "Remedy" })
 export type Severity = "info" | "warning" | "critical"
@@ -74,7 +74,7 @@ export const WorkspacePlacement = Schema.Literals(["own", "current"]).annotate({
 export type Preset = "custom" | "default" | "gaming-rig" | "shared-desktop" | "hotdesk" | "workstation" | "play-together"
 export const Preset = Schema.Literals(["custom", "default", "gaming-rig", "shared-desktop", "hotdesk", "workstation", "play-together"]).annotate({ "description": "Named bundle of the fields below. `Custom` uses the explicit fields;\nany other preset ignores them and expands ([`DisplayPolicy::effective`]).", "identifier": "Preset" })
 export type ApiMonitorInfo = { readonly "connector": string, readonly "description": string, readonly "enabled": boolean, readonly "managed": boolean, readonly "mode": string, readonly "primary": boolean, readonly "scale": number, readonly "selected": boolean, readonly "x": number, readonly "y": number } & { readonly [x: string]: Schema.Json }
-export const ApiMonitorInfo = Schema.StructWithRest(Schema.Struct({ "connector": Schema.String.annotate({ "description": "Connector (`DP-1`, `HDMI-A-2`) — the value `PUNKTFUNK_CAPTURE_MONITOR` takes." }), "description": Schema.String.annotate({ "description": "Picker label (`make model`, else the connector)." }), "enabled": Schema.Boolean.annotate({ "description": "Driven right now. Disabled heads stay listed so they are not missing from the picker." }), "managed": Schema.Boolean.annotate({ "description": "One of our virtual displays, not a real head. Best-effort on Sway, whose\n`HEADLESS-N` may be the operator's own." }), "mode": Schema.String.annotate({ "description": "`WIDTHxHEIGHT@HZ` of the current mode (size only when the refresh is unknown)." }), "primary": Schema.Boolean, "scale": Schema.Number.annotate({ "format": "double" }).check(Schema.isFinite().annotate({ "expected": "a finite number" })), "selected": Schema.Boolean.annotate({ "description": "True when the host-wide pin (`PUNKTFUNK_CAPTURE_MONITOR`, else the stored policy) names\nthis monitor." }), "x": Schema.Number.annotate({ "description": "Desktop-space top-left. Distinguishes two heads of the same size.", "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })), "y": Schema.Number.annotate({ "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })) }), [Schema.Record(Schema.String, Schema.Json.annotate({ "expected": "JSON value" }))]).annotate({ "description": "Physical monitor as the compositor reports it.", "identifier": "ApiMonitorInfo" })
+export const ApiMonitorInfo = Schema.StructWithRest(Schema.Struct({ "connector": Schema.String.annotate({ "description": "Connector (`DP-1`, `HDMI-A-2`) — the value `LILYNK_CAPTURE_MONITOR` takes." }), "description": Schema.String.annotate({ "description": "Picker label (`make model`, else the connector)." }), "enabled": Schema.Boolean.annotate({ "description": "Driven right now. Disabled heads stay listed so they are not missing from the picker." }), "managed": Schema.Boolean.annotate({ "description": "One of our virtual displays, not a real head. Best-effort on Sway, whose\n`HEADLESS-N` may be the operator's own." }), "mode": Schema.String.annotate({ "description": "`WIDTHxHEIGHT@HZ` of the current mode (size only when the refresh is unknown)." }), "primary": Schema.Boolean, "scale": Schema.Number.annotate({ "format": "double" }).check(Schema.isFinite().annotate({ "expected": "a finite number" })), "selected": Schema.Boolean.annotate({ "description": "True when the host-wide pin (`LILYNK_CAPTURE_MONITOR`, else the stored policy) names\nthis monitor." }), "x": Schema.Number.annotate({ "description": "Desktop-space top-left. Distinguishes two heads of the same size.", "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })), "y": Schema.Number.annotate({ "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })) }), [Schema.Record(Schema.String, Schema.Json.annotate({ "expected": "JSON value" }))]).annotate({ "description": "Physical monitor as the compositor reports it.", "identifier": "ApiMonitorInfo" })
 export type ReleaseDisplayRequest = { readonly "slot"?: number | null } & { readonly [x: string]: Schema.Json }
 export const ReleaseDisplayRequest = Schema.StructWithRest(Schema.Struct({ "slot": Schema.optionalKey(Schema.Union([Schema.Number.annotate({ "format": "int64" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })), Schema.Null]).annotate({ "description": "Slot to release (see `state`); omit to release **all** kept displays." })) }), [Schema.Record(Schema.String, Schema.Json.annotate({ "expected": "JSON value" }))]).annotate({ "description": "Request body for `releaseDisplay`.", "identifier": "ReleaseDisplayRequest" })
 export type ReleaseDisplayResult = { readonly "released": number } & { readonly [x: string]: Schema.Json }
@@ -128,7 +128,7 @@ export const AudioEgress = Schema.StructWithRest(Schema.Struct({ "infilled": Sch
 export type BitrateSpan = { readonly "adaptive_steps": number, readonly "avg_kbps": number, readonly "max_kbps": number, readonly "min_kbps": number } & { readonly [x: string]: Schema.Json }
 export const BitrateSpan = Schema.StructWithRest(Schema.Struct({ "adaptive_steps": Schema.Number.annotate({ "description": "Times the target moved after the opening rate: adaptive-bitrate decisions, plus a\nrebuild re-resolving what it actually encodes.", "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })), "avg_kbps": Schema.Number.annotate({ "description": "Mean of the targets the session ran at, NOT weighted by how long each held.\nA rate held for a second counts as much as one held for an hour.", "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })), "max_kbps": Schema.Number.annotate({ "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })), "min_kbps": Schema.Number.annotate({ "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })) }), [Schema.Record(Schema.String, Schema.Json.annotate({ "expected": "JSON value" }))]).annotate({ "description": "What the encoder's target did over the session. Absent when no encoder opened.", "identifier": "BitrateSpan" })
 export type SessionEndReason = "local" | "game_exited" | "host_ended" | "host_error" | "lost" | "stopped_by_operator" | "stolen"
-export const SessionEndReason = Schema.Literals(["local", "game_exited", "host_ended", "host_error", "lost", "stopped_by_operator", "stolen"]).annotate({ "description": "Why a session ended, in the client's own words\n([`lilynk_core::client::PunktfunkEndReason`]) so both ends name the same end the\nsame way. The bytes match that ABI where the two overlap.\n\n[`Self::StoppedByOperator`] from a console stop and [`Self::Stolen`] close as code 0, which\nevery client reads as `host_ended`. A `stopped_by_operator` after an access expiry, an\nunpair, a power action or a closed profile closes with a typed reject code the client names.", "identifier": "SessionEndReason" })
+export const SessionEndReason = Schema.Literals(["local", "game_exited", "host_ended", "host_error", "lost", "stopped_by_operator", "stolen"]).annotate({ "description": "Why a session ended, in the client's own words\n([`lilynk_core::client::LilynkEndReason`]) so both ends name the same end the\nsame way. The bytes match that ABI where the two overlap.\n\n[`Self::StoppedByOperator`] from a console stop and [`Self::Stolen`] close as code 0, which\nevery client reads as `host_ended`. A `stopped_by_operator` after an access expiry, an\nunpair, a power action or a closed profile closes with a typed reject code the client names.", "identifier": "SessionEndReason" })
 export type GyroCadence = { readonly "samples": number, readonly "stalls": number } & { readonly [x: string]: Schema.Json }
 export const GyroCadence = Schema.StructWithRest(Schema.Struct({ "samples": Schema.Number.annotate({ "format": "int64" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })), "stalls": Schema.Number.annotate({ "description": "Gaps of 500 ms or more — the feed stopping, not jitter.", "format": "int64" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })) }), [Schema.Record(Schema.String, Schema.Json.annotate({ "expected": "JSON value" }))]).annotate({ "description": "Client gyro arrival counts. Absent when no pad ever sent motion.", "identifier": "GyroCadence" })
 export type InputCounts = { readonly "dropped": number, readonly "events": number, readonly "mic": number, readonly "rich": number } & { readonly [x: string]: Schema.Json }
@@ -420,7 +420,7 @@ export const PendingDevice = Schema.StructWithRest(Schema.Struct({ "access_level
 export type SessionSummary = { readonly "audio"?: null | AudioEgress, readonly "bit_depth": number, readonly "bitrate"?: null | BitrateSpan, readonly "bitrate_kbps": number, readonly "bringup_ms": number, readonly "chroma": string, readonly "client": string, readonly "client_name"?: string | null, readonly "codec": string, readonly "duration_s": number, readonly "ended": SessionEndReason, readonly "frames_dropped"?: number, readonly "frames_sent"?: number, readonly "gyro"?: null | GyroCadence, readonly "hdr": boolean, readonly "id": number, readonly "input": InputCounts, readonly "join": boolean, readonly "mode": string, readonly "path_mtu"?: number, readonly "started_unix": number } & { readonly [x: string]: Schema.Json }
 export const SessionSummary = Schema.StructWithRest(Schema.Struct({ "audio": Schema.optionalKey(Schema.Union([Schema.Null, Schema.suspend((): Schema.Codec<AudioEgress> => AudioEgress).annotate({ "description": "Absent when the session ran no audio plane (synthetic source, or the thread never started)." })], { mode: "oneOf" })), "bit_depth": Schema.Number.annotate({ "description": "8 or 10. Independent of `hdr` — 10-bit SDR is a mode.", "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })), "bitrate": Schema.optionalKey(Schema.Union([Schema.Null, Schema.suspend((): Schema.Codec<BitrateSpan> => BitrateSpan).annotate({ "description": "What the encoder's target did. Absent on a session that opened no encoder." })], { mode: "oneOf" })), "bitrate_kbps": Schema.Number.annotate({ "description": "The encoder's target when the session ended, kbps. `bitrate` has the span.", "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })), "bringup_ms": Schema.Number.annotate({ "description": "Hello → first video packet, ms. `0` if no packet ever left.", "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })), "chroma": Schema.String.annotate({ "description": "`4:2:0` or `4:4:4`." }), "client": Schema.String.annotate({ "description": "Cert-fingerprint prefix, or peer IP for an anonymous client." }), "client_name": Schema.optionalKey(Schema.Union([Schema.String, Schema.Null]).annotate({ "description": "Display name (trust store, else the name the client sent). Absent if nameless." })), "codec": Schema.String.annotate({ "description": "`h264` | `hevc` | `av1` | `pyrowave`." }), "duration_s": Schema.Number.annotate({ "format": "int64" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })), "ended": SessionEndReason, "frames_dropped": Schema.optionalKey(Schema.Number.annotate({ "description": "Frames the capturer's encode pool refused. Absent on a capturer that does not\ncount them (everything but the Windows IDD-push and WGC paths), and on GameStream.", "format": "int64" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" }))), "frames_sent": Schema.optionalKey(Schema.Number.annotate({ "description": "Access units the send thread put on the wire. Absent when the video loop\nnever reached its tail — the `host_error` case — and on GameStream.", "format": "int64" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" }))), "gyro": Schema.optionalKey(Schema.Union([Schema.Null, Schema.suspend((): Schema.Codec<GyroCadence> => GyroCadence).annotate({ "description": "Absent when no pad sent motion — most sessions." })], { mode: "oneOf" })), "hdr": Schema.Boolean, "id": Schema.Number.annotate({ "description": "Same id [`SessionRef`] and the per-session routes carry.", "format": "int64" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })), "input": InputCounts, "join": Schema.Boolean.annotate({ "description": "Shared another session's display at ITS mode instead of owning one." }), "mode": Schema.String.annotate({ "description": "`WxH@Hz` as last delivered; a mid-session mode switch moves it." }), "path_mtu": Schema.optionalKey(Schema.Number.annotate({ "description": "Path MTU the QUIC stack settled on, bytes. Absent as `frames_sent` is.", "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" }))), "started_unix": Schema.Number.annotate({ "description": "Host wall clock at stream start, unix seconds.", "format": "int64" }).check(Schema.isInt().annotate({ "expected": "an integer" })) }), [Schema.Record(Schema.String, Schema.Json.annotate({ "expected": "JSON value" }))]).annotate({ "description": "Everything the host knows about one finished session.\n\nThe `session.ended` payload AND the body of `GET /api/v1/session/last`: one struct,\nso a screenshot of the console card is the API answer a bug report would have carried.\nA number the host does not accumulate per session is absent rather than zero.", "identifier": "SessionSummary" })
 export type GpuState = { readonly "active"?: null | ApiActiveGpu, readonly "encoder_pin"?: string | null, readonly "env_override"?: string | null, readonly "gpus": ReadonlyArray<ApiGpu>, readonly "mode": string, readonly "preferred_available": boolean, readonly "preferred_id"?: string | null, readonly "preferred_name"?: string | null, readonly "selected"?: null | ApiSelectedGpu } & { readonly [x: string]: Schema.Json }
-export const GpuState = Schema.StructWithRest(Schema.Struct({ "active": Schema.optionalKey(Schema.Union([Schema.Null, ApiActiveGpu], { mode: "oneOf" })), "encoder_pin": Schema.optionalKey(Schema.Union([Schema.String, Schema.Null]).annotate({ "description": "`PUNKTFUNK_ENCODER` when pinned (`qsv` / `nvenc` / …, not `auto`). A vendor mismatch is\noverridden at session open (adapter wins); the console uses this to flag a stale pin." })), "env_override": Schema.optionalKey(Schema.Union([Schema.String, Schema.Null]).annotate({ "description": "`PUNKTFUNK_RENDER_ADAPTER` when set. Windows honours it in `auto`; a manual pick\noverrides it." })), "gpus": Schema.Array(ApiGpu), "mode": Schema.String.annotate({ "description": "`auto` or `manual`." }), "preferred_available": Schema.Boolean, "preferred_id": Schema.optionalKey(Schema.Union([Schema.String, Schema.Null]).annotate({ "description": "Stored manual pick; retained in `auto` so the console can switch back. May name an absent GPU." })), "preferred_name": Schema.optionalKey(Schema.Union([Schema.String, Schema.Null]).annotate({ "description": "Label for the stored pick, kept even when that GPU is absent." })), "selected": Schema.optionalKey(Schema.Union([Schema.Null, ApiSelectedGpu], { mode: "oneOf" })) }), [Schema.Record(Schema.String, Schema.Json.annotate({ "expected": "JSON value" }))]).annotate({ "identifier": "GpuState" })
+export const GpuState = Schema.StructWithRest(Schema.Struct({ "active": Schema.optionalKey(Schema.Union([Schema.Null, ApiActiveGpu], { mode: "oneOf" })), "encoder_pin": Schema.optionalKey(Schema.Union([Schema.String, Schema.Null]).annotate({ "description": "`LILYNK_ENCODER` when pinned (`qsv` / `nvenc` / …, not `auto`). A vendor mismatch is\noverridden at session open (adapter wins); the console uses this to flag a stale pin." })), "env_override": Schema.optionalKey(Schema.Union([Schema.String, Schema.Null]).annotate({ "description": "`LILYNK_RENDER_ADAPTER` when set. Windows honours it in `auto`; a manual pick\noverrides it." })), "gpus": Schema.Array(ApiGpu), "mode": Schema.String.annotate({ "description": "`auto` or `manual`." }), "preferred_available": Schema.Boolean, "preferred_id": Schema.optionalKey(Schema.Union([Schema.String, Schema.Null]).annotate({ "description": "Stored manual pick; retained in `auto` so the console can switch back. May name an absent GPU." })), "preferred_name": Schema.optionalKey(Schema.Union([Schema.String, Schema.Null]).annotate({ "description": "Label for the stored pick, kept even when that GPU is absent." })), "selected": Schema.optionalKey(Schema.Union([Schema.Null, ApiSelectedGpu], { mode: "oneOf" })) }), [Schema.Record(Schema.String, Schema.Json.annotate({ "expected": "JSON value" }))]).annotate({ "identifier": "GpuState" })
 export type StreamInfo = { readonly "bitrate_kbps": number, readonly "codec": ApiCodec, readonly "fps": number, readonly "height": number, readonly "last_resize_ms"?: number | null, readonly "min_fec": number, readonly "packet_size": number, readonly "time_to_first_frame_ms"?: number | null, readonly "width": number } & { readonly [x: string]: Schema.Json }
 export const StreamInfo = Schema.StructWithRest(Schema.Struct({ "bitrate_kbps": Schema.Number.annotate({ "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })), "codec": ApiCodec, "fps": Schema.Number.annotate({ "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })), "height": Schema.Number.annotate({ "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })), "last_resize_ms": Schema.optionalKey(Schema.Union([Schema.Number.annotate({ "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })), Schema.Null]).annotate({ "description": "Last mid-stream resize, reconfigure → rebuilt, ms. Native only; `null` if none / GameStream." })), "min_fec": Schema.Number.annotate({ "description": "Client's parity floor per FEC block (`minRequiredFecPackets`).", "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })), "packet_size": Schema.Number.annotate({ "description": "Video payload size per packet (bytes).", "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })), "time_to_first_frame_ms": Schema.optionalKey(Schema.Union([Schema.Number.annotate({ "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })), Schema.Null]).annotate({ "description": "Hello → first video packet, ms. Native only; `null` on GameStream or while still bringing up." })), "width": Schema.Number.annotate({ "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })) }), [Schema.Record(Schema.String, Schema.Json.annotate({ "expected": "JSON value" }))]).annotate({ "description": "Negotiated stream parameters (RTSP on GameStream; live mode on native).", "identifier": "StreamInfo" })
 export type HostInfo = { readonly "abi_version": number, readonly "app_version": string, readonly "codecs": ReadonlyArray<ApiCodec>, readonly "door": boolean, readonly "door_off_unfinished"?: boolean, readonly "door_switch_failed"?: boolean, readonly "door_unavailable"?: string | null, readonly "door_unavailable_code"?: string | null, readonly "door_unavailable_params"?: { readonly [x: string]: string } | null, readonly "elevated_commands"?: boolean | null, readonly "fingerprint"?: string | null, readonly "gamestream": boolean, readonly "gfe_version": string, readonly "hostname": string, readonly "local_ip": string, readonly "os": string, readonly "os_name": string, readonly "ports": PortMap, readonly "uniqueid": string, readonly "version": string } & { readonly [x: string]: Schema.Json }
@@ -494,15 +494,15 @@ export const CatalogResponse = Schema.StructWithRest(Schema.Struct({ "busy": Sch
 export type Job = { readonly "error"?: string | null, readonly "finished_at"?: number | null, readonly "id": string, readonly "kind": string, readonly "log": ReadonlyArray<string>, readonly "phase": string, readonly "started_at": number, readonly "state": State, readonly "target": string, readonly "walk"?: null | AccessWalk } & { readonly [x: string]: Schema.Json }
 export const Job = Schema.StructWithRest(Schema.Struct({ "error": Schema.optionalKey(Schema.Union([Schema.String, Schema.Null])), "finished_at": Schema.optionalKey(Schema.Union([Schema.Number.annotate({ "format": "int64" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })), Schema.Null])), "id": Schema.String, "kind": Schema.String, "log": Schema.Array(Schema.String), "phase": Schema.String, "started_at": Schema.Number.annotate({ "format": "int64" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })), "state": State, "target": Schema.String, "walk": Schema.optionalKey(Schema.Union([Schema.Null, Schema.suspend((): Schema.Codec<AccessWalk> => AccessWalk).annotate({ "description": "The oldest folder whose access is changing while the job runs, whoever it is for." })], { mode: "oneOf" })) }), [Schema.Record(Schema.String, Schema.Json.annotate({ "expected": "JSON value" }))]).annotate({ "description": "Snake_case matches the management API; index/sources/manifest files use npm camelCase.", "identifier": "Job" })
 export type UpdateStatus = { readonly "apply": string, readonly "available": boolean, readonly "channel": string, readonly "channel_hint": string, readonly "check_disabled": boolean, readonly "current_version": string, readonly "install_kind": string, readonly "job"?: null | UpdateJobInfo, readonly "last_checked_unix"?: number | null, readonly "last_error"?: string | null, readonly "last_result"?: null | UpdateResultInfo, readonly "manifest"?: null | UpdateManifestInfo, readonly "not_published": boolean, readonly "opt_in_hint"?: string | null } & { readonly [x: string]: Schema.Json }
-export const UpdateStatus = Schema.StructWithRest(Schema.Struct({ "apply": Schema.String.annotate({ "description": "`notify` (show the command) | `full` (one-click) | `staged` (apply + reboot)." }), "available": Schema.Boolean.annotate({ "description": "Newer than `current_version` on this channel. Unparseable pairs never flag." }), "channel": Schema.String.annotate({ "description": "`stable` | `canary`." }), "channel_hint": Schema.String.annotate({ "description": "Copy-paste update command for this install kind." }), "check_disabled": Schema.Boolean.annotate({ "description": "`PUNKTFUNK_UPDATE_CHECK=0`." }), "current_version": Schema.String, "install_kind": Schema.String.annotate({ "description": "`windows-installer` | `sysext` | `rpm-ostree` | `apt` | `dnf` | `pacman` |\n`steamos-source` | `nix` | `source`." }), "job": Schema.optionalKey(Schema.Union([Schema.Null, UpdateJobInfo], { mode: "oneOf" })), "last_checked_unix": Schema.optionalKey(Schema.Union([Schema.Number.annotate({ "format": "int64" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })), Schema.Null]).annotate({ "description": "Last successful check (unix seconds)." })), "last_error": Schema.optionalKey(Schema.Union([Schema.String, Schema.Null]).annotate({ "description": "Last check failure, verbatim." })), "last_result": Schema.optionalKey(Schema.Union([Schema.Null, UpdateResultInfo], { mode: "oneOf" })), "manifest": Schema.optionalKey(Schema.Union([Schema.Null, UpdateManifestInfo], { mode: "oneOf" })), "not_published": Schema.Boolean.annotate({ "description": "Feed 404 for this channel: nothing published yet, not a check failure.\nMutually exclusive with `last_error`. Never set once a manifest has been\nseen — a feed that then 404s is an error." }), "opt_in_hint": Schema.optionalKey(Schema.Union([Schema.String, Schema.Null]).annotate({ "description": "One-click apply is possible but not opted in — command to run\n(Linux: join `lilynk-update`)." })) }), [Schema.Record(Schema.String, Schema.Json.annotate({ "expected": "JSON value" }))]).annotate({ "identifier": "UpdateStatus" })
+export const UpdateStatus = Schema.StructWithRest(Schema.Struct({ "apply": Schema.String.annotate({ "description": "`notify` (show the command) | `full` (one-click) | `staged` (apply + reboot)." }), "available": Schema.Boolean.annotate({ "description": "Newer than `current_version` on this channel. Unparseable pairs never flag." }), "channel": Schema.String.annotate({ "description": "`stable` | `canary`." }), "channel_hint": Schema.String.annotate({ "description": "Copy-paste update command for this install kind." }), "check_disabled": Schema.Boolean.annotate({ "description": "`LILYNK_UPDATE_CHECK=0`." }), "current_version": Schema.String, "install_kind": Schema.String.annotate({ "description": "`windows-installer` | `sysext` | `rpm-ostree` | `apt` | `dnf` | `pacman` |\n`steamos-source` | `nix` | `source`." }), "job": Schema.optionalKey(Schema.Union([Schema.Null, UpdateJobInfo], { mode: "oneOf" })), "last_checked_unix": Schema.optionalKey(Schema.Union([Schema.Number.annotate({ "format": "int64" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })), Schema.Null]).annotate({ "description": "Last successful check (unix seconds)." })), "last_error": Schema.optionalKey(Schema.Union([Schema.String, Schema.Null]).annotate({ "description": "Last check failure, verbatim." })), "last_result": Schema.optionalKey(Schema.Union([Schema.Null, UpdateResultInfo], { mode: "oneOf" })), "manifest": Schema.optionalKey(Schema.Union([Schema.Null, UpdateManifestInfo], { mode: "oneOf" })), "not_published": Schema.Boolean.annotate({ "description": "Feed 404 for this channel: nothing published yet, not a check failure.\nMutually exclusive with `last_error`. Never set once a manifest has been\nseen — a feed that then 404s is an error." }), "opt_in_hint": Schema.optionalKey(Schema.Union([Schema.String, Schema.Null]).annotate({ "description": "One-click apply is possible but not opted in — command to run\n(Linux: join `lilynk-update`)." })) }), [Schema.Record(Schema.String, Schema.Json.annotate({ "expected": "JSON value" }))]).annotate({ "identifier": "UpdateStatus" })
 export type DiagnosticsReport = { readonly "checks": ReadonlyArray<HostCheck>, readonly "ran_at_unix": number } & { readonly [x: string]: Schema.Json }
 export const DiagnosticsReport = Schema.StructWithRest(Schema.Struct({ "checks": Schema.Array(HostCheck).annotate({ "description": "Every registered check, worst-first, including `ok` and `inapplicable`. The console decides\nwhat to hide." }), "ran_at_unix": Schema.Number.annotate({ "description": "Last probe run, unix seconds.", "format": "int64" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })) }), [Schema.Record(Schema.String, Schema.Json.annotate({ "expected": "JSON value" }))]).annotate({ "description": "The `GET /diagnostics` body.", "identifier": "DiagnosticsReport" })
 export type EffectivePolicy = { readonly "identity": Identity, readonly "keep_alive": KeepAlive, readonly "layout": Layout, readonly "max_displays": number, readonly "mode_conflict": ModeConflict, readonly "topology": Topology } & { readonly [x: string]: Schema.Json }
 export const EffectivePolicy = Schema.StructWithRest(Schema.Struct({ "identity": Identity, "keep_alive": KeepAlive, "layout": Layout, "max_displays": Schema.Number.annotate({ "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" })), "mode_conflict": ModeConflict, "topology": Topology }), [Schema.Record(Schema.String, Schema.Json.annotate({ "expected": "JSON value" }))]).annotate({ "description": "The six axes after preset expansion. What lifecycle/registry read, and\nwhat mgmt echoes as in-force.\n\nEvery field is required on the wire. This type is also\n[`CustomPresetInput::fields`] (`POST/PUT /display/presets`) and a\nresponse member three times. `#[serde(default)]` would turn\n`{\"name\":\"Kiosk\",\"fields\":{}}` into a 201 storing six unchosen axes and\nmake all six optional in OpenAPI. Catalog tolerance for older entries\nlives on the read path only: [`StoredEffectivePolicy`].", "identifier": "EffectivePolicy" })
 export type DisplayPolicy = { readonly "capture_monitor"?: string | null, readonly "clients"?: { readonly [x: string]: ClientOverlay }, readonly "ddc_power_off"?: boolean, readonly "edid_lock"?: boolean, readonly "game_session"?: GameSession, readonly "identity"?: Identity, readonly "keep_alive"?: KeepAlive, readonly "keep_monitors"?: ReadonlyArray<string>, readonly "launch_workspace"?: WorkspacePlacement, readonly "layout"?: Layout, readonly "max_displays"?: number, readonly "mode_conflict"?: ModeConflict, readonly "pnp_disable_monitors"?: boolean, readonly "preset"?: Preset, readonly "screen"?: null | DisplayTarget, readonly "topology"?: Topology, readonly "version"?: number } & { readonly [x: string]: Schema.Json }
-export const DisplayPolicy = Schema.StructWithRest(Schema.Struct({ "capture_monitor": Schema.optionalKey(Schema.Union([Schema.String, Schema.Null]).annotate({ "description": "Deprecated: `screen`'s connector, kept one release for older consoles and SDKs. Read\nwhen `screen` is absent; written from `screen`." })), "clients": Schema.optionalKey(Schema.Record(Schema.String, ClientOverlay).annotate({ "description": "Per-device deviations, keyed by pairing fingerprint — what identity\nslots, admission and the device list already key on (never an address:\na dual-boot box keeps its fingerprint and changes its IP).\n\nWritten only through `/display/clients/{fp}`; the host-wide PUT refuses\na non-empty `clients` key, so a stale console cannot round-trip the\nwhole map back over a change it never saw." }).check(Schema.isPropertyNames(Schema.String).annotate({ "expected": "an object with property names matching the schema" }))), "ddc_power_off": Schema.optionalKey(Schema.Boolean.annotate({ "description": "Windows: DDC/CI panel off (VCP 0xD6) before Exclusive isolate, on at\nrestore. Cuts standby auto-input-scan / DP link churn on a dark\nphysical. Best-effort; no DDC/CI → skip. Orthogonal to `preset`; default off." })), "edid_lock": Schema.optionalKey(Schema.Boolean.annotate({ "description": "Windows/AMD: pin connector EDID emulation while streaming\n(`ly_win_display::adl_emul`). Locked at first Exclusive isolate\nbefore physicals deactivate (awake sink answers the live-EDID read),\nunlocked at last-member teardown, crash-journaled. Inert without\n`atiadlxx.dll`. Orthogonal to `preset`; default off." })), "game_session": Schema.optionalKey(Schema.suspend((): Schema.Codec<GameSession> => GameSession).annotate({ "description": "Game-launch routing. Orthogonal to `preset`; `#[serde(default)]` is\n`Dedicated`. A saved file always names its value and keeps it." })), "identity": Schema.optionalKey(Identity), "keep_alive": Schema.optionalKey(KeepAlive), "keep_monitors": Schema.optionalKey(Schema.Array(Schema.String).annotate({ "description": "Connectors that stay lit while streaming, even under `exclusive`\n(`design/web-console-overhaul.md` §5.5).\n\nThe shared-desktop case the all-or-nothing topology axis cannot express: the\ncouch TV streams on the sole screen while the desk monitor stays usable. Only\nmeaningful under `exclusive` — nothing else turns a monitor off." })), "launch_workspace": Schema.optionalKey(Schema.suspend((): Schema.Codec<WorkspacePlacement> => WorkspacePlacement).annotate({ "description": "Default for a launch whose library entry names no `on_window.workspace`.\nOrthogonal to `preset`; `#[serde(default)]` is `own`, so an older\n`display-settings.json` opts in with the rest." })), "layout": Schema.optionalKey(Layout), "max_displays": Schema.optionalKey(Schema.Number.annotate({ "description": "Simultaneous live virtual displays. Clamped to `1..=16` (connector ceiling).", "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" }))), "mode_conflict": Schema.optionalKey(ModeConflict), "pnp_disable_monitors": Schema.optionalKey(Schema.Boolean.annotate({ "description": "Windows: disable the PnP nodes of the physical monitors the isolate\nswitched off, for the stream; re-enabled at teardown. Persistent so a\nre-HPD stays off. Inactive externals are [`standby_sink_neutralise`]'s.\nA crash journal re-enables leftovers. Orthogonal to `preset`; default\non, and a v1 file migrates to on." })), "preset": Schema.optionalKey(Preset), "screen": Schema.optionalKey(Schema.Union([Schema.Null, Schema.suspend((): Schema.Codec<DisplayTarget> => DisplayTarget).annotate({ "description": "What a device with no `screen` of its own streams; absent is its own screen.\nHost-wide, orthogonal to `preset`. `PUNKTFUNK_CAPTURE_MONITOR` overrides it so\n`host.env` can pin without a console write undoing it." })], { mode: "oneOf" })), "topology": Schema.optionalKey(Topology), "version": Schema.optionalKey(Schema.Number.annotate({ "description": "Schema version. Unknown versions load best-effort\n([`DisplayPolicyStore::load_from`] warns) and write pins current.", "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" }))) }), [Schema.Record(Schema.String, Schema.Json.annotate({ "expected": "JSON value" }))]).annotate({ "description": "File + mgmt GET/PUT shape. When [`preset`](Self::preset) is not\n[`Preset::Custom`], explicit fields are ignored; [`effective`](Self::effective)\nresolves both to [`EffectivePolicy`].", "identifier": "DisplayPolicy" })
+export const DisplayPolicy = Schema.StructWithRest(Schema.Struct({ "capture_monitor": Schema.optionalKey(Schema.Union([Schema.String, Schema.Null]).annotate({ "description": "Deprecated: `screen`'s connector, kept one release for older consoles and SDKs. Read\nwhen `screen` is absent; written from `screen`." })), "clients": Schema.optionalKey(Schema.Record(Schema.String, ClientOverlay).annotate({ "description": "Per-device deviations, keyed by pairing fingerprint — what identity\nslots, admission and the device list already key on (never an address:\na dual-boot box keeps its fingerprint and changes its IP).\n\nWritten only through `/display/clients/{fp}`; the host-wide PUT refuses\na non-empty `clients` key, so a stale console cannot round-trip the\nwhole map back over a change it never saw." }).check(Schema.isPropertyNames(Schema.String).annotate({ "expected": "an object with property names matching the schema" }))), "ddc_power_off": Schema.optionalKey(Schema.Boolean.annotate({ "description": "Windows: DDC/CI panel off (VCP 0xD6) before Exclusive isolate, on at\nrestore. Cuts standby auto-input-scan / DP link churn on a dark\nphysical. Best-effort; no DDC/CI → skip. Orthogonal to `preset`; default off." })), "edid_lock": Schema.optionalKey(Schema.Boolean.annotate({ "description": "Windows/AMD: pin connector EDID emulation while streaming\n(`ly_win_display::adl_emul`). Locked at first Exclusive isolate\nbefore physicals deactivate (awake sink answers the live-EDID read),\nunlocked at last-member teardown, crash-journaled. Inert without\n`atiadlxx.dll`. Orthogonal to `preset`; default off." })), "game_session": Schema.optionalKey(Schema.suspend((): Schema.Codec<GameSession> => GameSession).annotate({ "description": "Game-launch routing. Orthogonal to `preset`; `#[serde(default)]` is\n`Dedicated`. A saved file always names its value and keeps it." })), "identity": Schema.optionalKey(Identity), "keep_alive": Schema.optionalKey(KeepAlive), "keep_monitors": Schema.optionalKey(Schema.Array(Schema.String).annotate({ "description": "Connectors that stay lit while streaming, even under `exclusive`\n(`design/web-console-overhaul.md` §5.5).\n\nThe shared-desktop case the all-or-nothing topology axis cannot express: the\ncouch TV streams on the sole screen while the desk monitor stays usable. Only\nmeaningful under `exclusive` — nothing else turns a monitor off." })), "launch_workspace": Schema.optionalKey(Schema.suspend((): Schema.Codec<WorkspacePlacement> => WorkspacePlacement).annotate({ "description": "Default for a launch whose library entry names no `on_window.workspace`.\nOrthogonal to `preset`; `#[serde(default)]` is `own`, so an older\n`display-settings.json` opts in with the rest." })), "layout": Schema.optionalKey(Layout), "max_displays": Schema.optionalKey(Schema.Number.annotate({ "description": "Simultaneous live virtual displays. Clamped to `1..=16` (connector ceiling).", "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" }))), "mode_conflict": Schema.optionalKey(ModeConflict), "pnp_disable_monitors": Schema.optionalKey(Schema.Boolean.annotate({ "description": "Windows: disable the PnP nodes of the physical monitors the isolate\nswitched off, for the stream; re-enabled at teardown. Persistent so a\nre-HPD stays off. Inactive externals are [`standby_sink_neutralise`]'s.\nA crash journal re-enables leftovers. Orthogonal to `preset`; default\non, and a v1 file migrates to on." })), "preset": Schema.optionalKey(Preset), "screen": Schema.optionalKey(Schema.Union([Schema.Null, Schema.suspend((): Schema.Codec<DisplayTarget> => DisplayTarget).annotate({ "description": "What a device with no `screen` of its own streams; absent is its own screen.\nHost-wide, orthogonal to `preset`. `LILYNK_CAPTURE_MONITOR` overrides it so\n`host.env` can pin without a console write undoing it." })], { mode: "oneOf" })), "topology": Schema.optionalKey(Topology), "version": Schema.optionalKey(Schema.Number.annotate({ "description": "Schema version. Unknown versions load best-effort\n([`DisplayPolicyStore::load_from`] warns) and write pins current.", "format": "int32" }).check(Schema.isInt().annotate({ "expected": "an integer" })).check(Schema.isGreaterThanOrEqualTo(0).annotate({ "expected": "a value greater than or equal to 0" }))) }), [Schema.Record(Schema.String, Schema.Json.annotate({ "expected": "JSON value" }))]).annotate({ "description": "File + mgmt GET/PUT shape. When [`preset`](Self::preset) is not\n[`Preset::Custom`], explicit fields are ignored; [`effective`](Self::effective)\nresolves both to [`EffectivePolicy`].", "identifier": "DisplayPolicy" })
 export type DisplayTargets = { readonly "host_default": DisplayTarget, readonly "locked": boolean, readonly "may_choose": boolean, readonly "role"?: null | ScreenRoles, readonly "targets": ReadonlyArray<ScreenRow>, readonly "yours"?: null | DisplayTarget } & { readonly [x: string]: Schema.Json }
-export const DisplayTargets = Schema.StructWithRest(Schema.Struct({ "host_default": Schema.suspend((): Schema.Codec<DisplayTarget> => DisplayTarget).annotate({ "description": "What a device with no screen of its own streams." }), "locked": Schema.Boolean.annotate({ "description": "`PUNKTFUNK_CAPTURE_MONITOR` fixes the screen for every device." }), "may_choose": Schema.Boolean.annotate({ "description": "Whether the caller may choose the screen: a paired device's `GRANT_DISPLAY`, always on\nthe operator and plugin lanes. A device's write without it is 403." }), "role": Schema.optionalKey(Schema.Union([Schema.Null, Schema.suspend((): Schema.Codec<ScreenRoles> => ScreenRoles).annotate({ "description": "The roles a device's own screen takes on this desk. Absent on a contract seat, a host\nwith no mirror backend, a gamescope session, and a desktop that lists no physical\nmonitor." })], { mode: "oneOf" })), "targets": Schema.Array(ScreenRow), "yours": Schema.optionalKey(Schema.Union([Schema.Null, Schema.suspend((): Schema.Codec<DisplayTarget> => DisplayTarget).annotate({ "description": "What the calling device is set to, before a taken or missing monitor falls back to its\nown screen. A screen it set itself counts only while `may_choose`. Null on the operator\nand plugin lanes." })], { mode: "oneOf" })) }), [Schema.Record(Schema.String, Schema.Json.annotate({ "expected": "JSON value" }))]).annotate({ "description": "What a device may stream (`GET /display/targets`).", "identifier": "DisplayTargets" })
+export const DisplayTargets = Schema.StructWithRest(Schema.Struct({ "host_default": Schema.suspend((): Schema.Codec<DisplayTarget> => DisplayTarget).annotate({ "description": "What a device with no screen of its own streams." }), "locked": Schema.Boolean.annotate({ "description": "`LILYNK_CAPTURE_MONITOR` fixes the screen for every device." }), "may_choose": Schema.Boolean.annotate({ "description": "Whether the caller may choose the screen: a paired device's `GRANT_DISPLAY`, always on\nthe operator and plugin lanes. A device's write without it is 403." }), "role": Schema.optionalKey(Schema.Union([Schema.Null, Schema.suspend((): Schema.Codec<ScreenRoles> => ScreenRoles).annotate({ "description": "The roles a device's own screen takes on this desk. Absent on a contract seat, a host\nwith no mirror backend, a gamescope session, and a desktop that lists no physical\nmonitor." })], { mode: "oneOf" })), "targets": Schema.Array(ScreenRow), "yours": Schema.optionalKey(Schema.Union([Schema.Null, Schema.suspend((): Schema.Codec<DisplayTarget> => DisplayTarget).annotate({ "description": "What the calling device is set to, before a taken or missing monitor falls back to its\nown screen. A screen it set itself counts only while `may_choose`. Null on the operator\nand plugin lanes." })], { mode: "oneOf" })) }), [Schema.Record(Schema.String, Schema.Json.annotate({ "expected": "JSON value" }))]).annotate({ "description": "What a device may stream (`GET /display/targets`).", "identifier": "DisplayTargets" })
 export type DownloadsReport = { readonly "downloads": ReadonlyArray<DownloadReport> } & { readonly [x: string]: Schema.Json }
 export const DownloadsReport = Schema.StructWithRest(Schema.Struct({ "downloads": Schema.Array(DownloadReport) }), [Schema.Record(Schema.String, Schema.Json.annotate({ "expected": "JSON value" }))]).annotate({ "description": "A plugin's downloads: every title it is downloading, paused or just finished.", "identifier": "DownloadsReport" })
 export type HookEntry = { readonly "debounce_ms"?: number, readonly "elevated"?: boolean, readonly "filter"?: null | HookFilter, readonly "hmac_secret_file"?: string | null, readonly "hold"?: boolean, readonly "on": string, readonly "run"?: string | null, readonly "timeout_s"?: number, readonly "webhook"?: string | null } & { readonly [x: string]: Schema.Json }
@@ -2100,7 +2100,7 @@ export const make = (
   options: {
     readonly transformClient?: ((client: HttpClient.HttpClient) => Effect.Effect<HttpClient.HttpClient>) | undefined
   } = {}
-): Punktfunk => {
+): Lilynk => {
   const unexpectedStatus = (response: HttpClientResponse.HttpClientResponse) =>
     Effect.flatMap(
       Effect.orElseSucceed(response.json, () => "Unexpected status code"),
@@ -2201,18 +2201,18 @@ export const make = (
     (response: HttpClientResponse.HttpClientResponse) =>
       Effect.flatMap(
         HttpClientResponse.schemaBodyJson(schema)(response),
-        (cause) => Effect.fail(PunktfunkError(tag, cause, response)),
+        (cause) => Effect.fail(LilynkError(tag, cause, response)),
       )
   return {
     httpClient,
-    "listActions": (options: Parameters<Punktfunk["listActions"]>[0]) => HttpClientRequest.get("/api/v1/actions").pipe(
+    "listActions": (options: Parameters<Lilynk["listActions"]>[0]) => HttpClientRequest.get("/api/v1/actions").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ListActions200),
       "401": decodeError("ListActions401", ListActions401),
       orElse: unexpectedStatus
     }))
     ),
-    "invokeAction": (id, options: Parameters<Punktfunk["invokeAction"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/actions/" + __encodePathParam(id) + "").pipe(
+    "invokeAction": (id, options: Parameters<Lilynk["invokeAction"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/actions/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "200": decodeSuccess(InvokeAction200),
@@ -2227,13 +2227,13 @@ export const make = (
     }))
     ))
   ),
-    "postDeviceChallenge": (options: Parameters<Punktfunk["postDeviceChallenge"]>[0]) => HttpClientRequest.post("/api/v1/auth/device/challenge").pipe(
+    "postDeviceChallenge": (options: Parameters<Lilynk["postDeviceChallenge"]>[0]) => HttpClientRequest.post("/api/v1/auth/device/challenge").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(PostDeviceChallenge200),
       orElse: unexpectedStatus
     }))
     ),
-    "postDeviceToken": (options: Parameters<Punktfunk["postDeviceToken"]>[0]) => HttpClientRequest.post("/api/v1/auth/device/token").pipe(
+    "postDeviceToken": (options: Parameters<Lilynk["postDeviceToken"]>[0]) => HttpClientRequest.post("/api/v1/auth/device/token").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(PostDeviceToken200),
@@ -2241,7 +2241,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "getPersonProfile": (options: Parameters<Punktfunk["getPersonProfile"]>[0]) => HttpClientRequest.get("/api/v1/auth/person/profile").pipe(
+    "getPersonProfile": (options: Parameters<Lilynk["getPersonProfile"]>[0]) => HttpClientRequest.get("/api/v1/auth/person/profile").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetPersonProfile200),
       "401": decodeError("GetPersonProfile401", GetPersonProfile401),
@@ -2249,7 +2249,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "getPersonAvatar": (options: Parameters<Punktfunk["getPersonAvatar"]>[0]) => HttpClientRequest.get("/api/v1/auth/person/profile/avatar").pipe(
+    "getPersonAvatar": (options: Parameters<Lilynk["getPersonAvatar"]>[0]) => HttpClientRequest.get("/api/v1/auth/person/profile/avatar").pipe(
       HttpClientRequest.setHeaders({ "If-None-Match": options?.params?.["If-None-Match"] ?? undefined }),
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "200": decodeBinary,
@@ -2263,7 +2263,7 @@ export const make = (
       HttpClientRequest.setHeaders({ "If-None-Match": options?.params?.["If-None-Match"] ?? undefined }),
       binaryRequest
     ),
-    "openPersonSession": (options: Parameters<Punktfunk["openPersonSession"]>[0]) => HttpClientRequest.post("/api/v1/auth/person/session").pipe(
+    "openPersonSession": (options: Parameters<Lilynk["openPersonSession"]>[0]) => HttpClientRequest.post("/api/v1/auth/person/session").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(OpenPersonSession200),
@@ -2272,14 +2272,14 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "closePersonSession": (options: Parameters<Punktfunk["closePersonSession"]>[0]) => HttpClientRequest.delete("/api/v1/auth/person/session").pipe(
+    "closePersonSession": (options: Parameters<Lilynk["closePersonSession"]>[0]) => HttpClientRequest.delete("/api/v1/auth/person/session").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "401": decodeError("ClosePersonSession401", ClosePersonSession401),
       "204": () => Effect.void,
       orElse: unexpectedStatus
     }))
     ),
-    "verifyPersonSession": (options: Parameters<Punktfunk["verifyPersonSession"]>[0]) => HttpClientRequest.post("/api/v1/auth/person/verify").pipe(
+    "verifyPersonSession": (options: Parameters<Lilynk["verifyPersonSession"]>[0]) => HttpClientRequest.post("/api/v1/auth/person/verify").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(VerifyPersonSession200),
@@ -2288,14 +2288,14 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "clientLogsList": (options: Parameters<Punktfunk["clientLogsList"]>[0]) => HttpClientRequest.get("/api/v1/client-logs").pipe(
+    "clientLogsList": (options: Parameters<Lilynk["clientLogsList"]>[0]) => HttpClientRequest.get("/api/v1/client-logs").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ClientLogsList200),
       "401": decodeError("ClientLogsList401", ClientLogsList401),
       orElse: unexpectedStatus
     }))
     ),
-    "clientLogsUpload": (options: Parameters<Punktfunk["clientLogsUpload"]>[0]) => HttpClientRequest.post("/api/v1/client-logs").pipe(
+    "clientLogsUpload": (options: Parameters<Lilynk["clientLogsUpload"]>[0]) => HttpClientRequest.post("/api/v1/client-logs").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ClientLogsUpload201),
       "400": decodeError("ClientLogsUpload400", ClientLogsUpload400),
@@ -2306,7 +2306,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "clientLogsGet": (id, options: Parameters<Punktfunk["clientLogsGet"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/client-logs/" + __encodePathParam(id) + "").pipe(
+    "clientLogsGet": (id, options: Parameters<Lilynk["clientLogsGet"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/client-logs/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "401": decodeError("ClientLogsGet401", ClientLogsGet401),
@@ -2316,7 +2316,7 @@ export const make = (
     }))
     ))
   ),
-    "clientLogsDelete": (id, options: Parameters<Punktfunk["clientLogsDelete"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/client-logs/" + __encodePathParam(id) + "").pipe(
+    "clientLogsDelete": (id, options: Parameters<Lilynk["clientLogsDelete"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/client-logs/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "401": decodeError("ClientLogsDelete401", ClientLogsDelete401),
@@ -2327,21 +2327,21 @@ export const make = (
     }))
     ))
   ),
-    "listPairedClients": (options: Parameters<Punktfunk["listPairedClients"]>[0]) => HttpClientRequest.get("/api/v1/clients").pipe(
+    "listPairedClients": (options: Parameters<Lilynk["listPairedClients"]>[0]) => HttpClientRequest.get("/api/v1/clients").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ListPairedClients200),
       "401": decodeError("ListPairedClients401", ListPairedClients401),
       orElse: unexpectedStatus
     }))
     ),
-    "unpairAllClients": (options: Parameters<Punktfunk["unpairAllClients"]>[0]) => HttpClientRequest.delete("/api/v1/clients").pipe(
+    "unpairAllClients": (options: Parameters<Lilynk["unpairAllClients"]>[0]) => HttpClientRequest.delete("/api/v1/clients").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(UnpairAllClients200),
       "401": decodeError("UnpairAllClients401", UnpairAllClients401),
       orElse: unexpectedStatus
     }))
     ),
-    "unpairClient": (fingerprint, options: Parameters<Punktfunk["unpairClient"]>[1]) => __makePathRequest(HttpClientRequest.delete, [fingerprint], () => "/api/v1/clients/" + __encodePathParam(fingerprint) + "").pipe(
+    "unpairClient": (fingerprint, options: Parameters<Lilynk["unpairClient"]>[1]) => __makePathRequest(HttpClientRequest.delete, [fingerprint], () => "/api/v1/clients/" + __encodePathParam(fingerprint) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "400": decodeError("UnpairClient400", UnpairClient400),
@@ -2352,7 +2352,7 @@ export const make = (
     }))
     ))
   ),
-    "renameClient": (fingerprint, options: Parameters<Punktfunk["renameClient"]>[1]) => __makePathRequest(HttpClientRequest.patch, [fingerprint], () => "/api/v1/clients/" + __encodePathParam(fingerprint) + "").pipe(
+    "renameClient": (fingerprint, options: Parameters<Lilynk["renameClient"]>[1]) => __makePathRequest(HttpClientRequest.patch, [fingerprint], () => "/api/v1/clients/" + __encodePathParam(fingerprint) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -2364,28 +2364,28 @@ export const make = (
     }))
     ))
   ),
-    "listCompositors": (options: Parameters<Punktfunk["listCompositors"]>[0]) => HttpClientRequest.get("/api/v1/compositors").pipe(
+    "listCompositors": (options: Parameters<Lilynk["listCompositors"]>[0]) => HttpClientRequest.get("/api/v1/compositors").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ListCompositors200),
       "401": decodeError("ListCompositors401", ListCompositors401),
       orElse: unexpectedStatus
     }))
     ),
-    "getDiagnostics": (options: Parameters<Punktfunk["getDiagnostics"]>[0]) => HttpClientRequest.get("/api/v1/diagnostics").pipe(
+    "getDiagnostics": (options: Parameters<Lilynk["getDiagnostics"]>[0]) => HttpClientRequest.get("/api/v1/diagnostics").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetDiagnostics200),
       "401": decodeError("GetDiagnostics401", GetDiagnostics401),
       orElse: unexpectedStatus
     }))
     ),
-    "refreshDiagnostics": (options: Parameters<Punktfunk["refreshDiagnostics"]>[0]) => HttpClientRequest.post("/api/v1/diagnostics/refresh").pipe(
+    "refreshDiagnostics": (options: Parameters<Lilynk["refreshDiagnostics"]>[0]) => HttpClientRequest.post("/api/v1/diagnostics/refresh").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(RefreshDiagnostics200),
       "401": decodeError("RefreshDiagnostics401", RefreshDiagnostics401),
       orElse: unexpectedStatus
     }))
     ),
-    "getDisplayClient": (fingerprint, options: Parameters<Punktfunk["getDisplayClient"]>[1]) => __makePathRequest(HttpClientRequest.get, [fingerprint], () => "/api/v1/display/clients/" + __encodePathParam(fingerprint) + "").pipe(
+    "getDisplayClient": (fingerprint, options: Parameters<Lilynk["getDisplayClient"]>[1]) => __makePathRequest(HttpClientRequest.get, [fingerprint], () => "/api/v1/display/clients/" + __encodePathParam(fingerprint) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetDisplayClient200),
@@ -2394,7 +2394,7 @@ export const make = (
     }))
     ))
   ),
-    "setDisplayClient": (fingerprint, options: Parameters<Punktfunk["setDisplayClient"]>[1]) => __makePathRequest(HttpClientRequest.put, [fingerprint], () => "/api/v1/display/clients/" + __encodePathParam(fingerprint) + "").pipe(
+    "setDisplayClient": (fingerprint, options: Parameters<Lilynk["setDisplayClient"]>[1]) => __makePathRequest(HttpClientRequest.put, [fingerprint], () => "/api/v1/display/clients/" + __encodePathParam(fingerprint) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -2409,7 +2409,7 @@ export const make = (
     }))
     ))
   ),
-    "deleteDisplayClient": (fingerprint, options: Parameters<Punktfunk["deleteDisplayClient"]>[1]) => __makePathRequest(HttpClientRequest.delete, [fingerprint], () => "/api/v1/display/clients/" + __encodePathParam(fingerprint) + "").pipe(
+    "deleteDisplayClient": (fingerprint, options: Parameters<Lilynk["deleteDisplayClient"]>[1]) => __makePathRequest(HttpClientRequest.delete, [fingerprint], () => "/api/v1/display/clients/" + __encodePathParam(fingerprint) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(DeleteDisplayClient200),
@@ -2419,7 +2419,7 @@ export const make = (
     }))
     ))
   ),
-    "setDisplayLayout": (options: Parameters<Punktfunk["setDisplayLayout"]>[0]) => HttpClientRequest.put("/api/v1/display/layout").pipe(
+    "setDisplayLayout": (options: Parameters<Lilynk["setDisplayLayout"]>[0]) => HttpClientRequest.put("/api/v1/display/layout").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(SetDisplayLayout200),
@@ -2428,21 +2428,21 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "getDisplayMonitors": (options: Parameters<Punktfunk["getDisplayMonitors"]>[0]) => HttpClientRequest.get("/api/v1/display/monitors").pipe(
+    "getDisplayMonitors": (options: Parameters<Lilynk["getDisplayMonitors"]>[0]) => HttpClientRequest.get("/api/v1/display/monitors").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetDisplayMonitors200),
       "401": decodeError("GetDisplayMonitors401", GetDisplayMonitors401),
       orElse: unexpectedStatus
     }))
     ),
-    "listCustomPresets": (options: Parameters<Punktfunk["listCustomPresets"]>[0]) => HttpClientRequest.get("/api/v1/display/presets").pipe(
+    "listCustomPresets": (options: Parameters<Lilynk["listCustomPresets"]>[0]) => HttpClientRequest.get("/api/v1/display/presets").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ListCustomPresets200),
       "401": decodeError("ListCustomPresets401", ListCustomPresets401),
       orElse: unexpectedStatus
     }))
     ),
-    "createCustomPreset": (options: Parameters<Punktfunk["createCustomPreset"]>[0]) => HttpClientRequest.post("/api/v1/display/presets").pipe(
+    "createCustomPreset": (options: Parameters<Lilynk["createCustomPreset"]>[0]) => HttpClientRequest.post("/api/v1/display/presets").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(CreateCustomPreset201),
@@ -2452,7 +2452,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "updateCustomPreset": (id, options: Parameters<Punktfunk["updateCustomPreset"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/display/presets/" + __encodePathParam(id) + "").pipe(
+    "updateCustomPreset": (id, options: Parameters<Lilynk["updateCustomPreset"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/display/presets/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -2465,7 +2465,7 @@ export const make = (
     }))
     ))
   ),
-    "deleteCustomPreset": (id, options: Parameters<Punktfunk["deleteCustomPreset"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/display/presets/" + __encodePathParam(id) + "").pipe(
+    "deleteCustomPreset": (id, options: Parameters<Lilynk["deleteCustomPreset"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/display/presets/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "401": decodeError("DeleteCustomPreset401", DeleteCustomPreset401),
@@ -2476,7 +2476,7 @@ export const make = (
     }))
     ))
   ),
-    "releaseDisplay": (options: Parameters<Punktfunk["releaseDisplay"]>[0]) => HttpClientRequest.post("/api/v1/display/release").pipe(
+    "releaseDisplay": (options: Parameters<Lilynk["releaseDisplay"]>[0]) => HttpClientRequest.post("/api/v1/display/release").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ReleaseDisplay200),
@@ -2484,14 +2484,14 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "getDisplaySettings": (options: Parameters<Punktfunk["getDisplaySettings"]>[0]) => HttpClientRequest.get("/api/v1/display/settings").pipe(
+    "getDisplaySettings": (options: Parameters<Lilynk["getDisplaySettings"]>[0]) => HttpClientRequest.get("/api/v1/display/settings").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetDisplaySettings200),
       "401": decodeError("GetDisplaySettings401", GetDisplaySettings401),
       orElse: unexpectedStatus
     }))
     ),
-    "setDisplaySettings": (options: Parameters<Punktfunk["setDisplaySettings"]>[0]) => HttpClientRequest.put("/api/v1/display/settings").pipe(
+    "setDisplaySettings": (options: Parameters<Lilynk["setDisplaySettings"]>[0]) => HttpClientRequest.put("/api/v1/display/settings").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(SetDisplaySettings200),
@@ -2501,28 +2501,28 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "getDisplayState": (options: Parameters<Punktfunk["getDisplayState"]>[0]) => HttpClientRequest.get("/api/v1/display/state").pipe(
+    "getDisplayState": (options: Parameters<Lilynk["getDisplayState"]>[0]) => HttpClientRequest.get("/api/v1/display/state").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetDisplayState200),
       "401": decodeError("GetDisplayState401", GetDisplayState401),
       orElse: unexpectedStatus
     }))
     ),
-    "getDisplayTargets": (options: Parameters<Punktfunk["getDisplayTargets"]>[0]) => HttpClientRequest.get("/api/v1/display/targets").pipe(
+    "getDisplayTargets": (options: Parameters<Lilynk["getDisplayTargets"]>[0]) => HttpClientRequest.get("/api/v1/display/targets").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetDisplayTargets200),
       "401": decodeError("GetDisplayTargets401", GetDisplayTargets401),
       orElse: unexpectedStatus
     }))
     ),
-    "getDownloads": (options: Parameters<Punktfunk["getDownloads"]>[0]) => HttpClientRequest.get("/api/v1/downloads").pipe(
+    "getDownloads": (options: Parameters<Lilynk["getDownloads"]>[0]) => HttpClientRequest.get("/api/v1/downloads").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetDownloads200),
       "401": decodeError("GetDownloads401", GetDownloads401),
       orElse: unexpectedStatus
     }))
     ),
-    "getEmulators": (options: Parameters<Punktfunk["getEmulators"]>[0]) => HttpClientRequest.get("/api/v1/emulators").pipe(
+    "getEmulators": (options: Parameters<Lilynk["getEmulators"]>[0]) => HttpClientRequest.get("/api/v1/emulators").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetEmulators200),
       "401": decodeError("GetEmulators401", GetEmulators401),
@@ -2530,7 +2530,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "getEmulatorRegistry": (options: Parameters<Punktfunk["getEmulatorRegistry"]>[0]) => HttpClientRequest.get("/api/v1/emulators/catalog").pipe(
+    "getEmulatorRegistry": (options: Parameters<Lilynk["getEmulatorRegistry"]>[0]) => HttpClientRequest.get("/api/v1/emulators/catalog").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetEmulatorRegistry200),
       "401": decodeError("GetEmulatorRegistry401", GetEmulatorRegistry401),
@@ -2538,7 +2538,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "adoptEmulator": (id, options: Parameters<Punktfunk["adoptEmulator"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/emulators/" + __encodePathParam(id) + "/adopt").pipe(
+    "adoptEmulator": (id, options: Parameters<Lilynk["adoptEmulator"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/emulators/" + __encodePathParam(id) + "/adopt").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -2552,7 +2552,7 @@ export const make = (
     }))
     ))
   ),
-    "installEmulatorContent": (id, options: Parameters<Punktfunk["installEmulatorContent"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/emulators/" + __encodePathParam(id) + "/content").pipe(
+    "installEmulatorContent": (id, options: Parameters<Lilynk["installEmulatorContent"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/emulators/" + __encodePathParam(id) + "/content").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -2565,7 +2565,7 @@ export const make = (
     }))
     ))
   ),
-    "getEmulatorFirmware": (id, options: Parameters<Punktfunk["getEmulatorFirmware"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/emulators/" + __encodePathParam(id) + "/firmware").pipe(
+    "getEmulatorFirmware": (id, options: Parameters<Lilynk["getEmulatorFirmware"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/emulators/" + __encodePathParam(id) + "/firmware").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.setUrlParams({ "platform": options.params["platform"] as any, "profile": options.params["profile"] as any }),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -2578,7 +2578,7 @@ export const make = (
     }))
     ))
   ),
-    "installEmulator": (id, options: Parameters<Punktfunk["installEmulator"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/emulators/" + __encodePathParam(id) + "/install").pipe(
+    "installEmulator": (id, options: Parameters<Lilynk["installEmulator"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/emulators/" + __encodePathParam(id) + "/install").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(InstallEmulator200),
@@ -2592,7 +2592,7 @@ export const make = (
     }))
     ))
   ),
-    "prepareEmulator": (id, options: Parameters<Punktfunk["prepareEmulator"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/emulators/" + __encodePathParam(id) + "/prepare").pipe(
+    "prepareEmulator": (id, options: Parameters<Lilynk["prepareEmulator"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/emulators/" + __encodePathParam(id) + "/prepare").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -2606,7 +2606,7 @@ export const make = (
     }))
     ))
   ),
-    "removeEmulator": (id, options: Parameters<Punktfunk["removeEmulator"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/emulators/" + __encodePathParam(id) + "/remove").pipe(
+    "removeEmulator": (id, options: Parameters<Lilynk["removeEmulator"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/emulators/" + __encodePathParam(id) + "/remove").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -2619,7 +2619,7 @@ export const make = (
     }))
     ))
   ),
-    "getEmulatorSaves": (id, options: Parameters<Punktfunk["getEmulatorSaves"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/emulators/" + __encodePathParam(id) + "/saves").pipe(
+    "getEmulatorSaves": (id, options: Parameters<Lilynk["getEmulatorSaves"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/emulators/" + __encodePathParam(id) + "/saves").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.setUrlParams({ "platform": options.params["platform"] as any, "game": options.params["game"] as any, "profile": options.params["profile"] as any }),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -2633,7 +2633,7 @@ export const make = (
     }))
     ))
   ),
-    "exportEmulatorSaves": (id, options: Parameters<Punktfunk["exportEmulatorSaves"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/emulators/" + __encodePathParam(id) + "/saves/export").pipe(
+    "exportEmulatorSaves": (id, options: Parameters<Lilynk["exportEmulatorSaves"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/emulators/" + __encodePathParam(id) + "/saves/export").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.setUrlParams({ "profile": options.params?.["profile"] as any }),
       HttpClientRequest.bodyJsonUnsafe(options.payload),
@@ -2648,7 +2648,7 @@ export const make = (
     }))
     ))
   ),
-    "importEmulatorSaves": (id, options: Parameters<Punktfunk["importEmulatorSaves"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/emulators/" + __encodePathParam(id) + "/saves/import").pipe(
+    "importEmulatorSaves": (id, options: Parameters<Lilynk["importEmulatorSaves"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/emulators/" + __encodePathParam(id) + "/saves/import").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.setUrlParams({ "profile": options.params?.["profile"] as any }),
       HttpClientRequest.bodyJsonUnsafe(options.payload),
@@ -2663,7 +2663,7 @@ export const make = (
     }))
     ))
   ),
-    "streamEvents": (options: Parameters<Punktfunk["streamEvents"]>[0]) => HttpClientRequest.get("/api/v1/events").pipe(
+    "streamEvents": (options: Parameters<Lilynk["streamEvents"]>[0]) => HttpClientRequest.get("/api/v1/events").pipe(
       HttpClientRequest.setUrlParams({ "since": options?.params?.["since"] as any, "kinds": options?.params?.["kinds"] as any }),
       HttpClientRequest.setHeaders({ "Last-Event-ID": options?.params?.["Last-Event-ID"] ?? undefined }),
       withResponse(options?.config)(HttpClientResponse.matchStatus({
@@ -2677,7 +2677,7 @@ export const make = (
       HttpClientRequest.setHeaders({ "Last-Event-ID": options?.params?.["Last-Event-ID"] ?? undefined }),
       sseRequest(StreamEvents200Sse)
     ),
-    "relayEvent": (options: Parameters<Punktfunk["relayEvent"]>[0]) => HttpClientRequest.post("/api/v1/events/relay").pipe(
+    "relayEvent": (options: Parameters<Lilynk["relayEvent"]>[0]) => HttpClientRequest.post("/api/v1/events/relay").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "400": decodeError("RelayEvent400", RelayEvent400),
@@ -2686,7 +2686,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "endGame": (options: Parameters<Punktfunk["endGame"]>[0]) => HttpClientRequest.post("/api/v1/game/end").pipe(
+    "endGame": (options: Parameters<Lilynk["endGame"]>[0]) => HttpClientRequest.post("/api/v1/game/end").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(EndGame200),
@@ -2696,7 +2696,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "releaseGameHold": (token, options: Parameters<Punktfunk["releaseGameHold"]>[1]) => __makePathRequest(HttpClientRequest.post, [token], () => "/api/v1/game/holds/" + __encodePathParam(token) + "/release").pipe(
+    "releaseGameHold": (token, options: Parameters<Lilynk["releaseGameHold"]>[1]) => __makePathRequest(HttpClientRequest.post, [token], () => "/api/v1/game/holds/" + __encodePathParam(token) + "/release").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "401": decodeError("ReleaseGameHold401", ReleaseGameHold401),
@@ -2706,14 +2706,14 @@ export const make = (
     }))
     ))
   ),
-    "listGpus": (options: Parameters<Punktfunk["listGpus"]>[0]) => HttpClientRequest.get("/api/v1/gpus").pipe(
+    "listGpus": (options: Parameters<Lilynk["listGpus"]>[0]) => HttpClientRequest.get("/api/v1/gpus").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ListGpus200),
       "401": decodeError("ListGpus401", ListGpus401),
       orElse: unexpectedStatus
     }))
     ),
-    "setGpuPreference": (options: Parameters<Punktfunk["setGpuPreference"]>[0]) => HttpClientRequest.put("/api/v1/gpus/preference").pipe(
+    "setGpuPreference": (options: Parameters<Lilynk["setGpuPreference"]>[0]) => HttpClientRequest.put("/api/v1/gpus/preference").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(SetGpuPreference200),
@@ -2723,20 +2723,20 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "getHealth": (options: Parameters<Punktfunk["getHealth"]>[0]) => HttpClientRequest.get("/api/v1/health").pipe(
+    "getHealth": (options: Parameters<Lilynk["getHealth"]>[0]) => HttpClientRequest.get("/api/v1/health").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetHealth200),
       orElse: unexpectedStatus
     }))
     ),
-    "getHooks": (options: Parameters<Punktfunk["getHooks"]>[0]) => HttpClientRequest.get("/api/v1/hooks").pipe(
+    "getHooks": (options: Parameters<Lilynk["getHooks"]>[0]) => HttpClientRequest.get("/api/v1/hooks").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetHooks200),
       "401": decodeError("GetHooks401", GetHooks401),
       orElse: unexpectedStatus
     }))
     ),
-    "setHooks": (options: Parameters<Punktfunk["setHooks"]>[0]) => HttpClientRequest.put("/api/v1/hooks").pipe(
+    "setHooks": (options: Parameters<Lilynk["setHooks"]>[0]) => HttpClientRequest.put("/api/v1/hooks").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(SetHooks200),
@@ -2747,28 +2747,28 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "getHostInfo": (options: Parameters<Punktfunk["getHostInfo"]>[0]) => HttpClientRequest.get("/api/v1/host").pipe(
+    "getHostInfo": (options: Parameters<Lilynk["getHostInfo"]>[0]) => HttpClientRequest.get("/api/v1/host").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetHostInfo200),
       "401": decodeError("GetHostInfo401", GetHostInfo401),
       orElse: unexpectedStatus
     }))
     ),
-    "getPlayingApps": (options: Parameters<Punktfunk["getPlayingApps"]>[0]) => HttpClientRequest.get("/api/v1/host/audio/apps").pipe(
+    "getPlayingApps": (options: Parameters<Lilynk["getPlayingApps"]>[0]) => HttpClientRequest.get("/api/v1/host/audio/apps").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetPlayingApps200),
       "401": decodeError("GetPlayingApps401", GetPlayingApps401),
       orElse: unexpectedStatus
     }))
     ),
-    "getHostSettings": (options: Parameters<Punktfunk["getHostSettings"]>[0]) => HttpClientRequest.get("/api/v1/host/settings").pipe(
+    "getHostSettings": (options: Parameters<Lilynk["getHostSettings"]>[0]) => HttpClientRequest.get("/api/v1/host/settings").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetHostSettings200),
       "401": decodeError("GetHostSettings401", GetHostSettings401),
       orElse: unexpectedStatus
     }))
     ),
-    "patchHostSettings": (options: Parameters<Punktfunk["patchHostSettings"]>[0]) => HttpClientRequest.patch("/api/v1/host/settings").pipe(
+    "patchHostSettings": (options: Parameters<Lilynk["patchHostSettings"]>[0]) => HttpClientRequest.patch("/api/v1/host/settings").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(PatchHostSettings200),
@@ -2778,14 +2778,14 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "getHostTheme": (options: Parameters<Punktfunk["getHostTheme"]>[0]) => HttpClientRequest.get("/api/v1/host/theme").pipe(
+    "getHostTheme": (options: Parameters<Lilynk["getHostTheme"]>[0]) => HttpClientRequest.get("/api/v1/host/theme").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetHostTheme200),
       "401": decodeError("GetHostTheme401", GetHostTheme401),
       orElse: unexpectedStatus
     }))
     ),
-    "getLibrary": (options: Parameters<Punktfunk["getLibrary"]>[0]) => HttpClientRequest.get("/api/v1/library").pipe(
+    "getLibrary": (options: Parameters<Lilynk["getLibrary"]>[0]) => HttpClientRequest.get("/api/v1/library").pipe(
       HttpClientRequest.setUrlParams({ "provider": options?.params?.["provider"] as any, "platform": options?.params?.["platform"] as any, "as": options?.params?.["as"] as any }),
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetLibrary200),
@@ -2794,7 +2794,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "getLibraryArt": (id, kind, options: Parameters<Punktfunk["getLibraryArt"]>[2]) => __makePathRequest(HttpClientRequest.get, [id, kind], () => "/api/v1/library/art/" + __encodePathParam(id) + "/" + __encodePathParam(kind) + "").pipe(
+    "getLibraryArt": (id, kind, options: Parameters<Lilynk["getLibraryArt"]>[2]) => __makePathRequest(HttpClientRequest.get, [id, kind], () => "/api/v1/library/art/" + __encodePathParam(id) + "/" + __encodePathParam(kind) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.setUrlParams({ "as": options?.params?.["as"] as any }),
       HttpClientRequest.setHeaders({ "If-None-Match": options?.params?.["If-None-Match"] ?? undefined }),
@@ -2814,7 +2814,7 @@ export const make = (
       binaryRequest
     ))
   )),
-    "createCustomGame": (options: Parameters<Punktfunk["createCustomGame"]>[0]) => HttpClientRequest.post("/api/v1/library/custom").pipe(
+    "createCustomGame": (options: Parameters<Lilynk["createCustomGame"]>[0]) => HttpClientRequest.post("/api/v1/library/custom").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(CreateCustomGame201),
@@ -2825,7 +2825,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "getCustomGame": (id, options: Parameters<Punktfunk["getCustomGame"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/library/custom/" + __encodePathParam(id) + "").pipe(
+    "getCustomGame": (id, options: Parameters<Lilynk["getCustomGame"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/library/custom/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetCustomGame200),
@@ -2835,7 +2835,7 @@ export const make = (
     }))
     ))
   ),
-    "updateCustomGame": (id, options: Parameters<Punktfunk["updateCustomGame"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/library/custom/" + __encodePathParam(id) + "").pipe(
+    "updateCustomGame": (id, options: Parameters<Lilynk["updateCustomGame"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/library/custom/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -2850,7 +2850,7 @@ export const make = (
     }))
     ))
   ),
-    "deleteCustomGame": (id, options: Parameters<Punktfunk["deleteCustomGame"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/library/custom/" + __encodePathParam(id) + "").pipe(
+    "deleteCustomGame": (id, options: Parameters<Lilynk["deleteCustomGame"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/library/custom/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "401": decodeError("DeleteCustomGame401", DeleteCustomGame401),
@@ -2863,7 +2863,7 @@ export const make = (
     }))
     ))
   ),
-    "setLibraryEntryHidden": (id, options: Parameters<Punktfunk["setLibraryEntryHidden"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/library/hidden/" + __encodePathParam(id) + "").pipe(
+    "setLibraryEntryHidden": (id, options: Parameters<Lilynk["setLibraryEntryHidden"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/library/hidden/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.setUrlParams({ "as": options.params?.["as"] as any }),
       HttpClientRequest.bodyJsonUnsafe(options.payload),
@@ -2878,7 +2878,7 @@ export const make = (
     }))
     ))
   ),
-    "installLibraryEntry": (id, options: Parameters<Punktfunk["installLibraryEntry"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/library/install/" + __encodePathParam(id) + "").pipe(
+    "installLibraryEntry": (id, options: Parameters<Lilynk["installLibraryEntry"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/library/install/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(InstallLibraryEntry202),
@@ -2891,7 +2891,7 @@ export const make = (
     }))
     ))
   ),
-    "uninstallLibraryEntry": (id, options: Parameters<Punktfunk["uninstallLibraryEntry"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/library/install/" + __encodePathParam(id) + "").pipe(
+    "uninstallLibraryEntry": (id, options: Parameters<Lilynk["uninstallLibraryEntry"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/library/install/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "401": decodeError("UninstallLibraryEntry401", UninstallLibraryEntry401),
@@ -2904,7 +2904,7 @@ export const make = (
     }))
     ))
   ),
-    "cancelLibraryInstall": (id, options: Parameters<Punktfunk["cancelLibraryInstall"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/library/install/" + __encodePathParam(id) + "/cancel").pipe(
+    "cancelLibraryInstall": (id, options: Parameters<Lilynk["cancelLibraryInstall"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/library/install/" + __encodePathParam(id) + "/cancel").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "401": decodeError("CancelLibraryInstall401", CancelLibraryInstall401),
@@ -2916,7 +2916,7 @@ export const make = (
     }))
     ))
   ),
-    "pauseLibraryInstall": (id, options: Parameters<Punktfunk["pauseLibraryInstall"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/library/install/" + __encodePathParam(id) + "/pause").pipe(
+    "pauseLibraryInstall": (id, options: Parameters<Lilynk["pauseLibraryInstall"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/library/install/" + __encodePathParam(id) + "/pause").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "401": decodeError("PauseLibraryInstall401", PauseLibraryInstall401),
@@ -2929,14 +2929,14 @@ export const make = (
     }))
     ))
   ),
-    "listLibraryMetadata": (options: Parameters<Punktfunk["listLibraryMetadata"]>[0]) => HttpClientRequest.get("/api/v1/library/metadata").pipe(
+    "listLibraryMetadata": (options: Parameters<Lilynk["listLibraryMetadata"]>[0]) => HttpClientRequest.get("/api/v1/library/metadata").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ListLibraryMetadata200),
       "401": decodeError("ListLibraryMetadata401", ListLibraryMetadata401),
       orElse: unexpectedStatus
     }))
     ),
-    "setLibraryMetadata": (options: Parameters<Punktfunk["setLibraryMetadata"]>[0]) => HttpClientRequest.put("/api/v1/library/metadata").pipe(
+    "setLibraryMetadata": (options: Parameters<Lilynk["setLibraryMetadata"]>[0]) => HttpClientRequest.put("/api/v1/library/metadata").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(SetLibraryMetadata200),
@@ -2945,7 +2945,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "putLibraryMetadata": (source, options: Parameters<Punktfunk["putLibraryMetadata"]>[1]) => __makePathRequest(HttpClientRequest.put, [source], () => "/api/v1/library/metadata/" + __encodePathParam(source) + "").pipe(
+    "putLibraryMetadata": (source, options: Parameters<Lilynk["putLibraryMetadata"]>[1]) => __makePathRequest(HttpClientRequest.put, [source], () => "/api/v1/library/metadata/" + __encodePathParam(source) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -2958,7 +2958,7 @@ export const make = (
     }))
     ))
   ),
-    "deleteLibraryMetadata": (source, options: Parameters<Punktfunk["deleteLibraryMetadata"]>[1]) => __makePathRequest(HttpClientRequest.delete, [source], () => "/api/v1/library/metadata/" + __encodePathParam(source) + "").pipe(
+    "deleteLibraryMetadata": (source, options: Parameters<Lilynk["deleteLibraryMetadata"]>[1]) => __makePathRequest(HttpClientRequest.delete, [source], () => "/api/v1/library/metadata/" + __encodePathParam(source) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(DeleteLibraryMetadata200),
@@ -2970,7 +2970,7 @@ export const make = (
     }))
     ))
   ),
-    "getLibraryOverrides": (options: Parameters<Punktfunk["getLibraryOverrides"]>[0]) => HttpClientRequest.get("/api/v1/library/overrides").pipe(
+    "getLibraryOverrides": (options: Parameters<Lilynk["getLibraryOverrides"]>[0]) => HttpClientRequest.get("/api/v1/library/overrides").pipe(
       HttpClientRequest.setUrlParams({ "as": options?.params?.["as"] as any }),
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetLibraryOverrides200),
@@ -2979,7 +2979,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "setGameOverrides": (id, options: Parameters<Punktfunk["setGameOverrides"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/library/overrides/games/" + __encodePathParam(id) + "").pipe(
+    "setGameOverrides": (id, options: Parameters<Lilynk["setGameOverrides"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/library/overrides/games/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.setUrlParams({ "as": options.params?.["as"] as any }),
       HttpClientRequest.bodyJsonUnsafe(options.payload),
@@ -2994,7 +2994,7 @@ export const make = (
     }))
     ))
   ),
-    "createOverrideSet": (options: Parameters<Punktfunk["createOverrideSet"]>[0]) => HttpClientRequest.post("/api/v1/library/overrides/sets").pipe(
+    "createOverrideSet": (options: Parameters<Lilynk["createOverrideSet"]>[0]) => HttpClientRequest.post("/api/v1/library/overrides/sets").pipe(
       HttpClientRequest.setUrlParams({ "as": options.params?.["as"] as any }),
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -3007,7 +3007,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "updateOverrideSet": (id, options: Parameters<Punktfunk["updateOverrideSet"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/library/overrides/sets/" + __encodePathParam(id) + "").pipe(
+    "updateOverrideSet": (id, options: Parameters<Lilynk["updateOverrideSet"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/library/overrides/sets/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.setUrlParams({ "as": options.params?.["as"] as any }),
       HttpClientRequest.bodyJsonUnsafe(options.payload),
@@ -3022,7 +3022,7 @@ export const make = (
     }))
     ))
   ),
-    "deleteOverrideSet": (id, options: Parameters<Punktfunk["deleteOverrideSet"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/library/overrides/sets/" + __encodePathParam(id) + "").pipe(
+    "deleteOverrideSet": (id, options: Parameters<Lilynk["deleteOverrideSet"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/library/overrides/sets/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.setUrlParams({ "as": options?.params?.["as"] as any }),
       withResponse(options?.config)(HttpClientResponse.matchStatus({
@@ -3034,7 +3034,7 @@ export const make = (
     }))
     ))
   ),
-    "setSourceOverrides": (source, options: Parameters<Punktfunk["setSourceOverrides"]>[1]) => __makePathRequest(HttpClientRequest.put, [source], () => "/api/v1/library/overrides/sources/" + __encodePathParam(source) + "").pipe(
+    "setSourceOverrides": (source, options: Parameters<Lilynk["setSourceOverrides"]>[1]) => __makePathRequest(HttpClientRequest.put, [source], () => "/api/v1/library/overrides/sources/" + __encodePathParam(source) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.setUrlParams({ "as": options.params?.["as"] as any }),
       HttpClientRequest.bodyJsonUnsafe(options.payload),
@@ -3049,14 +3049,14 @@ export const make = (
     }))
     ))
   ),
-    "listOwnTitles": (options: Parameters<Punktfunk["listOwnTitles"]>[0]) => HttpClientRequest.get("/api/v1/library/own").pipe(
+    "listOwnTitles": (options: Parameters<Lilynk["listOwnTitles"]>[0]) => HttpClientRequest.get("/api/v1/library/own").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ListOwnTitles200),
       "401": decodeError("ListOwnTitles401", ListOwnTitles401),
       orElse: unexpectedStatus
     }))
     ),
-    "storeOwnTitles": (options: Parameters<Punktfunk["storeOwnTitles"]>[0]) => HttpClientRequest.put("/api/v1/library/own").pipe(
+    "storeOwnTitles": (options: Parameters<Lilynk["storeOwnTitles"]>[0]) => HttpClientRequest.put("/api/v1/library/own").pipe(
       HttpClientRequest.setUrlParams({ "as": options.params["as"] as any }),
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -3070,7 +3070,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "getLibraryPage": (options: Parameters<Punktfunk["getLibraryPage"]>[0]) => HttpClientRequest.get("/api/v1/library/page").pipe(
+    "getLibraryPage": (options: Parameters<Lilynk["getLibraryPage"]>[0]) => HttpClientRequest.get("/api/v1/library/page").pipe(
       HttpClientRequest.setUrlParams({ "limit": options?.params?.["limit"] as any, "cursor": options?.params?.["cursor"] as any, "q": options?.params?.["q"] as any, "provider": options?.params?.["provider"] as any, "platform": options?.params?.["platform"] as any, "role": options?.params?.["role"] as any, "id": options?.params?.["id"] as any, "install": options?.params?.["install"] as any, "hidden": options?.params?.["hidden"] as any, "as": options?.params?.["as"] as any }),
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetLibraryPage200),
@@ -3080,7 +3080,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "setLibraryArtPick": (id, options: Parameters<Punktfunk["setLibraryArtPick"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/library/picks/" + __encodePathParam(id) + "").pipe(
+    "setLibraryArtPick": (id, options: Parameters<Lilynk["setLibraryArtPick"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/library/picks/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.setUrlParams({ "as": options.params?.["as"] as any }),
       HttpClientRequest.bodyJsonUnsafe(options.payload),
@@ -3094,7 +3094,7 @@ export const make = (
     }))
     ))
   ),
-    "reconcileProviderEntries": (provider, options: Parameters<Punktfunk["reconcileProviderEntries"]>[1]) => __makePathRequest(HttpClientRequest.put, [provider], () => "/api/v1/library/provider/" + __encodePathParam(provider) + "").pipe(
+    "reconcileProviderEntries": (provider, options: Parameters<Lilynk["reconcileProviderEntries"]>[1]) => __makePathRequest(HttpClientRequest.put, [provider], () => "/api/v1/library/provider/" + __encodePathParam(provider) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.setUrlParams({ "store": options.params?.["store"] as any }),
       HttpClientRequest.bodyJsonUnsafe(options.payload),
@@ -3108,7 +3108,7 @@ export const make = (
     }))
     ))
   ),
-    "deleteProviderEntries": (provider, options: Parameters<Punktfunk["deleteProviderEntries"]>[1]) => __makePathRequest(HttpClientRequest.delete, [provider], () => "/api/v1/library/provider/" + __encodePathParam(provider) + "").pipe(
+    "deleteProviderEntries": (provider, options: Parameters<Lilynk["deleteProviderEntries"]>[1]) => __makePathRequest(HttpClientRequest.delete, [provider], () => "/api/v1/library/provider/" + __encodePathParam(provider) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(DeleteProviderEntries200),
@@ -3119,7 +3119,7 @@ export const make = (
     }))
     ))
   ),
-    "reportProviderDownloads": (provider, options: Parameters<Punktfunk["reportProviderDownloads"]>[1]) => __makePathRequest(HttpClientRequest.put, [provider], () => "/api/v1/library/provider/" + __encodePathParam(provider) + "/downloads").pipe(
+    "reportProviderDownloads": (provider, options: Parameters<Lilynk["reportProviderDownloads"]>[1]) => __makePathRequest(HttpClientRequest.put, [provider], () => "/api/v1/library/provider/" + __encodePathParam(provider) + "/downloads").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -3131,7 +3131,7 @@ export const make = (
     }))
     ))
   ),
-    "reportProviderRunning": (provider, options: Parameters<Punktfunk["reportProviderRunning"]>[1]) => __makePathRequest(HttpClientRequest.put, [provider], () => "/api/v1/library/provider/" + __encodePathParam(provider) + "/running").pipe(
+    "reportProviderRunning": (provider, options: Parameters<Lilynk["reportProviderRunning"]>[1]) => __makePathRequest(HttpClientRequest.put, [provider], () => "/api/v1/library/provider/" + __encodePathParam(provider) + "/running").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -3143,7 +3143,7 @@ export const make = (
     }))
     ))
   ),
-    "listLibraryScanners": (options: Parameters<Punktfunk["listLibraryScanners"]>[0]) => HttpClientRequest.get("/api/v1/library/scanners").pipe(
+    "listLibraryScanners": (options: Parameters<Lilynk["listLibraryScanners"]>[0]) => HttpClientRequest.get("/api/v1/library/scanners").pipe(
       HttpClientRequest.setUrlParams({ "as": options?.params?.["as"] as any }),
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ListLibraryScanners200),
@@ -3152,7 +3152,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "setLibraryScanner": (id, options: Parameters<Punktfunk["setLibraryScanner"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/library/scanners/" + __encodePathParam(id) + "").pipe(
+    "setLibraryScanner": (id, options: Parameters<Lilynk["setLibraryScanner"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/library/scanners/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.setUrlParams({ "as": options.params?.["as"] as any }),
       HttpClientRequest.bodyJsonUnsafe(options.payload),
@@ -3166,7 +3166,7 @@ export const make = (
     }))
     ))
   ),
-    "getLocalSummary": (options: Parameters<Punktfunk["getLocalSummary"]>[0]) => HttpClientRequest.get("/api/v1/local/summary").pipe(
+    "getLocalSummary": (options: Parameters<Lilynk["getLocalSummary"]>[0]) => HttpClientRequest.get("/api/v1/local/summary").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetLocalSummary200),
       "401": decodeError("GetLocalSummary401", GetLocalSummary401),
@@ -3174,7 +3174,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "logsGet": (options: Parameters<Punktfunk["logsGet"]>[0]) => HttpClientRequest.get("/api/v1/logs").pipe(
+    "logsGet": (options: Parameters<Lilynk["logsGet"]>[0]) => HttpClientRequest.get("/api/v1/logs").pipe(
       HttpClientRequest.setUrlParams({ "after": options?.params?.["after"] as any, "limit": options?.params?.["limit"] as any }),
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(LogsGet200),
@@ -3182,14 +3182,14 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "listNativeClients": (options: Parameters<Punktfunk["listNativeClients"]>[0]) => HttpClientRequest.get("/api/v1/native/clients").pipe(
+    "listNativeClients": (options: Parameters<Lilynk["listNativeClients"]>[0]) => HttpClientRequest.get("/api/v1/native/clients").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ListNativeClients200),
       "401": decodeError("ListNativeClients401", ListNativeClients401),
       orElse: unexpectedStatus
     }))
     ),
-    "unpairAllNativeClients": (options: Parameters<Punktfunk["unpairAllNativeClients"]>[0]) => HttpClientRequest.delete("/api/v1/native/clients").pipe(
+    "unpairAllNativeClients": (options: Parameters<Lilynk["unpairAllNativeClients"]>[0]) => HttpClientRequest.delete("/api/v1/native/clients").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(UnpairAllNativeClients200),
       "401": decodeError("UnpairAllNativeClients401", UnpairAllNativeClients401),
@@ -3198,7 +3198,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "unpairNativeClient": (fingerprint, options: Parameters<Punktfunk["unpairNativeClient"]>[1]) => __makePathRequest(HttpClientRequest.delete, [fingerprint], () => "/api/v1/native/clients/" + __encodePathParam(fingerprint) + "").pipe(
+    "unpairNativeClient": (fingerprint, options: Parameters<Lilynk["unpairNativeClient"]>[1]) => __makePathRequest(HttpClientRequest.delete, [fingerprint], () => "/api/v1/native/clients/" + __encodePathParam(fingerprint) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "401": decodeError("UnpairNativeClient401", UnpairNativeClient401),
@@ -3209,7 +3209,7 @@ export const make = (
     }))
     ))
   ),
-    "updateNativeClientAccess": (fingerprint, options: Parameters<Punktfunk["updateNativeClientAccess"]>[1]) => __makePathRequest(HttpClientRequest.patch, [fingerprint], () => "/api/v1/native/clients/" + __encodePathParam(fingerprint) + "").pipe(
+    "updateNativeClientAccess": (fingerprint, options: Parameters<Lilynk["updateNativeClientAccess"]>[1]) => __makePathRequest(HttpClientRequest.patch, [fingerprint], () => "/api/v1/native/clients/" + __encodePathParam(fingerprint) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -3223,14 +3223,14 @@ export const make = (
     }))
     ))
   ),
-    "getNativePairing": (options: Parameters<Punktfunk["getNativePairing"]>[0]) => HttpClientRequest.get("/api/v1/native/pair").pipe(
+    "getNativePairing": (options: Parameters<Lilynk["getNativePairing"]>[0]) => HttpClientRequest.get("/api/v1/native/pair").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetNativePairing200),
       "401": decodeError("GetNativePairing401", GetNativePairing401),
       orElse: unexpectedStatus
     }))
     ),
-    "disarmNativePairing": (options: Parameters<Punktfunk["disarmNativePairing"]>[0]) => HttpClientRequest.delete("/api/v1/native/pair").pipe(
+    "disarmNativePairing": (options: Parameters<Lilynk["disarmNativePairing"]>[0]) => HttpClientRequest.delete("/api/v1/native/pair").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "401": decodeError("DisarmNativePairing401", DisarmNativePairing401),
       "503": decodeError("DisarmNativePairing503", DisarmNativePairing503),
@@ -3238,7 +3238,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "armNativePairing": (options: Parameters<Punktfunk["armNativePairing"]>[0]) => HttpClientRequest.post("/api/v1/native/pair/arm").pipe(
+    "armNativePairing": (options: Parameters<Lilynk["armNativePairing"]>[0]) => HttpClientRequest.post("/api/v1/native/pair/arm").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ArmNativePairing200),
@@ -3249,14 +3249,14 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "listPendingDevices": (options: Parameters<Punktfunk["listPendingDevices"]>[0]) => HttpClientRequest.get("/api/v1/native/pending").pipe(
+    "listPendingDevices": (options: Parameters<Lilynk["listPendingDevices"]>[0]) => HttpClientRequest.get("/api/v1/native/pending").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ListPendingDevices200),
       "401": decodeError("ListPendingDevices401", ListPendingDevices401),
       orElse: unexpectedStatus
     }))
     ),
-    "approvePendingDevice": (id, options: Parameters<Punktfunk["approvePendingDevice"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/native/pending/" + __encodePathParam(id) + "/approve").pipe(
+    "approvePendingDevice": (id, options: Parameters<Lilynk["approvePendingDevice"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/native/pending/" + __encodePathParam(id) + "/approve").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -3271,7 +3271,7 @@ export const make = (
     }))
     ))
   ),
-    "denyPendingDevice": (id, options: Parameters<Punktfunk["denyPendingDevice"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/native/pending/" + __encodePathParam(id) + "/deny").pipe(
+    "denyPendingDevice": (id, options: Parameters<Lilynk["denyPendingDevice"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/native/pending/" + __encodePathParam(id) + "/deny").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "401": decodeError("DenyPendingDevice401", DenyPendingDevice401),
@@ -3282,14 +3282,14 @@ export const make = (
     }))
     ))
   ),
-    "getPairingStatus": (options: Parameters<Punktfunk["getPairingStatus"]>[0]) => HttpClientRequest.get("/api/v1/pair").pipe(
+    "getPairingStatus": (options: Parameters<Lilynk["getPairingStatus"]>[0]) => HttpClientRequest.get("/api/v1/pair").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetPairingStatus200),
       "401": decodeError("GetPairingStatus401", GetPairingStatus401),
       orElse: unexpectedStatus
     }))
     ),
-    "submitPairingPin": (options: Parameters<Punktfunk["submitPairingPin"]>[0]) => HttpClientRequest.post("/api/v1/pair/pin").pipe(
+    "submitPairingPin": (options: Parameters<Lilynk["submitPairingPin"]>[0]) => HttpClientRequest.post("/api/v1/pair/pin").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "400": decodeError("SubmitPairingPin400", SubmitPairingPin400),
@@ -3301,7 +3301,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "getPluginAccess": (options: Parameters<Punktfunk["getPluginAccess"]>[0]) => HttpClientRequest.get("/api/v1/plugin-access").pipe(
+    "getPluginAccess": (options: Parameters<Lilynk["getPluginAccess"]>[0]) => HttpClientRequest.get("/api/v1/plugin-access").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetPluginAccess200),
       "401": decodeError("GetPluginAccess401", GetPluginAccess401),
@@ -3309,7 +3309,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "getPluginAccessRequests": (options: Parameters<Punktfunk["getPluginAccessRequests"]>[0]) => HttpClientRequest.get("/api/v1/plugin-access/requests").pipe(
+    "getPluginAccessRequests": (options: Parameters<Lilynk["getPluginAccessRequests"]>[0]) => HttpClientRequest.get("/api/v1/plugin-access/requests").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetPluginAccessRequests200),
       "401": decodeError("GetPluginAccessRequests401", GetPluginAccessRequests401),
@@ -3317,7 +3317,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "requestPluginAccess": (options: Parameters<Punktfunk["requestPluginAccess"]>[0]) => HttpClientRequest.post("/api/v1/plugin-access/requests").pipe(
+    "requestPluginAccess": (options: Parameters<Lilynk["requestPluginAccess"]>[0]) => HttpClientRequest.post("/api/v1/plugin-access/requests").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(RequestPluginAccess200),
@@ -3327,7 +3327,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "decidePluginAccess": (plugin, options: Parameters<Punktfunk["decidePluginAccess"]>[1]) => __makePathRequest(HttpClientRequest.post, [plugin], () => "/api/v1/plugin-access/" + __encodePathParam(plugin) + "/decide").pipe(
+    "decidePluginAccess": (plugin, options: Parameters<Lilynk["decidePluginAccess"]>[1]) => __makePathRequest(HttpClientRequest.post, [plugin], () => "/api/v1/plugin-access/" + __encodePathParam(plugin) + "/decide").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -3342,7 +3342,7 @@ export const make = (
     }))
     ))
   ),
-    "releasePluginAccess": (plugin, options: Parameters<Punktfunk["releasePluginAccess"]>[1]) => __makePathRequest(HttpClientRequest.post, [plugin], () => "/api/v1/plugin-access/" + __encodePathParam(plugin) + "/release").pipe(
+    "releasePluginAccess": (plugin, options: Parameters<Lilynk["releasePluginAccess"]>[1]) => __makePathRequest(HttpClientRequest.post, [plugin], () => "/api/v1/plugin-access/" + __encodePathParam(plugin) + "/release").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -3356,14 +3356,14 @@ export const make = (
     }))
     ))
   ),
-    "listPlugins": (options: Parameters<Punktfunk["listPlugins"]>[0]) => HttpClientRequest.get("/api/v1/plugins").pipe(
+    "listPlugins": (options: Parameters<Lilynk["listPlugins"]>[0]) => HttpClientRequest.get("/api/v1/plugins").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ListPlugins200),
       "401": decodeError("ListPlugins401", ListPlugins401),
       orElse: unexpectedStatus
     }))
     ),
-    "ingestPluginLogs": (options: Parameters<Punktfunk["ingestPluginLogs"]>[0]) => HttpClientRequest.post("/api/v1/plugins/logs").pipe(
+    "ingestPluginLogs": (options: Parameters<Lilynk["ingestPluginLogs"]>[0]) => HttpClientRequest.post("/api/v1/plugins/logs").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "400": decodeError("IngestPluginLogs400", IngestPluginLogs400),
@@ -3372,7 +3372,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "registerPlugin": (id, options: Parameters<Punktfunk["registerPlugin"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/plugins/" + __encodePathParam(id) + "").pipe(
+    "registerPlugin": (id, options: Parameters<Lilynk["registerPlugin"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/plugins/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -3383,7 +3383,7 @@ export const make = (
     }))
     ))
   ),
-    "deregisterPlugin": (id, options: Parameters<Punktfunk["deregisterPlugin"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/plugins/" + __encodePathParam(id) + "").pipe(
+    "deregisterPlugin": (id, options: Parameters<Lilynk["deregisterPlugin"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/plugins/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "401": decodeError("DeregisterPlugin401", DeregisterPlugin401),
@@ -3392,7 +3392,7 @@ export const make = (
     }))
     ))
   ),
-    "getPluginUiCredential": (id, options: Parameters<Punktfunk["getPluginUiCredential"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/plugins/" + __encodePathParam(id) + "/ui-credential").pipe(
+    "getPluginUiCredential": (id, options: Parameters<Lilynk["getPluginUiCredential"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/plugins/" + __encodePathParam(id) + "/ui-credential").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetPluginUiCredential200),
@@ -3402,7 +3402,7 @@ export const make = (
     }))
     ))
   ),
-    "attachPluginUi": (id, options: Parameters<Punktfunk["attachPluginUi"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/plugins/" + __encodePathParam(id) + "/ui/attach").pipe(
+    "attachPluginUi": (id, options: Parameters<Lilynk["attachPluginUi"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/plugins/" + __encodePathParam(id) + "/ui/attach").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "400": decodeError("AttachPluginUi400", AttachPluginUi400),
@@ -3413,7 +3413,7 @@ export const make = (
     }))
     ))
   ),
-    "listProfiles": (options: Parameters<Punktfunk["listProfiles"]>[0]) => HttpClientRequest.get("/api/v1/profiles").pipe(
+    "listProfiles": (options: Parameters<Lilynk["listProfiles"]>[0]) => HttpClientRequest.get("/api/v1/profiles").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ListProfiles200),
       "401": decodeError("ListProfiles401", ListProfiles401),
@@ -3421,7 +3421,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "createProfile": (options: Parameters<Punktfunk["createProfile"]>[0]) => HttpClientRequest.post("/api/v1/profiles").pipe(
+    "createProfile": (options: Parameters<Lilynk["createProfile"]>[0]) => HttpClientRequest.post("/api/v1/profiles").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(CreateProfile201),
@@ -3434,7 +3434,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "setDefaultProfile": (options: Parameters<Punktfunk["setDefaultProfile"]>[0]) => HttpClientRequest.put("/api/v1/profiles/default").pipe(
+    "setDefaultProfile": (options: Parameters<Lilynk["setDefaultProfile"]>[0]) => HttpClientRequest.put("/api/v1/profiles/default").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "401": decodeError("SetDefaultProfile401", SetDefaultProfile401),
@@ -3443,7 +3443,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "getSeatsDoctor": (options: Parameters<Punktfunk["getSeatsDoctor"]>[0]) => HttpClientRequest.get("/api/v1/profiles/doctor").pipe(
+    "getSeatsDoctor": (options: Parameters<Lilynk["getSeatsDoctor"]>[0]) => HttpClientRequest.get("/api/v1/profiles/doctor").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetSeatsDoctor200),
       "401": decodeError("GetSeatsDoctor401", GetSeatsDoctor401),
@@ -3452,7 +3452,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "setDoor": (options: Parameters<Punktfunk["setDoor"]>[0]) => HttpClientRequest.put("/api/v1/profiles/door").pipe(
+    "setDoor": (options: Parameters<Lilynk["setDoor"]>[0]) => HttpClientRequest.put("/api/v1/profiles/door").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "401": decodeError("SetDoor401", SetDoor401),
@@ -3465,7 +3465,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "enumerateProfiles": (options: Parameters<Punktfunk["enumerateProfiles"]>[0]) => HttpClientRequest.get("/api/v1/profiles/enumerate").pipe(
+    "enumerateProfiles": (options: Parameters<Lilynk["enumerateProfiles"]>[0]) => HttpClientRequest.get("/api/v1/profiles/enumerate").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(EnumerateProfiles200),
       "401": decodeError("EnumerateProfiles401", EnumerateProfiles401),
@@ -3473,7 +3473,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "listDeskPads": (options: Parameters<Punktfunk["listDeskPads"]>[0]) => HttpClientRequest.get("/api/v1/profiles/pads").pipe(
+    "listDeskPads": (options: Parameters<Lilynk["listDeskPads"]>[0]) => HttpClientRequest.get("/api/v1/profiles/pads").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ListDeskPads200),
       "401": decodeError("ListDeskPads401", ListDeskPads401),
@@ -3481,7 +3481,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "setDeskPadHolder": (key, options: Parameters<Punktfunk["setDeskPadHolder"]>[1]) => __makePathRequest(HttpClientRequest.put, [key], () => "/api/v1/profiles/pads/" + __encodePathParam(key) + "").pipe(
+    "setDeskPadHolder": (key, options: Parameters<Lilynk["setDeskPadHolder"]>[1]) => __makePathRequest(HttpClientRequest.put, [key], () => "/api/v1/profiles/pads/" + __encodePathParam(key) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -3495,7 +3495,7 @@ export const make = (
     }))
     ))
   ),
-    "setDeskPadLabel": (key, options: Parameters<Punktfunk["setDeskPadLabel"]>[1]) => __makePathRequest(HttpClientRequest.put, [key], () => "/api/v1/profiles/pads/" + __encodePathParam(key) + "/label").pipe(
+    "setDeskPadLabel": (key, options: Parameters<Lilynk["setDeskPadLabel"]>[1]) => __makePathRequest(HttpClientRequest.put, [key], () => "/api/v1/profiles/pads/" + __encodePathParam(key) + "/label").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -3509,7 +3509,7 @@ export const make = (
     }))
     ))
   ),
-    "getSeating": (options: Parameters<Punktfunk["getSeating"]>[0]) => HttpClientRequest.get("/api/v1/profiles/seating").pipe(
+    "getSeating": (options: Parameters<Lilynk["getSeating"]>[0]) => HttpClientRequest.get("/api/v1/profiles/seating").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetSeating200),
       "401": decodeError("GetSeating401", GetSeating401),
@@ -3517,7 +3517,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "setSeating": (options: Parameters<Punktfunk["setSeating"]>[0]) => HttpClientRequest.put("/api/v1/profiles/seating").pipe(
+    "setSeating": (options: Parameters<Lilynk["setSeating"]>[0]) => HttpClientRequest.put("/api/v1/profiles/seating").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(SetSeating200),
@@ -3527,14 +3527,14 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "windowsAccounts": (options: Parameters<Punktfunk["windowsAccounts"]>[0]) => HttpClientRequest.get("/api/v1/profiles/windows-accounts").pipe(
+    "windowsAccounts": (options: Parameters<Lilynk["windowsAccounts"]>[0]) => HttpClientRequest.get("/api/v1/profiles/windows-accounts").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(WindowsAccounts200),
       "401": decodeError("WindowsAccounts401", WindowsAccounts401),
       orElse: unexpectedStatus
     }))
     ),
-    "updateProfile": (id, options: Parameters<Punktfunk["updateProfile"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "").pipe(
+    "updateProfile": (id, options: Parameters<Lilynk["updateProfile"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -3548,7 +3548,7 @@ export const make = (
     }))
     ))
   ),
-    "deleteProfile": (id, options: Parameters<Punktfunk["deleteProfile"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "").pipe(
+    "deleteProfile": (id, options: Parameters<Lilynk["deleteProfile"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.setUrlParams({ "erase": options?.params?.["erase"] as any }),
       withResponse(options?.config)(HttpClientResponse.matchStatus({
@@ -3561,7 +3561,7 @@ export const make = (
     }))
     ))
   ),
-    "getProfileAvatar": (id, options: Parameters<Punktfunk["getProfileAvatar"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/avatar").pipe(
+    "getProfileAvatar": (id, options: Parameters<Lilynk["getProfileAvatar"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/avatar").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.setHeaders({ "If-None-Match": options?.params?.["If-None-Match"] ?? undefined }),
       withResponse(options?.config)(HttpClientResponse.matchStatus({
@@ -3579,7 +3579,7 @@ export const make = (
       binaryRequest
     ))
   )),
-    "setProfileAvatar": (id, options: Parameters<Punktfunk["setProfileAvatar"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/avatar").pipe(
+    "setProfileAvatar": (id, options: Parameters<Lilynk["setProfileAvatar"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/avatar").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "400": decodeError("SetProfileAvatar400", SetProfileAvatar400),
@@ -3590,7 +3590,7 @@ export const make = (
     }))
     ))
   ),
-    "deleteProfileAvatar": (id, options: Parameters<Punktfunk["deleteProfileAvatar"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/avatar").pipe(
+    "deleteProfileAvatar": (id, options: Parameters<Lilynk["deleteProfileAvatar"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/avatar").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "401": decodeError("DeleteProfileAvatar401", DeleteProfileAvatar401),
@@ -3600,7 +3600,7 @@ export const make = (
     }))
     ))
   ),
-    "listProfileDevices": (id, options: Parameters<Punktfunk["listProfileDevices"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/devices").pipe(
+    "listProfileDevices": (id, options: Parameters<Lilynk["listProfileDevices"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/devices").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ListProfileDevices200),
@@ -3612,7 +3612,7 @@ export const make = (
     }))
     ))
   ),
-    "addProfileDevice": (id, options: Parameters<Punktfunk["addProfileDevice"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/devices").pipe(
+    "addProfileDevice": (id, options: Parameters<Lilynk["addProfileDevice"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/devices").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -3626,7 +3626,7 @@ export const make = (
     }))
     ))
   ),
-    "signOutProfileDevices": (id, options: Parameters<Punktfunk["signOutProfileDevices"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/devices").pipe(
+    "signOutProfileDevices": (id, options: Parameters<Lilynk["signOutProfileDevices"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/devices").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "401": decodeError("SignOutProfileDevices401", SignOutProfileDevices401),
@@ -3638,7 +3638,7 @@ export const make = (
     }))
     ))
   ),
-    "signOutProfileDevice": (id, fingerprint, options: Parameters<Punktfunk["signOutProfileDevice"]>[2]) => __makePathRequest(HttpClientRequest.delete, [id, fingerprint], () => "/api/v1/profiles/" + __encodePathParam(id) + "/devices/" + __encodePathParam(fingerprint) + "").pipe(
+    "signOutProfileDevice": (id, fingerprint, options: Parameters<Lilynk["signOutProfileDevice"]>[2]) => __makePathRequest(HttpClientRequest.delete, [id, fingerprint], () => "/api/v1/profiles/" + __encodePathParam(id) + "/devices/" + __encodePathParam(fingerprint) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "400": decodeError("SignOutProfileDevice400", SignOutProfileDevice400),
@@ -3651,7 +3651,7 @@ export const make = (
     }))
     ))
   ),
-    "endProfileSession": (id, options: Parameters<Punktfunk["endProfileSession"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/end").pipe(
+    "endProfileSession": (id, options: Parameters<Lilynk["endProfileSession"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/end").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(EndProfileSession200),
@@ -3663,7 +3663,7 @@ export const make = (
     }))
     ))
   ),
-    "getProfileLock": (id, options: Parameters<Punktfunk["getProfileLock"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/lock").pipe(
+    "getProfileLock": (id, options: Parameters<Lilynk["getProfileLock"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/lock").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetProfileLock200),
@@ -3674,7 +3674,7 @@ export const make = (
     }))
     ))
   ),
-    "lockProfile": (id, options: Parameters<Punktfunk["lockProfile"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/lock").pipe(
+    "lockProfile": (id, options: Parameters<Lilynk["lockProfile"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/lock").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -3687,7 +3687,7 @@ export const make = (
     }))
     ))
   ),
-    "unlockProfile": (id, options: Parameters<Punktfunk["unlockProfile"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/lock").pipe(
+    "unlockProfile": (id, options: Parameters<Lilynk["unlockProfile"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/lock").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(UnlockProfile200),
@@ -3698,7 +3698,7 @@ export const make = (
     }))
     ))
   ),
-    "setProfilePin": (id, options: Parameters<Punktfunk["setProfilePin"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/lock/pin").pipe(
+    "setProfilePin": (id, options: Parameters<Lilynk["setProfilePin"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/lock/pin").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -3711,7 +3711,7 @@ export const make = (
     }))
     ))
   ),
-    "clearProfilePin": (id, options: Parameters<Punktfunk["clearProfilePin"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/lock/pin").pipe(
+    "clearProfilePin": (id, options: Parameters<Lilynk["clearProfilePin"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/lock/pin").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ClearProfilePin200),
@@ -3722,7 +3722,7 @@ export const make = (
     }))
     ))
   ),
-    "startProfileSeat": (id, options: Parameters<Punktfunk["startProfileSeat"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/start").pipe(
+    "startProfileSeat": (id, options: Parameters<Lilynk["startProfileSeat"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/start").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(StartProfileSeat200),
@@ -3733,7 +3733,7 @@ export const make = (
     }))
     ))
   ),
-    "stopProfileSeat": (id, options: Parameters<Punktfunk["stopProfileSeat"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/stop").pipe(
+    "stopProfileSeat": (id, options: Parameters<Lilynk["stopProfileSeat"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/stop").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(StopProfileSeat200),
@@ -3745,7 +3745,7 @@ export const make = (
     }))
     ))
   ),
-    "unlockChallenge": (id, options: Parameters<Punktfunk["unlockChallenge"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/unlock-challenge").pipe(
+    "unlockChallenge": (id, options: Parameters<Lilynk["unlockChallenge"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/unlock-challenge").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(UnlockChallenge200),
@@ -3759,7 +3759,7 @@ export const make = (
     }))
     ))
   ),
-    "wakeProfile": (id, options: Parameters<Punktfunk["wakeProfile"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/wake").pipe(
+    "wakeProfile": (id, options: Parameters<Lilynk["wakeProfile"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/profiles/" + __encodePathParam(id) + "/wake").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(WakeProfile200),
@@ -3771,7 +3771,7 @@ export const make = (
     }))
     ))
   ),
-    "stopSession": (options: Parameters<Punktfunk["stopSession"]>[0]) => HttpClientRequest.delete("/api/v1/session").pipe(
+    "stopSession": (options: Parameters<Lilynk["stopSession"]>[0]) => HttpClientRequest.delete("/api/v1/session").pipe(
       HttpClientRequest.setUrlParams({ "reason": options?.params?.["reason"] as any }),
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "401": decodeError("StopSession401", StopSession401),
@@ -3779,7 +3779,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "requestIdr": (options: Parameters<Punktfunk["requestIdr"]>[0]) => HttpClientRequest.post("/api/v1/session/idr").pipe(
+    "requestIdr": (options: Parameters<Lilynk["requestIdr"]>[0]) => HttpClientRequest.post("/api/v1/session/idr").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "401": decodeError("RequestIdr401", RequestIdr401),
       "409": decodeError("RequestIdr409", RequestIdr409),
@@ -3787,14 +3787,14 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "getRecentSessions": (options: Parameters<Punktfunk["getRecentSessions"]>[0]) => HttpClientRequest.get("/api/v1/session/last").pipe(
+    "getRecentSessions": (options: Parameters<Lilynk["getRecentSessions"]>[0]) => HttpClientRequest.get("/api/v1/session/last").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetRecentSessions200),
       "401": decodeError("GetRecentSessions401", GetRecentSessions401),
       orElse: unexpectedStatus
     }))
     ),
-    "getSessionSettings": (options: Parameters<Punktfunk["getSessionSettings"]>[0]) => HttpClientRequest.get("/api/v1/session/settings").pipe(
+    "getSessionSettings": (options: Parameters<Lilynk["getSessionSettings"]>[0]) => HttpClientRequest.get("/api/v1/session/settings").pipe(
       HttpClientRequest.setUrlParams({ "as": options?.params?.["as"] as any }),
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetSessionSettings200),
@@ -3804,7 +3804,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "setSessionSettings": (options: Parameters<Punktfunk["setSessionSettings"]>[0]) => HttpClientRequest.put("/api/v1/session/settings").pipe(
+    "setSessionSettings": (options: Parameters<Lilynk["setSessionSettings"]>[0]) => HttpClientRequest.put("/api/v1/session/settings").pipe(
       HttpClientRequest.setUrlParams({ "as": options.params?.["as"] as any }),
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -3818,7 +3818,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "clearSessionSettings": (options: Parameters<Punktfunk["clearSessionSettings"]>[0]) => HttpClientRequest.delete("/api/v1/session/settings").pipe(
+    "clearSessionSettings": (options: Parameters<Lilynk["clearSessionSettings"]>[0]) => HttpClientRequest.delete("/api/v1/session/settings").pipe(
       HttpClientRequest.setUrlParams({ "as": options.params["as"] as any }),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ClearSessionSettings200),
@@ -3831,7 +3831,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "stopOneSession": (id, options: Parameters<Punktfunk["stopOneSession"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/session/" + __encodePathParam(id) + "").pipe(
+    "stopOneSession": (id, options: Parameters<Lilynk["stopOneSession"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/session/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "401": decodeError("StopOneSession401", StopOneSession401),
@@ -3841,7 +3841,7 @@ export const make = (
     }))
     ))
   ),
-    "setSessionAccess": (id, options: Parameters<Punktfunk["setSessionAccess"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/session/" + __encodePathParam(id) + "/access").pipe(
+    "setSessionAccess": (id, options: Parameters<Lilynk["setSessionAccess"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/session/" + __encodePathParam(id) + "/access").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -3853,7 +3853,7 @@ export const make = (
     }))
     ))
   ),
-    "setSessionAudio": (id, options: Parameters<Punktfunk["setSessionAudio"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/session/" + __encodePathParam(id) + "/audio").pipe(
+    "setSessionAudio": (id, options: Parameters<Lilynk["setSessionAudio"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/session/" + __encodePathParam(id) + "/audio").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -3864,7 +3864,7 @@ export const make = (
     }))
     ))
   ),
-    "requestSessionIdr": (id, options: Parameters<Punktfunk["requestSessionIdr"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/session/" + __encodePathParam(id) + "/idr").pipe(
+    "requestSessionIdr": (id, options: Parameters<Lilynk["requestSessionIdr"]>[1]) => __makePathRequest(HttpClientRequest.post, [id], () => "/api/v1/session/" + __encodePathParam(id) + "/idr").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "401": decodeError("RequestSessionIdr401", RequestSessionIdr401),
@@ -3874,7 +3874,7 @@ export const make = (
     }))
     ))
   ),
-    "streamSessionPads": (id, options: Parameters<Punktfunk["streamSessionPads"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/session/" + __encodePathParam(id) + "/pads").pipe(
+    "streamSessionPads": (id, options: Parameters<Lilynk["streamSessionPads"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/session/" + __encodePathParam(id) + "/pads").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "401": decodeError("StreamSessionPads401", StreamSessionPads401),
@@ -3889,7 +3889,7 @@ export const make = (
       sseRequest(StreamSessionPads200Sse)
     ))
   )),
-    "setSessionPlayer": (id, options: Parameters<Punktfunk["setSessionPlayer"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/session/" + __encodePathParam(id) + "/player").pipe(
+    "setSessionPlayer": (id, options: Parameters<Lilynk["setSessionPlayer"]>[1]) => __makePathRequest(HttpClientRequest.put, [id], () => "/api/v1/session/" + __encodePathParam(id) + "/player").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -3901,7 +3901,7 @@ export const make = (
     }))
     ))
   ),
-    "statsCaptureLive": (options: Parameters<Punktfunk["statsCaptureLive"]>[0]) => HttpClientRequest.get("/api/v1/stats/capture/live").pipe(
+    "statsCaptureLive": (options: Parameters<Lilynk["statsCaptureLive"]>[0]) => HttpClientRequest.get("/api/v1/stats/capture/live").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(StatsCaptureLive200),
       "401": decodeError("StatsCaptureLive401", StatsCaptureLive401),
@@ -3909,21 +3909,21 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "statsCaptureStart": (options: Parameters<Punktfunk["statsCaptureStart"]>[0]) => HttpClientRequest.post("/api/v1/stats/capture/start").pipe(
+    "statsCaptureStart": (options: Parameters<Lilynk["statsCaptureStart"]>[0]) => HttpClientRequest.post("/api/v1/stats/capture/start").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(StatsCaptureStart200),
       "401": decodeError("StatsCaptureStart401", StatsCaptureStart401),
       orElse: unexpectedStatus
     }))
     ),
-    "statsCaptureStatus": (options: Parameters<Punktfunk["statsCaptureStatus"]>[0]) => HttpClientRequest.get("/api/v1/stats/capture/status").pipe(
+    "statsCaptureStatus": (options: Parameters<Lilynk["statsCaptureStatus"]>[0]) => HttpClientRequest.get("/api/v1/stats/capture/status").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(StatsCaptureStatus200),
       "401": decodeError("StatsCaptureStatus401", StatsCaptureStatus401),
       orElse: unexpectedStatus
     }))
     ),
-    "statsCaptureStop": (options: Parameters<Punktfunk["statsCaptureStop"]>[0]) => HttpClientRequest.post("/api/v1/stats/capture/stop").pipe(
+    "statsCaptureStop": (options: Parameters<Lilynk["statsCaptureStop"]>[0]) => HttpClientRequest.post("/api/v1/stats/capture/stop").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "200": decodeSuccess(StatsCaptureStop200),
       "401": decodeError("StatsCaptureStop401", StatsCaptureStop401),
@@ -3932,14 +3932,14 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "statsRecordingsList": (options: Parameters<Punktfunk["statsRecordingsList"]>[0]) => HttpClientRequest.get("/api/v1/stats/recordings").pipe(
+    "statsRecordingsList": (options: Parameters<Lilynk["statsRecordingsList"]>[0]) => HttpClientRequest.get("/api/v1/stats/recordings").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(StatsRecordingsList200),
       "401": decodeError("StatsRecordingsList401", StatsRecordingsList401),
       orElse: unexpectedStatus
     }))
     ),
-    "statsRecordingGet": (id, options: Parameters<Punktfunk["statsRecordingGet"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/stats/recordings/" + __encodePathParam(id) + "").pipe(
+    "statsRecordingGet": (id, options: Parameters<Lilynk["statsRecordingGet"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/stats/recordings/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(StatsRecordingGet200),
@@ -3950,7 +3950,7 @@ export const make = (
     }))
     ))
   ),
-    "statsRecordingDelete": (id, options: Parameters<Punktfunk["statsRecordingDelete"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/stats/recordings/" + __encodePathParam(id) + "").pipe(
+    "statsRecordingDelete": (id, options: Parameters<Lilynk["statsRecordingDelete"]>[1]) => __makePathRequest(HttpClientRequest.delete, [id], () => "/api/v1/stats/recordings/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "401": decodeError("StatsRecordingDelete401", StatsRecordingDelete401),
@@ -3961,14 +3961,14 @@ export const make = (
     }))
     ))
   ),
-    "getStatus": (options: Parameters<Punktfunk["getStatus"]>[0]) => HttpClientRequest.get("/api/v1/status").pipe(
+    "getStatus": (options: Parameters<Lilynk["getStatus"]>[0]) => HttpClientRequest.get("/api/v1/status").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetStatus200),
       "401": decodeError("GetStatus401", GetStatus401),
       orElse: unexpectedStatus
     }))
     ),
-    "getPluginCatalog": (options: Parameters<Punktfunk["getPluginCatalog"]>[0]) => HttpClientRequest.get("/api/v1/store/catalog").pipe(
+    "getPluginCatalog": (options: Parameters<Lilynk["getPluginCatalog"]>[0]) => HttpClientRequest.get("/api/v1/store/catalog").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetPluginCatalog200),
       "401": decodeError("GetPluginCatalog401", GetPluginCatalog401),
@@ -3976,7 +3976,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "installPlugin": (options: Parameters<Punktfunk["installPlugin"]>[0]) => HttpClientRequest.post("/api/v1/store/install").pipe(
+    "installPlugin": (options: Parameters<Lilynk["installPlugin"]>[0]) => HttpClientRequest.post("/api/v1/store/install").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(InstallPlugin202),
@@ -3987,7 +3987,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "listInstalledPlugins": (options: Parameters<Punktfunk["listInstalledPlugins"]>[0]) => HttpClientRequest.get("/api/v1/store/installed").pipe(
+    "listInstalledPlugins": (options: Parameters<Lilynk["listInstalledPlugins"]>[0]) => HttpClientRequest.get("/api/v1/store/installed").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ListInstalledPlugins200),
       "401": decodeError("ListInstalledPlugins401", ListInstalledPlugins401),
@@ -3995,7 +3995,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "listPluginJobs": (options: Parameters<Punktfunk["listPluginJobs"]>[0]) => HttpClientRequest.get("/api/v1/store/jobs").pipe(
+    "listPluginJobs": (options: Parameters<Lilynk["listPluginJobs"]>[0]) => HttpClientRequest.get("/api/v1/store/jobs").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ListPluginJobs200),
       "401": decodeError("ListPluginJobs401", ListPluginJobs401),
@@ -4003,7 +4003,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "getPluginJob": (id, options: Parameters<Punktfunk["getPluginJob"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/store/jobs/" + __encodePathParam(id) + "").pipe(
+    "getPluginJob": (id, options: Parameters<Lilynk["getPluginJob"]>[1]) => __makePathRequest(HttpClientRequest.get, [id], () => "/api/v1/store/jobs/" + __encodePathParam(id) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetPluginJob200),
@@ -4014,7 +4014,7 @@ export const make = (
     }))
     ))
   ),
-    "refreshPluginCatalog": (options: Parameters<Punktfunk["refreshPluginCatalog"]>[0]) => HttpClientRequest.post("/api/v1/store/refresh").pipe(
+    "refreshPluginCatalog": (options: Parameters<Lilynk["refreshPluginCatalog"]>[0]) => HttpClientRequest.post("/api/v1/store/refresh").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(RefreshPluginCatalog200),
       "401": decodeError("RefreshPluginCatalog401", RefreshPluginCatalog401),
@@ -4022,7 +4022,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "getPluginRuntime": (options: Parameters<Punktfunk["getPluginRuntime"]>[0]) => HttpClientRequest.get("/api/v1/store/runtime").pipe(
+    "getPluginRuntime": (options: Parameters<Lilynk["getPluginRuntime"]>[0]) => HttpClientRequest.get("/api/v1/store/runtime").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetPluginRuntime200),
       "401": decodeError("GetPluginRuntime401", GetPluginRuntime401),
@@ -4030,7 +4030,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "setPluginRuntime": (options: Parameters<Punktfunk["setPluginRuntime"]>[0]) => HttpClientRequest.post("/api/v1/store/runtime").pipe(
+    "setPluginRuntime": (options: Parameters<Lilynk["setPluginRuntime"]>[0]) => HttpClientRequest.post("/api/v1/store/runtime").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(SetPluginRuntime200),
@@ -4040,7 +4040,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "listPluginSources": (options: Parameters<Punktfunk["listPluginSources"]>[0]) => HttpClientRequest.get("/api/v1/store/sources").pipe(
+    "listPluginSources": (options: Parameters<Lilynk["listPluginSources"]>[0]) => HttpClientRequest.get("/api/v1/store/sources").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ListPluginSources200),
       "401": decodeError("ListPluginSources401", ListPluginSources401),
@@ -4048,7 +4048,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "putPluginSource": (name, options: Parameters<Punktfunk["putPluginSource"]>[1]) => __makePathRequest(HttpClientRequest.put, [name], () => "/api/v1/store/sources/" + __encodePathParam(name) + "").pipe(
+    "putPluginSource": (name, options: Parameters<Lilynk["putPluginSource"]>[1]) => __makePathRequest(HttpClientRequest.put, [name], () => "/api/v1/store/sources/" + __encodePathParam(name) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
@@ -4060,7 +4060,7 @@ export const make = (
     }))
     ))
   ),
-    "deletePluginSource": (name, options: Parameters<Punktfunk["deletePluginSource"]>[1]) => __makePathRequest(HttpClientRequest.delete, [name], () => "/api/v1/store/sources/" + __encodePathParam(name) + "").pipe(
+    "deletePluginSource": (name, options: Parameters<Lilynk["deletePluginSource"]>[1]) => __makePathRequest(HttpClientRequest.delete, [name], () => "/api/v1/store/sources/" + __encodePathParam(name) + "").pipe(
     Effect.flatMap((request) => request.pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "401": decodeError("DeletePluginSource401", DeletePluginSource401),
@@ -4070,7 +4070,7 @@ export const make = (
     }))
     ))
   ),
-    "uninstallPlugin": (options: Parameters<Punktfunk["uninstallPlugin"]>[0]) => HttpClientRequest.post("/api/v1/store/uninstall").pipe(
+    "uninstallPlugin": (options: Parameters<Lilynk["uninstallPlugin"]>[0]) => HttpClientRequest.post("/api/v1/store/uninstall").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(UninstallPlugin202),
@@ -4081,7 +4081,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "applyUpdate": (options: Parameters<Punktfunk["applyUpdate"]>[0]) => HttpClientRequest.post("/api/v1/update/apply").pipe(
+    "applyUpdate": (options: Parameters<Lilynk["applyUpdate"]>[0]) => HttpClientRequest.post("/api/v1/update/apply").pipe(
       HttpClientRequest.bodyJsonUnsafe(options.payload),
       withResponse(options.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ApplyUpdate202),
@@ -4090,7 +4090,7 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "forceUpdateCheck": (options: Parameters<Punktfunk["forceUpdateCheck"]>[0]) => HttpClientRequest.post("/api/v1/update/check").pipe(
+    "forceUpdateCheck": (options: Parameters<Lilynk["forceUpdateCheck"]>[0]) => HttpClientRequest.post("/api/v1/update/check").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(ForceUpdateCheck200),
       "401": decodeError("ForceUpdateCheck401", ForceUpdateCheck401),
@@ -4099,14 +4099,14 @@ export const make = (
       orElse: unexpectedStatus
     }))
     ),
-    "getUpdateStatus": (options: Parameters<Punktfunk["getUpdateStatus"]>[0]) => HttpClientRequest.get("/api/v1/update/status").pipe(
+    "getUpdateStatus": (options: Parameters<Lilynk["getUpdateStatus"]>[0]) => HttpClientRequest.get("/api/v1/update/status").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetUpdateStatus200),
       "401": decodeError("GetUpdateStatus401", GetUpdateStatus401),
       orElse: unexpectedStatus
     }))
     ),
-    "getWebTransport": (options: Parameters<Punktfunk["getWebTransport"]>[0]) => HttpClientRequest.get("/api/v1/webtransport").pipe(
+    "getWebTransport": (options: Parameters<Lilynk["getWebTransport"]>[0]) => HttpClientRequest.get("/api/v1/webtransport").pipe(
       withResponse(options?.config)(HttpClientResponse.matchStatus({
       "2xx": decodeSuccess(GetWebTransport200),
       "404": decodeError("GetWebTransport404", GetWebTransport404),
@@ -4116,7 +4116,7 @@ export const make = (
   }
 }
 
-export interface Punktfunk {
+export interface Lilynk {
   readonly httpClient: HttpClient.HttpClient
   /**
 * Per-caller view: platform availability plus whether this caller may invoke each one.
@@ -4125,8 +4125,8 @@ export interface Punktfunk {
 * Unknown ids still render with the server-supplied title.
 */
 readonly "listActions": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListActions200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListActions401", typeof ListActions401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListActions200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListActions401", typeof ListActions401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListActions200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListActions401", typeof ListActions401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListActions200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListActions401", typeof ListActions401.Type>>;
   }
   /**
 * Id-only, empty body: nothing in the request reaches the privileged path. Power actions
@@ -4138,8 +4138,8 @@ readonly "listActions": {
 * cert needs a live session of its own and the Choose-its-screen grant.
 */
 readonly "invokeAction": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof InvokeAction200.Type | void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"InvokeAction401", typeof InvokeAction401.Type> | PunktfunkError<"InvokeAction403", typeof InvokeAction403.Type> | PunktfunkError<"InvokeAction404", typeof InvokeAction404.Type> | PunktfunkError<"InvokeAction409", typeof InvokeAction409.Type> | PunktfunkError<"InvokeAction500", typeof InvokeAction500.Type> | PunktfunkError<"InvokeAction501", typeof InvokeAction501.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof InvokeAction200.Type | void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"InvokeAction401", typeof InvokeAction401.Type> | PunktfunkError<"InvokeAction403", typeof InvokeAction403.Type> | PunktfunkError<"InvokeAction404", typeof InvokeAction404.Type> | PunktfunkError<"InvokeAction409", typeof InvokeAction409.Type> | PunktfunkError<"InvokeAction500", typeof InvokeAction500.Type> | PunktfunkError<"InvokeAction501", typeof InvokeAction501.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof InvokeAction200.Type | void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"InvokeAction401", typeof InvokeAction401.Type> | LilynkError<"InvokeAction403", typeof InvokeAction403.Type> | LilynkError<"InvokeAction404", typeof InvokeAction404.Type> | LilynkError<"InvokeAction409", typeof InvokeAction409.Type> | LilynkError<"InvokeAction500", typeof InvokeAction500.Type> | LilynkError<"InvokeAction501", typeof InvokeAction501.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof InvokeAction200.Type | void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"InvokeAction401", typeof InvokeAction401.Type> | LilynkError<"InvokeAction403", typeof InvokeAction403.Type> | LilynkError<"InvokeAction404", typeof InvokeAction404.Type> | LilynkError<"InvokeAction409", typeof InvokeAction409.Type> | LilynkError<"InvokeAction500", typeof InvokeAction500.Type> | LilynkError<"InvokeAction501", typeof InvokeAction501.Type>>;
   }
   /**
 * Start a device exchange
@@ -4152,8 +4152,8 @@ readonly "postDeviceChallenge": {
 * Exchange a device signature for a token
 */
 readonly "postDeviceToken": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof PostDeviceTokenRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof PostDeviceToken200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"PostDeviceToken401", typeof PostDeviceToken401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof PostDeviceTokenRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof PostDeviceToken200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"PostDeviceToken401", typeof PostDeviceToken401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof PostDeviceTokenRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof PostDeviceToken200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"PostDeviceToken401", typeof PostDeviceToken401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof PostDeviceTokenRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof PostDeviceToken200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"PostDeviceToken401", typeof PostDeviceToken401.Type>>;
   }
   /**
 * The person lane on a seat host: the session's profile as the box's `profiles.json` in this
@@ -4161,16 +4161,16 @@ readonly "postDeviceToken": {
 * 404.
 */
 readonly "getPersonProfile": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetPersonProfile200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetPersonProfile401", typeof GetPersonProfile401.Type> | PunktfunkError<"GetPersonProfile404", typeof GetPersonProfile404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetPersonProfile200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetPersonProfile401", typeof GetPersonProfile401.Type> | PunktfunkError<"GetPersonProfile404", typeof GetPersonProfile404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetPersonProfile200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetPersonProfile401", typeof GetPersonProfile401.Type> | LilynkError<"GetPersonProfile404", typeof GetPersonProfile404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetPersonProfile200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetPersonProfile401", typeof GetPersonProfile401.Type> | LilynkError<"GetPersonProfile404", typeof GetPersonProfile404.Type>>;
   }
   /**
 * As `GET /profiles/{id}/avatar`, for the person session's own profile alone, from this seat
 * host's trust copy.
 */
 readonly "getPersonAvatar": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof GetPersonAvatarParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<Uint8Array | void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetPersonAvatar401", typeof GetPersonAvatar401.Type> | PunktfunkError<"GetPersonAvatar404", typeof GetPersonAvatar404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof GetPersonAvatarParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<Uint8Array | void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetPersonAvatar401", typeof GetPersonAvatar401.Type> | PunktfunkError<"GetPersonAvatar404", typeof GetPersonAvatar404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof GetPersonAvatarParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<Uint8Array | void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetPersonAvatar401", typeof GetPersonAvatar401.Type> | LilynkError<"GetPersonAvatar404", typeof GetPersonAvatar404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof GetPersonAvatarParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<Uint8Array | void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetPersonAvatar401", typeof GetPersonAvatar401.Type> | LilynkError<"GetPersonAvatar404", typeof GetPersonAvatar404.Type>>;
   }
   /**
 * As `GET /profiles/{id}/avatar`, for the person session's own profile alone, from this seat
@@ -4184,59 +4184,59 @@ readonly "getPersonAvatarStream": (options: { readonly params?: typeof GetPerson
 * ten refused tickets in a minute a refused one answers 429; a good one still opens.
 */
 readonly "openPersonSession": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof OpenPersonSessionRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof OpenPersonSession200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"OpenPersonSession401", typeof OpenPersonSession401.Type> | PunktfunkError<"OpenPersonSession429", typeof OpenPersonSession429.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof OpenPersonSessionRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof OpenPersonSession200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"OpenPersonSession401", typeof OpenPersonSession401.Type> | PunktfunkError<"OpenPersonSession429", typeof OpenPersonSession429.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof OpenPersonSessionRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof OpenPersonSession200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"OpenPersonSession401", typeof OpenPersonSession401.Type> | LilynkError<"OpenPersonSession429", typeof OpenPersonSession429.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof OpenPersonSessionRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof OpenPersonSession200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"OpenPersonSession401", typeof OpenPersonSession401.Type> | LilynkError<"OpenPersonSession429", typeof OpenPersonSession429.Type>>;
   }
   /**
 * From loopback, the session's own token as the bearer. Answers the same whether it was live.
 */
 readonly "closePersonSession": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ClosePersonSession401", typeof ClosePersonSession401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ClosePersonSession401", typeof ClosePersonSession401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ClosePersonSession401", typeof ClosePersonSession401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ClosePersonSession401", typeof ClosePersonSession401.Type>>;
   }
   /**
 * Admin lane, on a seat host: whether `token` is a live person session here, and for which
 * profile. The box asks before it takes a person session's word for that profile.
 */
 readonly "verifyPersonSession": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof VerifyPersonSessionRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof VerifyPersonSession200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"VerifyPersonSession401", typeof VerifyPersonSession401.Type> | PunktfunkError<"VerifyPersonSession404", typeof VerifyPersonSession404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof VerifyPersonSessionRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof VerifyPersonSession200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"VerifyPersonSession401", typeof VerifyPersonSession401.Type> | PunktfunkError<"VerifyPersonSession404", typeof VerifyPersonSession404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof VerifyPersonSessionRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof VerifyPersonSession200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"VerifyPersonSession401", typeof VerifyPersonSession401.Type> | LilynkError<"VerifyPersonSession404", typeof VerifyPersonSession404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof VerifyPersonSessionRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof VerifyPersonSession200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"VerifyPersonSession401", typeof VerifyPersonSession401.Type> | LilynkError<"VerifyPersonSession404", typeof VerifyPersonSession404.Type>>;
   }
   /**
 * List uploaded client log bundles
 */
 readonly "clientLogsList": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ClientLogsList200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ClientLogsList401", typeof ClientLogsList401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ClientLogsList200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ClientLogsList401", typeof ClientLogsList401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ClientLogsList200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ClientLogsList401", typeof ClientLogsList401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ClientLogsList200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ClientLogsList401", typeof ClientLogsList401.Type>>;
   }
   /**
 * A paired device posts plain text under its streaming cert — no bearer. Cap 1 MiB, newest
 * few per device kept. Write-only: uploading grants no read.
 */
 readonly "clientLogsUpload": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ClientLogsUpload201.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ClientLogsUpload400", typeof ClientLogsUpload400.Type> | PunktfunkError<"ClientLogsUpload403", typeof ClientLogsUpload403.Type> | PunktfunkError<"ClientLogsUpload413", typeof ClientLogsUpload413.Type> | PunktfunkError<"ClientLogsUpload422", typeof ClientLogsUpload422.Type> | PunktfunkError<"ClientLogsUpload500", typeof ClientLogsUpload500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ClientLogsUpload201.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ClientLogsUpload400", typeof ClientLogsUpload400.Type> | PunktfunkError<"ClientLogsUpload403", typeof ClientLogsUpload403.Type> | PunktfunkError<"ClientLogsUpload413", typeof ClientLogsUpload413.Type> | PunktfunkError<"ClientLogsUpload422", typeof ClientLogsUpload422.Type> | PunktfunkError<"ClientLogsUpload500", typeof ClientLogsUpload500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ClientLogsUpload201.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ClientLogsUpload400", typeof ClientLogsUpload400.Type> | LilynkError<"ClientLogsUpload403", typeof ClientLogsUpload403.Type> | LilynkError<"ClientLogsUpload413", typeof ClientLogsUpload413.Type> | LilynkError<"ClientLogsUpload422", typeof ClientLogsUpload422.Type> | LilynkError<"ClientLogsUpload500", typeof ClientLogsUpload500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ClientLogsUpload201.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ClientLogsUpload400", typeof ClientLogsUpload400.Type> | LilynkError<"ClientLogsUpload403", typeof ClientLogsUpload403.Type> | LilynkError<"ClientLogsUpload413", typeof ClientLogsUpload413.Type> | LilynkError<"ClientLogsUpload422", typeof ClientLogsUpload422.Type> | LilynkError<"ClientLogsUpload500", typeof ClientLogsUpload500.Type>>;
   }
   /**
 * Download a client log bundle
 */
 readonly "clientLogsGet": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ClientLogsGet401", typeof ClientLogsGet401.Type> | PunktfunkError<"ClientLogsGet404", typeof ClientLogsGet404.Type> | PunktfunkError<"ClientLogsGet500", typeof ClientLogsGet500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ClientLogsGet401", typeof ClientLogsGet401.Type> | PunktfunkError<"ClientLogsGet404", typeof ClientLogsGet404.Type> | PunktfunkError<"ClientLogsGet500", typeof ClientLogsGet500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ClientLogsGet401", typeof ClientLogsGet401.Type> | LilynkError<"ClientLogsGet404", typeof ClientLogsGet404.Type> | LilynkError<"ClientLogsGet500", typeof ClientLogsGet500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ClientLogsGet401", typeof ClientLogsGet401.Type> | LilynkError<"ClientLogsGet404", typeof ClientLogsGet404.Type> | LilynkError<"ClientLogsGet500", typeof ClientLogsGet500.Type>>;
   }
   /**
 * `404` if there is no such bundle.
 */
 readonly "clientLogsDelete": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ClientLogsDelete401", typeof ClientLogsDelete401.Type> | PunktfunkError<"ClientLogsDelete404", typeof ClientLogsDelete404.Type> | PunktfunkError<"ClientLogsDelete500", typeof ClientLogsDelete500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ClientLogsDelete401", typeof ClientLogsDelete401.Type> | PunktfunkError<"ClientLogsDelete404", typeof ClientLogsDelete404.Type> | PunktfunkError<"ClientLogsDelete500", typeof ClientLogsDelete500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ClientLogsDelete401", typeof ClientLogsDelete401.Type> | LilynkError<"ClientLogsDelete404", typeof ClientLogsDelete404.Type> | LilynkError<"ClientLogsDelete500", typeof ClientLogsDelete500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ClientLogsDelete401", typeof ClientLogsDelete401.Type> | LilynkError<"ClientLogsDelete404", typeof ClientLogsDelete404.Type> | LilynkError<"ClientLogsDelete500", typeof ClientLogsDelete500.Type>>;
   }
   /**
 * List paired clients
 */
 readonly "listPairedClients": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListPairedClients200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListPairedClients401", typeof ListPairedClients401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListPairedClients200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListPairedClients401", typeof ListPairedClients401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListPairedClients200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListPairedClients401", typeof ListPairedClients401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListPairedClients200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListPairedClients401", typeof ListPairedClients401.Type>>;
   }
   /**
 * Collection form of [`unpair_client`]: one persisted write, same revocation across the
@@ -4244,8 +4244,8 @@ readonly "listPairedClients": {
 * "unpair everything", and the body says whether that was three devices or none.
 */
 readonly "unpairAllClients": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof UnpairAllClients200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UnpairAllClients401", typeof UnpairAllClients401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof UnpairAllClients200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UnpairAllClients401", typeof UnpairAllClients401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof UnpairAllClients200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UnpairAllClients401", typeof UnpairAllClients401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof UnpairAllClients200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UnpairAllClients401", typeof UnpairAllClients401.Type>>;
   }
   /**
 * Persisted. A live GameStream session owned by this certificate is ended
@@ -4254,47 +4254,47 @@ readonly "unpairAllClients": {
 * is per-request via the paired-fingerprint check.
 */
 readonly "unpairClient": {
-    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UnpairClient400", typeof UnpairClient400.Type> | PunktfunkError<"UnpairClient401", typeof UnpairClient401.Type> | PunktfunkError<"UnpairClient404", typeof UnpairClient404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UnpairClient400", typeof UnpairClient400.Type> | PunktfunkError<"UnpairClient401", typeof UnpairClient401.Type> | PunktfunkError<"UnpairClient404", typeof UnpairClient404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UnpairClient400", typeof UnpairClient400.Type> | LilynkError<"UnpairClient401", typeof UnpairClient401.Type> | LilynkError<"UnpairClient404", typeof UnpairClient404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UnpairClient400", typeof UnpairClient400.Type> | LilynkError<"UnpairClient401", typeof UnpairClient401.Type> | LilynkError<"UnpairClient404", typeof UnpairClient404.Type>>;
   }
   /**
 * Cosmetic: no certificate, no trust change. Stored beside the pairing store; unpairing
 * the device forgets it.
 */
 readonly "renameClient": {
-    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly payload: typeof RenameClientRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof RenameClient200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"RenameClient400", typeof RenameClient400.Type> | PunktfunkError<"RenameClient401", typeof RenameClient401.Type> | PunktfunkError<"RenameClient404", typeof RenameClient404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly payload: typeof RenameClientRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof RenameClient200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"RenameClient400", typeof RenameClient400.Type> | PunktfunkError<"RenameClient401", typeof RenameClient401.Type> | PunktfunkError<"RenameClient404", typeof RenameClient404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly payload: typeof RenameClientRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof RenameClient200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"RenameClient400", typeof RenameClient400.Type> | LilynkError<"RenameClient401", typeof RenameClient401.Type> | LilynkError<"RenameClient404", typeof RenameClient404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly payload: typeof RenameClientRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof RenameClient200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"RenameClient400", typeof RenameClient400.Type> | LilynkError<"RenameClient401", typeof RenameClient401.Type> | LilynkError<"RenameClient404", typeof RenameClient404.Type>>;
   }
   /**
 * Each row carries availability and whether `Auto` resolves to it. Clients pass
-* `id` to `--compositor` or `PUNKTFUNK_COMPOSITOR_*`.
+* `id` to `--compositor` or `LILYNK_COMPOSITOR_*`.
 */
 readonly "listCompositors": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListCompositors200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListCompositors401", typeof ListCompositors401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListCompositors200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListCompositors401", typeof ListCompositors401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListCompositors200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListCompositors401", typeof ListCompositors401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListCompositors200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListCompositors401", typeof ListCompositors401.Type>>;
   }
   /**
 * Probes run at startup and on `POST /diagnostics/refresh`.
 */
 readonly "getDiagnostics": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetDiagnostics200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetDiagnostics401", typeof GetDiagnostics401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetDiagnostics200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetDiagnostics401", typeof GetDiagnostics401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetDiagnostics200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetDiagnostics401", typeof GetDiagnostics401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetDiagnostics200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetDiagnostics401", typeof GetDiagnostics401.Type>>;
   }
   /**
 * Returns the new report. Poll GET; membership and udev rules only change
 * after the operator changes them.
 */
 readonly "refreshDiagnostics": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof RefreshDiagnostics200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"RefreshDiagnostics401", typeof RefreshDiagnostics401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof RefreshDiagnostics200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"RefreshDiagnostics401", typeof RefreshDiagnostics401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof RefreshDiagnostics200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"RefreshDiagnostics401", typeof RefreshDiagnostics401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof RefreshDiagnostics200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"RefreshDiagnostics401", typeof RefreshDiagnostics401.Type>>;
   }
   /**
 * Absent fields follow the host policy; an unknown device answers with an empty
 * overlay rather than 404 — "follows host" is a real answer, not a missing one.
 */
 readonly "getDisplayClient": {
-    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetDisplayClient200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetDisplayClient401", typeof GetDisplayClient401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetDisplayClient200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetDisplayClient401", typeof GetDisplayClient401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetDisplayClient200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetDisplayClient401", typeof GetDisplayClient401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetDisplayClient200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetDisplayClient401", typeof GetDisplayClient401.Type>>;
   }
   /**
 * The operator writes the WHOLE overlay: a field absent from the body stops being pinned and
@@ -4307,15 +4307,15 @@ readonly "getDisplayClient": {
 * screen and topology are unchanged.
 */
 readonly "setDisplayClient": {
-    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly payload: typeof SetDisplayClientRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetDisplayClient200.Type | void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetDisplayClient400", typeof SetDisplayClient400.Type> | PunktfunkError<"SetDisplayClient401", typeof SetDisplayClient401.Type> | PunktfunkError<"SetDisplayClient403", typeof SetDisplayClient403.Type> | PunktfunkError<"SetDisplayClient422", typeof SetDisplayClient422.Type> | PunktfunkError<"SetDisplayClient500", typeof SetDisplayClient500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly payload: typeof SetDisplayClientRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetDisplayClient200.Type | void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetDisplayClient400", typeof SetDisplayClient400.Type> | PunktfunkError<"SetDisplayClient401", typeof SetDisplayClient401.Type> | PunktfunkError<"SetDisplayClient403", typeof SetDisplayClient403.Type> | PunktfunkError<"SetDisplayClient422", typeof SetDisplayClient422.Type> | PunktfunkError<"SetDisplayClient500", typeof SetDisplayClient500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly payload: typeof SetDisplayClientRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetDisplayClient200.Type | void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetDisplayClient400", typeof SetDisplayClient400.Type> | LilynkError<"SetDisplayClient401", typeof SetDisplayClient401.Type> | LilynkError<"SetDisplayClient403", typeof SetDisplayClient403.Type> | LilynkError<"SetDisplayClient422", typeof SetDisplayClient422.Type> | LilynkError<"SetDisplayClient500", typeof SetDisplayClient500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly payload: typeof SetDisplayClientRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetDisplayClient200.Type | void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetDisplayClient400", typeof SetDisplayClient400.Type> | LilynkError<"SetDisplayClient401", typeof SetDisplayClient401.Type> | LilynkError<"SetDisplayClient403", typeof SetDisplayClient403.Type> | LilynkError<"SetDisplayClient422", typeof SetDisplayClient422.Type> | LilynkError<"SetDisplayClient500", typeof SetDisplayClient500.Type>>;
   }
   /**
 * Make one device follow the host again
 */
 readonly "deleteDisplayClient": {
-    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof DeleteDisplayClient200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DeleteDisplayClient401", typeof DeleteDisplayClient401.Type> | PunktfunkError<"DeleteDisplayClient500", typeof DeleteDisplayClient500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof DeleteDisplayClient200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DeleteDisplayClient401", typeof DeleteDisplayClient401.Type> | PunktfunkError<"DeleteDisplayClient500", typeof DeleteDisplayClient500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof DeleteDisplayClient200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DeleteDisplayClient401", typeof DeleteDisplayClient401.Type> | LilynkError<"DeleteDisplayClient500", typeof DeleteDisplayClient500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof DeleteDisplayClient200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DeleteDisplayClient401", typeof DeleteDisplayClient401.Type> | LilynkError<"DeleteDisplayClient500", typeof DeleteDisplayClient500.Type>>;
   }
   /**
 * Persist per-identity-slot `(x, y)` offsets and switch the layout to manual. Applies on the next
@@ -4324,78 +4324,78 @@ readonly "deleteDisplayClient": {
 * See `design/display-management.md`.
 */
 readonly "setDisplayLayout": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetDisplayLayoutRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetDisplayLayout200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetDisplayLayout401", typeof SetDisplayLayout401.Type> | PunktfunkError<"SetDisplayLayout500", typeof SetDisplayLayout500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetDisplayLayoutRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetDisplayLayout200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetDisplayLayout401", typeof SetDisplayLayout401.Type> | PunktfunkError<"SetDisplayLayout500", typeof SetDisplayLayout500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetDisplayLayoutRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetDisplayLayout200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetDisplayLayout401", typeof SetDisplayLayout401.Type> | LilynkError<"SetDisplayLayout500", typeof SetDisplayLayout500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetDisplayLayoutRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetDisplayLayout200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetDisplayLayout401", typeof SetDisplayLayout401.Type> | LilynkError<"SetDisplayLayout500", typeof SetDisplayLayout500.Type>>;
   }
   /**
 * Heads this host has, for a capture-pin picker. Read-only; does not create, move, or disable.
 * Managed virtual displays are `/display/state`. See `design/per-monitor-portal-capture.md`.
 */
 readonly "getDisplayMonitors": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetDisplayMonitors200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetDisplayMonitors401", typeof GetDisplayMonitors401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetDisplayMonitors200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetDisplayMonitors401", typeof GetDisplayMonitors401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetDisplayMonitors200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetDisplayMonitors401", typeof GetDisplayMonitors401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetDisplayMonitors200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetDisplayMonitors401", typeof GetDisplayMonitors401.Type>>;
   }
   /**
 * Named field-bundles in `display-presets.json`. Also on `GET /display/settings` as `custom_presets`.
 */
 readonly "listCustomPresets": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListCustomPresets200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListCustomPresets401", typeof ListCustomPresets401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListCustomPresets200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListCustomPresets401", typeof ListCustomPresets401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListCustomPresets200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListCustomPresets401", typeof ListCustomPresets401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListCustomPresets200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListCustomPresets401", typeof ListCustomPresets401.Type>>;
   }
   /**
 * Named bundle of the display-behavior axes. Host assigns a stable id in the body. Apply with
 * `PUT /display/settings` carrying a `Custom` policy of its `fields` — no separate apply route.
 */
 readonly "createCustomPreset": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof CreateCustomPresetRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof CreateCustomPreset201.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"CreateCustomPreset400", typeof CreateCustomPreset400.Type> | PunktfunkError<"CreateCustomPreset401", typeof CreateCustomPreset401.Type> | PunktfunkError<"CreateCustomPreset500", typeof CreateCustomPreset500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof CreateCustomPresetRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof CreateCustomPreset201.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"CreateCustomPreset400", typeof CreateCustomPreset400.Type> | PunktfunkError<"CreateCustomPreset401", typeof CreateCustomPreset401.Type> | PunktfunkError<"CreateCustomPreset500", typeof CreateCustomPreset500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof CreateCustomPresetRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof CreateCustomPreset201.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"CreateCustomPreset400", typeof CreateCustomPreset400.Type> | LilynkError<"CreateCustomPreset401", typeof CreateCustomPreset401.Type> | LilynkError<"CreateCustomPreset500", typeof CreateCustomPreset500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof CreateCustomPresetRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof CreateCustomPreset201.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"CreateCustomPreset400", typeof CreateCustomPreset400.Type> | LilynkError<"CreateCustomPreset401", typeof CreateCustomPreset401.Type> | LilynkError<"CreateCustomPreset500", typeof CreateCustomPreset500.Type>>;
   }
   /**
 * Update a custom preset
 */
 readonly "updateCustomPreset": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof UpdateCustomPresetRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof UpdateCustomPreset200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UpdateCustomPreset400", typeof UpdateCustomPreset400.Type> | PunktfunkError<"UpdateCustomPreset401", typeof UpdateCustomPreset401.Type> | PunktfunkError<"UpdateCustomPreset404", typeof UpdateCustomPreset404.Type> | PunktfunkError<"UpdateCustomPreset500", typeof UpdateCustomPreset500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof UpdateCustomPresetRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof UpdateCustomPreset200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UpdateCustomPreset400", typeof UpdateCustomPreset400.Type> | PunktfunkError<"UpdateCustomPreset401", typeof UpdateCustomPreset401.Type> | PunktfunkError<"UpdateCustomPreset404", typeof UpdateCustomPreset404.Type> | PunktfunkError<"UpdateCustomPreset500", typeof UpdateCustomPreset500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof UpdateCustomPresetRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof UpdateCustomPreset200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UpdateCustomPreset400", typeof UpdateCustomPreset400.Type> | LilynkError<"UpdateCustomPreset401", typeof UpdateCustomPreset401.Type> | LilynkError<"UpdateCustomPreset404", typeof UpdateCustomPreset404.Type> | LilynkError<"UpdateCustomPreset500", typeof UpdateCustomPreset500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof UpdateCustomPresetRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof UpdateCustomPreset200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UpdateCustomPreset400", typeof UpdateCustomPreset400.Type> | LilynkError<"UpdateCustomPreset401", typeof UpdateCustomPreset401.Type> | LilynkError<"UpdateCustomPreset404", typeof UpdateCustomPreset404.Type> | LilynkError<"UpdateCustomPreset500", typeof UpdateCustomPreset500.Type>>;
   }
   /**
 * Removes it from the catalog. The active policy is untouched — catalog and
 * `display-settings.json` are decoupled.
 */
 readonly "deleteCustomPreset": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DeleteCustomPreset401", typeof DeleteCustomPreset401.Type> | PunktfunkError<"DeleteCustomPreset404", typeof DeleteCustomPreset404.Type> | PunktfunkError<"DeleteCustomPreset500", typeof DeleteCustomPreset500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DeleteCustomPreset401", typeof DeleteCustomPreset401.Type> | PunktfunkError<"DeleteCustomPreset404", typeof DeleteCustomPreset404.Type> | PunktfunkError<"DeleteCustomPreset500", typeof DeleteCustomPreset500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DeleteCustomPreset401", typeof DeleteCustomPreset401.Type> | LilynkError<"DeleteCustomPreset404", typeof DeleteCustomPreset404.Type> | LilynkError<"DeleteCustomPreset500", typeof DeleteCustomPreset500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DeleteCustomPreset401", typeof DeleteCustomPreset401.Type> | LilynkError<"DeleteCustomPreset404", typeof DeleteCustomPreset404.Type> | LilynkError<"DeleteCustomPreset500", typeof DeleteCustomPreset500.Type>>;
   }
   /**
 * Tear down lingering/pinned displays now. `slot` releases one; omit to release all.
 * Active (streaming) displays are never torn down here — that is session control.
 */
 readonly "releaseDisplay": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof ReleaseDisplayRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ReleaseDisplay200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ReleaseDisplay401", typeof ReleaseDisplay401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof ReleaseDisplayRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof ReleaseDisplay200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ReleaseDisplay401", typeof ReleaseDisplay401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof ReleaseDisplayRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ReleaseDisplay200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ReleaseDisplay401", typeof ReleaseDisplay401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof ReleaseDisplayRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof ReleaseDisplay200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ReleaseDisplay401", typeof ReleaseDisplay401.Type>>;
   }
   /**
 * Stored policy, preset expansions, and which options this build enforces.
 * See `design/display-management.md`.
 */
 readonly "getDisplaySettings": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetDisplaySettings200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetDisplaySettings401", typeof GetDisplaySettings401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetDisplaySettings200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetDisplaySettings401", typeof GetDisplaySettings401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetDisplaySettings200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetDisplaySettings401", typeof GetDisplaySettings401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetDisplaySettings200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetDisplaySettings401", typeof GetDisplaySettings401.Type>>;
   }
   /**
 * Persists (validated + clamped). Applies on the next connect/teardown; a running session keeps
 * the display it opened on. `keep_alive: forever` pins until `POST /display/release`.
 */
 readonly "setDisplaySettings": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetDisplaySettingsRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetDisplaySettings200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetDisplaySettings400", typeof SetDisplaySettings400.Type> | PunktfunkError<"SetDisplaySettings401", typeof SetDisplaySettings401.Type> | PunktfunkError<"SetDisplaySettings500", typeof SetDisplaySettings500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetDisplaySettingsRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetDisplaySettings200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetDisplaySettings400", typeof SetDisplaySettings400.Type> | PunktfunkError<"SetDisplaySettings401", typeof SetDisplaySettings401.Type> | PunktfunkError<"SetDisplaySettings500", typeof SetDisplaySettings500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetDisplaySettingsRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetDisplaySettings200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetDisplaySettings400", typeof SetDisplaySettings400.Type> | LilynkError<"SetDisplaySettings401", typeof SetDisplaySettings401.Type> | LilynkError<"SetDisplaySettings500", typeof SetDisplaySettings500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetDisplaySettingsRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetDisplaySettings200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetDisplaySettings400", typeof SetDisplaySettings400.Type> | LilynkError<"SetDisplaySettings401", typeof SetDisplaySettings401.Type> | LilynkError<"SetDisplaySettings500", typeof SetDisplaySettings500.Type>>;
   }
   /**
 * Active (streaming), lingering (countdown to teardown), or pinned.
 * See `design/display-management.md`.
 */
 readonly "getDisplayState": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetDisplayState200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetDisplayState401", typeof GetDisplayState401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetDisplayState200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetDisplayState401", typeof GetDisplayState401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetDisplayState200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetDisplayState401", typeof GetDisplayState401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetDisplayState200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetDisplayState401", typeof GetDisplayState401.Type>>;
   }
   /**
 * The device's own screen, then each of the host's monitors with the device streaming it
@@ -4404,24 +4404,24 @@ readonly "getDisplayState": {
 * the desk.
 */
 readonly "getDisplayTargets": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetDisplayTargets200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetDisplayTargets401", typeof GetDisplayTargets401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetDisplayTargets200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetDisplayTargets401", typeof GetDisplayTargets401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetDisplayTargets200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetDisplayTargets401", typeof GetDisplayTargets401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetDisplayTargets200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetDisplayTargets401", typeof GetDisplayTargets401.Type>>;
   }
   /**
 * Every title downloading, queued, paused, or finished in the last ten minutes, live ones
 * first, with speed and time left while downloading.
 */
 readonly "getDownloads": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetDownloads200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetDownloads401", typeof GetDownloads401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetDownloads200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetDownloads401", typeof GetDownloads401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetDownloads200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetDownloads401", typeof GetDownloads401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetDownloads200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetDownloads401", typeof GetDownloads401.Type>>;
   }
   /**
 * Every catalog entry: whether this OS can install it, what hermir installed, and the copies
 * the user installed. A plugin may read this to find a managed copy's program.
 */
 readonly "getEmulators": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetEmulators200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetEmulators401", typeof GetEmulators401.Type> | PunktfunkError<"GetEmulators500", typeof GetEmulators500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetEmulators200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetEmulators401", typeof GetEmulators401.Type> | PunktfunkError<"GetEmulators500", typeof GetEmulators500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetEmulators200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetEmulators401", typeof GetEmulators401.Type> | LilynkError<"GetEmulators500", typeof GetEmulators500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetEmulators200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetEmulators401", typeof GetEmulators401.Type> | LilynkError<"GetEmulators500", typeof GetEmulators500.Type>>;
   }
   /**
 * Every platform (names, aliases, extensions, folder shape) and every emulator as a library
@@ -4429,8 +4429,8 @@ readonly "getEmulators": {
 * firmware. The facts a plugin needs to list games and pick an emulator.
 */
 readonly "getEmulatorRegistry": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetEmulatorRegistry200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetEmulatorRegistry401", typeof GetEmulatorRegistry401.Type> | PunktfunkError<"GetEmulatorRegistry500", typeof GetEmulatorRegistry500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetEmulatorRegistry200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetEmulatorRegistry401", typeof GetEmulatorRegistry401.Type> | PunktfunkError<"GetEmulatorRegistry500", typeof GetEmulatorRegistry500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetEmulatorRegistry200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetEmulatorRegistry401", typeof GetEmulatorRegistry401.Type> | LilynkError<"GetEmulatorRegistry500", typeof GetEmulatorRegistry500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetEmulatorRegistry200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetEmulatorRegistry401", typeof GetEmulatorRegistry401.Type> | LilynkError<"GetEmulatorRegistry500", typeof GetEmulatorRegistry500.Type>>;
   }
   /**
 * Points the host at a copy of the caller's own, one no rule finds (a portable build unpacked
@@ -4439,8 +4439,8 @@ readonly "getEmulatorRegistry": {
 * person adopts one: anyone else's copy would run as them.
 */
 readonly "adoptEmulator": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof AdoptEmulatorRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof AdoptEmulator200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"AdoptEmulator400", typeof AdoptEmulator400.Type> | PunktfunkError<"AdoptEmulator401", typeof AdoptEmulator401.Type> | PunktfunkError<"AdoptEmulator403", typeof AdoptEmulator403.Type> | PunktfunkError<"AdoptEmulator404", typeof AdoptEmulator404.Type> | PunktfunkError<"AdoptEmulator409", typeof AdoptEmulator409.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof AdoptEmulatorRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof AdoptEmulator200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"AdoptEmulator400", typeof AdoptEmulator400.Type> | PunktfunkError<"AdoptEmulator401", typeof AdoptEmulator401.Type> | PunktfunkError<"AdoptEmulator403", typeof AdoptEmulator403.Type> | PunktfunkError<"AdoptEmulator404", typeof AdoptEmulator404.Type> | PunktfunkError<"AdoptEmulator409", typeof AdoptEmulator409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof AdoptEmulatorRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof AdoptEmulator200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"AdoptEmulator400", typeof AdoptEmulator400.Type> | LilynkError<"AdoptEmulator401", typeof AdoptEmulator401.Type> | LilynkError<"AdoptEmulator403", typeof AdoptEmulator403.Type> | LilynkError<"AdoptEmulator404", typeof AdoptEmulator404.Type> | LilynkError<"AdoptEmulator409", typeof AdoptEmulator409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof AdoptEmulatorRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof AdoptEmulator200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"AdoptEmulator400", typeof AdoptEmulator400.Type> | LilynkError<"AdoptEmulator401", typeof AdoptEmulator401.Type> | LilynkError<"AdoptEmulator403", typeof AdoptEmulator403.Type> | LilynkError<"AdoptEmulator404", typeof AdoptEmulator404.Type> | LilynkError<"AdoptEmulator409", typeof AdoptEmulator409.Type>>;
   }
   /**
 * Hands the files to the best copy of the emulator the way it takes them: a folder it scans,
@@ -4448,8 +4448,8 @@ readonly "adoptEmulator": {
 * why. A Windows seat host takes it from the operator alone.
 */
 readonly "installEmulatorContent": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof InstallEmulatorContentRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof InstallEmulatorContent200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"InstallEmulatorContent400", typeof InstallEmulatorContent400.Type> | PunktfunkError<"InstallEmulatorContent401", typeof InstallEmulatorContent401.Type> | PunktfunkError<"InstallEmulatorContent403", typeof InstallEmulatorContent403.Type> | PunktfunkError<"InstallEmulatorContent404", typeof InstallEmulatorContent404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof InstallEmulatorContentRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof InstallEmulatorContent200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"InstallEmulatorContent400", typeof InstallEmulatorContent400.Type> | PunktfunkError<"InstallEmulatorContent401", typeof InstallEmulatorContent401.Type> | PunktfunkError<"InstallEmulatorContent403", typeof InstallEmulatorContent403.Type> | PunktfunkError<"InstallEmulatorContent404", typeof InstallEmulatorContent404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof InstallEmulatorContentRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof InstallEmulatorContent200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"InstallEmulatorContent400", typeof InstallEmulatorContent400.Type> | LilynkError<"InstallEmulatorContent401", typeof InstallEmulatorContent401.Type> | LilynkError<"InstallEmulatorContent403", typeof InstallEmulatorContent403.Type> | LilynkError<"InstallEmulatorContent404", typeof InstallEmulatorContent404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof InstallEmulatorContentRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof InstallEmulatorContent200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"InstallEmulatorContent400", typeof InstallEmulatorContent400.Type> | LilynkError<"InstallEmulatorContent401", typeof InstallEmulatorContent401.Type> | LilynkError<"InstallEmulatorContent403", typeof InstallEmulatorContent403.Type> | LilynkError<"InstallEmulatorContent404", typeof InstallEmulatorContent404.Type>>;
   }
   /**
 * Whether the best copy of the emulator has the platform's firmware, each file hashed against
@@ -4457,8 +4457,8 @@ readonly "installEmulatorContent": {
 * seat's copy; a Linux seat answers once its host has checked it at a launch.
 */
 readonly "getEmulatorFirmware": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params: typeof GetEmulatorFirmwareParams.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetEmulatorFirmware200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetEmulatorFirmware400", typeof GetEmulatorFirmware400.Type> | PunktfunkError<"GetEmulatorFirmware401", typeof GetEmulatorFirmware401.Type> | PunktfunkError<"GetEmulatorFirmware404", typeof GetEmulatorFirmware404.Type> | PunktfunkError<"GetEmulatorFirmware409", typeof GetEmulatorFirmware409.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params: typeof GetEmulatorFirmwareParams.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof GetEmulatorFirmware200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetEmulatorFirmware400", typeof GetEmulatorFirmware400.Type> | PunktfunkError<"GetEmulatorFirmware401", typeof GetEmulatorFirmware401.Type> | PunktfunkError<"GetEmulatorFirmware404", typeof GetEmulatorFirmware404.Type> | PunktfunkError<"GetEmulatorFirmware409", typeof GetEmulatorFirmware409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params: typeof GetEmulatorFirmwareParams.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetEmulatorFirmware200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetEmulatorFirmware400", typeof GetEmulatorFirmware400.Type> | LilynkError<"GetEmulatorFirmware401", typeof GetEmulatorFirmware401.Type> | LilynkError<"GetEmulatorFirmware404", typeof GetEmulatorFirmware404.Type> | LilynkError<"GetEmulatorFirmware409", typeof GetEmulatorFirmware409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params: typeof GetEmulatorFirmwareParams.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof GetEmulatorFirmware200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetEmulatorFirmware400", typeof GetEmulatorFirmware400.Type> | LilynkError<"GetEmulatorFirmware401", typeof GetEmulatorFirmware401.Type> | LilynkError<"GetEmulatorFirmware404", typeof GetEmulatorFirmware404.Type> | LilynkError<"GetEmulatorFirmware409", typeof GetEmulatorFirmware409.Type>>;
   }
   /**
 * Fetches the emulator through its own release channel (Flatpak on Linux, the official
@@ -4466,8 +4466,8 @@ readonly "getEmulatorFirmware": {
 * Reinstalls an existing copy. Admin lane only.
 */
 readonly "installEmulator": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof InstallEmulator200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"InstallEmulator400", typeof InstallEmulator400.Type> | PunktfunkError<"InstallEmulator401", typeof InstallEmulator401.Type> | PunktfunkError<"InstallEmulator404", typeof InstallEmulator404.Type> | PunktfunkError<"InstallEmulator409", typeof InstallEmulator409.Type> | PunktfunkError<"InstallEmulator500", typeof InstallEmulator500.Type> | PunktfunkError<"InstallEmulator502", typeof InstallEmulator502.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof InstallEmulator200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"InstallEmulator400", typeof InstallEmulator400.Type> | PunktfunkError<"InstallEmulator401", typeof InstallEmulator401.Type> | PunktfunkError<"InstallEmulator404", typeof InstallEmulator404.Type> | PunktfunkError<"InstallEmulator409", typeof InstallEmulator409.Type> | PunktfunkError<"InstallEmulator500", typeof InstallEmulator500.Type> | PunktfunkError<"InstallEmulator502", typeof InstallEmulator502.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof InstallEmulator200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"InstallEmulator400", typeof InstallEmulator400.Type> | LilynkError<"InstallEmulator401", typeof InstallEmulator401.Type> | LilynkError<"InstallEmulator404", typeof InstallEmulator404.Type> | LilynkError<"InstallEmulator409", typeof InstallEmulator409.Type> | LilynkError<"InstallEmulator500", typeof InstallEmulator500.Type> | LilynkError<"InstallEmulator502", typeof InstallEmulator502.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof InstallEmulator200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"InstallEmulator400", typeof InstallEmulator400.Type> | LilynkError<"InstallEmulator401", typeof InstallEmulator401.Type> | LilynkError<"InstallEmulator404", typeof InstallEmulator404.Type> | LilynkError<"InstallEmulator409", typeof InstallEmulator409.Type> | LilynkError<"InstallEmulator500", typeof InstallEmulator500.Type> | LilynkError<"InstallEmulator502", typeof InstallEmulator502.Type>>;
   }
   /**
 * Every copy of the emulator on this host answers its first-run questions (a setup wizard, a
@@ -4478,16 +4478,16 @@ readonly "installEmulator": {
 * from the operator alone.
 */
 readonly "prepareEmulator": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof PrepareEmulatorRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof PrepareEmulator200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"PrepareEmulator400", typeof PrepareEmulator400.Type> | PunktfunkError<"PrepareEmulator401", typeof PrepareEmulator401.Type> | PunktfunkError<"PrepareEmulator403", typeof PrepareEmulator403.Type> | PunktfunkError<"PrepareEmulator404", typeof PrepareEmulator404.Type> | PunktfunkError<"PrepareEmulator500", typeof PrepareEmulator500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof PrepareEmulatorRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof PrepareEmulator200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"PrepareEmulator400", typeof PrepareEmulator400.Type> | PunktfunkError<"PrepareEmulator401", typeof PrepareEmulator401.Type> | PunktfunkError<"PrepareEmulator403", typeof PrepareEmulator403.Type> | PunktfunkError<"PrepareEmulator404", typeof PrepareEmulator404.Type> | PunktfunkError<"PrepareEmulator500", typeof PrepareEmulator500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof PrepareEmulatorRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof PrepareEmulator200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"PrepareEmulator400", typeof PrepareEmulator400.Type> | LilynkError<"PrepareEmulator401", typeof PrepareEmulator401.Type> | LilynkError<"PrepareEmulator403", typeof PrepareEmulator403.Type> | LilynkError<"PrepareEmulator404", typeof PrepareEmulator404.Type> | LilynkError<"PrepareEmulator500", typeof PrepareEmulator500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof PrepareEmulatorRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof PrepareEmulator200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"PrepareEmulator400", typeof PrepareEmulator400.Type> | LilynkError<"PrepareEmulator401", typeof PrepareEmulator401.Type> | LilynkError<"PrepareEmulator403", typeof PrepareEmulator403.Type> | LilynkError<"PrepareEmulator404", typeof PrepareEmulator404.Type> | LilynkError<"PrepareEmulator500", typeof PrepareEmulator500.Type>>;
   }
   /**
 * Takes the release's files away and keeps the emulator's own data unless `purge` is set.
 * A Flatpak is uninstalled. Grants on its folder stay until the operator forgets them.
 */
 readonly "removeEmulator": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof RemoveEmulatorRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"RemoveEmulator401", typeof RemoveEmulator401.Type> | PunktfunkError<"RemoveEmulator404", typeof RemoveEmulator404.Type> | PunktfunkError<"RemoveEmulator409", typeof RemoveEmulator409.Type> | PunktfunkError<"RemoveEmulator500", typeof RemoveEmulator500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof RemoveEmulatorRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"RemoveEmulator401", typeof RemoveEmulator401.Type> | PunktfunkError<"RemoveEmulator404", typeof RemoveEmulator404.Type> | PunktfunkError<"RemoveEmulator409", typeof RemoveEmulator409.Type> | PunktfunkError<"RemoveEmulator500", typeof RemoveEmulator500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof RemoveEmulatorRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"RemoveEmulator401", typeof RemoveEmulator401.Type> | LilynkError<"RemoveEmulator404", typeof RemoveEmulator404.Type> | LilynkError<"RemoveEmulator409", typeof RemoveEmulator409.Type> | LilynkError<"RemoveEmulator500", typeof RemoveEmulator500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof RemoveEmulatorRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"RemoveEmulator401", typeof RemoveEmulator401.Type> | LilynkError<"RemoveEmulator404", typeof RemoveEmulator404.Type> | LilynkError<"RemoveEmulator409", typeof RemoveEmulator409.Type> | LilynkError<"RemoveEmulator500", typeof RemoveEmulator500.Type>>;
   }
   /**
 * The save units of the platform on the best copy of the emulator: name, kind, size and a
@@ -4496,8 +4496,8 @@ readonly "removeEmulator": {
 * Windows seat host lists them for the operator alone.
 */
 readonly "getEmulatorSaves": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params: typeof GetEmulatorSavesParams.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetEmulatorSaves200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetEmulatorSaves400", typeof GetEmulatorSaves400.Type> | PunktfunkError<"GetEmulatorSaves401", typeof GetEmulatorSaves401.Type> | PunktfunkError<"GetEmulatorSaves403", typeof GetEmulatorSaves403.Type> | PunktfunkError<"GetEmulatorSaves404", typeof GetEmulatorSaves404.Type> | PunktfunkError<"GetEmulatorSaves409", typeof GetEmulatorSaves409.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params: typeof GetEmulatorSavesParams.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof GetEmulatorSaves200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetEmulatorSaves400", typeof GetEmulatorSaves400.Type> | PunktfunkError<"GetEmulatorSaves401", typeof GetEmulatorSaves401.Type> | PunktfunkError<"GetEmulatorSaves403", typeof GetEmulatorSaves403.Type> | PunktfunkError<"GetEmulatorSaves404", typeof GetEmulatorSaves404.Type> | PunktfunkError<"GetEmulatorSaves409", typeof GetEmulatorSaves409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params: typeof GetEmulatorSavesParams.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetEmulatorSaves200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetEmulatorSaves400", typeof GetEmulatorSaves400.Type> | LilynkError<"GetEmulatorSaves401", typeof GetEmulatorSaves401.Type> | LilynkError<"GetEmulatorSaves403", typeof GetEmulatorSaves403.Type> | LilynkError<"GetEmulatorSaves404", typeof GetEmulatorSaves404.Type> | LilynkError<"GetEmulatorSaves409", typeof GetEmulatorSaves409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params: typeof GetEmulatorSavesParams.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof GetEmulatorSaves200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetEmulatorSaves400", typeof GetEmulatorSaves400.Type> | LilynkError<"GetEmulatorSaves401", typeof GetEmulatorSaves401.Type> | LilynkError<"GetEmulatorSaves403", typeof GetEmulatorSaves403.Type> | LilynkError<"GetEmulatorSaves404", typeof GetEmulatorSaves404.Type> | LilynkError<"GetEmulatorSaves409", typeof GetEmulatorSaves409.Type>>;
   }
   /**
 * Writes each named unit into `dir`: the save file, or a tar of a save folder with nothing in
@@ -4506,8 +4506,8 @@ readonly "getEmulatorSaves": {
 * unit it didn't export is left out. A Windows seat host takes it from the operator alone.
 */
 readonly "exportEmulatorSaves": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof ExportEmulatorSavesParams.Encoded | undefined; readonly payload: typeof ExportEmulatorSavesRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ExportEmulatorSaves200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ExportEmulatorSaves400", typeof ExportEmulatorSaves400.Type> | PunktfunkError<"ExportEmulatorSaves401", typeof ExportEmulatorSaves401.Type> | PunktfunkError<"ExportEmulatorSaves403", typeof ExportEmulatorSaves403.Type> | PunktfunkError<"ExportEmulatorSaves404", typeof ExportEmulatorSaves404.Type> | PunktfunkError<"ExportEmulatorSaves409", typeof ExportEmulatorSaves409.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof ExportEmulatorSavesParams.Encoded | undefined; readonly payload: typeof ExportEmulatorSavesRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof ExportEmulatorSaves200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ExportEmulatorSaves400", typeof ExportEmulatorSaves400.Type> | PunktfunkError<"ExportEmulatorSaves401", typeof ExportEmulatorSaves401.Type> | PunktfunkError<"ExportEmulatorSaves403", typeof ExportEmulatorSaves403.Type> | PunktfunkError<"ExportEmulatorSaves404", typeof ExportEmulatorSaves404.Type> | PunktfunkError<"ExportEmulatorSaves409", typeof ExportEmulatorSaves409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof ExportEmulatorSavesParams.Encoded | undefined; readonly payload: typeof ExportEmulatorSavesRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ExportEmulatorSaves200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ExportEmulatorSaves400", typeof ExportEmulatorSaves400.Type> | LilynkError<"ExportEmulatorSaves401", typeof ExportEmulatorSaves401.Type> | LilynkError<"ExportEmulatorSaves403", typeof ExportEmulatorSaves403.Type> | LilynkError<"ExportEmulatorSaves404", typeof ExportEmulatorSaves404.Type> | LilynkError<"ExportEmulatorSaves409", typeof ExportEmulatorSaves409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof ExportEmulatorSavesParams.Encoded | undefined; readonly payload: typeof ExportEmulatorSavesRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof ExportEmulatorSaves200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ExportEmulatorSaves400", typeof ExportEmulatorSaves400.Type> | LilynkError<"ExportEmulatorSaves401", typeof ExportEmulatorSaves401.Type> | LilynkError<"ExportEmulatorSaves403", typeof ExportEmulatorSaves403.Type> | LilynkError<"ExportEmulatorSaves404", typeof ExportEmulatorSaves404.Type> | LilynkError<"ExportEmulatorSaves409", typeof ExportEmulatorSaves409.Type>>;
   }
   /**
 * Each unit goes where the emulator keeps it, in the first of its kinds with a place for its
@@ -4517,8 +4517,8 @@ readonly "exportEmulatorSaves": {
 * says so. A Windows seat host takes it from the operator alone.
 */
 readonly "importEmulatorSaves": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof ImportEmulatorSavesParams.Encoded | undefined; readonly payload: typeof ImportEmulatorSavesRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ImportEmulatorSaves200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ImportEmulatorSaves400", typeof ImportEmulatorSaves400.Type> | PunktfunkError<"ImportEmulatorSaves401", typeof ImportEmulatorSaves401.Type> | PunktfunkError<"ImportEmulatorSaves403", typeof ImportEmulatorSaves403.Type> | PunktfunkError<"ImportEmulatorSaves404", typeof ImportEmulatorSaves404.Type> | PunktfunkError<"ImportEmulatorSaves409", typeof ImportEmulatorSaves409.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof ImportEmulatorSavesParams.Encoded | undefined; readonly payload: typeof ImportEmulatorSavesRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof ImportEmulatorSaves200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ImportEmulatorSaves400", typeof ImportEmulatorSaves400.Type> | PunktfunkError<"ImportEmulatorSaves401", typeof ImportEmulatorSaves401.Type> | PunktfunkError<"ImportEmulatorSaves403", typeof ImportEmulatorSaves403.Type> | PunktfunkError<"ImportEmulatorSaves404", typeof ImportEmulatorSaves404.Type> | PunktfunkError<"ImportEmulatorSaves409", typeof ImportEmulatorSaves409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof ImportEmulatorSavesParams.Encoded | undefined; readonly payload: typeof ImportEmulatorSavesRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ImportEmulatorSaves200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ImportEmulatorSaves400", typeof ImportEmulatorSaves400.Type> | LilynkError<"ImportEmulatorSaves401", typeof ImportEmulatorSaves401.Type> | LilynkError<"ImportEmulatorSaves403", typeof ImportEmulatorSaves403.Type> | LilynkError<"ImportEmulatorSaves404", typeof ImportEmulatorSaves404.Type> | LilynkError<"ImportEmulatorSaves409", typeof ImportEmulatorSaves409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof ImportEmulatorSavesParams.Encoded | undefined; readonly payload: typeof ImportEmulatorSavesRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof ImportEmulatorSaves200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ImportEmulatorSaves400", typeof ImportEmulatorSaves400.Type> | LilynkError<"ImportEmulatorSaves401", typeof ImportEmulatorSaves401.Type> | LilynkError<"ImportEmulatorSaves403", typeof ImportEmulatorSaves403.Type> | LilynkError<"ImportEmulatorSaves404", typeof ImportEmulatorSaves404.Type> | LilynkError<"ImportEmulatorSaves409", typeof ImportEmulatorSaves409.Type>>;
   }
   /**
 * `id:` is `seq`, `event:` is kind, `data:` is HostEvent JSON. Resume with `Last-Event-ID`
@@ -4526,8 +4526,8 @@ readonly "importEmulatorSaves": {
 * `event: live` follows the catch-up; frames after it happened after you connected.
 */
 readonly "streamEvents": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof StreamEventsParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StreamEvents401", typeof StreamEvents401.Type> | PunktfunkError<"StreamEvents503", typeof StreamEvents503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof StreamEventsParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StreamEvents401", typeof StreamEvents401.Type> | PunktfunkError<"StreamEvents503", typeof StreamEvents503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof StreamEventsParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StreamEvents401", typeof StreamEvents401.Type> | LilynkError<"StreamEvents503", typeof StreamEvents503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof StreamEventsParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StreamEvents401", typeof StreamEvents401.Type> | LilynkError<"StreamEvents503", typeof StreamEvents503.Type>>;
   }
   /**
 * `id:` is `seq`, `event:` is kind, `data:` is HostEvent JSON. Resume with `Last-Event-ID`
@@ -4543,8 +4543,8 @@ readonly "streamEventsSse": (options: { readonly params?: typeof StreamEventsPar
 * token. The event joins this host's bus as new.
 */
 readonly "relayEvent": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof RelayEventRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"RelayEvent400", typeof RelayEvent400.Type> | PunktfunkError<"RelayEvent401", typeof RelayEvent401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof RelayEventRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"RelayEvent400", typeof RelayEvent400.Type> | PunktfunkError<"RelayEvent401", typeof RelayEvent401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof RelayEventRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"RelayEvent400", typeof RelayEvent400.Type> | LilynkError<"RelayEvent401", typeof RelayEvent401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof RelayEventRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"RelayEvent400", typeof RelayEvent400.Type> | LilynkError<"RelayEvent401", typeof RelayEvent401.Type>>;
   }
   /**
 * Ends games nobody is streaming: those waiting out the reconnect window and
@@ -4554,8 +4554,8 @@ readonly "relayEvent": {
 * one title. A paired device ends only games it launched.
 */
 readonly "endGame": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof EndGameRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof EndGame200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"EndGame401", typeof EndGame401.Type> | PunktfunkError<"EndGame403", typeof EndGame403.Type> | PunktfunkError<"EndGame409", typeof EndGame409.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof EndGameRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof EndGame200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"EndGame401", typeof EndGame401.Type> | PunktfunkError<"EndGame403", typeof EndGame403.Type> | PunktfunkError<"EndGame409", typeof EndGame409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof EndGameRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof EndGame200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"EndGame401", typeof EndGame401.Type> | LilynkError<"EndGame403", typeof EndGame403.Type> | LilynkError<"EndGame409", typeof EndGame409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof EndGameRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof EndGame200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"EndGame401", typeof EndGame401.Type> | LilynkError<"EndGame403", typeof EndGame403.Type> | LilynkError<"EndGame409", typeof EndGame409.Type>>;
   }
   /**
 * A seat host runs no plugins, so its `game.launching` carries a `hold` token and the launch
@@ -4563,15 +4563,15 @@ readonly "endGame": {
 * once they are done. Admin lane only: the door, or the Windows box host, holds the token.
 */
 readonly "releaseGameHold": {
-    <Config extends OperationConfig | undefined = undefined>(token: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ReleaseGameHold401", typeof ReleaseGameHold401.Type> | PunktfunkError<"ReleaseGameHold404", typeof ReleaseGameHold404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(token: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ReleaseGameHold401", typeof ReleaseGameHold401.Type> | PunktfunkError<"ReleaseGameHold404", typeof ReleaseGameHold404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(token: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ReleaseGameHold401", typeof ReleaseGameHold401.Type> | LilynkError<"ReleaseGameHold404", typeof ReleaseGameHold404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(token: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ReleaseGameHold401", typeof ReleaseGameHold401.Type> | LilynkError<"ReleaseGameHold404", typeof ReleaseGameHold404.Type>>;
   }
   /**
 * Preference changes apply to the next session; a running session keeps its GPU.
 */
 readonly "listGpus": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListGpus200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListGpus401", typeof ListGpus401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListGpus200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListGpus401", typeof ListGpus401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListGpus200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListGpus401", typeof ListGpus401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListGpus200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListGpus401", typeof ListGpus401.Type>>;
   }
   /**
 * `auto` = env pin else max VRAM on Windows, NVIDIA else the encode render node on Linux;
@@ -4579,8 +4579,8 @@ readonly "listGpus": {
 * An absent preferred GPU falls back to auto rather than failing the session.
 */
 readonly "setGpuPreference": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetGpuPreferenceRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetGpuPreference200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetGpuPreference400", typeof SetGpuPreference400.Type> | PunktfunkError<"SetGpuPreference401", typeof SetGpuPreference401.Type> | PunktfunkError<"SetGpuPreference500", typeof SetGpuPreference500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetGpuPreferenceRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetGpuPreference200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetGpuPreference400", typeof SetGpuPreference400.Type> | PunktfunkError<"SetGpuPreference401", typeof SetGpuPreference401.Type> | PunktfunkError<"SetGpuPreference500", typeof SetGpuPreference500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetGpuPreferenceRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetGpuPreference200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetGpuPreference400", typeof SetGpuPreference400.Type> | LilynkError<"SetGpuPreference401", typeof SetGpuPreference401.Type> | LilynkError<"SetGpuPreference500", typeof SetGpuPreference500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetGpuPreferenceRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetGpuPreference200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetGpuPreference400", typeof SetGpuPreference400.Type> | LilynkError<"SetGpuPreference401", typeof SetGpuPreference401.Type> | LilynkError<"SetGpuPreference500", typeof SetGpuPreference500.Type>>;
   }
   /**
 * Unauthenticated: `require_auth` exempts it.
@@ -4594,8 +4594,8 @@ readonly "getHealth": {
 * every lane but that person's own: their hooks may carry their webhooks' secrets.
 */
 readonly "getHooks": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetHooks200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetHooks401", typeof GetHooks401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetHooks200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetHooks401", typeof GetHooks401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetHooks200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetHooks401", typeof GetHooks401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetHooks200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetHooks401", typeof GetHooks401.Type>>;
   }
   /**
 * Whole-document PUT, not a patch. Applies from the next event. Commands run as the host
@@ -4605,29 +4605,29 @@ readonly "getHooks": {
 * runs only those. On a Windows seat that session names no `hmac_secret_file`.
 */
 readonly "setHooks": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetHooksRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetHooks200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetHooks400", typeof SetHooks400.Type> | PunktfunkError<"SetHooks401", typeof SetHooks401.Type> | PunktfunkError<"SetHooks403", typeof SetHooks403.Type> | PunktfunkError<"SetHooks500", typeof SetHooks500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetHooksRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetHooks200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetHooks400", typeof SetHooks400.Type> | PunktfunkError<"SetHooks401", typeof SetHooks401.Type> | PunktfunkError<"SetHooks403", typeof SetHooks403.Type> | PunktfunkError<"SetHooks500", typeof SetHooks500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetHooksRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetHooks200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetHooks400", typeof SetHooks400.Type> | LilynkError<"SetHooks401", typeof SetHooks401.Type> | LilynkError<"SetHooks403", typeof SetHooks403.Type> | LilynkError<"SetHooks500", typeof SetHooks500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetHooksRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetHooks200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetHooks400", typeof SetHooks400.Type> | LilynkError<"SetHooks401", typeof SetHooks401.Type> | LilynkError<"SetHooks403", typeof SetHooks403.Type> | LilynkError<"SetHooks500", typeof SetHooks500.Type>>;
   }
   /**
 * Host identity and capabilities
 */
 readonly "getHostInfo": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetHostInfo200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetHostInfo401", typeof GetHostInfo401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetHostInfo200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetHostInfo401", typeof GetHostInfo401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetHostInfo200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetHostInfo401", typeof GetHostInfo401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetHostInfo200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetHostInfo401", typeof GetHostInfo401.Type>>;
   }
   /**
 * Audio output streams on the host right now, by app. Empty on a host that cannot list them.
 */
 readonly "getPlayingApps": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetPlayingApps200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetPlayingApps401", typeof GetPlayingApps401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetPlayingApps200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetPlayingApps401", typeof GetPlayingApps401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetPlayingApps200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetPlayingApps401", typeof GetPlayingApps401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetPlayingApps200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetPlayingApps401", typeof GetPlayingApps401.Type>>;
   }
   /**
 * Every setting this host acts on, with the value in force and what set it.
 */
 readonly "getHostSettings": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetHostSettings200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetHostSettings401", typeof GetHostSettings401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetHostSettings200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetHostSettings401", typeof GetHostSettings401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetHostSettings200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetHostSettings401", typeof GetHostSettings401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetHostSettings200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetHostSettings401", typeof GetHostSettings401.Type>>;
   }
   /**
 * Partial: only the named settings change, and `null` resets one. Every value is checked
@@ -4635,8 +4635,8 @@ readonly "getHostSettings": {
 * restart. `tray_autostart` rewrites the tray's autostart entry here.
 */
 readonly "patchHostSettings": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof PatchHostSettingsRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof PatchHostSettings200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"PatchHostSettings400", typeof PatchHostSettings400.Type> | PunktfunkError<"PatchHostSettings401", typeof PatchHostSettings401.Type> | PunktfunkError<"PatchHostSettings500", typeof PatchHostSettings500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof PatchHostSettingsRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof PatchHostSettings200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"PatchHostSettings400", typeof PatchHostSettings400.Type> | PunktfunkError<"PatchHostSettings401", typeof PatchHostSettings401.Type> | PunktfunkError<"PatchHostSettings500", typeof PatchHostSettings500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof PatchHostSettingsRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof PatchHostSettings200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"PatchHostSettings400", typeof PatchHostSettings400.Type> | LilynkError<"PatchHostSettings401", typeof PatchHostSettings401.Type> | LilynkError<"PatchHostSettings500", typeof PatchHostSettings500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof PatchHostSettingsRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof PatchHostSettings200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"PatchHostSettings400", typeof PatchHostSettings400.Type> | LilynkError<"PatchHostSettings401", typeof PatchHostSettings401.Type> | LilynkError<"PatchHostSettings500", typeof PatchHostSettings500.Type>>;
   }
   /**
 * The mode and accent colour of the desktop this host runs on, for a console that follows it.
@@ -4644,8 +4644,8 @@ readonly "patchHostSettings": {
 * "none detected" rather than guessing.
 */
 readonly "getHostTheme": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetHostTheme200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetHostTheme401", typeof GetHostTheme401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetHostTheme200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetHostTheme401", typeof GetHostTheme401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetHostTheme200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetHostTheme401", typeof GetHostTheme401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetHostTheme200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetHostTheme401", typeof GetHostTheme401.Type>>;
   }
   /**
 * Plugin-synced entries plus custom ones. Art the host can serve is rewritten to this API's
@@ -4659,8 +4659,8 @@ readonly "getHostTheme": {
 * and cannot tell they exist.
 */
 readonly "getLibrary": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof GetLibraryParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetLibrary200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetLibrary401", typeof GetLibrary401.Type> | PunktfunkError<"GetLibrary404", typeof GetLibrary404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof GetLibraryParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetLibrary200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetLibrary401", typeof GetLibrary401.Type> | PunktfunkError<"GetLibrary404", typeof GetLibrary404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof GetLibraryParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetLibrary200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetLibrary401", typeof GetLibrary401.Type> | LilynkError<"GetLibrary404", typeof GetLibrary404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof GetLibraryParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetLibrary200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetLibrary401", typeof GetLibrary401.Type> | LilynkError<"GetLibrary404", typeof GetLibrary404.Type>>;
   }
   /**
 * Resolves `kind` (`portrait` | `hero` | `logo` | `header`) for a catalog id and returns the
@@ -4673,8 +4673,8 @@ readonly "getLibrary": {
 * the art as that profile sees it: its own picks first.
 */
 readonly "getLibraryArt": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, kind: string, options: { readonly params?: typeof GetLibraryArtParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<Uint8Array | void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetLibraryArt401", typeof GetLibraryArt401.Type> | PunktfunkError<"GetLibraryArt404", typeof GetLibraryArt404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, kind: string, options: { readonly params?: typeof GetLibraryArtParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<Uint8Array | void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetLibraryArt401", typeof GetLibraryArt401.Type> | PunktfunkError<"GetLibraryArt404", typeof GetLibraryArt404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, kind: string, options: { readonly params?: typeof GetLibraryArtParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<Uint8Array | void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetLibraryArt401", typeof GetLibraryArt401.Type> | LilynkError<"GetLibraryArt404", typeof GetLibraryArt404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, kind: string, options: { readonly params?: typeof GetLibraryArtParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<Uint8Array | void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetLibraryArt401", typeof GetLibraryArt401.Type> | LilynkError<"GetLibraryArt404", typeof GetLibraryArt404.Type>>;
   }
   /**
 * Resolves `kind` (`portrait` | `hero` | `logo` | `header`) for a catalog id and returns the
@@ -4694,8 +4694,8 @@ readonly "getLibraryArtStream": (id: string, kind: string, options: { readonly p
 * existing account only that person adds one, from their own session.
 */
 readonly "createCustomGame": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof CreateCustomGameRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof CreateCustomGame201.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"CreateCustomGame400", typeof CreateCustomGame400.Type> | PunktfunkError<"CreateCustomGame401", typeof CreateCustomGame401.Type> | PunktfunkError<"CreateCustomGame403", typeof CreateCustomGame403.Type> | PunktfunkError<"CreateCustomGame500", typeof CreateCustomGame500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof CreateCustomGameRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof CreateCustomGame201.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"CreateCustomGame400", typeof CreateCustomGame400.Type> | PunktfunkError<"CreateCustomGame401", typeof CreateCustomGame401.Type> | PunktfunkError<"CreateCustomGame403", typeof CreateCustomGame403.Type> | PunktfunkError<"CreateCustomGame500", typeof CreateCustomGame500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof CreateCustomGameRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof CreateCustomGame201.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"CreateCustomGame400", typeof CreateCustomGame400.Type> | LilynkError<"CreateCustomGame401", typeof CreateCustomGame401.Type> | LilynkError<"CreateCustomGame403", typeof CreateCustomGame403.Type> | LilynkError<"CreateCustomGame500", typeof CreateCustomGame500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof CreateCustomGameRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof CreateCustomGame201.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"CreateCustomGame400", typeof CreateCustomGame400.Type> | LilynkError<"CreateCustomGame401", typeof CreateCustomGame401.Type> | LilynkError<"CreateCustomGame403", typeof CreateCustomGame403.Type> | LilynkError<"CreateCustomGame500", typeof CreateCustomGame500.Type>>;
   }
   /**
 * Operator lane only: the hint names host paths, which is why the catalog read
@@ -4703,16 +4703,16 @@ readonly "createCustomGame": {
 * own account a title of its own is that person's alone to read: any other lane gets the 404.
 */
 readonly "getCustomGame": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetCustomGame200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetCustomGame401", typeof GetCustomGame401.Type> | PunktfunkError<"GetCustomGame404", typeof GetCustomGame404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetCustomGame200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetCustomGame401", typeof GetCustomGame401.Type> | PunktfunkError<"GetCustomGame404", typeof GetCustomGame404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetCustomGame200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetCustomGame401", typeof GetCustomGame401.Type> | LilynkError<"GetCustomGame404", typeof GetCustomGame404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetCustomGame200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetCustomGame401", typeof GetCustomGame401.Type> | LilynkError<"GetCustomGame404", typeof GetCustomGame404.Type>>;
   }
   readonly "updateCustomGame": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof UpdateCustomGameRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof UpdateCustomGame200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UpdateCustomGame400", typeof UpdateCustomGame400.Type> | PunktfunkError<"UpdateCustomGame401", typeof UpdateCustomGame401.Type> | PunktfunkError<"UpdateCustomGame403", typeof UpdateCustomGame403.Type> | PunktfunkError<"UpdateCustomGame404", typeof UpdateCustomGame404.Type> | PunktfunkError<"UpdateCustomGame409", typeof UpdateCustomGame409.Type> | PunktfunkError<"UpdateCustomGame500", typeof UpdateCustomGame500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof UpdateCustomGameRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof UpdateCustomGame200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UpdateCustomGame400", typeof UpdateCustomGame400.Type> | PunktfunkError<"UpdateCustomGame401", typeof UpdateCustomGame401.Type> | PunktfunkError<"UpdateCustomGame403", typeof UpdateCustomGame403.Type> | PunktfunkError<"UpdateCustomGame404", typeof UpdateCustomGame404.Type> | PunktfunkError<"UpdateCustomGame409", typeof UpdateCustomGame409.Type> | PunktfunkError<"UpdateCustomGame500", typeof UpdateCustomGame500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof UpdateCustomGameRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof UpdateCustomGame200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UpdateCustomGame400", typeof UpdateCustomGame400.Type> | LilynkError<"UpdateCustomGame401", typeof UpdateCustomGame401.Type> | LilynkError<"UpdateCustomGame403", typeof UpdateCustomGame403.Type> | LilynkError<"UpdateCustomGame404", typeof UpdateCustomGame404.Type> | LilynkError<"UpdateCustomGame409", typeof UpdateCustomGame409.Type> | LilynkError<"UpdateCustomGame500", typeof UpdateCustomGame500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof UpdateCustomGameRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof UpdateCustomGame200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UpdateCustomGame400", typeof UpdateCustomGame400.Type> | LilynkError<"UpdateCustomGame401", typeof UpdateCustomGame401.Type> | LilynkError<"UpdateCustomGame403", typeof UpdateCustomGame403.Type> | LilynkError<"UpdateCustomGame404", typeof UpdateCustomGame404.Type> | LilynkError<"UpdateCustomGame409", typeof UpdateCustomGame409.Type> | LilynkError<"UpdateCustomGame500", typeof UpdateCustomGame500.Type>>;
   }
   readonly "deleteCustomGame": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DeleteCustomGame401", typeof DeleteCustomGame401.Type> | PunktfunkError<"DeleteCustomGame403", typeof DeleteCustomGame403.Type> | PunktfunkError<"DeleteCustomGame404", typeof DeleteCustomGame404.Type> | PunktfunkError<"DeleteCustomGame409", typeof DeleteCustomGame409.Type> | PunktfunkError<"DeleteCustomGame500", typeof DeleteCustomGame500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DeleteCustomGame401", typeof DeleteCustomGame401.Type> | PunktfunkError<"DeleteCustomGame403", typeof DeleteCustomGame403.Type> | PunktfunkError<"DeleteCustomGame404", typeof DeleteCustomGame404.Type> | PunktfunkError<"DeleteCustomGame409", typeof DeleteCustomGame409.Type> | PunktfunkError<"DeleteCustomGame500", typeof DeleteCustomGame500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DeleteCustomGame401", typeof DeleteCustomGame401.Type> | LilynkError<"DeleteCustomGame403", typeof DeleteCustomGame403.Type> | LilynkError<"DeleteCustomGame404", typeof DeleteCustomGame404.Type> | LilynkError<"DeleteCustomGame409", typeof DeleteCustomGame409.Type> | LilynkError<"DeleteCustomGame500", typeof DeleteCustomGame500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DeleteCustomGame401", typeof DeleteCustomGame401.Type> | LilynkError<"DeleteCustomGame403", typeof DeleteCustomGame403.Type> | LilynkError<"DeleteCustomGame404", typeof DeleteCustomGame404.Type> | LilynkError<"DeleteCustomGame409", typeof DeleteCustomGame409.Type> | LilynkError<"DeleteCustomGame500", typeof DeleteCustomGame500.Type>>;
   }
   /**
 * Curation, not access control: the title leaves every play surface and launch resolution
@@ -4724,8 +4724,8 @@ readonly "getCustomGame": {
 * on a real change.
 */
 readonly "setLibraryEntryHidden": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof SetLibraryEntryHiddenParams.Encoded | undefined; readonly payload: typeof SetLibraryEntryHiddenRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetLibraryEntryHidden200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetLibraryEntryHidden400", typeof SetLibraryEntryHidden400.Type> | PunktfunkError<"SetLibraryEntryHidden401", typeof SetLibraryEntryHidden401.Type> | PunktfunkError<"SetLibraryEntryHidden403", typeof SetLibraryEntryHidden403.Type> | PunktfunkError<"SetLibraryEntryHidden404", typeof SetLibraryEntryHidden404.Type> | PunktfunkError<"SetLibraryEntryHidden500", typeof SetLibraryEntryHidden500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof SetLibraryEntryHiddenParams.Encoded | undefined; readonly payload: typeof SetLibraryEntryHiddenRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetLibraryEntryHidden200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetLibraryEntryHidden400", typeof SetLibraryEntryHidden400.Type> | PunktfunkError<"SetLibraryEntryHidden401", typeof SetLibraryEntryHidden401.Type> | PunktfunkError<"SetLibraryEntryHidden403", typeof SetLibraryEntryHidden403.Type> | PunktfunkError<"SetLibraryEntryHidden404", typeof SetLibraryEntryHidden404.Type> | PunktfunkError<"SetLibraryEntryHidden500", typeof SetLibraryEntryHidden500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof SetLibraryEntryHiddenParams.Encoded | undefined; readonly payload: typeof SetLibraryEntryHiddenRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetLibraryEntryHidden200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetLibraryEntryHidden400", typeof SetLibraryEntryHidden400.Type> | LilynkError<"SetLibraryEntryHidden401", typeof SetLibraryEntryHidden401.Type> | LilynkError<"SetLibraryEntryHidden403", typeof SetLibraryEntryHidden403.Type> | LilynkError<"SetLibraryEntryHidden404", typeof SetLibraryEntryHidden404.Type> | LilynkError<"SetLibraryEntryHidden500", typeof SetLibraryEntryHidden500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof SetLibraryEntryHiddenParams.Encoded | undefined; readonly payload: typeof SetLibraryEntryHiddenRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetLibraryEntryHidden200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetLibraryEntryHidden400", typeof SetLibraryEntryHidden400.Type> | LilynkError<"SetLibraryEntryHidden401", typeof SetLibraryEntryHidden401.Type> | LilynkError<"SetLibraryEntryHidden403", typeof SetLibraryEntryHidden403.Type> | LilynkError<"SetLibraryEntryHidden404", typeof SetLibraryEntryHidden404.Type> | LilynkError<"SetLibraryEntryHidden500", typeof SetLibraryEntryHidden500.Type>>;
   }
   /**
 * Asks the plugin that lists the title to download it, or to resume a paused download. The
@@ -4733,39 +4733,39 @@ readonly "setLibraryEntryHidden": {
 * download's row.
 */
 readonly "installLibraryEntry": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof InstallLibraryEntry202.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"InstallLibraryEntry401", typeof InstallLibraryEntry401.Type> | PunktfunkError<"InstallLibraryEntry403", typeof InstallLibraryEntry403.Type> | PunktfunkError<"InstallLibraryEntry404", typeof InstallLibraryEntry404.Type> | PunktfunkError<"InstallLibraryEntry409", typeof InstallLibraryEntry409.Type> | PunktfunkError<"InstallLibraryEntry502", typeof InstallLibraryEntry502.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof InstallLibraryEntry202.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"InstallLibraryEntry401", typeof InstallLibraryEntry401.Type> | PunktfunkError<"InstallLibraryEntry403", typeof InstallLibraryEntry403.Type> | PunktfunkError<"InstallLibraryEntry404", typeof InstallLibraryEntry404.Type> | PunktfunkError<"InstallLibraryEntry409", typeof InstallLibraryEntry409.Type> | PunktfunkError<"InstallLibraryEntry502", typeof InstallLibraryEntry502.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof InstallLibraryEntry202.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"InstallLibraryEntry401", typeof InstallLibraryEntry401.Type> | LilynkError<"InstallLibraryEntry403", typeof InstallLibraryEntry403.Type> | LilynkError<"InstallLibraryEntry404", typeof InstallLibraryEntry404.Type> | LilynkError<"InstallLibraryEntry409", typeof InstallLibraryEntry409.Type> | LilynkError<"InstallLibraryEntry502", typeof InstallLibraryEntry502.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof InstallLibraryEntry202.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"InstallLibraryEntry401", typeof InstallLibraryEntry401.Type> | LilynkError<"InstallLibraryEntry403", typeof InstallLibraryEntry403.Type> | LilynkError<"InstallLibraryEntry404", typeof InstallLibraryEntry404.Type> | LilynkError<"InstallLibraryEntry409", typeof InstallLibraryEntry409.Type> | LilynkError<"InstallLibraryEntry502", typeof InstallLibraryEntry502.Type>>;
   }
   /**
 * The plugin deletes what it downloaded for the title; saves stay. Refused while the title
 * runs or a launch waits for it. A paired device needs the manage-games grant.
 */
 readonly "uninstallLibraryEntry": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UninstallLibraryEntry401", typeof UninstallLibraryEntry401.Type> | PunktfunkError<"UninstallLibraryEntry403", typeof UninstallLibraryEntry403.Type> | PunktfunkError<"UninstallLibraryEntry404", typeof UninstallLibraryEntry404.Type> | PunktfunkError<"UninstallLibraryEntry409", typeof UninstallLibraryEntry409.Type> | PunktfunkError<"UninstallLibraryEntry502", typeof UninstallLibraryEntry502.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UninstallLibraryEntry401", typeof UninstallLibraryEntry401.Type> | PunktfunkError<"UninstallLibraryEntry403", typeof UninstallLibraryEntry403.Type> | PunktfunkError<"UninstallLibraryEntry404", typeof UninstallLibraryEntry404.Type> | PunktfunkError<"UninstallLibraryEntry409", typeof UninstallLibraryEntry409.Type> | PunktfunkError<"UninstallLibraryEntry502", typeof UninstallLibraryEntry502.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UninstallLibraryEntry401", typeof UninstallLibraryEntry401.Type> | LilynkError<"UninstallLibraryEntry403", typeof UninstallLibraryEntry403.Type> | LilynkError<"UninstallLibraryEntry404", typeof UninstallLibraryEntry404.Type> | LilynkError<"UninstallLibraryEntry409", typeof UninstallLibraryEntry409.Type> | LilynkError<"UninstallLibraryEntry502", typeof UninstallLibraryEntry502.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UninstallLibraryEntry401", typeof UninstallLibraryEntry401.Type> | LilynkError<"UninstallLibraryEntry403", typeof UninstallLibraryEntry403.Type> | LilynkError<"UninstallLibraryEntry404", typeof UninstallLibraryEntry404.Type> | LilynkError<"UninstallLibraryEntry409", typeof UninstallLibraryEntry409.Type> | LilynkError<"UninstallLibraryEntry502", typeof UninstallLibraryEntry502.Type>>;
   }
   /**
 * The plugin stops and discards what it downloaded.
 */
 readonly "cancelLibraryInstall": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"CancelLibraryInstall401", typeof CancelLibraryInstall401.Type> | PunktfunkError<"CancelLibraryInstall404", typeof CancelLibraryInstall404.Type> | PunktfunkError<"CancelLibraryInstall409", typeof CancelLibraryInstall409.Type> | PunktfunkError<"CancelLibraryInstall502", typeof CancelLibraryInstall502.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"CancelLibraryInstall401", typeof CancelLibraryInstall401.Type> | PunktfunkError<"CancelLibraryInstall404", typeof CancelLibraryInstall404.Type> | PunktfunkError<"CancelLibraryInstall409", typeof CancelLibraryInstall409.Type> | PunktfunkError<"CancelLibraryInstall502", typeof CancelLibraryInstall502.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"CancelLibraryInstall401", typeof CancelLibraryInstall401.Type> | LilynkError<"CancelLibraryInstall404", typeof CancelLibraryInstall404.Type> | LilynkError<"CancelLibraryInstall409", typeof CancelLibraryInstall409.Type> | LilynkError<"CancelLibraryInstall502", typeof CancelLibraryInstall502.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"CancelLibraryInstall401", typeof CancelLibraryInstall401.Type> | LilynkError<"CancelLibraryInstall404", typeof CancelLibraryInstall404.Type> | LilynkError<"CancelLibraryInstall409", typeof CancelLibraryInstall409.Type> | LilynkError<"CancelLibraryInstall502", typeof CancelLibraryInstall502.Type>>;
   }
   /**
 * The plugin stops and keeps what it has; installing again resumes. The operator always may;
 * a paired device may when it holds the manage-games grant.
 */
 readonly "pauseLibraryInstall": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"PauseLibraryInstall401", typeof PauseLibraryInstall401.Type> | PunktfunkError<"PauseLibraryInstall403", typeof PauseLibraryInstall403.Type> | PunktfunkError<"PauseLibraryInstall404", typeof PauseLibraryInstall404.Type> | PunktfunkError<"PauseLibraryInstall409", typeof PauseLibraryInstall409.Type> | PunktfunkError<"PauseLibraryInstall502", typeof PauseLibraryInstall502.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"PauseLibraryInstall401", typeof PauseLibraryInstall401.Type> | PunktfunkError<"PauseLibraryInstall403", typeof PauseLibraryInstall403.Type> | PunktfunkError<"PauseLibraryInstall404", typeof PauseLibraryInstall404.Type> | PunktfunkError<"PauseLibraryInstall409", typeof PauseLibraryInstall409.Type> | PunktfunkError<"PauseLibraryInstall502", typeof PauseLibraryInstall502.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"PauseLibraryInstall401", typeof PauseLibraryInstall401.Type> | LilynkError<"PauseLibraryInstall403", typeof PauseLibraryInstall403.Type> | LilynkError<"PauseLibraryInstall404", typeof PauseLibraryInstall404.Type> | LilynkError<"PauseLibraryInstall409", typeof PauseLibraryInstall409.Type> | LilynkError<"PauseLibraryInstall502", typeof PauseLibraryInstall502.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"PauseLibraryInstall401", typeof PauseLibraryInstall401.Type> | LilynkError<"PauseLibraryInstall403", typeof PauseLibraryInstall403.Type> | LilynkError<"PauseLibraryInstall404", typeof PauseLibraryInstall404.Type> | LilynkError<"PauseLibraryInstall409", typeof PauseLibraryInstall409.Type> | LilynkError<"PauseLibraryInstall502", typeof PauseLibraryInstall502.Type>>;
   }
   /**
 * Every source that has pushed a result, in the operator's order, with its switches and how
 * many entries it has something for.
 */
 readonly "listLibraryMetadata": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListLibraryMetadata200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListLibraryMetadata401", typeof ListLibraryMetadata401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListLibraryMetadata200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListLibraryMetadata401", typeof ListLibraryMetadata401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListLibraryMetadata200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListLibraryMetadata401", typeof ListLibraryMetadata401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListLibraryMetadata200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListLibraryMetadata401", typeof ListLibraryMetadata401.Type>>;
   }
   /**
 * The array is the new order; each row sets `enabled` and `replace` ("Use for every game",
@@ -4773,8 +4773,8 @@ readonly "listLibraryMetadata": {
 * Emits `library.changed`.
 */
 readonly "setLibraryMetadata": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetLibraryMetadataRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetLibraryMetadata200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetLibraryMetadata401", typeof SetLibraryMetadata401.Type> | PunktfunkError<"SetLibraryMetadata500", typeof SetLibraryMetadata500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetLibraryMetadataRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetLibraryMetadata200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetLibraryMetadata401", typeof SetLibraryMetadata401.Type> | PunktfunkError<"SetLibraryMetadata500", typeof SetLibraryMetadata500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetLibraryMetadataRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetLibraryMetadata200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetLibraryMetadata401", typeof SetLibraryMetadata401.Type> | LilynkError<"SetLibraryMetadata500", typeof SetLibraryMetadata500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetLibraryMetadataRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetLibraryMetadata200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetLibraryMetadata401", typeof SetLibraryMetadata401.Type> | LilynkError<"SetLibraryMetadata500", typeof SetLibraryMetadata500.Type>>;
   }
   /**
 * Everything the source has, keyed by library id: art for the four slots and `GameMeta`
@@ -4784,16 +4784,16 @@ readonly "setLibraryMetadata": {
 * Emits `library.changed` with the source as `source` when anything changed.
 */
 readonly "putLibraryMetadata": {
-    <Config extends OperationConfig | undefined = undefined>(source: string, options: { readonly payload: typeof PutLibraryMetadataRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof PutLibraryMetadata200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"PutLibraryMetadata400", typeof PutLibraryMetadata400.Type> | PunktfunkError<"PutLibraryMetadata401", typeof PutLibraryMetadata401.Type> | PunktfunkError<"PutLibraryMetadata403", typeof PutLibraryMetadata403.Type> | PunktfunkError<"PutLibraryMetadata500", typeof PutLibraryMetadata500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(source: string, options: { readonly payload: typeof PutLibraryMetadataRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof PutLibraryMetadata200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"PutLibraryMetadata400", typeof PutLibraryMetadata400.Type> | PunktfunkError<"PutLibraryMetadata401", typeof PutLibraryMetadata401.Type> | PunktfunkError<"PutLibraryMetadata403", typeof PutLibraryMetadata403.Type> | PunktfunkError<"PutLibraryMetadata500", typeof PutLibraryMetadata500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(source: string, options: { readonly payload: typeof PutLibraryMetadataRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof PutLibraryMetadata200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"PutLibraryMetadata400", typeof PutLibraryMetadata400.Type> | LilynkError<"PutLibraryMetadata401", typeof PutLibraryMetadata401.Type> | LilynkError<"PutLibraryMetadata403", typeof PutLibraryMetadata403.Type> | LilynkError<"PutLibraryMetadata500", typeof PutLibraryMetadata500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(source: string, options: { readonly payload: typeof PutLibraryMetadataRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof PutLibraryMetadata200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"PutLibraryMetadata400", typeof PutLibraryMetadata400.Type> | LilynkError<"PutLibraryMetadata401", typeof PutLibraryMetadata401.Type> | LilynkError<"PutLibraryMetadata403", typeof PutLibraryMetadata403.Type> | LilynkError<"PutLibraryMetadata500", typeof PutLibraryMetadata500.Type>>;
   }
   /**
 * Its result and its place in the order, for plugin uninstall. Emits `library.changed`
 * when there was anything to forget.
 */
 readonly "deleteLibraryMetadata": {
-    <Config extends OperationConfig | undefined = undefined>(source: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof DeleteLibraryMetadata200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DeleteLibraryMetadata400", typeof DeleteLibraryMetadata400.Type> | PunktfunkError<"DeleteLibraryMetadata401", typeof DeleteLibraryMetadata401.Type> | PunktfunkError<"DeleteLibraryMetadata403", typeof DeleteLibraryMetadata403.Type> | PunktfunkError<"DeleteLibraryMetadata500", typeof DeleteLibraryMetadata500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(source: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof DeleteLibraryMetadata200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DeleteLibraryMetadata400", typeof DeleteLibraryMetadata400.Type> | PunktfunkError<"DeleteLibraryMetadata401", typeof DeleteLibraryMetadata401.Type> | PunktfunkError<"DeleteLibraryMetadata403", typeof DeleteLibraryMetadata403.Type> | PunktfunkError<"DeleteLibraryMetadata500", typeof DeleteLibraryMetadata500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(source: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof DeleteLibraryMetadata200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DeleteLibraryMetadata400", typeof DeleteLibraryMetadata400.Type> | LilynkError<"DeleteLibraryMetadata401", typeof DeleteLibraryMetadata401.Type> | LilynkError<"DeleteLibraryMetadata403", typeof DeleteLibraryMetadata403.Type> | LilynkError<"DeleteLibraryMetadata500", typeof DeleteLibraryMetadata500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(source: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof DeleteLibraryMetadata200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DeleteLibraryMetadata400", typeof DeleteLibraryMetadata400.Type> | LilynkError<"DeleteLibraryMetadata401", typeof DeleteLibraryMetadata401.Type> | LilynkError<"DeleteLibraryMetadata403", typeof DeleteLibraryMetadata403.Type> | LilynkError<"DeleteLibraryMetadata500", typeof DeleteLibraryMetadata500.Type>>;
   }
   /**
 * The shared overrides, each game's entry and each source's, as `library-overrides.json`
@@ -4803,8 +4803,8 @@ readonly "deleteLibraryMetadata": {
 * and `box_games` and `box_sources`: the box's entries for what that profile's library lists.
 */
 readonly "getLibraryOverrides": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof GetLibraryOverridesParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetLibraryOverrides200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetLibraryOverrides401", typeof GetLibraryOverrides401.Type> | PunktfunkError<"GetLibraryOverrides404", typeof GetLibraryOverrides404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof GetLibraryOverridesParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetLibraryOverrides200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetLibraryOverrides401", typeof GetLibraryOverrides401.Type> | PunktfunkError<"GetLibraryOverrides404", typeof GetLibraryOverrides404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof GetLibraryOverridesParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetLibraryOverrides200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetLibraryOverrides401", typeof GetLibraryOverrides401.Type> | LilynkError<"GetLibraryOverrides404", typeof GetLibraryOverrides404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof GetLibraryOverridesParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetLibraryOverrides200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetLibraryOverrides401", typeof GetLibraryOverrides401.Type> | LilynkError<"GetLibraryOverrides404", typeof GetLibraryOverrides404.Type>>;
   }
   /**
 * `{ "set": id }` points the game at a shared override; fields alone are its own values;
@@ -4816,16 +4816,16 @@ readonly "getLibraryOverrides": {
 * `library.changed`.
 */
 readonly "setGameOverrides": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof SetGameOverridesParams.Encoded | undefined; readonly payload: typeof SetGameOverridesRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetGameOverrides200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetGameOverrides400", typeof SetGameOverrides400.Type> | PunktfunkError<"SetGameOverrides401", typeof SetGameOverrides401.Type> | PunktfunkError<"SetGameOverrides403", typeof SetGameOverrides403.Type> | PunktfunkError<"SetGameOverrides404", typeof SetGameOverrides404.Type> | PunktfunkError<"SetGameOverrides500", typeof SetGameOverrides500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof SetGameOverridesParams.Encoded | undefined; readonly payload: typeof SetGameOverridesRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetGameOverrides200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetGameOverrides400", typeof SetGameOverrides400.Type> | PunktfunkError<"SetGameOverrides401", typeof SetGameOverrides401.Type> | PunktfunkError<"SetGameOverrides403", typeof SetGameOverrides403.Type> | PunktfunkError<"SetGameOverrides404", typeof SetGameOverrides404.Type> | PunktfunkError<"SetGameOverrides500", typeof SetGameOverrides500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof SetGameOverridesParams.Encoded | undefined; readonly payload: typeof SetGameOverridesRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetGameOverrides200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetGameOverrides400", typeof SetGameOverrides400.Type> | LilynkError<"SetGameOverrides401", typeof SetGameOverrides401.Type> | LilynkError<"SetGameOverrides403", typeof SetGameOverrides403.Type> | LilynkError<"SetGameOverrides404", typeof SetGameOverrides404.Type> | LilynkError<"SetGameOverrides500", typeof SetGameOverrides500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof SetGameOverridesParams.Encoded | undefined; readonly payload: typeof SetGameOverridesRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetGameOverrides200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetGameOverrides400", typeof SetGameOverrides400.Type> | LilynkError<"SetGameOverrides401", typeof SetGameOverrides401.Type> | LilynkError<"SetGameOverrides403", typeof SetGameOverrides403.Type> | LilynkError<"SetGameOverrides404", typeof SetGameOverrides404.Type> | LilynkError<"SetGameOverrides500", typeof SetGameOverrides500.Type>>;
   }
   /**
 * A named set of stream settings that games and sources point at. The host assigns its id.
 * With `as`, it is that profile's own.
 */
 readonly "createOverrideSet": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof CreateOverrideSetParams.Encoded | undefined; readonly payload: typeof CreateOverrideSetRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof CreateOverrideSet201.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"CreateOverrideSet400", typeof CreateOverrideSet400.Type> | PunktfunkError<"CreateOverrideSet401", typeof CreateOverrideSet401.Type> | PunktfunkError<"CreateOverrideSet404", typeof CreateOverrideSet404.Type> | PunktfunkError<"CreateOverrideSet409", typeof CreateOverrideSet409.Type> | PunktfunkError<"CreateOverrideSet500", typeof CreateOverrideSet500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof CreateOverrideSetParams.Encoded | undefined; readonly payload: typeof CreateOverrideSetRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof CreateOverrideSet201.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"CreateOverrideSet400", typeof CreateOverrideSet400.Type> | PunktfunkError<"CreateOverrideSet401", typeof CreateOverrideSet401.Type> | PunktfunkError<"CreateOverrideSet404", typeof CreateOverrideSet404.Type> | PunktfunkError<"CreateOverrideSet409", typeof CreateOverrideSet409.Type> | PunktfunkError<"CreateOverrideSet500", typeof CreateOverrideSet500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof CreateOverrideSetParams.Encoded | undefined; readonly payload: typeof CreateOverrideSetRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof CreateOverrideSet201.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"CreateOverrideSet400", typeof CreateOverrideSet400.Type> | LilynkError<"CreateOverrideSet401", typeof CreateOverrideSet401.Type> | LilynkError<"CreateOverrideSet404", typeof CreateOverrideSet404.Type> | LilynkError<"CreateOverrideSet409", typeof CreateOverrideSet409.Type> | LilynkError<"CreateOverrideSet500", typeof CreateOverrideSet500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof CreateOverrideSetParams.Encoded | undefined; readonly payload: typeof CreateOverrideSetRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof CreateOverrideSet201.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"CreateOverrideSet400", typeof CreateOverrideSet400.Type> | LilynkError<"CreateOverrideSet401", typeof CreateOverrideSet401.Type> | LilynkError<"CreateOverrideSet404", typeof CreateOverrideSet404.Type> | LilynkError<"CreateOverrideSet409", typeof CreateOverrideSet409.Type> | LilynkError<"CreateOverrideSet500", typeof CreateOverrideSet500.Type>>;
   }
   /**
 * A field left out keeps its value; `null` clears it. Every game and source that uses it
@@ -4833,8 +4833,8 @@ readonly "createOverrideSet": {
 * belong to.
 */
 readonly "updateOverrideSet": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof UpdateOverrideSetParams.Encoded | undefined; readonly payload: typeof UpdateOverrideSetRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof UpdateOverrideSet200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UpdateOverrideSet400", typeof UpdateOverrideSet400.Type> | PunktfunkError<"UpdateOverrideSet401", typeof UpdateOverrideSet401.Type> | PunktfunkError<"UpdateOverrideSet404", typeof UpdateOverrideSet404.Type> | PunktfunkError<"UpdateOverrideSet409", typeof UpdateOverrideSet409.Type> | PunktfunkError<"UpdateOverrideSet500", typeof UpdateOverrideSet500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof UpdateOverrideSetParams.Encoded | undefined; readonly payload: typeof UpdateOverrideSetRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof UpdateOverrideSet200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UpdateOverrideSet400", typeof UpdateOverrideSet400.Type> | PunktfunkError<"UpdateOverrideSet401", typeof UpdateOverrideSet401.Type> | PunktfunkError<"UpdateOverrideSet404", typeof UpdateOverrideSet404.Type> | PunktfunkError<"UpdateOverrideSet409", typeof UpdateOverrideSet409.Type> | PunktfunkError<"UpdateOverrideSet500", typeof UpdateOverrideSet500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof UpdateOverrideSetParams.Encoded | undefined; readonly payload: typeof UpdateOverrideSetRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof UpdateOverrideSet200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UpdateOverrideSet400", typeof UpdateOverrideSet400.Type> | LilynkError<"UpdateOverrideSet401", typeof UpdateOverrideSet401.Type> | LilynkError<"UpdateOverrideSet404", typeof UpdateOverrideSet404.Type> | LilynkError<"UpdateOverrideSet409", typeof UpdateOverrideSet409.Type> | LilynkError<"UpdateOverrideSet500", typeof UpdateOverrideSet500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof UpdateOverrideSetParams.Encoded | undefined; readonly payload: typeof UpdateOverrideSetRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof UpdateOverrideSet200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UpdateOverrideSet400", typeof UpdateOverrideSet400.Type> | LilynkError<"UpdateOverrideSet401", typeof UpdateOverrideSet401.Type> | LilynkError<"UpdateOverrideSet404", typeof UpdateOverrideSet404.Type> | LilynkError<"UpdateOverrideSet409", typeof UpdateOverrideSet409.Type> | LilynkError<"UpdateOverrideSet500", typeof UpdateOverrideSet500.Type>>;
   }
   /**
 * The games and sources that used it lose their entry and go back to what the device
@@ -4842,8 +4842,8 @@ readonly "updateOverrideSet": {
 * lose theirs. Emits `library.changed` for each source they belong to.
 */
 readonly "deleteOverrideSet": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof DeleteOverrideSetParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof DeleteOverrideSet200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DeleteOverrideSet401", typeof DeleteOverrideSet401.Type> | PunktfunkError<"DeleteOverrideSet404", typeof DeleteOverrideSet404.Type> | PunktfunkError<"DeleteOverrideSet500", typeof DeleteOverrideSet500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof DeleteOverrideSetParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof DeleteOverrideSet200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DeleteOverrideSet401", typeof DeleteOverrideSet401.Type> | PunktfunkError<"DeleteOverrideSet404", typeof DeleteOverrideSet404.Type> | PunktfunkError<"DeleteOverrideSet500", typeof DeleteOverrideSet500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof DeleteOverrideSetParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof DeleteOverrideSet200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DeleteOverrideSet401", typeof DeleteOverrideSet401.Type> | LilynkError<"DeleteOverrideSet404", typeof DeleteOverrideSet404.Type> | LilynkError<"DeleteOverrideSet500", typeof DeleteOverrideSet500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof DeleteOverrideSetParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof DeleteOverrideSet200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DeleteOverrideSet401", typeof DeleteOverrideSet401.Type> | LilynkError<"DeleteOverrideSet404", typeof DeleteOverrideSet404.Type> | LilynkError<"DeleteOverrideSet500", typeof DeleteOverrideSet500.Type>>;
   }
   /**
 * The same body as a game's, without `none`: `{}` clears the source's entry. Each title of
@@ -4853,8 +4853,8 @@ readonly "deleteOverrideSet": {
 * with a title the profile's library lists. Emits `library.changed`.
 */
 readonly "setSourceOverrides": {
-    <Config extends OperationConfig | undefined = undefined>(source: string, options: { readonly params?: typeof SetSourceOverridesParams.Encoded | undefined; readonly payload: typeof SetSourceOverridesRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetSourceOverrides200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetSourceOverrides400", typeof SetSourceOverrides400.Type> | PunktfunkError<"SetSourceOverrides401", typeof SetSourceOverrides401.Type> | PunktfunkError<"SetSourceOverrides403", typeof SetSourceOverrides403.Type> | PunktfunkError<"SetSourceOverrides404", typeof SetSourceOverrides404.Type> | PunktfunkError<"SetSourceOverrides500", typeof SetSourceOverrides500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(source: string, options: { readonly params?: typeof SetSourceOverridesParams.Encoded | undefined; readonly payload: typeof SetSourceOverridesRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetSourceOverrides200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetSourceOverrides400", typeof SetSourceOverrides400.Type> | PunktfunkError<"SetSourceOverrides401", typeof SetSourceOverrides401.Type> | PunktfunkError<"SetSourceOverrides403", typeof SetSourceOverrides403.Type> | PunktfunkError<"SetSourceOverrides404", typeof SetSourceOverrides404.Type> | PunktfunkError<"SetSourceOverrides500", typeof SetSourceOverrides500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(source: string, options: { readonly params?: typeof SetSourceOverridesParams.Encoded | undefined; readonly payload: typeof SetSourceOverridesRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetSourceOverrides200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetSourceOverrides400", typeof SetSourceOverrides400.Type> | LilynkError<"SetSourceOverrides401", typeof SetSourceOverrides401.Type> | LilynkError<"SetSourceOverrides403", typeof SetSourceOverrides403.Type> | LilynkError<"SetSourceOverrides404", typeof SetSourceOverrides404.Type> | LilynkError<"SetSourceOverrides500", typeof SetSourceOverrides500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(source: string, options: { readonly params?: typeof SetSourceOverridesParams.Encoded | undefined; readonly payload: typeof SetSourceOverridesRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetSourceOverrides200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetSourceOverrides400", typeof SetSourceOverrides400.Type> | LilynkError<"SetSourceOverrides401", typeof SetSourceOverrides401.Type> | LilynkError<"SetSourceOverrides403", typeof SetSourceOverrides403.Type> | LilynkError<"SetSourceOverrides404", typeof SetSourceOverrides404.Type> | LilynkError<"SetSourceOverrides500", typeof SetSourceOverrides500.Type>>;
   }
   /**
 * The custom entries this seat host keeps in its own config folder, each by its `own:` id,
@@ -4863,8 +4863,8 @@ readonly "setSourceOverrides": {
 * profile. A host that keeps none answers an empty list.
 */
 readonly "listOwnTitles": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListOwnTitles200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListOwnTitles401", typeof ListOwnTitles401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListOwnTitles200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListOwnTitles401", typeof ListOwnTitles401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListOwnTitles200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListOwnTitles401", typeof ListOwnTitles401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListOwnTitles200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListOwnTitles401", typeof ListOwnTitles401.Type>>;
   }
   /**
 * What a seat host's `GET /library/own` answered, for the profile `as` names, on the host that
@@ -4874,8 +4874,8 @@ readonly "listOwnTitles": {
 * names an id twice is refused, and the stored titles stay. Emits `library.changed` on a change.
 */
 readonly "storeOwnTitles": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params: typeof StoreOwnTitlesParams.Encoded; readonly payload: typeof StoreOwnTitlesRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StoreOwnTitles400", typeof StoreOwnTitles400.Type> | PunktfunkError<"StoreOwnTitles401", typeof StoreOwnTitles401.Type> | PunktfunkError<"StoreOwnTitles403", typeof StoreOwnTitles403.Type> | PunktfunkError<"StoreOwnTitles404", typeof StoreOwnTitles404.Type> | PunktfunkError<"StoreOwnTitles409", typeof StoreOwnTitles409.Type> | PunktfunkError<"StoreOwnTitles500", typeof StoreOwnTitles500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params: typeof StoreOwnTitlesParams.Encoded; readonly payload: typeof StoreOwnTitlesRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StoreOwnTitles400", typeof StoreOwnTitles400.Type> | PunktfunkError<"StoreOwnTitles401", typeof StoreOwnTitles401.Type> | PunktfunkError<"StoreOwnTitles403", typeof StoreOwnTitles403.Type> | PunktfunkError<"StoreOwnTitles404", typeof StoreOwnTitles404.Type> | PunktfunkError<"StoreOwnTitles409", typeof StoreOwnTitles409.Type> | PunktfunkError<"StoreOwnTitles500", typeof StoreOwnTitles500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params: typeof StoreOwnTitlesParams.Encoded; readonly payload: typeof StoreOwnTitlesRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StoreOwnTitles400", typeof StoreOwnTitles400.Type> | LilynkError<"StoreOwnTitles401", typeof StoreOwnTitles401.Type> | LilynkError<"StoreOwnTitles403", typeof StoreOwnTitles403.Type> | LilynkError<"StoreOwnTitles404", typeof StoreOwnTitles404.Type> | LilynkError<"StoreOwnTitles409", typeof StoreOwnTitles409.Type> | LilynkError<"StoreOwnTitles500", typeof StoreOwnTitles500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params: typeof StoreOwnTitlesParams.Encoded; readonly payload: typeof StoreOwnTitlesRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StoreOwnTitles400", typeof StoreOwnTitles400.Type> | LilynkError<"StoreOwnTitles401", typeof StoreOwnTitles401.Type> | LilynkError<"StoreOwnTitles403", typeof StoreOwnTitles403.Type> | LilynkError<"StoreOwnTitles404", typeof StoreOwnTitles404.Type> | LilynkError<"StoreOwnTitles409", typeof StoreOwnTitles409.Type> | LilynkError<"StoreOwnTitles500", typeof StoreOwnTitles500.Type>>;
   }
   /**
 * Title order, `limit` titles a page (60 when absent, 200 at most). `next_cursor` names the
@@ -4889,8 +4889,8 @@ readonly "storeOwnTitles": {
 * other caller gets the page it would get without it.
 */
 readonly "getLibraryPage": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof GetLibraryPageParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetLibraryPage200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetLibraryPage400", typeof GetLibraryPage400.Type> | PunktfunkError<"GetLibraryPage401", typeof GetLibraryPage401.Type> | PunktfunkError<"GetLibraryPage404", typeof GetLibraryPage404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof GetLibraryPageParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetLibraryPage200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetLibraryPage400", typeof GetLibraryPage400.Type> | PunktfunkError<"GetLibraryPage401", typeof GetLibraryPage401.Type> | PunktfunkError<"GetLibraryPage404", typeof GetLibraryPage404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof GetLibraryPageParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetLibraryPage200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetLibraryPage400", typeof GetLibraryPage400.Type> | LilynkError<"GetLibraryPage401", typeof GetLibraryPage401.Type> | LilynkError<"GetLibraryPage404", typeof GetLibraryPage404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof GetLibraryPageParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetLibraryPage200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetLibraryPage400", typeof GetLibraryPage400.Type> | LilynkError<"GetLibraryPage401", typeof GetLibraryPage401.Type> | LilynkError<"GetLibraryPage404", typeof GetLibraryPage404.Type>>;
   }
   /**
 * The operator's choice beats the entry's own art and every metadata source, and survives
@@ -4899,8 +4899,8 @@ readonly "getLibraryPage": {
 * the same slot. Emits `library.changed`.
 */
 readonly "setLibraryArtPick": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof SetLibraryArtPickParams.Encoded | undefined; readonly payload: typeof SetLibraryArtPickRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetLibraryArtPick200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetLibraryArtPick400", typeof SetLibraryArtPick400.Type> | PunktfunkError<"SetLibraryArtPick401", typeof SetLibraryArtPick401.Type> | PunktfunkError<"SetLibraryArtPick404", typeof SetLibraryArtPick404.Type> | PunktfunkError<"SetLibraryArtPick500", typeof SetLibraryArtPick500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof SetLibraryArtPickParams.Encoded | undefined; readonly payload: typeof SetLibraryArtPickRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetLibraryArtPick200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetLibraryArtPick400", typeof SetLibraryArtPick400.Type> | PunktfunkError<"SetLibraryArtPick401", typeof SetLibraryArtPick401.Type> | PunktfunkError<"SetLibraryArtPick404", typeof SetLibraryArtPick404.Type> | PunktfunkError<"SetLibraryArtPick500", typeof SetLibraryArtPick500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof SetLibraryArtPickParams.Encoded | undefined; readonly payload: typeof SetLibraryArtPickRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetLibraryArtPick200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetLibraryArtPick400", typeof SetLibraryArtPick400.Type> | LilynkError<"SetLibraryArtPick401", typeof SetLibraryArtPick401.Type> | LilynkError<"SetLibraryArtPick404", typeof SetLibraryArtPick404.Type> | LilynkError<"SetLibraryArtPick500", typeof SetLibraryArtPick500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof SetLibraryArtPickParams.Encoded | undefined; readonly payload: typeof SetLibraryArtPickRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetLibraryArtPick200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetLibraryArtPick400", typeof SetLibraryArtPick400.Type> | LilynkError<"SetLibraryArtPick401", typeof SetLibraryArtPick401.Type> | LilynkError<"SetLibraryArtPick404", typeof SetLibraryArtPick404.Type> | LilynkError<"SetLibraryArtPick500", typeof SetLibraryArtPick500.Type>>;
   }
   /**
 * The payload is the desired set, keyed by `external_id`. The host diffs, keeps surviving
@@ -4912,16 +4912,16 @@ readonly "setLibraryArtPick": {
 * `DELETE`, not an empty reconcile — a store can have zero installed titles.
 */
 readonly "reconcileProviderEntries": {
-    <Config extends OperationConfig | undefined = undefined>(provider: string, options: { readonly params?: typeof ReconcileProviderEntriesParams.Encoded | undefined; readonly payload: typeof ReconcileProviderEntriesRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ReconcileProviderEntries200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ReconcileProviderEntries400", typeof ReconcileProviderEntries400.Type> | PunktfunkError<"ReconcileProviderEntries401", typeof ReconcileProviderEntries401.Type> | PunktfunkError<"ReconcileProviderEntries409", typeof ReconcileProviderEntries409.Type> | PunktfunkError<"ReconcileProviderEntries500", typeof ReconcileProviderEntries500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(provider: string, options: { readonly params?: typeof ReconcileProviderEntriesParams.Encoded | undefined; readonly payload: typeof ReconcileProviderEntriesRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof ReconcileProviderEntries200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ReconcileProviderEntries400", typeof ReconcileProviderEntries400.Type> | PunktfunkError<"ReconcileProviderEntries401", typeof ReconcileProviderEntries401.Type> | PunktfunkError<"ReconcileProviderEntries409", typeof ReconcileProviderEntries409.Type> | PunktfunkError<"ReconcileProviderEntries500", typeof ReconcileProviderEntries500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(provider: string, options: { readonly params?: typeof ReconcileProviderEntriesParams.Encoded | undefined; readonly payload: typeof ReconcileProviderEntriesRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ReconcileProviderEntries200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ReconcileProviderEntries400", typeof ReconcileProviderEntries400.Type> | LilynkError<"ReconcileProviderEntries401", typeof ReconcileProviderEntries401.Type> | LilynkError<"ReconcileProviderEntries409", typeof ReconcileProviderEntries409.Type> | LilynkError<"ReconcileProviderEntries500", typeof ReconcileProviderEntries500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(provider: string, options: { readonly params?: typeof ReconcileProviderEntriesParams.Encoded | undefined; readonly payload: typeof ReconcileProviderEntriesRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof ReconcileProviderEntries200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ReconcileProviderEntries400", typeof ReconcileProviderEntries400.Type> | LilynkError<"ReconcileProviderEntries401", typeof ReconcileProviderEntries401.Type> | LilynkError<"ReconcileProviderEntries409", typeof ReconcileProviderEntries409.Type> | LilynkError<"ReconcileProviderEntries500", typeof ReconcileProviderEntries500.Type>>;
   }
   /**
 * Everything owned by `{provider}`, for plugin uninstall. Emits `library.changed`
 * when anything was removed.
 */
 readonly "deleteProviderEntries": {
-    <Config extends OperationConfig | undefined = undefined>(provider: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof DeleteProviderEntries200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DeleteProviderEntries400", typeof DeleteProviderEntries400.Type> | PunktfunkError<"DeleteProviderEntries401", typeof DeleteProviderEntries401.Type> | PunktfunkError<"DeleteProviderEntries500", typeof DeleteProviderEntries500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(provider: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof DeleteProviderEntries200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DeleteProviderEntries400", typeof DeleteProviderEntries400.Type> | PunktfunkError<"DeleteProviderEntries401", typeof DeleteProviderEntries401.Type> | PunktfunkError<"DeleteProviderEntries500", typeof DeleteProviderEntries500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(provider: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof DeleteProviderEntries200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DeleteProviderEntries400", typeof DeleteProviderEntries400.Type> | LilynkError<"DeleteProviderEntries401", typeof DeleteProviderEntries401.Type> | LilynkError<"DeleteProviderEntries500", typeof DeleteProviderEntries500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(provider: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof DeleteProviderEntries200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DeleteProviderEntries400", typeof DeleteProviderEntries400.Type> | LilynkError<"DeleteProviderEntries401", typeof DeleteProviderEntries401.Type> | LilynkError<"DeleteProviderEntries500", typeof DeleteProviderEntries500.Type>>;
   }
   /**
 * The body restates every title the plugin is downloading, has paused, or just finished,
@@ -4930,8 +4930,8 @@ readonly "deleteProviderEntries": {
 * stalled, and a launch waiting on it gives up.
 */
 readonly "reportProviderDownloads": {
-    <Config extends OperationConfig | undefined = undefined>(provider: string, options: { readonly payload: typeof ReportProviderDownloadsRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ReportProviderDownloads200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ReportProviderDownloads400", typeof ReportProviderDownloads400.Type> | PunktfunkError<"ReportProviderDownloads401", typeof ReportProviderDownloads401.Type> | PunktfunkError<"ReportProviderDownloads403", typeof ReportProviderDownloads403.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(provider: string, options: { readonly payload: typeof ReportProviderDownloadsRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof ReportProviderDownloads200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ReportProviderDownloads400", typeof ReportProviderDownloads400.Type> | PunktfunkError<"ReportProviderDownloads401", typeof ReportProviderDownloads401.Type> | PunktfunkError<"ReportProviderDownloads403", typeof ReportProviderDownloads403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(provider: string, options: { readonly payload: typeof ReportProviderDownloadsRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ReportProviderDownloads200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ReportProviderDownloads400", typeof ReportProviderDownloads400.Type> | LilynkError<"ReportProviderDownloads401", typeof ReportProviderDownloads401.Type> | LilynkError<"ReportProviderDownloads403", typeof ReportProviderDownloads403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(provider: string, options: { readonly payload: typeof ReportProviderDownloadsRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof ReportProviderDownloads200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ReportProviderDownloads400", typeof ReportProviderDownloads400.Type> | LilynkError<"ReportProviderDownloads401", typeof ReportProviderDownloads401.Type> | LilynkError<"ReportProviderDownloads403", typeof ReportProviderDownloads403.Type>>;
   }
   /**
 * Live counterpart to reconcile `detect` hints: the body is the complete running set
@@ -4943,8 +4943,8 @@ readonly "reportProviderDownloads": {
 * report may race its own reconcile.
 */
 readonly "reportProviderRunning": {
-    <Config extends OperationConfig | undefined = undefined>(provider: string, options: { readonly payload: typeof ReportProviderRunningRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ReportProviderRunning200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ReportProviderRunning400", typeof ReportProviderRunning400.Type> | PunktfunkError<"ReportProviderRunning401", typeof ReportProviderRunning401.Type> | PunktfunkError<"ReportProviderRunning403", typeof ReportProviderRunning403.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(provider: string, options: { readonly payload: typeof ReportProviderRunningRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof ReportProviderRunning200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ReportProviderRunning400", typeof ReportProviderRunning400.Type> | PunktfunkError<"ReportProviderRunning401", typeof ReportProviderRunning401.Type> | PunktfunkError<"ReportProviderRunning403", typeof ReportProviderRunning403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(provider: string, options: { readonly payload: typeof ReportProviderRunningRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ReportProviderRunning200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ReportProviderRunning400", typeof ReportProviderRunning400.Type> | LilynkError<"ReportProviderRunning401", typeof ReportProviderRunning401.Type> | LilynkError<"ReportProviderRunning403", typeof ReportProviderRunning403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(provider: string, options: { readonly payload: typeof ReportProviderRunningRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof ReportProviderRunning200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ReportProviderRunning400", typeof ReportProviderRunning400.Type> | LilynkError<"ReportProviderRunning401", typeof ReportProviderRunning401.Type> | LilynkError<"ReportProviderRunning403", typeof ReportProviderRunning403.Type>>;
   }
   /**
 * One row per installed library plugin, with its enable state. Sources default to
@@ -4954,8 +4954,8 @@ readonly "reportProviderRunning": {
 * `off_by` says which.
 */
 readonly "listLibraryScanners": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof ListLibraryScannersParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListLibraryScanners200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListLibraryScanners401", typeof ListLibraryScanners401.Type> | PunktfunkError<"ListLibraryScanners404", typeof ListLibraryScanners404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof ListLibraryScannersParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListLibraryScanners200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListLibraryScanners401", typeof ListLibraryScanners401.Type> | PunktfunkError<"ListLibraryScanners404", typeof ListLibraryScanners404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof ListLibraryScannersParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListLibraryScanners200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListLibraryScanners401", typeof ListLibraryScanners401.Type> | LilynkError<"ListLibraryScanners404", typeof ListLibraryScanners404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof ListLibraryScannersParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListLibraryScanners200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListLibraryScanners401", typeof ListLibraryScanners401.Type> | LilynkError<"ListLibraryScanners404", typeof ListLibraryScanners404.Type>>;
   }
   /**
 * Takes effect on the next library read. Disabling hides titles; the plugin may keep
@@ -4965,15 +4965,15 @@ readonly "listLibraryScanners": {
 * changes.
 */
 readonly "setLibraryScanner": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof SetLibraryScannerParams.Encoded | undefined; readonly payload: typeof SetLibraryScannerRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetLibraryScanner200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetLibraryScanner401", typeof SetLibraryScanner401.Type> | PunktfunkError<"SetLibraryScanner403", typeof SetLibraryScanner403.Type> | PunktfunkError<"SetLibraryScanner404", typeof SetLibraryScanner404.Type> | PunktfunkError<"SetLibraryScanner500", typeof SetLibraryScanner500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof SetLibraryScannerParams.Encoded | undefined; readonly payload: typeof SetLibraryScannerRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetLibraryScanner200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetLibraryScanner401", typeof SetLibraryScanner401.Type> | PunktfunkError<"SetLibraryScanner403", typeof SetLibraryScanner403.Type> | PunktfunkError<"SetLibraryScanner404", typeof SetLibraryScanner404.Type> | PunktfunkError<"SetLibraryScanner500", typeof SetLibraryScanner500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof SetLibraryScannerParams.Encoded | undefined; readonly payload: typeof SetLibraryScannerRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetLibraryScanner200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetLibraryScanner401", typeof SetLibraryScanner401.Type> | LilynkError<"SetLibraryScanner403", typeof SetLibraryScanner403.Type> | LilynkError<"SetLibraryScanner404", typeof SetLibraryScanner404.Type> | LilynkError<"SetLibraryScanner500", typeof SetLibraryScanner500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof SetLibraryScannerParams.Encoded | undefined; readonly payload: typeof SetLibraryScannerRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetLibraryScanner200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetLibraryScanner401", typeof SetLibraryScanner401.Type> | LilynkError<"SetLibraryScanner403", typeof SetLibraryScanner403.Type> | LilynkError<"SetLibraryScanner404", typeof SetLibraryScanner404.Type> | LilynkError<"SetLibraryScanner500", typeof SetLibraryScanner500.Type>>;
   }
   /**
 * Bearer: `<config>/tray-token`, which every local account but a seat's may read; loopback only.
 */
 readonly "getLocalSummary": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetLocalSummary200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetLocalSummary401", typeof GetLocalSummary401.Type> | PunktfunkError<"GetLocalSummary404", typeof GetLocalSummary404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetLocalSummary200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetLocalSummary401", typeof GetLocalSummary401.Type> | PunktfunkError<"GetLocalSummary404", typeof GetLocalSummary404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetLocalSummary200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetLocalSummary401", typeof GetLocalSummary401.Type> | LilynkError<"GetLocalSummary404", typeof GetLocalSummary404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetLocalSummary200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetLocalSummary401", typeof GetLocalSummary401.Type> | LilynkError<"GetLocalSummary404", typeof GetLocalSummary404.Type>>;
   }
   /**
 * In-memory, DEBUG and above, independent of `RUST_LOG`. Poll with `after` = last
@@ -4981,15 +4981,15 @@ readonly "getLocalSummary": {
 * evicted.
 */
 readonly "logsGet": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof LogsGetParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof LogsGet200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"LogsGet401", typeof LogsGet401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof LogsGetParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof LogsGet200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"LogsGet401", typeof LogsGet401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof LogsGetParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof LogsGet200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"LogsGet401", typeof LogsGet401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof LogsGetParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof LogsGet200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"LogsGet401", typeof LogsGet401.Type>>;
   }
   /**
 * List native paired clients
 */
 readonly "listNativeClients": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListNativeClients200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListNativeClients401", typeof ListNativeClients401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListNativeClients200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListNativeClients401", typeof ListNativeClients401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListNativeClients200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListNativeClients401", typeof ListNativeClients401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListNativeClients200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListNativeClients401", typeof ListNativeClients401.Type>>;
   }
   /**
 * One persisted write, not a loop (a mid-loop failure would half-empty the
@@ -4998,15 +4998,15 @@ readonly "listNativeClients": {
 * still succeeds, and `unpaired` tells the operator what it meant.
 */
 readonly "unpairAllNativeClients": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof UnpairAllNativeClients200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UnpairAllNativeClients401", typeof UnpairAllNativeClients401.Type> | PunktfunkError<"UnpairAllNativeClients500", typeof UnpairAllNativeClients500.Type> | PunktfunkError<"UnpairAllNativeClients503", typeof UnpairAllNativeClients503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof UnpairAllNativeClients200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UnpairAllNativeClients401", typeof UnpairAllNativeClients401.Type> | PunktfunkError<"UnpairAllNativeClients500", typeof UnpairAllNativeClients500.Type> | PunktfunkError<"UnpairAllNativeClients503", typeof UnpairAllNativeClients503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof UnpairAllNativeClients200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UnpairAllNativeClients401", typeof UnpairAllNativeClients401.Type> | LilynkError<"UnpairAllNativeClients500", typeof UnpairAllNativeClients500.Type> | LilynkError<"UnpairAllNativeClients503", typeof UnpairAllNativeClients503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof UnpairAllNativeClients200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UnpairAllNativeClients401", typeof UnpairAllNativeClients401.Type> | LilynkError<"UnpairAllNativeClients500", typeof UnpairAllNativeClients500.Type> | LilynkError<"UnpairAllNativeClients503", typeof UnpairAllNativeClients503.Type>>;
   }
   /**
 * Unpair a native client
 */
 readonly "unpairNativeClient": {
-    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UnpairNativeClient401", typeof UnpairNativeClient401.Type> | PunktfunkError<"UnpairNativeClient404", typeof UnpairNativeClient404.Type> | PunktfunkError<"UnpairNativeClient503", typeof UnpairNativeClient503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UnpairNativeClient401", typeof UnpairNativeClient401.Type> | PunktfunkError<"UnpairNativeClient404", typeof UnpairNativeClient404.Type> | PunktfunkError<"UnpairNativeClient503", typeof UnpairNativeClient503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UnpairNativeClient401", typeof UnpairNativeClient401.Type> | LilynkError<"UnpairNativeClient404", typeof UnpairNativeClient404.Type> | LilynkError<"UnpairNativeClient503", typeof UnpairNativeClient503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UnpairNativeClient401", typeof UnpairNativeClient401.Type> | LilynkError<"UnpairNativeClient404", typeof UnpairNativeClient404.Type> | LilynkError<"UnpairNativeClient503", typeof UnpairNativeClient503.Type>>;
   }
   /**
 * Partial edit of grants/expiry. Omitted fields keep their current value;
@@ -5014,39 +5014,39 @@ readonly "unpairNativeClient": {
 * — this is not a pair path.
 */
 readonly "updateNativeClientAccess": {
-    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly payload: typeof UpdateNativeClientAccessRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof UpdateNativeClientAccess200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UpdateNativeClientAccess400", typeof UpdateNativeClientAccess400.Type> | PunktfunkError<"UpdateNativeClientAccess401", typeof UpdateNativeClientAccess401.Type> | PunktfunkError<"UpdateNativeClientAccess404", typeof UpdateNativeClientAccess404.Type> | PunktfunkError<"UpdateNativeClientAccess500", typeof UpdateNativeClientAccess500.Type> | PunktfunkError<"UpdateNativeClientAccess503", typeof UpdateNativeClientAccess503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly payload: typeof UpdateNativeClientAccessRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof UpdateNativeClientAccess200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UpdateNativeClientAccess400", typeof UpdateNativeClientAccess400.Type> | PunktfunkError<"UpdateNativeClientAccess401", typeof UpdateNativeClientAccess401.Type> | PunktfunkError<"UpdateNativeClientAccess404", typeof UpdateNativeClientAccess404.Type> | PunktfunkError<"UpdateNativeClientAccess500", typeof UpdateNativeClientAccess500.Type> | PunktfunkError<"UpdateNativeClientAccess503", typeof UpdateNativeClientAccess503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly payload: typeof UpdateNativeClientAccessRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof UpdateNativeClientAccess200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UpdateNativeClientAccess400", typeof UpdateNativeClientAccess400.Type> | LilynkError<"UpdateNativeClientAccess401", typeof UpdateNativeClientAccess401.Type> | LilynkError<"UpdateNativeClientAccess404", typeof UpdateNativeClientAccess404.Type> | LilynkError<"UpdateNativeClientAccess500", typeof UpdateNativeClientAccess500.Type> | LilynkError<"UpdateNativeClientAccess503", typeof UpdateNativeClientAccess503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(fingerprint: string, options: { readonly payload: typeof UpdateNativeClientAccessRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof UpdateNativeClientAccess200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UpdateNativeClientAccess400", typeof UpdateNativeClientAccess400.Type> | LilynkError<"UpdateNativeClientAccess401", typeof UpdateNativeClientAccess401.Type> | LilynkError<"UpdateNativeClientAccess404", typeof UpdateNativeClientAccess404.Type> | LilynkError<"UpdateNativeClientAccess500", typeof UpdateNativeClientAccess500.Type> | LilynkError<"UpdateNativeClientAccess503", typeof UpdateNativeClientAccess503.Type>>;
   }
   /**
 * Poll while armed to show the PIN and countdown. `enabled: false` means
 * this process runs no native plane.
 */
 readonly "getNativePairing": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetNativePairing200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetNativePairing401", typeof GetNativePairing401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetNativePairing200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetNativePairing401", typeof GetNativePairing401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetNativePairing200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetNativePairing401", typeof GetNativePairing401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetNativePairing200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetNativePairing401", typeof GetNativePairing401.Type>>;
   }
   /**
 * Disarm native pairing
 */
 readonly "disarmNativePairing": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DisarmNativePairing401", typeof DisarmNativePairing401.Type> | PunktfunkError<"DisarmNativePairing503", typeof DisarmNativePairing503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DisarmNativePairing401", typeof DisarmNativePairing401.Type> | PunktfunkError<"DisarmNativePairing503", typeof DisarmNativePairing503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DisarmNativePairing401", typeof DisarmNativePairing401.Type> | LilynkError<"DisarmNativePairing503", typeof DisarmNativePairing503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DisarmNativePairing401", typeof DisarmNativePairing401.Type> | LilynkError<"DisarmNativePairing503", typeof DisarmNativePairing503.Type>>;
   }
   /**
 * Opens a window and mints a PIN. `grants` / `expires_in_secs` apply to
 * whichever device completes the ceremony.
 */
 readonly "armNativePairing": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof ArmNativePairingRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ArmNativePairing200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ArmNativePairing400", typeof ArmNativePairing400.Type> | PunktfunkError<"ArmNativePairing401", typeof ArmNativePairing401.Type> | PunktfunkError<"ArmNativePairing409", typeof ArmNativePairing409.Type> | PunktfunkError<"ArmNativePairing503", typeof ArmNativePairing503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof ArmNativePairingRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof ArmNativePairing200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ArmNativePairing400", typeof ArmNativePairing400.Type> | PunktfunkError<"ArmNativePairing401", typeof ArmNativePairing401.Type> | PunktfunkError<"ArmNativePairing409", typeof ArmNativePairing409.Type> | PunktfunkError<"ArmNativePairing503", typeof ArmNativePairing503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof ArmNativePairingRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ArmNativePairing200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ArmNativePairing400", typeof ArmNativePairing400.Type> | LilynkError<"ArmNativePairing401", typeof ArmNativePairing401.Type> | LilynkError<"ArmNativePairing409", typeof ArmNativePairing409.Type> | LilynkError<"ArmNativePairing503", typeof ArmNativePairing503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof ArmNativePairingRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof ArmNativePairing200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ArmNativePairing400", typeof ArmNativePairing400.Type> | LilynkError<"ArmNativePairing401", typeof ArmNativePairing401.Type> | LilynkError<"ArmNativePairing409", typeof ArmNativePairing409.Type> | LilynkError<"ArmNativePairing503", typeof ArmNativePairing503.Type>>;
   }
   /**
 * Unpaired knocks while pairing is required. Approve to pair without a PIN.
 * Entries expire after ~10 minutes.
 */
 readonly "listPendingDevices": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListPendingDevices200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListPendingDevices401", typeof ListPendingDevices401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListPendingDevices200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListPendingDevices401", typeof ListPendingDevices401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListPendingDevices200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListPendingDevices401", typeof ListPendingDevices401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListPendingDevices200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListPendingDevices401", typeof ListPendingDevices401.Type>>;
   }
   /**
 * Pairs the fingerprint immediately (no PIN). `{}` keeps the knock name and
@@ -5054,51 +5054,51 @@ readonly "listPendingDevices": {
 * record, not necessarily this request's inputs.
 */
 readonly "approvePendingDevice": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof ApprovePendingDeviceRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ApprovePendingDevice200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ApprovePendingDevice400", typeof ApprovePendingDevice400.Type> | PunktfunkError<"ApprovePendingDevice401", typeof ApprovePendingDevice401.Type> | PunktfunkError<"ApprovePendingDevice404", typeof ApprovePendingDevice404.Type> | PunktfunkError<"ApprovePendingDevice409", typeof ApprovePendingDevice409.Type> | PunktfunkError<"ApprovePendingDevice500", typeof ApprovePendingDevice500.Type> | PunktfunkError<"ApprovePendingDevice503", typeof ApprovePendingDevice503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof ApprovePendingDeviceRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof ApprovePendingDevice200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ApprovePendingDevice400", typeof ApprovePendingDevice400.Type> | PunktfunkError<"ApprovePendingDevice401", typeof ApprovePendingDevice401.Type> | PunktfunkError<"ApprovePendingDevice404", typeof ApprovePendingDevice404.Type> | PunktfunkError<"ApprovePendingDevice409", typeof ApprovePendingDevice409.Type> | PunktfunkError<"ApprovePendingDevice500", typeof ApprovePendingDevice500.Type> | PunktfunkError<"ApprovePendingDevice503", typeof ApprovePendingDevice503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof ApprovePendingDeviceRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ApprovePendingDevice200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ApprovePendingDevice400", typeof ApprovePendingDevice400.Type> | LilynkError<"ApprovePendingDevice401", typeof ApprovePendingDevice401.Type> | LilynkError<"ApprovePendingDevice404", typeof ApprovePendingDevice404.Type> | LilynkError<"ApprovePendingDevice409", typeof ApprovePendingDevice409.Type> | LilynkError<"ApprovePendingDevice500", typeof ApprovePendingDevice500.Type> | LilynkError<"ApprovePendingDevice503", typeof ApprovePendingDevice503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof ApprovePendingDeviceRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof ApprovePendingDevice200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ApprovePendingDevice400", typeof ApprovePendingDevice400.Type> | LilynkError<"ApprovePendingDevice401", typeof ApprovePendingDevice401.Type> | LilynkError<"ApprovePendingDevice404", typeof ApprovePendingDevice404.Type> | LilynkError<"ApprovePendingDevice409", typeof ApprovePendingDevice409.Type> | LilynkError<"ApprovePendingDevice500", typeof ApprovePendingDevice500.Type> | LilynkError<"ApprovePendingDevice503", typeof ApprovePendingDevice503.Type>>;
   }
   /**
 * Drops the request. Not a blocklist — the next attempt knocks again.
 */
 readonly "denyPendingDevice": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DenyPendingDevice401", typeof DenyPendingDevice401.Type> | PunktfunkError<"DenyPendingDevice404", typeof DenyPendingDevice404.Type> | PunktfunkError<"DenyPendingDevice503", typeof DenyPendingDevice503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DenyPendingDevice401", typeof DenyPendingDevice401.Type> | PunktfunkError<"DenyPendingDevice404", typeof DenyPendingDevice404.Type> | PunktfunkError<"DenyPendingDevice503", typeof DenyPendingDevice503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DenyPendingDevice401", typeof DenyPendingDevice401.Type> | LilynkError<"DenyPendingDevice404", typeof DenyPendingDevice404.Type> | LilynkError<"DenyPendingDevice503", typeof DenyPendingDevice503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DenyPendingDevice401", typeof DenyPendingDevice401.Type> | LilynkError<"DenyPendingDevice404", typeof DenyPendingDevice404.Type> | LilynkError<"DenyPendingDevice503", typeof DenyPendingDevice503.Type>>;
   }
   /**
 * Poll this to know when to prompt for the PIN Moonlight displays.
 */
 readonly "getPairingStatus": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetPairingStatus200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetPairingStatus401", typeof GetPairingStatus401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetPairingStatus200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetPairingStatus401", typeof GetPairingStatus401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetPairingStatus200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetPairingStatus401", typeof GetPairingStatus401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetPairingStatus200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetPairingStatus401", typeof GetPairingStatus401.Type>>;
   }
   /**
 * Completes the out-of-band half of the handshake.
 */
 readonly "submitPairingPin": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SubmitPairingPinRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SubmitPairingPin400", typeof SubmitPairingPin400.Type> | PunktfunkError<"SubmitPairingPin401", typeof SubmitPairingPin401.Type> | PunktfunkError<"SubmitPairingPin409", typeof SubmitPairingPin409.Type> | PunktfunkError<"SubmitPairingPin415", typeof SubmitPairingPin415.Type> | PunktfunkError<"SubmitPairingPin422", typeof SubmitPairingPin422.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SubmitPairingPinRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SubmitPairingPin400", typeof SubmitPairingPin400.Type> | PunktfunkError<"SubmitPairingPin401", typeof SubmitPairingPin401.Type> | PunktfunkError<"SubmitPairingPin409", typeof SubmitPairingPin409.Type> | PunktfunkError<"SubmitPairingPin415", typeof SubmitPairingPin415.Type> | PunktfunkError<"SubmitPairingPin422", typeof SubmitPairingPin422.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SubmitPairingPinRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SubmitPairingPin400", typeof SubmitPairingPin400.Type> | LilynkError<"SubmitPairingPin401", typeof SubmitPairingPin401.Type> | LilynkError<"SubmitPairingPin409", typeof SubmitPairingPin409.Type> | LilynkError<"SubmitPairingPin415", typeof SubmitPairingPin415.Type> | LilynkError<"SubmitPairingPin422", typeof SubmitPairingPin422.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SubmitPairingPinRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SubmitPairingPin400", typeof SubmitPairingPin400.Type> | LilynkError<"SubmitPairingPin401", typeof SubmitPairingPin401.Type> | LilynkError<"SubmitPairingPin409", typeof SubmitPairingPin409.Type> | LilynkError<"SubmitPairingPin415", typeof SubmitPairingPin415.Type> | LilynkError<"SubmitPairingPin422", typeof SubmitPairingPin422.Type>>;
   }
   /**
 * Admin lane only: grants, pending requests, and denials across all plugins.
 */
 readonly "getPluginAccess": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetPluginAccess200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetPluginAccess401", typeof GetPluginAccess401.Type> | PunktfunkError<"GetPluginAccess403", typeof GetPluginAccess403.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetPluginAccess200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetPluginAccess401", typeof GetPluginAccess401.Type> | PunktfunkError<"GetPluginAccess403", typeof GetPluginAccess403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetPluginAccess200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetPluginAccess401", typeof GetPluginAccess401.Type> | LilynkError<"GetPluginAccess403", typeof GetPluginAccess403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetPluginAccess200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetPluginAccess401", typeof GetPluginAccess401.Type> | LilynkError<"GetPluginAccess403", typeof GetPluginAccess403.Type>>;
   }
   /**
 * Grants, pending requests, and denials for the calling plugin only.
 */
 readonly "getPluginAccessRequests": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetPluginAccessRequests200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetPluginAccessRequests401", typeof GetPluginAccessRequests401.Type> | PunktfunkError<"GetPluginAccessRequests403", typeof GetPluginAccessRequests403.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetPluginAccessRequests200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetPluginAccessRequests401", typeof GetPluginAccessRequests401.Type> | PunktfunkError<"GetPluginAccessRequests403", typeof GetPluginAccessRequests403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetPluginAccessRequests200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetPluginAccessRequests401", typeof GetPluginAccessRequests401.Type> | LilynkError<"GetPluginAccessRequests403", typeof GetPluginAccessRequests403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetPluginAccessRequests200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetPluginAccessRequests401", typeof GetPluginAccessRequests401.Type> | LilynkError<"GetPluginAccessRequests403", typeof GetPluginAccessRequests403.Type>>;
   }
   /**
 * Each path is validated against the real filesystem before it becomes a row the operator
 * sees: `granted` (already reachable), `pending`, `denied` (a sticky no), or `refused:<rule>`.
 */
 readonly "requestPluginAccess": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof RequestPluginAccessRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof RequestPluginAccess200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"RequestPluginAccess401", typeof RequestPluginAccess401.Type> | PunktfunkError<"RequestPluginAccess403", typeof RequestPluginAccess403.Type> | PunktfunkError<"RequestPluginAccess500", typeof RequestPluginAccess500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof RequestPluginAccessRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof RequestPluginAccess200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"RequestPluginAccess401", typeof RequestPluginAccess401.Type> | PunktfunkError<"RequestPluginAccess403", typeof RequestPluginAccess403.Type> | PunktfunkError<"RequestPluginAccess500", typeof RequestPluginAccess500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof RequestPluginAccessRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof RequestPluginAccess200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"RequestPluginAccess401", typeof RequestPluginAccess401.Type> | LilynkError<"RequestPluginAccess403", typeof RequestPluginAccess403.Type> | LilynkError<"RequestPluginAccess500", typeof RequestPluginAccess500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof RequestPluginAccessRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof RequestPluginAccess200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"RequestPluginAccess401", typeof RequestPluginAccess401.Type> | LilynkError<"RequestPluginAccess403", typeof RequestPluginAccess403.Type> | LilynkError<"RequestPluginAccess500", typeof RequestPluginAccess500.Type>>;
   }
   /**
 * `allow` turns a pending request into a grant (the platform ACL lands first, so a failed
@@ -5110,70 +5110,70 @@ readonly "requestPluginAccess": {
 * decides, and an emulator or core install is refused, as it is to a Windows seat's person.
 */
 readonly "decidePluginAccess": {
-    <Config extends OperationConfig | undefined = undefined>(plugin: string, options: { readonly payload: typeof DecidePluginAccessRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof DecidePluginAccess200.Type | typeof DecidePluginAccess202.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DecidePluginAccess400", typeof DecidePluginAccess400.Type> | PunktfunkError<"DecidePluginAccess401", typeof DecidePluginAccess401.Type> | PunktfunkError<"DecidePluginAccess403", typeof DecidePluginAccess403.Type> | PunktfunkError<"DecidePluginAccess404", typeof DecidePluginAccess404.Type> | PunktfunkError<"DecidePluginAccess500", typeof DecidePluginAccess500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(plugin: string, options: { readonly payload: typeof DecidePluginAccessRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof DecidePluginAccess200.Type | typeof DecidePluginAccess202.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DecidePluginAccess400", typeof DecidePluginAccess400.Type> | PunktfunkError<"DecidePluginAccess401", typeof DecidePluginAccess401.Type> | PunktfunkError<"DecidePluginAccess403", typeof DecidePluginAccess403.Type> | PunktfunkError<"DecidePluginAccess404", typeof DecidePluginAccess404.Type> | PunktfunkError<"DecidePluginAccess500", typeof DecidePluginAccess500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(plugin: string, options: { readonly payload: typeof DecidePluginAccessRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof DecidePluginAccess200.Type | typeof DecidePluginAccess202.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DecidePluginAccess400", typeof DecidePluginAccess400.Type> | LilynkError<"DecidePluginAccess401", typeof DecidePluginAccess401.Type> | LilynkError<"DecidePluginAccess403", typeof DecidePluginAccess403.Type> | LilynkError<"DecidePluginAccess404", typeof DecidePluginAccess404.Type> | LilynkError<"DecidePluginAccess500", typeof DecidePluginAccess500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(plugin: string, options: { readonly payload: typeof DecidePluginAccessRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof DecidePluginAccess200.Type | typeof DecidePluginAccess202.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DecidePluginAccess400", typeof DecidePluginAccess400.Type> | LilynkError<"DecidePluginAccess401", typeof DecidePluginAccess401.Type> | LilynkError<"DecidePluginAccess403", typeof DecidePluginAccess403.Type> | LilynkError<"DecidePluginAccess404", typeof DecidePluginAccess404.Type> | LilynkError<"DecidePluginAccess500", typeof DecidePluginAccess500.Type>>;
   }
   /**
 * `keep` is every path the form still holds. Each grant the form holds outside it loses the
 * form, and a grant only forms made goes with its last one. The operator's own grants stay.
 */
 readonly "releasePluginAccess": {
-    <Config extends OperationConfig | undefined = undefined>(plugin: string, options: { readonly payload: typeof ReleasePluginAccessRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ReleasePluginAccess200.Type | typeof ReleasePluginAccess202.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ReleasePluginAccess400", typeof ReleasePluginAccess400.Type> | PunktfunkError<"ReleasePluginAccess401", typeof ReleasePluginAccess401.Type> | PunktfunkError<"ReleasePluginAccess403", typeof ReleasePluginAccess403.Type> | PunktfunkError<"ReleasePluginAccess500", typeof ReleasePluginAccess500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(plugin: string, options: { readonly payload: typeof ReleasePluginAccessRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof ReleasePluginAccess200.Type | typeof ReleasePluginAccess202.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ReleasePluginAccess400", typeof ReleasePluginAccess400.Type> | PunktfunkError<"ReleasePluginAccess401", typeof ReleasePluginAccess401.Type> | PunktfunkError<"ReleasePluginAccess403", typeof ReleasePluginAccess403.Type> | PunktfunkError<"ReleasePluginAccess500", typeof ReleasePluginAccess500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(plugin: string, options: { readonly payload: typeof ReleasePluginAccessRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ReleasePluginAccess200.Type | typeof ReleasePluginAccess202.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ReleasePluginAccess400", typeof ReleasePluginAccess400.Type> | LilynkError<"ReleasePluginAccess401", typeof ReleasePluginAccess401.Type> | LilynkError<"ReleasePluginAccess403", typeof ReleasePluginAccess403.Type> | LilynkError<"ReleasePluginAccess500", typeof ReleasePluginAccess500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(plugin: string, options: { readonly payload: typeof ReleasePluginAccessRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof ReleasePluginAccess200.Type | typeof ReleasePluginAccess202.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ReleasePluginAccess400", typeof ReleasePluginAccess400.Type> | LilynkError<"ReleasePluginAccess401", typeof ReleasePluginAccess401.Type> | LilynkError<"ReleasePluginAccess403", typeof ReleasePluginAccess403.Type> | LilynkError<"ReleasePluginAccess500", typeof ReleasePluginAccess500.Type>>;
   }
   /**
 * Live, secret-free directory. The console fetches the secret separately, server-side.
 */
 readonly "listPlugins": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListPlugins200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListPlugins401", typeof ListPlugins401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListPlugins200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListPlugins401", typeof ListPlugins401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListPlugins200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListPlugins401", typeof ListPlugins401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListPlugins200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListPlugins401", typeof ListPlugins401.Type>>;
   }
   /**
 * Plugins are not host children — their output never hits the host `tracing` subscriber. Lines
 * share the host ring as `plugin:<source>` so `GET /logs` needs no second cursor.
 */
 readonly "ingestPluginLogs": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof IngestPluginLogsRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"IngestPluginLogs400", typeof IngestPluginLogs400.Type> | PunktfunkError<"IngestPluginLogs401", typeof IngestPluginLogs401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof IngestPluginLogsRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"IngestPluginLogs400", typeof IngestPluginLogs400.Type> | PunktfunkError<"IngestPluginLogs401", typeof IngestPluginLogs401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof IngestPluginLogsRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"IngestPluginLogs400", typeof IngestPluginLogs400.Type> | LilynkError<"IngestPluginLogs401", typeof IngestPluginLogs401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof IngestPluginLogsRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"IngestPluginLogs400", typeof IngestPluginLogs400.Type> | LilynkError<"IngestPluginLogs401", typeof IngestPluginLogs401.Type>>;
   }
   /**
 * Idempotent lease renew (~30 s). Emits `plugins.changed` only when an operator-visible field
 * changed; a pure renewal is silent.
 */
 readonly "registerPlugin": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof RegisterPluginRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"RegisterPlugin400", typeof RegisterPlugin400.Type> | PunktfunkError<"RegisterPlugin401", typeof RegisterPlugin401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof RegisterPluginRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"RegisterPlugin400", typeof RegisterPlugin400.Type> | PunktfunkError<"RegisterPlugin401", typeof RegisterPlugin401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof RegisterPluginRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"RegisterPlugin400", typeof RegisterPlugin400.Type> | LilynkError<"RegisterPlugin401", typeof RegisterPlugin401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof RegisterPluginRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"RegisterPlugin400", typeof RegisterPlugin400.Type> | LilynkError<"RegisterPlugin401", typeof RegisterPlugin401.Type>>;
   }
   /**
 * Immediate remove (SDK finalizer on SIGTERM). Emits `plugins.changed` only for a live entry;
 * unknown/expired is a silent 204.
 */
 readonly "deregisterPlugin": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DeregisterPlugin401", typeof DeregisterPlugin401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DeregisterPlugin401", typeof DeregisterPlugin401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DeregisterPlugin401", typeof DeregisterPlugin401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DeregisterPlugin401", typeof DeregisterPlugin401.Type>>;
   }
   /**
 * Server-side `{port, secret}` for the console proxy. The console BFF denylists this from the
 * browser.
 */
 readonly "getPluginUiCredential": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetPluginUiCredential200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetPluginUiCredential401", typeof GetPluginUiCredential401.Type> | PunktfunkError<"GetPluginUiCredential404", typeof GetPluginUiCredential404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetPluginUiCredential200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetPluginUiCredential401", typeof GetPluginUiCredential401.Type> | PunktfunkError<"GetPluginUiCredential404", typeof GetPluginUiCredential404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetPluginUiCredential200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetPluginUiCredential401", typeof GetPluginUiCredential401.Type> | LilynkError<"GetPluginUiCredential404", typeof GetPluginUiCredential404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetPluginUiCredential200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetPluginUiCredential401", typeof GetPluginUiCredential401.Type> | LilynkError<"GetPluginUiCredential404", typeof GetPluginUiCredential404.Type>>;
   }
   /**
 * `Upgrade: lilynk-ui` from the plugin, on its own pipe. The connection is kept for the
 * console's next request to the plugin's page, which the host sends down it as plain HTTP.
 */
 readonly "attachPluginUi": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"AttachPluginUi400", typeof AttachPluginUi400.Type> | PunktfunkError<"AttachPluginUi401", typeof AttachPluginUi401.Type> | PunktfunkError<"AttachPluginUi403", typeof AttachPluginUi403.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"AttachPluginUi400", typeof AttachPluginUi400.Type> | PunktfunkError<"AttachPluginUi401", typeof AttachPluginUi401.Type> | PunktfunkError<"AttachPluginUi403", typeof AttachPluginUi403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"AttachPluginUi400", typeof AttachPluginUi400.Type> | LilynkError<"AttachPluginUi401", typeof AttachPluginUi401.Type> | LilynkError<"AttachPluginUi403", typeof AttachPluginUi403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"AttachPluginUi400", typeof AttachPluginUi400.Type> | LilynkError<"AttachPluginUi401", typeof AttachPluginUi401.Type> | LilynkError<"AttachPluginUi403", typeof AttachPluginUi403.Type>>;
   }
   /**
 * On the plugin lane each row is `id`, `display_name` and `avatar` alone.
 */
 readonly "listProfiles": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListProfiles200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListProfiles401", typeof ListProfiles401.Type> | PunktfunkError<"ListProfiles404", typeof ListProfiles404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListProfiles200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListProfiles401", typeof ListProfiles401.Type> | PunktfunkError<"ListProfiles404", typeof ListProfiles404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListProfiles200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListProfiles401", typeof ListProfiles401.Type> | LilynkError<"ListProfiles404", typeof ListProfiles404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListProfiles200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListProfiles401", typeof ListProfiles401.Type> | LilynkError<"ListProfiles404", typeof ListProfiles404.Type>>;
   }
   /**
 * A seat profile (the default) gets a desktop of its own, whose account is made here, or runs
@@ -5183,15 +5183,15 @@ readonly "listProfiles": {
 * box's own session under its own name. A seat needs seats on (Windows) or the door (Linux).
 */
 readonly "createProfile": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof CreateProfileRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof CreateProfile201.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"CreateProfile400", typeof CreateProfile400.Type> | PunktfunkError<"CreateProfile401", typeof CreateProfile401.Type> | PunktfunkError<"CreateProfile409", typeof CreateProfile409.Type> | PunktfunkError<"CreateProfile422", typeof CreateProfile422.Type> | PunktfunkError<"CreateProfile429", typeof CreateProfile429.Type> | PunktfunkError<"CreateProfile503", typeof CreateProfile503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof CreateProfileRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof CreateProfile201.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"CreateProfile400", typeof CreateProfile400.Type> | PunktfunkError<"CreateProfile401", typeof CreateProfile401.Type> | PunktfunkError<"CreateProfile409", typeof CreateProfile409.Type> | PunktfunkError<"CreateProfile422", typeof CreateProfile422.Type> | PunktfunkError<"CreateProfile429", typeof CreateProfile429.Type> | PunktfunkError<"CreateProfile503", typeof CreateProfile503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof CreateProfileRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof CreateProfile201.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"CreateProfile400", typeof CreateProfile400.Type> | LilynkError<"CreateProfile401", typeof CreateProfile401.Type> | LilynkError<"CreateProfile409", typeof CreateProfile409.Type> | LilynkError<"CreateProfile422", typeof CreateProfile422.Type> | LilynkError<"CreateProfile429", typeof CreateProfile429.Type> | LilynkError<"CreateProfile503", typeof CreateProfile503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof CreateProfileRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof CreateProfile201.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"CreateProfile400", typeof CreateProfile400.Type> | LilynkError<"CreateProfile401", typeof CreateProfile401.Type> | LilynkError<"CreateProfile409", typeof CreateProfile409.Type> | LilynkError<"CreateProfile422", typeof CreateProfile422.Type> | LilynkError<"CreateProfile429", typeof CreateProfile429.Type> | LilynkError<"CreateProfile503", typeof CreateProfile503.Type>>;
   }
   /**
 * Where a device that names no profile lands
 */
 readonly "setDefaultProfile": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetDefaultProfileRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetDefaultProfile401", typeof SetDefaultProfile401.Type> | PunktfunkError<"SetDefaultProfile404", typeof SetDefaultProfile404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetDefaultProfileRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetDefaultProfile401", typeof SetDefaultProfile401.Type> | PunktfunkError<"SetDefaultProfile404", typeof SetDefaultProfile404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetDefaultProfileRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetDefaultProfile401", typeof SetDefaultProfile401.Type> | LilynkError<"SetDefaultProfile404", typeof SetDefaultProfile404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetDefaultProfileRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetDefaultProfile401", typeof SetDefaultProfile401.Type> | LilynkError<"SetDefaultProfile404", typeof SetDefaultProfile404.Type>>;
   }
   /**
 * The supervisor's own report: Windows, Remote Desktop, the seat display driver, Steam, and
@@ -5199,8 +5199,8 @@ readonly "setDefaultProfile": {
 * Admin lane only.
 */
 readonly "getSeatsDoctor": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetSeatsDoctor200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetSeatsDoctor401", typeof GetSeatsDoctor401.Type> | PunktfunkError<"GetSeatsDoctor409", typeof GetSeatsDoctor409.Type> | PunktfunkError<"GetSeatsDoctor503", typeof GetSeatsDoctor503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetSeatsDoctor200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetSeatsDoctor401", typeof GetSeatsDoctor401.Type> | PunktfunkError<"GetSeatsDoctor409", typeof GetSeatsDoctor409.Type> | PunktfunkError<"GetSeatsDoctor503", typeof GetSeatsDoctor503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetSeatsDoctor200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetSeatsDoctor401", typeof GetSeatsDoctor401.Type> | LilynkError<"GetSeatsDoctor409", typeof GetSeatsDoctor409.Type> | LilynkError<"GetSeatsDoctor503", typeof GetSeatsDoctor503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetSeatsDoctor200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetSeatsDoctor401", typeof GetSeatsDoctor401.Type> | LilynkError<"GetSeatsDoctor409", typeof GetSeatsDoctor409.Type> | LilynkError<"GetSeatsDoctor503", typeof GetSeatsDoctor503.Type>>;
   }
   /**
 * Linux. On moves the box's host to a system service that runs from boot, places every connect
@@ -5211,8 +5211,8 @@ readonly "getSeatsDoctor": {
 * owner's user must be in the `lilynk-update` group. Admin lane only.
 */
 readonly "setDoor": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetDoorRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetDoor401", typeof SetDoor401.Type> | PunktfunkError<"SetDoor403", typeof SetDoor403.Type> | PunktfunkError<"SetDoor409", typeof SetDoor409.Type> | PunktfunkError<"SetDoor502", typeof SetDoor502.Type> | PunktfunkError<"SetDoor503", typeof SetDoor503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetDoorRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetDoor401", typeof SetDoor401.Type> | PunktfunkError<"SetDoor403", typeof SetDoor403.Type> | PunktfunkError<"SetDoor409", typeof SetDoor409.Type> | PunktfunkError<"SetDoor502", typeof SetDoor502.Type> | PunktfunkError<"SetDoor503", typeof SetDoor503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetDoorRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetDoor401", typeof SetDoor401.Type> | LilynkError<"SetDoor403", typeof SetDoor403.Type> | LilynkError<"SetDoor409", typeof SetDoor409.Type> | LilynkError<"SetDoor502", typeof SetDoor502.Type> | LilynkError<"SetDoor503", typeof SetDoor503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetDoorRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetDoor401", typeof SetDoor401.Type> | LilynkError<"SetDoor403", typeof SetDoor403.Type> | LilynkError<"SetDoor409", typeof SetDoor409.Type> | LilynkError<"SetDoor502", typeof SetDoor502.Type> | LilynkError<"SetDoor503", typeof SetDoor503.Type>>;
   }
   /**
 * The profiles the asking device may open, the owner first, and the locked ones that take a
@@ -5223,8 +5223,8 @@ readonly "setDoor": {
 * needs its PIN. `person` marks the rows whose own library view this device may change now.
 */
 readonly "enumerateProfiles": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof EnumerateProfiles200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"EnumerateProfiles401", typeof EnumerateProfiles401.Type> | PunktfunkError<"EnumerateProfiles404", typeof EnumerateProfiles404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof EnumerateProfiles200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"EnumerateProfiles401", typeof EnumerateProfiles401.Type> | PunktfunkError<"EnumerateProfiles404", typeof EnumerateProfiles404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof EnumerateProfiles200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"EnumerateProfiles401", typeof EnumerateProfiles401.Type> | LilynkError<"EnumerateProfiles404", typeof EnumerateProfiles404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof EnumerateProfiles200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"EnumerateProfiles401", typeof EnumerateProfiles401.Type> | LilynkError<"EnumerateProfiles404", typeof EnumerateProfiles404.Type>>;
   }
   /**
 * Every game controller plugged into the PC that can be given to a profile, and every one a
@@ -5232,8 +5232,8 @@ readonly "enumerateProfiles": {
 * A host that can't give controllers away answers `supported: false`. Admin lane only.
 */
 readonly "listDeskPads": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListDeskPads200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListDeskPads401", typeof ListDeskPads401.Type> | PunktfunkError<"ListDeskPads503", typeof ListDeskPads503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListDeskPads200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListDeskPads401", typeof ListDeskPads401.Type> | PunktfunkError<"ListDeskPads503", typeof ListDeskPads503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListDeskPads200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListDeskPads401", typeof ListDeskPads401.Type> | LilynkError<"ListDeskPads503", typeof ListDeskPads503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListDeskPads200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListDeskPads401", typeof ListDeskPads401.Type> | LilynkError<"ListDeskPads503", typeof ListDeskPads503.Type>>;
   }
   /**
 * With a profile: only that profile's seat sees the controller, from its next start or at once
@@ -5243,8 +5243,8 @@ readonly "listDeskPads": {
 * in. Answers the list as it is after. Admin lane only.
 */
 readonly "setDeskPadHolder": {
-    <Config extends OperationConfig | undefined = undefined>(key: string, options: { readonly payload: typeof SetDeskPadHolderRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetDeskPadHolder200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetDeskPadHolder400", typeof SetDeskPadHolder400.Type> | PunktfunkError<"SetDeskPadHolder401", typeof SetDeskPadHolder401.Type> | PunktfunkError<"SetDeskPadHolder404", typeof SetDeskPadHolder404.Type> | PunktfunkError<"SetDeskPadHolder409", typeof SetDeskPadHolder409.Type> | PunktfunkError<"SetDeskPadHolder503", typeof SetDeskPadHolder503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(key: string, options: { readonly payload: typeof SetDeskPadHolderRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetDeskPadHolder200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetDeskPadHolder400", typeof SetDeskPadHolder400.Type> | PunktfunkError<"SetDeskPadHolder401", typeof SetDeskPadHolder401.Type> | PunktfunkError<"SetDeskPadHolder404", typeof SetDeskPadHolder404.Type> | PunktfunkError<"SetDeskPadHolder409", typeof SetDeskPadHolder409.Type> | PunktfunkError<"SetDeskPadHolder503", typeof SetDeskPadHolder503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(key: string, options: { readonly payload: typeof SetDeskPadHolderRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetDeskPadHolder200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetDeskPadHolder400", typeof SetDeskPadHolder400.Type> | LilynkError<"SetDeskPadHolder401", typeof SetDeskPadHolder401.Type> | LilynkError<"SetDeskPadHolder404", typeof SetDeskPadHolder404.Type> | LilynkError<"SetDeskPadHolder409", typeof SetDeskPadHolder409.Type> | LilynkError<"SetDeskPadHolder503", typeof SetDeskPadHolder503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(key: string, options: { readonly payload: typeof SetDeskPadHolderRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetDeskPadHolder200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetDeskPadHolder400", typeof SetDeskPadHolder400.Type> | LilynkError<"SetDeskPadHolder401", typeof SetDeskPadHolder401.Type> | LilynkError<"SetDeskPadHolder404", typeof SetDeskPadHolder404.Type> | LilynkError<"SetDeskPadHolder409", typeof SetDeskPadHolder409.Type> | LilynkError<"SetDeskPadHolder503", typeof SetDeskPadHolder503.Type>>;
   }
   /**
 * The console shows the name in place of what the hardware calls itself. `null` or a blank
@@ -5252,8 +5252,8 @@ readonly "setDeskPadHolder": {
 * be in the list. Answers the list as it is after. Admin lane only.
 */
 readonly "setDeskPadLabel": {
-    <Config extends OperationConfig | undefined = undefined>(key: string, options: { readonly payload: typeof SetDeskPadLabelRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetDeskPadLabel200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetDeskPadLabel400", typeof SetDeskPadLabel400.Type> | PunktfunkError<"SetDeskPadLabel401", typeof SetDeskPadLabel401.Type> | PunktfunkError<"SetDeskPadLabel409", typeof SetDeskPadLabel409.Type> | PunktfunkError<"SetDeskPadLabel500", typeof SetDeskPadLabel500.Type> | PunktfunkError<"SetDeskPadLabel503", typeof SetDeskPadLabel503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(key: string, options: { readonly payload: typeof SetDeskPadLabelRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetDeskPadLabel200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetDeskPadLabel400", typeof SetDeskPadLabel400.Type> | PunktfunkError<"SetDeskPadLabel401", typeof SetDeskPadLabel401.Type> | PunktfunkError<"SetDeskPadLabel409", typeof SetDeskPadLabel409.Type> | PunktfunkError<"SetDeskPadLabel500", typeof SetDeskPadLabel500.Type> | PunktfunkError<"SetDeskPadLabel503", typeof SetDeskPadLabel503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(key: string, options: { readonly payload: typeof SetDeskPadLabelRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetDeskPadLabel200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetDeskPadLabel400", typeof SetDeskPadLabel400.Type> | LilynkError<"SetDeskPadLabel401", typeof SetDeskPadLabel401.Type> | LilynkError<"SetDeskPadLabel409", typeof SetDeskPadLabel409.Type> | LilynkError<"SetDeskPadLabel500", typeof SetDeskPadLabel500.Type> | LilynkError<"SetDeskPadLabel503", typeof SetDeskPadLabel503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(key: string, options: { readonly payload: typeof SetDeskPadLabelRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetDeskPadLabel200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetDeskPadLabel400", typeof SetDeskPadLabel400.Type> | LilynkError<"SetDeskPadLabel401", typeof SetDeskPadLabel401.Type> | LilynkError<"SetDeskPadLabel409", typeof SetDeskPadLabel409.Type> | LilynkError<"SetDeskPadLabel500", typeof SetDeskPadLabel500.Type> | LilynkError<"SetDeskPadLabel503", typeof SetDeskPadLabel503.Type>>;
   }
   /**
 * Windows reports whether the box's seats are on and what turning them on needs: Windows
@@ -5262,8 +5262,8 @@ readonly "setDeskPadLabel": {
 * with `platform: other`. Admin lane only.
 */
 readonly "getSeating": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetSeating200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetSeating401", typeof GetSeating401.Type> | PunktfunkError<"GetSeating503", typeof GetSeating503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetSeating200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetSeating401", typeof GetSeating401.Type> | PunktfunkError<"GetSeating503", typeof GetSeating503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetSeating200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetSeating401", typeof GetSeating401.Type> | LilynkError<"GetSeating503", typeof GetSeating503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetSeating200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetSeating401", typeof GetSeating401.Type> | LilynkError<"GetSeating503", typeof GetSeating503.Type>>;
   }
   /**
 * On runs the checks, installs the seat display driver, turns Remote Desktop on for this
@@ -5274,8 +5274,8 @@ readonly "getSeating": {
 * keeps their accounts and restores what on changed. Admin lane only.
 */
 readonly "setSeating": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetSeatingRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetSeating200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetSeating401", typeof SetSeating401.Type> | PunktfunkError<"SetSeating409", typeof SetSeating409.Type> | PunktfunkError<"SetSeating503", typeof SetSeating503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetSeatingRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetSeating200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetSeating401", typeof SetSeating401.Type> | PunktfunkError<"SetSeating409", typeof SetSeating409.Type> | PunktfunkError<"SetSeating503", typeof SetSeating503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetSeatingRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetSeating200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetSeating401", typeof SetSeating401.Type> | LilynkError<"SetSeating409", typeof SetSeating409.Type> | LilynkError<"SetSeating503", typeof SetSeating503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetSeatingRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetSeating200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetSeating401", typeof SetSeating401.Type> | LilynkError<"SetSeating409", typeof SetSeating409.Type> | LilynkError<"SetSeating503", typeof SetSeating503.Type>>;
   }
   /**
 * The enabled local Windows accounts on this PC that no profile holds: none a seat signs in to,
@@ -5284,16 +5284,16 @@ readonly "setSeating": {
 * desktop** on an existing account.
 */
 readonly "windowsAccounts": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof WindowsAccounts200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"WindowsAccounts401", typeof WindowsAccounts401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof WindowsAccounts200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"WindowsAccounts401", typeof WindowsAccounts401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof WindowsAccounts200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"WindowsAccounts401", typeof WindowsAccounts401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof WindowsAccounts200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"WindowsAccounts401", typeof WindowsAccounts401.Type>>;
   }
   /**
 * `seat_password` gives a seat on an existing Windows account that account's new password.
 * The seat supervisor checks it with Windows before it keeps it, then the rest applies.
 */
 readonly "updateProfile": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof UpdateProfileRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof UpdateProfile200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UpdateProfile400", typeof UpdateProfile400.Type> | PunktfunkError<"UpdateProfile401", typeof UpdateProfile401.Type> | PunktfunkError<"UpdateProfile404", typeof UpdateProfile404.Type> | PunktfunkError<"UpdateProfile409", typeof UpdateProfile409.Type> | PunktfunkError<"UpdateProfile503", typeof UpdateProfile503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof UpdateProfileRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof UpdateProfile200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UpdateProfile400", typeof UpdateProfile400.Type> | PunktfunkError<"UpdateProfile401", typeof UpdateProfile401.Type> | PunktfunkError<"UpdateProfile404", typeof UpdateProfile404.Type> | PunktfunkError<"UpdateProfile409", typeof UpdateProfile409.Type> | PunktfunkError<"UpdateProfile503", typeof UpdateProfile503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof UpdateProfileRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof UpdateProfile200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UpdateProfile400", typeof UpdateProfile400.Type> | LilynkError<"UpdateProfile401", typeof UpdateProfile401.Type> | LilynkError<"UpdateProfile404", typeof UpdateProfile404.Type> | LilynkError<"UpdateProfile409", typeof UpdateProfile409.Type> | LilynkError<"UpdateProfile503", typeof UpdateProfile503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof UpdateProfileRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof UpdateProfile200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UpdateProfile400", typeof UpdateProfile400.Type> | LilynkError<"UpdateProfile401", typeof UpdateProfile401.Type> | LilynkError<"UpdateProfile404", typeof UpdateProfile404.Type> | LilynkError<"UpdateProfile409", typeof UpdateProfile409.Type> | LilynkError<"UpdateProfile503", typeof UpdateProfile503.Type>>;
   }
   /**
 * Sessions playing as it end with `SEAT_UNAVAILABLE`. With `erase`, its Steam home and picture
@@ -5301,16 +5301,16 @@ readonly "updateProfile": {
 * existing account a seat signs in to is released and stays; removing either needs `erase`.
 */
 readonly "deleteProfile": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof DeleteProfileParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DeleteProfile401", typeof DeleteProfile401.Type> | PunktfunkError<"DeleteProfile404", typeof DeleteProfile404.Type> | PunktfunkError<"DeleteProfile409", typeof DeleteProfile409.Type> | PunktfunkError<"DeleteProfile503", typeof DeleteProfile503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof DeleteProfileParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DeleteProfile401", typeof DeleteProfile401.Type> | PunktfunkError<"DeleteProfile404", typeof DeleteProfile404.Type> | PunktfunkError<"DeleteProfile409", typeof DeleteProfile409.Type> | PunktfunkError<"DeleteProfile503", typeof DeleteProfile503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof DeleteProfileParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DeleteProfile401", typeof DeleteProfile401.Type> | LilynkError<"DeleteProfile404", typeof DeleteProfile404.Type> | LilynkError<"DeleteProfile409", typeof DeleteProfile409.Type> | LilynkError<"DeleteProfile503", typeof DeleteProfile503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof DeleteProfileParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DeleteProfile401", typeof DeleteProfile401.Type> | LilynkError<"DeleteProfile404", typeof DeleteProfile404.Type> | LilynkError<"DeleteProfile409", typeof DeleteProfile409.Type> | LilynkError<"DeleteProfile503", typeof DeleteProfile503.Type>>;
   }
   /**
 * The stored image with an `ETag` of its bytes; a request whose `If-None-Match` names that tag
 * gets 304 with no body.
 */
 readonly "getProfileAvatar": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof GetProfileAvatarParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<Uint8Array | void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetProfileAvatar401", typeof GetProfileAvatar401.Type> | PunktfunkError<"GetProfileAvatar404", typeof GetProfileAvatar404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof GetProfileAvatarParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<Uint8Array | void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetProfileAvatar401", typeof GetProfileAvatar401.Type> | PunktfunkError<"GetProfileAvatar404", typeof GetProfileAvatar404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof GetProfileAvatarParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<Uint8Array | void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetProfileAvatar401", typeof GetProfileAvatar401.Type> | LilynkError<"GetProfileAvatar404", typeof GetProfileAvatar404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly params?: typeof GetProfileAvatarParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<Uint8Array | void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetProfileAvatar401", typeof GetProfileAvatar401.Type> | LilynkError<"GetProfileAvatar404", typeof GetProfileAvatar404.Type>>;
   }
   /**
 * The stored image with an `ETag` of its bytes; a request whose `If-None-Match` names that tag
@@ -5321,15 +5321,15 @@ readonly "getProfileAvatarStream": (id: string, options: { readonly params?: typ
 * PNG, JPEG or WebP, at most 1 MiB. The console crops it square first.
 */
 readonly "setProfileAvatar": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetProfileAvatar400", typeof SetProfileAvatar400.Type> | PunktfunkError<"SetProfileAvatar401", typeof SetProfileAvatar401.Type> | PunktfunkError<"SetProfileAvatar404", typeof SetProfileAvatar404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetProfileAvatar400", typeof SetProfileAvatar400.Type> | PunktfunkError<"SetProfileAvatar401", typeof SetProfileAvatar401.Type> | PunktfunkError<"SetProfileAvatar404", typeof SetProfileAvatar404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetProfileAvatar400", typeof SetProfileAvatar400.Type> | LilynkError<"SetProfileAvatar401", typeof SetProfileAvatar401.Type> | LilynkError<"SetProfileAvatar404", typeof SetProfileAvatar404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetProfileAvatar400", typeof SetProfileAvatar400.Type> | LilynkError<"SetProfileAvatar401", typeof SetProfileAvatar401.Type> | LilynkError<"SetProfileAvatar404", typeof SetProfileAvatar404.Type>>;
   }
   /**
 * Remove a profile's picture
 */
 readonly "deleteProfileAvatar": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DeleteProfileAvatar401", typeof DeleteProfileAvatar401.Type> | PunktfunkError<"DeleteProfileAvatar404", typeof DeleteProfileAvatar404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DeleteProfileAvatar401", typeof DeleteProfileAvatar401.Type> | PunktfunkError<"DeleteProfileAvatar404", typeof DeleteProfileAvatar404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DeleteProfileAvatar401", typeof DeleteProfileAvatar401.Type> | LilynkError<"DeleteProfileAvatar404", typeof DeleteProfileAvatar404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DeleteProfileAvatar401", typeof DeleteProfileAvatar401.Type> | LilynkError<"DeleteProfileAvatar404", typeof DeleteProfileAvatar404.Type>>;
   }
   /**
 * For a profile on a person's own Linux account: each device that unlocked it, and how it gets
@@ -5337,16 +5337,16 @@ readonly "deleteProfileAvatar": {
 * open. Admin lane only.
 */
 readonly "listProfileDevices": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListProfileDevices200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListProfileDevices401", typeof ListProfileDevices401.Type> | PunktfunkError<"ListProfileDevices404", typeof ListProfileDevices404.Type> | PunktfunkError<"ListProfileDevices409", typeof ListProfileDevices409.Type> | PunktfunkError<"ListProfileDevices503", typeof ListProfileDevices503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListProfileDevices200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListProfileDevices401", typeof ListProfileDevices401.Type> | PunktfunkError<"ListProfileDevices404", typeof ListProfileDevices404.Type> | PunktfunkError<"ListProfileDevices409", typeof ListProfileDevices409.Type> | PunktfunkError<"ListProfileDevices503", typeof ListProfileDevices503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListProfileDevices200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListProfileDevices401", typeof ListProfileDevices401.Type> | LilynkError<"ListProfileDevices404", typeof ListProfileDevices404.Type> | LilynkError<"ListProfileDevices409", typeof ListProfileDevices409.Type> | LilynkError<"ListProfileDevices503", typeof ListProfileDevices503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListProfileDevices200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListProfileDevices401", typeof ListProfileDevices401.Type> | LilynkError<"ListProfileDevices404", typeof ListProfileDevices404.Type> | LilynkError<"ListProfileDevices409", typeof ListProfileDevices409.Type> | LilynkError<"ListProfileDevices503", typeof ListProfileDevices503.Type>>;
   }
   /**
 * Puts a device paired with this host, Punktfunk or Moonlight, on the profile's list until it
 * is signed out. Answers the list. Admin lane only.
 */
 readonly "addProfileDevice": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof AddProfileDeviceRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof AddProfileDevice200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"AddProfileDevice400", typeof AddProfileDevice400.Type> | PunktfunkError<"AddProfileDevice401", typeof AddProfileDevice401.Type> | PunktfunkError<"AddProfileDevice404", typeof AddProfileDevice404.Type> | PunktfunkError<"AddProfileDevice409", typeof AddProfileDevice409.Type> | PunktfunkError<"AddProfileDevice422", typeof AddProfileDevice422.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof AddProfileDeviceRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof AddProfileDevice200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"AddProfileDevice400", typeof AddProfileDevice400.Type> | PunktfunkError<"AddProfileDevice401", typeof AddProfileDevice401.Type> | PunktfunkError<"AddProfileDevice404", typeof AddProfileDevice404.Type> | PunktfunkError<"AddProfileDevice409", typeof AddProfileDevice409.Type> | PunktfunkError<"AddProfileDevice422", typeof AddProfileDevice422.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof AddProfileDeviceRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof AddProfileDevice200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"AddProfileDevice400", typeof AddProfileDevice400.Type> | LilynkError<"AddProfileDevice401", typeof AddProfileDevice401.Type> | LilynkError<"AddProfileDevice404", typeof AddProfileDevice404.Type> | LilynkError<"AddProfileDevice409", typeof AddProfileDevice409.Type> | LilynkError<"AddProfileDevice422", typeof AddProfileDevice422.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof AddProfileDeviceRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof AddProfileDevice200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"AddProfileDevice400", typeof AddProfileDevice400.Type> | LilynkError<"AddProfileDevice401", typeof AddProfileDevice401.Type> | LilynkError<"AddProfileDevice404", typeof AddProfileDevice404.Type> | LilynkError<"AddProfileDevice409", typeof AddProfileDevice409.Type> | LilynkError<"AddProfileDevice422", typeof AddProfileDevice422.Type>>;
   }
   /**
 * For a profile on a person's own Linux account: every device needs the account's password
@@ -5354,8 +5354,8 @@ readonly "addProfileDevice": {
 * session on it from a device off the list ends. Admin lane only.
 */
 readonly "signOutProfileDevices": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SignOutProfileDevices401", typeof SignOutProfileDevices401.Type> | PunktfunkError<"SignOutProfileDevices404", typeof SignOutProfileDevices404.Type> | PunktfunkError<"SignOutProfileDevices409", typeof SignOutProfileDevices409.Type> | PunktfunkError<"SignOutProfileDevices503", typeof SignOutProfileDevices503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SignOutProfileDevices401", typeof SignOutProfileDevices401.Type> | PunktfunkError<"SignOutProfileDevices404", typeof SignOutProfileDevices404.Type> | PunktfunkError<"SignOutProfileDevices409", typeof SignOutProfileDevices409.Type> | PunktfunkError<"SignOutProfileDevices503", typeof SignOutProfileDevices503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SignOutProfileDevices401", typeof SignOutProfileDevices401.Type> | LilynkError<"SignOutProfileDevices404", typeof SignOutProfileDevices404.Type> | LilynkError<"SignOutProfileDevices409", typeof SignOutProfileDevices409.Type> | LilynkError<"SignOutProfileDevices503", typeof SignOutProfileDevices503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SignOutProfileDevices401", typeof SignOutProfileDevices401.Type> | LilynkError<"SignOutProfileDevices404", typeof SignOutProfileDevices404.Type> | LilynkError<"SignOutProfileDevices409", typeof SignOutProfileDevices409.Type> | LilynkError<"SignOutProfileDevices503", typeof SignOutProfileDevices503.Type>>;
   }
   /**
 * For a profile on a person's own Linux account: the device needs the account's password again
@@ -5363,23 +5363,23 @@ readonly "signOutProfileDevices": {
 * session it plays there ends. Admin lane only.
 */
 readonly "signOutProfileDevice": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, fingerprint: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SignOutProfileDevice400", typeof SignOutProfileDevice400.Type> | PunktfunkError<"SignOutProfileDevice401", typeof SignOutProfileDevice401.Type> | PunktfunkError<"SignOutProfileDevice404", typeof SignOutProfileDevice404.Type> | PunktfunkError<"SignOutProfileDevice409", typeof SignOutProfileDevice409.Type> | PunktfunkError<"SignOutProfileDevice503", typeof SignOutProfileDevice503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, fingerprint: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SignOutProfileDevice400", typeof SignOutProfileDevice400.Type> | PunktfunkError<"SignOutProfileDevice401", typeof SignOutProfileDevice401.Type> | PunktfunkError<"SignOutProfileDevice404", typeof SignOutProfileDevice404.Type> | PunktfunkError<"SignOutProfileDevice409", typeof SignOutProfileDevice409.Type> | PunktfunkError<"SignOutProfileDevice503", typeof SignOutProfileDevice503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, fingerprint: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SignOutProfileDevice400", typeof SignOutProfileDevice400.Type> | LilynkError<"SignOutProfileDevice401", typeof SignOutProfileDevice401.Type> | LilynkError<"SignOutProfileDevice404", typeof SignOutProfileDevice404.Type> | LilynkError<"SignOutProfileDevice409", typeof SignOutProfileDevice409.Type> | LilynkError<"SignOutProfileDevice503", typeof SignOutProfileDevice503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, fingerprint: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SignOutProfileDevice400", typeof SignOutProfileDevice400.Type> | LilynkError<"SignOutProfileDevice401", typeof SignOutProfileDevice401.Type> | LilynkError<"SignOutProfileDevice404", typeof SignOutProfileDevice404.Type> | LilynkError<"SignOutProfileDevice409", typeof SignOutProfileDevice409.Type> | LilynkError<"SignOutProfileDevice503", typeof SignOutProfileDevice503.Type>>;
   }
   /**
 * Disconnects whoever plays there and keeps the seat running for the next connect.
 */
 readonly "endProfileSession": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof EndProfileSession200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"EndProfileSession401", typeof EndProfileSession401.Type> | PunktfunkError<"EndProfileSession404", typeof EndProfileSession404.Type> | PunktfunkError<"EndProfileSession409", typeof EndProfileSession409.Type> | PunktfunkError<"EndProfileSession503", typeof EndProfileSession503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof EndProfileSession200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"EndProfileSession401", typeof EndProfileSession401.Type> | PunktfunkError<"EndProfileSession404", typeof EndProfileSession404.Type> | PunktfunkError<"EndProfileSession409", typeof EndProfileSession409.Type> | PunktfunkError<"EndProfileSession503", typeof EndProfileSession503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof EndProfileSession200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"EndProfileSession401", typeof EndProfileSession401.Type> | LilynkError<"EndProfileSession404", typeof EndProfileSession404.Type> | LilynkError<"EndProfileSession409", typeof EndProfileSession409.Type> | LilynkError<"EndProfileSession503", typeof EndProfileSession503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof EndProfileSession200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"EndProfileSession401", typeof EndProfileSession401.Type> | LilynkError<"EndProfileSession404", typeof EndProfileSession404.Type> | LilynkError<"EndProfileSession409", typeof EndProfileSession409.Type> | LilynkError<"EndProfileSession503", typeof EndProfileSession503.Type>>;
   }
   /**
 * Whether it is locked, whether it has a PIN, and the wrong PINs counted against it. Its
 * devices are `GET /profiles/{id}/devices`. Admin lane only.
 */
 readonly "getProfileLock": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetProfileLock200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetProfileLock401", typeof GetProfileLock401.Type> | PunktfunkError<"GetProfileLock404", typeof GetProfileLock404.Type> | PunktfunkError<"GetProfileLock409", typeof GetProfileLock409.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetProfileLock200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetProfileLock401", typeof GetProfileLock401.Type> | PunktfunkError<"GetProfileLock404", typeof GetProfileLock404.Type> | PunktfunkError<"GetProfileLock409", typeof GetProfileLock409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetProfileLock200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetProfileLock401", typeof GetProfileLock401.Type> | LilynkError<"GetProfileLock404", typeof GetProfileLock404.Type> | LilynkError<"GetProfileLock409", typeof GetProfileLock409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetProfileLock200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetProfileLock401", typeof GetProfileLock401.Type> | LilynkError<"GetProfileLock404", typeof GetProfileLock404.Type> | LilynkError<"GetProfileLock409", typeof GetProfileLock409.Type>>;
   }
   /**
 * From now its list is exactly `devices`, paired devices, so a lock keeps the ones someone
@@ -5389,46 +5389,46 @@ readonly "getProfileLock": {
 * routes change a locked profile. Admin lane only.
 */
 readonly "lockProfile": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof LockProfileRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof LockProfile200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"LockProfile400", typeof LockProfile400.Type> | PunktfunkError<"LockProfile401", typeof LockProfile401.Type> | PunktfunkError<"LockProfile404", typeof LockProfile404.Type> | PunktfunkError<"LockProfile409", typeof LockProfile409.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof LockProfileRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof LockProfile200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"LockProfile400", typeof LockProfile400.Type> | PunktfunkError<"LockProfile401", typeof LockProfile401.Type> | PunktfunkError<"LockProfile404", typeof LockProfile404.Type> | PunktfunkError<"LockProfile409", typeof LockProfile409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof LockProfileRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof LockProfile200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"LockProfile400", typeof LockProfile400.Type> | LilynkError<"LockProfile401", typeof LockProfile401.Type> | LilynkError<"LockProfile404", typeof LockProfile404.Type> | LilynkError<"LockProfile409", typeof LockProfile409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof LockProfileRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof LockProfile200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"LockProfile400", typeof LockProfile400.Type> | LilynkError<"LockProfile401", typeof LockProfile401.Type> | LilynkError<"LockProfile404", typeof LockProfile404.Type> | LilynkError<"LockProfile409", typeof LockProfile409.Type>>;
   }
   /**
 * Every paired device opens it again. Its list and its PIN stay for the next lock. Admin lane
 * only.
 */
 readonly "unlockProfile": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof UnlockProfile200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UnlockProfile401", typeof UnlockProfile401.Type> | PunktfunkError<"UnlockProfile404", typeof UnlockProfile404.Type> | PunktfunkError<"UnlockProfile409", typeof UnlockProfile409.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof UnlockProfile200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UnlockProfile401", typeof UnlockProfile401.Type> | PunktfunkError<"UnlockProfile404", typeof UnlockProfile404.Type> | PunktfunkError<"UnlockProfile409", typeof UnlockProfile409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof UnlockProfile200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UnlockProfile401", typeof UnlockProfile401.Type> | LilynkError<"UnlockProfile404", typeof UnlockProfile404.Type> | LilynkError<"UnlockProfile409", typeof UnlockProfile409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof UnlockProfile200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UnlockProfile401", typeof UnlockProfile401.Type> | LilynkError<"UnlockProfile404", typeof UnlockProfile404.Type> | LilynkError<"UnlockProfile409", typeof UnlockProfile409.Type>>;
   }
   /**
 * While it is locked, a device off its list opens it with this PIN, and the PIN puts it on the
 * list. Replaces any PIN it had. Admin lane only.
 */
 readonly "setProfilePin": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof SetProfilePinRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetProfilePin200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetProfilePin400", typeof SetProfilePin400.Type> | PunktfunkError<"SetProfilePin401", typeof SetProfilePin401.Type> | PunktfunkError<"SetProfilePin404", typeof SetProfilePin404.Type> | PunktfunkError<"SetProfilePin409", typeof SetProfilePin409.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof SetProfilePinRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetProfilePin200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetProfilePin400", typeof SetProfilePin400.Type> | PunktfunkError<"SetProfilePin401", typeof SetProfilePin401.Type> | PunktfunkError<"SetProfilePin404", typeof SetProfilePin404.Type> | PunktfunkError<"SetProfilePin409", typeof SetProfilePin409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof SetProfilePinRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetProfilePin200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetProfilePin400", typeof SetProfilePin400.Type> | LilynkError<"SetProfilePin401", typeof SetProfilePin401.Type> | LilynkError<"SetProfilePin404", typeof SetProfilePin404.Type> | LilynkError<"SetProfilePin409", typeof SetProfilePin409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof SetProfilePinRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetProfilePin200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetProfilePin400", typeof SetProfilePin400.Type> | LilynkError<"SetProfilePin401", typeof SetProfilePin401.Type> | LilynkError<"SetProfilePin404", typeof SetProfilePin404.Type> | LilynkError<"SetProfilePin409", typeof SetProfilePin409.Type>>;
   }
   /**
 * While it is locked, only the devices on its list open it. Admin lane only.
 */
 readonly "clearProfilePin": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ClearProfilePin200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ClearProfilePin401", typeof ClearProfilePin401.Type> | PunktfunkError<"ClearProfilePin404", typeof ClearProfilePin404.Type> | PunktfunkError<"ClearProfilePin409", typeof ClearProfilePin409.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ClearProfilePin200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ClearProfilePin401", typeof ClearProfilePin401.Type> | PunktfunkError<"ClearProfilePin404", typeof ClearProfilePin404.Type> | PunktfunkError<"ClearProfilePin409", typeof ClearProfilePin409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ClearProfilePin200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ClearProfilePin401", typeof ClearProfilePin401.Type> | LilynkError<"ClearProfilePin404", typeof ClearProfilePin404.Type> | LilynkError<"ClearProfilePin409", typeof ClearProfilePin409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ClearProfilePin200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ClearProfilePin401", typeof ClearProfilePin401.Type> | LilynkError<"ClearProfilePin404", typeof ClearProfilePin404.Type> | LilynkError<"ClearProfilePin409", typeof ClearProfilePin409.Type>>;
   }
   /**
 * The console's **Start**: as `wake`, from the console. A profile on a person's own Linux
 * account is refused: only its person's password at connect starts it.
 */
 readonly "startProfileSeat": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof StartProfileSeat200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StartProfileSeat401", typeof StartProfileSeat401.Type> | PunktfunkError<"StartProfileSeat404", typeof StartProfileSeat404.Type> | PunktfunkError<"StartProfileSeat409", typeof StartProfileSeat409.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof StartProfileSeat200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StartProfileSeat401", typeof StartProfileSeat401.Type> | PunktfunkError<"StartProfileSeat404", typeof StartProfileSeat404.Type> | PunktfunkError<"StartProfileSeat409", typeof StartProfileSeat409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof StartProfileSeat200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StartProfileSeat401", typeof StartProfileSeat401.Type> | LilynkError<"StartProfileSeat404", typeof StartProfileSeat404.Type> | LilynkError<"StartProfileSeat409", typeof StartProfileSeat409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof StartProfileSeat200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StartProfileSeat401", typeof StartProfileSeat401.Type> | LilynkError<"StartProfileSeat404", typeof StartProfileSeat404.Type> | LilynkError<"StartProfileSeat409", typeof StartProfileSeat409.Type>>;
   }
   /**
 * Logs the seat off; whoever plays there is disconnected. The next pick starts it again.
 */
 readonly "stopProfileSeat": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof StopProfileSeat200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StopProfileSeat401", typeof StopProfileSeat401.Type> | PunktfunkError<"StopProfileSeat404", typeof StopProfileSeat404.Type> | PunktfunkError<"StopProfileSeat409", typeof StopProfileSeat409.Type> | PunktfunkError<"StopProfileSeat503", typeof StopProfileSeat503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof StopProfileSeat200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StopProfileSeat401", typeof StopProfileSeat401.Type> | PunktfunkError<"StopProfileSeat404", typeof StopProfileSeat404.Type> | PunktfunkError<"StopProfileSeat409", typeof StopProfileSeat409.Type> | PunktfunkError<"StopProfileSeat503", typeof StopProfileSeat503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof StopProfileSeat200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StopProfileSeat401", typeof StopProfileSeat401.Type> | LilynkError<"StopProfileSeat404", typeof StopProfileSeat404.Type> | LilynkError<"StopProfileSeat409", typeof StopProfileSeat409.Type> | LilynkError<"StopProfileSeat503", typeof StopProfileSeat503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof StopProfileSeat200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StopProfileSeat401", typeof StopProfileSeat401.Type> | LilynkError<"StopProfileSeat404", typeof StopProfileSeat404.Type> | LilynkError<"StopProfileSeat409", typeof StopProfileSeat409.Type> | LilynkError<"StopProfileSeat503", typeof StopProfileSeat503.Type>>;
   }
   /**
 * For a device that enrolled an unlock key: 32 random bytes for the key to sign, and what the
@@ -5438,8 +5438,8 @@ readonly "stopProfileSeat": {
 * profile's PIN. Paired devices only.
 */
 readonly "unlockChallenge": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof UnlockChallenge200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UnlockChallenge400", typeof UnlockChallenge400.Type> | PunktfunkError<"UnlockChallenge401", typeof UnlockChallenge401.Type> | PunktfunkError<"UnlockChallenge403", typeof UnlockChallenge403.Type> | PunktfunkError<"UnlockChallenge404", typeof UnlockChallenge404.Type> | PunktfunkError<"UnlockChallenge409", typeof UnlockChallenge409.Type> | PunktfunkError<"UnlockChallenge503", typeof UnlockChallenge503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof UnlockChallenge200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UnlockChallenge400", typeof UnlockChallenge400.Type> | PunktfunkError<"UnlockChallenge401", typeof UnlockChallenge401.Type> | PunktfunkError<"UnlockChallenge403", typeof UnlockChallenge403.Type> | PunktfunkError<"UnlockChallenge404", typeof UnlockChallenge404.Type> | PunktfunkError<"UnlockChallenge409", typeof UnlockChallenge409.Type> | PunktfunkError<"UnlockChallenge503", typeof UnlockChallenge503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof UnlockChallenge200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UnlockChallenge400", typeof UnlockChallenge400.Type> | LilynkError<"UnlockChallenge401", typeof UnlockChallenge401.Type> | LilynkError<"UnlockChallenge403", typeof UnlockChallenge403.Type> | LilynkError<"UnlockChallenge404", typeof UnlockChallenge404.Type> | LilynkError<"UnlockChallenge409", typeof UnlockChallenge409.Type> | LilynkError<"UnlockChallenge503", typeof UnlockChallenge503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof UnlockChallenge200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UnlockChallenge400", typeof UnlockChallenge400.Type> | LilynkError<"UnlockChallenge401", typeof UnlockChallenge401.Type> | LilynkError<"UnlockChallenge403", typeof UnlockChallenge403.Type> | LilynkError<"UnlockChallenge404", typeof UnlockChallenge404.Type> | LilynkError<"UnlockChallenge409", typeof UnlockChallenge409.Type> | LilynkError<"UnlockChallenge503", typeof UnlockChallenge503.Type>>;
   }
   /**
 * Starts a stopped seat so the next connect lands in it, and answers at once with the seat
@@ -5450,19 +5450,19 @@ readonly "unlockChallenge": {
 * password.
 */
 readonly "wakeProfile": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof WakeProfile200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"WakeProfile401", typeof WakeProfile401.Type> | PunktfunkError<"WakeProfile403", typeof WakeProfile403.Type> | PunktfunkError<"WakeProfile404", typeof WakeProfile404.Type> | PunktfunkError<"WakeProfile409", typeof WakeProfile409.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof WakeProfile200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"WakeProfile401", typeof WakeProfile401.Type> | PunktfunkError<"WakeProfile403", typeof WakeProfile403.Type> | PunktfunkError<"WakeProfile404", typeof WakeProfile404.Type> | PunktfunkError<"WakeProfile409", typeof WakeProfile409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof WakeProfile200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"WakeProfile401", typeof WakeProfile401.Type> | LilynkError<"WakeProfile403", typeof WakeProfile403.Type> | LilynkError<"WakeProfile404", typeof WakeProfile404.Type> | LilynkError<"WakeProfile409", typeof WakeProfile409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof WakeProfile200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"WakeProfile401", typeof WakeProfile401.Type> | LilynkError<"WakeProfile403", typeof WakeProfile403.Type> | LilynkError<"WakeProfile404", typeof WakeProfile404.Type> | LilynkError<"WakeProfile409", typeof WakeProfile409.Type>>;
   }
   /**
 * A deliberate stop: skip keep-alive linger and apply `game_on_session_end`.
 */
 readonly "stopSession": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof StopSessionParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StopSession401", typeof StopSession401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof StopSessionParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StopSession401", typeof StopSession401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof StopSessionParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StopSession401", typeof StopSession401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof StopSessionParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StopSession401", typeof StopSession401.Type>>;
   }
   readonly "requestIdr": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"RequestIdr401", typeof RequestIdr401.Type> | PunktfunkError<"RequestIdr409", typeof RequestIdr409.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"RequestIdr401", typeof RequestIdr401.Type> | PunktfunkError<"RequestIdr409", typeof RequestIdr409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"RequestIdr401", typeof RequestIdr401.Type> | LilynkError<"RequestIdr409", typeof RequestIdr409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"RequestIdr401", typeof RequestIdr401.Type> | LilynkError<"RequestIdr409", typeof RequestIdr409.Type>>;
   }
   /**
 * What each session came to — mode, codec, bitrate, frames, bring-up, and why it ended
@@ -5472,12 +5472,12 @@ readonly "stopSession": {
 * A host that has not streamed since it started answers with an empty list.
 */
 readonly "getRecentSessions": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetRecentSessions200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetRecentSessions401", typeof GetRecentSessions401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetRecentSessions200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetRecentSessions401", typeof GetRecentSessions401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetRecentSessions200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetRecentSessions401", typeof GetRecentSessions401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetRecentSessions200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetRecentSessions401", typeof GetRecentSessions401.Type>>;
   }
   readonly "getSessionSettings": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof GetSessionSettingsParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetSessionSettings200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetSessionSettings401", typeof GetSessionSettings401.Type> | PunktfunkError<"GetSessionSettings404", typeof GetSessionSettings404.Type> | PunktfunkError<"GetSessionSettings409", typeof GetSessionSettings409.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof GetSessionSettingsParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetSessionSettings200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetSessionSettings401", typeof GetSessionSettings401.Type> | PunktfunkError<"GetSessionSettings404", typeof GetSessionSettings404.Type> | PunktfunkError<"GetSessionSettings409", typeof GetSessionSettings409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof GetSessionSettingsParams.Encoded | undefined; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetSessionSettings200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetSessionSettings401", typeof GetSessionSettings401.Type> | LilynkError<"GetSessionSettings404", typeof GetSessionSettings404.Type> | LilynkError<"GetSessionSettings409", typeof GetSessionSettings409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof GetSessionSettingsParams.Encoded | undefined; readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetSessionSettings200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetSessionSettings401", typeof GetSessionSettings401.Type> | LilynkError<"GetSessionSettings404", typeof GetSessionSettings404.Type> | LilynkError<"GetSessionSettings409", typeof GetSessionSettings409.Type>>;
   }
   /**
 * Persisted clamped. Takes effect on the next decision, including a session
@@ -5486,8 +5486,8 @@ readonly "getRecentSessions": {
 * device that is that locked profile's person may set them too.
 */
 readonly "setSessionSettings": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof SetSessionSettingsParams.Encoded | undefined; readonly payload: typeof SetSessionSettingsRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetSessionSettings200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetSessionSettings400", typeof SetSessionSettings400.Type> | PunktfunkError<"SetSessionSettings401", typeof SetSessionSettings401.Type> | PunktfunkError<"SetSessionSettings403", typeof SetSessionSettings403.Type> | PunktfunkError<"SetSessionSettings404", typeof SetSessionSettings404.Type> | PunktfunkError<"SetSessionSettings409", typeof SetSessionSettings409.Type> | PunktfunkError<"SetSessionSettings500", typeof SetSessionSettings500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof SetSessionSettingsParams.Encoded | undefined; readonly payload: typeof SetSessionSettingsRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetSessionSettings200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetSessionSettings400", typeof SetSessionSettings400.Type> | PunktfunkError<"SetSessionSettings401", typeof SetSessionSettings401.Type> | PunktfunkError<"SetSessionSettings403", typeof SetSessionSettings403.Type> | PunktfunkError<"SetSessionSettings404", typeof SetSessionSettings404.Type> | PunktfunkError<"SetSessionSettings409", typeof SetSessionSettings409.Type> | PunktfunkError<"SetSessionSettings500", typeof SetSessionSettings500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof SetSessionSettingsParams.Encoded | undefined; readonly payload: typeof SetSessionSettingsRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetSessionSettings200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetSessionSettings400", typeof SetSessionSettings400.Type> | LilynkError<"SetSessionSettings401", typeof SetSessionSettings401.Type> | LilynkError<"SetSessionSettings403", typeof SetSessionSettings403.Type> | LilynkError<"SetSessionSettings404", typeof SetSessionSettings404.Type> | LilynkError<"SetSessionSettings409", typeof SetSessionSettings409.Type> | LilynkError<"SetSessionSettings500", typeof SetSessionSettings500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params?: typeof SetSessionSettingsParams.Encoded | undefined; readonly payload: typeof SetSessionSettingsRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetSessionSettings200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetSessionSettings400", typeof SetSessionSettings400.Type> | LilynkError<"SetSessionSettings401", typeof SetSessionSettings401.Type> | LilynkError<"SetSessionSettings403", typeof SetSessionSettings403.Type> | LilynkError<"SetSessionSettings404", typeof SetSessionSettings404.Type> | LilynkError<"SetSessionSettings409", typeof SetSessionSettings409.Type> | LilynkError<"SetSessionSettings500", typeof SetSessionSettings500.Type>>;
   }
   /**
 * Its seat plays with the box's Seat defaults again; the answer is what `GET` with the same
@@ -5496,16 +5496,16 @@ readonly "setSessionSettings": {
 * device that is that locked profile's person may drop them too.
 */
 readonly "clearSessionSettings": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params: typeof ClearSessionSettingsParams.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ClearSessionSettings200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ClearSessionSettings400", typeof ClearSessionSettings400.Type> | PunktfunkError<"ClearSessionSettings401", typeof ClearSessionSettings401.Type> | PunktfunkError<"ClearSessionSettings403", typeof ClearSessionSettings403.Type> | PunktfunkError<"ClearSessionSettings404", typeof ClearSessionSettings404.Type> | PunktfunkError<"ClearSessionSettings409", typeof ClearSessionSettings409.Type> | PunktfunkError<"ClearSessionSettings500", typeof ClearSessionSettings500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly params: typeof ClearSessionSettingsParams.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof ClearSessionSettings200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ClearSessionSettings400", typeof ClearSessionSettings400.Type> | PunktfunkError<"ClearSessionSettings401", typeof ClearSessionSettings401.Type> | PunktfunkError<"ClearSessionSettings403", typeof ClearSessionSettings403.Type> | PunktfunkError<"ClearSessionSettings404", typeof ClearSessionSettings404.Type> | PunktfunkError<"ClearSessionSettings409", typeof ClearSessionSettings409.Type> | PunktfunkError<"ClearSessionSettings500", typeof ClearSessionSettings500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params: typeof ClearSessionSettingsParams.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ClearSessionSettings200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ClearSessionSettings400", typeof ClearSessionSettings400.Type> | LilynkError<"ClearSessionSettings401", typeof ClearSessionSettings401.Type> | LilynkError<"ClearSessionSettings403", typeof ClearSessionSettings403.Type> | LilynkError<"ClearSessionSettings404", typeof ClearSessionSettings404.Type> | LilynkError<"ClearSessionSettings409", typeof ClearSessionSettings409.Type> | LilynkError<"ClearSessionSettings500", typeof ClearSessionSettings500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly params: typeof ClearSessionSettingsParams.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof ClearSessionSettings200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ClearSessionSettings400", typeof ClearSessionSettings400.Type> | LilynkError<"ClearSessionSettings401", typeof ClearSessionSettings401.Type> | LilynkError<"ClearSessionSettings403", typeof ClearSessionSettings403.Type> | LilynkError<"ClearSessionSettings404", typeof ClearSessionSettings404.Type> | LilynkError<"ClearSessionSettings409", typeof ClearSessionSettings409.Type> | LilynkError<"ClearSessionSettings500", typeof ClearSessionSettings500.Type>>;
   }
   /**
 * Same deliberate stop as `DELETE /session`, for the one id. Every other live
 * session keeps streaming.
 */
 readonly "stopOneSession": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StopOneSession401", typeof StopOneSession401.Type> | PunktfunkError<"StopOneSession404", typeof StopOneSession404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StopOneSession401", typeof StopOneSession401.Type> | PunktfunkError<"StopOneSession404", typeof StopOneSession404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StopOneSession401", typeof StopOneSession401.Type> | LilynkError<"StopOneSession404", typeof StopOneSession404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StopOneSession401", typeof StopOneSession401.Type> | LilynkError<"StopOneSession404", typeof StopOneSession404.Type>>;
   }
   /**
 * Re-points the LIVE grant set — the mask the input thread already checks every
@@ -5517,8 +5517,8 @@ readonly "stopOneSession": {
 * The applied mask comes back, which is how a caller sees the clamp.
 */
 readonly "setSessionAccess": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof SetSessionAccessRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetSessionAccess200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetSessionAccess400", typeof SetSessionAccess400.Type> | PunktfunkError<"SetSessionAccess401", typeof SetSessionAccess401.Type> | PunktfunkError<"SetSessionAccess404", typeof SetSessionAccess404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof SetSessionAccessRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetSessionAccess200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetSessionAccess400", typeof SetSessionAccess400.Type> | PunktfunkError<"SetSessionAccess401", typeof SetSessionAccess401.Type> | PunktfunkError<"SetSessionAccess404", typeof SetSessionAccess404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof SetSessionAccessRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetSessionAccess200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetSessionAccess400", typeof SetSessionAccess400.Type> | LilynkError<"SetSessionAccess401", typeof SetSessionAccess401.Type> | LilynkError<"SetSessionAccess404", typeof SetSessionAccess404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof SetSessionAccessRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetSessionAccess200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetSessionAccess400", typeof SetSessionAccess400.Type> | LilynkError<"SetSessionAccess401", typeof SetSessionAccess401.Type> | LilynkError<"SetSessionAccess404", typeof SetSessionAccess404.Type>>;
   }
   /**
 * Drops this session's audio at the wire, nothing else: the capturer and the sink
@@ -5526,15 +5526,15 @@ readonly "setSessionAccess": {
 * its overlay can name the silence instead of the player guessing.
 */
 readonly "setSessionAudio": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof SetSessionAudioRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetSessionAudio401", typeof SetSessionAudio401.Type> | PunktfunkError<"SetSessionAudio404", typeof SetSessionAudio404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof SetSessionAudioRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetSessionAudio401", typeof SetSessionAudio401.Type> | PunktfunkError<"SetSessionAudio404", typeof SetSessionAudio404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof SetSessionAudioRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetSessionAudio401", typeof SetSessionAudio401.Type> | LilynkError<"SetSessionAudio404", typeof SetSessionAudio404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof SetSessionAudioRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetSessionAudio401", typeof SetSessionAudio401.Type> | LilynkError<"SetSessionAudio404", typeof SetSessionAudio404.Type>>;
   }
   /**
 * Request a keyframe on one session
 */
 readonly "requestSessionIdr": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"RequestSessionIdr401", typeof RequestSessionIdr401.Type> | PunktfunkError<"RequestSessionIdr404", typeof RequestSessionIdr404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"RequestSessionIdr401", typeof RequestSessionIdr401.Type> | PunktfunkError<"RequestSessionIdr404", typeof RequestSessionIdr404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"RequestSessionIdr401", typeof RequestSessionIdr401.Type> | LilynkError<"RequestSessionIdr404", typeof RequestSessionIdr404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"RequestSessionIdr401", typeof RequestSessionIdr401.Type> | LilynkError<"RequestSessionIdr404", typeof RequestSessionIdr404.Type>>;
   }
   /**
 * One frame per pad state the host applies — what it injects, not what the client
@@ -5549,8 +5549,8 @@ readonly "requestSessionIdr": {
 * or none at all — costs the input thread one atomic load per pad event.
 */
 readonly "streamSessionPads": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StreamSessionPads401", typeof StreamSessionPads401.Type> | PunktfunkError<"StreamSessionPads404", typeof StreamSessionPads404.Type> | PunktfunkError<"StreamSessionPads503", typeof StreamSessionPads503.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StreamSessionPads401", typeof StreamSessionPads401.Type> | PunktfunkError<"StreamSessionPads404", typeof StreamSessionPads404.Type> | PunktfunkError<"StreamSessionPads503", typeof StreamSessionPads503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StreamSessionPads401", typeof StreamSessionPads401.Type> | LilynkError<"StreamSessionPads404", typeof StreamSessionPads404.Type> | LilynkError<"StreamSessionPads503", typeof StreamSessionPads503.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StreamSessionPads401", typeof StreamSessionPads401.Type> | LilynkError<"StreamSessionPads404", typeof StreamSessionPads404.Type> | LilynkError<"StreamSessionPads503", typeof StreamSessionPads503.Type>>;
   }
   /**
 * One frame per pad state the host applies — what it injects, not what the client
@@ -5577,53 +5577,53 @@ readonly "streamSessionPadsSse": (id: string) => Stream.Stream<{ readonly event:
 * anonymous session's pick lasts only as long as the session.
 */
 readonly "setSessionPlayer": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof SetSessionPlayerRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetSessionPlayer200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetSessionPlayer400", typeof SetSessionPlayer400.Type> | PunktfunkError<"SetSessionPlayer401", typeof SetSessionPlayer401.Type> | PunktfunkError<"SetSessionPlayer404", typeof SetSessionPlayer404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof SetSessionPlayerRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetSessionPlayer200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetSessionPlayer400", typeof SetSessionPlayer400.Type> | PunktfunkError<"SetSessionPlayer401", typeof SetSessionPlayer401.Type> | PunktfunkError<"SetSessionPlayer404", typeof SetSessionPlayer404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof SetSessionPlayerRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetSessionPlayer200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetSessionPlayer400", typeof SetSessionPlayer400.Type> | LilynkError<"SetSessionPlayer401", typeof SetSessionPlayer401.Type> | LilynkError<"SetSessionPlayer404", typeof SetSessionPlayer404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly payload: typeof SetSessionPlayerRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetSessionPlayer200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetSessionPlayer400", typeof SetSessionPlayer400.Type> | LilynkError<"SetSessionPlayer401", typeof SetSessionPlayer401.Type> | LilynkError<"SetSessionPlayer404", typeof SetSessionPlayer404.Type>>;
   }
   readonly "statsCaptureLive": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof StatsCaptureLive200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StatsCaptureLive401", typeof StatsCaptureLive401.Type> | PunktfunkError<"StatsCaptureLive404", typeof StatsCaptureLive404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof StatsCaptureLive200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StatsCaptureLive401", typeof StatsCaptureLive401.Type> | PunktfunkError<"StatsCaptureLive404", typeof StatsCaptureLive404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof StatsCaptureLive200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StatsCaptureLive401", typeof StatsCaptureLive401.Type> | LilynkError<"StatsCaptureLive404", typeof StatsCaptureLive404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof StatsCaptureLive200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StatsCaptureLive401", typeof StatsCaptureLive401.Type> | LilynkError<"StatsCaptureLive404", typeof StatsCaptureLive404.Type>>;
   }
   /**
 * Streaming loops emit aggregated samples every 1–2 s into the in-progress
 * capture (`GET /stats/capture/live`).
 */
 readonly "statsCaptureStart": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof StatsCaptureStart200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StatsCaptureStart401", typeof StatsCaptureStart401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof StatsCaptureStart200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StatsCaptureStart401", typeof StatsCaptureStart401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof StatsCaptureStart200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StatsCaptureStart401", typeof StatsCaptureStart401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof StatsCaptureStart200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StatsCaptureStart401", typeof StatsCaptureStart401.Type>>;
   }
   readonly "statsCaptureStatus": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof StatsCaptureStatus200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StatsCaptureStatus401", typeof StatsCaptureStatus401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof StatsCaptureStatus200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StatsCaptureStatus401", typeof StatsCaptureStatus401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof StatsCaptureStatus200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StatsCaptureStatus401", typeof StatsCaptureStatus401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof StatsCaptureStatus200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StatsCaptureStatus401", typeof StatsCaptureStatus401.Type>>;
   }
   /**
 * Disarm and write the capture to disk atomically.
 */
 readonly "statsCaptureStop": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof StatsCaptureStop200.Type | void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StatsCaptureStop401", typeof StatsCaptureStop401.Type> | PunktfunkError<"StatsCaptureStop500", typeof StatsCaptureStop500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof StatsCaptureStop200.Type | void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StatsCaptureStop401", typeof StatsCaptureStop401.Type> | PunktfunkError<"StatsCaptureStop500", typeof StatsCaptureStop500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof StatsCaptureStop200.Type | void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StatsCaptureStop401", typeof StatsCaptureStop401.Type> | LilynkError<"StatsCaptureStop500", typeof StatsCaptureStop500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof StatsCaptureStop200.Type | void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StatsCaptureStop401", typeof StatsCaptureStop401.Type> | LilynkError<"StatsCaptureStop500", typeof StatsCaptureStop500.Type>>;
   }
   /**
 * Summaries only (`meta`, no sample body), newest first.
 */
 readonly "statsRecordingsList": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof StatsRecordingsList200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StatsRecordingsList401", typeof StatsRecordingsList401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof StatsRecordingsList200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StatsRecordingsList401", typeof StatsRecordingsList401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof StatsRecordingsList200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StatsRecordingsList401", typeof StatsRecordingsList401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof StatsRecordingsList200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StatsRecordingsList401", typeof StatsRecordingsList401.Type>>;
   }
   readonly "statsRecordingGet": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof StatsRecordingGet200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StatsRecordingGet401", typeof StatsRecordingGet401.Type> | PunktfunkError<"StatsRecordingGet404", typeof StatsRecordingGet404.Type> | PunktfunkError<"StatsRecordingGet500", typeof StatsRecordingGet500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof StatsRecordingGet200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StatsRecordingGet401", typeof StatsRecordingGet401.Type> | PunktfunkError<"StatsRecordingGet404", typeof StatsRecordingGet404.Type> | PunktfunkError<"StatsRecordingGet500", typeof StatsRecordingGet500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof StatsRecordingGet200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StatsRecordingGet401", typeof StatsRecordingGet401.Type> | LilynkError<"StatsRecordingGet404", typeof StatsRecordingGet404.Type> | LilynkError<"StatsRecordingGet500", typeof StatsRecordingGet500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof StatsRecordingGet200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StatsRecordingGet401", typeof StatsRecordingGet401.Type> | LilynkError<"StatsRecordingGet404", typeof StatsRecordingGet404.Type> | LilynkError<"StatsRecordingGet500", typeof StatsRecordingGet500.Type>>;
   }
   readonly "statsRecordingDelete": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StatsRecordingDelete401", typeof StatsRecordingDelete401.Type> | PunktfunkError<"StatsRecordingDelete404", typeof StatsRecordingDelete404.Type> | PunktfunkError<"StatsRecordingDelete500", typeof StatsRecordingDelete500.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"StatsRecordingDelete401", typeof StatsRecordingDelete401.Type> | PunktfunkError<"StatsRecordingDelete404", typeof StatsRecordingDelete404.Type> | PunktfunkError<"StatsRecordingDelete500", typeof StatsRecordingDelete500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StatsRecordingDelete401", typeof StatsRecordingDelete401.Type> | LilynkError<"StatsRecordingDelete404", typeof StatsRecordingDelete404.Type> | LilynkError<"StatsRecordingDelete500", typeof StatsRecordingDelete500.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"StatsRecordingDelete401", typeof StatsRecordingDelete401.Type> | LilynkError<"StatsRecordingDelete404", typeof StatsRecordingDelete404.Type> | LilynkError<"StatsRecordingDelete500", typeof StatsRecordingDelete500.Type>>;
   }
   /**
 * Live host status
 */
 readonly "getStatus": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetStatus200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetStatus401", typeof GetStatus401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetStatus200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetStatus401", typeof GetStatus401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetStatus200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetStatus401", typeof GetStatus401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetStatus200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetStatus401", typeof GetStatus401.Type>>;
   }
   /**
 * Merged view across sources, annotated with what this host has and can run. A source past its
@@ -5631,8 +5631,8 @@ readonly "getStatus": {
 * travelled with the entry.
 */
 readonly "getPluginCatalog": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetPluginCatalog200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetPluginCatalog401", typeof GetPluginCatalog401.Type> | PunktfunkError<"GetPluginCatalog403", typeof GetPluginCatalog403.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetPluginCatalog200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetPluginCatalog401", typeof GetPluginCatalog401.Type> | PunktfunkError<"GetPluginCatalog403", typeof GetPluginCatalog403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetPluginCatalog200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetPluginCatalog401", typeof GetPluginCatalog401.Type> | LilynkError<"GetPluginCatalog403", typeof GetPluginCatalog403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetPluginCatalog200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetPluginCatalog401", typeof GetPluginCatalog401.Type> | LilynkError<"GetPluginCatalog403", typeof GetPluginCatalog403.Type>>;
   }
   /**
 * `{source, id}` installs the catalog pin after re-checking integrity, or `{spec,
@@ -5645,37 +5645,37 @@ readonly "getPluginCatalog": {
 * One package operation at a time (`409` otherwise): `bun` shares a lockfile and `node_modules`.
 */
 readonly "installPlugin": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof InstallPluginRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof InstallPlugin202.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"InstallPlugin400", typeof InstallPlugin400.Type> | PunktfunkError<"InstallPlugin401", typeof InstallPlugin401.Type> | PunktfunkError<"InstallPlugin403", typeof InstallPlugin403.Type> | PunktfunkError<"InstallPlugin409", typeof InstallPlugin409.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof InstallPluginRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof InstallPlugin202.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"InstallPlugin400", typeof InstallPlugin400.Type> | PunktfunkError<"InstallPlugin401", typeof InstallPlugin401.Type> | PunktfunkError<"InstallPlugin403", typeof InstallPlugin403.Type> | PunktfunkError<"InstallPlugin409", typeof InstallPlugin409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof InstallPluginRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof InstallPlugin202.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"InstallPlugin400", typeof InstallPlugin400.Type> | LilynkError<"InstallPlugin401", typeof InstallPlugin401.Type> | LilynkError<"InstallPlugin403", typeof InstallPlugin403.Type> | LilynkError<"InstallPlugin409", typeof InstallPlugin409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof InstallPluginRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof InstallPlugin202.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"InstallPlugin400", typeof InstallPlugin400.Type> | LilynkError<"InstallPlugin401", typeof InstallPlugin401.Type> | LilynkError<"InstallPlugin403", typeof InstallPlugin403.Type> | LilynkError<"InstallPlugin409", typeof InstallPlugin409.Type>>;
   }
   /**
 * Plugins-dir packages, with provenance and live registration. No provenance record means CLI
 * install (`tier: "cli"`); absence is the answer, not a gap.
 */
 readonly "listInstalledPlugins": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListInstalledPlugins200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListInstalledPlugins401", typeof ListInstalledPlugins401.Type> | PunktfunkError<"ListInstalledPlugins403", typeof ListInstalledPlugins403.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListInstalledPlugins200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListInstalledPlugins401", typeof ListInstalledPlugins401.Type> | PunktfunkError<"ListInstalledPlugins403", typeof ListInstalledPlugins403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListInstalledPlugins200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListInstalledPlugins401", typeof ListInstalledPlugins401.Type> | LilynkError<"ListInstalledPlugins403", typeof ListInstalledPlugins403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListInstalledPlugins200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListInstalledPlugins401", typeof ListInstalledPlugins401.Type> | LilynkError<"ListInstalledPlugins403", typeof ListInstalledPlugins403.Type>>;
   }
   /**
 * List recent package jobs
 */
 readonly "listPluginJobs": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListPluginJobs200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListPluginJobs401", typeof ListPluginJobs401.Type> | PunktfunkError<"ListPluginJobs403", typeof ListPluginJobs403.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListPluginJobs200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListPluginJobs401", typeof ListPluginJobs401.Type> | PunktfunkError<"ListPluginJobs403", typeof ListPluginJobs403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListPluginJobs200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListPluginJobs401", typeof ListPluginJobs401.Type> | LilynkError<"ListPluginJobs403", typeof ListPluginJobs403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListPluginJobs200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListPluginJobs401", typeof ListPluginJobs401.Type> | LilynkError<"ListPluginJobs403", typeof ListPluginJobs403.Type>>;
   }
   /**
 * Poll this while `state` is `running`; `log` carries the tail of the package manager's output.
 */
 readonly "getPluginJob": {
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetPluginJob200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetPluginJob401", typeof GetPluginJob401.Type> | PunktfunkError<"GetPluginJob403", typeof GetPluginJob403.Type> | PunktfunkError<"GetPluginJob404", typeof GetPluginJob404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetPluginJob200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetPluginJob401", typeof GetPluginJob401.Type> | PunktfunkError<"GetPluginJob403", typeof GetPluginJob403.Type> | PunktfunkError<"GetPluginJob404", typeof GetPluginJob404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetPluginJob200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetPluginJob401", typeof GetPluginJob401.Type> | LilynkError<"GetPluginJob403", typeof GetPluginJob403.Type> | LilynkError<"GetPluginJob404", typeof GetPluginJob404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(id: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetPluginJob200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetPluginJob401", typeof GetPluginJob401.Type> | LilynkError<"GetPluginJob403", typeof GetPluginJob403.Type> | LilynkError<"GetPluginJob404", typeof GetPluginJob404.Type>>;
   }
   /**
 * Bypasses the freshness window, re-fetches all sources, returns the merged catalog.
 */
 readonly "refreshPluginCatalog": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof RefreshPluginCatalog200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"RefreshPluginCatalog401", typeof RefreshPluginCatalog401.Type> | PunktfunkError<"RefreshPluginCatalog403", typeof RefreshPluginCatalog403.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof RefreshPluginCatalog200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"RefreshPluginCatalog401", typeof RefreshPluginCatalog401.Type> | PunktfunkError<"RefreshPluginCatalog403", typeof RefreshPluginCatalog403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof RefreshPluginCatalog200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"RefreshPluginCatalog401", typeof RefreshPluginCatalog401.Type> | LilynkError<"RefreshPluginCatalog403", typeof RefreshPluginCatalog403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof RefreshPluginCatalog200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"RefreshPluginCatalog401", typeof RefreshPluginCatalog401.Type> | LilynkError<"RefreshPluginCatalog403", typeof RefreshPluginCatalog403.Type>>;
   }
   /**
 * Plugins run only while the runner is on. The runner discovers units at startup, so a freshly
@@ -5683,45 +5683,45 @@ readonly "refreshPluginCatalog": {
 * runner is theirs: any lane but their own session reads it as not installed.
 */
 readonly "getPluginRuntime": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetPluginRuntime200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetPluginRuntime401", typeof GetPluginRuntime401.Type> | PunktfunkError<"GetPluginRuntime403", typeof GetPluginRuntime403.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetPluginRuntime200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetPluginRuntime401", typeof GetPluginRuntime401.Type> | PunktfunkError<"GetPluginRuntime403", typeof GetPluginRuntime403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetPluginRuntime200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetPluginRuntime401", typeof GetPluginRuntime401.Type> | LilynkError<"GetPluginRuntime403", typeof GetPluginRuntime403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetPluginRuntime200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetPluginRuntime401", typeof GetPluginRuntime401.Type> | LilynkError<"GetPluginRuntime403", typeof GetPluginRuntime403.Type>>;
   }
   /**
 * On a seat host on a person's own account only their own session switches it.
 */
 readonly "setPluginRuntime": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetPluginRuntimeRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetPluginRuntime200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetPluginRuntime400", typeof SetPluginRuntime400.Type> | PunktfunkError<"SetPluginRuntime401", typeof SetPluginRuntime401.Type> | PunktfunkError<"SetPluginRuntime403", typeof SetPluginRuntime403.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetPluginRuntimeRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetPluginRuntime200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"SetPluginRuntime400", typeof SetPluginRuntime400.Type> | PunktfunkError<"SetPluginRuntime401", typeof SetPluginRuntime401.Type> | PunktfunkError<"SetPluginRuntime403", typeof SetPluginRuntime403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetPluginRuntimeRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof SetPluginRuntime200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetPluginRuntime400", typeof SetPluginRuntime400.Type> | LilynkError<"SetPluginRuntime401", typeof SetPluginRuntime401.Type> | LilynkError<"SetPluginRuntime403", typeof SetPluginRuntime403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof SetPluginRuntimeRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof SetPluginRuntime200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"SetPluginRuntime400", typeof SetPluginRuntime400.Type> | LilynkError<"SetPluginRuntime401", typeof SetPluginRuntime401.Type> | LilynkError<"SetPluginRuntime403", typeof SetPluginRuntime403.Type>>;
   }
   /**
 * List catalog sources
 */
 readonly "listPluginSources": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListPluginSources200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListPluginSources401", typeof ListPluginSources401.Type> | PunktfunkError<"ListPluginSources403", typeof ListPluginSources403.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListPluginSources200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ListPluginSources401", typeof ListPluginSources401.Type> | PunktfunkError<"ListPluginSources403", typeof ListPluginSources403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ListPluginSources200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListPluginSources401", typeof ListPluginSources401.Type> | LilynkError<"ListPluginSources403", typeof ListPluginSources403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ListPluginSources200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ListPluginSources401", typeof ListPluginSources401.Type> | LilynkError<"ListPluginSources403", typeof ListPluginSources403.Type>>;
   }
   /**
 * Its entries become installable and attributed to it. They never carry `verified`; that badge is
 * the built-in source alone.
 */
 readonly "putPluginSource": {
-    <Config extends OperationConfig | undefined = undefined>(name: string, options: { readonly payload: typeof PutPluginSourceRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"PutPluginSource400", typeof PutPluginSource400.Type> | PunktfunkError<"PutPluginSource401", typeof PutPluginSource401.Type> | PunktfunkError<"PutPluginSource403", typeof PutPluginSource403.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(name: string, options: { readonly payload: typeof PutPluginSourceRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"PutPluginSource400", typeof PutPluginSource400.Type> | PunktfunkError<"PutPluginSource401", typeof PutPluginSource401.Type> | PunktfunkError<"PutPluginSource403", typeof PutPluginSource403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(name: string, options: { readonly payload: typeof PutPluginSourceRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"PutPluginSource400", typeof PutPluginSource400.Type> | LilynkError<"PutPluginSource401", typeof PutPluginSource401.Type> | LilynkError<"PutPluginSource403", typeof PutPluginSource403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(name: string, options: { readonly payload: typeof PutPluginSourceRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"PutPluginSource400", typeof PutPluginSource400.Type> | LilynkError<"PutPluginSource401", typeof PutPluginSource401.Type> | LilynkError<"PutPluginSource403", typeof PutPluginSource403.Type>>;
   }
   /**
 * Remove a catalog source
 */
 readonly "deletePluginSource": {
-    <Config extends OperationConfig | undefined = undefined>(name: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DeletePluginSource401", typeof DeletePluginSource401.Type> | PunktfunkError<"DeletePluginSource403", typeof DeletePluginSource403.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(name: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"DeletePluginSource401", typeof DeletePluginSource401.Type> | PunktfunkError<"DeletePluginSource403", typeof DeletePluginSource403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(name: string, options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<void, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DeletePluginSource401", typeof DeletePluginSource401.Type> | LilynkError<"DeletePluginSource403", typeof DeletePluginSource403.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(name: string, options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<void, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"DeletePluginSource401", typeof DeletePluginSource401.Type> | LilynkError<"DeletePluginSource403", typeof DeletePluginSource403.Type>>;
   }
   /**
 * Drops the package and its provenance, then restarts the runner. Only names the runner would
 * supervise: a shared dependency cannot be ripped out of the tree.
 */
 readonly "uninstallPlugin": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof UninstallPluginRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof UninstallPlugin202.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UninstallPlugin400", typeof UninstallPlugin400.Type> | PunktfunkError<"UninstallPlugin401", typeof UninstallPlugin401.Type> | PunktfunkError<"UninstallPlugin403", typeof UninstallPlugin403.Type> | PunktfunkError<"UninstallPlugin409", typeof UninstallPlugin409.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof UninstallPluginRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof UninstallPlugin202.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"UninstallPlugin400", typeof UninstallPlugin400.Type> | PunktfunkError<"UninstallPlugin401", typeof UninstallPlugin401.Type> | PunktfunkError<"UninstallPlugin403", typeof UninstallPlugin403.Type> | PunktfunkError<"UninstallPlugin409", typeof UninstallPlugin409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof UninstallPluginRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof UninstallPlugin202.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UninstallPlugin400", typeof UninstallPlugin400.Type> | LilynkError<"UninstallPlugin401", typeof UninstallPlugin401.Type> | LilynkError<"UninstallPlugin403", typeof UninstallPlugin403.Type> | LilynkError<"UninstallPlugin409", typeof UninstallPlugin409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof UninstallPluginRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof UninstallPlugin202.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"UninstallPlugin400", typeof UninstallPlugin400.Type> | LilynkError<"UninstallPlugin401", typeof UninstallPlugin401.Type> | LilynkError<"UninstallPlugin403", typeof UninstallPlugin403.Type> | LilynkError<"UninstallPlugin409", typeof UninstallPlugin409.Type>>;
   }
   /**
 * Only for install kinds that support it. No version or URL in the body — the host
@@ -5729,54 +5729,54 @@ readonly "uninstallPlugin": {
 * the outcome is `last_result`.
 */
 readonly "applyUpdate": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof ApplyUpdateRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ApplyUpdate202.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ApplyUpdate401", typeof ApplyUpdate401.Type> | PunktfunkError<"ApplyUpdate409", typeof ApplyUpdate409.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof ApplyUpdateRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof ApplyUpdate202.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ApplyUpdate401", typeof ApplyUpdate401.Type> | PunktfunkError<"ApplyUpdate409", typeof ApplyUpdate409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof ApplyUpdateRequestJson.Encoded; readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ApplyUpdate202.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ApplyUpdate401", typeof ApplyUpdate401.Type> | LilynkError<"ApplyUpdate409", typeof ApplyUpdate409.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly payload: typeof ApplyUpdateRequestJson.Encoded; readonly config?: Config | undefined }): Effect.Effect<WithOptionalResponse<typeof ApplyUpdate202.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ApplyUpdate401", typeof ApplyUpdate401.Type> | LilynkError<"ApplyUpdate409", typeof ApplyUpdate409.Type>>;
   }
   /**
 * One forced check per 30 s. `last_error` is a failed check; `not_published`
 * is an empty channel, not a failure.
 */
 readonly "forceUpdateCheck": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ForceUpdateCheck200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ForceUpdateCheck401", typeof ForceUpdateCheck401.Type> | PunktfunkError<"ForceUpdateCheck409", typeof ForceUpdateCheck409.Type> | PunktfunkError<"ForceUpdateCheck429", typeof ForceUpdateCheck429.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ForceUpdateCheck200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"ForceUpdateCheck401", typeof ForceUpdateCheck401.Type> | PunktfunkError<"ForceUpdateCheck409", typeof ForceUpdateCheck409.Type> | PunktfunkError<"ForceUpdateCheck429", typeof ForceUpdateCheck429.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof ForceUpdateCheck200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ForceUpdateCheck401", typeof ForceUpdateCheck401.Type> | LilynkError<"ForceUpdateCheck409", typeof ForceUpdateCheck409.Type> | LilynkError<"ForceUpdateCheck429", typeof ForceUpdateCheck429.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof ForceUpdateCheck200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"ForceUpdateCheck401", typeof ForceUpdateCheck401.Type> | LilynkError<"ForceUpdateCheck409", typeof ForceUpdateCheck409.Type> | LilynkError<"ForceUpdateCheck429", typeof ForceUpdateCheck429.Type>>;
   }
   /**
 * A cache older than 6 h may kick a background refresh. The response never
 * blocks on the network.
 */
 readonly "getUpdateStatus": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetUpdateStatus200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetUpdateStatus401", typeof GetUpdateStatus401.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetUpdateStatus200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetUpdateStatus401", typeof GetUpdateStatus401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetUpdateStatus200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetUpdateStatus401", typeof GetUpdateStatus401.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetUpdateStatus200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetUpdateStatus401", typeof GetUpdateStatus401.Type>>;
   }
   /**
 * Where to reach the browser plane
 */
 readonly "getWebTransport": {
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetWebTransport200.Type, Config>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetWebTransport404", typeof GetWebTransport404.Type>>;
-    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetWebTransport200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | PunktfunkError<"GetWebTransport404", typeof GetWebTransport404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config: Config }): Effect.Effect<WithOptionalResponse<typeof GetWebTransport200.Type, Config>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetWebTransport404", typeof GetWebTransport404.Type>>;
+    <Config extends OperationConfig | undefined = undefined>(options: { readonly config?: Config | undefined } | undefined): Effect.Effect<WithOptionalResponse<typeof GetWebTransport200.Type, Config | undefined>, HttpClientError.HttpClientError | SchemaError | LilynkError<"GetWebTransport404", typeof GetWebTransport404.Type>>;
   }
 }
 
-export interface PunktfunkError<Tag extends string, E> {
+export interface LilynkError<Tag extends string, E> {
   readonly _tag: Tag
   readonly request: HttpClientRequest.HttpClientRequest
   readonly response: HttpClientResponse.HttpClientResponse
   readonly cause: E
 }
 
-class PunktfunkErrorImpl extends Data.Error<{
+class LilynkErrorImpl extends Data.Error<{
   _tag: string
   cause: any
   request: HttpClientRequest.HttpClientRequest
   response: HttpClientResponse.HttpClientResponse
 }> {}
 
-export const PunktfunkError = <Tag extends string, E>(
+export const LilynkError = <Tag extends string, E>(
   tag: Tag,
   cause: E,
   response: HttpClientResponse.HttpClientResponse,
-): PunktfunkError<Tag, E> =>
-  new PunktfunkErrorImpl({
+): LilynkError<Tag, E> =>
+  new LilynkErrorImpl({
     _tag: tag,
     cause,
     response,

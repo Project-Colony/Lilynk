@@ -23,7 +23,7 @@ pub const WORKSPACE_VERSION: &str = env!("CARGO_PKG_VERSION");
 pub enum ImportKind {
     /// Tiled dmabuf → EGL/GL de-tile blit → BGRx CUDA buffer.
     Tiled,
-    /// Tiled dmabuf → EGL/GL NV12 convert → two-plane CUDA buffer (`PUNKTFUNK_NV12`).
+    /// Tiled dmabuf → EGL/GL NV12 convert → two-plane CUDA buffer (`LILYNK_NV12`).
     TiledNv12,
     /// LINEAR dmabuf → Vulkan bridge → BGRx CUDA buffer (gamescope's only offer).
     Linear,

@@ -4,13 +4,13 @@
 #[cfg(feature = "quic")]
 use crate::*;
 
-/// Static HDR metadata ([`punktfunk_connection_next_hdr_meta`]): ST.2086 mastering
+/// Static HDR metadata ([`lilynk_connection_next_hdr_meta`]): ST.2086 mastering
 /// display + CEA-861.3 content light. HDR10 SEI units (primaries/white 1/50000,
 /// luminance 0.0001 cd/m²) for DXGI / `CAEDRMetadata` / `KEY_HDR_STATIC_INFO`.
 #[cfg(feature = "quic")]
 #[repr(C)]
 #[derive(Clone, Copy)]
-pub struct PunktfunkHdrMeta {
+pub struct LilynkHdrMeta {
     /// Display-primaries x-chromaticities, 1/50000 units, ST.2086 order [green, blue, red].
     pub display_primaries_x: [u16; 3],
     /// Display-primaries y-chromaticities, 1/50000 units, ST.2086 order [green, blue, red].
@@ -30,9 +30,9 @@ pub struct PunktfunkHdrMeta {
 }
 
 #[cfg(feature = "quic")]
-impl PunktfunkHdrMeta {
-    fn from_meta(m: &lilynk_core::quic::HdrMeta) -> PunktfunkHdrMeta {
-        PunktfunkHdrMeta {
+impl LilynkHdrMeta {
+    fn from_meta(m: &lilynk_core::quic::HdrMeta) -> LilynkHdrMeta {
+        LilynkHdrMeta {
             display_primaries_x: [
                 m.display_primaries[0][0],
                 m.display_primaries[1][0],
@@ -53,36 +53,36 @@ impl PunktfunkHdrMeta {
     }
 }
 
-/// Host capture→sent duration for one AU ([`punktfunk_connection_next_host_timing`]).
+/// Host capture→sent duration for one AU ([`lilynk_connection_next_host_timing`]).
 /// Correlate by `pts_ns`; `network = (received + clock_offset − pts_ns) − host_us`.
 /// Lost datagram: no sample. See `design/stats-unification.md`.
 #[cfg(feature = "quic")]
 #[repr(C)]
 #[derive(Clone, Copy)]
-pub struct PunktfunkHostTiming {
-    /// AU capture stamp (host capture clock — matches `PunktfunkFrame::pts_ns`).
+pub struct LilynkHostTiming {
+    /// AU capture stamp (host capture clock — matches `LilynkFrame::pts_ns`).
     pub pts_ns: u64,
     /// Host capture→sent duration, µs.
     pub host_us: u32,
 }
 
 /// Pull the next static HDR metadata (ST.2086 + content light) into `*out`.
-/// [`PunktfunkStatus::NoFrame`] on timeout, [`PunktfunkStatus::Closed`] once ended.
+/// [`LilynkStatus::NoFrame`] on timeout, [`LilynkStatus::Closed`] once ended.
 /// Apply the latest to the display. Only an HDR session (PQ transfer from
-/// `punktfunk_connection_color_info`) emits these. One puller.
+/// `lilynk_connection_color_info`) emits these. One puller.
 ///
 /// # Safety
-/// `c` is a valid connection handle; `out` is writable for one `PunktfunkHdrMeta`.
+/// `c` is a valid connection handle; `out` is writable for one `LilynkHdrMeta`.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_next_hdr_meta(
-    c: *mut PunktfunkConnection,
-    out: *mut PunktfunkHdrMeta,
+pub unsafe extern "C" fn lilynk_connection_next_hdr_meta(
+    c: *mut LilynkConnection,
+    out: *mut LilynkHdrMeta,
     timeout_ms: u32,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         if out.is_null() {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         match c
             .inner
@@ -90,8 +90,8 @@ pub unsafe extern "C" fn punktfunk_connection_next_hdr_meta(
         {
             Ok(m) => {
                 // SAFETY: caller out-param, non-null on this path, written once.
-                unsafe { *out = PunktfunkHdrMeta::from_meta(&m) };
-                PunktfunkStatus::Ok
+                unsafe { *out = LilynkHdrMeta::from_meta(&m) };
+                LilynkStatus::Ok
             }
             Err(e) => e.status(),
         }
@@ -99,10 +99,10 @@ pub unsafe extern "C" fn punktfunk_connection_next_hdr_meta(
 }
 
 /// Forwarded host-cursor shape: straight-alpha RGBA8, no padding, `len == w * h * 4`,
-/// hotspot within `w`×`h`. `serial` is the identity [`PunktfunkCursorState`] refers
+/// hotspot within `w`×`h`. `serial` is the identity [`LilynkCursorState`] refers
 /// to — cache the built OS cursor by it.
 #[repr(C)]
-pub struct PunktfunkCursorShape {
+pub struct LilynkCursorShape {
     pub serial: u32,
     pub w: u16,
     pub h: u16,
@@ -117,7 +117,7 @@ pub struct PunktfunkCursorShape {
 /// relative-mode hint. `flags` bit 0 = visible, bit 1 = relative (host app
 /// grabbed/hid the pointer — run captured relative; clear = absolute at `x`/`y`).
 #[repr(C)]
-pub struct PunktfunkCursorState {
+pub struct LilynkCursorState {
     pub serial: u32,
     pub flags: u8,
     pub x: i32,
@@ -125,7 +125,7 @@ pub struct PunktfunkCursorState {
 }
 
 /// Pull the next forwarded cursor shape (pointer-bitmap change on the control
-/// stream; only `PUNKTFUNK_CLIENT_CAP_CURSOR` sessions receive any). On `Ok`,
+/// stream; only `LILYNK_CLIENT_CAP_CURSOR` sessions receive any). On `Ok`,
 /// `out->rgba` borrows until the next cursor-shape call. One puller per plane.
 ///
 /// # Safety
@@ -133,14 +133,14 @@ pub struct PunktfunkCursorState {
 /// puller; it may run concurrently with every other plane.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_next_cursor_shape(
-    c: *mut PunktfunkConnection,
-    out: *mut PunktfunkCursorShape,
+pub unsafe extern "C" fn lilynk_connection_next_cursor_shape(
+    c: *mut LilynkConnection,
+    out: *mut LilynkCursorShape,
     timeout_ms: u32,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         if out.is_null() {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         match c
             .inner
@@ -151,7 +151,7 @@ pub unsafe extern "C" fn punktfunk_connection_next_cursor_shape(
                 let sh = slot.insert(shape);
                 // SAFETY: `out` is a caller-owned `#[repr(C)]` slot, written once by value.
                 unsafe {
-                    *out = PunktfunkCursorShape {
+                    *out = LilynkCursorShape {
                         serial: sh.serial,
                         w: sh.w,
                         h: sh.h,
@@ -161,7 +161,7 @@ pub unsafe extern "C" fn punktfunk_connection_next_cursor_shape(
                         len: sh.rgba.len(),
                     };
                 }
-                PunktfunkStatus::Ok
+                LilynkStatus::Ok
             }
             Err(e) => e.status(),
         }
@@ -170,21 +170,21 @@ pub unsafe extern "C" fn punktfunk_connection_next_cursor_shape(
 
 /// Pull the next cursor state (`0xD0` per host encode tick — latest-wins; drain
 /// the queue and apply only the newest). Same negotiation gate as
-/// [`punktfunk_connection_next_cursor_shape`].
+/// [`lilynk_connection_next_cursor_shape`].
 ///
 /// # Safety
 /// `c` is a valid connection handle; `out` is writable. At most one cursor-state
 /// puller; it may run concurrently with every other plane.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_next_cursor_state(
-    c: *mut PunktfunkConnection,
-    out: *mut PunktfunkCursorState,
+pub unsafe extern "C" fn lilynk_connection_next_cursor_state(
+    c: *mut LilynkConnection,
+    out: *mut LilynkCursorState,
     timeout_ms: u32,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         if out.is_null() {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         match c
             .inner
@@ -193,14 +193,14 @@ pub unsafe extern "C" fn punktfunk_connection_next_cursor_state(
             Ok(st) => {
                 // SAFETY: `out` is a caller-owned `#[repr(C)]` slot, written once by value.
                 unsafe {
-                    *out = PunktfunkCursorState {
+                    *out = LilynkCursorState {
                         serial: st.serial,
                         flags: st.flags,
                         x: st.x,
                         y: st.y,
                     };
                 }
-                PunktfunkStatus::Ok
+                LilynkStatus::Ok
             }
             Err(e) => e.status(),
         }
@@ -214,33 +214,33 @@ pub unsafe extern "C" fn punktfunk_connection_next_cursor_state(
 /// `c` is a valid connection handle.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_set_cursor_render(
-    c: *mut PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_set_cursor_render(
+    c: *mut LilynkConnection,
     client_draws: bool,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         status_of(c.inner.set_cursor_render(client_draws))
     })
 }
 
 /// Pull the next per-AU host timing (0xCF) into `*out`: capture→sent duration,
-/// correlated by `pts_ns` (see [`PunktfunkHostTiming`]).
-/// [`PunktfunkStatus::NoFrame`] on timeout, [`PunktfunkStatus::Closed`] once ended.
+/// correlated by `pts_ns` (see [`LilynkHostTiming`]).
+/// [`LilynkStatus::NoFrame`] on timeout, [`LilynkStatus::Closed`] once ended.
 /// Drain non-blockingly (`timeout_ms = 0`). A host that never emits any: keep
 /// showing the combined `host+network` stage. One puller.
 ///
 /// # Safety
-/// `c` is a valid connection handle; `out` is writable for one `PunktfunkHostTiming`.
+/// `c` is a valid connection handle; `out` is writable for one `LilynkHostTiming`.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_next_host_timing(
-    c: *mut PunktfunkConnection,
-    out: *mut PunktfunkHostTiming,
+pub unsafe extern "C" fn lilynk_connection_next_host_timing(
+    c: *mut LilynkConnection,
+    out: *mut LilynkHostTiming,
     timeout_ms: u32,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         if out.is_null() {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         match c
             .inner
@@ -249,12 +249,12 @@ pub unsafe extern "C" fn punktfunk_connection_next_host_timing(
             Ok(t) => {
                 // SAFETY: `out` is a caller-owned `#[repr(C)]` slot, written once by value.
                 unsafe {
-                    *out = PunktfunkHostTiming {
+                    *out = LilynkHostTiming {
                         pts_ns: t.pts_ns,
                         host_us: t.host_us,
                     }
                 };
-                PunktfunkStatus::Ok
+                LilynkStatus::Ok
             }
             Err(e) => e.status(),
         }
@@ -264,21 +264,21 @@ pub unsafe extern "C" fn punktfunk_connection_next_host_timing(
 /// Resolved colour signalling + encode bit depth. Each out pointer is filled when
 /// non-NULL: `primaries`/`transfer`/`matrix` are CICP (BT.709 = 1; BT.2020 = 9;
 /// PQ = 16, HLG = 18; BT.2020-NCL = 9), `full_range` 0/1, `bit_depth` 8 or 10.
-/// Transfer 16/18 is HDR — drain [`punktfunk_connection_next_hdr_meta`]. The format of the
-/// newest frame `next_au` handed out: it moves on a frame flagged `PUNKTFUNK_FRAME_NEW_FORMAT`.
+/// Transfer 16/18 is HDR — drain [`lilynk_connection_next_hdr_meta`]. The format of the
+/// newest frame `next_au` handed out: it moves on a frame flagged `LILYNK_FRAME_NEW_FORMAT`.
 ///
 /// # Safety
 /// `c` is a valid connection handle; each out pointer is NULL or writable for its scalar.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_color_info(
-    c: *mut PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_color_info(
+    c: *mut LilynkConnection,
     primaries: *mut u8,
     transfer: *mut u8,
     matrix: *mut u8,
     full_range: *mut u8,
     bit_depth: *mut u8,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         let f = c.inner.video_format();
         // SAFETY: the caller passes each out-param null or writable for one value.
@@ -289,38 +289,38 @@ pub unsafe extern "C" fn punktfunk_connection_color_info(
             put(full_range, f.color.full_range);
             put(bit_depth, f.bit_depth);
         }
-        PunktfunkStatus::Ok
+        LilynkStatus::Ok
     })
 }
 
 /// Resolved chroma as HEVC `chroma_format_idc`: `1` = 4:2:0, `3` = 4:4:4.
 /// `*out` is filled when non-NULL. In-band SPS is authoritative; this lets the
-/// embedder pre-size the decoder. Moves with [`punktfunk_connection_color_info`].
+/// embedder pre-size the decoder. Moves with [`lilynk_connection_color_info`].
 ///
 /// # Safety
 /// `c` is a valid connection handle; `out` is NULL or writable for one `u8`.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_chroma_format(
-    c: *mut PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_chroma_format(
+    c: *mut LilynkConnection,
     out: *mut u8,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     conn_out!(c, out => c.inner.video_format().chroma_format)
 }
 
-/// Host-resolved video codec: [`PUNKTFUNK_CODEC_H264`] / [`PUNKTFUNK_CODEC_HEVC`] /
-/// [`PUNKTFUNK_CODEC_AV1`]. Build the decoder from this (never assume HEVC).
+/// Host-resolved video codec: [`LILYNK_CODEC_H264`] / [`LILYNK_CODEC_HEVC`] /
+/// [`LILYNK_CODEC_AV1`]. Build the decoder from this (never assume HEVC).
 /// `*out` is filled when non-NULL. A host that did not negotiate reports HEVC. Moves with
-/// [`punktfunk_connection_color_info`].
+/// [`lilynk_connection_color_info`].
 ///
 /// # Safety
 /// `c` is a valid connection handle; `out` is NULL or writable for one `u8`.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_codec(
-    c: *mut PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_codec(
+    c: *mut LilynkConnection,
     out: *mut u8,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     conn_out!(c, out => c.inner.video_format().codec)
 }
 
@@ -333,9 +333,9 @@ pub unsafe extern "C" fn punktfunk_connection_codec(
 /// `c` is a valid connection handle; `out` is NULL or writable for one `u32`.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_shard_payload(
-    c: *mut PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_shard_payload(
+    c: *mut LilynkConnection,
     out: *mut u32,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     conn_out!(c, out => u32::from(c.inner.shard_payload))
 }

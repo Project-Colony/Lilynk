@@ -1,6 +1,6 @@
 //! Connect + handshake: cert-pinned `pkf2` dial, `ClientHello`/`ServerHello`/`Ready` on the
 //! control stream, wall-clock skew, and the [`Session`] over the connection's own socket, keyed from its exporter. A typed application
-//! close from the host is [`PunktfunkError::Rejected`], not a transport error; a host that
+//! close from the host is [`LilynkError::Rejected`], not a transport error; a host that
 //! answers no `pkf2` is the wire-version rejection. A host may answer with a `Redirect`
 //! instead: the session runs on another host of the same box, and the dial repeats there, once.
 //! A profile unlock rides the first dial only, right after its `ClientHello`.
@@ -69,8 +69,8 @@ fn client_features(p: &ConnectParams) -> crate::quic::v2::features::FeatureSet {
         .with(registry::FEATURE_CLEAR_PLACEMENT)
         .with(registry::FEATURE_SCROLL_AXIS_UNITS)
         .with(registry::FEATURE_PCM_PARTS);
-    // Triage switch: `PUNKTFUNK_TOUCHPAD=0` keeps the whole touchpad plane off.
-    if crate::env_on("PUNKTFUNK_TOUCHPAD") != Some(false) {
+    // Triage switch: `LILYNK_TOUCHPAD=0` keeps the whole touchpad plane off.
+    if crate::env_on("LILYNK_TOUCHPAD") != Some(false) {
         set = set
             .with(registry::FEATURE_TOUCHPAD)
             .with(registry::FEATURE_TOUCHPAD_TAPS);
@@ -105,9 +105,7 @@ fn follow(
     to: &Redirect,
 ) -> Result<()> {
     if std::mem::replace(redirected, true) {
-        return Err(PunktfunkError::InvalidArg(
-            "redirected twice on one connect",
-        ));
+        return Err(LilynkError::InvalidArg("redirected twice on one connect"));
     }
     tracing::info!(
         addr = %to.addr,
@@ -138,7 +136,7 @@ async fn dial(
 ) -> Result<Dialed> {
     // A password or key proof goes only to a host whose identity this client already pinned.
     if unlock.is_some() && pin.is_none() {
-        return Err(PunktfunkError::InvalidArg(
+        return Err(LilynkError::InvalidArg(
             "a profile unlock needs a pinned host",
         ));
     }
@@ -146,9 +144,8 @@ async fn dial(
     let shutdown = &args.shared.shutdown;
     let remote = dial_addr(host, port).await?;
     let identity = p.identity.as_ref().map(|(c, k)| (c.as_str(), k.as_str()));
-    let io_err = |e: endpoint::anyhow_result::Error| {
-        PunktfunkError::Io(std::io::Error::other(e.to_string()))
-    };
+    let io_err =
+        |e: endpoint::anyhow_result::Error| LilynkError::Io(std::io::Error::other(e.to_string()));
     let (r, observed) = endpoint::client_shared(
         pin,
         identity,
@@ -166,7 +163,7 @@ async fn dial(
     let conn = loop {
         let connecting = ep
             .connect(remote, "punktfunk")
-            .map_err(|_| PunktfunkError::InvalidArg("connect"))?;
+            .map_err(|_| LilynkError::InvalidArg("connect"))?;
         // Remaining budget only: a late success must not land after `ready_rx` gave up.
         let now = tokio::time::Instant::now();
         let attempt = DIAL_ATTEMPT.min(deadline.saturating_duration_since(now));
@@ -181,10 +178,10 @@ async fn dial(
                 let fp_mismatch = pin.is_some()
                     && observed.lock().unwrap().map(|fp| Some(fp) != pin) == Some(true);
                 if fp_mismatch {
-                    return Err(PunktfunkError::Crypto);
+                    return Err(LilynkError::Crypto);
                 }
                 if endpoint::refused_alpn(&e) {
-                    return Err(PunktfunkError::Rejected(
+                    return Err(LilynkError::Rejected(
                         crate::reject::RejectReason::WireVersionMismatch,
                         String::new(),
                     ));
@@ -192,16 +189,16 @@ async fn dial(
                 // Only TimedOut (host never answered) is retryable.
                 let host_silent = matches!(e, quinn::ConnectionError::TimedOut);
                 if !host_silent {
-                    return Err(PunktfunkError::Io(std::io::Error::other(e.to_string())));
+                    return Err(LilynkError::Io(std::io::Error::other(e.to_string())));
                 }
                 if gave_up() {
-                    return Err(PunktfunkError::Timeout);
+                    return Err(LilynkError::Timeout);
                 }
             }
             // Attempt window elapsed, host still silent. Drop `connecting` and redial.
             Err(_) => {
                 if gave_up() {
-                    return Err(PunktfunkError::Timeout);
+                    return Err(LilynkError::Timeout);
                 }
             }
         }
@@ -219,7 +216,7 @@ async fn dial(
         let (mut send, recv) = conn
             .open_bi()
             .await
-            .map_err(|e| PunktfunkError::Io(std::io::Error::other(e.to_string())))?;
+            .map_err(|e| LilynkError::Io(std::io::Error::other(e.to_string())))?;
         // Every dial says what its OS knows about this end of the path.
         let link = conn
             .local_ip()
@@ -355,9 +352,9 @@ async fn dial(
 
         let suite = server
             .suite
-            .ok_or(PunktfunkError::Unsupported("unsealed native media"))?;
+            .ok_or(LilynkError::Unsupported("unsealed native media"))?;
         let keys =
-            endpoint::media_keys(&conn, &server.session_id, suite).ok_or(PunktfunkError::Crypto)?;
+            endpoint::media_keys(&conn, &server.session_id, suite).ok_or(LilynkError::Crypto)?;
         if let Ok(sock) = media.try_clone_socket() {
             *args.shared.data_sock.lock().unwrap() = Some(sock);
         }
@@ -407,7 +404,7 @@ async fn dial(
         let screens = server.features.has(registry::FEATURE_SCREENS);
         args.shared.screens.set_on(screens);
         session.set_screens(screens);
-        Ok::<_, PunktfunkError>(Step::Session(Box::new((
+        Ok::<_, LilynkError>(Step::Session(Box::new((
             session,
             send,
             recv,
@@ -439,7 +436,7 @@ async fn dial(
     let Some(outcome) = outcome else {
         conn.close(crate::quic::QUIT_CLOSE_CODE.into(), b"client cancelled");
         let _ = tokio::time::timeout(std::time::Duration::from_millis(300), ep.wait_idle()).await;
-        return Err(PunktfunkError::Timeout);
+        return Err(LilynkError::Timeout);
     };
     match outcome {
         Ok(Step::Session(landed)) => {
@@ -469,7 +466,7 @@ async fn dial(
                     .await;
             }
             Err(match reject_from_close(&conn) {
-                Some((r, said)) => PunktfunkError::Rejected(r, said),
+                Some((r, said)) => LilynkError::Rejected(r, said),
                 None => e,
             })
         }
@@ -678,7 +675,7 @@ mod tests {
             "the redirected dial sent one"
         );
         match got {
-            Err(PunktfunkError::Rejected(r, said)) => {
+            Err(LilynkError::Rejected(r, said)) => {
                 assert_eq!(r, crate::reject::RejectReason::ProfileLocked);
                 assert_eq!(said, "Wrong password. Try again.");
             }
@@ -700,7 +697,7 @@ mod tests {
             ..new()
         };
         match crate::client::NativeClient::connect(unpinned).map(|_| ()) {
-            Err(PunktfunkError::InvalidArg(_)) => {}
+            Err(LilynkError::InvalidArg(_)) => {}
             other => panic!("{other:?}"),
         }
         let dialed = rt.block_on(tokio::time::timeout(

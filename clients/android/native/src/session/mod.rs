@@ -302,13 +302,13 @@ impl Drop for VideoThread {
 /// client that is still reading. `pop` waits for its own timeout, which is the loop's only wait.
 pub(crate) fn drain_frames<T>(
     shutdown: &AtomicBool,
-    mut pop: impl FnMut() -> Result<T, lilynk_core::PunktfunkError>,
+    mut pop: impl FnMut() -> Result<T, lilynk_core::LilynkError>,
 ) {
     while !shutdown.load(Ordering::Relaxed) {
         // `NoFrame` is the timeout: re-check the flag and poll again. Anything else is a closed
         // session, and there is nothing left to drain.
         match pop() {
-            Ok(_) | Err(lilynk_core::PunktfunkError::NoFrame) => {}
+            Ok(_) | Err(lilynk_core::LilynkError::NoFrame) => {}
             Err(_) => break,
         }
     }
@@ -360,7 +360,7 @@ mod tests {
         drain_frames, pack_src_crop, pack_surface_size, unpack_src_crop, unpack_surface_size,
         HandleTable,
     };
-    use lilynk_core::PunktfunkError;
+    use lilynk_core::LilynkError;
     use std::sync::atomic::{AtomicBool, Ordering};
 
     /// The drain takes frames and timeouts alike, ends on a closed session at once, and never
@@ -370,9 +370,9 @@ mod tests {
         let stop = AtomicBool::new(false);
         let mut script = vec![
             Ok(1),
-            Err(PunktfunkError::NoFrame),
+            Err(LilynkError::NoFrame),
             Ok(2),
-            Err(PunktfunkError::Closed),
+            Err(LilynkError::Closed),
             Ok(3),
         ]
         .into_iter();
@@ -390,7 +390,7 @@ mod tests {
             Ok(())
         });
         assert_eq!(pops, 1, "the flag ends the loop after the pop that saw it");
-        drain_frames(&stop, || -> Result<(), PunktfunkError> {
+        drain_frames(&stop, || -> Result<(), LilynkError> {
             panic!("a stopped drain pops nothing")
         });
     }

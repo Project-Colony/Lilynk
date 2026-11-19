@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Capture host-free UI screenshots of the native Linux client. Mirrors the iOS harness
-# (clients/apple/tools/screenshots.sh): one app launch per scene (PUNKTFUNK_SHOT_SCENE),
+# (clients/apple/tools/screenshots.sh): one app launch per scene (LILYNK_SHOT_SCENE),
 # the app renders a mock-populated REAL view and — when the binary supports it — CAPTURES
-# ITSELF (PUNKTFUNK_SHOT_OUT: widget snapshot → gsk render → PNG) before printing
+# ITSELF (LILYNK_SHOT_OUT: widget snapshot → gsk render → PNG) before printing
 # `PF_SHOT_READY`. Self-capture needs no Xvfb/ImageMagick and runs under a live Wayland
 # session too; the X11 root-grab path is kept as a fallback for old binaries. No host,
 # GPU, or live stream — only the chrome scenes (the stream runs in the lilynk-session
@@ -110,7 +110,7 @@ rc=0
 for scene in "${SCENES[@]}"; do
 	: >"$WORK/log"
 	rm -f "$OUT/$scene.png"
-	PUNKTFUNK_SHOT_SCENE="$scene" PUNKTFUNK_SHOT_OUT="$OUT/$scene.png" \
+	LILYNK_SHOT_SCENE="$scene" LILYNK_SHOT_OUT="$OUT/$scene.png" \
 		"$BIN" >"$WORK/log" 2>&1 &
 	pid=$!
 	ready=0
@@ -134,7 +134,7 @@ for scene in "${SCENES[@]}"; do
 		if [ -f "$OUT/$scene.png" ]; then
 			echo "✓ $scene → $OUT/$scene.png (self-capture)"
 		elif [ "$MODE" = x11 ]; then
-			# Old binary (no PUNKTFUNK_SHOT_OUT support) — grab the X root instead.
+			# Old binary (no LILYNK_SHOT_OUT support) — grab the X root instead.
 			sleep "$SETTLE"
 			if capture_x11 "$OUT/$scene.png"; then
 				echo "✓ $scene → $OUT/$scene.png (x11 grab)"

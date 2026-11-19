@@ -9,8 +9,8 @@
 //! Apply takes no version, URL, or channel from the request; those come from the
 //! verified cache. Trust and failure rules live in [`manifest`]. The serial floor
 //! in `update-state.json` makes a replayed older manifest an error, not a silent
-//! downgrade. Checks are off unless `PUNKTFUNK_UPDATE_CHECK=1`; status then reports
-//! `check_disabled`. `PUNKTFUNK_UPDATE_APPLY=0` leaves check intact and
+//! downgrade. Checks are off unless `LILYNK_UPDATE_CHECK=1`; status then reports
+//! `check_disabled`. `LILYNK_UPDATE_APPLY=0` leaves check intact and
 //! 409s apply.
 
 pub(crate) mod detect;
@@ -38,13 +38,13 @@ pub(crate) const FORCE_MIN_INTERVAL: Duration = Duration::from_secs(30);
 const STALE_AFTER: Duration = Duration::from_secs(45 * 24 * 60 * 60);
 
 pub(crate) fn check_disabled() -> bool {
-    !ly_host_config::row_bool("PUNKTFUNK_UPDATE_CHECK")
+    !ly_host_config::row_bool("LILYNK_UPDATE_CHECK")
 }
 
 /// Operator kill switch: apply 409s and status reports `notify` even when a
 /// one-click leg exists. Check is unaffected.
 pub(crate) fn apply_disabled() -> bool {
-    !ly_host_config::row_bool("PUNKTFUNK_UPDATE_APPLY")
+    !ly_host_config::row_bool("LILYNK_UPDATE_APPLY")
 }
 
 /// What an apply can use on this box, probed once so [`apply_leg`] is a pure table.

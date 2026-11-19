@@ -6,8 +6,8 @@
       "port": 47990,
       "proto": "tcp",
       "what": "management REST API (HTTPS + token; read-only status/library off loopback)",
-      "env": "PUNKTFUNK_MGMT_BIND",
-      "conflict": "Sunshine / Apollo / Vibeshine serve their web UI on 47990 too — the one port still shared with them once GameStream compat is off. Move it via PUNKTFUNK_MGMT_BIND; clients relearn it from discovery."
+      "env": "LILYNK_MGMT_BIND",
+      "conflict": "Sunshine / Apollo / Vibeshine serve their web UI on 47990 too — the one port still shared with them once GameStream compat is off. Move it via LILYNK_MGMT_BIND; clients relearn it from discovery."
     },
     "web": {
       "port": 47992,
@@ -19,13 +19,13 @@
       "port": 9777,
       "proto": "udp",
       "what": "QUIC: control, video and audio",
-      "env": "PUNKTFUNK_NATIVE_PORT"
+      "env": "LILYNK_NATIVE_PORT"
     },
     "browser": {
       "port": 9778,
       "proto": "udp",
       "what": "browser streaming (preview, off until switched on)",
-      "env": "PUNKTFUNK_WEBTRANSPORT_PORT"
+      "env": "LILYNK_WEBTRANSPORT_PORT"
     },
     "mdns": {
       "port": 5353,
@@ -35,7 +35,7 @@
     "gamestream": {
       "tcp": [47984, 47989, 48010],
       "udp": [47998, 47999, 48000],
-      "what": "GameStream/Moonlight-compat planes (opt-in, PUNKTFUNK_GAMESTREAM=1)",
+      "what": "GameStream/Moonlight-compat planes (opt-in, LILYNK_GAMESTREAM=1)",
       "conflict": "Sunshine / Apollo / Vibeshine bind these same fixed ports and advertise the same mDNS name — run only one GameStream host at a time, or keep punktfunk native-only."
     }
   },

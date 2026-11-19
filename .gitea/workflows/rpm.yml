@@ -219,7 +219,7 @@ jobs:
         # vX.Y.Z tag -> X.Y.Z-1 in the base group (a real release); main push -> <next-minor>-0.ciN.g<sha>
         # in the `<base>-canary` group, whose "0." release sorts below the eventual <next-minor>-1 yet
         # climbs by run number (scripts/ci/ly-version.sh owns the rule). The spec %build stamps
-        # PUNKTFUNK_BUILD_VERSION from these macros into the binary (--version provenance).
+        # LILYNK_BUILD_VERSION from these macros into the binary (--version provenance).
         run: |
           eval "$(bash scripts/ci/ly-version.sh --format rpm)"   # -> PF_VERSION, PF_RELEASE, PF_CHANNEL
           case "$PF_CHANNEL" in

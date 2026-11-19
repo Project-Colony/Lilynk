@@ -132,7 +132,7 @@ fun SettingsScreen(
     /**
      * Seeds the pushed detail page. The live app always starts on the category list (null); the
      * screenshot harness passes a category to capture one, the way the GTK client's
-     * `PUNKTFUNK_SHOT_SETTINGS_SCOPE` seeds its scope.
+     * `LILYNK_SHOT_SETTINGS_SCOPE` seeds its scope.
      */
     initialCategory: SettingsCategory? = null,
     /** Seeds the scope the same way, for a screenshot of a preset being edited. */
@@ -883,7 +883,7 @@ private fun ResetAllGroup(onReset: () -> Unit) {
         }
     }
     if (asking) {
-        PunktfunkDialog(
+        LilynkDialog(
             title = stringResource(R.string.prefs_reset_all_title),
             onDismiss = { asking = false },
             actions = listOf(
@@ -1239,7 +1239,7 @@ private fun DisplaySettings(
         ) { c -> update("compositor", s.copy(compositor = c)) }
     }
     if (hdrWarning) {
-        PunktfunkDialog(
+        LilynkDialog(
             title = stringResource(R.string.player_hdr_enabled_no_headroom_title),
             onDismiss = { hdrWarning = false },
             actions = listOf(

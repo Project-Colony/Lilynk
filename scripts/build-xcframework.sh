@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# Build PunktfunkCore.xcframework for the Apple clients — run ON A MAC with Xcode + rustup.
+# Build LilynkCore.xcframework for the Apple clients — run ON A MAC with Xcode + rustup.
 #
 #   rustup target add aarch64-apple-darwin x86_64-apple-darwin # + aarch64-apple-ios{,-sim} for iOS
 #   bash scripts/build-xcframework.sh
 #
-# Output: clients/apple/PunktfunkCore.xcframework (consumed by clients/apple/Package.swift).
+# Output: clients/apple/LilynkCore.xcframework (consumed by clients/apple/Package.swift).
 # The library is clients/apple/native: the C ABI (lilynk-ffi) WITH the `quic` feature (the
-# punktfunk/1 connection API), so the bundled header gets PUNKTFUNK_FEATURE_QUIC pre-defined, plus
-# the Skia console (`punktfunk_console.h`).
+# punktfunk/1 connection API), so the bundled header gets LILYNK_FEATURE_QUIC pre-defined, plus
+# the Skia console (`lilynk_console.h`).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 # CI points CARGO_TARGET_DIR at a dir that outlives the job (scripts/ci/mac-cargo-target.sh).
@@ -159,20 +159,20 @@ lipo -create \
     -output "$STAGE/macos/liblilynk_apple.a"
 
 # Headers dir: the generated C headers (core's with the quic API force-enabled) + a modulemap
-# so Swift can `import PunktfunkCore`. Regenerated first: no build step writes include/.
+# so Swift can `import LilynkCore`. Regenerated first: no build step writes include/.
 cargo run -q -p gen-headers
-# PunktfunkShared's String Catalog and L10n.swift, which no Swift build writes either.
+# LilynkShared's String Catalog and L10n.swift, which no Swift build writes either.
 bash scripts/gen-l10n-apple.sh
 mkdir -p "$STAGE/include"
 {
-    echo "#define PUNKTFUNK_FEATURE_QUIC 1"
+    echo "#define LILYNK_FEATURE_QUIC 1"
     cat include/lilynk_core.h
 } > "$STAGE/include/lilynk_core.h"
-cp include/punktfunk_console.h "$STAGE/include/"
+cp include/lilynk_console.h "$STAGE/include/"
 cat > "$STAGE/include/module.modulemap" <<'EOF'
-module PunktfunkCore {
+module LilynkCore {
     header "lilynk_core.h"
-    header "punktfunk_console.h"
+    header "lilynk_console.h"
     export *
 }
 EOF
@@ -215,11 +215,11 @@ if ! xcodebuild -version >/dev/null 2>&1; then
     done
 fi
 
-rm -rf clients/apple/PunktfunkCore.xcframework
-"${XCODEBUILD[@]}" -create-xcframework "${ARGS[@]}" -output clients/apple/PunktfunkCore.xcframework
+rm -rf clients/apple/LilynkCore.xcframework
+"${XCODEBUILD[@]}" -create-xcframework "${ARGS[@]}" -output clients/apple/LilynkCore.xcframework
 
 # Xcode (unlike `swift build`) refuses to EMBED an unsigned xcframework: the app targets in
-# Lilynk.xcodeproj fail with "The framework 'PunktfunkCore.xcframework' is unsigned". So
+# Lilynk.xcodeproj fail with "The framework 'LilynkCore.xcframework' is unsigned". So
 # sign the bundle here. Identity: $CODESIGN_IDENTITY if set, else the first "Apple Development"
 # identity in the keychain, else ad-hoc ("-") — ad-hoc satisfies `swift build` and most local
 # Xcode runs; a real identity is needed for device/distribution. --timestamp=none keeps it
@@ -230,10 +230,10 @@ if [[ -z "$SIGN_ID" ]]; then
         | awk -F'"' '/Apple Development/ {print $2; exit}')
 fi
 SIGN_ID="${SIGN_ID:--}" # ad-hoc fallback when no real identity is available
-if codesign --force --timestamp=none --sign "$SIGN_ID" clients/apple/PunktfunkCore.xcframework; then
-    echo "OK: clients/apple/PunktfunkCore.xcframework (signed: $SIGN_ID)"
+if codesign --force --timestamp=none --sign "$SIGN_ID" clients/apple/LilynkCore.xcframework; then
+    echo "OK: clients/apple/LilynkCore.xcframework (signed: $SIGN_ID)"
 else
-    echo "WARN: clients/apple/PunktfunkCore.xcframework built but NOT signed — Xcode app" >&2
+    echo "WARN: clients/apple/LilynkCore.xcframework built but NOT signed — Xcode app" >&2
     echo "      builds will report it unsigned. Set CODESIGN_IDENTITY and re-run." >&2
-    echo "OK: clients/apple/PunktfunkCore.xcframework (unsigned)"
+    echo "OK: clients/apple/LilynkCore.xcframework (unsigned)"
 fi

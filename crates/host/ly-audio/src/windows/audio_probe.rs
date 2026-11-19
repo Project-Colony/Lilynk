@@ -3,7 +3,7 @@
 //! tear the probe nodes down.
 //!
 //! `ssm` / `sink` / `sss-primary` / `mint` / `plan` / `micpitch` / `micpins` /
-//! `cleanup`. Nodes stamp `PunktfunkAudioProbe=1` under `Device Parameters`
+//! `cleanup`. Nodes stamp `LilynkAudioProbe=1` under `Device Parameters`
 //! because DeviceDesc dies at INF install; `cleanup` and
 //! [`devnode_cleanup`](super::devnode_cleanup) match that marker, not the name.
 //!
@@ -22,7 +22,7 @@ use wasapi::{Direction, SampleType, StreamMode, WaveFormat};
 /// `Device Parameters` stamp. `cleanup` and
 /// [`devnode_cleanup`](super::devnode_cleanup) match this so a probe node cannot
 /// outlive the product.
-pub const PROBE_MARKER: &str = "PunktfunkAudioProbe";
+pub const PROBE_MARKER: &str = "LilynkAudioProbe";
 /// Device Manager name until the INF install overwrites it.
 const PROBE_DESC: &str = "Punktfunk Audio Probe";
 const ENDPOINT_WAIT: Duration = Duration::from_secs(15);

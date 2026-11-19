@@ -95,9 +95,9 @@ pub fn mic_mute_label(muted: bool) -> &'static str {
 /// ([`crate::quic::encode_audio_datagram`]), so it is also the smallest shed unit.
 ///
 /// The lossless plane negotiates shorter frames ([`pcm::frame_us_for`]); the resolved value is
-/// `audio_frame_us` on `Welcome`. Exported to C as `PUNKTFUNK_AUDIO_FRAME_MS` and kept at 5 —
+/// `audio_frame_us` on `Welcome`. Exported to C as `LILYNK_AUDIO_FRAME_MS` and kept at 5 —
 /// embedders size rings from it. Sizing as *frames × this* is wrong on lossless; drain
-/// `punktfunk_connection_next_audio_pcm` and use `frame_count` instead.
+/// `lilynk_connection_next_audio_pcm` and use `frame_count` instead.
 pub const FRAME_MS: u32 = 5;
 
 /// Opus-plane sample rate, and the protocol default. Lossless negotiates via [`pcm`].

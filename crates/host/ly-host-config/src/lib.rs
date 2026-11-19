@@ -9,7 +9,7 @@
 //! sites. [`env_on`] is the explicit-off grammar of the env-only knobs.
 #![forbid(unsafe_code)]
 
-/// Keyboard LAYOUT from `localectl`, not a `PUNKTFUNK_*` knob. Shared so the
+/// Keyboard LAYOUT from `localectl`, not a `LILYNK_*` knob. Shared so the
 /// injector and the gamescope backend do not depend on each other.
 pub mod layout;
 pub mod listen;
@@ -24,7 +24,7 @@ pub use store::{
     save_at, snapshot, store_path, Resolved, SaveError, Snapshot, Source,
 };
 
-/// Explicit-off for a `PUNKTFUNK_*` var: trimmed, case-insensitive
+/// Explicit-off for a `LILYNK_*` var: trimmed, case-insensitive
 /// `0`/`false`/`off`/`no` are off; any other present value is on; unset is
 /// `None`. Callers must use this — `var(k) != Ok("0")` treats `"0 "` and
 /// `"false"` as ON.
@@ -51,10 +51,10 @@ pub enum AudioOutputMode {
     /// Windows falls back to hardware when no silent sink keeps the stream's format.
     #[default]
     ClientOnly,
-    /// Host hardware plays as well as the client. `PUNKTFUNK_HOST_AUDIO=1`.
+    /// Host hardware plays as well as the client. `LILYNK_HOST_AUDIO=1`.
     HostAndClient,
     /// Operator's default playback device; never write default-device policy.
-    /// `PUNKTFUNK_KEEP_DEFAULT=1`.
+    /// `LILYNK_KEEP_DEFAULT=1`.
     FollowDefault,
 }
 
@@ -148,7 +148,7 @@ pub const DEFAULT_VOICE_APPS: &[&str] = &[
     "mumble",
 ];
 
-/// A comma list (row `audio_voice_apps`, `PUNKTFUNK_AUDIO_VOICE_APPS`) added to
+/// A comma list (row `audio_voice_apps`, `LILYNK_AUDIO_VOICE_APPS`) added to
 /// [`DEFAULT_VOICE_APPS`], lowercased, blanks and repeats dropped.
 pub fn parse_voice_apps(raw: Option<&str>) -> Vec<String> {
     let mut apps: Vec<String> = DEFAULT_VOICE_APPS.iter().map(|s| s.to_string()).collect();
@@ -185,12 +185,12 @@ pub struct HostConfig {
     pub host_name: Option<String>,
     /// Row `clipboard`.
     pub clipboard: ClipboardPolicy,
-    /// `PUNKTFUNK_MGMT_BIND` — management listen (`IP:PORT`). `--mgmt-bind` wins.
+    /// `LILYNK_MGMT_BIND` — management listen (`IP:PORT`). `--mgmt-bind` wins.
     /// Unset = [`listen::ListenPlan`]'s default (Sunshine's web UI port).
     /// Lives in `host.env` because a package upgrade rewrites the unit file.
     /// Raw string: [`listen::ListenPlan::resolve`] turns a bad value into a startup error.
     pub mgmt_bind: Option<String>,
-    /// `PUNKTFUNK_NATIVE_PORT` — native QUIC control port. `--native-port` wins.
+    /// `LILYNK_NATIVE_PORT` — native QUIC control port. `--native-port` wins.
     /// Unset = [`listen::NATIVE_PORT`]. Raw string so a typo is a startup error, not a silent
     /// default.
     pub native_port: Option<String>,
@@ -200,25 +200,25 @@ pub struct HostConfig {
     /// Row `webtransport` — the browser plane. **Default OFF**, like GameStream: a new
     /// externally-reachable transport should not appear on a host because it was upgraded.
     pub webtransport: bool,
-    /// `PUNKTFUNK_WEBTRANSPORT_ORIGINS` — comma-separated browser origins allowed to open a
+    /// `LILYNK_WEBTRANSPORT_ORIGINS` — comma-separated browser origins allowed to open a
     /// session (`https://host:47990`). Empty = any: a host does not know its own origin.
     /// WebTransport is not subject to CORS, so this list and pairing are what keep out the other
     /// pages the user has open.
     pub webtransport_origins: Vec<String>,
-    /// `PUNKTFUNK_WEBTRANSPORT_BIND` — browser-plane listen address. `--webtransport-bind` wins.
+    /// `LILYNK_WEBTRANSPORT_BIND` — browser-plane listen address. `--webtransport-bind` wins.
     /// Unset = every interface (`parse_serve_args`), matching the native plane. Narrow it to put
     /// the browser plane on one interface without moving the rest of the host.
     pub webtransport_bind: Option<String>,
-    /// `PUNKTFUNK_WEBTRANSPORT_PORT` — browser-plane listen port. `--webtransport-port` wins.
+    /// `LILYNK_WEBTRANSPORT_PORT` — browser-plane listen port. `--webtransport-port` wins.
     /// Unset = [`listen::BROWSER_PORT`]. Raw string so a typo is a startup error, not a silent
     /// default.
     pub webtransport_port: Option<String>,
-    /// `PUNKTFUNK_ENCODER` — encoder-backend override (lowercased). Empty = auto-detect by GPU vendor.
+    /// `LILYNK_ENCODER` — encoder-backend override (lowercased). Empty = auto-detect by GPU vendor.
     pub encoder_pref: String,
-    /// `PUNKTFUNK_RENDER_ADAPTER` — discrete render-GPU pin by description substring.
+    /// `LILYNK_RENDER_ADAPTER` — discrete render-GPU pin by description substring.
     /// `Some` even when empty: empty still counts as set for presence checks.
     pub render_adapter: Option<String>,
-    /// `PUNKTFUNK_ZEROCOPY`, in the [`env_on`] grammar. Nothing reads this field: `ly-zerocopy`
+    /// `LILYNK_ZEROCOPY`, in the [`env_on`] grammar. Nothing reads this field: `ly-zerocopy`
     /// reads the variable itself, in its own grammar.
     pub zerocopy: Option<bool>,
     /// Row `ten_bit` — host policy gate for HEVC Main10 / AV1. **Default ON**. The
@@ -229,7 +229,7 @@ pub struct HostConfig {
     /// only *allows* 4:4:4; the session still needs the client to advertise it, HEVC,
     /// full-chroma capture, and the encode probe. Independent of `ten_bit`.
     pub four_four_four: bool,
-    /// `PUNKTFUNK_CHACHA20` — host policy gate for ChaCha20-Poly1305
+    /// `LILYNK_CHACHA20` — host policy gate for ChaCha20-Poly1305
     /// (`design/chacha20-session-cipher.md`). **Default ON**, explicit-off.
     /// The host only *allows* it; a session uses ChaCha only when the client
     /// advertised `VIDEO_CAP_CHACHA20`. Everyone else stays AES-128-GCM.
@@ -240,79 +240,79 @@ pub struct HostConfig {
     pub audio_voice_chat: VoiceChatRoute,
     /// Row `audio_voice_apps` — see [`parse_voice_apps`]. Never empty.
     pub audio_voice_apps: Vec<String>,
-    /// `PUNKTFUNK_AUDIO_QUALITY` — encode tier (`low`/`standard`/`high`); `None` is
+    /// `LILYNK_AUDIO_QUALITY` — encode tier (`low`/`standard`/`high`); `None` is
     /// `AudioTier::default()`. Raw string: the table lives in `lilynk-core`. The
     /// handshake's `audio_budget` warns on an unknown spelling and takes the default.
     pub audio_quality: Option<String>,
-    /// `PUNKTFUNK_AUDIO_REDUNDANCY` — the redundant `0xD2` audio plane. `Some(false)` never
+    /// `LILYNK_AUDIO_REDUNDANCY` — the redundant `0xD2` audio plane. `Some(false)` never
     /// offers it; otherwise a client that asked gets it when the audio budget fits.
     pub audio_redundancy: Option<bool>,
-    /// `PUNKTFUNK_AUDIO_HIRES` — host policy gate for lossless `0xD3`
+    /// `LILYNK_AUDIO_HIRES` — host policy gate for lossless `0xD3`
     /// (`design/hi-res-audio.md`). **Default ON**, explicit-off. The host only
     /// *allows* the plane; the client's format pick is the session switch.
     /// A junk value such as a client-shaped `96000/24` keeps the default. `0` forces Opus.
     pub audio_hires: bool,
-    /// `PUNKTFUNK_PERF` — per-stage timing instrumentation.
+    /// `LILYNK_PERF` — per-stage timing instrumentation.
     pub perf: bool,
-    /// `PUNKTFUNK_VIDEO_SOURCE` — `virtual` (default: per-client virtual output) /
+    /// `LILYNK_VIDEO_SOURCE` — `virtual` (default: per-client virtual output) /
     /// `portal` (an existing monitor); anything else, including `synthetic`, is
     /// the test pattern.
     pub video_source: Option<String>,
-    /// `PUNKTFUNK_CAPTURE_MONITOR` — pin capture at a named physical monitor
+    /// `LILYNK_CAPTURE_MONITOR` — pin capture at a named physical monitor
     /// (`DP-1`). Config, not a prompt: a `--user` service has nobody to answer a
     /// chooser. A name that is off or matches no head falls back to the device's own screen.
     /// Linux-only; `design/per-monitor-portal-capture.md`.
     pub capture_monitor: Option<String>,
-    /// `PUNKTFUNK_PORTAL_CURSOR_MODE` — `auto` (default) · `hidden` · `embedded` ·
+    /// `LILYNK_PORTAL_CURSOR_MODE` — `auto` (default) · `hidden` · `embedded` ·
     /// `metadata`. Preference, not a command: `ly_portal::cursor_mode::pick` takes the pin only
     /// when the backend advertises it, else falls back. `embedded` is the safe pin.
     pub portal_cursor_mode: Option<String>,
-    /// `PUNKTFUNK_COMPOSITOR` — explicit compositor override (operator/CI/test).
+    /// `LILYNK_COMPOSITOR` — explicit compositor override (operator/CI/test).
     /// Not the runtime-detected session; `apply_session_env` never writes this.
     pub compositor: Option<String>,
-    /// `PUNKTFUNK_GAMEPAD` — virtual-pad backend preference, fed to `pick_gamepad`.
+    /// `LILYNK_GAMEPAD` — virtual-pad backend preference, fed to `pick_gamepad`.
     pub gamepad: Option<String>,
-    /// `PUNKTFUNK_GAMESCOPE_GRAB_CURSOR` — `--force-grab-cursor` on a real game
+    /// `LILYNK_GAMESCOPE_GRAB_CURSOR` — `--force-grab-cursor` on a real game
     /// launch. Default OFF: relative mode breaks absolute-pointer titles and menus.
     pub gamescope_grab_cursor: bool,
-    /// `PUNKTFUNK_GAMESCOPE_SPLASH` — splash on every bare headless gamescope spawn.
+    /// `LILYNK_GAMESCOPE_SPLASH` — splash on every bare headless gamescope spawn.
     /// gamescope only composites (and pushes PipeWire) when a client paints.
     /// **Default ON**; `=0` is the escape hatch.
     pub gamescope_splash: bool,
-    /// `PUNKTFUNK_GAMESCOPE_ISOLATE` — per-session EIS/audio/mic planes
+    /// `LILYNK_GAMESCOPE_ISOLATE` — per-session EIS/audio/mic planes
     /// (`design/gamescope-multiuser.md`). **Default ON**; `=0` restores shared
     /// host-lifetime planes. Shared-desktop and managed/attach routes are untouched.
     pub gamescope_isolate: bool,
-    /// `PUNKTFUNK_STEAM_PREWARM` — how many of the most recent players' seats start with the
+    /// `LILYNK_STEAM_PREWARM` — how many of the most recent players' seats start with the
     /// host, so a connect skips a first logon. **Default 1**; `0` is off.
     pub steam_prewarm: u32,
-    /// `PUNKTFUNK_SEAT_IDLE_STOP_MIN` — minutes a running seat may sit with nobody on it before
+    /// `LILYNK_SEAT_IDLE_STOP_MIN` — minutes a running seat may sit with nobody on it before
     /// the box stops it. **Default 240**; `0` never stops one.
     pub seat_idle_stop_min: u32,
-    /// `PUNKTFUNK_SEAT_END_ON_GAME_EXIT` — a seat's stream ends when its game exits. **Default
+    /// `LILYNK_SEAT_END_ON_GAME_EXIT` — a seat's stream ends when its game exits. **Default
     /// ON**. Handed to every seat in [`seat_defaults`].
     pub seat_end_on_game_exit: bool,
-    /// `PUNKTFUNK_SEAT_MAX_MODE` — the highest mode a seat grants a device without a cap of its
+    /// `LILYNK_SEAT_MAX_MODE` — the highest mode a seat grants a device without a cap of its
     /// own, `WIDTHxHEIGHT@HZ`. Handed to every seat in [`seat_defaults`].
     pub seat_max_mode: Option<String>,
-    /// `PUNKTFUNK_SEAT_LIBRARY_WRITABLE` — a seat updates and installs into the owner's Steam
+    /// `LILYNK_SEAT_LIBRARY_WRITABLE` — a seat updates and installs into the owner's Steam
     /// libraries. **Default ON**; off mounts them read-only. Handed on in [`seat_defaults`].
     pub seat_library_writable: bool,
-    /// `PUNKTFUNK_SEAT_BACKGROUND_INPUT` — every app a Windows seat starts reads GameInput in the
+    /// `LILYNK_SEAT_BACKGROUND_INPUT` — every app a Windows seat starts reads GameInput in the
     /// background. **Default ON**. Handed to every seat in [`seat_defaults`].
     pub seat_background_input: bool,
-    /// `PUNKTFUNK_DUALSENSE_USBIP` — a DualSense is a USB/IP device with a real sound card
+    /// `LILYNK_DUALSENSE_USBIP` — a DualSense is a USB/IP device with a real sound card
     /// instead of a uhid pad. **Default OFF**. Handed to every seat in [`seat_defaults`].
     pub dualsense_usbip: bool,
-    /// `PUNKTFUNK_GAMESCOPE_HDR` — allow HDR on gamescope. The host probes the
+    /// `LILYNK_GAMESCOPE_HDR` — allow HDR on gamescope. The host probes the
     /// punktfunk build (`packaging/gamescope`) and stays SDR if missing; this only
-    /// decides whether HDR is *attempted*. **Default ON**, matching `PUNKTFUNK_10BIT`.
+    /// decides whether HDR is *attempted*. **Default ON**, matching `LILYNK_10BIT`.
     pub gamescope_hdr: bool,
-    /// `PUNKTFUNK_GAMESCOPE_SDR_NITS` — starting SDR luminance inside the PQ container
+    /// `LILYNK_GAMESCOPE_SDR_NITS` — starting SDR luminance inside the PQ container
     /// (`--hdr-sdr-content-nits`). `None` = ly-vdisplay's `SDR_REFERENCE_WHITE_NITS`
     /// (BT.2408), what our clients decode against.
     pub gamescope_sdr_nits: Option<u32>,
-    /// `PUNKTFUNK_GAMESCOPE_BIND` — bind patched gamescope over `/usr/bin/gamescope`
+    /// `LILYNK_GAMESCOPE_BIND` — bind patched gamescope over `/usr/bin/gamescope`
     /// in the session unit's mount namespace. `gamescope-session-plus` hardcodes
     /// that path (`ly-vdisplay`'s `gamescope/bind.rs`).
     ///
@@ -321,17 +321,17 @@ pub struct HostConfig {
     /// `None` = AUTO (arm only when the script cannot reach gamescope another way).
     /// `Some(false)` = never. `Some(true)` = force; a failed redirect still disarms.
     pub gamescope_bind: Option<bool>,
-    /// `PUNKTFUNK_GAMESCOPE_REFRESH_RATES` — extra Hz (comma-separated) a gamescope
+    /// `LILYNK_GAMESCOPE_REFRESH_RATES` — extra Hz (comma-separated) a gamescope
     /// session offers on top of the rate it runs at. Can only ADD; the session rate
     /// is always included. Empty = negotiated rate only. Ignored on stock gamescope.
     pub gamescope_refresh_rates: Vec<u32>,
-    /// `PUNKTFUNK_RECOVER_SESSION_CMD` — operator hook (debounced) when a client
+    /// `LILYNK_RECOVER_SESSION_CMD` — operator hook (debounced) when a client
     /// connects with no graphical session for this uid. Unset/empty = disabled.
     pub recover_session_cmd: Option<String>,
-    /// `PUNKTFUNK_ON_CONNECT_CMD` — `client.connected` hook: detached, event JSON
+    /// `LILYNK_ON_CONNECT_CMD` — `client.connected` hook: detached, event JSON
     /// on stdin + `PF_EVENT_*`. Filters live in `hooks.json`. Unset/empty = disabled.
     pub on_connect_cmd: Option<String>,
-    /// `PUNKTFUNK_ON_DISCONNECT_CMD` — `client.disconnected` sibling of
+    /// `LILYNK_ON_DISCONNECT_CMD` — `client.disconnected` sibling of
     /// [`Self::on_connect_cmd`].
     pub on_disconnect_cmd: Option<String>,
     /// Row `max_fps` — game-side frame limiter. `None` (`0`) = no limit. Caps
@@ -348,7 +348,7 @@ pub struct HostConfig {
     /// Row `vdisplay_resolutions` — `(width, height)` the Windows virtual display offers beside
     /// the session's own, so a game can run below the stream size.
     pub vdisplay_resolutions: Vec<(u32, u32)>,
-    /// `PUNKTFUNK_GAMESCOPE_VRR=0` — opt out of adaptive sync. Default on: capable
+    /// `LILYNK_GAMESCOPE_VRR=0` — opt out of adaptive sync. Default on: capable
     /// gamescope gets `--adaptive-sync` + `--framerate-limit` at the game rate so
     /// it paints on the game's commit. Inert on stock gamescope (`adaptive_sync_args`).
     pub gamescope_vrr: bool,
@@ -364,80 +364,79 @@ impl HostConfig {
         let row_bool = |k: &str| store::row_bool_in(rows, k);
         let row_tri = |k: &str| store::row_tri_in(rows, k);
         Self {
-            // Blank-is-unset: `PUNKTFUNK_MGMT_BIND=` means default.
-            mgmt_bind: val("PUNKTFUNK_MGMT_BIND")
+            // Blank-is-unset: `LILYNK_MGMT_BIND=` means default.
+            mgmt_bind: val("LILYNK_MGMT_BIND")
                 .map(|s| s.trim().to_string())
                 .filter(|s| !s.is_empty()),
-            native_port: val("PUNKTFUNK_NATIVE_PORT")
+            native_port: val("LILYNK_NATIVE_PORT")
                 .map(|s| s.trim().to_string())
                 .filter(|s| !s.is_empty()),
-            webtransport_origins: val("PUNKTFUNK_WEBTRANSPORT_ORIGINS")
+            webtransport_origins: val("LILYNK_WEBTRANSPORT_ORIGINS")
                 .unwrap_or_default()
                 .split(',')
                 .map(|s| s.trim().to_string())
                 .filter(|s| !s.is_empty())
                 .collect(),
-            webtransport_bind: val("PUNKTFUNK_WEBTRANSPORT_BIND")
+            webtransport_bind: val("LILYNK_WEBTRANSPORT_BIND")
                 .map(|s| s.trim().to_string())
                 .filter(|s| !s.is_empty()),
-            webtransport_port: val("PUNKTFUNK_WEBTRANSPORT_PORT")
+            webtransport_port: val("LILYNK_WEBTRANSPORT_PORT")
                 .map(|s| s.trim().to_string())
                 .filter(|s| !s.is_empty()),
-            encoder_pref: encoder_pref(val("PUNKTFUNK_ENCODER")),
-            render_adapter: val("PUNKTFUNK_RENDER_ADAPTER"),
-            zerocopy: on("PUNKTFUNK_ZEROCOPY"),
-            chacha20: row_bool("PUNKTFUNK_CHACHA20"),
-            audio_quality: val("PUNKTFUNK_AUDIO_QUALITY").map(|s| s.trim().to_lowercase()),
-            audio_redundancy: row_tri("PUNKTFUNK_AUDIO_REDUNDANCY"),
-            audio_hires: row_bool("PUNKTFUNK_AUDIO_HIRES"),
-            perf: on("PUNKTFUNK_PERF") == Some(true),
+            encoder_pref: encoder_pref(val("LILYNK_ENCODER")),
+            render_adapter: val("LILYNK_RENDER_ADAPTER"),
+            zerocopy: on("LILYNK_ZEROCOPY"),
+            chacha20: row_bool("LILYNK_CHACHA20"),
+            audio_quality: val("LILYNK_AUDIO_QUALITY").map(|s| s.trim().to_lowercase()),
+            audio_redundancy: row_tri("LILYNK_AUDIO_REDUNDANCY"),
+            audio_hires: row_bool("LILYNK_AUDIO_HIRES"),
+            perf: on("LILYNK_PERF") == Some(true),
             // Defaults to `virtual`, the per-client virtual output: a packaged unit does not
             // require host.env. `synthetic` is reached by naming it (any unrecognised value lands
             // there).
-            video_source: val("PUNKTFUNK_VIDEO_SOURCE").or_else(|| Some("virtual".to_string())),
-            // Emptied-to-None: `PUNKTFUNK_CAPTURE_MONITOR=` is unset, not a blank name.
-            capture_monitor: val("PUNKTFUNK_CAPTURE_MONITOR")
+            video_source: val("LILYNK_VIDEO_SOURCE").or_else(|| Some("virtual".to_string())),
+            // Emptied-to-None: `LILYNK_CAPTURE_MONITOR=` is unset, not a blank name.
+            capture_monitor: val("LILYNK_CAPTURE_MONITOR")
                 .map(|s| s.trim().to_string())
                 .filter(|s| !s.is_empty()),
             // Emptied-to-None. Spellings are parsed by `ly_portal::cursor_mode::parse_pin`.
-            portal_cursor_mode: val("PUNKTFUNK_PORTAL_CURSOR_MODE")
+            portal_cursor_mode: val("LILYNK_PORTAL_CURSOR_MODE")
                 .map(|s| s.trim().to_string())
                 .filter(|s| !s.is_empty()),
-            compositor: val("PUNKTFUNK_COMPOSITOR"),
-            gamepad: val("PUNKTFUNK_GAMEPAD"),
-            gamescope_grab_cursor: row_bool("PUNKTFUNK_GAMESCOPE_GRAB_CURSOR"),
-            gamescope_splash: row_bool("PUNKTFUNK_GAMESCOPE_SPLASH"),
-            gamescope_isolate: row_bool("PUNKTFUNK_GAMESCOPE_ISOLATE"),
-            steam_prewarm: val("PUNKTFUNK_STEAM_PREWARM")
+            compositor: val("LILYNK_COMPOSITOR"),
+            gamepad: val("LILYNK_GAMEPAD"),
+            gamescope_grab_cursor: row_bool("LILYNK_GAMESCOPE_GRAB_CURSOR"),
+            gamescope_splash: row_bool("LILYNK_GAMESCOPE_SPLASH"),
+            gamescope_isolate: row_bool("LILYNK_GAMESCOPE_ISOLATE"),
+            steam_prewarm: val("LILYNK_STEAM_PREWARM")
                 .and_then(|s| s.trim().parse::<u32>().ok())
                 .unwrap_or(1)
                 .min(8),
-            seat_idle_stop_min: val("PUNKTFUNK_SEAT_IDLE_STOP_MIN")
+            seat_idle_stop_min: val("LILYNK_SEAT_IDLE_STOP_MIN")
                 .and_then(|s| s.trim().parse::<u32>().ok())
                 .unwrap_or(240)
                 .min(1_440),
-            seat_end_on_game_exit: row_bool("PUNKTFUNK_SEAT_END_ON_GAME_EXIT"),
-            seat_max_mode: val("PUNKTFUNK_SEAT_MAX_MODE")
+            seat_end_on_game_exit: row_bool("LILYNK_SEAT_END_ON_GAME_EXIT"),
+            seat_max_mode: val("LILYNK_SEAT_MAX_MODE")
                 .map(|s| s.trim().to_string())
                 .filter(|s| !s.is_empty()),
-            seat_library_writable: row_bool("PUNKTFUNK_SEAT_LIBRARY_WRITABLE"),
-            seat_background_input: row_bool("PUNKTFUNK_SEAT_BACKGROUND_INPUT"),
-            dualsense_usbip: row_bool("PUNKTFUNK_DUALSENSE_USBIP"),
-            gamescope_hdr: row_bool("PUNKTFUNK_GAMESCOPE_HDR"),
-            gamescope_sdr_nits: val("PUNKTFUNK_GAMESCOPE_SDR_NITS")
+            seat_library_writable: row_bool("LILYNK_SEAT_LIBRARY_WRITABLE"),
+            seat_background_input: row_bool("LILYNK_SEAT_BACKGROUND_INPUT"),
+            dualsense_usbip: row_bool("LILYNK_DUALSENSE_USBIP"),
+            gamescope_hdr: row_bool("LILYNK_GAMESCOPE_HDR"),
+            gamescope_sdr_nits: val("LILYNK_GAMESCOPE_SDR_NITS")
                 .and_then(|s| s.trim().parse::<u32>().ok())
                 .filter(|n| (1..=10_000).contains(n)),
             // Auto by default; `off` is stock gamescope; `on` is force.
-            gamescope_bind: row_tri("PUNKTFUNK_GAMESCOPE_BIND"),
+            gamescope_bind: row_tri("LILYNK_GAMESCOPE_BIND"),
             // Junk entries are dropped; this only widens a menu.
             gamescope_refresh_rates: parse_refresh_rates(
-                val("PUNKTFUNK_GAMESCOPE_REFRESH_RATES").as_deref(),
+                val("LILYNK_GAMESCOPE_REFRESH_RATES").as_deref(),
             ),
-            recover_session_cmd: val("PUNKTFUNK_RECOVER_SESSION_CMD")
-                .filter(|s| !s.trim().is_empty()),
-            on_connect_cmd: val("PUNKTFUNK_ON_CONNECT_CMD").filter(|s| !s.trim().is_empty()),
-            on_disconnect_cmd: val("PUNKTFUNK_ON_DISCONNECT_CMD").filter(|s| !s.trim().is_empty()),
-            gamescope_vrr: row_bool("PUNKTFUNK_GAMESCOPE_VRR"),
+            recover_session_cmd: val("LILYNK_RECOVER_SESSION_CMD").filter(|s| !s.trim().is_empty()),
+            on_connect_cmd: val("LILYNK_ON_CONNECT_CMD").filter(|s| !s.trim().is_empty()),
+            on_disconnect_cmd: val("LILYNK_ON_DISCONNECT_CMD").filter(|s| !s.trim().is_empty()),
+            gamescope_vrr: row_bool("LILYNK_GAMESCOPE_VRR"),
             ..Self::default()
         }
     }
@@ -538,13 +537,13 @@ impl HostConfig {
     }
 }
 
-/// `PUNKTFUNK_ENCODER`, lower-cased. On Windows a software pin becomes `auto`: the driver
+/// `LILYNK_ENCODER`, lower-cased. On Windows a software pin becomes `auto`: the driver
 /// encodes, so a session opened on it would pass the handshake and die at the encoder open.
 fn encoder_pref(raw: Option<String>) -> String {
     let pref = raw.unwrap_or_default().to_ascii_lowercase();
     if cfg!(windows) && matches!(pref.as_str(), "sw" | "software" | "openh264") {
         eprintln!(
-            "punktfunk: PUNKTFUNK_ENCODER={pref:?} — Windows has no software encoder since the \
+            "punktfunk: LILYNK_ENCODER={pref:?} — Windows has no software encoder since the \
              driver took over encoding; using auto"
         );
         return "auto".into();

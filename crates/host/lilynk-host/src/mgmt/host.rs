@@ -846,7 +846,7 @@ pub(crate) struct AvailableCompositor {
     /// pass to `--compositor`.
     id: String,
     label: String,
-    /// Usable now: the live session's compositor, the `PUNKTFUNK_COMPOSITOR` pin, or a backend
+    /// Usable now: the live session's compositor, the `LILYNK_COMPOSITOR` pin, or a backend
     /// whose own probe passes.
     available: bool,
     /// True for the backend an `Auto` (unspecified) request resolves to right now.
@@ -856,7 +856,7 @@ pub(crate) struct AvailableCompositor {
 /// List compositor backends
 ///
 /// Each row carries availability and whether `Auto` resolves to it. Clients pass
-/// `id` to `--compositor` or `PUNKTFUNK_COMPOSITOR_*`.
+/// `id` to `--compositor` or `LILYNK_COMPOSITOR_*`.
 #[utoipa::path(
     get,
     path = "/compositors",

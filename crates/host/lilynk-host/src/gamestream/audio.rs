@@ -424,7 +424,7 @@ fn audio_body(
     // Pace to packet duration. PipeWire hands ~1024-frame chunks; bursting them
     // glitches the client's low-latency jitter buffer.
     let mut clock = SendClock::new(Duration::from_millis(frame_ms as u64), Instant::now());
-    // Soft-limited capture gain (`PUNKTFUNK_AUDIO_GAIN`); do not clamp — see
+    // Soft-limited capture gain (`LILYNK_AUDIO_GAIN`); do not clamp — see
     // `crate::audio::capture_gain`.
     let gain = crate::audio::capture_gain();
     tracing::info!(

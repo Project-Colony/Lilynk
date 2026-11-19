@@ -426,7 +426,7 @@ pub(crate) fn open_preferring_worker(
     let path = match resolve_worker_path() {
         WorkerPath::Off => {
             tracing::info!(
-                "pyrowave: PUNKTFUNK_ENCODE_WORKER=off — encoding in-process at default GPU priority"
+                "pyrowave: LILYNK_ENCODE_WORKER=off — encoding in-process at default GPU priority"
             );
             return inline();
         }
@@ -435,7 +435,7 @@ pub(crate) fn open_preferring_worker(
                 worker = WORKER_BIN,
                 "pyrowave: the encode worker was not found beside the host binary or on PATH — \
                  encoding in-process at default GPU priority (the GPU-preemption lever needs the \
-                 capability-carrying worker; set PUNKTFUNK_ENCODE_WORKER to its path)"
+                 capability-carrying worker; set LILYNK_ENCODE_WORKER to its path)"
             );
             return inline();
         }

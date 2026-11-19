@@ -20,7 +20,7 @@
     4. Restart the host service.
   Avoids a reboot on purpose (this box boots to Proxmox).
 
-.PARAMETER Service     Host service name. Default PunktfunkHost.
+.PARAMETER Service     Host service name. Default LilynkHost.
 .PARAMETER AdapterName FriendlyName substring of the IddCx adapter to cycle. Default "Punktfunk
                        Virtual Display" (NOT SudoVDA's "SudoMaker Virtual Display Adapter").
 .PARAMETER GhostMatch  FriendlyName substring of the virtual monitors to reap. Default "Punktfunk".
@@ -38,7 +38,7 @@
 #>
 [CmdletBinding()]
 param(
-    [string]$Service     = 'PunktfunkHost',
+    [string]$Service     = 'LilynkHost',
     [string]$AdapterName = 'Punktfunk Virtual Display',
     [string]$GhostMatch  = 'Punktfunk',
     [switch]$KeepGhosts,

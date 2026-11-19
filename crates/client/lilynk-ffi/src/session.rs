@@ -10,17 +10,17 @@ use lilynk_core::stats::Stats;
 use lilynk_core::transport::loopback_pair;
 
 /// Opaque session handle. C sees only the pointer.
-pub struct PunktfunkSession {
+pub struct LilynkSession {
     inner: Session,
-    /// Last polled frame. [`PunktfunkFrame::data`] is valid until the next poll/free.
+    /// Last polled frame. [`LilynkFrame::data`] is valid until the next poll/free.
     last_frame: Option<lilynk_core::session::Frame>,
 }
 
-/// Session configuration. Set `struct_size` to `sizeof(PunktfunkConfig)`; a
+/// Session configuration. Set `struct_size` to `sizeof(LilynkConfig)`; a
 /// smaller prefix is rejected rather than over-read.
 #[repr(C)]
 #[derive(Clone, Copy)]
-pub struct PunktfunkConfig {
+pub struct LilynkConfig {
     pub struct_size: u32,
     /// 0 = host, 1 = client.
     pub role: u32,
@@ -35,25 +35,24 @@ pub struct PunktfunkConfig {
     pub max_frame_bytes: u64,
 }
 
-impl PunktfunkConfig {
-    fn to_config(self) -> Result<Config, PunktfunkStatus> {
+impl LilynkConfig {
+    fn to_config(self) -> Result<Config, LilynkStatus> {
         let role = match self.role {
             0 => Role::Host,
             1 => Role::Client,
-            _ => return Err(PunktfunkStatus::InvalidArg),
+            _ => return Err(LilynkStatus::InvalidArg),
         };
         // Reject before narrowing: 300% or a 65600-shard block must not wrap to a valid u8/u16.
         let scheme = u8::try_from(self.fec_scheme)
             .ok()
             .and_then(FecScheme::from_u8)
-            .ok_or(PunktfunkStatus::InvalidArg)?;
-        let fec_percent =
-            u8::try_from(self.fec_percent).map_err(|_| PunktfunkStatus::InvalidArg)?;
+            .ok_or(LilynkStatus::InvalidArg)?;
+        let fec_percent = u8::try_from(self.fec_percent).map_err(|_| LilynkStatus::InvalidArg)?;
         let max_data_per_block =
-            u16::try_from(self.max_data_per_block).map_err(|_| PunktfunkStatus::InvalidArg)?;
+            u16::try_from(self.max_data_per_block).map_err(|_| LilynkStatus::InvalidArg)?;
         // 32-bit: `as usize` truncates >4 GiB to a residue that still passes `validate()`.
         let max_frame_bytes =
-            usize::try_from(self.max_frame_bytes).map_err(|_| PunktfunkStatus::InvalidArg)?;
+            usize::try_from(self.max_frame_bytes).map_err(|_| LilynkStatus::InvalidArg)?;
         let cfg = Config {
             role,
             fec: FecConfig {
@@ -74,23 +73,23 @@ impl PunktfunkConfig {
 ///
 /// # Safety
 /// `cfg` is null or points to at least its declared `struct_size` bytes.
-unsafe fn config_from_ptr(cfg: *const PunktfunkConfig) -> Result<Config, PunktfunkStatus> {
+unsafe fn config_from_ptr(cfg: *const LilynkConfig) -> Result<Config, LilynkStatus> {
     if cfg.is_null() {
-        return Err(PunktfunkStatus::NullPointer);
+        return Err(LilynkStatus::NullPointer);
     }
     // SAFETY: `addr_of!` does not form a `&`; the caller may have a smaller older layout.
     let declared = unsafe { std::ptr::addr_of!((*cfg).struct_size).read_unaligned() } as usize;
-    if declared < std::mem::size_of::<PunktfunkConfig>() {
-        return Err(PunktfunkStatus::InvalidArg);
+    if declared < std::mem::size_of::<LilynkConfig>() {
+        return Err(LilynkStatus::InvalidArg);
     }
     // SAFETY: `cfg` is non-null and `struct_size` covers this type.
     unsafe { *cfg }.to_config()
 }
 
 /// Reassembled access unit. `data`/`len` borrow session memory until the next
-/// `lilynk_client_poll_frame` / `punktfunk_session_free` on this session.
+/// `lilynk_client_poll_frame` / `lilynk_session_free` on this session.
 #[repr(C)]
-pub struct PunktfunkFrame {
+pub struct LilynkFrame {
     pub data: *const u8,
     pub len: usize,
     pub frame_index: u32,
@@ -104,7 +103,7 @@ pub struct PunktfunkFrame {
 /// Session counters.
 #[repr(C)]
 #[derive(Clone, Copy, Default)]
-pub struct PunktfunkStats {
+pub struct LilynkStats {
     pub frames_submitted: u64,
     pub frames_completed: u64,
     pub frames_dropped: u64,
@@ -118,9 +117,9 @@ pub struct PunktfunkStats {
     pub bytes_received: u64,
 }
 
-impl From<Stats> for PunktfunkStats {
+impl From<Stats> for LilynkStats {
     fn from(s: Stats) -> Self {
-        PunktfunkStats {
+        LilynkStats {
             frames_submitted: s.frames_submitted,
             frames_completed: s.frames_completed,
             frames_dropped: s.frames_dropped,
@@ -135,8 +134,8 @@ impl From<Stats> for PunktfunkStats {
     }
 }
 
-fn new_handle(session: Session) -> *mut PunktfunkSession {
-    Box::into_raw(Box::new(PunktfunkSession {
+fn new_handle(session: Session) -> *mut LilynkSession {
+    Box::into_raw(Box::new(LilynkSession {
         inner: session,
         last_frame: None,
     }))
@@ -148,16 +147,16 @@ fn new_handle(session: Session) -> *mut PunktfunkSession {
 /// # Safety
 /// All four pointers are valid; the two out-params receive owned handles.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_test_loopback_pair(
-    host_cfg: *const PunktfunkConfig,
-    client_cfg: *const PunktfunkConfig,
-    out_host: *mut *mut PunktfunkSession,
-    out_client: *mut *mut PunktfunkSession,
-) -> PunktfunkStatus {
+pub unsafe extern "C" fn lilynk_test_loopback_pair(
+    host_cfg: *const LilynkConfig,
+    client_cfg: *const LilynkConfig,
+    out_host: *mut *mut LilynkSession,
+    out_client: *mut *mut LilynkSession,
+) -> LilynkStatus {
     guard(|| {
         if host_cfg.is_null() || client_cfg.is_null() || out_host.is_null() || out_client.is_null()
         {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         // SAFETY: pointers are caller-supplied and null-checked on this path.
         let hconf = match unsafe { config_from_ptr(host_cfg) } {
@@ -183,16 +182,16 @@ pub unsafe extern "C" fn punktfunk_test_loopback_pair(
             *out_host = new_handle(hs);
             *out_client = new_handle(cs);
         }
-        PunktfunkStatus::Ok
+        LilynkStatus::Ok
     })
 }
 
 /// Free a session handle. NULL is a no-op.
 ///
 /// # Safety
-/// `s` is a handle from `punktfunk_test_loopback_pair`, freed once.
+/// `s` is a handle from `lilynk_test_loopback_pair`, freed once.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_session_free(s: *mut PunktfunkSession) {
+pub unsafe extern "C" fn lilynk_session_free(s: *mut LilynkSession) {
     guard_void(|| {
         if !s.is_null() {
             // SAFETY: pointers are caller-supplied and null-checked on this path.
@@ -207,18 +206,18 @@ pub unsafe extern "C" fn punktfunk_session_free(s: *mut PunktfunkSession) {
 /// `s` is a valid host handle. For a representable nonzero `len`, `data` points
 /// to that many readable bytes; `data` may be NULL when `len == 0`.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_host_submit_frame(
-    s: *mut PunktfunkSession,
+pub unsafe extern "C" fn lilynk_host_submit_frame(
+    s: *mut LilynkSession,
     data: *const u8,
     len: usize,
     pts_ns: u64,
     flags: u32,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     guard(|| {
         // SAFETY: caller handle or null; `as_mut`/`as_ref` never dereference null.
         let s = match unsafe { s.as_mut() } {
             Some(s) => s,
-            None => return PunktfunkStatus::NullPointer,
+            None => return LilynkStatus::NullPointer,
         };
         // SAFETY: `data` is null or readable for `len` bytes (this fn's contract).
         let slice = match unsafe { in_bytes(data, len) } {
@@ -229,31 +228,31 @@ pub unsafe extern "C" fn punktfunk_host_submit_frame(
     })
 }
 
-/// Client: poll for the next reassembled access unit. [`PunktfunkStatus::NoFrame`]
+/// Client: poll for the next reassembled access unit. [`LilynkStatus::NoFrame`]
 /// when nothing is ready. On `Ok`, `*out` borrows session memory until the next poll.
 ///
 /// # Safety
-/// `s` is a valid client handle; `out` points to a writable `PunktfunkFrame`.
+/// `s` is a valid client handle; `out` points to a writable `LilynkFrame`.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn lilynk_client_poll_frame(
-    s: *mut PunktfunkSession,
-    out: *mut PunktfunkFrame,
-) -> PunktfunkStatus {
+    s: *mut LilynkSession,
+    out: *mut LilynkFrame,
+) -> LilynkStatus {
     guard(|| {
         // SAFETY: caller handle or null; `as_mut`/`as_ref` never dereference null.
         let s = match unsafe { s.as_mut() } {
             Some(s) => s,
-            None => return PunktfunkStatus::NullPointer,
+            None => return LilynkStatus::NullPointer,
         };
         if out.is_null() {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         match s.inner.poll_frame() {
             Ok(frame) => {
                 let f = s.last_frame.insert(frame);
                 // SAFETY: `out` is a caller-owned `#[repr(C)]` slot, written once by value.
                 unsafe {
-                    *out = PunktfunkFrame {
+                    *out = LilynkFrame {
                         data: f.data.as_ptr(),
                         len: f.data.len(),
                         frame_index: f.frame_index,
@@ -262,7 +261,7 @@ pub unsafe extern "C" fn lilynk_client_poll_frame(
                         received_ns: f.received_ns,
                     };
                 }
-                PunktfunkStatus::Ok
+                LilynkStatus::Ok
             }
             Err(e) => e.status(),
         }
@@ -277,13 +276,13 @@ pub unsafe extern "C" fn lilynk_client_poll_frame(
 #[cfg(feature = "quic")]
 pub(crate) unsafe fn read_input_event<'a>(
     ev: *const InputEvent,
-) -> Result<&'a InputEvent, PunktfunkStatus> {
+) -> Result<&'a InputEvent, LilynkStatus> {
     if ev.is_null() {
-        return Err(PunktfunkStatus::NullPointer);
+        return Err(LilynkStatus::NullPointer);
     }
     // SAFETY: non-null, readable; a one-byte read of the leading `kind` tag is valid for any value.
     if lilynk_core::input::InputKind::from_u8(unsafe { ev.cast::<u8>().read() }).is_none() {
-        return Err(PunktfunkStatus::InvalidArg);
+        return Err(LilynkStatus::InvalidArg);
     }
     // SAFETY: discriminant validated; remaining fields are valid for any bit pattern.
     Ok(unsafe { &*ev })
@@ -292,25 +291,25 @@ pub(crate) unsafe fn read_input_event<'a>(
 /// Copy session counters into `*out`.
 ///
 /// # Safety
-/// `s` is a valid handle; `out` points to a writable `PunktfunkStats`.
+/// `s` is a valid handle; `out` points to a writable `LilynkStats`.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_get_stats(
-    s: *mut PunktfunkSession,
-    out: *mut PunktfunkStats,
-) -> PunktfunkStatus {
+pub unsafe extern "C" fn lilynk_get_stats(
+    s: *mut LilynkSession,
+    out: *mut LilynkStats,
+) -> LilynkStatus {
     guard(|| {
         // SAFETY: caller handle or null; `as_mut`/`as_ref` never dereference null.
         let s = match unsafe { s.as_ref() } {
             Some(s) => s,
-            None => return PunktfunkStatus::NullPointer,
+            None => return LilynkStatus::NullPointer,
         };
         if out.is_null() {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         let stats = s.inner.stats();
         // SAFETY: `out` is non-null on this path; written once by value.
-        unsafe { *out = PunktfunkStats::from(stats) };
-        PunktfunkStatus::Ok
+        unsafe { *out = LilynkStats::from(stats) };
+        LilynkStatus::Ok
     })
 }
 
@@ -323,7 +322,7 @@ mod tests {
     fn read_input_event_rejects_null_and_bad_discriminant() {
         // SAFETY: null is the documented reported-not-UB case.
         let null_result = unsafe { read_input_event(std::ptr::null()) };
-        assert_eq!(null_result.unwrap_err(), PunktfunkStatus::NullPointer);
+        assert_eq!(null_result.unwrap_err(), LilynkStatus::NullPointer);
 
         let mut slot = core::mem::MaybeUninit::<InputEvent>::zeroed();
         let p = slot.as_mut_ptr();
@@ -331,7 +330,7 @@ mod tests {
         unsafe { p.cast::<u8>().write(42) };
         // SAFETY: `p` is aligned and readable for the full struct.
         let bad_tag = unsafe { read_input_event(p) };
-        assert_eq!(bad_tag.unwrap_err(), PunktfunkStatus::InvalidArg);
+        assert_eq!(bad_tag.unwrap_err(), LilynkStatus::InvalidArg);
 
         // SAFETY: as above; tag 0 (KeyDown) + zeroed fields is a fully valid event.
         unsafe { p.cast::<u8>().write(0) };

@@ -340,8 +340,8 @@ impl PlanInputs {
         };
         PlanInputs {
             pad_ids: pad_render_ids(&renders),
-            mic_want: name_pin("PUNKTFUNK_MIC_DEVICE"),
-            loopback_want: name_pin("PUNKTFUNK_LOOPBACK_DEVICE"),
+            mic_want: name_pin("LILYNK_MIC_DEVICE"),
+            loopback_want: name_pin("LILYNK_LOOPBACK_DEVICE"),
             minted: super::minted::minted_ids(),
             renders,
             captures,
@@ -421,7 +421,7 @@ pub fn wire_now_full(park_defaults: bool) -> WiredPlan {
                 .is_some_and(|(n, _)| n.to_lowercase().contains(want.as_str()));
             if !honoured {
                 tracing::warn!(want = %want,
-                    "PUNKTFUNK_LOOPBACK_DEVICE matches no output device the microphone leaves \
+                    "LILYNK_LOOPBACK_DEVICE matches no output device the microphone leaves \
                      free — capturing the automatic pick");
             }
         }
@@ -431,7 +431,7 @@ pub fn wire_now_full(park_defaults: bool) -> WiredPlan {
                 device = %name,
                 "the desktop-audio loopback endpoint {why} — streamed audio will sound worse \
                  than it does on the host. Attach or select a 48 kHz stereo output device, or \
-                 set audio.output_mode = host_and_client (PUNKTFUNK_HOST_AUDIO=1) to prefer \
+                 set audio.output_mode = host_and_client (LILYNK_HOST_AUDIO=1) to prefer \
                  real hardware"
             );
         }

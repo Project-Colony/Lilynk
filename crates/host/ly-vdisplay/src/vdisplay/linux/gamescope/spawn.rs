@@ -20,7 +20,7 @@ pub(super) fn steam_runtime_dir(inst: u64) -> std::path::PathBuf {
     std::path::Path::new(&base).join(format!("lilynk-steam-{inst}"))
 }
 
-/// Nested refresh: client's rate, capped by `PUNKTFUNK_MAX_FPS` (`HostConfig::game_fps`). This is
+/// Nested refresh: client's rate, capped by `LILYNK_MAX_FPS` (`HostConfig::game_fps`). This is
 /// the game's clamp, not the session — encode still repeats the held frame at the client's rate.
 pub(super) fn game_hz(session_hz: u32) -> u32 {
     ly_host_config::config().game_fps(session_hz).max(1)
@@ -48,7 +48,7 @@ pub(super) fn game_mhz(mode: Mode) -> u32 {
 }
 
 /// Add the compositor-side arguments shared by every bare gamescope spawn. `steam_mode` belongs
-/// before the `--` terminator; [`PUNKTFUNK_GAMESCOPE_APP`](spawn()) configures the nested command
+/// before the `--` terminator; [`LILYNK_GAMESCOPE_APP`](spawn()) configures the nested command
 /// after it and therefore cannot enable gamescope's Steam integration itself.
 ///
 /// `-r` is the rate the GAME sees and is clamped to, which is why the frame limiter lives here
@@ -141,7 +141,7 @@ fn mangoapp_config(
 
 /// Paint-on-commit + `--framerate-limit` at [`game_hz`], the whole-hertz form of `-r`. The two
 /// travel together: VRR stops pacing to the refresh grid, so a FIFO game would otherwise run
-/// unbounded. Gated on the probe so argv means what it says. `PUNKTFUNK_GAMESCOPE_VRR=0` opts out.
+/// unbounded. Gated on the probe so argv means what it says. `LILYNK_GAMESCOPE_VRR=0` opts out.
 fn adaptive_sync_args(game_hz: u32) -> Vec<String> {
     if !ly_host_config::config().gamescope_vrr || !gamescope_paints_on_commit() {
         return Vec::new();
@@ -158,7 +158,7 @@ pub(super) fn game_cap(game_hz: u32) -> String {
     if !adaptive_sync_args(game_hz).is_empty() {
         format!("{game_hz} fps")
     } else if !ly_host_config::config().gamescope_vrr {
-        "off (PUNKTFUNK_GAMESCOPE_VRR=0)".to_string()
+        "off (LILYNK_GAMESCOPE_VRR=0)".to_string()
     } else {
         "off (needs lilynk-gamescope +pfhdr10)".to_string()
     }
@@ -247,7 +247,7 @@ pub(super) fn resolved_spawn_app(cmd: Option<&str>) -> Option<String> {
         .filter(|s| !s.trim().is_empty())
         // Read the env fallback under the shared env lock so it can't race a concurrent session's
         // `set_var` of the same key.
-        .or_else(|| crate::with_env_lock(|| std::env::var("PUNKTFUNK_GAMESCOPE_APP").ok()))
+        .or_else(|| crate::with_env_lock(|| std::env::var("LILYNK_GAMESCOPE_APP").ok()))
         .filter(|s| !s.trim().is_empty())
 }
 
@@ -716,10 +716,10 @@ mod tests {
         let wsi = nested_wrapper_script(
             relay,
             false,
-            &[("PUNKTFUNK_GAMESCOPE_WSI", "1".to_string())],
+            &[("LILYNK_GAMESCOPE_WSI", "1".to_string())],
             None,
         );
-        assert!(wsi.contains("exec env 'PUNKTFUNK_GAMESCOPE_WSI=1' sh -c \"$1\""));
+        assert!(wsi.contains("exec env 'LILYNK_GAMESCOPE_WSI=1' sh -c \"$1\""));
         assert_eq!(shell_word("a b'c;$HOME"), "'a b'\"'\"'c;$HOME'");
 
         let env = [("GDK_BACKEND", "x11".to_string())];

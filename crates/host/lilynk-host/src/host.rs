@@ -230,7 +230,7 @@ pub fn serve(
     if gamestream {
         anyhow::bail!(
             "this lilynk-host was built WITHOUT the 'gamestream' feature — stock-Moonlight \
-             compat is unavailable in this binary. Remove --gamestream / PUNKTFUNK_GAMESTREAM \
+             compat is unavailable in this binary. Remove --gamestream / LILYNK_GAMESTREAM \
              from the configuration, or install a standard (GameStream-featured) build."
         );
     }
@@ -483,7 +483,7 @@ pub fn serve(
 }
 
 /// Display name for Moonlight's host tile and both mDNS instance names.
-/// `PUNKTFUNK_HOST_NAME` wins; otherwise the machine hostname.
+/// `LILYNK_HOST_NAME` wins; otherwise the machine hostname.
 fn hostname_string() -> String {
     if let Some(n) = ly_host_config::config().host_name.as_deref() {
         return sanitize_display_name(n);
@@ -491,7 +491,7 @@ fn hostname_string() -> String {
     machine_hostname()
 }
 
-/// Raw machine hostname — no `PUNKTFUNK_HOST_NAME`, no display sanitizing.
+/// Raw machine hostname — no `LILYNK_HOST_NAME`, no display sanitizing.
 /// Certificate SAN and DNS-ish consumers want this, not [`hostname_string`].
 pub(crate) fn machine_hostname() -> String {
     #[cfg(target_os = "windows")]
@@ -590,7 +590,7 @@ mod host_name_tests {
     use super::sanitize_display_name;
 
     /// Display name rides the mDNS service instance label; a `.` truncates it in every
-    /// client list. Split from the env read: `PUNKTFUNK_HOST_NAME` is process-global
+    /// client list. Split from the env read: `LILYNK_HOST_NAME` is process-global
     /// and must not race the parallel suite.
     #[test]
     fn display_name_survives_free_text_but_loses_the_label_breakers() {

@@ -1,5 +1,5 @@
 //! Video encode behind one [`Encoder`] trait, opened by [`open_video`]. Pin a backend with
-//! `PUNKTFUNK_ENCODER`. The Windows backends are `ly-encode-win`'s, re-exported here. Capture to
+//! `LILYNK_ENCODER`. The Windows backends are `ly-encode-win`'s, re-exported here. Capture to
 //! encode is one-way: this crate never depends on capture.
 //!
 //! - `open`: `open_video`, `OpenParams`, `TrackedEncoder`.

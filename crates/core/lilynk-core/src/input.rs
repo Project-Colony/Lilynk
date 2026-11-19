@@ -4,7 +4,7 @@
 //! led by [`INPUT_MAGIC`]. Toward a host advertising
 //! [`HOST_CAP2_INPUT_EDGES`](crate::quic::HOST_CAP2_INPUT_EDGES), key, mouse-button and text
 //! edges ride the control stream instead. Every native event is a fixed [`INPUT_WIRE_LEN`]-byte
-//! little-endian [`InputEvent`] (`#[repr(C)]` as `PunktfunkInputEvent`), plus one screen byte
+//! little-endian [`InputEvent`] (`#[repr(C)]` as `LilynkInputEvent`), plus one screen byte
 //! past the first screen ([`InputEvent::wire`]). Variant field packing lives on [`InputKind`].
 //! Capability-gated tags (`GamepadState`/`Remove`/`Arrival`, `TextInput`, `Scroll`) are ignored
 //! by hosts that never advertised the matching `HOST_CAP_*` / `HOST_CAP2_*` bit.
@@ -605,7 +605,7 @@ impl GamepadSnapshot {
     }
 }
 
-/// `#[repr(C)]` as `PunktfunkInputEvent`.
+/// `#[repr(C)]` as `LilynkInputEvent`.
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct InputEvent {

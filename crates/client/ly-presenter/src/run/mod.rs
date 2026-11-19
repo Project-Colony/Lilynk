@@ -31,7 +31,7 @@ use crate::present_pace::{
 use crate::touch::{Abs, Act, FingerPhase};
 use crate::vk::{FrameInput, Presented};
 use anyhow::{Context as _, Result};
-use lilynk_core::client::{NativeClient, PunktfunkEndReason};
+use lilynk_core::client::{LilynkEndReason, NativeClient};
 use lilynk_core::config::{CompositorPref, Mode};
 use lilynk_core::hud::{self, HudLine, StatsSnapshot};
 use lilynk_core::quic::HdrMeta;
@@ -90,7 +90,7 @@ pub struct SessionOpts {
     /// is the way back. See [`apply_capture`](shell::apply_capture).
     pub inhibit_shortcuts: bool,
     /// `Latency` = newest-wins arrival pacing; `Smooth { buffer }` = FIFO one frame per latch
-    /// slot. `PUNKTFUNK_PRESENTER=arrival` forces the latency drain without a rebuild.
+    /// slot. `LILYNK_PRESENTER=arrival` forces the latency drain without a rebuild.
     pub present_priority: PresentPriority,
     /// Tear-free present, from `Settings::vsync`. Off asks for a tearing mode; the mode that
     /// took is named in the stats line.

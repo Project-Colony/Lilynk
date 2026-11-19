@@ -1,8 +1,8 @@
 @echo off
-rem punktfunk plugin/script runner launcher - the action the PunktfunkScripting scheduled task runs.
+rem punktfunk plugin/script runner launcher - the action the LilynkScripting scheduled task runs.
 rem
 rem OPT-IN: the installer registers that task DISABLED (the runner is inert until you add automation).
-rem Enable it once you have scripts/plugins:  Enable-ScheduledTask -TaskName PunktfunkScripting
+rem Enable it once you have scripts/plugins:  Enable-ScheduledTask -TaskName LilynkScripting
 rem
 rem Lays out next to the installed payload: {app}\scripting\scripting-run.cmd + runner-cli.js and
 rem {app}\bun\bun.exe (so %~dp0 = {app}\scripting\). The runner discovers the operator's units under
@@ -37,7 +37,7 @@ rem writable (task started before `plugins enable` ever ran), start unlogged rat
 rem ponytail: no size cap within one run - rotate on size if a chatty plugin ever fills a disk.
 rem A seat's runner logs into its seat's config dir, the one the runner itself reads.
 set "LOG=%ProgramData%\punktfunk\plugin-state\runner.log"
-if defined PUNKTFUNK_CONFIG_DIR set "LOG=%PUNKTFUNK_CONFIG_DIR%\plugin-state\runner.log"
+if defined LILYNK_CONFIG_DIR set "LOG=%LILYNK_CONFIG_DIR%\plugin-state\runner.log"
 set "LOGGED="
 if exist "%LOG%" move /y "%LOG%" "%LOG%.1" >nul 2>&1
 copy /y nul "%LOG%" >nul 2>&1 && set "LOGGED=1"

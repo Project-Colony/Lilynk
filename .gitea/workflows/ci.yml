@@ -411,7 +411,7 @@ jobs:
             THIRD-PARTY-NOTICES.txt \
             clients/linux/THIRD-PARTY-NOTICES.txt \
             clients/windows/THIRD-PARTY-NOTICES.txt \
-            clients/apple/Sources/PunktfunkKit/Resources/THIRD-PARTY-NOTICES.txt \
+            clients/apple/Sources/LilynkKit/Resources/THIRD-PARTY-NOTICES.txt \
             clients/android/app/src/main/assets/THIRD-PARTY-NOTICES.txt \
             || (echo "::error::attribution is stale — run scripts/gen-third-party-notices.sh and commit" && exit 1)
 
@@ -739,7 +739,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      # OpenAPI snapshot in sync, PUNKTFUNK_* vars in docs still exist, undocumented-var
+      # OpenAPI snapshot in sync, LILYNK_* vars in docs still exist, undocumented-var
       # ratchet (baseline: scripts/ci/docs-undocumented-env-baseline.txt), host-cli.md commands
       # still exist, data/platforms.json parses; the script header lists the rest.
       - name: Docs drift gates

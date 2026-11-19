@@ -60,7 +60,7 @@ Use your bar's name in place of `default`. To scope the dock, set `enabled` the 
 Nothing is required: the host finds Umbriel on every connect, so you don't export
 `UMBRIEL_SOCKET`.
 
-Leave `PUNKTFUNK_COMPOSITOR` unset: a pin turns off detection and session following. It accepts
+Leave `LILYNK_COMPOSITOR` unset: a pin turns off detection and session following. It accepts
 `umbriel` if you need it. Every other option is in [Configuration](/docs/configuration).
 
 ## Start the host
@@ -100,7 +100,7 @@ lingering so the host starts at boot: `sudo loginctl enable-linger "$USER"`.
 ### "find the Umbriel IPC socket (no UMBRIEL_SOCKET, no umbriel-*.sock)"
 
 The host found no running Umbriel for its user: it started outside your Umbriel session, or
-`PUNKTFUNK_COMPOSITOR` pins Umbriel while another desktop runs. Start the host from inside the
+`LILYNK_COMPOSITOR` pins Umbriel while another desktop runs. Start the host from inside the
 session, as above, and leave the pin unset.
 
 ### "This Umbriel session can't be captured directly; the stream needs a GPU encoder" [#no-direct-capture]

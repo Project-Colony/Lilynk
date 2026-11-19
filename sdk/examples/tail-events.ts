@@ -3,7 +3,7 @@
 // needed — `connect()` returns a plain Promise client.
 //
 //   bun examples/tail-events.ts          (on the host box: zero config)
-//   PUNKTFUNK_MGMT_URL=… PUNKTFUNK_MGMT_TOKEN=… bun examples/tail-events.ts
+//   LILYNK_MGMT_URL=… LILYNK_MGMT_TOKEN=… bun examples/tail-events.ts
 import { connect } from "../src/index.js";
 
 const pf = await connect();

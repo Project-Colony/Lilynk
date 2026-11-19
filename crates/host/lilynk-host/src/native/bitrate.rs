@@ -10,7 +10,7 @@ use lilynk_core::quic::AckReason;
 use lilynk_core::Session;
 use std::sync::atomic::{AtomicU8, Ordering};
 
-use super::Punktfunk1Source;
+use super::Lilynk1Source;
 
 /// Fallback when `Hello::bitrate_kbps == 0` (20 Mbps). A client that knows its link asks.
 const DEFAULT_BITRATE_KBPS: u32 = 20_000;
@@ -152,7 +152,7 @@ pub(super) fn session_pyrowave_bpp(client_x100: u16) -> f64 {
 /// the `picture` it encodes, not the 20 Mbps H.26x default: a Fixed session runs at the pin, an
 /// Automatic one adapts under it. A non-zero client rate asks for Fixed and its number is
 /// ignored: bits per pixel is the quality knob, and it holds across modes. Every pin goes
-/// through `ceiling`, the session's `PUNKTFUNK_PYROWAVE_MAX_MBPS` in kbps. H.26x/AV1 explicit
+/// through `ceiling`, the session's `LILYNK_PYROWAVE_MAX_MBPS` in kbps. H.26x/AV1 explicit
 /// rates stand.
 pub(super) fn resolve_bitrate_kbps_for(
     codec: crate::encode::Codec,
@@ -173,14 +173,14 @@ pub(super) fn resolve_bitrate_kbps_for(
         let mode = picture.mode();
         let pin = lilynk_core::pyrowave::kbps_for(&mode, chroma.is_444(), bit_depth, bpp)
             .clamp(MIN_BITRATE_KBPS, MAX_BITRATE_KBPS);
-        // Open-loop pin can outrun the link. `PUNKTFUNK_PYROWAVE_MAX_MBPS` caps it;
+        // Open-loop pin can outrun the link. `LILYNK_PYROWAVE_MAX_MBPS` caps it;
         // unset ⇒ no cap.
         if let Some(ceiling) = ceiling {
             if pin > ceiling {
                 tracing::warn!(
                     pin_kbps = pin,
                     ceiling_kbps = ceiling,
-                    "PyroWave bitrate pin exceeds PUNKTFUNK_PYROWAVE_MAX_MBPS — capping to it"
+                    "PyroWave bitrate pin exceeds LILYNK_PYROWAVE_MAX_MBPS — capping to it"
                 );
                 return ceiling.max(MIN_BITRATE_KBPS);
             }
@@ -456,11 +456,11 @@ pub(super) fn pyrowave_mode_kbps(
 /// FEC in one wire budget. Synthetic-abr derives frame bytes from FEC every frame;
 /// the virtual path publishes a proposal only after its encoder accepts the matching
 /// rate. Fixed synthetic and the standalone software source have no retarget path.
-pub(super) fn adaptive_fec_for(source: Punktfunk1Source, static_override: bool) -> bool {
+pub(super) fn adaptive_fec_for(source: Lilynk1Source, static_override: bool) -> bool {
     !static_override
         && matches!(
             source,
-            Punktfunk1Source::SyntheticAbr(_) | Punktfunk1Source::Virtual
+            Lilynk1Source::SyntheticAbr(_) | Lilynk1Source::Virtual
         )
 }
 
@@ -516,7 +516,7 @@ mod tests {
     /// that never reaches the wire.
     #[test]
     fn adaptive_fec_only_for_sources_with_a_coordinated_retarget() {
-        let abr = Punktfunk1Source::SyntheticAbr(SynthAbrShape {
+        let abr = Lilynk1Source::SyntheticAbr(SynthAbrShape {
             content: Content::Steady { fill_pct: 100 },
             recovery: std::time::Duration::ZERO,
             answer: KeyframeAnswer::Idr,
@@ -525,10 +525,10 @@ mod tests {
             serve_ramp: false,
         });
         for (source, want) in [
-            (Punktfunk1Source::Synthetic, false),
-            (Punktfunk1Source::Software, false),
+            (Lilynk1Source::Synthetic, false),
+            (Lilynk1Source::Software, false),
             (abr, true),
-            (Punktfunk1Source::Virtual, true),
+            (Lilynk1Source::Virtual, true),
         ] {
             assert_eq!(
                 adaptive_fec_for(source, false),

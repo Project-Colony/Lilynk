@@ -5,35 +5,35 @@ use crate::*;
 #[cfg(feature = "quic")]
 use lilynk_core::input::InputEvent;
 
-/// A running demo host from [`punktfunk_demo_host_start`].
+/// A running demo host from [`lilynk_demo_host_start`].
 #[cfg(feature = "quic")]
-pub struct PunktfunkDemoHost {
+pub struct LilynkDemoHost {
     inner: crate::demo_host::DemoHost,
 }
 
-/// The demo session to render, from [`punktfunk_demo_host_session`].
+/// The demo session to render, from [`lilynk_demo_host_session`].
 #[cfg(feature = "quic")]
 #[repr(C)]
 #[derive(Clone, Copy, Debug, Default)]
-pub struct PunktfunkDemoSession {
+pub struct LilynkDemoSession {
     /// Bumped on each new session and accepted mode switch: rebuild the encoder, start on an IDR.
     pub generation: u32,
     pub width: u32,
     pub height: u32,
     pub refresh_hz: u32,
     pub bitrate_kbps: u32,
-    /// `PUNKTFUNK_CODEC_H264` or `PUNKTFUNK_CODEC_HEVC`.
+    /// `LILYNK_CODEC_H264` or `LILYNK_CODEC_HEVC`.
     pub codec: u8,
 }
 
-/// Start a demo host on a free loopback port. `codecs` is the `PUNKTFUNK_CODEC_*` mask the
-/// embedder can encode. NULL on failure. Free with [`punktfunk_demo_host_stop`].
+/// Start a demo host on a free loopback port. `codecs` is the `LILYNK_CODEC_*` mask the
+/// embedder can encode. NULL on failure. Free with [`lilynk_demo_host_stop`].
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub extern "C" fn punktfunk_demo_host_start(codecs: u8) -> *mut PunktfunkDemoHost {
+pub extern "C" fn lilynk_demo_host_start(codecs: u8) -> *mut LilynkDemoHost {
     let started = std::panic::catch_unwind(|| crate::demo_host::DemoHost::start(codecs));
     match started {
-        Ok(Ok(inner)) => Box::into_raw(Box::new(PunktfunkDemoHost { inner })),
+        Ok(Ok(inner)) => Box::into_raw(Box::new(LilynkDemoHost { inner })),
         Ok(Err(e)) => {
             tracing::warn!(error = %e, "demo host did not start");
             ptr::null_mut()
@@ -45,10 +45,10 @@ pub extern "C" fn punktfunk_demo_host_start(codecs: u8) -> *mut PunktfunkDemoHos
 /// Stop the host, ending any session, and free the handle. NULL is a no-op.
 ///
 /// # Safety
-/// `h` came from [`punktfunk_demo_host_start`] and is not used after this call.
+/// `h` came from [`lilynk_demo_host_start`] and is not used after this call.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_demo_host_stop(h: *mut PunktfunkDemoHost) {
+pub unsafe extern "C" fn lilynk_demo_host_stop(h: *mut LilynkDemoHost) {
     guard_void(|| {
         if !h.is_null() {
             // SAFETY: pointers are caller-supplied and null-checked on this path.
@@ -63,7 +63,7 @@ pub unsafe extern "C" fn punktfunk_demo_host_stop(h: *mut PunktfunkDemoHost) {
 /// `h` is a live handle or NULL.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_demo_host_port(h: *const PunktfunkDemoHost) -> u16 {
+pub unsafe extern "C" fn lilynk_demo_host_port(h: *const LilynkDemoHost) -> u16 {
     // SAFETY: caller handle or null; `as_ref` never dereferences null.
     unsafe { h.as_ref() }.map_or(0, |h| h.inner.port())
 }
@@ -74,21 +74,21 @@ pub unsafe extern "C" fn punktfunk_demo_host_port(h: *const PunktfunkDemoHost) -
 /// `h` is a live handle; `out_sha256` is writable for 32 bytes.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_demo_host_fingerprint(
-    h: *const PunktfunkDemoHost,
+pub unsafe extern "C" fn lilynk_demo_host_fingerprint(
+    h: *const LilynkDemoHost,
     out_sha256: *mut u8,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     guard(|| {
         // SAFETY: caller handle or null; `as_ref` never dereferences null.
         let Some(h) = (unsafe { h.as_ref() }) else {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         };
         if out_sha256.is_null() {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         // SAFETY: `out_sha256` is non-null here and writable for 32 bytes.
         unsafe { put_sha256(out_sha256, h.inner.fingerprint()) };
-        PunktfunkStatus::Ok
+        LilynkStatus::Ok
     })
 }
 
@@ -99,9 +99,9 @@ pub unsafe extern "C" fn punktfunk_demo_host_fingerprint(
 /// `h` is a live handle; `out` is writable.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_demo_host_session(
-    h: *const PunktfunkDemoHost,
-    out: *mut PunktfunkDemoSession,
+pub unsafe extern "C" fn lilynk_demo_host_session(
+    h: *const LilynkDemoHost,
+    out: *mut LilynkDemoSession,
 ) -> bool {
     std::panic::catch_unwind(AssertUnwindSafe(|| {
         // SAFETY: caller handle or null; `as_ref` never dereferences null.
@@ -113,7 +113,7 @@ pub unsafe extern "C" fn punktfunk_demo_host_session(
         };
         // SAFETY: caller out-param, non-null on this path, written once.
         unsafe {
-            *out = PunktfunkDemoSession {
+            *out = LilynkDemoSession {
                 generation: s.generation,
                 width: s.mode.width,
                 height: s.mode.height,
@@ -134,8 +134,8 @@ pub unsafe extern "C" fn punktfunk_demo_host_session(
 /// `h` is a live handle; `buf` is writable for `cap` bytes.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_demo_host_launch(
-    h: *const PunktfunkDemoHost,
+pub unsafe extern "C" fn lilynk_demo_host_launch(
+    h: *const LilynkDemoHost,
     buf: *mut c_char,
     cap: usize,
 ) -> usize {
@@ -160,9 +160,7 @@ pub unsafe extern "C" fn punktfunk_demo_host_launch(
 /// `h` is a live handle or NULL.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_demo_host_take_keyframe_request(
-    h: *const PunktfunkDemoHost,
-) -> bool {
+pub unsafe extern "C" fn lilynk_demo_host_take_keyframe_request(h: *const LilynkDemoHost) -> bool {
     // SAFETY: caller handle or null; `as_ref` never dereferences null.
     unsafe { h.as_ref() }.is_some_and(|h| h.inner.take_keyframe_request())
 }
@@ -173,8 +171,8 @@ pub unsafe extern "C" fn punktfunk_demo_host_take_keyframe_request(
 /// `h` is a live handle; `out` is writable.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_demo_host_next_input(
-    h: *const PunktfunkDemoHost,
+pub unsafe extern "C" fn lilynk_demo_host_next_input(
+    h: *const LilynkDemoHost,
     out: *mut InputEvent,
 ) -> bool {
     std::panic::catch_unwind(AssertUnwindSafe(|| {
@@ -202,8 +200,8 @@ pub unsafe extern "C" fn punktfunk_demo_host_next_input(
 /// `h` is a live handle; `data` is readable for `len` bytes.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_demo_host_submit_video(
-    h: *const PunktfunkDemoHost,
+pub unsafe extern "C" fn lilynk_demo_host_submit_video(
+    h: *const LilynkDemoHost,
     data: *const u8,
     len: usize,
     keyframe: bool,

@@ -193,7 +193,7 @@ The runner is its own package. Install it, then press **Enable runner**:
 | Windows | Re-run the host setup |
 
 Installed but still reported missing? The host service can't find the `lilynk-scripting`
-executable on its `PATH`. Point `PUNKTFUNK_SCRIPTING` at it ([Configuration](/docs/configuration)).
+executable on its `PATH`. Point `LILYNK_SCRIPTING` at it ([Configuration](/docs/configuration)).
 
 ### The plugin runner keeps failing to start
 
@@ -214,9 +214,9 @@ Repair the sandbox, then start the runner. It stays stopped until you do.
 | Host | Repair | Start the runner |
 |---|---|---|
 | Linux | Install `bubblewrap` 0.8 or newer, or allow unprivileged user namespaces. | `systemctl --user restart lilynk-scripting` |
-| Windows | Re-run the host setup. | `Start-ScheduledTask -TaskName PunktfunkScripting`, from an elevated PowerShell |
+| Windows | Re-run the host setup. | `Start-ScheduledTask -TaskName LilynkScripting`, from an elevated PowerShell |
 
-As a last resort on Linux, `Environment=PUNKTFUNK_PLUGIN_SANDBOX=off` in
+As a last resort on Linux, `Environment=LILYNK_PLUGIN_SANDBOX=off` in
 `systemctl --user edit lilynk-scripting` runs plugins with your whole account's access; the
 console warns while it is set.
 
@@ -227,7 +227,7 @@ protected paths outright; its log names each one (`plugin folder request refused
 
 ### Plugin interfaces are unavailable
 
-The console couldn't open its plugin port (TCP 47993 by default). Set `PUNKTFUNK_UI_PLUGIN_PORT` to
+The console couldn't open its plugin port (TCP 47993 by default). Set `LILYNK_UI_PLUGIN_PORT` to
 a free port ([Configuration](/docs/configuration)) and restart the console.
 
 ### Trust this plugin's port once

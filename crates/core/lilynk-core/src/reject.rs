@@ -1,6 +1,6 @@
 //! Typed QUIC application close codes and the [`RejectReason`] vocabulary a
 //! host uses to turn a connection away. Lives outside the `quic` feature
-//! because [`PunktfunkError::Rejected`](crate::error::PunktfunkError::Rejected)
+//! because [`LilynkError::Rejected`](crate::error::LilynkError::Rejected)
 //! carries it in every build; `crate::quic` re-exports it.
 
 use std::time::Duration;
@@ -60,7 +60,7 @@ pub const PROFILE_LOCKED_CLOSE_CODE: u32 = 0x74;
 macro_rules! reject_reasons {
     ($($variant:ident = $code:ident, $token:literal, $text:literal;)*) => {
         /// Client-side view of the host's QUIC application close code. Surfaces as
-        /// [`PunktfunkError::Rejected`](crate::error::PunktfunkError::Rejected).
+        /// [`LilynkError::Rejected`](crate::error::LilynkError::Rejected).
         #[derive(Debug, Clone, Copy, PartialEq, Eq)]
         pub enum RejectReason {
             $($variant,)*

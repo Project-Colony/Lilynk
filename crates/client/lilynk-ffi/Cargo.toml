@@ -28,7 +28,7 @@ quic = [
 lilynk-core = { path = "../../core/lilynk-core" }
 ly-bitstream = { path = "../../codec/ly-bitstream" }
 ly-l10n = { path = "../../../l10n", features = ["client"], optional = true }
-# The backend `punktfunk_set_log_callback` installs (`log::set_logger` + `log::Log`). tracing's
+# The backend `lilynk_set_log_callback` installs (`log::set_logger` + `log::Log`). tracing's
 # `log` feature mirrors every event as a `log` record while no tracing subscriber is installed,
 # which is how core's lines reach the callback.
 log = "0.4"

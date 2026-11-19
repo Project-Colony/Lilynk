@@ -684,7 +684,7 @@ pub(crate) struct DisplayStateResponse {
 /// Physical monitor as the compositor reports it.
 #[derive(Serialize, ToSchema)]
 pub(crate) struct ApiMonitorInfo {
-    /// Connector (`DP-1`, `HDMI-A-2`) — the value `PUNKTFUNK_CAPTURE_MONITOR` takes.
+    /// Connector (`DP-1`, `HDMI-A-2`) — the value `LILYNK_CAPTURE_MONITOR` takes.
     connector: String,
     /// Picker label (`make model`, else the connector).
     description: String,
@@ -700,7 +700,7 @@ pub(crate) struct ApiMonitorInfo {
     /// One of our virtual displays, not a real head. Best-effort on Sway, whose
     /// `HEADLESS-N` may be the operator's own.
     managed: bool,
-    /// True when the host-wide pin (`PUNKTFUNK_CAPTURE_MONITOR`, else the stored policy) names
+    /// True when the host-wide pin (`LILYNK_CAPTURE_MONITOR`, else the stored policy) names
     /// this monitor.
     selected: bool,
 }
@@ -820,7 +820,7 @@ pub(crate) struct ScreenRow {
 /// What a device may stream (`GET /display/targets`).
 #[derive(Serialize, ToSchema)]
 pub(crate) struct DisplayTargets {
-    /// `PUNKTFUNK_CAPTURE_MONITOR` fixes the screen for every device.
+    /// `LILYNK_CAPTURE_MONITOR` fixes the screen for every device.
     locked: bool,
     /// What a device with no screen of its own streams.
     host_default: DisplayTarget,

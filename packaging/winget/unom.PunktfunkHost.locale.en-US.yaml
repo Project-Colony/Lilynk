@@ -65,7 +65,7 @@ InstallationNotes: |-
     This install generated a login password and did not display it. Print it from an
     ELEVATED PowerShell, BEFORE your first sign-in:   lilynk-host web password
     The console then keeps only a salted hash in %ProgramData%\punktfunk\web-password, so a
-    forgotten password is reset: put a PUNKTFUNK_UI_PASSWORD=<your-password> line back in that
+    forgotten password is reset: put a LILYNK_UI_PASSWORD=<your-password> line back in that
     file and run  lilynk-host service restart
 
   Configuration:  %ProgramData%\punktfunk\host.env

@@ -70,7 +70,7 @@ impl Ds5Feedback {
     /// route; the pad's speaker volume range is `0x3D..=0x64`.
     /// Bits 0/1 stay clear (rumble-emulation / disable-audio-haptics mute the coils).
     /// The select persists across USB-audio restart; a later
-    /// [`HidOutput::AudioCtl`](lilynk_core::quic::HidOutput::AudioCtl) still overrides. `PUNKTFUNK_PAD_SPEAKER_PATH` / `_VOLUME` override per run.
+    /// [`HidOutput::AudioCtl`](lilynk_core::quic::HidOutput::AudioCtl) still overrides. `LILYNK_PAD_SPEAKER_PATH` / `_VOLUME` override per run.
     pub(super) fn speaker_enable_packet(volume: u8, path: u8) -> [u8; 47] {
         let mut p = [0u8; 47];
         // bit5 = ucSpeakerVolume valid, bit7 = audio-control byte valid.

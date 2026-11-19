@@ -1682,7 +1682,7 @@ fn wait_for_box_session(grace: Duration) -> HandbackWait {
 }
 
 /// After [`HANDBACK_GRACE`], if nothing is drawing: `stop` the autologin (releases the parked
-/// `--wait start`; `restart` does not), then restart the DM, then `PUNKTFUNK_RECOVER_SESSION_CMD`.
+/// `--wait start`; `restart` does not), then restart the DM, then `LILYNK_RECOVER_SESSION_CMD`.
 /// Detached: a hand-back running for a minute would block every reconnect. Call once the units
 /// are settled, or the first poll reads our own finished takeover as a new one.
 fn ensure_box_session_or_escalate(units: &[String]) {
@@ -1749,7 +1749,7 @@ fn handback_watch(units: &[String]) {
     // Rung 3: operator escape hatch, then say what is left to do by hand.
     if crate::try_recover_session() {
         tracing::warn!(
-            "gamescope: fired PUNKTFUNK_RECOVER_SESSION_CMD to bring the box's session back"
+            "gamescope: fired LILYNK_RECOVER_SESSION_CMD to bring the box's session back"
         );
         return;
     }
@@ -1758,7 +1758,7 @@ fn handback_watch(units: &[String]) {
         "gamescope: the box has NO session driving its panel and every automatic remedy failed — \
          its screen stays dark until someone runs `systemctl --user restart <unit>` for one of \
          these, or `sudo systemctl restart display-manager.service`. Set \
-         PUNKTFUNK_RECOVER_SESSION_CMD to let the host do this itself"
+         LILYNK_RECOVER_SESSION_CMD to let the host do this itself"
     );
 }
 
@@ -1864,7 +1864,7 @@ fn do_restore_tv_session(verify: bool) {
                 %dm,
                 shape = why.shape(),
                 reason = %why,
-                "display-manager restart lost its privilege — fired PUNKTFUNK_RECOVER_SESSION_CMD \
+                "display-manager restart lost its privilege — fired LILYNK_RECOVER_SESSION_CMD \
                  to bring the session back"
             ),
             // No graphical session. The helper's own reason rides along: the two root commands
@@ -1873,7 +1873,7 @@ fn do_restore_tv_session(verify: bool) {
                 %dm,
                 shape = why.shape(),
                 reason = %why,
-                "could not restart the display manager and no PUNKTFUNK_RECOVER_SESSION_CMD is \
+                "could not restart the display manager and no LILYNK_RECOVER_SESSION_CMD is \
                  configured — the box has no graphical session until someone runs \
                  `systemctl reset-failed {dm} && systemctl restart {dm}` as root"
             ),

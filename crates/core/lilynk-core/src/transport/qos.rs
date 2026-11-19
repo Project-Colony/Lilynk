@@ -6,7 +6,7 @@
 //! [`set_media_qos`] tags video CS5 / audio CS6 (Linux also `SO_PRIORITY`) so a
 //! WMM AP or managed switch can prefer media over bulk. Default: on toward
 //! RFC1918 / ULA / link-local / loopback, off toward anything routable — WAN
-//! paths bleach or reject DSCP. `PUNKTFUNK_DSCP=1` forces on, `=0` kills it;
+//! paths bleach or reject DSCP. `LILYNK_DSCP=1` forces on, `=0` kills it;
 //! [`set_dscp_default`] still forces on (Android low-latency). Windows strips
 //! a plain `IP_TOS`, so the mark goes through qWAVE ([`super::qos_windows`]);
 //! hold the returned [`QosFlow`] while the socket sends media. On Linux and
@@ -61,13 +61,13 @@ impl MediaClass {
     }
 }
 
-/// Embedder force-on when `PUNKTFUNK_DSCP` is unset. `false` is AUTO (private
+/// Embedder force-on when `LILYNK_DSCP` is unset. `false` is AUTO (private
 /// peers only); `true` marks every peer (e.g. Android low-latency over a VPN
 /// the address math cannot see as local).
 static DSCP_DEFAULT: AtomicBool = AtomicBool::new(false);
 
 /// Force DSCP on for sockets created from now on (`false` restores AUTO). Call
-/// before connect — the tag is applied at socket creation. `PUNKTFUNK_DSCP`
+/// before connect — the tag is applied at socket creation. `LILYNK_DSCP`
 /// still overrides.
 pub fn set_dscp_default(enabled: bool) {
     DSCP_DEFAULT.store(enabled, Ordering::Relaxed);
@@ -83,12 +83,12 @@ fn dscp_decision(env: Option<&str>, embedder_on: bool, peer_private: bool) -> bo
     }
 }
 
-/// [`dscp_decision`] for `peer`. `PUNKTFUNK_DSCP` is read once: the shared socket asks on
+/// [`dscp_decision`] for `peer`. `LILYNK_DSCP` is read once: the shared socket asks on
 /// every packet.
 pub(crate) fn dscp_enabled_for(peer: Option<std::net::SocketAddr>) -> bool {
     static ENV: std::sync::OnceLock<Option<String>> = std::sync::OnceLock::new();
     dscp_decision(
-        ENV.get_or_init(|| std::env::var("PUNKTFUNK_DSCP").ok())
+        ENV.get_or_init(|| std::env::var("LILYNK_DSCP").ok())
             .as_deref(),
         DSCP_DEFAULT.load(Ordering::Relaxed),
         peer.is_some_and(|p| is_private_peer(&p)),
@@ -168,7 +168,7 @@ pub fn set_media_qos_to(
 }
 
 /// Unconditional QoS apply, split out of [`set_media_qos`] so tests need not
-/// touch `PUNKTFUNK_DSCP`. `None` clears the mark. Best-effort (log and continue).
+/// touch `LILYNK_DSCP`. `None` clears the mark. Best-effort (log and continue).
 #[cfg_attr(windows, allow(dead_code))]
 fn apply_media_qos(socket: &UdpSocket, class: Option<MediaClass>) {
     let sock = socket2::SockRef::from(socket);

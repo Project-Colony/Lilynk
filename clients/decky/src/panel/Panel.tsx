@@ -13,7 +13,7 @@ import { SessionSection } from "./SessionSection";
 import { TroubleshootingSection } from "./TroubleshootingSection";
 import { AboutSection, UpdateSection } from "./UpdateSection";
 
-const PunktfunkSection: FC = () => {
+const LilynkSection: FC = () => {
   const [gamePageStream, setGamePageStream] = useState(gamePageStreamEnabled);
   return (
     <PanelSection title="Punktfunk">
@@ -45,7 +45,7 @@ export const QamPanel: FC = () => {
       <UpdateSection info={info} check={check} />
       <SessionSection />
       <HostsSection />
-      <PunktfunkSection />
+      <LilynkSection />
       <TroubleshootingSection />
       <AboutSection info={info} checking={checking} check={check} />
     </>

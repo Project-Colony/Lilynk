@@ -23,7 +23,7 @@ export function streamFrom(host: HostView, game: Game): void {
 /** The Punktfunk lens mark: the logo's two overlapping circles in the brand violets, the lighter
  *  one behind. A surface that paints itself violet overrides `--pf-back` / `--pf-deep`, because the
  *  deep circle is the same violet as the Play button's focus fill and would vanish on it. */
-export const PunktfunkMark: FC<{ size?: number }> = ({ size = 22 }) => (
+export const LilynkMark: FC<{ size?: number }> = ({ size = 22 }) => (
   <svg viewBox="17 13 141 141" width={size} height={size} aria-hidden="true">
     <defs>
       <linearGradient id="pf-lens" x1="0" y1="1" x2="1" y2="0">

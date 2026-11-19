@@ -208,13 +208,13 @@ fn desktop_steam_pid() -> Option<u32> {
         return None; // our own dedicated spawn's Steam
     }
     let cgroup = std::fs::read_to_string(format!("/proc/{pid}/cgroup")).unwrap_or_default();
-    if cgroup_is_punktfunk_owned(&cgroup) {
+    if cgroup_is_lilynk_owned(&cgroup) {
         return None; // the host service's tree or the managed session unit
     }
     Some(pid)
 }
 
-fn cgroup_is_punktfunk_owned(cgroup: &str) -> bool {
+fn cgroup_is_lilynk_owned(cgroup: &str) -> bool {
     cgroup.contains("lilynk-host.service") || cgroup.contains(&format!("{SESSION_UNIT}.service"))
 }
 
@@ -656,21 +656,21 @@ mod tests {
     #[test]
     fn desktop_steam_cgroup_ownership() {
         // A desktop-launched Steam (the instance-conflict case).
-        assert!(!cgroup_is_punktfunk_owned(
+        assert!(!cgroup_is_lilynk_owned(
             "0::/user.slice/user-1000.slice/user@1000.service/app.slice/app-gnome-steam-48605.scope"
         ));
         // KDE spawns app scopes too; still foreign.
-        assert!(!cgroup_is_punktfunk_owned(
+        assert!(!cgroup_is_lilynk_owned(
             "0::/user.slice/user-1000.slice/user@1000.service/app.slice/app-steam@0f3a.service"
         ));
         // Our own dedicated spawn tree (Steam nested under the host service).
-        assert!(cgroup_is_punktfunk_owned(
+        assert!(cgroup_is_lilynk_owned(
             "0::/user.slice/user-1000.slice/user@1000.service/app.slice/lilynk-host.service"
         ));
         // The host-managed gamescope session unit (SESSION_UNIT).
-        assert!(cgroup_is_punktfunk_owned(
+        assert!(cgroup_is_lilynk_owned(
             "0::/user.slice/user-1000.slice/user@1000.service/app.slice/lilynk-gamescope.service"
         ));
-        assert!(!cgroup_is_punktfunk_owned(""));
+        assert!(!cgroup_is_lilynk_owned(""));
     }
 }

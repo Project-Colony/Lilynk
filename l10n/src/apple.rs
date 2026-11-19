@@ -1,4 +1,4 @@
-//! `ly-l10n apple`: `Localizable.xcstrings` and `L10n.swift` for the `PunktfunkShared` module.
+//! `ly-l10n apple`: `Localizable.xcstrings` and `L10n.swift` for the `LilynkShared` module.
 //!
 //! `L10n` has one accessor per message, named in camelCase. A message without placeholders is
 //! a `LocalizedStringResource`: `Text(L10n.playerStatsScalePct)`, or
@@ -14,7 +14,7 @@
 //! catalog's `%N$` picks them out.
 //!
 //! Two more catalogs hold text the system reads outside the app's code. `AppShortcuts.xcstrings`
-//! is keyed by the English phrase a `PunktfunkShortcuts` literal spells, `{host}` written
+//! is keyed by the English phrase a `LilynkShortcuts` literal spells, `{host}` written
 //! `${host}`; it comes from the `apple_shortcut_*_phrase` messages. `InfoPlist.xcstrings` is
 //! keyed by Info.plist key; `USAGE` says which message fills which.
 

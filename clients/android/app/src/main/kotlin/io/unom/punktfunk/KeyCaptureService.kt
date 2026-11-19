@@ -70,7 +70,7 @@ class KeyCaptureService : AccessibilityService() {
         var running by mutableStateOf(false)
             private set
 
-        private const val PREFS = "punktfunk_key_capture"
+        private const val PREFS = "lilynk_key_capture"
         private const val K_ANSWERED = "disclosure_answered"
 
         /** The launch prompt has been answered once; after that only Settings offers it. */
@@ -96,7 +96,7 @@ class KeyCaptureService : AccessibilityService() {
 @Composable
 fun KeyCaptureDisclosure(onDismiss: () -> Unit) {
     val context = LocalContext.current
-    PunktfunkDialog(
+    LilynkDialog(
         title = stringResource(R.string.android_keycapture_title),
         onDismiss = onDismiss,
         dismissOnOutsideTap = false,

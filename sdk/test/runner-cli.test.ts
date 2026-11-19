@@ -93,8 +93,8 @@ test.skipIf(process.platform !== "linux")(
 				env: {
 					...process.env,
 					PATH: path.join(root, "no-bwrap"),
-					PUNKTFUNK_CONFIG_DIR: root,
-					PUNKTFUNK_PLUGIN_SANDBOX: "on",
+					LILYNK_CONFIG_DIR: root,
+					LILYNK_PLUGIN_SANDBOX: "on",
 				},
 				stdout: "pipe",
 				stderr: "pipe",

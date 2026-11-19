@@ -48,7 +48,7 @@ const fixtureEntries: LogEntry[] = [
 	entry(
 		4,
 		"INFO",
-		"lilynk_host::punktfunk1",
+		"lilynk_host::lilynk1",
 		"session start mode=1920x1080@60 codec=hevc",
 	),
 	entry(

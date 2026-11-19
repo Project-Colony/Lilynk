@@ -344,8 +344,8 @@ impl WinExecutor<'_> {
                 .ok("would re-enable only the tasks that were enabled before the stop");
         } else {
             for (task, enabled) in [
-                ("PunktfunkWeb", web_enabled),
-                ("PunktfunkScripting", scripting_enabled),
+                ("LilynkWeb", web_enabled),
+                ("LilynkScripting", scripting_enabled),
             ] {
                 if enabled == Some(true) {
                     self.spawn_quiet(&["schtasks", "/Change", "/TN", task, "/ENABLE"], true)?;
@@ -355,14 +355,8 @@ impl WinExecutor<'_> {
                 .ok("re-enabled the tasks that were enabled before the stop");
         }
         let runner: &[&str] = match scripting_enabled {
-            Some(true) => &["schtasks", "/Run", "/TN", "PunktfunkScripting"],
-            Some(false) => &[
-                "schtasks",
-                "/Change",
-                "/TN",
-                "PunktfunkScripting",
-                "/DISABLE",
-            ],
+            Some(true) => &["schtasks", "/Run", "/TN", "LilynkScripting"],
+            Some(false) => &["schtasks", "/Change", "/TN", "LilynkScripting", "/DISABLE"],
             None => return Ok(()),
         };
         self.spawn(
@@ -447,11 +441,11 @@ impl WinExecutor<'_> {
     }
 
     fn stop_host_runtime(&self, app_dir: &str) -> Result<(), Failed> {
-        if let Err(e) = sys::stop_service_wait("PunktfunkHost") {
+        if let Err(e) = sys::stop_service_wait("LilynkHost") {
             self.ui.warn(&format!("service stop: {e}"));
         }
         self.spawn_quiet(&["taskkill", "/F", "/IM", "lilynk-tray.exe"], true)?;
-        for task in ["PunktfunkWeb", "PunktfunkScripting"] {
+        for task in ["LilynkWeb", "LilynkScripting"] {
             self.spawn_quiet(&["schtasks", "/Change", "/TN", task, "/DISABLE"], true)?;
             self.spawn_quiet(&["schtasks", "/End", "/TN", task], true)?;
         }
@@ -527,7 +521,7 @@ impl WinExecutor<'_> {
 
     fn register_scripting(&self, app_dir: &str, start_now: bool) -> Result<(), Failed> {
         self.ui
-            .plus("schtasks /Create /TN PunktfunkScripting /XML <generated> /F");
+            .plus("schtasks /Create /TN LilynkScripting /XML <generated> /F");
         if !self.dry {
             let xml = scripting_task_xml(app_dir);
             let file = format!("{}\\pf-scripting-task.xml", self.subst.temp);
@@ -538,7 +532,7 @@ impl WinExecutor<'_> {
                     "schtasks",
                     "/Create",
                     "/TN",
-                    "PunktfunkScripting",
+                    "LilynkScripting",
                     "/XML",
                     &file,
                     "/F",
@@ -550,7 +544,7 @@ impl WinExecutor<'_> {
         }
         if start_now {
             self.spawn(
-                &["schtasks", "/Run", "/TN", "PunktfunkScripting"].map(str::to_string),
+                &["schtasks", "/Run", "/TN", "LilynkScripting"].map(str::to_string),
                 true,
             )?;
         }

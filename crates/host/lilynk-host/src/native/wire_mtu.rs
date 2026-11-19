@@ -7,7 +7,7 @@
 //! (to the sealed jumbo datagram unless jumbo is off), so a settled MTU below that is
 //! the path verdict.
 //!
-//! Pin with `PUNKTFUNK_WIRE_MTU=<bytes>`. Watch records a below-ceiling
+//! Pin with `LILYNK_WIRE_MTU=<bytes>`. Watch records a below-ceiling
 //! settle; the next handshake clamps. Jumbo follows this host's adapter toward
 //! the client and grows only to what the path proved. It starts the next session
 //! at that size only after a live re-proof — PyroWave cannot re-key mid-stream.
@@ -162,7 +162,7 @@ fn jumbo_session_start(i: JumboStart, peer: IpAddr) -> Option<usize> {
     Some(target)
 }
 
-/// Shard payload for a new session on `conn`, under the session's `PUNKTFUNK_WIRE_MTU`
+/// Shard payload for a new session on `conn`, under the session's `LILYNK_WIRE_MTU`
 /// (`env`). Async only for the bounded [`JUMBO_PROOF_WAIT`], entered only on a path a
 /// previous session already proved jumbo.
 pub(super) async fn negotiated_shard_payload(
@@ -251,7 +251,7 @@ fn resolve(
                 wire_mtu = mtu,
                 shard_payload = p,
                 default,
-                "wire MTU: shard payload set from PUNKTFUNK_WIRE_MTU"
+                "wire MTU: shard payload set from LILYNK_WIRE_MTU"
             );
         }
         return p;
@@ -487,7 +487,7 @@ impl Watch {
                  lowered NIC MTU — compare `ping <client> -f -l 1450` vs `-l 1200` and check \
                  `netsh interface ipv4 show subinterfaces` (Windows) / `ip link` (Linux). The \
                  measured budget is recorded: the NEXT session from this client sizes video to \
-                 fit automatically. To pin it for all sessions set PUNKTFUNK_WIRE_MTU."
+                 fit automatically. To pin it for all sessions set LILYNK_WIRE_MTU."
             );
         }
         if self.reneg.is_some() {
@@ -715,7 +715,7 @@ mod tests {
         v6.proven_udp_budget = Some(8952);
         assert_eq!(jumbo_session_start(v6, V6), Some(8906));
         // `resolve` must pick jumbo ahead of the env branch, which would
-        // clamp a >1500 `PUNKTFUNK_WIRE_MTU` to the family default.
+        // clamp a >1500 `LILYNK_WIRE_MTU` to the family default.
         assert_eq!(resolve(Some(9000), None, proven_jumbo(), V4), 8926);
     }
 

@@ -11,10 +11,10 @@ node_modules/
 dist/
 # Swift package build artifacts + the locally-built xcframework (rebuild via scripts/build-xcframework.sh)
 clients/apple/.build/
-clients/apple/PunktfunkCore.xcframework/
+clients/apple/LilynkCore.xcframework/
 clients/apple/.swiftpm/
 # String Catalog + L10n.swift from l10n/messages (scripts/gen-l10n-apple.sh)
-clients/apple/Sources/PunktfunkShared/Generated/
+clients/apple/Sources/LilynkShared/Generated/
 # Generated App Store screenshots (tools/screenshots.sh output; uploaded as a CI artifact)
 clients/apple/screenshots/
 clients/linux/screenshots/

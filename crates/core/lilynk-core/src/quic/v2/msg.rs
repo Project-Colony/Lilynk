@@ -9,7 +9,7 @@
 use super::field::*;
 use super::registry as reg;
 use crate::config::Mode;
-use crate::error::{PunktfunkError, Result};
+use crate::error::{LilynkError, Result};
 use crate::quic::*;
 /// The buffer [`ProfileUnlock::secret`] lives in, for callers that build one.
 pub use zeroize::Zeroizing;
@@ -101,7 +101,7 @@ impl FieldValue for [u8; 32] {
     }
     fn get(v: &[u8]) -> Result<Self> {
         v.try_into()
-            .map_err(|_| PunktfunkError::InvalidArg("32-byte field of another length"))
+            .map_err(|_| LilynkError::InvalidArg("32-byte field of another length"))
     }
 }
 
@@ -130,7 +130,7 @@ impl FieldValue for Mode {
     fn get(v: &[u8]) -> Result<Self> {
         let b: &[u8; 12] = v
             .try_into()
-            .map_err(|_| PunktfunkError::InvalidArg("mode field of another length"))?;
+            .map_err(|_| LilynkError::InvalidArg("mode field of another length"))?;
         let at = |o: usize| u32::from_le_bytes([b[o], b[o + 1], b[o + 2], b[o + 3]]);
         Ok(Mode {
             width: at(0),
@@ -234,7 +234,7 @@ macro_rules! v2_message {
                 $(
                     let check: fn(&$ty) -> bool = $check;
                     if !check(&m) {
-                        return Err(PunktfunkError::InvalidArg(concat!("bad ", stringify!($ty))));
+                        return Err(LilynkError::InvalidArg(concat!("bad ", stringify!($ty))));
                     }
                 )?
                 Ok(m)
@@ -406,7 +406,7 @@ impl ProfileUnlock {
         if u.is_valid() {
             Ok(u)
         } else {
-            Err(PunktfunkError::InvalidArg("bad ProfileUnlock"))
+            Err(LilynkError::InvalidArg("bad ProfileUnlock"))
         }
     }
 
@@ -495,9 +495,7 @@ pub fn unlock_signed_message(
 ) -> Result<[u8; UNLOCK_SIGNED_LEN]> {
     let hex = |b: u8| b.is_ascii_digit() || (b'a'..=b'f').contains(&b);
     if seat_id.len() != 32 || !seat_id.bytes().all(hex) {
-        return Err(PunktfunkError::InvalidArg(
-            "seat id is not 32 lowercase hex",
-        ));
+        return Err(LilynkError::InvalidArg("seat id is not 32 lowercase hex"));
     }
     let mut m = [0u8; UNLOCK_SIGNED_LEN];
     for (at, part) in [
@@ -529,7 +527,7 @@ pub fn profile_unlock_signed_message(
 ) -> Result<[u8; PROFILE_UNLOCK_SIGNED_LEN]> {
     let ok = |b: u8| b.is_ascii_alphanumeric() || b == b'-' || b == b'_';
     if !(1..=PROFILE_ID_MAX).contains(&profile_id.len()) || !profile_id.bytes().all(ok) {
-        return Err(PunktfunkError::InvalidArg(
+        return Err(LilynkError::InvalidArg(
             "profile id is not 1 to 64 of [A-Za-z0-9_-]",
         ));
     }
@@ -608,7 +606,7 @@ impl V2Message for ClipOffer {
                 1 => set_once(&mut seq, u32_of(v)?)?,
                 2 => {
                     if kinds.len() == CLIP_MAX_KINDS || v.len() < 8 || v.len() - 8 > CLIP_MAX_MIME {
-                        return Err(PunktfunkError::InvalidArg("bad ClipOffer kind"));
+                        return Err(LilynkError::InvalidArg("bad ClipOffer kind"));
                     }
                     let (mime, size) = v.split_at(v.len() - 8);
                     kinds.push(ClipKind {
@@ -648,7 +646,7 @@ pub struct StreamConfig {
     pub host_link_mbps: u32,
     /// The host data socket's granted send buffer.
     pub host_sndbuf_kb: u32,
-    /// What the host's operator pinned with `PUNKTFUNK_DELIVERY`: `0` nothing, then auto,
+    /// What the host's operator pinned with `LILYNK_DELIVERY`: `0` nothing, then auto,
     /// wake, burst, smooth, capped.
     pub host_forced_shape: u8,
     /// The size the epoch encodes at when the host scales `mode` down for the client's view.
@@ -713,7 +711,7 @@ impl FieldValue for Vec<Screen> {
     }
     fn get(v: &[u8]) -> Result<Self> {
         if v.len() % SCREEN_LEN != 0 || v.len() / SCREEN_LEN > SCREENS_MAX {
-            return Err(PunktfunkError::InvalidArg("bad screen list"));
+            return Err(LilynkError::InvalidArg("bad screen list"));
         }
         Ok(v.chunks_exact(SCREEN_LEN)
             .map(|r| {
@@ -866,7 +864,7 @@ impl FieldValue for [u8; 4] {
     }
     fn get(v: &[u8]) -> Result<Self> {
         v.try_into()
-            .map_err(|_| PunktfunkError::InvalidArg("4-byte field of another length"))
+            .map_err(|_| LilynkError::InvalidArg("4-byte field of another length"))
     }
 }
 
@@ -885,7 +883,7 @@ pub fn decode_input_event(ty: u64, body: &[u8]) -> Option<crate::input::InputEve
 /// Decode a body of message type `M`, checking the frame type first.
 pub fn decode<M: V2Message>(ty: u64, body: &[u8]) -> Result<M> {
     if ty != M::TYPE {
-        return Err(PunktfunkError::InvalidArg("frame of another type"));
+        return Err(LilynkError::InvalidArg("frame of another type"));
     }
     M::from_body(body)
 }

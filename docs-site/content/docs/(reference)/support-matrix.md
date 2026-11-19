@@ -154,7 +154,7 @@ Each session gets its own display at the client's resolution and refresh rate â€
    PyroWave and the client leaves its codec on automatic. Full chroma on any vendor; modes
    around 8K fall back to 4:2:0. 10-bit SDR on Linux, and on Windows 11 24H2 and later. Not in
    Windows ARM64 builds.
-8. Only with `PUNKTFUNK_ENCODER=software`; `auto` never picks it on Linux.
+8. Only with `LILYNK_ENCODER=software`; `auto` never picks it on Linux.
 
 HEVC 4:4:4 means an NVIDIA host, or pick PyroWave. Asking for 4:4:4 is a client setting, off by
 default, on the Linux, Windows and Apple clients; Android has none, and GameStream sessions are
@@ -213,12 +213,12 @@ decoders, with openh264 and rav1d as the software floor on the desktop.
    other two don't exist),
    then software. Windows tries Vulkan Video first on NVIDIA and AMD, D3D11VA first on Intel and
    others. Pin one in the client's decoder setting or with
-   [`PUNKTFUNK_DECODER`](/docs/configuration#client-side-native-clients); a pinned decoder that
+   [`LILYNK_DECODER`](/docs/configuration#client-side-native-clients); a pinned decoder that
    fails still falls through. Mid-session, three decode errors spread over at least a second move
    to the next decoder, and the session log names the one in use. Where the GPU's Vulkan driver
    can't show hardware-decoded video (Snapdragon X), the Windows client draws through Direct3D 11
    instead and decodes with D3D11VA, then software, so HEVC, AV1 and 10-bit are offered there too;
-   [`PUNKTFUNK_PRESENT_BACKEND`](/docs/configuration#client-side-native-clients) forces either.
+   [`LILYNK_PRESENT_BACKEND`](/docs/configuration#client-side-native-clients) forces either.
 2. The software floor covers H.264 (openh264) and AV1 (rav1d), 8-bit only, with no HEVC. AV1 is
    offered only where hardware decodes it, and so is HEVC; 10-bit needs a hardware decoder too. If
    every HEVC decoder fails, the client reconnects on a codec with a software floor. PyroWave is

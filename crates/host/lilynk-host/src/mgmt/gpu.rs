@@ -52,10 +52,10 @@ pub(crate) struct GpuState {
     /// Label for the stored pick, kept even when that GPU is absent.
     preferred_name: Option<String>,
     preferred_available: bool,
-    /// `PUNKTFUNK_RENDER_ADAPTER` when set. Windows honours it in `auto`; a manual pick
+    /// `LILYNK_RENDER_ADAPTER` when set. Windows honours it in `auto`; a manual pick
     /// overrides it.
     env_override: Option<String>,
-    /// `PUNKTFUNK_ENCODER` when pinned (`qsv` / `nvenc` / …, not `auto`). A vendor mismatch is
+    /// `LILYNK_ENCODER` when pinned (`qsv` / `nvenc` / …, not `auto`). A vendor mismatch is
     /// overridden at session open (adapter wins); the console uses this to flag a stale pin.
     encoder_pin: Option<String>,
     selected: Option<ApiSelectedGpu>,

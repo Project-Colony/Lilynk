@@ -150,7 +150,7 @@ impl Executor<'_> {
             StepAction::PacmanSwitch { pkgs } => self.pacman_switch(pkgs, facts).map(|()| true),
             StepAction::Linger => self.linger(facts),
             StepAction::StartUnits { units } => self.start_units(units, outcome, facts),
-            // No password, no file: an empty `PUNKTFUNK_UI_PASSWORD=` line is a console
+            // No password, no file: an empty `LILYNK_UI_PASSWORD=` line is a console
             // that admits nobody, which is worse than the generated one this skips to.
             StepAction::WebPassword => match choices.web_password.as_deref() {
                 Some(password) => {
@@ -276,7 +276,7 @@ impl Executor<'_> {
             let _ = std::fs::create_dir_all(dir);
             set_mode(dir, 0o700);
         }
-        match std::fs::write(&path, format!("PUNKTFUNK_UI_PASSWORD={password}\n")) {
+        match std::fs::write(&path, format!("LILYNK_UI_PASSWORD={password}\n")) {
             Ok(()) => {
                 set_mode(&path, 0o600);
                 self.ui.ok(&format!("your password → {shown}"));

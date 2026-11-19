@@ -58,11 +58,11 @@ const OFF_RING_HEAD: usize = core::mem::offset_of!(TouchpadShm, ring_head);
 const OFF_RING_TAIL: usize = core::mem::offset_of!(TouchpadShm, ring_tail);
 const OFF_INPUT_MODE: usize = core::mem::offset_of!(TouchpadShm, input_mode);
 
-/// `PUNKTFUNK_TOUCHPAD=0` keeps the feature off.
-const TOUCHPAD_ENV: &str = "PUNKTFUNK_TOUCHPAD";
+/// `LILYNK_TOUCHPAD=0` keeps the feature off.
+const TOUCHPAD_ENV: &str = "LILYNK_TOUCHPAD";
 /// Set on a seat host, whose HID input would land in the console session. Same reading as
 /// `mouse_windows::mouse_index_for_slot`: only a reserved connector is a seat.
-const SEAT_SLOT_ENV: &str = "PUNKTFUNK_SEAT_DISPLAY_SLOT";
+const SEAT_SLOT_ENV: &str = "LILYNK_SEAT_DISPLAY_SLOT";
 const SEAT_SLOTS: std::ops::RangeInclusive<u8> = 12..=15;
 /// The session user's touchpad settings, under `HKEY_USERS\<sid>`.
 const SETTINGS_KEY: &str = r"Software\Microsoft\Windows\CurrentVersion\PrecisionTouchPad";

@@ -121,7 +121,7 @@ Android. Most settings can differ per [preset](/docs/presets-and-links); the exc
 | **V-Sync** | On (Mac: off) | Off shows each frame as soon as it's ready, with tearing. A driver without a tearing mode stays tear-free. | Linux, Windows, Mac |
 | **Follow variable refresh** | On | Prefers the driver's variable-refresh present mode where it offers one. Whether a VRR, FreeSync or G-Sync screen then follows the stream is the compositor's call: Linux desktops want the window fullscreen and focused. | Linux, Windows, Mac, iPhone, iPad |
 | **Host compositor** | Automatic | Which backend a Linux host uses for the virtual display. A host without it picks its own. | All |
-| **Video decoder**, **GPU** | Automatic | The decoder and graphics card this device uses. Change them only to debug; `PUNKTFUNK_DECODER` [overrides](/docs/configuration#client-side-native-clients) the decoder. | Linux, Windows. **GPU**: Windows, and Linux with more than one GPU. |
+| **Video decoder**, **GPU** | Automatic | The decoder and graphics card this device uses. Change them only to debug; `LILYNK_DECODER` [overrides](/docs/configuration#client-side-native-clients) the decoder. | Linux, Windows. **GPU**: Windows, and Linux with more than one GPU. |
 | **Low-latency mode** | On | Asks the decoder and system for their low-latency paths. Turn it off if a device misbehaves. | Android |
 | **Keep screen awake** | On | Off, a stream keeps the screen awake only while you play: five minutes after your last key, touch or controller input, this device's own screen saver or sleep takes over. | Linux, Windows, Android, Apple |
 | **Screen** | Flat | Flat, or bent like a curved monitor: the radius in millimetres, 800R the tightest. | Apple Vision Pro |

@@ -75,7 +75,7 @@ pub(crate) use profiles::{may_wake, start_seat};
 /// Default management port — next to the GameStream block (47984…48010).
 ///
 /// Sunshine's web UI is also 47990, so a Sunshine fork and a GameStream-off
-/// host collide here. Move it via `--mgmt-bind` / `PUNKTFUNK_MGMT_BIND`; consumers read
+/// host collide here. Move it via `--mgmt-bind` / `LILYNK_MGMT_BIND`; consumers read
 /// the port [`publish_endpoint`] wrote rather than assuming this constant.
 pub const DEFAULT_PORT: u16 = ly_host_config::listen::MGMT_PORT;
 
@@ -139,7 +139,7 @@ fn published_port(dir: &std::path::Path) -> u16 {
 }
 
 /// IO half of [`publish_endpoint`]. Directory is injected so tests skip
-/// `PUNKTFUNK_CONFIG_DIR`.
+/// `LILYNK_CONFIG_DIR`.
 ///
 /// Readable by every local account: the port is already in mDNS TXT, and the
 /// per-user tray and runner follow it. The config dir itself admits only
@@ -147,7 +147,7 @@ fn published_port(dir: &std::path::Path) -> u16 {
 fn write_endpoint(dir: &std::path::Path, port: u16) -> std::io::Result<std::path::PathBuf> {
     let path = dir.join(ENDPOINT_FILE);
     // Replace, not write: systemd may source this mid-rewrite. A torn read
-    // yields empty `PUNKTFUNK_MGMT_URL`; a set-but-blank var is not the
+    // yields empty `LILYNK_MGMT_URL`; a set-but-blank var is not the
     // built-in default.
     ly_paths::replace_users_readable_file(&path, endpoint_line(port).as_bytes())?;
     Ok(path)
@@ -156,7 +156,7 @@ fn write_endpoint(dir: &std::path::Path, port: u16) -> std::io::Result<std::path
 /// One `KEY=VALUE` line: systemd `EnvironmentFile` and
 /// `windows::service::web::read_env_file_value`. No quoting; a URL has no `=`.
 fn endpoint_line(port: u16) -> String {
-    format!("PUNKTFUNK_MGMT_URL=https://127.0.0.1:{port}\n")
+    format!("LILYNK_MGMT_URL=https://127.0.0.1:{port}\n")
 }
 
 #[derive(Clone, Debug)]

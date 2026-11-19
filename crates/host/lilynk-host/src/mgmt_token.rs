@@ -9,13 +9,13 @@
 //! children, and none of them has business with the admin API.
 //!
 //! Four token files:
-//! - **`mgmt-token`** (`PUNKTFUNK_MGMT_TOKEN`) — full admin.
-//! - **`plugin-token`** (`PUNKTFUNK_PLUGIN_TOKEN`) — `mgmt::auth::plugin_may_access`.
+//! - **`mgmt-token`** (`LILYNK_MGMT_TOKEN`) — full admin.
+//! - **`plugin-token`** (`LILYNK_PLUGIN_TOKEN`) — `mgmt::auth::plugin_may_access`.
 //!   The SDK `connect()` prefers this file so a plugin cannot rewrite
 //!   `hooks.json` or admit devices.
 //! - **`plugin-run/plugin-tokens.json`** — one per installed plugin, by id
 //!   ([`load_or_generate_per_plugin`]).
-//! - **`tray-token`** (`PUNKTFUNK_TRAY_TOKEN`) — `GET /local/summary` only. Fresh per
+//! - **`tray-token`** (`LILYNK_TRAY_TOKEN`) — `GET /local/summary` only. Fresh per
 //!   start, readable by every local account ([`mint_tray_token`]).
 
 use anyhow::{Context, Result};
@@ -30,7 +30,7 @@ static ENV_TOKENS: OnceLock<[Option<String>; 2]> = OnceLock::new();
 
 /// The variables `main` takes out of the environment before anything can inherit them. The
 /// console password is here because no child of ours may see it either.
-pub const CREDENTIAL_ENV_VARS: [&str; 3] = [ENV_VAR, PLUGIN_ENV_VAR, "PUNKTFUNK_UI_PASSWORD"];
+pub const CREDENTIAL_ENV_VARS: [&str; 3] = [ENV_VAR, PLUGIN_ENV_VAR, "LILYNK_UI_PASSWORD"];
 
 /// Remember what the environment carried, once, before `main` empties it.
 ///
@@ -46,13 +46,13 @@ fn env_token(env_var: &str) -> Option<String> {
     tokens[slot].clone()
 }
 
-const ENV_VAR: &str = "PUNKTFUNK_MGMT_TOKEN";
+const ENV_VAR: &str = "LILYNK_MGMT_TOKEN";
 const FILE: &str = "mgmt-token";
-const PLUGIN_ENV_VAR: &str = "PUNKTFUNK_PLUGIN_TOKEN";
+const PLUGIN_ENV_VAR: &str = "LILYNK_PLUGIN_TOKEN";
 pub(crate) const PLUGIN_FILE: &str = "plugin-token";
 /// `{ "<plugin id>": "<token>" }` — see [`load_or_generate_per_plugin`].
 const PER_PLUGIN_FILE: &str = "plugin-tokens.json";
-const TRAY_ENV_VAR: &str = "PUNKTFUNK_TRAY_TOKEN";
+const TRAY_ENV_VAR: &str = "LILYNK_TRAY_TOKEN";
 pub(crate) const TRAY_FILE: &str = "tray-token";
 
 /// 32 random bytes as hex: safe in `KEY=VALUE` and in a bearer header.
@@ -163,7 +163,7 @@ pub fn load_or_generate_plugin() -> Result<String> {
 /// Persisted operator token in `dir`, or `None`. Never mints.
 ///
 /// `ctl` must not generate: a client-minted file would become the host
-/// credential. Ignores `PUNKTFUNK_MGMT_TOKEN` so a consumer does not publish
+/// credential. Ignores `LILYNK_MGMT_TOKEN` so a consumer does not publish
 /// the token in `/proc/<pid>/environ`.
 pub(crate) fn read_persisted(dir: &Path) -> Option<String> {
     let contents = fs::read_to_string(dir.join(FILE)).ok()?;
@@ -231,15 +231,15 @@ mod tests {
     fn parses_bare_and_keyvalue_forms() {
         assert_eq!(parse_token("abc123\n", ENV_VAR).as_deref(), Some("abc123"));
         assert_eq!(
-            parse_token("PUNKTFUNK_MGMT_TOKEN=deadbeef\n", ENV_VAR).as_deref(),
+            parse_token("LILYNK_MGMT_TOKEN=deadbeef\n", ENV_VAR).as_deref(),
             Some("deadbeef")
         );
         assert_eq!(
-            parse_token("PUNKTFUNK_PLUGIN_TOKEN=deadbeef\n", PLUGIN_ENV_VAR).as_deref(),
+            parse_token("LILYNK_PLUGIN_TOKEN=deadbeef\n", PLUGIN_ENV_VAR).as_deref(),
             Some("deadbeef")
         );
         assert_eq!(parse_token("\n  \n", ENV_VAR), None);
-        assert_eq!(parse_token("PUNKTFUNK_MGMT_TOKEN=\n", ENV_VAR), None);
+        assert_eq!(parse_token("LILYNK_MGMT_TOKEN=\n", ENV_VAR), None);
     }
 
     #[test]

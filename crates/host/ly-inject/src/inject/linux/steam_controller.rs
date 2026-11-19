@@ -157,7 +157,7 @@ impl SteamDeckPad {
                 SteamModel::Controller => fb.forward_sc_set(data.get(1..).unwrap_or_default()),
             },
             UhidEvent::GetReport { id, .. } => {
-                let _ = dev.reply_get_report(id, Some(&serial_reply("PUNKTFUNK01")));
+                let _ = dev.reply_get_report(id, Some(&serial_reply("LILYNK01")));
             }
         });
         fb
@@ -325,7 +325,7 @@ impl PadProto for SteamProto {
     }
 }
 
-/// Session Steam Deck pads (`PUNKTFUNK_GAMEPAD=steamdeck`).
+/// Session Steam Deck pads (`LILYNK_GAMEPAD=steamdeck`).
 pub type SteamControllerManager = UhidManager<SteamProto>;
 
 /// A classic Steam Controller's transport: usbip (`vhci_hcd`), a USB device Steam adopts, else
@@ -464,7 +464,7 @@ impl PadProto for ScProto {
     }
 }
 
-/// Session classic Steam Controllers (`PUNKTFUNK_GAMEPAD=steamcontroller`).
+/// Session classic Steam Controllers (`LILYNK_GAMEPAD=steamcontroller`).
 pub type SteamCtrlManager = UhidManager<ScProto>;
 
 #[cfg(test)]

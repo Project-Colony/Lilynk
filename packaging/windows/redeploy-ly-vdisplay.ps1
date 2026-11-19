@@ -19,7 +19,7 @@
   + Version_Number=10.0.26100.0, per drivers/deploy-dev.ps1); otherwise build separately and omit it.
 
 .PARAMETER Build       Run `cargo build --release` in packaging/windows/drivers first (needs the MSVC env).
-.PARAMETER Service     Host service name. Default PunktfunkHost.
+.PARAMETER Service     Host service name. Default LilynkHost.
 .PARAMETER Thumbprint  Passthrough to deploy-dev.ps1 (test-cert SHA-1). Omit to use its default.
 .PARAMETER Nefconc     Passthrough to deploy-dev.ps1 (nefconc.exe path). Omit to use its default.
 .PARAMETER Verify      After redeploy, probe to confirm ADD works (passes through to the reset's
@@ -36,7 +36,7 @@
 [CmdletBinding()]
 param(
     [switch]$Build,
-    [string]$Service = 'PunktfunkHost',
+    [string]$Service = 'LilynkHost',
     [string]$Thumbprint,
     [string]$Nefconc,
     [switch]$Verify,

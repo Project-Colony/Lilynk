@@ -5,7 +5,7 @@
 # and seat-session stops it with the seat. The host makes plugin-run and plugin-state first: a
 # `+` ExecStartPre here fails at NAMESPACE. It reads the seat's config directory alone, never the
 # person's own ~/.config/punktfunk, and runs only the plugins their own console installed
-# (PUNKTFUNK_PERSON_PLUGINS). Otherwise it is lilynk-scripting.service, whose comments explain
+# (LILYNK_PERSON_PLUGINS). Otherwise it is lilynk-scripting.service, whose comments explain
 # each directive.
 [Unit]
 Description=punktfunk plugin runner for seat %i
@@ -13,8 +13,8 @@ Description=punktfunk plugin runner for seat %i
 [Service]
 Type=simple
 ExecStart=/usr/bin/lilynk-scripting
-Environment=PUNKTFUNK_CONFIG_DIR=/var/lib/lilynk-seats/seats/%i/config
-Environment=PUNKTFUNK_PERSON_PLUGINS=1
+Environment=LILYNK_CONFIG_DIR=/var/lib/lilynk-seats/seats/%i/config
+Environment=LILYNK_PERSON_PLUGINS=1
 Restart=on-failure
 RestartSec=2
 RestartPreventExitStatus=78

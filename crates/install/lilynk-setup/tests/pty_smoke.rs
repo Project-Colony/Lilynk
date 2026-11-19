@@ -140,7 +140,7 @@ fn the_demo_walks_from_the_settings_screen_to_the_outro() {
         "the password step never showed:\n{text}"
     );
     assert!(
-        text.contains("PUNKTFUNK_UI_PASSWORD"),
+        text.contains("LILYNK_UI_PASSWORD"),
         "the step did not say how to print the password:\n{text}"
     );
     // And the bind question right after it. Taking its default leaves the console on the local
@@ -150,7 +150,7 @@ fn the_demo_walks_from_the_settings_screen_to_the_outro() {
         "the bind step never showed:\n{text}"
     );
     assert!(
-        text.contains("PUNKTFUNK_UI_BIND=0.0.0.0"),
+        text.contains("LILYNK_UI_BIND=0.0.0.0"),
         "the default answer did not reach host.env:\n{text}"
     );
     assert!(
@@ -192,7 +192,7 @@ fn the_demo_writes_nothing_into_the_users_home() {
         home.path().to_str(),
     ));
     assert!(
-        text.contains("PUNKTFUNK_MGMT_BIND"),
+        text.contains("LILYNK_MGMT_BIND"),
         "the preset did not reach a SetEnv step"
     );
     let touched = home.path().join(".config/punktfunk");
@@ -264,7 +264,7 @@ fn a_typed_password_lands_in_the_file_the_console_reads() {
     let path = line.rsplit(' ').next().expect("a path on the line");
     assert_eq!(
         std::fs::read_to_string(path).expect("the password file"),
-        "PUNKTFUNK_UI_PASSWORD=hunter2-and-then-some\n"
+        "LILYNK_UI_PASSWORD=hunter2-and-then-some\n"
     );
     assert!(
         text.contains("Password: the one you typed"),

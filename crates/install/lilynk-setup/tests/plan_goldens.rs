@@ -60,7 +60,7 @@ fn fresh(id: &str, family: Family) -> Facts {
         has_omarchy_bin: id == "omarchy",
         has_ujust: false,
         in_input_group: false,
-        in_punktfunk_group: false,
+        in_lilynk_group: false,
         has_input_group: true,
         nvidia: Nvidia::Absent,
         firewall: Firewall::None,
@@ -822,7 +822,7 @@ fn trap_a_hand_off_never_skips_the_mgmt_port_move() {
             steps[..=end].iter().any(|s| matches!(
                 &s.action,
                 StepAction::SetEnv { key, value }
-                    if key == "PUNKTFUNK_MGMT_BIND" && value == "0.0.0.0:47991"
+                    if key == "LILYNK_MGMT_BIND" && value == "0.0.0.0:47991"
             )),
             "{id}: the move is planned after the run ends"
         );
@@ -1277,7 +1277,7 @@ fn the_password_file_is_written_owner_only() {
     let file = root.join("config/punktfunk/web-password");
     assert_eq!(
         std::fs::read_to_string(&file).expect("the password file"),
-        "PUNKTFUNK_UI_PASSWORD=correct-horse-battery\n"
+        "LILYNK_UI_PASSWORD=correct-horse-battery\n"
     );
     #[cfg(unix)]
     {

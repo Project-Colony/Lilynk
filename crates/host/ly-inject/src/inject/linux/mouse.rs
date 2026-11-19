@@ -138,11 +138,11 @@ const SETTLE: Duration = Duration::from_millis(200);
 
 /// `inner` with a [`VirtualMouse`] in front, where this host can have one: `/dev/uinput`
 /// opens, the node is not a seat's proxy, and the backend is not gamescope, which gives a
-/// plugged-in mouse the same unaccelerated motion as its EIS. `PUNKTFUNK_MOUSE=0` keeps the
+/// plugged-in mouse the same unaccelerated motion as its EIS. `LILYNK_MOUSE=0` keeps the
 /// mouse off; `1` uses it without asking the compositor, for one that reads uinput devices
 /// and cannot say so.
 pub(crate) fn layered(inner: Box<dyn InputInjector>, backend: Backend) -> Box<dyn InputInjector> {
-    let knob = ly_host_config::env_on("PUNKTFUNK_MOUSE");
+    let knob = ly_host_config::env_on("LILYNK_MOUSE");
     let wanted = backend != Backend::GamescopeEi
         && knob != Some(false)
         && crate::uapi::open_nonblock(UINPUT).is_ok()

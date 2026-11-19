@@ -9,7 +9,7 @@
 use lilynk_core::client::{ConnectParams, NativeClient};
 use lilynk_core::config::CompositorPref;
 use lilynk_core::input::{InputEvent, InputKind};
-use lilynk_core::{Mode, PunktfunkError};
+use lilynk_core::{LilynkError, Mode};
 use std::time::{Duration, Instant};
 
 fn main() {
@@ -40,7 +40,7 @@ fn main() {
     while Instant::now() < deadline {
         match client.next_frame(Duration::from_millis(50)) {
             Ok(_) => frames += 1,
-            Err(PunktfunkError::NoFrame) => {}
+            Err(LilynkError::NoFrame) => {}
             Err(e) => {
                 eprintln!("mu-smoke {w}x{h}: session ended: {e:?}");
                 break;

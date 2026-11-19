@@ -32,7 +32,7 @@ mod imp {
     use anyhow::{anyhow, Result};
     use lilynk_core::au::AuMemory;
     use lilynk_core::client::NativeClient;
-    use lilynk_core::error::PunktfunkError;
+    use lilynk_core::error::LilynkError;
     use ly_client_video::video_color::ColorDesc;
     use ly_client_video::video_pyrowave::{DecodeTimeline, PyroWaveDecoder};
     use ndk::native_window::NativeWindow;
@@ -369,7 +369,7 @@ mod imp {
 
             let frame = match client.next_frame(Duration::from_millis(5)) {
                 Ok(f) => f,
-                Err(PunktfunkError::NoFrame) => {
+                Err(LilynkError::NoFrame) => {
                     if received == 0 && !warned_silent && started.elapsed() > NO_VIDEO_PATIENCE {
                         warned_silent = true;
                         log::warn!(

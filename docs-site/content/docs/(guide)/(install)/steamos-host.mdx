@@ -70,7 +70,7 @@ is live when a client connects; see [Steam / gamescope](/docs/gamescope).
 
 The installer also builds `lilynk-gamescope`, gamescope with 10-bit capture, and points the host
 at it. A 10-bit client with HDR on then streams HDR10 from Game Mode; anything else streams SDR. If
-that build fails, the rest works in SDR; run `update.sh` to retry. `PUNKTFUNK_GAMESCOPE_HDR=0` in
+that build fails, the rest works in SDR; run `update.sh` to retry. `LILYNK_GAMESCOPE_HDR=0` in
 `~/.config/punktfunk/host.env` forces SDR.
 
 Check what the host resolved. Load `host.env` first, as the service does, or the probe describes

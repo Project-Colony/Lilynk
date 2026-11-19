@@ -2,11 +2,11 @@
 
 One SwiftUI codebase for Mac, iPhone, iPad, Apple TV and Apple Vision Pro. Networking and protocol — QUIC control
 plane, UDP data plane, FEC, AES-GCM, Opus, cert pinning — are the shared Rust `lilynk-core`,
-statically linked as `PunktfunkCore.xcframework`; this package is the Swift half: decode, present,
+statically linked as `LilynkCore.xcframework`; this package is the Swift half: decode, present,
 input, UI.
 
-`PunktfunkKit` is the reusable library (the C-ABI wrapper, the two presenters, input and gamepad
-capture, discovery); `PunktfunkClient` is the app, including the gamepad UI a connected controller
+`LilynkKit` is the reusable library (the C-ABI wrapper, the two presenters, input and gamepad
+capture, discovery); `LilynkClient` is the app, including the gamepad UI a connected controller
 swaps the whole home for. What the app can do for a user is
 [the docs site](https://docs.punktfunk.unom.io/docs/install-client)'s job, not this file's.
 
@@ -16,13 +16,13 @@ Xcode 26.5 / Swift 6.3. Build the Rust core into an xcframework first:
 
 ```sh
 rustup target add aarch64-apple-darwin x86_64-apple-darwin
-bash scripts/build-xcframework.sh     # → clients/apple/PunktfunkCore.xcframework
+bash scripts/build-xcframework.sh     # → clients/apple/LilynkCore.xcframework
 #   BUILD_IOS=1 / BUILD_TVOS=1 / BUILD_VISIONOS=1 add those slices
 bash scripts/gen-l10n-apple.sh        # after a change in l10n/messages; the line above runs it too
 
 cd clients/apple
 open Lilynk.xcodeproj              # the real app: ⌘R
-swift run PunktfunkClient             # or the unbundled dev shell
+swift run LilynkClient             # or the unbundled dev shell
 swift build && swift test             # units + loopback/remote (self-skip without a host)
 ```
 
@@ -34,8 +34,8 @@ Against a host:
 
 ```sh
 bash test-loopback.sh                 # builds lilynk-host synthetic-source and byte-verifies frames
-PUNKTFUNK_REMOTE_HOST=<ip> swift test --filter RemoteFirstLightTests
-PUNKTFUNK_AUTOCONNECT=<ip> PUNKTFUNK_MODE=1280x720x60 swift run PunktfunkClient
+LILYNK_REMOTE_HOST=<ip> swift test --filter RemoteFirstLightTests
+LILYNK_AUTOCONNECT=<ip> LILYNK_MODE=1280x720x60 swift run LilynkClient
 ```
 
 ## Traps

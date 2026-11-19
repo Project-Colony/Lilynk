@@ -23,7 +23,7 @@ pub const DEFAULT_MGMT_PORT: u16 = 47991;
 /// What "this machine only" means to the console's listener.
 pub const LOOPBACK_BIND: &str = "127.0.0.1";
 
-/// The console's default listen address (`PUNKTFUNK_UI_BIND` in host.env): every interface. The
+/// The console's default listen address (`LILYNK_UI_BIND` in host.env): every interface. The
 /// console answers only peers on the local network or a VPN, never the internet.
 pub const LAN_BIND: &str = "0.0.0.0";
 
@@ -61,7 +61,7 @@ pub struct Pins {
     pub channel: Option<Channel>,
     pub gamestream: Option<bool>,
     pub clipboard: Option<bool>,
-    pub punktfunk_group: Option<bool>,
+    pub lilynk_group: Option<bool>,
     pub linger: Option<bool>,
     pub omarchy_setup: Option<bool>,
     pub omarchy_toasts: Option<bool>,
@@ -126,7 +126,7 @@ pub struct Choices {
     pub channel: Channel,
     /// Set when `--channel` named a channel the box is not on — a switch, not an install.
     pub switch_from: Option<Channel>,
-    pub punktfunk_group: bool,
+    pub lilynk_group: bool,
     pub gamestream: bool,
     pub clipboard: bool,
     pub linger: bool,
@@ -142,7 +142,7 @@ pub struct Choices {
     /// has a desktop session, and never a row on the screen: it is one certificate, this
     /// machine's own.
     pub console_cert: bool,
-    /// Where the web console listens (`PUNKTFUNK_UI_BIND`). The local network unless the user or
+    /// Where the web console listens (`LILYNK_UI_BIND`). The local network unless the user or
     /// `--web-bind` says otherwise; the plugin-UI origin on 47993 follows it.
     pub web_bind: String,
     /// The console login password the user typed. `None` leaves it to the console's own
@@ -185,7 +185,7 @@ impl Choices {
         };
 
         let omarchy_setup = pins.omarchy_setup.unwrap_or(true);
-        let punktfunk_group = steamos || pins.punktfunk_group.unwrap_or(true);
+        let lilynk_group = steamos || pins.lilynk_group.unwrap_or(true);
         // Off next to Sunshine too: both hosts bind the Moonlight ports.
         let gamestream = pins.gamestream.unwrap_or(false);
         let linger = steamos
@@ -202,7 +202,7 @@ impl Choices {
             },
             channel,
             switch_from,
-            punktfunk_group,
+            lilynk_group,
             gamestream,
             clipboard: pins.clipboard.unwrap_or(true),
             linger,
@@ -227,7 +227,7 @@ impl Choices {
                 .unwrap_or_else(|| LAN_BIND.to_string()),
             // Asked after the settings screen, so nothing derives it here.
             web_password: None,
-            group_why: punktfunk_group.then_some(group_why).flatten(),
+            group_why: lilynk_group.then_some(group_why).flatten(),
             linger_why: linger.then_some(linger_why).flatten(),
         }
     }
@@ -281,7 +281,7 @@ mod tests {
         );
         assert_eq!(desktop.channel, Channel::Stable);
         assert!(
-            desktop.punktfunk_group,
+            desktop.lilynk_group,
             "the D4 flip: yes on every box, not couch-only"
         );
         assert!(!desktop.gamestream);
@@ -298,7 +298,7 @@ mod tests {
         assert_eq!(desktop.mgmt_port, DEFAULT_MGMT_PORT);
 
         let couch = Choices::derive(&fresh("bazzite", Family::Sysext), &Pins::default());
-        assert!(couch.punktfunk_group);
+        assert!(couch.lilynk_group);
         assert!(couch.linger, "a couch box starts at boot");
         assert_eq!(couch.group_why, Some(Why::CouchPad(Couch::Bazzite)));
         assert_eq!(
@@ -365,13 +365,13 @@ mod tests {
         let mut couch = fresh("bazzite", Family::Sysext);
         couch.sunshine_active = true;
         let pins = Pins {
-            punktfunk_group: Some(false),
+            lilynk_group: Some(false),
             linger: Some(false),
             gamestream: Some(false),
             ..Pins::default()
         };
         let c = Choices::derive(&couch, &pins);
-        assert!(!c.punktfunk_group);
+        assert!(!c.lilynk_group);
         assert!(!c.linger);
         assert!(!c.gamestream);
         assert!(

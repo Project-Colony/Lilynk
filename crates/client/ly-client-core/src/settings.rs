@@ -214,7 +214,7 @@ pub struct Settings {
     pub mic_enabled: bool,
     /// Platform echo cancellation (PipeWire echo-cancelled source; WASAPI Communications
     /// category). Default on — without it a laptop speaker looping host audio is heard
-    /// by the mic. `PUNKTFUNK_NO_AEC=1` overrides off. Only while `mic_enabled`.
+    /// by the mic. `LILYNK_NO_AEC=1` overrides off. Only while `mic_enabled`.
     #[serde(default = "default_true")]
     pub echo_cancel: bool,
     /// Requested channels: 2 (stereo), 6 (5.1), 8 (7.1). Host clamps; decoder follows.
@@ -242,9 +242,9 @@ pub struct Settings {
     ///
     /// A stored value is not validated. Pre-native spellings `"vulkan"`/`"vaapi"`/`"d3d11va"`
     /// map in `video::migrate_decoder_pref` at warn; the store is not rewritten, so a
-    /// downgrade still works. `PUNKTFUNK_DECODER` overrides (see `video::Decoder::new`).
+    /// downgrade still works. `LILYNK_DECODER` overrides (see `video::Decoder::new`).
     pub decoder: String,
-    /// Decode/present GPU marketing name; empty = automatic. Maps to `PUNKTFUNK_VK_ADAPTER`.
+    /// Decode/present GPU marketing name; empty = automatic. Maps to `LILYNK_VK_ADAPTER`.
     #[serde(default)]
     pub adapter: String,
     /// Ask for 4:4:4 (`quic::VIDEO_CAP_444`). Default off: bandwidth and encode
@@ -372,10 +372,10 @@ pub struct Settings {
     #[serde(default)]
     pub shortcuts: String,
     /// Playback endpoint (PipeWire `node.name` / WASAPI `IMMDevice` id); empty = OS default.
-    /// Maps to `PUNKTFUNK_AUDIO_SINK`. A gone pick falls back to default.
+    /// Maps to `LILYNK_AUDIO_SINK`. A gone pick falls back to default.
     #[serde(default)]
     pub speaker_device: String,
-    /// Capture endpoint; same semantics as `speaker_device` (`PUNKTFUNK_AUDIO_SOURCE`).
+    /// Capture endpoint; same semantics as `speaker_device` (`LILYNK_AUDIO_SOURCE`).
     #[serde(default)]
     pub mic_device: String,
     /// Off, the client plays no rumble on any pad, whatever the host sends, and the console

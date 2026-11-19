@@ -1,6 +1,6 @@
 //! The self-extractor (D2/D3): a packed exe unpacks runtime + payload into a fresh admin-only
 //! dir and re-runs itself from there, where the WinAppSDK DLLs sit beside it. The child gets
-//! `PUNKTFUNK_SETUP_ROOT` plus the same argv; the parent waits and returns the child's exit
+//! `LILYNK_SETUP_ROOT` plus the same argv; the parent waits and returns the child's exit
 //! code, so winget and a terminal see one process with one result.
 //!
 //! Elevated (the host installer), the dir is created with an explicit SDDL — owner
@@ -16,7 +16,7 @@ use lilynk_setup::platform::windows::sys;
 
 use crate::{overlay, payload};
 
-pub const ROOT_ENV: &str = "PUNKTFUNK_SETUP_ROOT";
+pub const ROOT_ENV: &str = "LILYNK_SETUP_ROOT";
 
 /// `Some(exit)` when this process was the packed outer exe and has run the extracted copy.
 /// A plain wizard build (no footer) or the extracted child itself gets `None`.

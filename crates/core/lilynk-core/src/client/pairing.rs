@@ -3,7 +3,7 @@
 
 use super::worker::reject_from_close;
 use super::{dial_addr, NativeClient};
-use crate::error::{PunktfunkError, Result};
+use crate::error::{LilynkError, Result};
 use crate::quic::endpoint;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
@@ -24,11 +24,11 @@ impl NativeClient {
         use crate::quic::{pake, PairChallenge, PairProof, PairRequest, PairResult};
 
         let client_fp = endpoint::fingerprint_of_pem(identity.0)
-            .map_err(|_| PunktfunkError::InvalidArg("client cert pem"))?;
+            .map_err(|_| LilynkError::InvalidArg("client cert pem"))?;
         let rt = tokio::runtime::Builder::new_current_thread()
             .enable_all()
             .build()
-            .map_err(PunktfunkError::Io)?;
+            .map_err(LilynkError::Io)?;
         let pin = pin.to_string();
         let name = name.to_string();
 
@@ -36,7 +36,7 @@ impl NativeClient {
             let remote = dial_addr(host, port).await?;
             // quinn's driver is spawned on the current runtime.
             let (ep, observed) = endpoint::client_pinned_with_identity(None, Some(identity));
-            let ep = ep.map_err(|e| PunktfunkError::Io(std::io::Error::other(e.to_string())))?;
+            let ep = ep.map_err(|e| LilynkError::Io(std::io::Error::other(e.to_string())))?;
 
             // Never close here; the caller does, then flushes, so an early
             // return still lets the host see CONNECTION_CLOSE.
@@ -45,7 +45,7 @@ impl NativeClient {
                 let (mut send, recv) = conn
                     .open_bi()
                     .await
-                    .map_err(|e| PunktfunkError::Io(std::io::Error::other(e.to_string())))?;
+                    .map_err(|e| LilynkError::Io(std::io::Error::other(e.to_string())))?;
                 v2io::write_stream_type(&mut send, registry::STREAM_CONTROL).await?;
                 let mut recv = v2io::FrameReader::new(recv);
                 // SPAKE2 as A; bind our fingerprint and the TOFU-observed host cert.
@@ -63,7 +63,7 @@ impl NativeClient {
                 let confirms = pake.finish(&challenge.spake_b)?;
                 // Host confirm = same key (PIN + certs). Pin only after this.
                 if !pake::verify(&confirms.host, &challenge.confirm) {
-                    return Err(PunktfunkError::Crypto); // wrong PIN or MITM
+                    return Err(LilynkError::Crypto); // wrong PIN or MITM
                 }
                 let proof = PairProof {
                     confirm: confirms.client,
@@ -74,23 +74,23 @@ impl NativeClient {
                 if result.ok {
                     Ok(host_fp)
                 } else {
-                    Err(PunktfunkError::Crypto) // host rejected post-confirm
+                    Err(LilynkError::Crypto) // host rejected post-confirm
                 }
             };
 
             let ceremony = async {
                 let conn = ep
                     .connect(remote, "punktfunk")
-                    .map_err(|_| PunktfunkError::InvalidArg("connect"))?
+                    .map_err(|_| LilynkError::InvalidArg("connect"))?
                     .await
                     .map_err(|e| match endpoint::refused_alpn(&e) {
-                        true => PunktfunkError::Rejected(
+                        true => LilynkError::Rejected(
                             crate::reject::RejectReason::WireVersionMismatch,
                             String::new(),
                         ),
-                        false => PunktfunkError::Io(std::io::Error::other(e.to_string())),
+                        false => LilynkError::Io(std::io::Error::other(e.to_string())),
                     })?;
-                let host_fp = observed.lock().unwrap().ok_or(PunktfunkError::Crypto)?;
+                let host_fp = observed.lock().unwrap().ok_or(LilynkError::Crypto)?;
                 let outcome = match exchange(conn.clone(), host_fp).await {
                     // Prefer a typed host close (not armed / wrong device / rate-limit)
                     // over the transport error from the aborted stream. Same race as
@@ -104,7 +104,7 @@ impl NativeClient {
                             .await;
                         }
                         Err(match reject_from_close(&conn) {
-                            Some((r, said)) => PunktfunkError::Rejected(r, said),
+                            Some((r, said)) => LilynkError::Rejected(r, said),
                             None => e,
                         })
                     }
@@ -117,7 +117,7 @@ impl NativeClient {
             };
             let outcome = tokio::time::timeout(timeout, ceremony)
                 .await
-                .map_err(|_| PunktfunkError::Timeout)?;
+                .map_err(|_| LilynkError::Timeout)?;
             // Drain CONNECTION_CLOSE before dropping the runtime; else the host
             // waits the full pairing timeout. 2 s is enough for a local flush.
             let _ = tokio::time::timeout(Duration::from_secs(2), ep.wait_idle()).await;
@@ -145,30 +145,30 @@ impl NativeClient {
         let rt = tokio::runtime::Builder::new_current_thread()
             .enable_all()
             .build()
-            .map_err(PunktfunkError::Io)?;
+            .map_err(LilynkError::Io)?;
         rt.block_on(async move {
             let remote = dial_addr(host, port).await?;
             let (ep, observed) = endpoint::client_pinned_with_identity(Some(pin), Some(identity));
-            let ep = ep.map_err(|e| PunktfunkError::Io(std::io::Error::other(e.to_string())))?;
+            let ep = ep.map_err(|e| LilynkError::Io(std::io::Error::other(e.to_string())))?;
             let knock = async {
                 let conn = ep
                     .connect(remote, "punktfunk")
-                    .map_err(|_| PunktfunkError::InvalidArg("connect"))?
+                    .map_err(|_| LilynkError::InvalidArg("connect"))?
                     .await
                     .map_err(|e| {
                         let seen = *observed.lock().unwrap();
                         if seen.is_some_and(|seen| seen != pin) {
-                            PunktfunkError::Crypto
+                            LilynkError::Crypto
                         } else if endpoint::refused_alpn(&e) {
-                            PunktfunkError::Rejected(
+                            LilynkError::Rejected(
                                 crate::reject::RejectReason::WireVersionMismatch,
-                            String::new(),
+                                String::new(),
                             )
                         } else {
-                            PunktfunkError::Io(std::io::Error::other(e.to_string()))
+                            LilynkError::Io(std::io::Error::other(e.to_string()))
                         }
                     })?;
-                let host_fp = observed.lock().unwrap().ok_or(PunktfunkError::Crypto)?;
+                let host_fp = observed.lock().unwrap().ok_or(LilynkError::Crypto)?;
                 match knock_once(&conn, name).await {
                     Ok(()) => {
                         conn.close(crate::quic::QUIT_CLOSE_CODE.into(), b"access only");
@@ -176,17 +176,14 @@ impl NativeClient {
                     }
                     Err(e) => {
                         if conn.close_reason().is_none() {
-                            let _ = tokio::time::timeout(
-                                Duration::from_millis(300),
-                                conn.closed(),
-                            )
-                            .await;
+                            let _ = tokio::time::timeout(Duration::from_millis(300), conn.closed())
+                                .await;
                         }
                         if access_granted(&conn) {
                             return Ok(host_fp);
                         }
                         Err(match reject_from_close(&conn) {
-                            Some((r, said)) => PunktfunkError::Rejected(r, said),
+                            Some((r, said)) => LilynkError::Rejected(r, said),
                             None => e,
                         })
                     }
@@ -201,8 +198,8 @@ impl NativeClient {
                 }
             };
             let outcome = tokio::select! {
-                r = tokio::time::timeout(timeout, knock) => r.unwrap_or(Err(PunktfunkError::Timeout)),
-                () = cancelled => Err(PunktfunkError::Timeout),
+                r = tokio::time::timeout(timeout, knock) => r.unwrap_or(Err(LilynkError::Timeout)),
+                () = cancelled => Err(LilynkError::Timeout),
             };
             // The host withdraws a parked request only when its connection closes.
             ep.close(crate::quic::QUIT_CLOSE_CODE.into(), b"access request done");
@@ -220,7 +217,7 @@ async fn knock_once(conn: &quinn::Connection, name: &str) -> Result<()> {
     let (mut send, recv) = conn
         .open_bi()
         .await
-        .map_err(|e| PunktfunkError::Io(std::io::Error::other(e.to_string())))?;
+        .map_err(|e| LilynkError::Io(std::io::Error::other(e.to_string())))?;
     v2io::write_stream_type(&mut send, registry::STREAM_CONTROL).await?;
     let mut recv = v2io::FrameReader::new(recv);
     // A mode, codec and suite an older host can admit, so it reaches its `ServerHello`.

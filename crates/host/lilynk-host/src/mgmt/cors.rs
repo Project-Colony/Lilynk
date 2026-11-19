@@ -36,7 +36,7 @@ const POSITION_AUTHENTICATED: &[&str] = &["/api/v1/local/summary"];
 /// Should this host stamp cross-origin headers at all?
 ///
 /// Only where there is a browser to serve: the plane is running, or an operator named the pages
-/// that may talk to this host in `PUNKTFUNK_WEBTRANSPORT_ORIGINS`. Every other host stamps
+/// that may talk to this host in `LILYNK_WEBTRANSPORT_ORIGINS`. Every other host stamps
 /// nothing, so a feature nobody turned on cannot widen what the management API lets a page
 /// read.
 pub(crate) fn enabled(browser_plane: bool, origins: &[String]) -> bool {

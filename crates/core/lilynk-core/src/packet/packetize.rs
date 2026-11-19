@@ -2,7 +2,7 @@
 
 use super::*;
 use crate::config::Config;
-use crate::error::{PunktfunkError, Result};
+use crate::error::{LilynkError, Result};
 use crate::fec::ErasureCoder;
 
 /// Splits an access unit into FEC-protected shard packets. Host-side only.
@@ -338,7 +338,7 @@ impl Packetizer {
                 self.max_blocks
             };
             if au.blocks_out as usize + 2 > cap.min(u16::MAX as usize) {
-                return Err(PunktfunkError::Unsupported(
+                return Err(LilynkError::Unsupported(
                     "streamed AU exceeds the negotiated max_frame_bytes",
                 ));
             }
@@ -356,7 +356,7 @@ impl Packetizer {
                 au.emitted_shards
                     .checked_mul(payload as u64)
                     .and_then(|b| u32::try_from(b).ok())
-                    .ok_or(PunktfunkError::Unsupported("streamed AU exceeds u32 bytes"))?
+                    .ok_or(LilynkError::Unsupported("streamed AU exceeds u32 bytes"))?
             } else {
                 0 // full-K: `encode_v2` places it at `block × K`
             };
@@ -388,7 +388,7 @@ impl Packetizer {
         mut emit: impl FnMut(&PacketHeader, &[u8]) -> Result<()>,
     ) -> Result<()> {
         let frame_bytes = u32::try_from(au.total_bytes)
-            .map_err(|_| PunktfunkError::Unsupported("streamed AU exceeds u32 bytes"))?;
+            .map_err(|_| LilynkError::Unsupported("streamed AU exceeds u32 bytes"))?;
         let block_count = au.blocks_out + 1;
         self.emit_streamed_block(
             au.frame_index,
@@ -420,7 +420,7 @@ impl Packetizer {
     ) -> Result<()> {
         let payload = self.shard_payload;
         if payload > u16::MAX as usize {
-            return Err(PunktfunkError::InvalidArg("shard_payload exceeds u16"));
+            return Err(LilynkError::InvalidArg("shard_payload exceeds u16"));
         }
         // At least one (zero-padded) data shard even for an empty final block (empty AU).
         let k = bytes.len().div_ceil(payload).max(1);
@@ -429,7 +429,7 @@ impl Packetizer {
             .recovery_for(k)
             .min(self.max_total_shards.saturating_sub(k));
         if k + m > u16::MAX as usize {
-            return Err(PunktfunkError::Unsupported("block shard count exceeds u16"));
+            return Err(LilynkError::Unsupported("block shard count exceeds u16"));
         }
         let full_shards = bytes.len() / payload;
         self.tail.clear();
@@ -543,16 +543,16 @@ impl Geometry {
     /// max; this catches an oversize frame anyway.
     pub fn check(&self) -> Result<()> {
         if self.payload > u16::MAX as usize {
-            return Err(PunktfunkError::InvalidArg("shard_payload exceeds u16"));
+            return Err(LilynkError::InvalidArg("shard_payload exceeds u16"));
         }
         if self.block_count > u16::MAX as usize {
-            return Err(PunktfunkError::Unsupported(
+            return Err(LilynkError::Unsupported(
                 "frame too large: block count exceeds u16",
             ));
         }
         for b in 0..self.block_count {
             if self.data_count(b) + self.parity_of(b) > u16::MAX as usize {
-                return Err(PunktfunkError::Unsupported("block shard count exceeds u16"));
+                return Err(LilynkError::Unsupported("block shard count exceeds u16"));
             }
         }
         Ok(())

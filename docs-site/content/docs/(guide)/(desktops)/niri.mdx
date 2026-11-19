@@ -52,7 +52,7 @@ On the next connect the log says `niri: virtual outputs available`.
 
 Nothing is required: the host finds niri on every connect, so you don't export `NIRI_SOCKET`.
 
-Leave `PUNKTFUNK_COMPOSITOR` unset: a pin turns off detection and session following. It accepts
+Leave `LILYNK_COMPOSITOR` unset: a pin turns off detection and session following. It accepts
 `niri` (alias `biri`) if you need it. Every other option is in
 [Configuration](/docs/configuration).
 
@@ -95,13 +95,13 @@ Your niri is stock. The client is told the host can't create a display, and the 
 [Get biri](#get-biri) and restart the host.
 
 To stream meanwhile, click **Stream this monitor** on a monitor's row in **Screens**, or set
-`PUNKTFUNK_CAPTURE_MONITOR` to its connector. That works on stock niri:
+`LILYNK_CAPTURE_MONITOR` to its connector. That works on stock niri:
 [Stream a real monitor instead](/docs/stream-a-monitor).
 
 ### "find the niri IPC socket (no NIRI_SOCKET, no niri.*.sock)"
 
 The host found no running niri for its user: it started outside your niri session, or
-`PUNKTFUNK_COMPOSITOR` pins niri while another desktop runs. Start the host from inside the
+`LILYNK_COMPOSITOR` pins niri while another desktop runs. Start the host from inside the
 session, as above, and leave the pin unset.
 
 ### "can't create a virtual output here"

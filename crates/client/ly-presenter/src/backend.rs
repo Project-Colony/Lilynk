@@ -49,7 +49,7 @@ pub(crate) fn choose(knobs: &crate::knobs::Knobs, console: bool) -> Backend {
     if let Some(v) = forced.filter(|v| !matches!(*v, "d3d11" | "vulkan")) {
         tracing::warn!(
             value = v,
-            "PUNKTFUNK_PRESENT_BACKEND takes d3d11 or vulkan; ignoring it"
+            "LILYNK_PRESENT_BACKEND takes d3d11 or vulkan; ignoring it"
         );
     }
     let (backend, probe) = decide(knobs, console);
@@ -91,7 +91,7 @@ pub fn probe_backend() -> (&'static str, String) {
     let (backend, probe) = decide(&knobs, false);
     let why = match probe {
         _ if !cfg!(windows) => "the only backend off Windows",
-        _ if forced => "forced by PUNKTFUNK_PRESENT_BACKEND",
+        _ if forced => "forced by LILYNK_PRESENT_BACKEND",
         None => "no Vulkan loader",
         Some(true) => "the Vulkan device imports D3D11 textures",
         Some(false) => "the Vulkan device can't import D3D11 textures",

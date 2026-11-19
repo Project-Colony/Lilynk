@@ -96,7 +96,7 @@ pub(crate) struct SessionShared {
     /// frame by the send loop's pacer.
     pub(crate) refuted: Arc<crate::send_pacing::Refutation>,
     /// The shape the client asked for (`Shape as u8`), read per frame by the send loop.
-    /// `PUNKTFUNK_DELIVERY` overrides it.
+    /// `LILYNK_DELIVERY` overrides it.
     pub(crate) shape: Arc<AtomicU8>,
     /// Both ends' ports, from the handshake: the pacer's floor and hard ceiling, and the
     /// bound on every probe.
@@ -219,7 +219,7 @@ impl SessionWiring {
     pub(crate) fn new(
         welcome: &Welcome,
         tenure: &Tenure,
-        source: Punktfunk1Source,
+        source: Lilynk1Source,
         ports: crate::send_pacing::Ports,
     ) -> SessionWiring {
         let (reconfig_tx, reconfig) = std::sync::mpsc::channel();
@@ -241,7 +241,7 @@ impl SessionWiring {
         let (screen_tell_tx, screen_tell_rx) = tokio::sync::mpsc::unbounded_channel();
         let fec_target = Arc::new(AtomicU8::new(welcome.fec.fec_percent));
         let fec_requested = match source {
-            Punktfunk1Source::SyntheticAbr(_) => fec_target.clone(),
+            Lilynk1Source::SyntheticAbr(_) => fec_target.clone(),
             _ => Arc::new(AtomicU8::new(welcome.fec.fec_percent)),
         };
         SessionWiring {

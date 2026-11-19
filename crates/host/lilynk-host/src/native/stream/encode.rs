@@ -18,7 +18,7 @@ const DEESCALATE_CLEAN_FRAMES: u32 = 600;
 pub(super) const DEESCALATE_BACKOFF_START: std::time::Duration = std::time::Duration::from_secs(60);
 const DEESCALATE_BACKOFF_MAX: std::time::Duration = std::time::Duration::from_secs(25 * 60);
 const CADENCE_LOG_MIN_GAP: std::time::Duration = std::time::Duration::from_secs(5);
-// Without `PUNKTFUNK_PERF` a stage histogram keeps at most this many samples; a trim keeps
+// Without `LILYNK_PERF` a stage histogram keeps at most this many samples; a trim keeps
 // the newer half. 256 is ~4 s at 60 fps.
 const STAGE_WINDOW: usize = 256;
 // The cadence line's chain percentiles cover this many ticks: ~1 s at 60 fps.
@@ -55,7 +55,7 @@ impl ChainWindow {
     }
 }
 
-/// Append a stage sample. Under `PUNKTFUNK_PERF` the 2 s report clears the histogram;
+/// Append a stage sample. Under `LILYNK_PERF` the 2 s report clears the histogram;
 /// without it the trim at [`STAGE_WINDOW`] bounds it.
 fn push_stage(v: &mut Vec<u32>, us: u32, perf: bool) {
     if !perf && v.len() >= STAGE_WINDOW {
@@ -325,7 +325,7 @@ impl StreamState {
         }
     }
 
-    /// Every 2 s under `PUNKTFUNK_PERF`: the new/repeat/regen split and the stage percentiles.
+    /// Every 2 s under `LILYNK_PERF`: the new/repeat/regen split and the stage percentiles.
     pub(super) fn log_diag(&mut self) {
         if !(self.facts.perf && self.diag.diag_at.elapsed() >= std::time::Duration::from_secs(2)) {
             return;
@@ -346,7 +346,7 @@ impl StreamState {
         self.diag.diag_at = std::time::Instant::now();
     }
 
-    /// The stage histograms take samples under `PUNKTFUNK_PERF`, and in an adaptive session
+    /// The stage histograms take samples under `LILYNK_PERF`, and in an adaptive session
     /// until the first degraded verdict has logged them.
     fn stages_sampled(&self) -> bool {
         self.facts.perf || (self.diag.stages_owed && self.pipelining.adaptive)
@@ -776,7 +776,7 @@ impl StreamState {
     /// Pipelined-retrieve escalation on a sustained behind-cadence score, wound back after a
     /// clean run with a growing backoff; pipelined retrieve is judged on a full-budget chain
     /// (see [`encode_chain_pressure`]). Also publishes the cadence verdict the ABR climb gate
-    /// reads, and logs its flips ([`Self::log_cadence_flip`]). With `PUNKTFUNK_IDD_ADAPTIVE`
+    /// reads, and logs its flips ([`Self::log_cadence_flip`]). With `LILYNK_IDD_ADAPTIVE`
     /// off it does none of this.
     pub(super) fn adapt_to_cadence(&mut self) {
         let p = &mut self.pipelining;
@@ -861,7 +861,7 @@ impl StreamState {
     /// this tick's encode chain and the last [`CHAIN_WINDOW`] ticks', the source period, the
     /// path the encoder reads, and the producer pool's withheld peak since the last line. On
     /// the frame-driven path a chain near the source period means the loop sets that period.
-    /// The first degraded line also logs the stage percentiles once without `PUNKTFUNK_PERF`.
+    /// The first degraded line also logs the stage percentiles once without `LILYNK_PERF`.
     fn log_cadence_flip(
         &mut self,
         degraded: bool,
@@ -1134,7 +1134,7 @@ mod tests {
         let mut f = super::super::swap::tests::fake();
         assert!(
             f.st.stages_sampled(),
-            "an adaptive session samples before PUNKTFUNK_PERF"
+            "an adaptive session samples before LILYNK_PERF"
         );
         f.st.diag.st_submit.push(9_000);
         let budget = std::time::Duration::from_millis(20);
@@ -1169,7 +1169,7 @@ mod tests {
         );
     }
 
-    /// Without `PUNKTFUNK_PERF` a histogram keeps the newest samples within the window.
+    /// Without `LILYNK_PERF` a histogram keeps the newest samples within the window.
     #[test]
     fn an_unreported_stage_histogram_stays_bounded() {
         let mut v = Vec::new();
@@ -1189,7 +1189,7 @@ mod tests {
         assert_eq!(
             perf.len(),
             1_000,
-            "the 2 s report clears it under PUNKTFUNK_PERF"
+            "the 2 s report clears it under LILYNK_PERF"
         );
     }
 

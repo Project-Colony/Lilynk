@@ -300,7 +300,7 @@ pub(super) struct SendStats {
     /// [`crate::native::wiring::SessionShared::refuted`]: once raised, the pacer caps an
     /// unmeasured link.
     pub(super) refuted: Arc<crate::send_pacing::Refutation>,
-    /// The shape the client asked for (`Shape as u8`). `PUNKTFUNK_DELIVERY` overrides it.
+    /// The shape the client asked for (`Shape as u8`). `LILYNK_DELIVERY` overrides it.
     pub(super) shape: Arc<std::sync::atomic::AtomicU8>,
     pub(super) bringup: Arc<crate::bringup::Trace>,
     /// Data-socket clone for the kernel-queue probe behind the `wire egress` line.
@@ -830,7 +830,7 @@ impl WireLine {
     }
 }
 
-/// The 2 s window: the `PUNKTFUNK_PERF` line and the stats recorder's sample.
+/// The 2 s window: the `LILYNK_PERF` line and the stats recorder's sample.
 struct PerfLine {
     win: PerfWindow,
     last: std::time::Instant,

@@ -399,7 +399,7 @@ mod session_main {
             );
         }
         // Windows: HDR only when the selected output is presenting HDR.
-        // `PUNKTFUNK_CLIENT_PEAK_NITS` is the headless bypass.
+        // `LILYNK_CLIENT_PEAK_NITS` is the headless bypass.
         #[cfg(windows)]
         let display_hdr = lilynk_core::client::display_hdr_env_override().or(display_hdr);
         #[cfg(windows)]
@@ -549,14 +549,14 @@ mod session_main {
                     println!("no Vulkan physical devices");
                 }
                 for (i, a) in adapters.iter().enumerate() {
-                    // The bracketed number is the PUNKTFUNK_VK_DEVICE value, and the
+                    // The bracketed number is the LILYNK_VK_DEVICE value, and the
                     // FIRST listed entry is what
                     // a default run presents on — the decoder shares that device, so
                     // on a hybrid box this line is usually the answer.
                     let kind = if a.discrete { "discrete" } else { "integrated" };
                     let marked = i == 0 && backend == "vulkan";
                     // `a.index`, NOT the loop position: this list is sorted
-                    // discrete-first, while PUNKTFUNK_VK_DEVICE indexes the raw
+                    // discrete-first, while LILYNK_VK_DEVICE indexes the raw
                     // enumeration, which puts the iGPU first on some hybrids. The
                     // `i == 0` marker stays the loop position — sorted-first is what
                     // `pick_device` lands on when nothing overrides it.
@@ -594,15 +594,15 @@ mod session_main {
                     // not move the presenter.
                     println!();
                     println!(
-                        "Vulkan Video decodes on the presenter's device. PUNKTFUNK_DECODER \
+                        "Vulkan Video decodes on the presenter's device. LILYNK_DECODER \
                          picks the rung,"
                     );
                     println!(
-                        "not the GPU — move the presenter with PUNKTFUNK_VK_DEVICE=<index \
+                        "not the GPU — move the presenter with LILYNK_VK_DEVICE=<index \
                          above> or"
                     );
                     println!(
-                        "PUNKTFUNK_VK_ADAPTER=<name substring>, which is the safer knob \
+                        "LILYNK_VK_ADAPTER=<name substring>, which is the safer knob \
                          where two"
                     );
                     println!("adapters share a name.");
@@ -686,7 +686,7 @@ mod session_main {
     /// elsewhere. Without it the presenter's device advertises no decode queue and `auto` falls
     /// to VAAPI, which chroma-fringes on VanGogh and is unverified on Intel. Every other driver
     /// ignores both, and a driver that already decodes by default no-ops. Appended, never
-    /// clobbered, so a user's own flags survive; `PUNKTFUNK_DECODER=native-vaapi` still pins
+    /// clobbered, so a user's own flags survive; `LILYNK_DECODER=native-vaapi` still pins
     /// VAAPI.
     ///
     /// ⚠⚠ Called from the TOP of [`run`], ahead of the `--list-adapters` / `--probe-decode`
@@ -878,9 +878,9 @@ mod session_main {
                 })
                 .map_or_else(trust::Settings::load, |spec| spec.settings);
             for (var, value) in [
-                ("PUNKTFUNK_VK_ADAPTER", &s.adapter),
-                ("PUNKTFUNK_AUDIO_SINK", &s.speaker_device),
-                ("PUNKTFUNK_AUDIO_SOURCE", &s.mic_device),
+                ("LILYNK_VK_ADAPTER", &s.adapter),
+                ("LILYNK_AUDIO_SINK", &s.speaker_device),
+                ("LILYNK_AUDIO_SOURCE", &s.mic_device),
             ] {
                 if std::env::var_os(var).is_none() && !value.is_empty() {
                     // SAFETY: still the single-threaded startup stretch of `run()` — the

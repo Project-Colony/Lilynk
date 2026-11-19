@@ -24,7 +24,7 @@ import android.content.Context
  * cache. One key per host record id, namespaced so nothing else can collide with it.
  */
 object LibraryPosition {
-    private const val PREFS = "punktfunk_library_position"
+    private const val PREFS = "lilynk_library_position"
 
     private fun prefs(context: Context) =
         context.applicationContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE)

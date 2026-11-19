@@ -8,7 +8,7 @@
 //! [`GamescopeHold`] counts the sessions, on either plane, that may stream a
 //! gamescope the host took over. The last one dropped hands Game Mode back.
 //!
-//! Pin with `PUNKTFUNK_COMPOSITOR`. A pin names a backend, not a running
+//! Pin with `LILYNK_COMPOSITOR`. A pin names a backend, not a running
 //! session, and outranks dedicated-launch and auto-follow. Leave it unset
 //! except for CI and single-session appliances.
 //!
@@ -58,25 +58,25 @@ fn pinned_at_a_dead_session(
 
 /// With `recover`, fires the operator recovery hook (debounced) when configured,
 /// so a retry a few seconds later can land in a recovered desktop. `pinned` is
-/// the `PUNKTFUNK_COMPOSITOR` value when the pin is what got us here, so the
+/// the `LILYNK_COMPOSITOR` value when the pin is what got us here, so the
 /// message names the knob to change.
 #[cfg(not(target_os = "windows"))]
 fn no_live_session(pinned: Option<&str>, recover: bool) -> anyhow::Error {
     if recover && crate::vdisplay::try_recover_session() {
         return anyhow::anyhow!(
             "no live graphical session for this uid — host session recovery launched \
-             (PUNKTFUNK_RECOVER_SESSION_CMD); retry in a few seconds"
+             (LILYNK_RECOVER_SESSION_CMD); retry in a few seconds"
         );
     }
     match pinned {
         Some(pin) => anyhow::anyhow!(
-            "PUNKTFUNK_COMPOSITOR={pin} pins this host to a backend that can only attach to an \
+            "LILYNK_COMPOSITOR={pin} pins this host to a backend that can only attach to an \
              already-running compositor, and no graphical session is live for this uid — start a \
-             session, pin `gamescope` (it stands its own up), or set PUNKTFUNK_RECOVER_SESSION_CMD"
+             session, pin `gamescope` (it stands its own up), or set LILYNK_RECOVER_SESSION_CMD"
         ),
         None => anyhow::anyhow!(
             "no usable compositor (no live graphical session for this uid; set \
-             PUNKTFUNK_COMPOSITOR or start a desktop/gaming session)"
+             LILYNK_COMPOSITOR or start a desktop/gaming session)"
         ),
     }
 }
@@ -85,7 +85,7 @@ fn no_live_session(pinned: Option<&str>, recover: bool) -> anyhow::Error {
 /// (`design/gamescope-multiuser.md`).
 ///
 /// Only a gamescope bare spawn qualifies — managed/attach are single-occupant,
-/// shared-desktop backends want shared planes. `PUNKTFUNK_GAMESCOPE_ISOLATE`
+/// shared-desktop backends want shared planes. `LILYNK_GAMESCOPE_ISOLATE`
 /// turns it off. The resolve paths and `serve_session`'s plane setup must
 /// never disagree about this predicate.
 #[cfg(not(target_os = "windows"))]
@@ -173,8 +173,8 @@ pub(crate) fn resolve_compositor(
                         .as_deref()
                         .unwrap_or("-"),
                     "game_session=dedicated asked for this launch's OWN headless gamescope, but \
-                     PUNKTFUNK_COMPOSITOR pins this host to a backend — the operator pin wins and \
-                     the game launches into the pinned session instead. Unset PUNKTFUNK_COMPOSITOR \
+                     LILYNK_COMPOSITOR pins this host to a backend — the operator pin wins and \
+                     the game launches into the pinned session instead. Unset LILYNK_COMPOSITOR \
                      to get dedicated game sessions."
                 );
             } else {
@@ -200,7 +200,7 @@ pub(crate) fn resolve_compositor(
             Some(c) => c,
             // No live session, but managed gamescope infra exists: its path
             // stands the session up from nothing. Skip under an operator pin —
-            // `PUNKTFUNK_COMPOSITOR` keeps its exact meaning.
+            // `LILYNK_COMPOSITOR` keeps its exact meaning.
             None if revive && !overridden && crate::vdisplay::managed_session_available() => {
                 tracing::info!(
                     "no live graphical session — managed gamescope infra present; routing to \
@@ -220,7 +220,7 @@ pub(crate) fn resolve_compositor(
         // pin skips the retarget below but still needs a route, and an
         // isolated spawn must not touch the shared injector.
         let route = crate::vdisplay::resolve_gamescope_route(chosen, false);
-        // Publish input as a value, not `PUNKTFUNK_INPUT_BACKEND`. Skip on a
+        // Publish input as a value, not `LILYNK_INPUT_BACKEND`. Skip on a
         // pin (operator knob stays in charge) and on isolated (own injector).
         if !overridden && !isolated(chosen, route.as_ref()) {
             crate::inject::set_backend_id(crate::vdisplay::input_backend_id(chosen));

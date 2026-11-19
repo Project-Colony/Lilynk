@@ -8,7 +8,7 @@
 //!
 //! Per segment it prints what went in (wire events, distance) beside what the window got on
 //! the vertical axis: the `axis_source` seen, Σ`axis`, Σ`value120`, stops, and cadence.
-//! `PUNKTFUNK_INPUT_BACKEND` picks the injector like it does for the host.
+//! `LILYNK_INPUT_BACKEND` picks the injector like it does for the host.
 //!
 //! `--listen N` injects nothing and records a real client for N seconds. `--inject-at WxH`
 //! opens no window: the script lands on whatever app sits at the centre of a desktop that

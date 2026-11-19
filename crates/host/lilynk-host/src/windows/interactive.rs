@@ -82,7 +82,7 @@ fn exe_dir(cmdline: &str) -> Option<PathBuf> {
 ///
 /// Fire-and-forget: the child's handles close on return; the process keeps
 /// running. Environment is the user's block plus this process's
-/// `PUNKTFUNK_*` / `RUST_LOG` (see [`merged_env_block`]).
+/// `LILYNK_*` / `RUST_LOG` (see [`merged_env_block`]).
 ///
 /// Needs SYSTEM (`WTSQueryUserToken` requires `SE_TCB`). Fails when this
 /// process's session has no signed-in user. `workdir` defaults to the
@@ -395,7 +395,7 @@ fn launch(
 
 /// UTF-16, double-null-terminated block for `CREATE_UNICODE_ENVIRONMENT`:
 /// the target session's `user_block` (`CreateEnvironmentBlock`) with this
-/// process's `PUNKTFUNK_*` and `RUST_LOG` overlaid, so the child inherits
+/// process's `LILYNK_*` and `RUST_LOG` overlaid, so the child inherits
 /// host settings rather than the target shell's, then `extra` (a hook's
 /// `PF_*` event). Shared with [`crate::service`]. `strip_secrets` drops
 /// `*TOKEN*`/`*PASSWORD*` keys: a session-user child (game, hook, tray) must
@@ -433,7 +433,7 @@ pub(crate) unsafe fn merged_env_block(
             p = unsafe { p.offset(len + 1) };
         }
     }
-    let is_ours = |k: &str| k.starts_with("PUNKTFUNK_") || k == "RUST_LOG";
+    let is_ours = |k: &str| k.starts_with("LILYNK_") || k == "RUST_LOG";
     let is_secret = |k: &str| k.contains("TOKEN") || k.contains("PASSWORD");
     entries.retain(|e| !is_ours(e.split('=').next().unwrap_or("")));
     for (k, v) in std::env::vars().filter(|(k, _)| is_ours(k)) {

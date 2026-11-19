@@ -144,14 +144,14 @@ impl Boost {
 }
 
 /// Boost the calling thread and log the outcome once, under its name. Info: a field
-/// bundle has to show whether the hot threads ran boosted. `PUNKTFUNK_THREAD_BOOST=0`
+/// bundle has to show whether the hot threads ran boosted. `LILYNK_THREAD_BOOST=0`
 /// leaves every thread as it was (an A/B, and the way out if a driver spins).
 pub fn boost_and_log(what: &'static str) {
     static OFF: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
-    if *OFF.get_or_init(|| crate::env_on("PUNKTFUNK_THREAD_BOOST") == Some(false)) {
+    if *OFF.get_or_init(|| crate::env_on("LILYNK_THREAD_BOOST") == Some(false)) {
         tracing::info!(
             thread = what,
-            "thread priority left alone (PUNKTFUNK_THREAD_BOOST=0)"
+            "thread priority left alone (LILYNK_THREAD_BOOST=0)"
         );
         return;
     }

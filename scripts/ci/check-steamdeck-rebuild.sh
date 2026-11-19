@@ -24,7 +24,7 @@ mkdir -p "$src/scripts/steamdeck" "$(dirname "$host")" "$tmp/home/.config/punktf
 stub() {  # stub <exit status>: an update.sh that logs a call and exits with it
     printf '#!/bin/sh\necho ran >> "%s/calls"\nexit %s\n' "$tmp" "$1" > "$src/scripts/steamdeck/update.sh"
 }
-run() { HOME=$tmp/home PUNKTFUNK_SRC=$src bash "$repo/scripts/steamdeck/rebuild-check.sh" 2>&1; }
+run() { HOME=$tmp/home LILYNK_SRC=$src bash "$repo/scripts/steamdeck/rebuild-check.sh" 2>&1; }
 calls() { if [ -f "$tmp/calls" ]; then wc -l < "$tmp/calls" | tr -d ' '; else echo 0; fi; }
 stamp=$tmp/home/.cache/punktfunk/rebuild-attempt
 fail() { echo "check-steamdeck-rebuild: $*" >&2; exit 1; }
@@ -65,7 +65,7 @@ printf '#!/bin/sh\necho "repulled sudo=$PF_SUDO_OK" >> "%s/steps"\n' "$tmp" > "$
 version() { printf '#!/bin/sh\necho %s\n' "$1" > "$src/scripts/steamdeck/build-version.sh"; }
 update() {
     : > "$tmp/steps"
-    HOME=$tmp/home PUNKTFUNK_SRC=$src PATH=$stubs:$PATH bash "$repo/scripts/steamdeck/update.sh" "$@" </dev/null 2>&1
+    HOME=$tmp/home LILYNK_SRC=$src PATH=$stubs:$PATH bash "$repo/scripts/steamdeck/update.sh" "$@" </dev/null 2>&1
 }
 steps() { grep -c "$1" "$tmp/steps" || true; }
 

@@ -2,7 +2,7 @@
 //! + send via `lilynk_core`. Input returns through the inject backends.
 //!
 //! `serve` is the secure default (native punktfunk + management API).
-//! `--gamestream` is opt-in, trusted-LAN only. `punktfunk1-host` is the native
+//! `--gamestream` is opt-in, trusted-LAN only. `lilynk1-host` is the native
 //! plane alone. `spike` writes encoded AUs to a file and loopbacks them through
 //! `lilynk_core`.
 //!
@@ -377,7 +377,7 @@ fn take_env_credentials() {
             .map(|v| v.trim().to_string())
             .filter(|v| !v.is_empty())
     };
-    mgmt_token::adopt_env_tokens(read("PUNKTFUNK_MGMT_TOKEN"), read("PUNKTFUNK_PLUGIN_TOKEN"));
+    mgmt_token::adopt_env_tokens(read("LILYNK_MGMT_TOKEN"), read("LILYNK_PLUGIN_TOKEN"));
     for key in mgmt_token::CREDENTIAL_ENV_VARS {
         // SAFETY: the first statement of `real_main`, so this process is still single-threaded and
         // nothing can read the environment concurrently.
@@ -466,7 +466,7 @@ fn startup(args: &[String]) {
     if !ly_paths::seat::role().is_door()
         && matches!(
             args.first().map(String::as_str),
-            Some("serve") | Some("punktfunk1-host")
+            Some("serve") | Some("lilynk1-host")
         )
     {
         gpuclocks::on_host_start();
@@ -593,7 +593,7 @@ fn real_main() -> Result<()> {
         #[cfg(target_os = "linux")]
         Some("switchpro-test") => devtest::switchpro_test(&args),
         Some("spike") => spike::run(spike::parse_spike(&args[1..])?),
-        Some("punktfunk1-host") => native::run(parse_punktfunk1(&args[1..])?),
+        Some("lilynk1-host") => native::run(parse_lilynk1(&args[1..])?),
         Some("-h") | Some("--help") | Some("help") | None => {
             print_usage();
             Ok(())
@@ -626,17 +626,17 @@ fn settings_cli(args: &[String]) -> Result<()> {
     Ok(())
 }
 
-/// `punktfunk1-host` flags. A bad value is an error, as in
+/// `lilynk1-host` flags. A bad value is an error, as in
 /// [`serve_cli::parse_serve_args`]: a typo'd port must not quietly serve `NATIVE_PORT`.
-fn parse_punktfunk1(args: &[String]) -> Result<native::Punktfunk1Options> {
+fn parse_lilynk1(args: &[String]) -> Result<native::Lilynk1Options> {
     fn value<T: std::str::FromStr>(flag: &str, v: String) -> Result<T> {
         v.trim()
             .parse()
             .map_err(|_| anyhow::anyhow!("bad {flag} '{v}'"))
     }
-    let mut opts = native::Punktfunk1Options {
+    let mut opts = native::Lilynk1Options {
         port: ly_host_config::listen::NATIVE_PORT,
-        source: native::Punktfunk1Source::Synthetic,
+        source: native::Lilynk1Source::Synthetic,
         seconds: 30,
         frames: 300,
         max_sessions: 0,
@@ -700,8 +700,8 @@ fn parse_punktfunk1(args: &[String]) -> Result<native::Punktfunk1Options> {
         i += 1;
     }
     opts.source = match source.as_str() {
-        "synthetic" => native::Punktfunk1Source::Synthetic,
-        "virtual" => native::Punktfunk1Source::Virtual,
+        "synthetic" => native::Lilynk1Source::Synthetic,
+        "virtual" => native::Lilynk1Source::Virtual,
         "synthetic-abr" => {
             if !(1..=100).contains(&fill) {
                 bail!("--fill takes 1-100");
@@ -715,7 +715,7 @@ fn parse_punktfunk1(args: &[String]) -> Result<native::Punktfunk1Options> {
             let Some(content) = native::Content::parse(&content, fill) else {
                 bail!("--content takes steady, idle-then-motion, frame-driven:<fps> or motion-then-still:<fps>");
             };
-            native::Punktfunk1Source::SyntheticAbr(native::SynthAbrShape {
+            native::Lilynk1Source::SyntheticAbr(native::SynthAbrShape {
                 content,
                 recovery: std::time::Duration::from_millis(recovery_ms),
                 answer,
@@ -748,14 +748,14 @@ USAGE:
     lilynk-host openapi                    print the management API's OpenAPI document (codegen)
     lilynk-host library [art --clear]      print the game catalog as JSON; `art --clear` drops
                                               every cover the host fetched and cached on disk
-    lilynk-host punktfunk1-host [OPTIONS]  native punktfunk host alone (tests and benches)
+    lilynk-host lilynk1-host [OPTIONS]     native punktfunk host alone (tests and benches)
     lilynk-host probe-compositor           exit 0 iff the compositor is up + ready (bringup gate)
     lilynk-host list-monitors              list the host's physical monitors (Linux) — the
-                                              connector names PUNKTFUNK_CAPTURE_MONITOR takes
+                                              connector names LILYNK_CAPTURE_MONITOR takes
     lilynk-host spike [OPTIONS]            capture→encode→file pipeline spike (dev tool)
 
 SERVE OPTIONS:
-    --mgmt-bind <IP:PORT>        management API address (or PUNKTFUNK_MGMT_BIND in host.env, which
+    --mgmt-bind <IP:PORT>        management API address (or LILYNK_MGMT_BIND in host.env, which
                                  this flag overrides). Default: 0.0.0.0:47990 — paired clients
                                  reach the read-only surface, incl. the game library, over mTLS;
                                  the bearer admin API stays loopback-only. Pin 127.0.0.1:47990 to
@@ -769,19 +769,19 @@ SERVE OPTIONS:
                                  The flag locks the console's GameStream setting; an install sets
                                  that setting instead (`settings set gamestream true`)
     --native                     no-op (the native plane always runs in `serve`)
-    --native-port <PORT>         native QUIC port (or PUNKTFUNK_NATIVE_PORT in host.env, which
+    --native-port <PORT>         native QUIC port (or LILYNK_NATIVE_PORT in host.env, which
                                  this flag overrides). Default 9777. Clients follow via mDNS, and
                                  a manually-added host keeps whatever port it was added with
     --open                       disable mandatory native pairing (default: pairing REQUIRED —
                                  an open host any LAN device can stream from is insecure)
     --no-mdns                    skip the mDNS adverts (native + GameStream) — for multicast-dead
                                  environments (bridged Docker, CI); clients connect via a manually
-                                 added host. Also PUNKTFUNK_MDNS=0
+                                 added host. Also LILYNK_MDNS=0
     --door                       the box's host as a system service (Linux): advertise, pair,
                                  serve the console and place every connect on a seat of the
                                  seat supervisor, and never open a display
 
-PUNKTFUNK1-HOST OPTIONS:
+LILYNK1-HOST OPTIONS:
     --port <N>                   QUIC listen port (default: 9777)
     --source <synthetic|synthetic-abr|virtual>
                                  test frames, frames sized from the live Automatic rate, or a
@@ -824,7 +824,7 @@ PUNKTFUNK1-HOST OPTIONS:
                                  test harnesses/CI (deterministic `probe --pair`); do not use on
                                  a real LAN (a guessable PIN defeats the ceremony's rate limit)
     --no-mdns                    skip the _punktfunk._udp mDNS advert (multicast-dead environments;
-                                 clients use --connect HOST:PORT). Also PUNKTFUNK_MDNS=0
+                                 clients use --connect HOST:PORT). Also LILYNK_MDNS=0
 
 SPIKE OPTIONS:
     --source <synthetic|synthetic-nv12|portal|virtual>
@@ -834,7 +834,7 @@ SPIKE OPTIONS:
     --fps <N>                    target frame rate (default: 60)
     --codec <h264|h265|av1|pyrowave>
                                  encode codec (default: h265). 'pyrowave' also wants
-                                 PUNKTFUNK_ENCODER=pyrowave so capture takes the passthrough
+                                 LILYNK_ENCODER=pyrowave so capture takes the passthrough
     --hdr                        request HDR capture and a 10-bit encode; on Windows this is
                                  the seat readiness gate and fails rather than falls back
     --bitrate <MBPS>             target bitrate in Mbps (default: 20)
@@ -843,7 +843,7 @@ SPIKE OPTIONS:
     --no-loopback                skip the lilynk_core round-trip verification
     --wire-chunk <BYTES>         PyroWave datagram-aligned packetization at this shard payload
                                  (a real session passes its negotiated shard_payload, e.g. 1408).
-                                 With PUNKTFUNK_PYROWAVE_STREAMED_AU=1 also armed, the AU is
+                                 With LILYNK_PYROWAVE_STREAMED_AU=1 also armed, the AU is
                                  drained through poll_chunk and sealed as a STREAMED wire frame
                                  (VIDEO_CAP_STREAMED_AU), then byte-verified by the loopback
     -h, --help                   this help
@@ -853,7 +853,7 @@ NOTES:
     (see design/linux-setup.md). 'synthetic' needs no capture session and always runs.
     Encoded AUs are written to a playable file AND (unless --no-loopback) fed through a
     lilynk_core host→client loopback that reassembles and byte-verifies each one.
-    Both 'serve' and 'punktfunk1-host' advertise the native service over mDNS
+    Both 'serve' and 'lilynk1-host' advertise the native service over mDNS
     (_punktfunk._udp) for client auto-discovery — 'lilynk-probe --discover' lists them."
     );
     windows::entry::print_usage();
@@ -866,10 +866,10 @@ mod tests {
 
     /// A bad value is refused rather than replaced by the default.
     #[test]
-    fn punktfunk1_host_refuses_a_bad_value() {
-        let o = parse_punktfunk1(&args(&["--port", "9800", "--allow-tofu", "--no-mdns"])).unwrap();
+    fn lilynk1_host_refuses_a_bad_value() {
+        let o = parse_lilynk1(&args(&["--port", "9800", "--allow-tofu", "--no-mdns"])).unwrap();
         assert_eq!((o.port, o.require_pairing, o.mdns), (9800, false, false));
-        assert!(matches!(o.source, native::Punktfunk1Source::Synthetic));
+        assert!(matches!(o.source, native::Lilynk1Source::Synthetic));
         for bad in [
             &["--port", "abc"][..],
             &["--seconds", "-1"],
@@ -880,10 +880,7 @@ mod tests {
             &["--port"],
             &["--frobnicate"],
         ] {
-            assert!(
-                parse_punktfunk1(&args(bad)).is_err(),
-                "{bad:?} was accepted"
-            );
+            assert!(parse_lilynk1(&args(bad)).is_err(), "{bad:?} was accepted");
         }
         let abr = [
             "--source",
@@ -893,8 +890,8 @@ mod tests {
             "--fill",
             "50",
         ];
-        let o = parse_punktfunk1(&args(&abr)).unwrap();
-        let native::Punktfunk1Source::SyntheticAbr(shape) = o.source else {
+        let o = parse_lilynk1(&args(&abr)).unwrap();
+        let native::Lilynk1Source::SyntheticAbr(shape) = o.source else {
             panic!("synthetic-abr source");
         };
         assert_eq!(

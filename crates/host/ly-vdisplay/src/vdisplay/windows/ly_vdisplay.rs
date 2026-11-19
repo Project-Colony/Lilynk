@@ -1843,8 +1843,8 @@ mod tests {
         // has no subscriber.
         init_test_tracing();
         assert!(
-            ly_host_config::env_on("PUNKTFUNK_NO_ISOLATE") != Some(true),
-            "PUNKTFUNK_NO_ISOLATE forces Topology::Extend — this case needs Exclusive"
+            ly_host_config::env_on("LILYNK_NO_ISOLATE") != Some(true),
+            "LILYNK_NO_ISOLATE forces Topology::Extend — this case needs Exclusive"
         );
         let _topology = ExclusiveTopology::force();
         let physicals_before = active_physicals();

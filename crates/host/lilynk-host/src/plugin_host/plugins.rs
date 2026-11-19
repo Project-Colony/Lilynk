@@ -3,7 +3,7 @@
 //! Package ops (`add`/`remove`/`list`) go to the bun runner (`sdk/src/plugins.ts`):
 //! this binary locates it; it owns the vendored bun, `@punktfunk` scope, and plugins dir.
 //! Service ops (`enable`/`disable`/`status`) run here — `systemctl --user` or the
-//! `PunktfunkScripting` scheduled task — so they work without the runner package.
+//! `LilynkScripting` scheduled task — so they work without the runner package.
 //!
 //! Windows: `add`, `remove`, `enable` and `disable` need elevation (`%ProgramData%\punktfunk`
 //! is ACL'd; the task is admin-owned). Refuse unelevated rather than a bare EACCES from `bun add`.

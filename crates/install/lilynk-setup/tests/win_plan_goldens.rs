@@ -430,8 +430,8 @@ fn an_upgrade_keeps_a_switched_off_runner_off() {
         Artifact::Host,
         false,
     );
-    assert!(text.contains("schtasks /Change /TN PunktfunkScripting /DISABLE"));
-    assert!(!text.contains("schtasks /Run /TN PunktfunkScripting"));
+    assert!(text.contains("schtasks /Change /TN LilynkScripting /DISABLE"));
+    assert!(!text.contains("schtasks /Run /TN LilynkScripting"));
 }
 
 // Unchecking a row on upgrade turns it off. Inno's unchecked box is a no-op; do not copy that.
@@ -445,7 +445,7 @@ fn deselecting_tray_on_an_upgrade_turns_tray_autostart_off() {
     assert!(cmds
         .iter()
         .any(|c| c.ends_with("settings set tray_autostart false")));
-    assert!(!cmds.iter().any(|c| c.contains("PunktfunkTray")));
+    assert!(!cmds.iter().any(|c| c.contains("LilynkTray")));
 }
 
 #[test]

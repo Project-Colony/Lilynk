@@ -41,12 +41,12 @@ pub const VIDEO_CAP_PROBE_SEQ: u8 = 0x10;
 /// this bit; others get a whole-AU seal.
 pub const VIDEO_CAP_STREAMED_AU: u8 = 0x20;
 /// [`Hello::video_caps`]: client can open ChaCha20-Poly1305 session datagrams and wants
-/// them (software-AES targets). The host grants only when `PUNKTFUNK_CHACHA20` allows, and
+/// them (software-AES targets). The host grants only when `LILYNK_CHACHA20` allows, and
 /// says so in the `ServerHello` suite.
 pub const VIDEO_CAP_CHACHA20: u8 = 0x40;
 /// [`Hello::video_caps`]: the decoder accepts multi-slice AUs. The embedder sets this from
 /// the decode stack — some mobile/TV SoCs wedge on multi-slice HEVC — not from a host
-/// default. The host uses >1 slice only toward this bit (`PUNKTFUNK_NVENC_SLICES` still
+/// default. The host uses >1 slice only toward this bit (`LILYNK_NVENC_SLICES` still
 /// overrides). Last free `video_caps` bit; the next cap needs a second byte (ABI bump).
 pub const VIDEO_CAP_MULTI_SLICE: u8 = 0x80;
 

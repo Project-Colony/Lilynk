@@ -478,7 +478,7 @@ fn codec_props(codec: Codec) -> CodecProps {
     }
 }
 
-/// `PUNKTFUNK_AMF_USAGE` (the knob's numbering) → `*_USAGE_ENUM`. AVC/HEVC share numbering;
+/// `LILYNK_AMF_USAGE` (the knob's numbering) → `*_USAGE_ENUM`. AVC/HEVC share numbering;
 /// **AV1 swaps ULTRA_LOW_LATENCY (2) and LOW_LATENCY (1)** (VideoEncoderAV1.h).
 fn usage_from_knobs(codec: Codec) -> i64 {
     let av1 = codec == Codec::Av1;
@@ -498,7 +498,7 @@ fn usage_from_knobs(codec: Codec) -> i64 {
     }
 }
 
-/// LTR loss recovery is on unless `PUNKTFUNK_NO_AMF_LTR=1` or `PUNKTFUNK_INTRA_REFRESH` asked
+/// LTR loss recovery is on unless `LILYNK_NO_AMF_LTR=1` or `LILYNK_INTRA_REFRESH` asked
 /// for intra-refresh instead: AMF has no constrained-intra property, so the two exclude each
 /// other and the operator's pick wins, as on QSV.
 fn ltr_disabled() -> bool {
@@ -506,7 +506,7 @@ fn ltr_disabled() -> bool {
 }
 
 /// Frames between LTR marks while the client sends no confirmations. Default `fps/2` (~0.5 s);
-/// [`NUM_LTR_SLOTS`] then covers ~1 s of recent references. `PUNKTFUNK_LTR_INTERVAL_FRAMES` overrides.
+/// [`NUM_LTR_SLOTS`] then covers ~1 s of recent references. `LILYNK_LTR_INTERVAL_FRAMES` overrides.
 fn ltr_mark_interval(fps: u32) -> i64 {
     super::policy::ltr_interval().unwrap_or_else(|| (fps.max(2) / 2).max(1) as i64)
 }
@@ -1088,7 +1088,7 @@ pub struct AmfEncoder {
     reference_floor: Option<crate::Acked>,
     /// What the client confirmed it decoded clean, whatever the link: the kept pair's marks.
     confirmed: Option<crate::Acked>,
-    /// `PUNKTFUNK_LTR_FORCE_AT=N`: self-trigger [`Encoder::invalidate_ref_frames`] at that index.
+    /// `LILYNK_LTR_FORCE_AT=N`: self-trigger [`Encoder::invalidate_ref_frames`] at that index.
     ltr_test_force_at: Option<i64>,
     /// Refuse this frame after the LTR decision, as a failed surface creation would.
     #[cfg(test)]
@@ -1187,13 +1187,13 @@ impl AmfEncoder {
         self.full_range = full;
     }
 
-    /// Attempt LTR-RFI unless `PUNKTFUNK_NO_AMF_LTR` or the periodic wave asked otherwise. Driver
+    /// Attempt LTR-RFI unless `LILYNK_NO_AMF_LTR` or the periodic wave asked otherwise. Driver
     /// accept is `ltr_active`.
     fn ltr_wanted(&self) -> bool {
         !ltr_disabled() && !super::policy::intra_refresh_requested()
     }
 
-    /// VBV/HRD buffer (bits) at `bps`: ~1 frame interval, `PUNKTFUNK_VBV_FRAMES`-scaled.
+    /// VBV/HRD buffer (bits) at `bps`: ~1 frame interval, `LILYNK_VBV_FRAMES`-scaled.
     fn vbv_bits(&self, bps: u64) -> i64 {
         ((bps as f64 / self.fps.max(1) as f64) * crate::vbv_frames_env())
             .clamp(1.0, i32::MAX as f64) as i64
@@ -1292,7 +1292,7 @@ impl AmfEncoder {
                     );
                 } else {
                     tracing::warn!(
-                        "PUNKTFUNK_INTRA_REFRESH requested but this VCN/driver rejected the \
+                        "LILYNK_INTRA_REFRESH requested but this VCN/driver rejected the \
                          intra-refresh property — loss recovery stays full-IDR"
                     );
                 }

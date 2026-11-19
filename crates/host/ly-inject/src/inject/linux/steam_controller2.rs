@@ -278,7 +278,7 @@ impl PadProto for TritonProto {
     }
 }
 
-/// Session's virtual SC2 pads — `PUNKTFUNK_GAMEPAD=steamcontroller2` (aliases `sc2`/`ibex`),
+/// Session's virtual SC2 pads — `LILYNK_GAMEPAD=steamcontroller2` (aliases `sc2`/`ibex`),
 /// or the per-pad kind an Android client declares for a captured physical pad.
 pub type Triton2Manager = UhidManager<TritonProto>;
 

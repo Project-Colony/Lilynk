@@ -319,7 +319,7 @@ struct Rules {
     yields: bool,
     /// Windows: an account the supervisor made, marked by comment.
     windows_ours: bool,
-    /// Windows: the host runs with `PUNKTFUNK_SEAT_OWN_ACCOUNT`.
+    /// Windows: the host runs with `LILYNK_SEAT_OWN_ACCOUNT`.
     own_marker: bool,
     uid: Option<u32>,
     sid: Option<String>,

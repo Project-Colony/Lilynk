@@ -8,13 +8,13 @@ use lilynk_core::quic::v2::msg::{Screen, SCREENS_MAX};
 
 /// Most screens a session shows, screen 0 included.
 #[cfg(feature = "quic")]
-pub const PUNKTFUNK_SCREENS_MAX: usize = 4;
+pub const LILYNK_SCREENS_MAX: usize = 4;
 
 /// One screen of a session: a client monitor in an ask, a screen the host built in a layout.
 #[cfg(feature = "quic")]
 #[repr(C)]
 #[derive(Clone, Copy, Default)]
-pub struct PunktfunkScreen {
+pub struct LilynkScreen {
     /// 0 is the screen the connect's mode describes.
     pub index: u8,
     /// The video stream it rides; `0` in an ask.
@@ -38,22 +38,22 @@ pub struct PunktfunkScreen {
 #[cfg(feature = "quic")]
 #[repr(C)]
 #[derive(Clone, Copy, Default)]
-pub struct PunktfunkScreenView {
+pub struct LilynkScreenView {
     pub width: u32,
     pub height: u32,
 }
 
 #[cfg(feature = "quic")]
 const _: () = {
-    assert!(std::mem::size_of::<PunktfunkScreen>() == 24);
-    assert!(std::mem::size_of::<PunktfunkScreenView>() == 8);
-    assert!(PUNKTFUNK_SCREENS_MAX == SCREENS_MAX);
+    assert!(std::mem::size_of::<LilynkScreen>() == 24);
+    assert!(std::mem::size_of::<LilynkScreenView>() == 8);
+    assert!(LILYNK_SCREENS_MAX == SCREENS_MAX);
 };
 
 #[cfg(feature = "quic")]
-impl PunktfunkScreen {
+impl LilynkScreen {
     fn from_core(s: &Screen) -> Self {
-        PunktfunkScreen {
+        LilynkScreen {
             index: s.index,
             stream: s.stream,
             primary: u8::from(s.primary),
@@ -91,8 +91,8 @@ impl PunktfunkScreen {
 /// `screens` and `views` are each null or readable for `n` records.
 #[cfg(feature = "quic")]
 pub(super) unsafe fn screens_at(
-    screens: *const PunktfunkScreen,
-    views: *const PunktfunkScreenView,
+    screens: *const LilynkScreen,
+    views: *const LilynkScreenView,
     n: usize,
 ) -> Vec<Screen> {
     if screens.is_null() || n == 0 {
@@ -128,19 +128,19 @@ pub(super) unsafe fn screens_at(
 /// `generation` are null or writable.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_screen_layout(
-    c: *const PunktfunkConnection,
-    out: *mut PunktfunkScreen,
+pub unsafe extern "C" fn lilynk_connection_screen_layout(
+    c: *const LilynkConnection,
+    out: *mut LilynkScreen,
     cap: usize,
     count: *mut usize,
     generation: *mut u32,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         let (layout_gen, layout) = c.inner.screen_layout();
         if !out.is_null() {
             for (i, s) in layout.iter().take(cap).enumerate() {
                 // SAFETY: `out` is writable for `cap` records (caller contract) and `i < cap`.
-                unsafe { put(out.add(i), PunktfunkScreen::from_core(s)) };
+                unsafe { put(out.add(i), LilynkScreen::from_core(s)) };
             }
         }
         // SAFETY: the caller passes each out-param null or writable for one value.
@@ -148,28 +148,28 @@ pub unsafe extern "C" fn punktfunk_connection_screen_layout(
             put(count, layout.len());
             put(generation, layout_gen);
         }
-        PunktfunkStatus::Ok
+        LilynkStatus::Ok
     })
 }
 
-/// Show these `n` screens from now on, screen 0 first, at most [`PUNKTFUNK_SCREENS_MAX`]: the
+/// Show these `n` screens from now on, screen 0 first, at most [`LILYNK_SCREENS_MAX`]: the
 /// host adds, drops and resizes the others and answers with a new layout. Screen 0's size still
-/// moves by [`punktfunk_connection_request_mode`]. A host without screens ignores it.
+/// moves by [`lilynk_connection_request_mode`]. A host without screens ignores it.
 ///
 /// # Safety
 /// `c` is a valid connection handle; `screens` is null or readable for `n` records.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_request_screens(
-    c: *const PunktfunkConnection,
-    screens: *const PunktfunkScreen,
+pub unsafe extern "C" fn lilynk_connection_request_screens(
+    c: *const LilynkConnection,
+    screens: *const LilynkScreen,
     n: usize,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     // SAFETY: the caller's contract, with no views.
-    unsafe { punktfunk_connection_request_screens_view(c, screens, std::ptr::null(), n) }
+    unsafe { lilynk_connection_request_screens_view(c, screens, std::ptr::null(), n) }
 }
 
-/// [`punktfunk_connection_request_screens`] with each screen's view, `views[i]` for
+/// [`lilynk_connection_request_screens`] with each screen's view, `views[i]` for
 /// `screens[i]`: a further screen shown smaller than its mode is scaled to its view before
 /// encoding. Null `views` names none.
 ///
@@ -178,18 +178,18 @@ pub unsafe extern "C" fn punktfunk_connection_request_screens(
 /// records.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_request_screens_view(
-    c: *const PunktfunkConnection,
-    screens: *const PunktfunkScreen,
-    views: *const PunktfunkScreenView,
+pub unsafe extern "C" fn lilynk_connection_request_screens_view(
+    c: *const LilynkConnection,
+    screens: *const LilynkScreen,
+    views: *const LilynkScreenView,
     n: usize,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
-        if n > PUNKTFUNK_SCREENS_MAX {
-            return PunktfunkStatus::InvalidArg;
+        if n > LILYNK_SCREENS_MAX {
+            return LilynkStatus::InvalidArg;
         }
         if screens.is_null() && n > 0 {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         // SAFETY: `screens` and `views` are null or readable for `n` records (caller contract).
         let list = unsafe { screens_at(screens, views, n) };
@@ -204,17 +204,17 @@ pub unsafe extern "C" fn punktfunk_connection_request_screens_view(
 /// `c` is a valid connection handle.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_request_screen_keyframe(
-    c: *const PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_request_screen_keyframe(
+    c: *const LilynkConnection,
     screen: u8,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         c.inner.request_screen_keyframe(screen);
-        PunktfunkStatus::Ok
+        LilynkStatus::Ok
     })
 }
 
-/// Next whole access unit of screen `screen` (1 or more), as [`punktfunk_connection_next_au`]
+/// Next whole access unit of screen `screen` (1 or more), as [`lilynk_connection_next_au`]
 /// hands screen 0's: `FRAME_NEW_FORMAT` on the first of each format, and `*out` borrowed until
 /// this screen's next pull. `NoFrame` on timeout and before the host opened the screen;
 /// `Closed` once the session ended or the host dropped it; `InvalidArg` for screen 0.
@@ -223,21 +223,21 @@ pub unsafe extern "C" fn punktfunk_connection_request_screen_keyframe(
 /// `c` is a valid connection handle; `out` is writable. At most one thread pulls each screen.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_next_screen_au(
-    c: *mut PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_next_screen_au(
+    c: *mut LilynkConnection,
     screen: u8,
-    out: *mut PunktfunkFrame,
+    out: *mut LilynkFrame,
     timeout_ms: u32,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         if out.is_null() {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         let Some(slot) = usize::from(screen)
             .checked_sub(1)
-            .filter(|i| *i < PUNKTFUNK_SCREENS_MAX - 1)
+            .filter(|i| *i < LILYNK_SCREENS_MAX - 1)
         else {
-            return PunktfunkStatus::InvalidArg;
+            return LilynkStatus::InvalidArg;
         };
         let timeout = std::time::Duration::from_millis(u64::from(timeout_ms));
         match c.inner.next_screen_frame(screen, timeout) {
@@ -246,7 +246,7 @@ pub unsafe extern "C" fn punktfunk_connection_next_screen_au(
                 let f = slots[slot].insert(frame);
                 // SAFETY: `out` is a caller-owned, writable `#[repr(C)]` slot.
                 unsafe { put(out, super::planes::frame_view(f)) };
-                PunktfunkStatus::Ok
+                LilynkStatus::Ok
             }
             Err(e) => e.status(),
         }

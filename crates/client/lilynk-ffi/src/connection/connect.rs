@@ -1,4 +1,4 @@
-//! Dialing a host: every `punktfunk_connect*` entry point and their options, plus
+//! Dialing a host: every `lilynk_connect*` entry point and their options, plus
 //! pairing, identity generation and the pre-connect probe.
 
 #[cfg(feature = "quic")]
@@ -12,8 +12,8 @@ use crate::*;
 /// the pin on every later connect.
 ///
 /// Identity: `client_cert_pem`/`client_key_pem` (both NULL, or both NUL-terminated
-/// PEM — [`punktfunk_generate_identity`]) are TLS client auth so a host can
-/// recognize this client once paired ([`punktfunk_pair`]). NULL = anonymous;
+/// PEM — [`lilynk_generate_identity`]) are TLS client auth so a host can
+/// recognize this client once paired ([`lilynk_pair`]). NULL = anonymous;
 /// a host that requires pairing, the default, rejects anonymous sessions.
 ///
 /// # Safety
@@ -22,7 +22,7 @@ use crate::*;
 /// `client_cert_pem`/`client_key_pem` are each NULL or NUL-terminated UTF-8.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connect(
+pub unsafe extern "C" fn lilynk_connect(
     host: *const std::os::raw::c_char,
     port: u16,
     width: u32,
@@ -33,8 +33,8 @@ pub unsafe extern "C" fn punktfunk_connect(
     client_cert_pem: *const std::os::raw::c_char,
     client_key_pem: *const std::os::raw::c_char,
     timeout_ms: u32,
-) -> *mut PunktfunkConnection {
-    let o = PunktfunkConnectOpts {
+) -> *mut LilynkConnection {
+    let o = LilynkConnectOpts {
         host,
         port,
         width,
@@ -50,15 +50,15 @@ pub unsafe extern "C" fn punktfunk_connect(
     unsafe { connect_ex_impl(&o, observed_sha256_out, std::ptr::null_mut()) }
 }
 
-/// [`punktfunk_connect`] plus a `compositor` (`PUNKTFUNK_COMPOSITOR_*`). `AUTO`
+/// [`lilynk_connect`] plus a `compositor` (`LILYNK_COMPOSITOR_*`). `AUTO`
 /// (or unrecognized) lets the host decide; a concrete value is honored only if
-/// available. Same as [`punktfunk_connect_ex2`] with `gamepad = PUNKTFUNK_GAMEPAD_AUTO`.
+/// available. Same as [`lilynk_connect_ex2`] with `gamepad = LILYNK_GAMEPAD_AUTO`.
 ///
 /// # Safety
-/// Same as [`punktfunk_connect`].
+/// Same as [`lilynk_connect`].
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connect_ex(
+pub unsafe extern "C" fn lilynk_connect_ex(
     host: *const std::os::raw::c_char,
     port: u16,
     width: u32,
@@ -70,8 +70,8 @@ pub unsafe extern "C" fn punktfunk_connect_ex(
     client_cert_pem: *const std::os::raw::c_char,
     client_key_pem: *const std::os::raw::c_char,
     timeout_ms: u32,
-) -> *mut PunktfunkConnection {
-    let o = PunktfunkConnectOpts {
+) -> *mut LilynkConnection {
+    let o = LilynkConnectOpts {
         host,
         port,
         width,
@@ -88,16 +88,16 @@ pub unsafe extern "C" fn punktfunk_connect_ex(
     unsafe { connect_ex_impl(&o, observed_sha256_out, std::ptr::null_mut()) }
 }
 
-/// [`punktfunk_connect_ex`] plus a virtual `gamepad` (`PUNKTFUNK_GAMEPAD_*`).
-/// `AUTO` (or unrecognized) lets the host decide (`PUNKTFUNK_GAMEPAD` env, else
-/// X-Box 360). Resolved via [`punktfunk_connection_gamepad`]. HID-output feedback, for the
-/// backends that emit it, arrives on [`punktfunk_connection_next_hidout`].
+/// [`lilynk_connect_ex`] plus a virtual `gamepad` (`LILYNK_GAMEPAD_*`).
+/// `AUTO` (or unrecognized) lets the host decide (`LILYNK_GAMEPAD` env, else
+/// X-Box 360). Resolved via [`lilynk_connection_gamepad`]. HID-output feedback, for the
+/// backends that emit it, arrives on [`lilynk_connection_next_hidout`].
 ///
 /// # Safety
-/// Same as [`punktfunk_connect`].
+/// Same as [`lilynk_connect`].
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connect_ex2(
+pub unsafe extern "C" fn lilynk_connect_ex2(
     host: *const std::os::raw::c_char,
     port: u16,
     width: u32,
@@ -110,8 +110,8 @@ pub unsafe extern "C" fn punktfunk_connect_ex2(
     client_cert_pem: *const std::os::raw::c_char,
     client_key_pem: *const std::os::raw::c_char,
     timeout_ms: u32,
-) -> *mut PunktfunkConnection {
-    let o = PunktfunkConnectOpts {
+) -> *mut LilynkConnection {
+    let o = LilynkConnectOpts {
         host,
         port,
         width,
@@ -129,15 +129,15 @@ pub unsafe extern "C" fn punktfunk_connect_ex2(
     unsafe { connect_ex_impl(&o, observed_sha256_out, std::ptr::null_mut()) }
 }
 
-/// [`punktfunk_connect_ex2`] plus encoder `bitrate_kbps`. `0` = host default;
+/// [`lilynk_connect_ex2`] plus encoder `bitrate_kbps`. `0` = host default;
 /// other values clamp to the host range, except PyroWave, which pins its own rate.
-/// Read [`punktfunk_connection_bitrate`].
+/// Read [`lilynk_connection_bitrate`].
 ///
 /// # Safety
-/// Same as [`punktfunk_connect`].
+/// Same as [`lilynk_connect`].
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connect_ex3(
+pub unsafe extern "C" fn lilynk_connect_ex3(
     host: *const std::os::raw::c_char,
     port: u16,
     width: u32,
@@ -151,8 +151,8 @@ pub unsafe extern "C" fn punktfunk_connect_ex3(
     client_cert_pem: *const std::os::raw::c_char,
     client_key_pem: *const std::os::raw::c_char,
     timeout_ms: u32,
-) -> *mut PunktfunkConnection {
-    let o = PunktfunkConnectOpts {
+) -> *mut LilynkConnection {
+    let o = LilynkConnectOpts {
         host,
         port,
         width,
@@ -171,15 +171,15 @@ pub unsafe extern "C" fn punktfunk_connect_ex3(
     unsafe { connect_ex_impl(&o, observed_sha256_out, std::ptr::null_mut()) }
 }
 
-/// [`punktfunk_connect_ex3`] plus a library title. `launch_id` is a store-qualified
+/// [`lilynk_connect_ex3`] plus a library title. `launch_id` is a store-qualified
 /// id (`steam:<appid>` / `custom:<id>`); the host resolves it against its own
 /// library. `NULL` / empty / unknown ⇒ default session, no game.
 ///
 /// # Safety
-/// Same as [`punktfunk_connect`]; non-NULL `launch_id` is a NUL-terminated C string.
+/// Same as [`lilynk_connect`]; non-NULL `launch_id` is a NUL-terminated C string.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connect_ex4(
+pub unsafe extern "C" fn lilynk_connect_ex4(
     host: *const std::os::raw::c_char,
     port: u16,
     width: u32,
@@ -194,8 +194,8 @@ pub unsafe extern "C" fn punktfunk_connect_ex4(
     client_cert_pem: *const std::os::raw::c_char,
     client_key_pem: *const std::os::raw::c_char,
     timeout_ms: u32,
-) -> *mut PunktfunkConnection {
-    let o = PunktfunkConnectOpts {
+) -> *mut LilynkConnection {
+    let o = LilynkConnectOpts {
         host,
         port,
         width,
@@ -215,16 +215,16 @@ pub unsafe extern "C" fn punktfunk_connect_ex4(
     unsafe { connect_ex_impl(&o, observed_sha256_out, std::ptr::null_mut()) }
 }
 
-/// [`punktfunk_connect_ex4`] plus `video_caps` (`PUNKTFUNK_VIDEO_CAP_*`).
+/// [`lilynk_connect_ex4`] plus `video_caps` (`LILYNK_VIDEO_CAP_*`).
 /// Host upgrades only when the bit is set. Read colour via
-/// [`punktfunk_connection_color_info`] / [`punktfunk_connection_next_hdr_meta`].
+/// [`lilynk_connection_color_info`] / [`lilynk_connection_next_hdr_meta`].
 ///
 /// # Safety
-/// Same as [`punktfunk_connect`]; non-NULL `launch_id` is a NUL-terminated C string.
+/// Same as [`lilynk_connect`]; non-NULL `launch_id` is a NUL-terminated C string.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
 #[allow(clippy::too_many_arguments)]
-pub unsafe extern "C" fn punktfunk_connect_ex5(
+pub unsafe extern "C" fn lilynk_connect_ex5(
     host: *const std::os::raw::c_char,
     port: u16,
     width: u32,
@@ -240,8 +240,8 @@ pub unsafe extern "C" fn punktfunk_connect_ex5(
     client_cert_pem: *const std::os::raw::c_char,
     client_key_pem: *const std::os::raw::c_char,
     timeout_ms: u32,
-) -> *mut PunktfunkConnection {
-    let o = PunktfunkConnectOpts {
+) -> *mut LilynkConnection {
+    let o = LilynkConnectOpts {
         host,
         port,
         width,
@@ -262,17 +262,17 @@ pub unsafe extern "C" fn punktfunk_connect_ex5(
     unsafe { connect_ex_impl(&o, observed_sha256_out, std::ptr::null_mut()) }
 }
 
-/// [`punktfunk_connect_ex5`] plus audio channel count: `2` (stereo), `6` (5.1) or
+/// [`lilynk_connect_ex5`] plus audio channel count: `2` (stereo), `6` (5.1) or
 /// `8` (7.1). Host clamps to what it can capture; read
-/// [`punktfunk_connection_audio_channels`]. Advertises HEVC-only, no codec
-/// preference ([`punktfunk_connect_ex7`] negotiates).
+/// [`lilynk_connection_audio_channels`]. Advertises HEVC-only, no codec
+/// preference ([`lilynk_connect_ex7`] negotiates).
 ///
 /// # Safety
-/// Same as [`punktfunk_connect`].
+/// Same as [`lilynk_connect`].
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
 #[allow(clippy::too_many_arguments)]
-pub unsafe extern "C" fn punktfunk_connect_ex6(
+pub unsafe extern "C" fn lilynk_connect_ex6(
     host: *const std::os::raw::c_char,
     port: u16,
     width: u32,
@@ -289,8 +289,8 @@ pub unsafe extern "C" fn punktfunk_connect_ex6(
     client_cert_pem: *const std::os::raw::c_char,
     client_key_pem: *const std::os::raw::c_char,
     timeout_ms: u32,
-) -> *mut PunktfunkConnection {
-    let o = PunktfunkConnectOpts {
+) -> *mut LilynkConnection {
+    let o = LilynkConnectOpts {
         host,
         port,
         width,
@@ -312,16 +312,16 @@ pub unsafe extern "C" fn punktfunk_connect_ex6(
     unsafe { connect_ex_impl(&o, observed_sha256_out, std::ptr::null_mut()) }
 }
 
-/// [`punktfunk_connect_ex6`] plus `video_codecs` (`PUNKTFUNK_CODEC_*` bits) and a
+/// [`lilynk_connect_ex6`] plus `video_codecs` (`LILYNK_CODEC_*` bits) and a
 /// soft `preferred_codec` (one codec bit, `0` = none). Host honors preference when
-/// it can produce it, else best shared codec. Read [`punktfunk_connection_codec`].
+/// it can produce it, else best shared codec. Read [`lilynk_connection_codec`].
 ///
 /// # Safety
-/// Same as [`punktfunk_connect`].
+/// Same as [`lilynk_connect`].
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
 #[allow(clippy::too_many_arguments)]
-pub unsafe extern "C" fn punktfunk_connect_ex7(
+pub unsafe extern "C" fn lilynk_connect_ex7(
     host: *const std::os::raw::c_char,
     port: u16,
     width: u32,
@@ -340,8 +340,8 @@ pub unsafe extern "C" fn punktfunk_connect_ex7(
     client_cert_pem: *const std::os::raw::c_char,
     client_key_pem: *const std::os::raw::c_char,
     timeout_ms: u32,
-) -> *mut PunktfunkConnection {
-    let o = PunktfunkConnectOpts {
+) -> *mut LilynkConnection {
+    let o = LilynkConnectOpts {
         host,
         port,
         width,
@@ -365,15 +365,15 @@ pub unsafe extern "C" fn punktfunk_connect_ex7(
     unsafe { connect_ex_impl(&o, observed_sha256_out, std::ptr::null_mut()) }
 }
 
-/// [`punktfunk_connect_ex7`] plus `status_out` (nullable): the mapped
-/// [`PunktfunkStatus`], including typed host rejections. NULL alone cannot say why.
+/// [`lilynk_connect_ex7`] plus `status_out` (nullable): the mapped
+/// [`LilynkStatus`], including typed host rejections. NULL alone cannot say why.
 ///
 /// # Safety
-/// Same as [`punktfunk_connect`]; non-null `status_out` points to a writable `i32`.
+/// Same as [`lilynk_connect`]; non-null `status_out` points to a writable `i32`.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
 #[allow(clippy::too_many_arguments)]
-pub unsafe extern "C" fn punktfunk_connect_ex8(
+pub unsafe extern "C" fn lilynk_connect_ex8(
     host: *const std::os::raw::c_char,
     port: u16,
     width: u32,
@@ -393,8 +393,8 @@ pub unsafe extern "C" fn punktfunk_connect_ex8(
     client_key_pem: *const std::os::raw::c_char,
     timeout_ms: u32,
     status_out: *mut i32,
-) -> *mut PunktfunkConnection {
-    let o = PunktfunkConnectOpts {
+) -> *mut LilynkConnection {
+    let o = LilynkConnectOpts {
         host,
         port,
         width,
@@ -418,15 +418,15 @@ pub unsafe extern "C" fn punktfunk_connect_ex8(
     unsafe { connect_ex_impl(&o, observed_sha256_out, status_out) }
 }
 
-/// [`punktfunk_connect_ex8`] plus `client_caps`. Cursor bit: host stops compositing;
+/// [`lilynk_connect_ex8`] plus `client_caps`. Cursor bit: host stops compositing;
 /// the embedder must drain shape/state or there is no pointer. Pass 0 for composited.
 ///
 /// # Safety
-/// Same as [`punktfunk_connect_ex8`].
+/// Same as [`lilynk_connect_ex8`].
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
 #[allow(clippy::too_many_arguments)]
-pub unsafe extern "C" fn punktfunk_connect_ex9(
+pub unsafe extern "C" fn lilynk_connect_ex9(
     host: *const std::os::raw::c_char,
     port: u16,
     width: u32,
@@ -447,8 +447,8 @@ pub unsafe extern "C" fn punktfunk_connect_ex9(
     client_key_pem: *const std::os::raw::c_char,
     timeout_ms: u32,
     status_out: *mut i32,
-) -> *mut PunktfunkConnection {
-    let o = PunktfunkConnectOpts {
+) -> *mut LilynkConnection {
+    let o = LilynkConnectOpts {
         host,
         port,
         width,
@@ -473,16 +473,16 @@ pub unsafe extern "C" fn punktfunk_connect_ex9(
     unsafe { connect_ex_impl(&o, observed_sha256_out, status_out) }
 }
 
-/// [`punktfunk_connect_ex9`] plus `device_name` — the label this device knocks
+/// [`lilynk_connect_ex9`] plus `device_name` — the label this device knocks
 /// with. NULL/empty = [`lilynk_core::client::device_name`]. Longer than
 /// [`HELLO_NAME_MAX`] is truncated on a character boundary, not rejected.
 ///
 /// # Safety
-/// Same as [`punktfunk_connect_ex9`]; non-null `device_name` is a NUL-terminated C string.
+/// Same as [`lilynk_connect_ex9`]; non-null `device_name` is a NUL-terminated C string.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
 #[allow(clippy::too_many_arguments)]
-pub unsafe extern "C" fn punktfunk_connect_ex10(
+pub unsafe extern "C" fn lilynk_connect_ex10(
     host: *const std::os::raw::c_char,
     port: u16,
     width: u32,
@@ -504,8 +504,8 @@ pub unsafe extern "C" fn punktfunk_connect_ex10(
     device_name: *const std::os::raw::c_char,
     timeout_ms: u32,
     status_out: *mut i32,
-) -> *mut PunktfunkConnection {
-    let o = PunktfunkConnectOpts {
+) -> *mut LilynkConnection {
+    let o = LilynkConnectOpts {
         host,
         port,
         width,
@@ -531,22 +531,22 @@ pub unsafe extern "C" fn punktfunk_connect_ex10(
     unsafe { connect_ex_impl(&o, observed_sha256_out, status_out) }
 }
 
-/// [`punktfunk_connect_ex10`] plus an audio-format ask (`audio_rate_hz` /
+/// [`lilynk_connect_ex10`] plus an audio-format ask (`audio_rate_hz` /
 /// `audio_bits`). Any non-zero pair — including `48000`/`16` — sets
 /// `CLIENT_CAP_AUDIO_HIRES` and asks for lossless `0xD3`. `0`/`0` is unspecified
 /// (Opus). Do not pass 48 kHz/16 as a stand-in for default.
 ///
 /// The host may still resolve Opus (`design/hi-res-audio.md`); open the device
-/// from [`punktfunk_connection_audio_sample_rate`] / `_bits`, not from the ask.
-/// At 44.1 kHz, [`punktfunk_connection_audio_frame_us`] is a nominal length —
+/// from [`lilynk_connection_audio_sample_rate`] / `_bits`, not from the ask.
+/// At 44.1 kHz, [`lilynk_connection_audio_frame_us`] is a nominal length —
 /// advance clocks from samples / rate, not from that figure.
 ///
 /// # Safety
-/// Same as [`punktfunk_connect_ex10`].
+/// Same as [`lilynk_connect_ex10`].
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
 #[allow(clippy::too_many_arguments)]
-pub unsafe extern "C" fn punktfunk_connect_ex11(
+pub unsafe extern "C" fn lilynk_connect_ex11(
     host: *const std::os::raw::c_char,
     port: u16,
     width: u32,
@@ -570,8 +570,8 @@ pub unsafe extern "C" fn punktfunk_connect_ex11(
     device_name: *const std::os::raw::c_char,
     timeout_ms: u32,
     status_out: *mut i32,
-) -> *mut PunktfunkConnection {
-    let o = PunktfunkConnectOpts {
+) -> *mut LilynkConnection {
+    let o = LilynkConnectOpts {
         host,
         port,
         width,
@@ -599,19 +599,19 @@ pub unsafe extern "C" fn punktfunk_connect_ex11(
     unsafe { connect_ex_impl(&o, observed_sha256_out, status_out) }
 }
 
-/// [`punktfunk_connect_ex11`] plus `video_fit`: how this client fills its view when the frame's
-/// shape differs (`PUNKTFUNK_VIDEO_FIT_*`; unknown = fit). A host that frames the picture for
-/// another device reframes to it. Every other argument is [`punktfunk_connect_ex11`]'s.
+/// [`lilynk_connect_ex11`] plus `video_fit`: how this client fills its view when the frame's
+/// shape differs (`LILYNK_VIDEO_FIT_*`; unknown = fit). A host that frames the picture for
+/// another device reframes to it. Every other argument is [`lilynk_connect_ex11`]'s.
 ///
 /// Frozen, like the rest of the `connect_ex*` family: new options land only in
-/// [`PunktfunkConnectOpts`]. Prefer [`punktfunk_connect_opts`].
+/// [`LilynkConnectOpts`]. Prefer [`lilynk_connect_opts`].
 ///
 /// # Safety
-/// Same as [`punktfunk_connect_ex10`].
+/// Same as [`lilynk_connect_ex10`].
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
 #[allow(clippy::too_many_arguments)]
-pub unsafe extern "C" fn punktfunk_connect_ex12(
+pub unsafe extern "C" fn lilynk_connect_ex12(
     host: *const std::os::raw::c_char,
     port: u16,
     width: u32,
@@ -636,8 +636,8 @@ pub unsafe extern "C" fn punktfunk_connect_ex12(
     device_name: *const std::os::raw::c_char,
     timeout_ms: u32,
     status_out: *mut i32,
-) -> *mut PunktfunkConnection {
-    let o = PunktfunkConnectOpts {
+) -> *mut LilynkConnection {
+    let o = LilynkConnectOpts {
         host,
         port,
         width,
@@ -666,31 +666,31 @@ pub unsafe extern "C" fn punktfunk_connect_ex12(
     unsafe { connect_ex_impl(&o, observed_sha256_out, status_out) }
 }
 
-/// [`PunktfunkConnectOpts::video_fit`]: whole picture, bars.
-pub const PUNKTFUNK_VIDEO_FIT_FIT: u8 = 0;
-/// [`PunktfunkConnectOpts::video_fit`]: fill the view, cut the overflow.
-pub const PUNKTFUNK_VIDEO_FIT_CROP: u8 = 1;
-/// [`PunktfunkConnectOpts::video_fit`]: fill the view, scale each axis alone.
-pub const PUNKTFUNK_VIDEO_FIT_STRETCH: u8 = 2;
+/// [`LilynkConnectOpts::video_fit`]: whole picture, bars.
+pub const LILYNK_VIDEO_FIT_FIT: u8 = 0;
+/// [`LilynkConnectOpts::video_fit`]: fill the view, cut the overflow.
+pub const LILYNK_VIDEO_FIT_CROP: u8 = 1;
+/// [`LilynkConnectOpts::video_fit`]: fill the view, scale each axis alone.
+pub const LILYNK_VIDEO_FIT_STRETCH: u8 = 2;
 
-/// [`punktfunk_connect_ex9`] `client_caps` bit: render the host cursor locally
+/// [`lilynk_connect_ex9`] `client_caps` bit: render the host cursor locally
 /// (`design/remote-desktop-sweep.md`).
-pub const PUNKTFUNK_CLIENT_CAP_CURSOR: u8 = 0x01;
+pub const LILYNK_CLIENT_CAP_CURSOR: u8 = 0x01;
 
-/// [`punktfunk_connect_ex9`] `client_caps` bit: pad-audio plane (0xD1 — DualSense
-/// voice-coil + speaker). Drain [`punktfunk_connection_next_pad_audio`] and declare
-/// pads via [`punktfunk_connection_set_pad_audio_caps`]. Host emits only with
-/// [`PUNKTFUNK_HOST_CAP_PAD_AUDIO`].
-pub const PUNKTFUNK_CLIENT_CAP_PAD_AUDIO: u8 = 0x08;
+/// [`lilynk_connect_ex9`] `client_caps` bit: pad-audio plane (0xD1 — DualSense
+/// voice-coil + speaker). Drain [`lilynk_connection_next_pad_audio`] and declare
+/// pads via [`lilynk_connection_set_pad_audio_caps`]. Host emits only with
+/// [`LILYNK_HOST_CAP_PAD_AUDIO`].
+pub const LILYNK_CLIENT_CAP_PAD_AUDIO: u8 = 0x08;
 
 /// Ask for lossless `0xD3`. Usually derived from a non-zero `audio_rate_hz`/
-/// `audio_bits` on [`punktfunk_connect_ex11`]. Set by hand only for 48 kHz/16-bit
+/// `audio_bits` on [`lilynk_connect_ex11`]. Set by hand only for 48 kHz/16-bit
 /// lossless (indistinguishable from an unspecified ask).
-pub const PUNKTFUNK_CLIENT_CAP_AUDIO_HIRES: u8 = 0x10;
+pub const LILYNK_CLIENT_CAP_AUDIO_HIRES: u8 = 0x10;
 
 /// Keep host speakers live this session (do not park the mix). Request-only;
 /// hosts that do not know the bit ignore it.
-pub const PUNKTFUNK_CLIENT_CAP_KEEP_HOST_AUDIO: u8 = 0x20;
+pub const LILYNK_CLIENT_CAP_KEEP_HOST_AUDIO: u8 = 0x20;
 
 /// Cut a device name to [`HELLO_NAME_MAX`] bytes on a character boundary.
 /// Truncate, don't reject: a too-long label must not fail connect.
@@ -705,66 +705,66 @@ fn clamp_device_name(s: &str) -> String {
     s[..end].to_string()
 }
 
-/// Growable connect options for [`punktfunk_connect_opts`]. Zero-init, set
-/// `struct_size = sizeof(PunktfunkConnectOpts)`, then the fields you mean.
+/// Growable connect options for [`lilynk_connect_opts`]. Zero-init, set
+/// `struct_size = sizeof(LilynkConnectOpts)`, then the fields you mean.
 /// Zero = auto/unspecified (`audio_rate_hz = 0` is Opus; a non-zero pair is
 /// lossless). Append only; no tail padding (sizes asserted in `lilynk-ffi`); bump ABI.
 #[cfg(feature = "quic")]
 #[repr(C)]
-pub struct PunktfunkConnectOpts {
-    /// `sizeof(PunktfunkConnectOpts)` as this caller was compiled. Smaller than
+pub struct LilynkConnectOpts {
+    /// `sizeof(LilynkConnectOpts)` as this caller was compiled. Smaller than
     /// the frozen minimum is rejected; a shorter prefix defaults the tail.
     pub struct_size: u32,
     /// Required: NUL-terminated UTF-8 IP or hostname (the one non-nullable pointer here).
     pub host: *const std::os::raw::c_char,
-    /// Library id to auto-launch, or null ([`punktfunk_connect_ex4`]).
+    /// Library id to auto-launch, or null ([`lilynk_connect_ex4`]).
     pub launch_id: *const std::os::raw::c_char,
     /// Null (trust on first use) or the host certificate's expected 32-byte SHA-256
-    /// ([`punktfunk_connect`]'s trust contract).
+    /// ([`lilynk_connect`]'s trust contract).
     pub pin_sha256: *const u8,
     /// TLS client identity: both null (anonymous) or both NUL-terminated PEM
-    /// ([`punktfunk_generate_identity`]).
+    /// ([`lilynk_generate_identity`]).
     pub client_cert_pem: *const std::os::raw::c_char,
     /// See `client_cert_pem`.
     pub client_key_pem: *const std::os::raw::c_char,
     /// Label this device knocks with, or null for the OS default
-    /// ([`punktfunk_connect_ex10`]).
+    /// ([`lilynk_connect_ex10`]).
     pub device_name: *const std::os::raw::c_char,
-    /// Requested mode ([`punktfunk_connect`]).
+    /// Requested mode ([`lilynk_connect`]).
     pub width: u32,
     /// See `width`.
     pub height: u32,
     /// See `width`.
     pub refresh_hz: u32,
-    /// `PUNKTFUNK_COMPOSITOR_*`; `0`/unrecognized = auto ([`punktfunk_connect_ex`]).
+    /// `LILYNK_COMPOSITOR_*`; `0`/unrecognized = auto ([`lilynk_connect_ex`]).
     pub compositor: u32,
-    /// `PUNKTFUNK_GAMEPAD_*`; `0`/unrecognized = auto ([`punktfunk_connect_ex2`]).
+    /// `LILYNK_GAMEPAD_*`; `0`/unrecognized = auto ([`lilynk_connect_ex2`]).
     pub gamepad: u32,
-    /// Session wire budget in kbps; `0` = host default ([`punktfunk_connect_ex3`]).
+    /// Session wire budget in kbps; `0` = host default ([`lilynk_connect_ex3`]).
     pub bitrate_kbps: u32,
     /// Audio format ask; `0`/`0` = unspecified (Opus). An explicit pair — including
-    /// 48000/16 — is lossless and derives `PUNKTFUNK_CLIENT_CAP_AUDIO_HIRES`.
+    /// 48000/16 — is lossless and derives `LILYNK_CLIENT_CAP_AUDIO_HIRES`.
     pub audio_rate_hz: u32,
     /// Connect timeout in milliseconds.
     pub timeout_ms: u32,
     /// Required: the host's UDP port.
     pub port: u16,
-    /// `PUNKTFUNK_VIDEO_CAP_*` bits ([`punktfunk_connect_ex5`]).
+    /// `LILYNK_VIDEO_CAP_*` bits ([`lilynk_connect_ex5`]).
     pub video_caps: u8,
-    /// Channel ask: 2 / 6 / 8; `0` = stereo ([`punktfunk_connect_ex6`]).
+    /// Channel ask: 2 / 6 / 8; `0` = stereo ([`lilynk_connect_ex6`]).
     pub audio_channels: u8,
     /// See `audio_rate_hz`.
     pub audio_bits: u8,
-    /// `PUNKTFUNK_CODEC_*` bits the client can decode ([`punktfunk_connect_ex7`]).
+    /// `LILYNK_CODEC_*` bits the client can decode ([`lilynk_connect_ex7`]).
     pub video_codecs: u8,
-    /// The one `PUNKTFUNK_CODEC_*` bit to prefer; `0` = host's choice
-    /// ([`punktfunk_connect_ex7`]).
+    /// The one `LILYNK_CODEC_*` bit to prefer; `0` = host's choice
+    /// ([`lilynk_connect_ex7`]).
     pub preferred_codec: u8,
-    /// `PUNKTFUNK_CLIENT_CAP_*` bits ([`punktfunk_connect_ex9`]).
+    /// `LILYNK_CLIENT_CAP_*` bits ([`lilynk_connect_ex9`]).
     pub client_caps: u8,
     /// Always `0`, ignored. Held so the struct keeps its v35 size.
     pub reserved1: u32,
-    /// `PUNKTFUNK_VIDEO_FIT_*`: how this client fills its view when the frame's shape
+    /// `LILYNK_VIDEO_FIT_*`: how this client fills its view when the frame's shape
     /// differs; unknown = fit. A host that frames the picture for another device reframes
     /// to it. v35–v40 callers zeroed this byte as `reserved0`, so they ask for fit.
     pub video_fit: u8,
@@ -773,7 +773,7 @@ pub struct PunktfunkConnectOpts {
     pub reserved0: [u8; 3],
     /// The settings preset this dial names: its stable id, or null. The host shows it and
     /// hands it to hooks; the stream is unchanged. Null falls back to
-    /// [`punktfunk_set_session_preset`].
+    /// [`lilynk_set_session_preset`].
     pub preset_id: *const std::os::raw::c_char,
     /// The preset's display name, or null. Read only beside a non-null `preset_id`.
     pub preset_name: *const std::os::raw::c_char,
@@ -785,13 +785,13 @@ pub struct PunktfunkConnectOpts {
     /// Always `0`. Fills what would otherwise be padding, as `reserved0` does.
     pub reserved2: [u8; 6],
     /// The profile to play as: a host profile id (at most 64 bytes), or null to let the host
-    /// choose. [`punktfunk_connection_profile`] reads which it resolved.
+    /// choose. [`lilynk_connection_profile`] reads which it resolved.
     pub profile_id: *const std::os::raw::c_char,
     /// The player's PyroWave quality in hundredths of a bit per pixel, 50 to 200
-    /// ([`punktfunk_pyrowave_kbps`]). `0`, which a shorter prefix defaults to, leaves the
+    /// ([`lilynk_pyrowave_kbps`]). `0`, which a shorter prefix defaults to, leaves the
     /// host's own.
     pub pyrowave_bpp_x100: u16,
-    /// `PUNKTFUNK_REFORMAT_*` bits: what this caller rebuilds when the host changes the stream's
+    /// `LILYNK_REFORMAT_*` bits: what this caller rebuilds when the host changes the stream's
     /// format mid-session. `0`, which a shorter prefix defaults to, keeps the format fixed.
     pub reformat: u8,
     /// Always `0`. Fills what would otherwise be padding.
@@ -804,12 +804,12 @@ pub struct PunktfunkConnectOpts {
     pub on_pending_ctx: *mut std::os::raw::c_void,
     /// The screens this caller shows, screen 0 first at the connect's mode, read for
     /// `screen_count` records during the call; null for one. Further screens' access units come
-    /// from [`punktfunk_connection_next_screen_au`].
-    pub screens: *const PunktfunkScreen,
-    /// See `screens`; at most `PUNKTFUNK_SCREENS_MAX` are read.
+    /// from [`lilynk_connection_next_screen_au`].
+    pub screens: *const LilynkScreen,
+    /// See `screens`; at most `LILYNK_SCREENS_MAX` are read.
     pub screen_count: u8,
     /// `1`: this caller opens a picture per screen, so it may ask for screens later
-    /// ([`punktfunk_connection_request_screens`]) with none asked here.
+    /// ([`lilynk_connection_request_screens`]) with none asked here.
     pub shows_screens: u8,
     /// Always `0`. Fills what would otherwise be padding.
     pub reserved5: [u8; 6],
@@ -817,9 +817,9 @@ pub struct PunktfunkConnectOpts {
     /// copied into a buffer the library wipes, and the caller wipes its own. An unlock outside
     /// the wire's bounds, or one without `pin_sha256`, fails the connect with `INVALID_ARG`
     /// before anything is dialed.
-    pub unlock: *const PunktfunkProfileUnlock,
+    pub unlock: *const LilynkProfileUnlock,
     /// `1`: this caller asks the player for a profile's password and dials again with it after
-    /// `PUNKTFUNK_STATUS_REJECTED_PROFILE_LOCKED`. A non-null `unlock` implies it.
+    /// `LILYNK_STATUS_REJECTED_PROFILE_LOCKED`. A non-null `unlock` implies it.
     pub prompts_unlock: u8,
     /// Always `0`. Fills what would otherwise be padding.
     pub reserved6: [u8; 7],
@@ -831,46 +831,46 @@ pub struct PunktfunkConnectOpts {
     pub view_height: u32,
     /// Each asked screen's view, read for `screen_count` records beside `screens` during the
     /// call; null, which a shorter prefix defaults to, names none.
-    pub screen_views: *const PunktfunkScreenView,
+    pub screen_views: *const LilynkScreenView,
     /// The screen this dial's preset asks for, as a preset spells it: `only`, `main`, `second`
     /// or `monitor:<connector>`. Null, empty, which a shorter prefix defaults to, or any other
-    /// spelling asks for none. [`punktfunk_connection_screen_role`] reads what the session got.
+    /// spelling asks for none. [`lilynk_connection_screen_role`] reads what the session got.
     pub host_screen: *const std::os::raw::c_char,
     /// The display's exact rate in millihertz when it is not whole hertz: `59940` beside
     /// `refresh_hz = 60`. `0`, which a shorter prefix defaults to, or a rate that does not
     /// round to `refresh_hz`, asks for the whole rate.
-    /// [`punktfunk_connection_refresh_mhz`] reads what the host delivers.
+    /// [`lilynk_connection_refresh_mhz`] reads what the host delivers.
     pub refresh_mhz: u32,
     /// Always `0`. Fills what would otherwise be padding.
     pub reserved7: u32,
 }
 
-/// [`PunktfunkProfileUnlock::kind`]: the account password as typed.
-pub const PUNKTFUNK_UNLOCK_PASSWORD: u8 = 1;
-/// [`PunktfunkProfileUnlock::kind`]: a signature over [`punktfunk_profile_unlock_message`].
-pub const PUNKTFUNK_UNLOCK_KEY_PROOF: u8 = 2;
-/// [`PunktfunkProfileUnlock::enroll_alg`]: enrol no key.
-pub const PUNKTFUNK_ENROLL_NONE: u8 = 0;
-/// [`PunktfunkProfileUnlock::enroll_alg`]: ECDSA P-256 with SHA-256, the 65-byte SEC1 point.
-pub const PUNKTFUNK_ENROLL_P256: u8 = 1;
-/// [`PunktfunkProfileUnlock::enroll_alg`]: RSA 2048 PKCS#1 v1.5 with SHA-256, a DER
+/// [`LilynkProfileUnlock::kind`]: the account password as typed.
+pub const LILYNK_UNLOCK_PASSWORD: u8 = 1;
+/// [`LilynkProfileUnlock::kind`]: a signature over [`lilynk_profile_unlock_message`].
+pub const LILYNK_UNLOCK_KEY_PROOF: u8 = 2;
+/// [`LilynkProfileUnlock::enroll_alg`]: enrol no key.
+pub const LILYNK_ENROLL_NONE: u8 = 0;
+/// [`LilynkProfileUnlock::enroll_alg`]: ECDSA P-256 with SHA-256, the 65-byte SEC1 point.
+pub const LILYNK_ENROLL_P256: u8 = 1;
+/// [`LilynkProfileUnlock::enroll_alg`]: RSA 2048 PKCS#1 v1.5 with SHA-256, a DER
 /// `RSAPublicKey` of at most 600 bytes.
-pub const PUNKTFUNK_ENROLL_RSA2048: u8 = 2;
-/// Bytes [`punktfunk_profile_unlock_message`] writes.
-pub const PUNKTFUNK_UNLOCK_MESSAGE_LEN: usize = 152;
+pub const LILYNK_ENROLL_RSA2048: u8 = 2;
+/// Bytes [`lilynk_profile_unlock_message`] writes.
+pub const LILYNK_UNLOCK_MESSAGE_LEN: usize = 152;
 
-/// What opens a profile on a person's own account ([`PunktfunkConnectOpts::unlock`]). Password:
+/// What opens a profile on a person's own account ([`LilynkConnectOpts::unlock`]). Password:
 /// `secret` is the password as typed, UTF-8, 1 to 512 bytes, never trimmed, no NUL; optionally
 /// with a key to enrol. Key proof: `secret` is the signature, 1 to 1024 bytes, and nothing else
 /// is set.
 #[cfg(feature = "quic")]
 #[repr(C)]
-pub struct PunktfunkProfileUnlock {
-    /// `PUNKTFUNK_UNLOCK_*`.
+pub struct LilynkProfileUnlock {
+    /// `LILYNK_UNLOCK_*`.
     pub kind: u8,
     /// Password only: `1` keeps this device signed in to the profile.
     pub stay_signed_in: u8,
-    /// Password only: `PUNKTFUNK_ENROLL_*` of `enroll_key`.
+    /// Password only: `LILYNK_ENROLL_*` of `enroll_key`.
     pub enroll_alg: u8,
     /// Always `0`.
     pub reserved: [u8; 5],
@@ -879,7 +879,7 @@ pub struct PunktfunkProfileUnlock {
     /// See `secret`.
     pub secret_len: usize,
     /// The public key to enrol, readable for `enroll_key_len` bytes; null with
-    /// `PUNKTFUNK_ENROLL_NONE`.
+    /// `LILYNK_ENROLL_NONE`.
     pub enroll_key: *const u8,
     /// See `enroll_key`.
     pub enroll_key_len: usize,
@@ -890,12 +890,12 @@ pub struct PunktfunkProfileUnlock {
 /// value.
 ///
 /// # Safety
-/// `u` is null or a readable [`PunktfunkProfileUnlock`] whose buffers are readable for their
+/// `u` is null or a readable [`LilynkProfileUnlock`] whose buffers are readable for their
 /// lengths.
 #[cfg(feature = "quic")]
 unsafe fn unlock_of(
-    u: *const PunktfunkProfileUnlock,
-) -> Result<Option<lilynk_core::quic::v2::msg::ProfileUnlock>, PunktfunkStatus> {
+    u: *const LilynkProfileUnlock,
+) -> Result<Option<lilynk_core::quic::v2::msg::ProfileUnlock>, LilynkStatus> {
     use lilynk_core::quic::v2::msg::{
         ProfileUnlock, Zeroizing, ENROLL_RSA_KEY_MAX, UNLOCK_SIGNATURE_MAX,
     };
@@ -905,7 +905,7 @@ unsafe fn unlock_of(
     };
     let bytes = |p: *const u8, len: usize, cap: usize| {
         if len > cap {
-            return Err(PunktfunkStatus::InvalidArg);
+            return Err(LilynkStatus::InvalidArg);
         }
         // SAFETY: null or readable for `len` bytes (caller contract).
         Ok(unsafe { in_bytes(p, len) }?.to_vec())
@@ -914,7 +914,7 @@ unsafe fn unlock_of(
     let key = bytes(u.enroll_key, u.enroll_key_len, ENROLL_RSA_KEY_MAX)?;
     ProfileUnlock::new(u.kind, secret, u.stay_signed_in != 0, u.enroll_alg, key)
         .map(Some)
-        .map_err(|_| PunktfunkStatus::InvalidArg)
+        .map_err(|_| LilynkStatus::InvalidArg)
 }
 
 /// The bytes a profile's unlock key signs, with SHA-256 as the digest, into `out`:
@@ -925,43 +925,43 @@ unsafe fn unlock_of(
 ///
 /// # Safety
 /// `challenge`, `device_sha256` and `box_sha256` are readable for 32 bytes; `seat_id` is a
-/// NUL-terminated string; `out` is writable for [`PUNKTFUNK_UNLOCK_MESSAGE_LEN`] bytes.
+/// NUL-terminated string; `out` is writable for [`LILYNK_UNLOCK_MESSAGE_LEN`] bytes.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_profile_unlock_message(
+pub unsafe extern "C" fn lilynk_profile_unlock_message(
     challenge: *const u8,
     seat_id: *const std::os::raw::c_char,
     device_sha256: *const u8,
     box_sha256: *const u8,
     out: *mut u8,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     let build = lilynk_core::quic::v2::msg::unlock_signed_message;
     // SAFETY: this function's contract is `message_into`'s.
     guard(|| unsafe { message_into(challenge, seat_id, device_sha256, box_sha256, out, build) })
 }
 
-/// Bytes [`punktfunk_locked_profile_unlock_message`] writes.
-pub const PUNKTFUNK_LOCKED_PROFILE_UNLOCK_MESSAGE_LEN: usize = 187;
+/// Bytes [`lilynk_locked_profile_unlock_message`] writes.
+pub const LILYNK_LOCKED_PROFILE_UNLOCK_MESSAGE_LEN: usize = 187;
 
 /// What a locked profile's unlock key signs, with SHA-256 as the digest, into `out`:
 /// `"punktfunk-profile-unlock-v1" ‖ challenge ‖ profile id, zero-padded to 64 ‖ device
 /// fingerprint ‖ box fingerprint`. `profile_id` is 1 to 64 of `[A-Za-z0-9_-]`; the rest is
-/// [`punktfunk_profile_unlock_message`]'s. `INVALID_ARG` for any other id, `NULL_POINTER` for a
+/// [`lilynk_profile_unlock_message`]'s. `INVALID_ARG` for any other id, `NULL_POINTER` for a
 /// null argument.
 ///
 /// # Safety
 /// `challenge`, `device_sha256` and `box_sha256` are readable for 32 bytes; `profile_id` is a
-/// NUL-terminated string; `out` is writable for [`PUNKTFUNK_LOCKED_PROFILE_UNLOCK_MESSAGE_LEN`]
+/// NUL-terminated string; `out` is writable for [`LILYNK_LOCKED_PROFILE_UNLOCK_MESSAGE_LEN`]
 /// bytes.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_locked_profile_unlock_message(
+pub unsafe extern "C" fn lilynk_locked_profile_unlock_message(
     challenge: *const u8,
     profile_id: *const std::os::raw::c_char,
     device_sha256: *const u8,
     box_sha256: *const u8,
     out: *mut u8,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     let build = lilynk_core::quic::v2::msg::profile_unlock_signed_message;
     // SAFETY: this function's contract is `message_into`'s.
     guard(|| unsafe { message_into(challenge, profile_id, device_sha256, box_sha256, out, build) })
@@ -975,7 +975,7 @@ type BuildMessage<const N: usize> =
 /// `build`'s message over the three 32-byte inputs and the id, into `out`.
 ///
 /// # Safety
-/// As [`punktfunk_profile_unlock_message`], with `out` writable for `N` bytes.
+/// As [`lilynk_profile_unlock_message`], with `out` writable for `N` bytes.
 #[cfg(feature = "quic")]
 unsafe fn message_into<const N: usize>(
     challenge: *const u8,
@@ -984,43 +984,43 @@ unsafe fn message_into<const N: usize>(
     box_sha256: *const u8,
     out: *mut u8,
     build: BuildMessage<N>,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     if out.is_null() {
-        return PunktfunkStatus::NullPointer;
+        return LilynkStatus::NullPointer;
     }
     // SAFETY: null or readable for 32 bytes (caller contract).
     let fp = |p: *const u8| unsafe { in_bytes(p, 32) }.map(<[u8; 32]>::try_from);
     let (Ok(Ok(c)), Ok(Ok(d)), Ok(Ok(b))) = (fp(challenge), fp(device_sha256), fp(box_sha256))
     else {
-        return PunktfunkStatus::NullPointer;
+        return LilynkStatus::NullPointer;
     };
     // SAFETY: null or NUL-terminated, per this function's contract.
     let id = match unsafe { opt_cstr(id) } {
         Ok(Some(s)) => s,
-        Ok(None) => return PunktfunkStatus::NullPointer,
-        Err(()) => return PunktfunkStatus::InvalidArg,
+        Ok(None) => return LilynkStatus::NullPointer,
+        Err(()) => return LilynkStatus::InvalidArg,
     };
     match build(&c, id, &d, &b) {
         Ok(m) => {
             // SAFETY: `out` is non-null and writable for the message's length (caller
             // contract); a byte array has alignment 1.
             unsafe { put(out.cast(), m) };
-            PunktfunkStatus::Ok
+            LilynkStatus::Ok
         }
-        Err(_) => PunktfunkStatus::InvalidArg,
+        Err(_) => LilynkStatus::InvalidArg,
     }
 }
 
-/// [`PunktfunkConnectOpts::reformat`]: this caller rebuilds its decoder on a frame flagged
+/// [`LilynkConnectOpts::reformat`]: this caller rebuilds its decoder on a frame flagged
 /// [`FRAME_NEW_FORMAT`](lilynk_core::packet::FRAME_NEW_FORMAT), from the codec, colour and
 /// chroma getters read right after it.
 #[cfg(feature = "quic")]
-pub const PUNKTFUNK_REFORMAT_VIDEO: u8 = 1;
+pub const LILYNK_REFORMAT_VIDEO: u8 = 1;
 
-/// [`PunktfunkConnectOpts::reformat`]: this caller reopens its audio player when
-/// `punktfunk_connection_next_audio_pcm` returns `PUNKTFUNK_STATUS_AUDIO_FORMAT`.
+/// [`LilynkConnectOpts::reformat`]: this caller reopens its audio player when
+/// `lilynk_connection_next_audio_pcm` returns `LILYNK_STATUS_AUDIO_FORMAT`.
 #[cfg(feature = "quic")]
-pub const PUNKTFUNK_REFORMAT_AUDIO: u8 = 2;
+pub const LILYNK_REFORMAT_AUDIO: u8 = 2;
 
 // No tail padding (append contract). On grow: freeze `CONNECT_OPTS_MIN_SIZE`, update these sizes.
 // `video_fit` sits in the byte v35–v40 callers zeroed as `reserved0`.
@@ -1029,49 +1029,49 @@ const _: () = {
     use core::mem::{offset_of, size_of};
     #[cfg(target_pointer_width = "64")]
     assert!(
-        size_of::<PunktfunkConnectOpts>() == 224
-            && offset_of!(PunktfunkConnectOpts, video_fit) == 100
-            && offset_of!(PunktfunkConnectOpts, delivery_flags) == 121
-            && offset_of!(PunktfunkConnectOpts, profile_id) == 128
-            && offset_of!(PunktfunkConnectOpts, pyrowave_bpp_x100) == 136
-            && offset_of!(PunktfunkConnectOpts, reformat) == 138
-            && offset_of!(PunktfunkConnectOpts, on_pending) == 144
-            && offset_of!(PunktfunkConnectOpts, screens) == 160
-            && offset_of!(PunktfunkConnectOpts, shows_screens) == 169
-            && offset_of!(PunktfunkConnectOpts, unlock) == 176
-            && offset_of!(PunktfunkConnectOpts, prompts_unlock) == 184
-            && offset_of!(PunktfunkConnectOpts, view_width) == 192
-            && offset_of!(PunktfunkConnectOpts, screen_views) == 200
-            && offset_of!(PunktfunkConnectOpts, host_screen) == 208
-            && offset_of!(PunktfunkConnectOpts, refresh_mhz) == 216
-            && size_of::<PunktfunkProfileUnlock>() == 40
+        size_of::<LilynkConnectOpts>() == 224
+            && offset_of!(LilynkConnectOpts, video_fit) == 100
+            && offset_of!(LilynkConnectOpts, delivery_flags) == 121
+            && offset_of!(LilynkConnectOpts, profile_id) == 128
+            && offset_of!(LilynkConnectOpts, pyrowave_bpp_x100) == 136
+            && offset_of!(LilynkConnectOpts, reformat) == 138
+            && offset_of!(LilynkConnectOpts, on_pending) == 144
+            && offset_of!(LilynkConnectOpts, screens) == 160
+            && offset_of!(LilynkConnectOpts, shows_screens) == 169
+            && offset_of!(LilynkConnectOpts, unlock) == 176
+            && offset_of!(LilynkConnectOpts, prompts_unlock) == 184
+            && offset_of!(LilynkConnectOpts, view_width) == 192
+            && offset_of!(LilynkConnectOpts, screen_views) == 200
+            && offset_of!(LilynkConnectOpts, host_screen) == 208
+            && offset_of!(LilynkConnectOpts, refresh_mhz) == 216
+            && size_of::<LilynkProfileUnlock>() == 40
     );
     #[cfg(target_pointer_width = "32")]
     assert!(
-        size_of::<PunktfunkConnectOpts>() == 160
-            && offset_of!(PunktfunkConnectOpts, video_fit) == 72
-            && offset_of!(PunktfunkConnectOpts, delivery_flags) == 85
-            && offset_of!(PunktfunkConnectOpts, profile_id) == 92
-            && offset_of!(PunktfunkConnectOpts, pyrowave_bpp_x100) == 96
-            && offset_of!(PunktfunkConnectOpts, reformat) == 98
-            && offset_of!(PunktfunkConnectOpts, on_pending) == 104
-            && offset_of!(PunktfunkConnectOpts, screens) == 112
-            && offset_of!(PunktfunkConnectOpts, shows_screens) == 117
-            && offset_of!(PunktfunkConnectOpts, unlock) == 124
-            && offset_of!(PunktfunkConnectOpts, prompts_unlock) == 128
-            && offset_of!(PunktfunkConnectOpts, view_width) == 136
-            && offset_of!(PunktfunkConnectOpts, screen_views) == 144
-            && offset_of!(PunktfunkConnectOpts, host_screen) == 148
-            && offset_of!(PunktfunkConnectOpts, refresh_mhz) == 152
-            && size_of::<PunktfunkProfileUnlock>() == 24
+        size_of::<LilynkConnectOpts>() == 160
+            && offset_of!(LilynkConnectOpts, video_fit) == 72
+            && offset_of!(LilynkConnectOpts, delivery_flags) == 85
+            && offset_of!(LilynkConnectOpts, profile_id) == 92
+            && offset_of!(LilynkConnectOpts, pyrowave_bpp_x100) == 96
+            && offset_of!(LilynkConnectOpts, reformat) == 98
+            && offset_of!(LilynkConnectOpts, on_pending) == 104
+            && offset_of!(LilynkConnectOpts, screens) == 112
+            && offset_of!(LilynkConnectOpts, shows_screens) == 117
+            && offset_of!(LilynkConnectOpts, unlock) == 124
+            && offset_of!(LilynkConnectOpts, prompts_unlock) == 128
+            && offset_of!(LilynkConnectOpts, view_width) == 136
+            && offset_of!(LilynkConnectOpts, screen_views) == 144
+            && offset_of!(LilynkConnectOpts, host_screen) == 148
+            && offset_of!(LilynkConnectOpts, refresh_mhz) == 152
+            && size_of::<LilynkProfileUnlock>() == 24
     );
 };
 
 /// All zero, as C's `= {0}` leaves it, with this build's `struct_size`.
 #[cfg(feature = "quic")]
-impl Default for PunktfunkConnectOpts {
+impl Default for LilynkConnectOpts {
     fn default() -> Self {
-        PunktfunkConnectOpts {
+        LilynkConnectOpts {
             struct_size: std::mem::size_of::<Self>() as u32,
             host: ptr::null(),
             launch_id: ptr::null(),
@@ -1132,7 +1132,7 @@ thread_local! {
 }
 
 /// The sentence the host sent when it refused the last connect on this thread, for a caller
-/// holding a `PUNKTFUNK_STATUS_REJECTED_*` status: a host can name what only it knows, such as
+/// holding a `LILYNK_STATUS_REJECTED_*` status: a host can name what only it knows, such as
 /// who holds the seat. Empty when it said nothing. Read on the connecting thread, right after
 /// the failed connect. `INVALID_ARG` when `out` is null or `cap` too small for it and a NUL.
 ///
@@ -1140,16 +1140,16 @@ thread_local! {
 /// `out` is null or writable for `cap` bytes.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connect_refusal(
+pub unsafe extern "C" fn lilynk_connect_refusal(
     out: *mut std::os::raw::c_char,
     cap: usize,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     crate::guard(|| {
         let said = REFUSAL.with(|r| r.borrow().clone());
         // SAFETY: the caller passes `out` null or writable for `cap` bytes.
         match unsafe { crate::write_cstr(out, cap, &said) } {
-            true => PunktfunkStatus::Ok,
-            false => PunktfunkStatus::InvalidArg,
+            true => LilynkStatus::Ok,
+            false => LilynkStatus::InvalidArg,
         }
     })
 }
@@ -1161,23 +1161,23 @@ struct PendingHook(unsafe extern "C" fn(*mut std::os::raw::c_void), usize);
 #[cfg(feature = "quic")]
 impl PendingHook {
     fn call(&self) {
-        // SAFETY: the caller's contract on `PunktfunkConnectOpts::on_pending`: the function
+        // SAFETY: the caller's contract on `LilynkConnectOpts::on_pending`: the function
         // takes back the context it registered, on the thread inside the connect call.
         unsafe { (self.0)(self.1 as *mut std::os::raw::c_void) }
     }
 }
 
-/// What the entry points before [`punktfunk_connect_ex7`] imply: stereo, HEVC only.
+/// What the entry points before [`lilynk_connect_ex7`] imply: stereo, HEVC only.
 #[cfg(feature = "quic")]
-fn legacy_opts() -> PunktfunkConnectOpts {
-    PunktfunkConnectOpts {
+fn legacy_opts() -> LilynkConnectOpts {
+    LilynkConnectOpts {
         audio_channels: 2,
-        video_codecs: PUNKTFUNK_CODEC_HEVC,
+        video_codecs: LILYNK_CODEC_HEVC,
         ..Default::default()
     }
 }
 
-/// What [`punktfunk_set_session_preset`] last named. Process-wide, so a connect whose opts name
+/// What [`lilynk_set_session_preset`] last named. Process-wide, so a connect whose opts name
 /// no preset reads it once, at entry, into that dial's own parameters.
 #[cfg(feature = "quic")]
 static SESSION_PRESET: std::sync::Mutex<Option<lilynk_core::quic::SessionPreset>> =
@@ -1187,14 +1187,14 @@ static SESSION_PRESET: std::sync::Mutex<Option<lilynk_core::quic::SessionPreset>
 /// shows it and hands it to hooks; the stream is unchanged. A null `id` names none. The value
 /// outlives the call, so set it before every connect. ABI v38.
 ///
-/// Process-wide: two overlapping dials share it. [`PunktfunkConnectOpts::preset_id`] names a
+/// Process-wide: two overlapping dials share it. [`LilynkConnectOpts::preset_id`] names a
 /// preset for one dial and wins over this.
 ///
 /// # Safety
 /// `id` and `name` are null or NUL-terminated C strings, read during this call only.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_set_session_preset(
+pub unsafe extern "C" fn lilynk_set_session_preset(
     id: *const std::os::raw::c_char,
     name: *const std::os::raw::c_char,
 ) {
@@ -1208,7 +1208,7 @@ pub unsafe extern "C" fn punktfunk_set_session_preset(
     *lock_recover(&SESSION_PRESET) = preset;
 }
 
-/// Minimum `struct_size` [`punktfunk_connect_opts`] accepts. Frozen: when the
+/// Minimum `struct_size` [`lilynk_connect_opts`] accepts. Frozen: when the
 /// struct grows this stays put so older callers keep connecting; only the size
 /// asserts above move.
 #[cfg(all(feature = "quic", target_pointer_width = "64"))]
@@ -1216,7 +1216,7 @@ const CONNECT_OPTS_MIN_SIZE: usize = 96;
 #[cfg(all(feature = "quic", target_pointer_width = "32"))]
 const CONNECT_OPTS_MIN_SIZE: usize = 68;
 
-/// Connect with every option in one growable [`PunktfunkConnectOpts`]: the `connect_ex*`
+/// Connect with every option in one growable [`LilynkConnectOpts`]: the `connect_ex*`
 /// family's arguments, `video_fit` and the session preset. New options land only in this
 /// struct; the `connect_ex*` entry points stay frozen.
 ///
@@ -1225,16 +1225,16 @@ const CONNECT_OPTS_MIN_SIZE: usize = 68;
 ///
 /// # Safety
 /// `opts` is null or points to at least `opts->struct_size` readable bytes laid
-/// out as its declared [`PunktfunkConnectOpts`]; pointer fields follow
-/// [`punktfunk_connect_ex11`]; `observed_sha256_out` is null or valid for 32 bytes.
+/// out as its declared [`LilynkConnectOpts`]; pointer fields follow
+/// [`lilynk_connect_ex11`]; `observed_sha256_out` is null or valid for 32 bytes.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connect_opts(
-    opts: *const PunktfunkConnectOpts,
+pub unsafe extern "C" fn lilynk_connect_opts(
+    opts: *const LilynkConnectOpts,
     observed_sha256_out: *mut u8,
     status_out: *mut i32,
-) -> *mut PunktfunkConnection {
-    let set_status = |s: lilynk_core::error::PunktfunkStatus| {
+) -> *mut LilynkConnection {
+    let set_status = |s: lilynk_core::error::LilynkStatus| {
         // SAFETY: the caller passes `status_out` null or writable for one value.
         unsafe { put(status_out, s as i32) };
     };
@@ -1254,21 +1254,19 @@ pub unsafe extern "C" fn punktfunk_connect_opts(
 /// them reads as zero. Null is `NullPointer`, a size under the frozen minimum `InvalidArg`.
 ///
 /// # Safety
-/// `opts` is null or readable for its own `struct_size` bytes, as [`punktfunk_connect_opts`].
+/// `opts` is null or readable for its own `struct_size` bytes, as [`lilynk_connect_opts`].
 #[cfg(feature = "quic")]
-unsafe fn opts_prefix(
-    opts: *const PunktfunkConnectOpts,
-) -> Result<PunktfunkConnectOpts, PunktfunkStatus> {
+unsafe fn opts_prefix(opts: *const LilynkConnectOpts) -> Result<LilynkConnectOpts, LilynkStatus> {
     if opts.is_null() {
-        return Err(PunktfunkStatus::NullPointer);
+        return Err(LilynkStatus::NullPointer);
     }
     // SAFETY: `addr_of!` does not form a `&`; the caller may have a different size.
     let declared = unsafe { std::ptr::addr_of!((*opts).struct_size).read_unaligned() } as usize;
     if declared < CONNECT_OPTS_MIN_SIZE {
-        return Err(PunktfunkStatus::InvalidArg);
+        return Err(LilynkStatus::InvalidArg);
     }
-    let mut o = PunktfunkConnectOpts::default();
-    let take = declared.min(std::mem::size_of::<PunktfunkConnectOpts>());
+    let mut o = LilynkConnectOpts::default();
+    let take = declared.min(std::mem::size_of::<LilynkConnectOpts>());
     // SAFETY: `opts` is readable for `declared >= take`; `o` is a local and cannot overlap.
     // Every field is an integer, a raw pointer or an `Option` of a function pointer (null is
     // `None`), so any bytes are a valid value.
@@ -1286,15 +1284,15 @@ unsafe fn opts_prefix(
 /// written on every path.
 ///
 /// # Safety
-/// `o`'s pointer fields follow [`punktfunk_connect_opts`]; `observed_sha256_out` is null or
+/// `o`'s pointer fields follow [`lilynk_connect_opts`]; `observed_sha256_out` is null or
 /// valid for 32 bytes; `status_out` is null or writable for one `i32`.
 #[cfg(feature = "quic")]
 unsafe fn connect_ex_impl(
-    o: &PunktfunkConnectOpts,
+    o: &LilynkConnectOpts,
     observed_sha256_out: *mut u8,
     status_out: *mut i32,
-) -> *mut PunktfunkConnection {
-    let set_status = |s: lilynk_core::error::PunktfunkStatus| {
+) -> *mut LilynkConnection {
+    let set_status = |s: lilynk_core::error::LilynkStatus| {
         // SAFETY: the caller passes `status_out` null or writable for one value.
         unsafe { put(status_out, s as i32) };
     };
@@ -1311,8 +1309,8 @@ unsafe fn connect_ex_impl(
             Ok(c) => {
                 // SAFETY: `observed_sha256_out` is null or writable for 32 bytes (caller contract).
                 unsafe { put_sha256(observed_sha256_out, c.host_fingerprint) };
-                set_status(lilynk_core::error::PunktfunkStatus::Ok);
-                Box::into_raw(Box::new(PunktfunkConnection {
+                set_status(lilynk_core::error::LilynkStatus::Ok);
+                Box::into_raw(Box::new(LilynkConnection {
                     inner: c,
                     last: std::sync::Mutex::new(None),
                     last_screens: std::sync::Mutex::default(),
@@ -1326,7 +1324,7 @@ unsafe fn connect_ex_impl(
             Err(e) => {
                 set_status(e.status());
                 let said = match &e {
-                    lilynk_core::error::PunktfunkError::Rejected(_, said) => said.clone(),
+                    lilynk_core::error::LilynkError::Rejected(_, said) => said.clone(),
                     _ => String::new(),
                 };
                 REFUSAL.with(|r| *r.borrow_mut() = said);
@@ -1335,7 +1333,7 @@ unsafe fn connect_ex_impl(
         }
     }));
     r.unwrap_or_else(|_| {
-        set_status(lilynk_core::error::PunktfunkStatus::Panic);
+        set_status(lilynk_core::error::LilynkStatus::Panic);
         std::ptr::null_mut()
     })
 }
@@ -1345,14 +1343,14 @@ unsafe fn connect_ex_impl(
 /// to none (the OS name for the device).
 ///
 /// # Safety
-/// Each pointer field of `o` is null or valid as [`punktfunk_connect_opts`] documents.
+/// Each pointer field of `o` is null or valid as [`lilynk_connect_opts`] documents.
 #[cfg(feature = "quic")]
 unsafe fn connect_params(
-    o: &PunktfunkConnectOpts,
-) -> Result<lilynk_core::client::ConnectParams, PunktfunkStatus> {
+    o: &LilynkConnectOpts,
+) -> Result<lilynk_core::client::ConnectParams, LilynkStatus> {
     // SAFETY: caller C string, NUL-terminated or null; borrowed for this call only.
     let Ok(Some(host)) = (unsafe { opt_cstr(o.host) }) else {
-        return Err(PunktfunkStatus::InvalidArg);
+        return Err(LilynkStatus::InvalidArg);
     };
     // SAFETY: as above.
     let launch = match unsafe { opt_cstr(o.launch_id) } {
@@ -1386,7 +1384,7 @@ unsafe fn connect_params(
         (Ok(Some(c)), Ok(Some(k))) => Some((c.to_string(), k.to_string())),
         (Ok(None), Ok(None)) => None,
         // Half an identity or bad UTF-8: fail closed.
-        _ => return Err(PunktfunkStatus::InvalidArg),
+        _ => return Err(LilynkStatus::InvalidArg),
     };
     // SAFETY: as above.
     let preset = match unsafe { opt_cstr(o.preset_id) } {
@@ -1401,9 +1399,7 @@ unsafe fn connect_params(
     // An id the host can't hold is no ask: the host then picks, as it does for null.
     // SAFETY: as above.
     let profile = match unsafe { opt_cstr(o.profile_id) } {
-        Ok(Some(id)) if !id.is_empty() && id.len() <= PUNKTFUNK_PROFILE_ID_MAX => {
-            Some(id.to_string())
-        }
+        Ok(Some(id)) if !id.is_empty() && id.len() <= LILYNK_PROFILE_ID_MAX => Some(id.to_string()),
         _ => None,
     };
     // SAFETY: as above.
@@ -1418,13 +1414,13 @@ unsafe fn connect_params(
         refresh_mhz: 0,
     }
     .stating(o.refresh_mhz);
-    let n = usize::from(o.screen_count).min(PUNKTFUNK_SCREENS_MAX);
+    let n = usize::from(o.screen_count).min(LILYNK_SCREENS_MAX);
     // SAFETY: `screens` and `screen_views` are null or readable for `screen_count >= n` records
     // (caller contract).
     let screens = unsafe { super::screens::screens_at(o.screens, o.screen_views, n) };
     // An unlock goes only to a pinned host; refused before its secret is read.
     if !o.unlock.is_null() && pin.is_none() {
-        return Err(PunktfunkStatus::InvalidArg);
+        return Err(LilynkStatus::InvalidArg);
     }
     // SAFETY: `unlock` is null or a readable struct whose buffers match their lengths.
     let unlock = unsafe { unlock_of(o.unlock) }?;
@@ -1454,8 +1450,8 @@ unsafe fn connect_params(
         profile,
         screen_wish,
         probe_only: o.delivery_flags & lilynk_core::quic::EXT_DELIVERY_PROBE_ONLY != 0,
-        rebuilds_decoder: o.reformat & PUNKTFUNK_REFORMAT_VIDEO != 0,
-        reopens_audio: o.reformat & PUNKTFUNK_REFORMAT_AUDIO != 0,
+        rebuilds_decoder: o.reformat & LILYNK_REFORMAT_VIDEO != 0,
+        reopens_audio: o.reformat & LILYNK_REFORMAT_AUDIO != 0,
         screens,
         shows_screens: o.shows_screens != 0,
         on_pending: o.on_pending.map(|f| {
@@ -1463,7 +1459,7 @@ unsafe fn connect_params(
             std::sync::Arc::new(move || hook.call()) as std::sync::Arc<dyn Fn() + Send + Sync>
         }),
         // The rest stays default: Legacy coupling (embedders decode what the host answers),
-        // no display volume, whole AUs (`PunktfunkFrame` cannot tell a part), no abort.
+        // no display volume, whole AUs (`LilynkFrame` cannot tell a part), no abort.
         ..lilynk_core::client::ConnectParams::new(
             host,
             o.port,
@@ -1479,7 +1475,7 @@ unsafe fn connect_params(
 /// chroma and depth the player's switches ask.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub extern "C" fn punktfunk_pyrowave_kbps(
+pub extern "C" fn lilynk_pyrowave_kbps(
     width: u32,
     height: u32,
     refresh_hz: u32,
@@ -1499,7 +1495,7 @@ pub extern "C" fn punktfunk_pyrowave_kbps(
 }
 
 /// What the OS says about this device's interface toward `host_ip`, or toward its default
-/// route when `host_ip` is null or no IP literal: `PUNKTFUNK_IFACE_KIND_*` and link speed in
+/// route when `host_ip` is null or no IP literal: `LILYNK_IFACE_KIND_*` and link speed in
 /// Mbit/s, `0` where it did not say. `false` when it named no interface; both outs are written
 /// either way. A route lookup: nothing is sent.
 ///
@@ -1508,7 +1504,7 @@ pub extern "C" fn punktfunk_pyrowave_kbps(
 /// writable for one value.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_local_link_facts(
+pub unsafe extern "C" fn lilynk_local_link_facts(
     host_ip: *const std::os::raw::c_char,
     out_kind: *mut u8,
     out_mbps: *mut u32,
@@ -1540,7 +1536,7 @@ fn pyrowave_rate_text(kbps: u32) -> String {
     }
 }
 
-/// [`punktfunk_pyrowave_link_warning`]'s line, in the language the process is set to.
+/// [`lilynk_pyrowave_link_warning`]'s line, in the language the process is set to.
 #[cfg(feature = "quic")]
 fn pyrowave_link_warning(
     required_kbps: u32,
@@ -1559,7 +1555,7 @@ fn pyrowave_link_warning(
 }
 
 /// The line the PyroWave quality row shows when `required_kbps` is more than this device's
-/// link carries ([`punktfunk_local_link_facts`]'s `kind` and `mbps`), NUL-terminated into
+/// link carries ([`lilynk_local_link_facts`]'s `kind` and `mbps`), NUL-terminated into
 /// `out`; empty when it fits. One wording for every client, in the language the process is set
 /// to ([`ly_l10n::set_languages`]), English before. 160 bytes is ample.
 ///
@@ -1567,28 +1563,28 @@ fn pyrowave_link_warning(
 /// `out` is writable for `cap` bytes.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_pyrowave_link_warning(
+pub unsafe extern "C" fn lilynk_pyrowave_link_warning(
     required_kbps: u32,
     kind: u8,
     mbps: u32,
     out: *mut std::os::raw::c_char,
     cap: usize,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     if out.is_null() || cap == 0 {
-        return PunktfunkStatus::NullPointer;
+        return LilynkStatus::NullPointer;
     }
     let facts = lilynk_core::transport::LinkFacts { kind, mbps };
     let line = pyrowave_link_warning(required_kbps, facts).unwrap_or_default();
     // SAFETY: `out` is writable for `cap` bytes, per this function's contract.
     if !unsafe { crate::write_cstr(out, cap, &line) } {
-        return PunktfunkStatus::InvalidArg;
+        return LilynkStatus::InvalidArg;
     }
-    PunktfunkStatus::Ok
+    LilynkStatus::Ok
 }
 
 /// Generate a persistent client identity: self-signed certificate + private key,
 /// both PEM, NUL-terminated, written into the caller's buffers. Generate once,
-/// store both, pass them to [`punktfunk_pair`] and every [`punktfunk_connect`].
+/// store both, pass them to [`lilynk_pair`] and every [`lilynk_connect`].
 /// Hosts recognize this client by the certificate fingerprint. 4096-byte buffers
 /// are ample.
 ///
@@ -1596,30 +1592,30 @@ pub unsafe extern "C" fn punktfunk_pyrowave_link_warning(
 /// `cert_pem_out` is writable for `cert_cap` bytes; `key_pem_out` for `key_cap`.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_generate_identity(
+pub unsafe extern "C" fn lilynk_generate_identity(
     cert_pem_out: *mut std::os::raw::c_char,
     cert_cap: usize,
     key_pem_out: *mut std::os::raw::c_char,
     key_cap: usize,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     guard(|| {
         if cert_pem_out.is_null() || key_pem_out.is_null() {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         let (cert, key) = match lilynk_core::quic::endpoint::generate_identity() {
             Ok(t) => t,
-            Err(_) => return PunktfunkStatus::Io,
+            Err(_) => return LilynkStatus::Io,
         };
         // Both fit or neither is written.
         if cert.len() + 1 > cert_cap || key.len() + 1 > key_cap {
-            return PunktfunkStatus::InvalidArg;
+            return LilynkStatus::InvalidArg;
         }
         // SAFETY: each buffer is writable for its `cap` bytes, per this function's contract.
         unsafe {
             write_cstr(cert_pem_out, cert_cap, &cert);
             write_cstr(key_pem_out, key_cap, &key);
         }
-        PunktfunkStatus::Ok
+        LilynkStatus::Ok
     })
 }
 
@@ -1641,11 +1637,11 @@ pub unsafe extern "C" fn lilynk_probe(
     port: u16,
     timeout_ms: u32,
     observed_sha256_out: *mut u8,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     guard(|| {
         // SAFETY: pointers are caller-supplied and null-checked on this path.
         let Ok(Some(host)) = (unsafe { opt_cstr(host) }) else {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         };
         match lilynk_core::client::NativeClient::probe_identity(
             host,
@@ -1655,9 +1651,9 @@ pub unsafe extern "C" fn lilynk_probe(
             Some(fp) => {
                 // SAFETY: `observed_sha256_out` is null or writable for 32 bytes (caller contract).
                 unsafe { put_sha256(observed_sha256_out, fp) };
-                PunktfunkStatus::Ok
+                LilynkStatus::Ok
             }
-            None => PunktfunkStatus::Timeout,
+            None => LilynkStatus::Timeout,
         }
     })
 }
@@ -1665,14 +1661,14 @@ pub unsafe extern "C" fn lilynk_probe(
 /// PIN pairing: the host displays a PIN; pass it here. On success the host has
 /// stored this client's identity and the verified host fingerprint is written to
 /// `host_sha256_out` (32 bytes) — persist it as `pin_sha256` for
-/// [`punktfunk_connect`]. [`PunktfunkStatus::Crypto`] for a wrong PIN.
+/// [`lilynk_connect`]. [`LilynkStatus::Crypto`] for a wrong PIN.
 ///
 /// # Safety
 /// `host`/`client_cert_pem`/`client_key_pem`/`pin`/`name` are NUL-terminated UTF-8;
 /// `host_sha256_out` is writable for 32 bytes.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_pair(
+pub unsafe extern "C" fn lilynk_pair(
     host: *const std::os::raw::c_char,
     port: u16,
     client_cert_pem: *const std::os::raw::c_char,
@@ -1681,7 +1677,7 @@ pub unsafe extern "C" fn punktfunk_pair(
     name: *const std::os::raw::c_char,
     host_sha256_out: *mut u8,
     timeout_ms: u32,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     guard(|| {
         let (Ok(Some(host)), Ok(Some(cert)), Ok(Some(key)), Ok(Some(pin)), Ok(Some(name))) = (
             // SAFETY: pointers are caller-supplied and null-checked on this path.
@@ -1695,10 +1691,10 @@ pub unsafe extern "C" fn punktfunk_pair(
             // SAFETY: pointers are caller-supplied and null-checked on this path.
             unsafe { opt_cstr(name) },
         ) else {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         };
         if host_sha256_out.is_null() {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         match lilynk_core::client::NativeClient::pair(
             host,
@@ -1711,7 +1707,7 @@ pub unsafe extern "C" fn punktfunk_pair(
             Ok(fp) => {
                 // SAFETY: `host_sha256_out` is non-null here and writable for 32 bytes.
                 unsafe { put_sha256(host_sha256_out, fp) };
-                PunktfunkStatus::Ok
+                LilynkStatus::Ok
             }
             Err(e) => e.status(),
         }
@@ -1720,8 +1716,8 @@ pub unsafe extern "C" fn punktfunk_pair(
 
 /// Request access without a PIN: blocks until the host's operator approves this device,
 /// refuses it, or `timeout_ms` passes. Never starts a stream. On success the host fingerprint
-/// is written to `host_sha256_out` — persist it as paired, like [`punktfunk_pair`]'s.
-/// A refusal is its `PUNKTFUNK_STATUS_REJECTED_*` code.
+/// is written to `host_sha256_out` — persist it as paired, like [`lilynk_pair`]'s.
+/// A refusal is its `LILYNK_STATUS_REJECTED_*` code.
 ///
 /// # Safety
 /// `host`/`client_cert_pem`/`client_key_pem`/`name` are NUL-terminated UTF-8; `pin_sha256`
@@ -1729,7 +1725,7 @@ pub unsafe extern "C" fn punktfunk_pair(
 /// none pairs by PIN); `host_sha256_out` is writable for 32 bytes.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_request_access(
+pub unsafe extern "C" fn lilynk_request_access(
     host: *const std::os::raw::c_char,
     port: u16,
     client_cert_pem: *const std::os::raw::c_char,
@@ -1738,7 +1734,7 @@ pub unsafe extern "C" fn punktfunk_request_access(
     name: *const std::os::raw::c_char,
     host_sha256_out: *mut u8,
     timeout_ms: u32,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     guard(|| {
         let (Ok(Some(host)), Ok(Some(cert)), Ok(Some(key)), Ok(Some(name))) = (
             // SAFETY: pointers are caller-supplied and null-checked on this path.
@@ -1750,10 +1746,10 @@ pub unsafe extern "C" fn punktfunk_request_access(
             // SAFETY: pointers are caller-supplied and null-checked on this path.
             unsafe { opt_cstr(name) },
         ) else {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         };
         if host_sha256_out.is_null() || pin_sha256.is_null() {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         let mut pin = [0u8; 32];
         // SAFETY: a non-null pin is valid for 32 bytes (caller contract); copied out here.
@@ -1770,7 +1766,7 @@ pub unsafe extern "C" fn punktfunk_request_access(
             Ok(fp) => {
                 // SAFETY: `host_sha256_out` is non-null here and writable for 32 bytes.
                 unsafe { put_sha256(host_sha256_out, fp) };
-                PunktfunkStatus::Ok
+                LilynkStatus::Ok
             }
             Err(e) => e.status(),
         }
@@ -1782,18 +1778,18 @@ mod tests {
     use super::*;
 
     /// `video_fit` and the preset reach the dial. A null `preset_id` takes what
-    /// `punktfunk_set_session_preset` named; a named one wins over it.
+    /// `lilynk_set_session_preset` named; a named one wins over it.
     #[test]
     fn connect_opts_carry_fit_and_preset() {
-        let mut o = PunktfunkConnectOpts {
+        let mut o = LilynkConnectOpts {
             host: c"127.0.0.1".as_ptr(),
-            video_fit: PUNKTFUNK_VIDEO_FIT_CROP,
+            video_fit: LILYNK_VIDEO_FIT_CROP,
             preset_id: c"dock-1".as_ptr(),
             preset_name: c"Docked".as_ptr(),
             ..Default::default()
         };
         // SAFETY: C-string literals outlive the call; `name` null names none.
-        unsafe { punktfunk_set_session_preset(c"old".as_ptr(), std::ptr::null()) };
+        unsafe { lilynk_set_session_preset(c"old".as_ptr(), std::ptr::null()) };
         // SAFETY: every pointer field is null or a live C-string literal.
         let p = unsafe { connect_params(&o) }.unwrap();
         assert_eq!(p.video_fit, lilynk_core::video_fit::VideoFit::Crop);
@@ -1807,13 +1803,13 @@ mod tests {
         let p = unsafe { connect_params(&o) }.unwrap();
         assert_eq!(p.preset, lilynk_core::quic::SessionPreset::new("old", ""));
         // SAFETY: null `id` clears the fallback.
-        unsafe { punktfunk_set_session_preset(std::ptr::null(), std::ptr::null()) };
+        unsafe { lilynk_set_session_preset(std::ptr::null(), std::ptr::null()) };
     }
 
     /// The view reaches the dial; a zero axis is no view.
     #[test]
     fn connect_opts_carry_the_view() {
-        let mut o = PunktfunkConnectOpts {
+        let mut o = LilynkConnectOpts {
             host: c"127.0.0.1".as_ptr(),
             view_width: 1366,
             view_height: 768,
@@ -1832,7 +1828,7 @@ mod tests {
     #[test]
     fn connect_opts_carry_the_screen_wish() {
         use lilynk_core::quic::v2::hello::ScreenWish;
-        let mut o = PunktfunkConnectOpts {
+        let mut o = LilynkConnectOpts {
             host: c"127.0.0.1".as_ptr(),
             host_screen: c"monitor:DP-1".as_ptr(),
             ..Default::default()
@@ -1852,7 +1848,7 @@ mod tests {
         // SAFETY: as above.
         let wish = unsafe { connect_params(&whole) }.unwrap().screen_wish;
         assert_eq!(wish, Some(ScreenWish::Second));
-        o.struct_size = core::mem::offset_of!(PunktfunkConnectOpts, host_screen) as u32;
+        o.struct_size = core::mem::offset_of!(LilynkConnectOpts, host_screen) as u32;
         // SAFETY: `o` is readable for more than the size it declares.
         let older = unsafe { opts_prefix(&o) }.unwrap();
         assert!(older.host_screen.is_null());
@@ -1862,7 +1858,7 @@ mod tests {
     /// `refresh_hz`'s fraction, and a caller whose `struct_size` ends before it, ask whole.
     #[test]
     fn connect_opts_carry_the_exact_rate() {
-        let mut o = PunktfunkConnectOpts {
+        let mut o = LilynkConnectOpts {
             host: c"127.0.0.1".as_ptr(),
             width: 1920,
             height: 1080,
@@ -1871,13 +1867,13 @@ mod tests {
             ..Default::default()
         };
         // SAFETY: every pointer field is null or a live C-string literal.
-        let mode = |o: &PunktfunkConnectOpts| unsafe { connect_params(o) }.unwrap().mode;
+        let mode = |o: &LilynkConnectOpts| unsafe { connect_params(o) }.unwrap().mode;
         assert_eq!(mode(&o).millihz(), 59_940);
         o.refresh_mhz = 119_880;
         assert_eq!(mode(&o).millihz(), 60_000);
 
         o.refresh_mhz = 59_940;
-        o.struct_size = core::mem::offset_of!(PunktfunkConnectOpts, refresh_mhz) as u32;
+        o.struct_size = core::mem::offset_of!(LilynkConnectOpts, refresh_mhz) as u32;
         // SAFETY: `o` is readable for more than the size it declares.
         let older = unsafe { opts_prefix(&o) }.unwrap();
         assert_eq!(mode(&older).millihz(), 60_000);
@@ -1886,8 +1882,8 @@ mod tests {
     /// `profile_id` reaches the dial; one longer than the wire carries is no ask.
     #[test]
     fn connect_opts_carry_the_profile() {
-        let long = format!("{}\0", "9".repeat(PUNKTFUNK_PROFILE_ID_MAX + 1));
-        let mut o = PunktfunkConnectOpts {
+        let long = format!("{}\0", "9".repeat(LILYNK_PROFILE_ID_MAX + 1));
+        let mut o = LilynkConnectOpts {
             host: c"127.0.0.1".as_ptr(),
             profile_id: c"9a3f1c2b7e40".as_ptr(),
             ..Default::default()
@@ -1912,7 +1908,7 @@ mod tests {
             n.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
         }
         let calls = std::sync::atomic::AtomicU32::new(0);
-        let o = PunktfunkConnectOpts {
+        let o = LilynkConnectOpts {
             host: c"127.0.0.1".as_ptr(),
             on_pending: Some(mark),
             on_pending_ctx: std::ptr::addr_of!(calls).cast_mut().cast(),
@@ -1922,7 +1918,7 @@ mod tests {
         let p = unsafe { connect_params(&o) }.unwrap();
         (p.on_pending.expect("the callback is carried"))();
         assert_eq!(calls.load(std::sync::atomic::Ordering::SeqCst), 1);
-        let none = PunktfunkConnectOpts {
+        let none = LilynkConnectOpts {
             host: c"127.0.0.1".as_ptr(),
             ..Default::default()
         };
@@ -1937,14 +1933,14 @@ mod tests {
     #[test]
     fn connect_opts_carry_the_screens() {
         let asked = [
-            PunktfunkScreen {
+            LilynkScreen {
                 width: 1920,
                 height: 1080,
                 refresh_hz: 60,
                 primary: 1,
                 ..Default::default()
             },
-            PunktfunkScreen {
+            LilynkScreen {
                 index: 1,
                 width: 2560,
                 height: 1440,
@@ -1953,7 +1949,7 @@ mod tests {
                 ..Default::default()
             },
         ];
-        let o = PunktfunkConnectOpts {
+        let o = LilynkConnectOpts {
             host: c"127.0.0.1".as_ptr(),
             screens: asked.as_ptr(),
             screen_count: 2,
@@ -1970,16 +1966,16 @@ mod tests {
         assert!(p.screens.iter().all(|s| s.view.is_none()), "no views");
         // Each view rides with the screen at its place; a zero axis is none.
         let views = [
-            PunktfunkScreenView {
+            LilynkScreenView {
                 width: 0,
                 height: 1080,
             },
-            PunktfunkScreenView {
+            LilynkScreenView {
                 width: 1280,
                 height: 720,
             },
         ];
-        let viewed = PunktfunkConnectOpts {
+        let viewed = LilynkConnectOpts {
             screen_views: views.as_ptr(),
             ..o
         };
@@ -1989,7 +1985,7 @@ mod tests {
             (p.screens[0].view, p.screens[1].view),
             (None, Some((1280, 720)))
         );
-        let one = PunktfunkConnectOpts {
+        let one = LilynkConnectOpts {
             host: c"127.0.0.1".as_ptr(),
             ..Default::default()
         };
@@ -2001,7 +1997,7 @@ mod tests {
     /// The quality reaches the dial as asked; the row's rate and warning come from core.
     #[test]
     fn connect_opts_carry_the_pyrowave_quality() {
-        let o = PunktfunkConnectOpts {
+        let o = LilynkConnectOpts {
             host: c"127.0.0.1".as_ptr(),
             pyrowave_bpp_x100: 120,
             ..Default::default()
@@ -2009,23 +2005,20 @@ mod tests {
         // SAFETY: every pointer field is null or a live C-string literal.
         let p = unsafe { connect_params(&o) }.unwrap();
         assert_eq!(p.pyrowave_bpp_x100, 120);
-        assert_eq!(
-            punktfunk_pyrowave_kbps(1920, 1080, 60, false, 8, 0),
-            199_065
-        );
+        assert_eq!(lilynk_pyrowave_kbps(1920, 1080, 60, false, 8, 0), 199_065);
         let mut line = [0 as std::os::raw::c_char; 160];
         let wifi = lilynk_core::transport::IFACE_KIND_WIFI;
         // SAFETY: `line` is writable for its length.
         let st = unsafe {
-            punktfunk_pyrowave_link_warning(100_000, wifi, 0, line.as_mut_ptr(), line.len())
+            lilynk_pyrowave_link_warning(100_000, wifi, 0, line.as_mut_ptr(), line.len())
         };
-        assert_eq!(st, PunktfunkStatus::Ok);
+        assert_eq!(st, LilynkStatus::Ok);
         // SAFETY: the call above wrote a NUL-terminated string into `line`.
         let said = unsafe { std::ffi::CStr::from_ptr(line.as_ptr()) };
         assert!(said.to_str().unwrap().ends_with("on Wi-Fi."));
         let (mut kind, mut mbps) = (u8::MAX, u32::MAX);
         // SAFETY: both outs are locals; a null `host_ip` asks for the default route.
-        unsafe { punktfunk_local_link_facts(std::ptr::null(), &mut kind, &mut mbps) };
+        unsafe { lilynk_local_link_facts(std::ptr::null(), &mut kind, &mut mbps) };
         assert_ne!(kind, u8::MAX, "the kind is written either way");
     }
 
@@ -2034,17 +2027,17 @@ mod tests {
     #[test]
     fn connect_opts_carry_the_unlock() {
         let secret = *b"open sesame";
-        let mut u = PunktfunkProfileUnlock {
-            kind: PUNKTFUNK_UNLOCK_PASSWORD,
+        let mut u = LilynkProfileUnlock {
+            kind: LILYNK_UNLOCK_PASSWORD,
             stay_signed_in: 1,
-            enroll_alg: PUNKTFUNK_ENROLL_NONE,
+            enroll_alg: LILYNK_ENROLL_NONE,
             reserved: [0; 5],
             secret: secret.as_ptr(),
             secret_len: secret.len(),
             enroll_key: std::ptr::null(),
             enroll_key_len: 0,
         };
-        let mut o = PunktfunkConnectOpts {
+        let mut o = LilynkConnectOpts {
             host: c"127.0.0.1".as_ptr(),
             unlock: &u,
             prompts_unlock: 1,
@@ -2052,7 +2045,7 @@ mod tests {
         };
         // SAFETY: every pointer field is null, a C-string literal, or a live local.
         let unpinned = unsafe { connect_params(&o) }.err();
-        assert_eq!(unpinned, Some(PunktfunkStatus::InvalidArg), "no pin");
+        assert_eq!(unpinned, Some(LilynkStatus::InvalidArg), "no pin");
         let pin = [7u8; 32];
         o.pin_sha256 = pin.as_ptr();
         // SAFETY: as above.
@@ -2060,34 +2053,34 @@ mod tests {
         let got = p.unlock.expect("the unlock is carried");
         assert!(p.prompts_unlock && got.stay_signed_in);
         assert_eq!(*got.secret, secret);
-        for (kind, len) in [(9, secret.len()), (PUNKTFUNK_UNLOCK_PASSWORD, 0)] {
+        for (kind, len) in [(9, secret.len()), (LILYNK_UNLOCK_PASSWORD, 0)] {
             (u.kind, u.secret_len) = (kind, len);
             o.unlock = &u;
             // SAFETY: as above.
             let refused = unsafe { connect_params(&o) }.err();
-            assert_eq!(refused, Some(PunktfunkStatus::InvalidArg));
+            assert_eq!(refused, Some(LilynkStatus::InvalidArg));
         }
-        u = PunktfunkProfileUnlock {
+        u = LilynkProfileUnlock {
             secret: std::ptr::null(),
             secret_len: 4,
-            kind: PUNKTFUNK_UNLOCK_KEY_PROOF,
+            kind: LILYNK_UNLOCK_KEY_PROOF,
             ..u
         };
         o.unlock = &u;
         // SAFETY: as above; the null buffer is refused before any read.
         let refused = unsafe { connect_params(&o) }.err();
-        assert_eq!(refused, Some(PunktfunkStatus::NullPointer));
+        assert_eq!(refused, Some(LilynkStatus::NullPointer));
     }
 
     /// The C builder writes core's message and refuses a seat id that is not lowercase hex.
     #[test]
     fn the_unlock_message_is_cores() {
         let (challenge, dev, boxed) = ([1u8; 32], [0xaa; 32], [0xbb; 32]);
-        let mut out = [0u8; PUNKTFUNK_UNLOCK_MESSAGE_LEN];
+        let mut out = [0u8; LILYNK_UNLOCK_MESSAGE_LEN];
         let seat = c"0123456789abcdef0123456789abcdef";
         // SAFETY: each input is a live 32-byte local or a C-string literal; `out` fits the message.
         let st = unsafe {
-            punktfunk_profile_unlock_message(
+            lilynk_profile_unlock_message(
                 challenge.as_ptr(),
                 seat.as_ptr(),
                 dev.as_ptr(),
@@ -2095,7 +2088,7 @@ mod tests {
                 out.as_mut_ptr(),
             )
         };
-        assert_eq!(st, PunktfunkStatus::Ok);
+        assert_eq!(st, LilynkStatus::Ok);
         let want = lilynk_core::quic::v2::msg::unlock_signed_message(
             &challenge,
             seat.to_str().unwrap(),
@@ -2105,7 +2098,7 @@ mod tests {
         assert_eq!(out, want.unwrap());
         // SAFETY: as above.
         let st = unsafe {
-            punktfunk_profile_unlock_message(
+            lilynk_profile_unlock_message(
                 challenge.as_ptr(),
                 c"0123456789ABCDEF0123456789abcdef".as_ptr(),
                 dev.as_ptr(),
@@ -2113,10 +2106,10 @@ mod tests {
                 out.as_mut_ptr(),
             )
         };
-        assert_eq!(st, PunktfunkStatus::InvalidArg);
+        assert_eq!(st, LilynkStatus::InvalidArg);
         // SAFETY: a null fingerprint is refused before any read.
         let st = unsafe {
-            punktfunk_profile_unlock_message(
+            lilynk_profile_unlock_message(
                 challenge.as_ptr(),
                 seat.as_ptr(),
                 std::ptr::null(),
@@ -2124,18 +2117,18 @@ mod tests {
                 out.as_mut_ptr(),
             )
         };
-        assert_eq!(st, PunktfunkStatus::NullPointer);
+        assert_eq!(st, LilynkStatus::NullPointer);
     }
 
     /// The locked profile's builder writes core's message and refuses an id core refuses.
     #[test]
     fn the_locked_profile_message_is_cores() {
         let (challenge, dev, boxed) = ([1u8; 32], [0xaa; 32], [0xbb; 32]);
-        let mut out = [0u8; PUNKTFUNK_LOCKED_PROFILE_UNLOCK_MESSAGE_LEN];
+        let mut out = [0u8; LILYNK_LOCKED_PROFILE_UNLOCK_MESSAGE_LEN];
         let mut write = |id: &std::ffi::CStr| {
             // SAFETY: each input is a live 32-byte local or a C string; `out` fits the message.
             let st = unsafe {
-                punktfunk_locked_profile_unlock_message(
+                lilynk_locked_profile_unlock_message(
                     challenge.as_ptr(),
                     id.as_ptr(),
                     dev.as_ptr(),
@@ -2151,8 +2144,8 @@ mod tests {
             &dev,
             &boxed,
         );
-        assert_eq!(write(c"9a3f1c2b7e40"), (PunktfunkStatus::Ok, want.unwrap()));
-        assert_eq!(write(c"kid desk").0, PunktfunkStatus::InvalidArg);
+        assert_eq!(write(c"9a3f1c2b7e40"), (LilynkStatus::Ok, want.unwrap()));
+        assert_eq!(write(c"kid desk").0, LilynkStatus::InvalidArg);
     }
 
     /// Size-prefix guard: null/undersized is a status, not a read.
@@ -2160,24 +2153,23 @@ mod tests {
     fn connect_opts_guards_size_prefix() {
         let mut status = 0i32;
         // SAFETY: null `opts` is the documented reported-not-UB case.
-        let c =
-            unsafe { punktfunk_connect_opts(std::ptr::null(), std::ptr::null_mut(), &mut status) };
+        let c = unsafe { lilynk_connect_opts(std::ptr::null(), std::ptr::null_mut(), &mut status) };
         assert!(c.is_null());
-        assert_eq!(status, PunktfunkStatus::NullPointer as i32);
+        assert_eq!(status, LilynkStatus::NullPointer as i32);
 
         // SAFETY: an all-zero struct is a valid value (null pointers, zero scalars).
-        let mut o: PunktfunkConnectOpts = unsafe { std::mem::zeroed() };
+        let mut o: LilynkConnectOpts = unsafe { std::mem::zeroed() };
         o.struct_size = 4; // smaller than CONNECT_OPTS_MIN_SIZE
                            // SAFETY: `o` outlives the call; out-params are null or a live local.
-        let c = unsafe { punktfunk_connect_opts(&o, std::ptr::null_mut(), &mut status) };
+        let c = unsafe { lilynk_connect_opts(&o, std::ptr::null_mut(), &mut status) };
         assert!(c.is_null());
-        assert_eq!(status, PunktfunkStatus::InvalidArg as i32);
+        assert_eq!(status, LilynkStatus::InvalidArg as i32);
 
-        o.struct_size = std::mem::size_of::<PunktfunkConnectOpts>() as u32;
+        o.struct_size = std::mem::size_of::<LilynkConnectOpts>() as u32;
         // SAFETY: as above; the null `host` field is the documented InvalidArg path.
-        let c = unsafe { punktfunk_connect_opts(&o, std::ptr::null_mut(), &mut status) };
+        let c = unsafe { lilynk_connect_opts(&o, std::ptr::null_mut(), &mut status) };
         assert!(c.is_null());
-        assert_eq!(status, PunktfunkStatus::InvalidArg as i32);
+        assert_eq!(status, LilynkStatus::InvalidArg as i32);
     }
 
     #[test]
@@ -2186,10 +2178,9 @@ mod tests {
         let mut key: [std::os::raw::c_char; 2] = [0x5a; 2];
 
         // SAFETY: each array is writable for the one-byte capacity reported to the core.
-        let status =
-            unsafe { punktfunk_generate_identity(cert.as_mut_ptr(), 1, key.as_mut_ptr(), 1) };
+        let status = unsafe { lilynk_generate_identity(cert.as_mut_ptr(), 1, key.as_mut_ptr(), 1) };
 
-        assert_eq!(status, PunktfunkStatus::InvalidArg);
+        assert_eq!(status, LilynkStatus::InvalidArg);
         assert_eq!(cert, [0x5a; 2]);
         assert_eq!(key, [0x5a; 2]);
     }

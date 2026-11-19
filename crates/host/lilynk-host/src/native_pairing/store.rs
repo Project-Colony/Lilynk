@@ -1,4 +1,4 @@
-//! Persistent paired-client store: `punktfunk1-paired.json` under the config dir.
+//! Persistent paired-client store: `lilynk1-paired.json` under the config dir.
 //!
 //! Owns the paired-clients [`Mutex`] and atomic-replace persistence. GameStream
 //! pairing is a separate store. Pending knocks live in [`super::approval`].
@@ -106,7 +106,7 @@ fn mtime(path: &Path) -> Option<std::time::SystemTime> {
 }
 
 fn default_path() -> Result<PathBuf> {
-    Ok(ly_paths::config_dir().join("punktfunk1-paired.json"))
+    Ok(ly_paths::config_dir().join("lilynk1-paired.json"))
 }
 
 /// A store a non-admin planted before the first elevated run is a pre-trusted device.
@@ -144,7 +144,7 @@ impl TrustStore {
     pub(super) fn open(store_path: Option<PathBuf>) -> Result<TrustStore> {
         let (path, read_only) = match (store_path, ly_paths::seat::trust_dir()) {
             (Some(p), _) => (p, false),
-            (None, Some(dir)) => (dir.join("punktfunk1-paired.json"), true),
+            (None, Some(dir)) => (dir.join("lilynk1-paired.json"), true),
             (None, None) => (default_path()?, false),
         };
         Ok(TrustStore::at(path, read_only))
@@ -401,7 +401,7 @@ mod tests {
     #[test]
     fn a_read_only_store_follows_the_box_and_never_writes() {
         let dir = tempfile::tempdir().unwrap();
-        let path = dir.path().join("punktfunk1-paired.json");
+        let path = dir.path().join("lilynk1-paired.json");
         let box_store = TrustStore::at(path.clone(), false);
         box_store.add("TV", "aa").unwrap();
         let seat = TrustStore::at(path.clone(), true);

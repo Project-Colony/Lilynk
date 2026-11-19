@@ -22,12 +22,12 @@ echo "== 5: nowall_720p 120 s, the control =="
 "$HERE/run.sh" nowall_720p 120 > "$OUT/lc-nowall-1.run" 2>&1 && keep lc-nowall-1 nowall_720p
 echo "  done"
 
-# Three runs, not two: a split between two has no majority. PUNKTFUNK_PERF puts the
+# Three runs, not two: a split between two has no majority. LILYNK_PERF puts the
 # host's send-loop percentiles in its log, which is how a standing delay at a low
 # rate is read.
 echo "== 4: wifi_tv_probe_damage 300 s x3, decoder hold, host perf =="
 for r in 1 2 3; do
-  PF_RIG_DECODER_HOLD=1 PUNKTFUNK_PERF=1 "$HERE/run.sh" wifi_tv_probe_damage 300 \
+  PF_RIG_DECODER_HOLD=1 LILYNK_PERF=1 "$HERE/run.sh" wifi_tv_probe_damage 300 \
     > "$OUT/lc-wifi-$r.run" 2>&1 && keep "lc-wifi-$r" wifi_tv_probe_damage
   echo "  run $r done"
 done

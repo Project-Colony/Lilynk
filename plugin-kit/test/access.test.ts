@@ -154,38 +154,38 @@ describe("folder access", () => {
 
 	test("missing counts only inside the sandbox", () => {
 		const missing = `/definitely-missing-lilynk-${process.pid}`;
-		const previous = process.env.PUNKTFUNK_MGMT_UNIX;
+		const previous = process.env.LILYNK_MGMT_UNIX;
 		try {
-			delete process.env.PUNKTFUNK_MGMT_UNIX;
+			delete process.env.LILYNK_MGMT_UNIX;
 			expect(unreachable([missing])).toEqual([]);
-			process.env.PUNKTFUNK_MGMT_UNIX = "/run/punktfunk/host.sock";
+			process.env.LILYNK_MGMT_UNIX = "/run/punktfunk/host.sock";
 			expect(unreachable([missing, missing])).toEqual([missing]);
 		} finally {
-			if (previous === undefined) delete process.env.PUNKTFUNK_MGMT_UNIX;
-			else process.env.PUNKTFUNK_MGMT_UNIX = previous;
+			if (previous === undefined) delete process.env.LILYNK_MGMT_UNIX;
+			else process.env.LILYNK_MGMT_UNIX = previous;
 		}
 	});
 
 	test("a folder asked for by its files keeps that through the check", () => {
 		const missing = `/definitely-missing-lilynk-${process.pid}`;
-		const previous = process.env.PUNKTFUNK_MGMT_UNIX;
+		const previous = process.env.LILYNK_MGMT_UNIX;
 		try {
-			process.env.PUNKTFUNK_MGMT_UNIX = "/run/punktfunk/host.sock";
+			process.env.LILYNK_MGMT_UNIX = "/run/punktfunk/host.sock";
 			expect(unreachable([{ path: missing, files: true }, missing])).toEqual([
 				{ path: missing, files: true },
 			]);
 		} finally {
-			if (previous === undefined) delete process.env.PUNKTFUNK_MGMT_UNIX;
-			else process.env.PUNKTFUNK_MGMT_UNIX = previous;
+			if (previous === undefined) delete process.env.LILYNK_MGMT_UNIX;
+			else process.env.LILYNK_MGMT_UNIX = previous;
 		}
 	});
 
 	test("defineLibraryPlugin asks once for one unreachable set", async () => {
-		const previousConfig = process.env.PUNKTFUNK_CONFIG_DIR;
-		const previousSocket = process.env.PUNKTFUNK_MGMT_UNIX;
+		const previousConfig = process.env.LILYNK_CONFIG_DIR;
+		const previousSocket = process.env.LILYNK_MGMT_UNIX;
 		const config = `${import.meta.dir}/.access-${process.pid}`;
-		process.env.PUNKTFUNK_CONFIG_DIR = config;
-		process.env.PUNKTFUNK_MGMT_UNIX = "/run/punktfunk/host.sock";
+		process.env.LILYNK_CONFIG_DIR = config;
+		process.env.LILYNK_MGMT_UNIX = "/run/punktfunk/host.sock";
 		const posts: unknown[] = [];
 		const plugin = defineLibraryPlugin({
 			name: "access-test",
@@ -228,20 +228,20 @@ describe("folder access", () => {
 				process.emit("SIGTERM", "SIGTERM");
 				await running;
 			}
-			if (previousConfig === undefined) delete process.env.PUNKTFUNK_CONFIG_DIR;
-			else process.env.PUNKTFUNK_CONFIG_DIR = previousConfig;
-			if (previousSocket === undefined) delete process.env.PUNKTFUNK_MGMT_UNIX;
-			else process.env.PUNKTFUNK_MGMT_UNIX = previousSocket;
+			if (previousConfig === undefined) delete process.env.LILYNK_CONFIG_DIR;
+			else process.env.LILYNK_CONFIG_DIR = previousConfig;
+			if (previousSocket === undefined) delete process.env.LILYNK_MGMT_UNIX;
+			else process.env.LILYNK_MGMT_UNIX = previousSocket;
 			fs.rmSync(config, { recursive: true, force: true });
 		}
 	});
 
 	test("a refused request still lets the scan reach the library", async () => {
-		const previousConfig = process.env.PUNKTFUNK_CONFIG_DIR;
-		const previousSocket = process.env.PUNKTFUNK_MGMT_UNIX;
+		const previousConfig = process.env.LILYNK_CONFIG_DIR;
+		const previousSocket = process.env.LILYNK_MGMT_UNIX;
 		const config = `${import.meta.dir}/.access-refused-${process.pid}`;
-		process.env.PUNKTFUNK_CONFIG_DIR = config;
-		process.env.PUNKTFUNK_MGMT_UNIX = "/run/punktfunk/host.sock";
+		process.env.LILYNK_CONFIG_DIR = config;
+		process.env.LILYNK_MGMT_UNIX = "/run/punktfunk/host.sock";
 		const reconciles: string[] = [];
 		const plugin = defineLibraryPlugin({
 			name: "refused-test",
@@ -279,10 +279,10 @@ describe("folder access", () => {
 				process.emit("SIGTERM", "SIGTERM");
 				await running;
 			}
-			if (previousConfig === undefined) delete process.env.PUNKTFUNK_CONFIG_DIR;
-			else process.env.PUNKTFUNK_CONFIG_DIR = previousConfig;
-			if (previousSocket === undefined) delete process.env.PUNKTFUNK_MGMT_UNIX;
-			else process.env.PUNKTFUNK_MGMT_UNIX = previousSocket;
+			if (previousConfig === undefined) delete process.env.LILYNK_CONFIG_DIR;
+			else process.env.LILYNK_CONFIG_DIR = previousConfig;
+			if (previousSocket === undefined) delete process.env.LILYNK_MGMT_UNIX;
+			else process.env.LILYNK_MGMT_UNIX = previousSocket;
 			fs.rmSync(config, { recursive: true, force: true });
 		}
 	});

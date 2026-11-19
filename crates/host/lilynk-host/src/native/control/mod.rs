@@ -427,7 +427,7 @@ struct ControlTask {
     /// An RFI ask is a frame parity could not repair; the report that closes the window
     /// carries only what parity did repair.
     unrecovered: UnrecoveredRun,
-    /// `None` when `PUNKTFUNK_GSO` pins the offload on: an A/B run must not downshift itself.
+    /// `None` when `LILYNK_GSO` pins the offload on: an A/B run must not downshift itself.
     offload_guard: Option<OffloadGuard>,
     /// The link's loss over a horizon one report window cannot see, which is what sizes
     /// parity against the frame this session's budget buys.
@@ -685,7 +685,7 @@ impl ControlTask {
             fec_pct(shared.fec_target.load(Ordering::Relaxed)),
             shared.live_bitrate.load(Ordering::Relaxed),
         );
-        // No-op when FEC is pinned (`PUNKTFUNK_FEC_PCT`).
+        // No-op when FEC is pinned (`LILYNK_FEC_PCT`).
         if self.task.adaptive_fec {
             self.adapt_fec(fb, unrecovered_run);
         }
@@ -1102,7 +1102,7 @@ struct OffloadGuard {
 }
 
 impl OffloadGuard {
-    /// One report window. Built only when the offload is not pinned by `PUNKTFUNK_GSO`.
+    /// One report window. Built only when the offload is not pinned by `LILYNK_GSO`.
     fn on_report(&mut self, loss_ppm: u32) {
         if loss_ppm < OFFLOAD_LOSS_PPM {
             self.over = 0;
@@ -1119,7 +1119,7 @@ impl OffloadGuard {
                 loss_ppm,
                 windows = self.over,
                 "UDP send offload looks to be costing delivered throughput on this path — \
-                 every packet leaves on its own for the rest of the session (PUNKTFUNK_GSO=1 \
+                 every packet leaves on its own for the rest of the session (LILYNK_GSO=1 \
                  pins it on)"
             );
         }

@@ -167,7 +167,7 @@ fn open_transport(idx: u8, gamepad_only: bool) -> Result<DsTransport> {
 
 /// DualSense [`PadProto`]: transport + [`DsState`] + handshake. Slot table / heartbeat live in [`UhidManager`].
 pub struct DsLinuxProto {
-    /// Steam back-grip fold. DualSense has no HID slot; `PUNKTFUNK_STEAM_REMAP=paddles=…`, default drop.
+    /// Steam back-grip fold. DualSense has no HID slot; `LILYNK_STEAM_REMAP=paddles=…`, default drop.
     remap: crate::steam_remap::RemapConfig,
     /// The session may not move the pointer: its pads' touchpads move none.
     gamepad_only: bool,
@@ -258,7 +258,7 @@ impl PadProto for DsLinuxProto {
     }
 }
 
-/// Session DualSense pads (`PUNKTFUNK_GAMEPAD=dualsense`). Analog of [`GamepadManager`](super::gamepad::GamepadManager).
+/// Session DualSense pads (`LILYNK_GAMEPAD=dualsense`). Analog of [`GamepadManager`](super::gamepad::GamepadManager).
 ///
 /// Touch/motion arrive on `apply_rich`, buttons on `handle`. [`UhidManager`] merges and heartbeats
 /// report `0x01` — `hid-playstation`/Proton/SDL treat a multi-second gap as unplug.
@@ -325,7 +325,7 @@ impl PadProto for DsEdgeLinuxProto {
     }
 }
 
-/// Session Edge pads: `PUNKTFUNK_GAMEPAD=edge`, or a client's paddle-bearing pad kind.
+/// Session Edge pads: `LILYNK_GAMEPAD=edge`, or a client's paddle-bearing pad kind.
 pub type DualSenseEdgeManager = UhidManager<DsEdgeLinuxProto>;
 
 #[cfg(test)]

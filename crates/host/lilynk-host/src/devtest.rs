@@ -153,8 +153,8 @@ pub fn input_test() -> Result<()> {
         y,
         flags: 0,
     };
-    // `PUNKTFUNK_INPUT_TEST_ABS=WxH`: MouseMoveAbs (touch → abs). `xdotool getmouselocation` should jump.
-    if let Ok(dims) = std::env::var("PUNKTFUNK_INPUT_TEST_ABS") {
+    // `LILYNK_INPUT_TEST_ABS=WxH`: MouseMoveAbs (touch → abs). `xdotool getmouselocation` should jump.
+    if let Ok(dims) = std::env::var("LILYNK_INPUT_TEST_ABS") {
         let (w, h) = dims
             .split_once('x')
             .and_then(|(w, h)| Some((w.parse::<u32>().ok()?, h.parse::<u32>().ok()?)))
@@ -304,7 +304,7 @@ pub fn hdr_probe() -> Result<()> {
     let compositor = crate::vdisplay::detect().ok();
     println!("monitor in BT.2100 (HDR) colour mode: {monitor_hdr}");
     println!("gamescope offers 10-bit PQ capture:   {gs_binary_hdr}");
-    println!("PUNKTFUNK_GAMESCOPE_HDR:              {gs_knob}");
+    println!("LILYNK_GAMESCOPE_HDR:              {gs_knob}");
     // In-node cursor lets the session take the zero-CSC encode source; otherwise a
     // full-frame blend. Invisible until you compare two streams, so print it here.
     println!(
@@ -319,14 +319,14 @@ pub fn hdr_probe() -> Result<()> {
         crate::capture::capturer_supports_hdr_for(compositor, None, &encoder)
     );
     println!(
-        "GameStream HDR (PUNKTFUNK_10BIT + the launch's display + encoder): desktop {}, game {}",
+        "GameStream HDR (LILYNK_10BIT + the launch's display + encoder): desktop {}, game {}",
         crate::gamestream::launch_hdr_capable(None, false, &encoder),
         crate::gamestream::launch_hdr_capable(None, true, &encoder)
     );
     Ok(())
 }
 
-/// Connector names `PUNKTFUNK_CAPTURE_MONITOR` takes — available before the mgmt API is up.
+/// Connector names `LILYNK_CAPTURE_MONITOR` takes — available before the mgmt API is up.
 #[cfg(target_os = "linux")]
 pub fn list_monitors() -> Result<()> {
     let compositor = crate::vdisplay::detect()?;
@@ -481,7 +481,7 @@ pub fn pad_sink_test(args: &[String]) -> Result<()> {
 /// Proves what UHID cannot: `vhci_hcd` + `hid-playstation` bind, `snd-usb-audio` ALSA card
 /// (GE-Proton `snd_card_next`; a minted PipeWire node is never that), USB parent so wine
 /// walks HID → `usb_device` and gets a non-null ContainerId, then split_quad samples.
-/// Ignores `PUNKTFUNK_DUALSENSE_USBIP` — this command is the opt-in. `--pad N`, `--seconds N`.
+/// Ignores `LILYNK_DUALSENSE_USBIP` — this command is the opt-in. `--pad N`, `--seconds N`.
 #[cfg(target_os = "linux")]
 pub fn pad_usbip_test(args: &[String]) -> Result<()> {
     use std::time::Duration;
@@ -604,22 +604,20 @@ pub fn switchpro_test(args: &[String]) -> Result<()> {
 
 /// Mirror a named physical monitor and pull frames (`design/per-monitor-portal-capture.md`).
 ///
-/// Same display-backend open as a session (`PUNKTFUNK_CAPTURE_MONITOR` routes to mirror).
+/// Same display-backend open as a session (`LILYNK_CAPTURE_MONITOR` routes to mirror).
 /// Proves the compositor accepted a record request for that head and it produces pixels
 /// at its own size. `--monitor <CONNECTOR>` (else the pin); `--seconds N`.
 #[cfg(target_os = "linux")]
 pub fn mirror_test(args: &[String]) -> Result<()> {
     use std::time::{Duration, Instant};
     let secs: u64 = flag_or(args, "--seconds", 5);
-    // `--monitor` cannot set `PUNKTFUNK_CAPTURE_MONITOR`: config is snapshotted at
+    // `--monitor` cannot set `LILYNK_CAPTURE_MONITOR`: config is snapshotted at
     // startup. Explicit connector → `open_mirror`; unset → pin / production `open_for`.
     let explicit = flag(args, "--monitor").map(str::to_owned);
     let want = explicit
         .clone()
         .or_else(crate::vdisplay::capture_monitor)
-        .context(
-            "no monitor named — pass --monitor <CONNECTOR> or set PUNKTFUNK_CAPTURE_MONITOR",
-        )?;
+        .context("no monitor named — pass --monitor <CONNECTOR> or set LILYNK_CAPTURE_MONITOR")?;
 
     let compositor = crate::vdisplay::detect()?;
     let monitors = crate::vdisplay::monitors::list(compositor)?;
@@ -791,7 +789,7 @@ pub fn anchor_test(args: &[String]) -> Result<()> {
         // WlrVirtual (Sway) would green-pass with no region log. Need a compositor that speaks EI.
         anyhow::bail!(
             "input backend is {backend:?}, not libei — the absolute-region ladder only exists on \
-             the libei backend; set PUNKTFUNK_INPUT_BACKEND=libei"
+             the libei backend; set LILYNK_INPUT_BACKEND=libei"
         );
     }
     let mut inj = crate::inject::open(backend)?;

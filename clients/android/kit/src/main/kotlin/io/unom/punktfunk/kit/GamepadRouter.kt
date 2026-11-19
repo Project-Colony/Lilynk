@@ -862,7 +862,7 @@ class GamepadRouter(
         /** Mirror of `lilynk-core::input::MAX_PADS` — wire pad indices 0..15. */
         const val MAX_PADS = 16
 
-        /** The C ABI's `PUNKTFUNK_SC2_GATE_*` bits, for [NativeBridge.nativeSetSc2Gate]. */
+        /** The C ABI's `LILYNK_SC2_GATE_*` bits, for [NativeBridge.nativeSetSc2Gate]. */
         const val SC2_GATE_MASKED = 1
         const val SC2_GATE_SYSTEM_LOCAL = 2
         const val SC2_GATE_CHORDS = 4

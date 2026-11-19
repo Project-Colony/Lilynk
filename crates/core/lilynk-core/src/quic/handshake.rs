@@ -15,7 +15,7 @@ pub struct Hello {
     /// Preferred compositor (`Auto` = host decides). Honored only if that backend is available;
     /// the resolved choice is [`Welcome::compositor`]. Omitted by older clients → `Auto`.
     pub compositor: CompositorPref,
-    /// Preferred virtual gamepad (`Auto` = host `PUNKTFUNK_GAMEPAD`, else X-Box 360). Echoed in
+    /// Preferred virtual gamepad (`Auto` = host `LILYNK_GAMEPAD`, else X-Box 360). Echoed in
     /// [`Welcome::gamepad`]. Omitted by older clients → `Auto`.
     pub gamepad: GamepadPref,
     /// Requested encoder bitrate, kbps. `0` = host default. Clamped and echoed in

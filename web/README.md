@@ -22,7 +22,7 @@ bun run dev               # http://localhost:47992
 
 # The dev server proxies /api → https://127.0.0.1:47990 (the host's mgmt API; it serves HTTPS
 # with the host's self-signed identity cert — the dev proxy uses `secure: false`).
-# Point it elsewhere: PUNKTFUNK_MGMT_URL=https://<host>:47990 bun run dev
+# Point it elsewhere: LILYNK_MGMT_URL=https://<host>:47990 bun run dev
 ```
 
 Start a host with the management API up:
@@ -35,7 +35,7 @@ WAYLAND_DISPLAY=wayland-kde XDG_CURRENT_DESKTOP=KDE \
 # loopback :47990, no token (a token is mandatory for non-loopback binds).
 ```
 
-The management token is **server-side only** — set `PUNKTFUNK_MGMT_TOKEN` in the console's
+The management token is **server-side only** — set `LILYNK_MGMT_TOKEN` in the console's
 environment and the BFF injects it when proxying (`server/routes/api/[...].ts`). It never reaches
 the browser, so there is no token field in the UI; the browser only ever holds the session cookie.
 
@@ -52,12 +52,12 @@ LAN console.)
 ```sh
 bun run build             # → .output/  (Nitro `bun` preset + our Bun.serve TLS entry)
 PORT=47992 HOST=0.0.0.0 \
-  PUNKTFUNK_UI_PASSWORD=… PUNKTFUNK_MGMT_TOKEN=… \
-  PUNKTFUNK_MGMT_URL=https://127.0.0.1:47990 \
-  PUNKTFUNK_UI_TLS_CERT=~/.config/punktfunk/cert.pem \
-  PUNKTFUNK_UI_TLS_KEY=~/.config/punktfunk/key.pem PUNKTFUNK_UI_SECURE=1 \
+  LILYNK_UI_PASSWORD=… LILYNK_MGMT_TOKEN=… \
+  LILYNK_MGMT_URL=https://127.0.0.1:47990 \
+  LILYNK_UI_TLS_CERT=~/.config/punktfunk/cert.pem \
+  LILYNK_UI_TLS_KEY=~/.config/punktfunk/key.pem LILYNK_UI_SECURE=1 \
   bun run start           # = bun run .output/server/index.mjs
-# PUNKTFUNK_UI_TLS_* unset ⇒ plain HTTP (local dev); both set ⇒ HTTPS (HTTP/1.1 over TLS).
+# LILYNK_UI_TLS_* unset ⇒ plain HTTP (local dev); both set ⇒ HTTPS (HTTP/1.1 over TLS).
 # Naming cert.pem/key.pem serves native-cert.pem/native-key.pem instead when both sit beside them
 # (the identity split — nitro-entry/tls-paths.mjs); the legacy pair is the fallback, not the target.
 # The host's self-signed mgmt cert is accepted only for the proxy's loopback hop, scoped in code
@@ -73,16 +73,16 @@ Run it on the same box as the host; it serves the console over HTTPS on `:47992`
 
 Single-user, login-gated. Config via env (see `.env.example`):
 
-- The console requires a **login**, checked against `PUNKTFUNK_UI_PASSWORD_HASH` (salted
+- The console requires a **login**, checked against `LILYNK_UI_PASSWORD_HASH` (salted
   argon2id, `Bun.password`). On success the server sets a **sealed session cookie** (h3
   `useSession`, AES-GCM). `server/middleware/auth.ts` gates *every* request — pages redirect to
   `/login`, `/api` returns 401 — and **fails closed** (503) when no password is configured.
-- `PUNKTFUNK_UI_PASSWORD` (clear) still works for one release and is also the reset path: the
+- `LILYNK_UI_PASSWORD` (clear) still works for one release and is also the reset path: the
   first sign-in with it rewrites the password file as a hash, 0600, temp-file-and-rename.
 - The **bearer-token admin surface of the management API is loopback-only** — the host honors a
   bearer token only from a loopback peer, so the admin API is never LAN-exposed. The web server
-  holds `PUNKTFUNK_MGMT_TOKEN` server-side and injects it when proxying `/api/**` →
-  `PUNKTFUNK_MGMT_URL` (loopback; `server/routes/api/[...].ts`). **The token never reaches the
+  holds `LILYNK_MGMT_TOKEN` server-side and injects it when proxying `/api/**` →
+  `LILYNK_MGMT_URL` (loopback; `server/routes/api/[...].ts`). **The token never reaches the
   browser**; the browser only ever holds the session cookie. (The host *also* binds the
   **read-only** surface — host status + the game library — to the LAN so paired native clients can
   fetch it directly over mTLS; that path uses client certs, not the token, and never touches this
@@ -90,7 +90,7 @@ Single-user, login-gated. Config via env (see `.env.example`):
 
 So: `browser ──password──▶ web server (session cookie) ──mgmt token, server-side──▶ mgmt API`.
 Run the host with a matching token: `cargo run -rp lilynk-host -- serve` +
-`PUNKTFUNK_MGMT_TOKEN=…` (or `--mgmt-token …`). `vite dev` has no gate (localhost-only) and
+`LILYNK_MGMT_TOKEN=…` (or `--mgmt-token …`). `vite dev` has no gate (localhost-only) and
 proxies straight to the loopback mgmt API.
 
 > Toolchain notes (load-bearing): TanStack Start's `start-plugin-core` peer-requires

@@ -371,7 +371,7 @@ fn omarchy_steps(_facts: &Facts, choices: &Choices) -> Vec<Step> {
     }
     let cmd = format!(
         "lilynk-omarchy setup --groups={} --cert={} --toasts={} --idle-guard={} --theme={}",
-        bit(choices.punktfunk_group),
+        bit(choices.lilynk_group),
         bit(choices.console_cert),
         bit(choices.omarchy_toasts),
         bit(choices.omarchy_idle),
@@ -404,7 +404,7 @@ fn conflict_steps(facts: &Facts, choices: &Choices) -> Vec<Step> {
     let mut steps = vec![Step::note(Level::Warn, t::setup_conflict_active())];
     if choices.move_mgmt_port {
         steps.push(Step::set_env(
-            "PUNKTFUNK_MGMT_BIND",
+            "LILYNK_MGMT_BIND",
             format!("0.0.0.0:{}", choices.mgmt_port),
         ));
         steps.push(Step::note(
@@ -440,9 +440,9 @@ fn group_steps(facts: &Facts, choices: &Choices) -> Vec<Step> {
     } else {
         steps.push(Step::run(r#"sudo usermod -aG input "$USER""#));
     }
-    if choices.punktfunk_group {
-        if facts.in_punktfunk_group {
-            steps.push(Step::note(Level::Ok, t::setup_groups_punktfunk_already()));
+    if choices.lilynk_group {
+        if facts.in_lilynk_group {
+            steps.push(Step::note(Level::Ok, t::setup_groups_lilynk_already()));
         } else {
             steps.push(Step::run(r#"sudo usermod -aG punktfunk "$USER""#));
         }
@@ -454,7 +454,7 @@ fn option_steps(facts: &Facts, choices: &Choices) -> Vec<Step> {
     let mut steps = vec![];
     // Always written, never conditional: the line is what tells web-init.sh this box has already
     // answered the question, so an upgrade never has to guess the console's reach for it.
-    steps.push(Step::set_env("PUNKTFUNK_UI_BIND", choices.web_bind.clone()));
+    steps.push(Step::set_env("LILYNK_UI_BIND", choices.web_bind.clone()));
     if choices.gamestream {
         if facts.sunshine_active {
             steps.push(Step::note(Level::Warn, t::setup_gamestream_conflict()));
@@ -468,7 +468,7 @@ fn option_steps(facts: &Facts, choices: &Choices) -> Vec<Step> {
     // brings its own. A seat that is merely not logged in (ssh) keeps the host's detection.
     if !facts.graphical_seat && !facts.desktop_sessions && !facts.couch_box {
         steps.push(Step::note(Level::Ok, t::setup_headless_gamescope()));
-        steps.push(Step::set_env("PUNKTFUNK_COMPOSITOR", "gamescope"));
+        steps.push(Step::set_env("LILYNK_COMPOSITOR", "gamescope"));
     }
     steps
 }

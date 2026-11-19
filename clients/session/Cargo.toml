@@ -16,7 +16,7 @@ path = "src/main.rs"
 default = ["ui", "pyrowave"]
 # PyroWave client decode (the wired-LAN wavelet codec) — enables the decode backend + the
 # planar present path. ON by default; each session still opts in explicitly (the Settings
-# codec pick, or PUNKTFUNK_PREFER_PYROWAVE=1). The Windows ARM64 leg builds
+# codec pick, or LILYNK_PREFER_PYROWAVE=1). The Windows ARM64 leg builds
 # --no-default-features and so skips it — note that also drops `ui` (the Skia console/OSD),
 # not just pyrowave; hardware video decode itself (D3D11VA / Vulkan Video) is unaffected.
 pyrowave = ["ly-client-core/pyrowave", "ly-presenter/pyrowave"]
@@ -36,7 +36,7 @@ ly-client-core = { path = "../../crates/client/ly-client-core", default-features
 lilynk-core = { path = "../../crates/core/lilynk-core", features = ["quic"] }
 # `os_languages()`: the language the console's text follows; `client` for its own lines.
 ly-l10n = { path = "../../l10n", features = ["client", "os"] }
-# The fake-library dev hook (`PUNKTFUNK_FAKE_LIBRARY`, browse mode) parses GameEntry JSON, and
+# The fake-library dev hook (`LILYNK_FAKE_LIBRARY`, browse mode) parses GameEntry JSON, and
 # a preset the console saves arrives with its overrides as JSON.
 serde_json = { version = "1", optional = true }
 tracing = "0.1"

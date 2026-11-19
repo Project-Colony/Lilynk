@@ -100,7 +100,7 @@ pub async fn available_cursor_modes(proxy: &Screencast) -> ashpd::Result<BitFlag
 
 /// `Metadata` when the session has a cursor channel (the client or encoder
 /// draws, so the compositor must not burn the pointer in), else `Embedded`.
-/// `PUNKTFUNK_PORTAL_CURSOR_MODE` overrides both. `backend` is the log line only.
+/// `LILYNK_PORTAL_CURSOR_MODE` overrides both. `backend` is the log line only.
 fn want(hw_cursor: bool, backend: &str) -> Mode {
     let negotiated = if hw_cursor {
         Mode::Metadata
@@ -118,7 +118,7 @@ fn want(hw_cursor: bool, backend: &str) -> Mode {
                 backend,
                 pinned = pinned.name(),
                 negotiated = negotiated.name(),
-                "ScreenCast: cursor mode pinned by PUNKTFUNK_PORTAL_CURSOR_MODE"
+                "ScreenCast: cursor mode pinned by LILYNK_PORTAL_CURSOR_MODE"
             );
             pinned
         }
@@ -127,7 +127,7 @@ fn want(hw_cursor: bool, backend: &str) -> Mode {
                 backend,
                 value = raw,
                 negotiated = negotiated.name(),
-                "ScreenCast: unrecognised PUNKTFUNK_PORTAL_CURSOR_MODE (want auto|hidden|embedded|\
+                "ScreenCast: unrecognised LILYNK_PORTAL_CURSOR_MODE (want auto|hidden|embedded|\
                  metadata) — ignoring"
             );
             negotiated

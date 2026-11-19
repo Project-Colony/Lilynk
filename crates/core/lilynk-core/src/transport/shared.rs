@@ -678,19 +678,19 @@ impl Transport for ClientMedia {
     }
 }
 
-/// `PUNKTFUNK_GSO` set to anything but `0`: the offload is pinned on for an A/B, and a loss
+/// `LILYNK_GSO` set to anything but `0`: the offload is pinned on for an A/B, and a loss
 /// guard must stand down or it downshifts the run it is measuring.
 pub fn offload_pinned() -> bool {
-    std::env::var_os("PUNKTFUNK_GSO").is_some_and(|v| v != "0")
+    std::env::var_os("LILYNK_GSO").is_some_and(|v| v != "0")
 }
 
-/// `PUNKTFUNK_GSO=0`: the operator's off switch; GSO is on wherever the path has it.
+/// `LILYNK_GSO=0`: the operator's off switch; GSO is on wherever the path has it.
 fn gso_allowed() -> bool {
     static ALLOWED: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
     *ALLOWED.get_or_init(|| {
-        let off = crate::env_on("PUNKTFUNK_GSO") == Some(false);
+        let off = crate::env_on("LILYNK_GSO") == Some(false);
         if off {
-            tracing::info!("PUNKTFUNK_GSO=0: media leaves one packet per send");
+            tracing::info!("LILYNK_GSO=0: media leaves one packet per send");
         }
         !off
     })
@@ -785,7 +785,7 @@ impl MediaSender {
         })
     }
 
-    /// Share the offload switch: `false` sends every packet on its own, as `PUNKTFUNK_GSO=0`
+    /// Share the offload switch: `false` sends every packet on its own, as `LILYNK_GSO=0`
     /// does, for the rest of the session.
     pub fn set_offload_switch(&mut self, switch: Arc<AtomicBool>) {
         self.offload = switch;
@@ -917,7 +917,7 @@ impl Transport for MediaSender {
     /// Runs of equal-size packets leave as one offloaded send ([`Self::transmit`]), each run
     /// within the platform's segment limit and under the UDP payload bound of either IP family;
     /// the last packet of a run may be shorter. An oversize run is `EMSGSIZE`, which quinn-udp
-    /// reports as sent. With `PUNKTFUNK_GSO=0`, or once the session's loss guard cleared the
+    /// reports as sent. With `LILYNK_GSO=0`, or once the session's loss guard cleared the
     /// switch, packets leave one by one.
     fn send_gso(&self, packets: &[&[u8]]) -> std::io::Result<usize> {
         const GSO_MAX_PAYLOAD: usize = 65535 - 40 - 8;
@@ -1585,11 +1585,11 @@ mod tests {
             }
         }
 
-        /// `PUNKTFUNK_DSCP=0` leaves every packet bare: [`marks_reach_the_wire`] in a process
+        /// `LILYNK_DSCP=0` leaves every packet bare: [`marks_reach_the_wire`] in a process
         /// started with it.
         #[test]
         fn the_kill_switch_unmarks_the_wire() {
-            if std::env::var_os("PUNKTFUNK_DSCP").is_some() {
+            if std::env::var_os("LILYNK_DSCP").is_some() {
                 return;
             }
             let out = std::process::Command::new(std::env::current_exe().unwrap())
@@ -1597,7 +1597,7 @@ mod tests {
                     "--exact",
                     "transport::shared::tests::marks::marks_reach_the_wire",
                 ])
-                .env("PUNKTFUNK_DSCP", "0")
+                .env("LILYNK_DSCP", "0")
                 .output()
                 .unwrap();
             let stdout = String::from_utf8_lossy(&out.stdout);

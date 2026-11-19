@@ -1,9 +1,9 @@
 # Apple client CI **and** distribution — everything that runs on the self-hosted macOS runner
 # (home-mac-mini-1, host mode; see scripts/ci/setup-macos-runner.sh), in dependency order:
 #
-#   swift        — build the Rust core into PunktfunkCore.xcframework, then build + test the Swift
+#   swift        — build the Rust core into LilynkCore.xcframework, then build + test the Swift
 #                  package. Network-dependent tests (RemoteFirstLightTests) self-skip without
-#                  PUNKTFUNK_REMOTE_HOST. Runs on pushes, tags AND pull requests labelled
+#                  LILYNK_REMOTE_HOST. Runs on pushes, tags AND pull requests labelled
 #                  `ci:apple` or `ci:all`.
 #   distribute   — needs: swift. The signed/notarized artifacts:
 #                    macOS (Developer ID) -> sandboxed, signed, notarized + stapled .dmg, attached
@@ -251,7 +251,7 @@ jobs:
           command -v cmake >/dev/null || "$BREW" install cmake
           echo "$BREW_BIN" >> "$GITHUB_PATH"
 
-      - name: Build PunktfunkCore.xcframework (mac + iOS + tvOS + visionOS slices)
+      - name: Build LilynkCore.xcframework (mac + iOS + tvOS + visionOS slices)
         # iOS, tvOS and visionOS slices on purpose: the scheme builds below need them. A rebuild replaces
         # the whole xcframework and drops any slice not asked for, so this must stay in step with
         # them. The bundle is parked per commit, so distribute and screenshots copy it instead.
@@ -260,7 +260,7 @@ jobs:
       - name: Metal toolchain (a separate Xcode component since Xcode 26)
         run: sh scripts/ci/ensure-metal-toolchain.sh
 
-      - name: Build (PunktfunkKit + PunktfunkClient app shell)
+      - name: Build (LilynkKit + LilynkClient app shell)
         working-directory: clients/apple
         run: swift build
 
@@ -425,7 +425,7 @@ jobs:
           fi
           echo "disk after prune:"; df -h /System/Volumes/Data | tail -1
 
-      - name: Build PunktfunkCore.xcframework (mac + iOS + tvOS + visionOS)
+      - name: Build LilynkCore.xcframework (mac + iOS + tvOS + visionOS)
         # The `swift` job parked this commit's bundle on the runner, so this copies it in. Built on
         # canary too, so the tvOS archive/upload below runs on the same track as iOS/macOS.
         run: sh scripts/ci/mac-xcframework.sh
@@ -556,7 +556,7 @@ jobs:
           # Separate archive from the Developer ID one above: App Store needs a signed, entitled
           # archive that -exportArchive can re-sign for distribution, not the unsigned-then-codesign
           # DMG path. Archive with AUTOMATIC signing (development), not a manually-specified
-          # profile: the SwiftPM resource bundle (PunktfunkKit_PunktfunkKit) is a product type that
+          # profile: the SwiftPM resource bundle (LilynkKit_LilynkKit) is a product type that
           # cannot carry a provisioning profile, and a global PROVISIONING_PROFILE_SPECIFIER (here)
           # or an sdk-scoped one (iOS/tvOS) lands on it and fails the archive ("does not support
           # provisioning profiles"). Automatic signing assigns a profile only to the app and leaves
@@ -622,7 +622,7 @@ jobs:
         continue-on-error: true
         run: |
           # Archive with AUTOMATIC signing (development) — see the macOS App Store step for the full
-          # rationale. The SwiftPM resource bundle (PunktfunkKit_PunktfunkKit) builds for iphoneos,
+          # rationale. The SwiftPM resource bundle (LilynkKit_LilynkKit) builds for iphoneos,
           # so even an sdk-scoped PROVISIONING_PROFILE_SPECIFIER matches it and fails the archive
           # ("does not support provisioning profiles"). Automatic signing profiles only the app and
           # leaves the resource bundle (and the macOS-host macro plugins) alone.
@@ -638,7 +638,7 @@ jobs:
           osascript -e 'tell application "Xcode" to quit' >/dev/null 2>&1 || true
           pkill -x Xcode 2>/dev/null || true
           PROFILE="Punktfunk iOS App Store Distribution"
-          # The embedded PunktfunkWidgetsExtension (bundle io.unom.punktfunk.widgets) is a second
+          # The embedded LilynkWidgetsExtension (bundle io.unom.punktfunk.widgets) is a second
           # distribution artifact in the .ipa, so manual signing must map its App ID to its own
           # App Store profile too — else exportArchive fails ("no profile for io.unom.punktfunk.widgets").
           WIDGET_PROFILE="Punktfunk iOS Widgets App Store Distribution"
@@ -769,7 +769,7 @@ jobs:
         continue-on-error: true
         run: |
           # Archive with AUTOMATIC signing (development) — see the macOS App Store step. The SwiftPM
-          # resource bundle (PunktfunkKit_PunktfunkKit) builds for appletvos and rejects an
+          # resource bundle (LilynkKit_LilynkKit) builds for appletvos and rejects an
           # sdk-scoped profile; Automatic signing profiles only the app and
           # leaves the resource bundle + the macOS-host macro plugins (OnceMacro/SwizzlingMacro/
           # AssociationMacro) alone. -allowProvisioningUpdates lets Xcode sync the App ID
@@ -936,7 +936,7 @@ jobs:
               -mtime +7 -exec rm -rf {} + 2>/dev/null || true
           fi
 
-      - name: Build PunktfunkCore.xcframework (mac + iOS + tvOS slices)
+      - name: Build LilynkCore.xcframework (mac + iOS + tvOS slices)
         run: sh scripts/ci/mac-xcframework.sh
 
       - name: Metal toolchain (a separate Xcode component since Xcode 26)

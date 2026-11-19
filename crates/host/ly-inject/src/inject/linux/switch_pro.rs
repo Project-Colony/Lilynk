@@ -155,7 +155,7 @@ impl SwitchPad {
 /// Switch Pro [`PadProto`]: UHID open, [`SwitchState`] mappers, probe `service`.
 /// Slot table / unplug / heartbeat / dedup live in [`UhidManager`].
 pub struct SwitchProProto {
-    /// Steam back-grip fold. A Pro Controller has no paddle slot; `PUNKTFUNK_STEAM_REMAP=paddles=…`, default drop.
+    /// Steam back-grip fold. A Pro Controller has no paddle slot; `LILYNK_STEAM_REMAP=paddles=…`, default drop.
     remap: crate::steam_remap::RemapConfig,
 }
 
@@ -211,7 +211,7 @@ impl PadProto for SwitchProProto {
     }
 }
 
-/// Session Switch Pro pads (`PUNKTFUNK_GAMEPAD=switchpro`, or a Nintendo-family per-pad kind).
+/// Session Switch Pro pads (`LILYNK_GAMEPAD=switchpro`, or a Nintendo-family per-pad kind).
 pub type SwitchProManager = UhidManager<SwitchProProto>;
 
 /// A Joy-Con pair: both halves of one pad slot. The left half drives the low motor, the right
@@ -278,7 +278,7 @@ impl PadProto for JoyConPairProto {
     }
 }
 
-/// Session Joy-Con pairs (a Joy-Con pair client, or `PUNKTFUNK_GAMEPAD=joyconpair`).
+/// Session Joy-Con pairs (a Joy-Con pair client, or `LILYNK_GAMEPAD=joyconpair`).
 pub type JoyConPairManager = UhidManager<JoyConPairProto>;
 
 #[cfg(test)]

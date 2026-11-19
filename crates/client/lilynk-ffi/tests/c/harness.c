@@ -14,10 +14,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-static PunktfunkConfig make_config(uint32_t role, uint32_t drop_period) {
-    PunktfunkConfig c;
+static LilynkConfig make_config(uint32_t role, uint32_t drop_period) {
+    LilynkConfig c;
     memset(&c, 0, sizeof(c));
-    c.struct_size = (uint32_t)sizeof(PunktfunkConfig);
+    c.struct_size = (uint32_t)sizeof(LilynkConfig);
     c.role = role;                 /* 0 = host, 1 = client */
     c.fec_scheme = 0;              /* GF(2^8) */
     c.fec_percent = 25;
@@ -29,96 +29,96 @@ static PunktfunkConfig make_config(uint32_t role, uint32_t drop_period) {
 }
 
 int main(void) {
-    printf("punktfunk C ABI harness (abi_version=%u)\n", punktfunk_abi_version());
+    printf("punktfunk C ABI harness (abi_version=%u)\n", lilynk_abi_version());
 
-    /* PunktfunkConnectOpts: the C compiler agrees with Rust's const-asserted layout, 224 bytes on
+    /* LilynkConnectOpts: the C compiler agrees with Rust's const-asserted layout, 224 bytes on
      * 64-bit and 160 on 32-bit with no tail padding, so an appended field never lands in bytes an
      * older caller's sizeof covered. The size-prefix guard rejects an undersized struct as a
      * status, not a read. Only the `cargo test --test c_abi` build defines
-     * PUNKTFUNK_FEATURE_QUIC; run.sh builds default features and skips this block. */
-#ifdef PUNKTFUNK_FEATURE_QUIC
-    if (sizeof(PunktfunkConnectOpts) != (sizeof(void *) == 8 ? 224u : 160u)
-        || offsetof(PunktfunkConnectOpts, video_fit) != (sizeof(void *) == 8 ? 100u : 72u)
-        || offsetof(PunktfunkConnectOpts, delivery_flags) != (sizeof(void *) == 8 ? 121u : 85u)
-        || offsetof(PunktfunkConnectOpts, profile_id) != (sizeof(void *) == 8 ? 128u : 92u)
-        || offsetof(PunktfunkConnectOpts, pyrowave_bpp_x100) != (sizeof(void *) == 8 ? 136u : 96u)
-        || offsetof(PunktfunkConnectOpts, on_pending) != (sizeof(void *) == 8 ? 144u : 104u)
-        || offsetof(PunktfunkConnectOpts, screens) != (sizeof(void *) == 8 ? 160u : 112u)
-        || offsetof(PunktfunkConnectOpts, unlock) != (sizeof(void *) == 8 ? 176u : 124u)
-        || offsetof(PunktfunkConnectOpts, prompts_unlock) != (sizeof(void *) == 8 ? 184u : 128u)
-        || offsetof(PunktfunkConnectOpts, view_width) != (sizeof(void *) == 8 ? 192u : 136u)
-        || offsetof(PunktfunkConnectOpts, screen_views) != (sizeof(void *) == 8 ? 200u : 144u)
-        || offsetof(PunktfunkConnectOpts, host_screen) != (sizeof(void *) == 8 ? 208u : 148u)
-        || offsetof(PunktfunkConnectOpts, refresh_mhz) != (sizeof(void *) == 8 ? 216u : 152u)
-        || sizeof(PunktfunkProfileUnlock) != (sizeof(void *) == 8 ? 40u : 24u)
-        || sizeof(PunktfunkScreen) != 24u || sizeof(PunktfunkScreenView) != 8u) {
-        fprintf(stderr, "FAIL: PunktfunkConnectOpts is %zu bytes, video_fit at %zu, delivery_flags at %zu, profile_id at %zu, pyrowave_bpp_x100 at %zu, on_pending at %zu, screens at %zu, unlock at %zu, view_width at %zu, screen_views at %zu, host_screen at %zu, refresh_mhz at %zu; PunktfunkScreen is %zu, PunktfunkProfileUnlock %zu\n",
-                sizeof(PunktfunkConnectOpts), offsetof(PunktfunkConnectOpts, video_fit),
-                offsetof(PunktfunkConnectOpts, delivery_flags),
-                offsetof(PunktfunkConnectOpts, profile_id),
-                offsetof(PunktfunkConnectOpts, pyrowave_bpp_x100),
-                offsetof(PunktfunkConnectOpts, on_pending),
-                offsetof(PunktfunkConnectOpts, screens), offsetof(PunktfunkConnectOpts, unlock),
-                offsetof(PunktfunkConnectOpts, view_width),
-                offsetof(PunktfunkConnectOpts, screen_views),
-                offsetof(PunktfunkConnectOpts, host_screen),
-                offsetof(PunktfunkConnectOpts, refresh_mhz),
-                sizeof(PunktfunkScreen), sizeof(PunktfunkProfileUnlock));
+     * LILYNK_FEATURE_QUIC; run.sh builds default features and skips this block. */
+#ifdef LILYNK_FEATURE_QUIC
+    if (sizeof(LilynkConnectOpts) != (sizeof(void *) == 8 ? 224u : 160u)
+        || offsetof(LilynkConnectOpts, video_fit) != (sizeof(void *) == 8 ? 100u : 72u)
+        || offsetof(LilynkConnectOpts, delivery_flags) != (sizeof(void *) == 8 ? 121u : 85u)
+        || offsetof(LilynkConnectOpts, profile_id) != (sizeof(void *) == 8 ? 128u : 92u)
+        || offsetof(LilynkConnectOpts, pyrowave_bpp_x100) != (sizeof(void *) == 8 ? 136u : 96u)
+        || offsetof(LilynkConnectOpts, on_pending) != (sizeof(void *) == 8 ? 144u : 104u)
+        || offsetof(LilynkConnectOpts, screens) != (sizeof(void *) == 8 ? 160u : 112u)
+        || offsetof(LilynkConnectOpts, unlock) != (sizeof(void *) == 8 ? 176u : 124u)
+        || offsetof(LilynkConnectOpts, prompts_unlock) != (sizeof(void *) == 8 ? 184u : 128u)
+        || offsetof(LilynkConnectOpts, view_width) != (sizeof(void *) == 8 ? 192u : 136u)
+        || offsetof(LilynkConnectOpts, screen_views) != (sizeof(void *) == 8 ? 200u : 144u)
+        || offsetof(LilynkConnectOpts, host_screen) != (sizeof(void *) == 8 ? 208u : 148u)
+        || offsetof(LilynkConnectOpts, refresh_mhz) != (sizeof(void *) == 8 ? 216u : 152u)
+        || sizeof(LilynkProfileUnlock) != (sizeof(void *) == 8 ? 40u : 24u)
+        || sizeof(LilynkScreen) != 24u || sizeof(LilynkScreenView) != 8u) {
+        fprintf(stderr, "FAIL: LilynkConnectOpts is %zu bytes, video_fit at %zu, delivery_flags at %zu, profile_id at %zu, pyrowave_bpp_x100 at %zu, on_pending at %zu, screens at %zu, unlock at %zu, view_width at %zu, screen_views at %zu, host_screen at %zu, refresh_mhz at %zu; LilynkScreen is %zu, LilynkProfileUnlock %zu\n",
+                sizeof(LilynkConnectOpts), offsetof(LilynkConnectOpts, video_fit),
+                offsetof(LilynkConnectOpts, delivery_flags),
+                offsetof(LilynkConnectOpts, profile_id),
+                offsetof(LilynkConnectOpts, pyrowave_bpp_x100),
+                offsetof(LilynkConnectOpts, on_pending),
+                offsetof(LilynkConnectOpts, screens), offsetof(LilynkConnectOpts, unlock),
+                offsetof(LilynkConnectOpts, view_width),
+                offsetof(LilynkConnectOpts, screen_views),
+                offsetof(LilynkConnectOpts, host_screen),
+                offsetof(LilynkConnectOpts, refresh_mhz),
+                sizeof(LilynkScreen), sizeof(LilynkProfileUnlock));
         return 1;
     }
     /* A null connection is a status for the mode-and-view ask too. */
-    if (punktfunk_connection_request_mode_view(NULL, 2048, 1152, 60, 1366, 768)
-        != PUNKTFUNK_STATUS_NULL_POINTER) {
-        fprintf(stderr, "FAIL: punktfunk_connection_request_mode_view on a null connection\n");
+    if (lilynk_connection_request_mode_view(NULL, 2048, 1152, 60, 1366, 768)
+        != LILYNK_STATUS_NULL_POINTER) {
+        fprintf(stderr, "FAIL: lilynk_connection_request_mode_view on a null connection\n");
         return 1;
     }
     /* And for the exact-rate ask and its read-back. */
     uint32_t mhz = 0;
-    if (punktfunk_connection_request_mode_exact(NULL, 2048, 1152, 59940, true, 0, 0)
-            != PUNKTFUNK_STATUS_NULL_POINTER
-        || punktfunk_connection_refresh_mhz(NULL, &mhz) != PUNKTFUNK_STATUS_NULL_POINTER) {
+    if (lilynk_connection_request_mode_exact(NULL, 2048, 1152, 59940, true, 0, 0)
+            != LILYNK_STATUS_NULL_POINTER
+        || lilynk_connection_refresh_mhz(NULL, &mhz) != LILYNK_STATUS_NULL_POINTER) {
         fprintf(stderr, "FAIL: an exact-rate call on a null connection\n");
         return 1;
     }
-    if (punktfunk_connection_request_screens_view(NULL, NULL, NULL, 0)
-        != PUNKTFUNK_STATUS_NULL_POINTER) {
-        fprintf(stderr, "FAIL: punktfunk_connection_request_screens_view on a null connection\n");
+    if (lilynk_connection_request_screens_view(NULL, NULL, NULL, 0)
+        != LILYNK_STATUS_NULL_POINTER) {
+        fprintf(stderr, "FAIL: lilynk_connection_request_screens_view on a null connection\n");
         return 1;
     }
     {
         /* The role echo reads from C as two plain bytes with named values. */
         uint8_t role = 0, reason = 0;
-        if (punktfunk_connection_screen_role(NULL, &role) != PUNKTFUNK_STATUS_NULL_POINTER
-            || punktfunk_connection_screen_role_reason(NULL, &reason)
-                   != PUNKTFUNK_STATUS_NULL_POINTER
-            || PUNKTFUNK_SCREEN_ROLE_SECOND != 3 || PUNKTFUNK_SCREEN_ROLE_REASON_NO_MONITORS != 4) {
+        if (lilynk_connection_screen_role(NULL, &role) != LILYNK_STATUS_NULL_POINTER
+            || lilynk_connection_screen_role_reason(NULL, &reason)
+                   != LILYNK_STATUS_NULL_POINTER
+            || LILYNK_SCREEN_ROLE_SECOND != 3 || LILYNK_SCREEN_ROLE_REASON_NO_MONITORS != 4) {
             fprintf(stderr, "FAIL: the screen role accessors or their values\n");
             return 1;
         }
     }
     {
         /* The unlock message builds from C and refuses an uppercase seat id. */
-        uint8_t challenge[32] = {0}, fp[32] = {0}, msg[PUNKTFUNK_UNLOCK_MESSAGE_LEN];
-        if (punktfunk_profile_unlock_message(challenge, "0123456789abcdef0123456789abcdef", fp, fp, msg)
-                != PUNKTFUNK_STATUS_OK
-            || punktfunk_profile_unlock_message(challenge, "0123456789ABCDEF0123456789abcdef", fp, fp, msg)
-                != PUNKTFUNK_STATUS_INVALID_ARG) {
-            fprintf(stderr, "FAIL: punktfunk_profile_unlock_message\n");
+        uint8_t challenge[32] = {0}, fp[32] = {0}, msg[LILYNK_UNLOCK_MESSAGE_LEN];
+        if (lilynk_profile_unlock_message(challenge, "0123456789abcdef0123456789abcdef", fp, fp, msg)
+                != LILYNK_STATUS_OK
+            || lilynk_profile_unlock_message(challenge, "0123456789ABCDEF0123456789abcdef", fp, fp, msg)
+                != LILYNK_STATUS_INVALID_ARG) {
+            fprintf(stderr, "FAIL: lilynk_profile_unlock_message\n");
             return 1;
         }
     }
     {
         /* The screen calls link from C; a null connection is a status and writes nothing. */
-        PunktfunkScreen screens[PUNKTFUNK_SCREENS_MAX];
-        PunktfunkFrame frame;
+        LilynkScreen screens[LILYNK_SCREENS_MAX];
+        LilynkFrame frame;
         uintptr_t count = 7;
         uint32_t generation = 7;
         memset(screens, 0, sizeof(screens));
-        if (punktfunk_connection_screen_layout(NULL, screens, PUNKTFUNK_SCREENS_MAX, &count,
-                                               &generation) != PUNKTFUNK_STATUS_NULL_POINTER
-            || punktfunk_connection_request_screens(NULL, screens, 2) != PUNKTFUNK_STATUS_NULL_POINTER
-            || punktfunk_connection_request_screen_keyframe(NULL, 1) != PUNKTFUNK_STATUS_NULL_POINTER
-            || punktfunk_connection_next_screen_au(NULL, 1, &frame, 0) != PUNKTFUNK_STATUS_NULL_POINTER
+        if (lilynk_connection_screen_layout(NULL, screens, LILYNK_SCREENS_MAX, &count,
+                                               &generation) != LILYNK_STATUS_NULL_POINTER
+            || lilynk_connection_request_screens(NULL, screens, 2) != LILYNK_STATUS_NULL_POINTER
+            || lilynk_connection_request_screen_keyframe(NULL, 1) != LILYNK_STATUS_NULL_POINTER
+            || lilynk_connection_next_screen_au(NULL, 1, &frame, 0) != LILYNK_STATUS_NULL_POINTER
             || count != 7 || generation != 7) {
             fprintf(stderr, "FAIL: screen calls on a null connection\n");
             return 1;
@@ -127,21 +127,21 @@ int main(void) {
     /* The PyroWave quality row's rate and warning: 4K120 at 1.6 bits per pixel on an unknown link. */
     {
         char line[160];
-        uint32_t kbps = punktfunk_pyrowave_kbps(3840, 2160, 120, false, 8, 160);
+        uint32_t kbps = lilynk_pyrowave_kbps(3840, 2160, 120, false, 8, 160);
         if (kbps != 1592524u
-            || punktfunk_pyrowave_link_warning(kbps, PUNKTFUNK_IFACE_KIND_UNKNOWN, 0, line, sizeof(line))
-                   != PUNKTFUNK_STATUS_OK
+            || lilynk_pyrowave_link_warning(kbps, LILYNK_IFACE_KIND_UNKNOWN, 0, line, sizeof(line))
+                   != LILYNK_STATUS_OK
             || strstr(line, "1.6 Gbit/s") == NULL) {
             fprintf(stderr, "FAIL: PyroWave quality priced %u kbps, warned \"%s\"\n", (unsigned)kbps, line);
             return 1;
         }
     }
     {
-        PunktfunkConnectOpts o;
+        LilynkConnectOpts o;
         int32_t st = 0;
         memset(&o, 0, sizeof(o));
         o.struct_size = 4; /* below the frozen minimum size */
-        if (punktfunk_connect_opts(&o, NULL, &st) != NULL || st != PUNKTFUNK_STATUS_INVALID_ARG) {
+        if (lilynk_connect_opts(&o, NULL, &st) != NULL || st != LILYNK_STATUS_INVALID_ARG) {
             fprintf(stderr, "FAIL: undersized connect opts accepted (st=%d)\n", (int)st);
             return 1;
         }
@@ -150,14 +150,14 @@ int main(void) {
         /* The recovery reports link from C; a null connection is a status and writes nothing. */
         bool admit = true, hold = true;
         uint32_t gap = 7;
-        if (punktfunk_connection_recovery_on_frame(NULL, 1, true, 0, &admit, &gap)
-                != PUNKTFUNK_STATUS_NULL_POINTER
-            || punktfunk_connection_recovery_on_decoded(
-                   NULL, 0, false, PUNKTFUNK_ANCHOR_EVIDENCE_UNAVAILABLE, 0, &hold, NULL)
-                != PUNKTFUNK_STATUS_NULL_POINTER
-            || punktfunk_connection_recovery_on_no_output(NULL) != PUNKTFUNK_STATUS_NULL_POINTER
-            || punktfunk_connection_recovery_lost(NULL) != PUNKTFUNK_STATUS_NULL_POINTER
-            || punktfunk_connection_recovery_reset(NULL) != PUNKTFUNK_STATUS_NULL_POINTER
+        if (lilynk_connection_recovery_on_frame(NULL, 1, true, 0, &admit, &gap)
+                != LILYNK_STATUS_NULL_POINTER
+            || lilynk_connection_recovery_on_decoded(
+                   NULL, 0, false, LILYNK_ANCHOR_EVIDENCE_UNAVAILABLE, 0, &hold, NULL)
+                != LILYNK_STATUS_NULL_POINTER
+            || lilynk_connection_recovery_on_no_output(NULL) != LILYNK_STATUS_NULL_POINTER
+            || lilynk_connection_recovery_lost(NULL) != LILYNK_STATUS_NULL_POINTER
+            || lilynk_connection_recovery_reset(NULL) != LILYNK_STATUS_NULL_POINTER
             || !admit || !hold || gap != 7) {
             fprintf(stderr, "FAIL: recovery reports on a null connection\n");
             return 1;
@@ -166,61 +166,61 @@ int main(void) {
 #endif
 
     {
-        PunktfunkH265Concealer *concealer = punktfunk_h265_concealer_new();
-        PunktfunkConcealment kind = PUNKTFUNK_CONCEALMENT_INTACT;
+        LilynkH265Concealer *concealer = lilynk_h265_concealer_new();
+        LilynkConcealment kind = LILYNK_CONCEALMENT_INTACT;
         uint8_t byte = 0;
         uint8_t *out = NULL;
         uintptr_t out_len = 0;
-        PunktfunkStatus status = punktfunk_h265_concealer_conceal(
+        LilynkStatus status = lilynk_h265_concealer_conceal(
             concealer, &byte, SIZE_MAX, &kind, &out, &out_len);
-        if (status != PUNKTFUNK_STATUS_INVALID_ARG) {
+        if (status != LILYNK_STATUS_INVALID_ARG) {
             fprintf(stderr, "FAIL: unrepresentable concealer input accepted (st=%d)\n",
                     (int)status);
             return 1;
         }
-        punktfunk_h265_concealer_free(concealer);
+        lilynk_h265_concealer_free(concealer);
     }
 
     {
         /* After a gap the rule withholds until the anchor, and refuses an unknown verdict. */
-        AuAdmission *admit = punktfunk_au_admission_new();
+        AuAdmission *admit = lilynk_au_admission_new();
         bool gap_held = false, anchor_held = true, ask = true;
-        PunktfunkStatus s1 = punktfunk_au_admission_note(
-            admit, 4, 1, 0, true, PUNKTFUNK_CONCEALED_NONE, &gap_held, &ask);
-        PunktfunkStatus s2 = punktfunk_au_admission_note(
-            admit, 5, 0, PUNKTFUNK_USER_FLAG_RECOVERY_ANCHOR, true, PUNKTFUNK_CONCEALED_NONE,
+        LilynkStatus s1 = lilynk_au_admission_note(
+            admit, 4, 1, 0, true, LILYNK_CONCEALED_NONE, &gap_held, &ask);
+        LilynkStatus s2 = lilynk_au_admission_note(
+            admit, 5, 0, LILYNK_USER_FLAG_RECOVERY_ANCHOR, true, LILYNK_CONCEALED_NONE,
             &anchor_held, NULL);
-        PunktfunkStatus s3 = punktfunk_au_admission_note(admit, 6, 0, 0, true, 7, NULL, NULL);
-        if (s1 != PUNKTFUNK_STATUS_OK || s2 != PUNKTFUNK_STATUS_OK || !gap_held || ask
-            || anchor_held || s3 != PUNKTFUNK_STATUS_INVALID_ARG) {
+        LilynkStatus s3 = lilynk_au_admission_note(admit, 6, 0, 0, true, 7, NULL, NULL);
+        if (s1 != LILYNK_STATUS_OK || s2 != LILYNK_STATUS_OK || !gap_held || ask
+            || anchor_held || s3 != LILYNK_STATUS_INVALID_ARG) {
             fprintf(stderr, "FAIL: admission rule (st=%d/%d/%d)\n", (int)s1, (int)s2, (int)s3);
             return 1;
         }
-        punktfunk_au_admission_free(admit);
+        lilynk_au_admission_free(admit);
     }
 
     {
         /* A 320x180 Main-profile sequence-header OBU parses; a cut one does not. */
         static const uint8_t seq[] = {0x0a, 0x0b, 0x00, 0x00, 0x00, 0x04, 0x3c,
                                       0xfe, 0xcc, 0x4a, 0xf9, 0x00, 0x40};
-        PunktfunkAv1SequenceInfo info;
-        PunktfunkStatus s1 = punktfunk_av1_sequence_info(seq, sizeof seq, &info);
-        PunktfunkStatus s2 = punktfunk_av1_sequence_info(seq, sizeof seq - 1, &info);
-        if (s1 != PUNKTFUNK_STATUS_OK || info.max_width != 320 || info.max_height != 180
-            || s2 != PUNKTFUNK_STATUS_INVALID_ARG) {
+        LilynkAv1SequenceInfo info;
+        LilynkStatus s1 = lilynk_av1_sequence_info(seq, sizeof seq, &info);
+        LilynkStatus s2 = lilynk_av1_sequence_info(seq, sizeof seq - 1, &info);
+        if (s1 != LILYNK_STATUS_OK || info.max_width != 320 || info.max_height != 180
+            || s2 != LILYNK_STATUS_INVALID_ARG) {
             fprintf(stderr, "FAIL: av1 sequence info (st=%d/%d)\n", (int)s1, (int)s2);
             return 1;
         }
     }
 
     const uint32_t DROP_PERIOD = 8;   /* drop 1 of every 8 packets */
-    PunktfunkConfig host_cfg = make_config(0, DROP_PERIOD);
-    PunktfunkConfig client_cfg = make_config(1, DROP_PERIOD);
+    LilynkConfig host_cfg = make_config(0, DROP_PERIOD);
+    LilynkConfig client_cfg = make_config(1, DROP_PERIOD);
 
-    PunktfunkSession *host = NULL;
-    PunktfunkSession *client = NULL;
-    PunktfunkStatus rc = punktfunk_test_loopback_pair(&host_cfg, &client_cfg, &host, &client);
-    if (rc != PUNKTFUNK_STATUS_OK || !host || !client) {
+    LilynkSession *host = NULL;
+    LilynkSession *client = NULL;
+    LilynkStatus rc = lilynk_test_loopback_pair(&host_cfg, &client_cfg, &host, &client);
+    if (rc != LILYNK_STATUS_OK || !host || !client) {
         fprintf(stderr, "FAIL: loopback_pair rc=%d\n", (int)rc);
         return 1;
     }
@@ -236,17 +236,17 @@ int main(void) {
             buf[i] = (uint8_t)((i * 131u) + (unsigned)f * 17u);
         }
 
-        rc = punktfunk_host_submit_frame(host, buf, FRAME_LEN, (uint64_t)f * 1000000u, 0);
-        if (rc != PUNKTFUNK_STATUS_OK) {
+        rc = lilynk_host_submit_frame(host, buf, FRAME_LEN, (uint64_t)f * 1000000u, 0);
+        if (rc != LILYNK_STATUS_OK) {
             fprintf(stderr, "FAIL: submit frame %d rc=%d\n", f, (int)rc);
             failures++;
             continue;
         }
 
-        PunktfunkFrame out;
+        LilynkFrame out;
         memset(&out, 0, sizeof(out));
         rc = lilynk_client_poll_frame(client, &out);
-        if (rc != PUNKTFUNK_STATUS_OK) {
+        if (rc != LILYNK_STATUS_OK) {
             fprintf(stderr, "FAIL: poll frame %d rc=%d (expected recovery)\n", f, (int)rc);
             failures++;
             continue;
@@ -263,9 +263,9 @@ int main(void) {
         }
     }
 
-    PunktfunkStats st;
+    LilynkStats st;
     memset(&st, 0, sizeof(st));
-    punktfunk_get_stats(client, &st);
+    lilynk_get_stats(client, &st);
     printf("client stats: completed=%llu recovered_shards=%llu dropped_pkts=%llu rx_pkts=%llu\n",
            (unsigned long long)st.frames_completed,
            (unsigned long long)st.fec_recovered_shards,
@@ -278,8 +278,8 @@ int main(void) {
     }
 
     free(buf);
-    punktfunk_session_free(host);
-    punktfunk_session_free(client);
+    lilynk_session_free(host);
+    lilynk_session_free(client);
 
     if (failures == 0) {
         printf("PASS: %d frames round-tripped byte-exact through lossy loopback\n", FRAMES);

@@ -166,8 +166,7 @@ fn render_engine_rate_hz() -> Option<u32> {
             let enumerator = DeviceEnumerator::new().ok()?;
             // The endpoint the render thread will pick, not the default — a USB DAC and the
             // system default routinely run at different rates.
-            let device =
-                pick_device(&enumerator, &Direction::Render, "PUNKTFUNK_AUDIO_SINK").ok()?;
+            let device = pick_device(&enumerator, &Direction::Render, "LILYNK_AUDIO_SINK").ok()?;
             let client = device.get_iaudioclient().ok()?;
             client.get_mixformat().ok().map(|f| f.get_samplespersec())
         })
@@ -423,8 +422,8 @@ fn sleep_unless_stopped(stop: &AtomicBool, total: Duration) {
 /// Open and start a shared-mode render stream at the session's format.
 fn open_render(fmt: PlaybackFormat, channels: u8) -> Result<Endpoint> {
     let enumerator = DeviceEnumerator::new().context("DeviceEnumerator")?;
-    let follows_default = std::env::var("PUNKTFUNK_AUDIO_SINK").map_or(true, |v| v.is_empty());
-    let device = pick_device(&enumerator, &Direction::Render, "PUNKTFUNK_AUDIO_SINK")
+    let follows_default = std::env::var("LILYNK_AUDIO_SINK").map_or(true, |v| v.is_empty());
+    let device = pick_device(&enumerator, &Direction::Render, "LILYNK_AUDIO_SINK")
         .context("render endpoint")?;
     let name = device.get_friendlyname().unwrap_or_default();
     let mut audio_client = device.get_iaudioclient().context("IAudioClient")?;
@@ -606,7 +605,7 @@ pub struct MicStreamer {
 impl MicStreamer {
     /// `muted` is live with the capture loop (B4): keep reading, send nothing. Do not stop
     /// the `IAudioClient` — stop/start re-primes buffers and re-runs category negotiation.
-    /// `echo_cancel` is the Settings toggle; `PUNKTFUNK_NO_AEC=1` overrides it off.
+    /// `echo_cancel` is the Settings toggle; `LILYNK_NO_AEC=1` overrides it off.
     ///
     /// `Err` when capture does not start within [`OPEN_TIMEOUT`]: no uplink runs.
     pub fn spawn(
@@ -650,11 +649,11 @@ impl Drop for MicStreamer {
     }
 }
 
-/// Settings toggle with `PUNKTFUNK_NO_AEC=1` as a one-way override off. The hook is the
+/// Settings toggle with `LILYNK_NO_AEC=1` as a one-way override off. The hook is the
 /// Communications stream category; the PipeWire twin gates its echo-cancelled source the
 /// same way.
 fn aec_enabled(echo_cancel: bool) -> bool {
-    echo_cancel && crate::env_on("PUNKTFUNK_NO_AEC") != Some(true)
+    echo_cancel && crate::env_on("LILYNK_NO_AEC") != Some(true)
 }
 
 /// Sends `ready` once capture runs. An `Err` before that is [`MicStreamer::spawn`]'s answer.
@@ -675,7 +674,7 @@ fn mic_thread(
         .map_err(|e| anyhow!("opus encoder: {e}"))?;
 
     let enumerator = DeviceEnumerator::new().context("DeviceEnumerator")?;
-    let device = pick_device(&enumerator, &Direction::Capture, "PUNKTFUNK_AUDIO_SOURCE")
+    let device = pick_device(&enumerator, &Direction::Capture, "LILYNK_AUDIO_SOURCE")
         .context("capture endpoint (no microphone?)")?;
     let mut audio_client = device.get_iaudioclient().context("IAudioClient")?;
     // Communications category: the mode a driver/APO echo canceller usually runs in.

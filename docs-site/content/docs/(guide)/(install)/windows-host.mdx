@@ -99,7 +99,7 @@ a device.
   **GameStream** there. A line in `%ProgramData%\punktfunk\host.env` pins a setting. After editing
   it, run `lilynk-host service restart` from an elevated prompt. See
   [Configuration](/docs/configuration).
-- **Encoder.** `PUNKTFUNK_ENCODER` in `host.env` forces `nvenc`, `amf`, `qsv` or `mf` (Media
+- **Encoder.** `LILYNK_ENCODER` in `host.env` forces `nvenc`, `amf`, `qsv` or `mf` (Media
   Foundation). A pin that doesn't match the selected GPU's vendor is ignored. When the native
   encoder can't open, an 8-bit SDR session falls back to Media Foundation. NVENC has the most field
   time; AMF and QSV see less.

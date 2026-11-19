@@ -15,13 +15,13 @@ const serverDir = fileURLToPath(new URL("./server", import.meta.url));
 
 // The management API the console drives. The browser always talks same-origin (/api/...):
 // in `vite dev` the dev server proxies it (below); in the built Bun/Nitro server the scanned
-// server/routes/api/[...].ts does. Override the upstream with PUNKTFUNK_MGMT_URL.
-const MGMT_URL = process.env.PUNKTFUNK_MGMT_URL ?? "https://127.0.0.1:47990";
+// server/routes/api/[...].ts does. Override the upstream with LILYNK_MGMT_URL.
+const MGMT_URL = process.env.LILYNK_MGMT_URL ?? "https://127.0.0.1:47990";
 
 // Dev-only `/plugin-ui/<id>-<exp>-<mac>/**` proxy: the route (server/routes/plugin-ui/[...].ts)
 // needs Bun's `tls` fetch option. Same page-path check, sandbox, CORS, secret, cookie strip and
 // 127.0.0.1-only dial, but it skips `callPlugin`: no host relay for a port-0 (viaHost) plugin and
-// no 401 retry. Needs PUNKTFUNK_MGMT_TOKEN in the dev environment.
+// no 401 retry. Needs LILYNK_MGMT_TOKEN in the dev environment.
 function pluginUiDevProxy(): Plugin {
 	const fetchCred = (
 		id: string,
@@ -100,10 +100,10 @@ function pluginUiDevProxy(): Plugin {
 					res.end();
 					return;
 				}
-				const token = process.env.PUNKTFUNK_MGMT_TOKEN;
+				const token = process.env.LILYNK_MGMT_TOKEN;
 				if (!token) {
 					res.statusCode = 503;
-					res.end("dev plugin-ui proxy: set PUNKTFUNK_MGMT_TOKEN");
+					res.end("dev plugin-ui proxy: set LILYNK_MGMT_TOKEN");
 					return;
 				}
 				const cred = await fetchCred(id, token);
@@ -191,7 +191,7 @@ export default defineConfig({
 				// without this `bun run dev` 401s on every call and `apiFetch` bounces the developer
 				// to /login — where logging in doesn't help, because dev has no login gate at all.
 				configure(proxy) {
-					const token = process.env.PUNKTFUNK_MGMT_TOKEN;
+					const token = process.env.LILYNK_MGMT_TOKEN;
 					if (!token) return;
 					proxy.on("proxyReq", (proxyReq, req) => {
 						// A person's console never carries the admin bearer, in dev either.

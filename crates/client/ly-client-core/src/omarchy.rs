@@ -47,7 +47,7 @@ pub struct OsTheme {
 
 /// All three colours are required: half a palette is worse than none.
 /// Unparsable `mode` is `dark`, matching the console.
-pub fn parse_punktfunk_json(raw: &str) -> Option<OsTheme> {
+pub fn parse_lilynk_json(raw: &str) -> Option<OsTheme> {
     let v: serde_json::Value = serde_json::from_str(raw).ok()?;
     let colour = |k: &str| {
         v.get(k)
@@ -101,7 +101,7 @@ pub fn current() -> Option<OsTheme> {
     // A half-written switch parses as nothing; the other file, or a tick of "no theme", is fine.
     std::fs::read_to_string(theme.join("lilynk.json"))
         .ok()
-        .and_then(|raw| parse_punktfunk_json(&raw))
+        .and_then(|raw| parse_lilynk_json(&raw))
         .or_else(|| {
             std::fs::read_to_string(theme.join("colors.toml"))
                 .ok()
@@ -123,17 +123,17 @@ mod tests {
     fn an_unrendered_template_is_not_a_theme() {
         // `{{ accent }}` is JSON-valid; parse_hex is what refuses it.
         assert!(
-            parse_punktfunk_json(&rendered("dark", "#1a1b26", "#c0caf5", "{{ accent }}")).is_none()
+            parse_lilynk_json(&rendered("dark", "#1a1b26", "#c0caf5", "{{ accent }}")).is_none()
         );
         assert!(
-            parse_punktfunk_json(r##"{"mode":"dark","accent":"#89b4fa"}"##).is_none(),
+            parse_lilynk_json(r##"{"mode":"dark","accent":"#89b4fa"}"##).is_none(),
             "a partial palette"
         );
         assert!(
-            parse_punktfunk_json(r#"{"mode":"dark","acc"#).is_none(),
+            parse_lilynk_json(r#"{"mode":"dark","acc"#).is_none(),
             "half-written during a switch"
         );
-        assert!(parse_punktfunk_json(&rendered("dark", "#1a1b26", "#c0caf5", "#zzzzzz")).is_none());
+        assert!(parse_lilynk_json(&rendered("dark", "#1a1b26", "#c0caf5", "#zzzzzz")).is_none());
     }
 
     #[test]
@@ -152,7 +152,7 @@ mod tests {
 
     #[test]
     fn mode_defaults_to_dark_and_light_is_honoured() {
-        let t = |m| parse_punktfunk_json(&rendered(m, "#1a1b26", "#c0caf5", "#7aa2f7")).unwrap();
+        let t = |m| parse_lilynk_json(&rendered(m, "#1a1b26", "#c0caf5", "#7aa2f7")).unwrap();
         assert!(t("dark").dark);
         assert!(!t("light").dark);
         assert!(

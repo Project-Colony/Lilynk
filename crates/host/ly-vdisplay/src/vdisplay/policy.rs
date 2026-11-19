@@ -69,7 +69,7 @@ impl KeepAlive {
 
 /// Linger once the last session leaves the display of device `fp`. A configured console
 /// decides, that device's overlay over the host's `keep_alive`, and outranks `env_ms`
-/// (`PUNKTFUNK_MONITOR_LINGER_MS`): a leftover knob never overrides the console.
+/// (`LILYNK_MONITOR_LINGER_MS`): a leftover knob never overrides the console.
 /// Unconfigured: the knob, else teardown at once. A value that does not parse is unset.
 fn resolve_linger(
     configured: Option<&DisplayPolicy>,
@@ -90,7 +90,7 @@ fn resolve_linger(
 #[serde(rename_all = "snake_case")]
 pub enum Topology {
     /// Resolved at acquire ([`super::resolve_topology`]): exclusive, or extend under an
-    /// explicit `PUNKTFUNK_COMPOSITOR` pin.
+    /// explicit `LILYNK_COMPOSITOR` pin.
     #[default]
     Auto,
     /// Add the virtual display(s); leave physical outputs alone.
@@ -243,7 +243,7 @@ pub enum ScreenReason {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ScreenPick {
     pub target: DisplayTarget,
-    /// `PUNKTFUNK_CAPTURE_MONITOR` fixes the screen for every device.
+    /// `LILYNK_CAPTURE_MONITOR` fixes the screen for every device.
     pub locked: bool,
     /// Set when `target` fell back to [`DisplayTarget::Own`].
     pub reason: Option<ScreenReason>,
@@ -340,7 +340,7 @@ pub struct DisplayPolicy {
     #[serde(default)]
     pub edid_lock: bool,
     /// What a device with no `screen` of its own streams; absent is its own screen.
-    /// Host-wide, orthogonal to `preset`. `PUNKTFUNK_CAPTURE_MONITOR` overrides it so
+    /// Host-wide, orthogonal to `preset`. `LILYNK_CAPTURE_MONITOR` overrides it so
     /// `host.env` can pin without a console write undoing it.
     #[serde(default)]
     pub screen: Option<DisplayTarget>,
@@ -1198,10 +1198,10 @@ impl DisplayPolicyStore {
     }
 
     /// Linger once the last session leaves the display of device `fp`: this store's
-    /// `keep_alive`, else `PUNKTFUNK_MONITOR_LINGER_MS`, else teardown at once. The env read
+    /// `keep_alive`, else `LILYNK_MONITOR_LINGER_MS`, else teardown at once. The env read
     /// takes the lock: a release runs beside another session's setup.
     pub fn linger(&self, fp: Option<&str>) -> Linger {
-        let env_ms = crate::with_env_lock(|| std::env::var("PUNKTFUNK_MONITOR_LINGER_MS").ok());
+        let env_ms = crate::with_env_lock(|| std::env::var("LILYNK_MONITOR_LINGER_MS").ok());
         resolve_linger(self.configured().as_ref(), fp, env_ms.as_deref())
     }
 
@@ -1210,7 +1210,7 @@ impl DisplayPolicyStore {
     }
 
     /// PnP-disable the monitors the isolate switched off. Default on;
-    /// `PUNKTFUNK_STANDBY_SINK_KEEP` vetoes it with every other PnP disable.
+    /// `LILYNK_STANDBY_SINK_KEEP` vetoes it with every other PnP disable.
     pub fn pnp_disable_monitors(&self) -> bool {
         self.get().pnp_disable_monitors && self.standby_sink_neutralise()
     }
@@ -1228,7 +1228,7 @@ impl DisplayPolicyStore {
     /// Default on ([`standby_sink_neutralise`]). Monitors the isolate switched
     /// off are [`Self::pnp_disable_monitors`]'s, not this one's.
     pub fn standby_sink_neutralise(&self) -> bool {
-        standby_sink_neutralise(std::env::var("PUNKTFUNK_STANDBY_SINK_KEEP").ok().as_deref())
+        standby_sink_neutralise(std::env::var("LILYNK_STANDBY_SINK_KEEP").ok().as_deref())
     }
 
     /// Persist + adopt. Memory changes only after the disk write; the
@@ -1600,7 +1600,7 @@ pub fn load_custom_presets() -> Vec<CustomPreset> {
 }
 
 /// Neutralise a connected-but-inactive external sink while streaming,
-/// unless `PUNKTFUNK_STANDBY_SINK_KEEP` is set (any value but `0`/`off`/empty).
+/// unless `LILYNK_STANDBY_SINK_KEEP` is set (any value but `0`/`off`/empty).
 ///
 /// Default-on: standby HPD/DDC on an unused TV stalls the virtual head.
 /// Operator displays are out of scope — this selector only sees external

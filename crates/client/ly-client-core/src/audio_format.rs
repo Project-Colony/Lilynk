@@ -27,7 +27,7 @@ pub const AUDIO_FORMAT_LOSSLESS_1764: &str = "lossless1764";
 /// Values are shared verbatim with Apple `AudioFormatChoice` and Android `AUDIO_FORMAT_*`.
 /// A preset round-trips between the clients (`presets.rs`); a spelling mismatch is
 /// stored as-is and silently falls back to the global default. Change in lockstep with
-/// `clients/apple/Sources/PunktfunkShared/EffectiveSettings.swift` and
+/// `clients/apple/Sources/LilynkShared/EffectiveSettings.swift` and
 /// `clients/android/app/src/main/kotlin/io/unom/punktfunk/Settings.kt`.
 ///
 /// 16-bit is omitted at every rate: ~1.5 Mbps for what 256 kbps Opus already is.

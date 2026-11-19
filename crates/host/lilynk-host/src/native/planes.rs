@@ -3,7 +3,7 @@
 //! planes and joins the threads.
 
 use super::input::{self, input_thread, ClientInput};
-use super::{audio::audio_thread, handshake, AudioCapSlot, Punktfunk1Source, SessionKnobs};
+use super::{audio::audio_thread, handshake, AudioCapSlot, Lilynk1Source, SessionKnobs};
 use super::{emit_connected, send_hdr_baseline, send_test_feedback};
 #[cfg(target_os = "linux")]
 use super::{plays_seat_mode, seat_id, session_isolation, SeatClaim};
@@ -152,7 +152,7 @@ pub(super) fn spawn_input_plane(
         let counters = counters.clone();
         let input_route = scope.planes().input_route.clone();
         scope
-            .thread("punktfunk1-input", move || {
+            .thread("lilynk1-input", move || {
                 input_thread(
                     input_rx,
                     conn,
@@ -195,7 +195,7 @@ pub(super) fn spawn_input_plane(
 #[allow(clippy::too_many_arguments)]
 pub(super) fn spawn_audio_plane(
     scope: &mut SessionScope,
-    source: Punktfunk1Source,
+    source: Lilynk1Source,
     audio_cap: &AudioCapSlot,
     welcome: &Welcome,
     joined: Option<&crate::vdisplay::admission::LiveDisplay>,
@@ -209,7 +209,7 @@ pub(super) fn spawn_audio_plane(
 ) {
     if matches!(
         source,
-        Punktfunk1Source::Synthetic | Punktfunk1Source::SyntheticAbr(..)
+        Lilynk1Source::Synthetic | Lilynk1Source::SyntheticAbr(..)
     ) {
         return;
     }
@@ -234,7 +234,7 @@ pub(super) fn spawn_audio_plane(
     let published = published.clone();
     let muted = controls.muted.clone();
     let counters = counters.clone();
-    let spawned = scope.thread("punktfunk1-audio", move || {
+    let spawned = scope.thread("lilynk1-audio", move || {
         audio_thread(super::audio::PlaneArgs {
             conn,
             stop,
@@ -360,7 +360,7 @@ pub(super) fn spawn_planes(
     if n.terms.verdict.display_hdr {
         send_hdr_baseline(&conn, hello.display_hdr);
     }
-    if source == Punktfunk1Source::Synthetic && who.knobs.test_feedback {
+    if source == Lilynk1Source::Synthetic && who.knobs.test_feedback {
         send_test_feedback(&conn);
     }
     // `$XDG_RUNTIME_DIR/punktfunk/stream` while this session streams. Retracts on every exit.
@@ -378,7 +378,7 @@ pub(super) fn spawn_planes(
             profile: Some(who.profile_ref.clone()),
         },
     ));
-    // Linux `PUNKTFUNK_PIN_CLOCKS`: refcounted vendor clock floor while any session streams.
+    // Linux `LILYNK_PIN_CLOCKS`: refcounted vendor clock floor while any session streams.
     #[cfg(target_os = "linux")]
     scope.hold(crate::gpuclocks::session_pin());
     Ok(())

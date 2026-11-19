@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   firewalld service definition for the native punktfunk host (the secure default 'serve', or the
-  punktfunk1-host subcommand).
+  lilynk1-host subcommand).
 
   Installed to /usr/lib/firewalld/services/ by the lilynk-host package. NOT enabled automatically
   (packages never touch the admin's firewall). Stock Arch/Debian ship no active firewall; Fedora/RHEL

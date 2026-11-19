@@ -11,14 +11,14 @@ use crate::*;
 /// `c` is a valid connection handle; `port` is writable (NULL is skipped).
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_mgmt_port(
-    c: *const PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_mgmt_port(
+    c: *const LilynkConnection,
     port: *mut u16,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     conn_out!(c, port => c.inner.mgmt_port())
 }
 
-/// Host capability bitfield from `Welcome` (`PUNKTFUNK_HOST_CAP_*`). Test
+/// Host capability bitfield from `Welcome` (`LILYNK_HOST_CAP_*`). Test
 /// `CLIPBOARD` before offering the toggle, `PEN` before sending stylus batches.
 /// Safe any time after connect.
 ///
@@ -26,71 +26,71 @@ pub unsafe extern "C" fn punktfunk_connection_mgmt_port(
 /// `c` is a valid connection handle; `caps` is writable (NULL is skipped).
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_host_caps(
-    c: *const PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_host_caps(
+    c: *const LilynkConnection,
     caps: *mut u8,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     conn_out!(c, caps => c.inner.host_caps())
 }
 
-/// Second host capability byte from `Welcome` (`PUNKTFUNK_HOST_CAP2_*`).
+/// Second host capability byte from `Welcome` (`LILYNK_HOST_CAP2_*`).
 /// `0` toward a host that never sends the byte. Safe any time after connect.
 ///
 /// # Safety
 /// `c` is a valid connection handle; `caps` is writable (NULL is skipped).
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_host_caps2(
-    c: *const PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_host_caps2(
+    c: *const LilynkConnection,
     caps: *mut u8,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     conn_out!(c, caps => c.inner.host_caps2())
 }
 
 /// `true` when the host presents touchpad frames as a touchpad of its own: test it before
-/// [`punktfunk_connection_send_touchpad`]. With the player's Invert scroll direction on, the
+/// [`lilynk_connection_send_touchpad`]. With the player's Invert scroll direction on, the
 /// client keeps its own scroll path, so the host's touchpad is not used: read this again after
-/// [`punktfunk_connection_set_invert_scroll`].
+/// [`lilynk_connection_set_invert_scroll`].
 ///
 /// # Safety
 /// `c` is a valid connection handle; `presents` is writable (NULL is skipped).
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_host_touchpad(
-    c: *const PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_host_touchpad(
+    c: *const LilynkConnection,
     presents: *mut bool,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     conn_out!(c, presents => c.inner.host_presents_touchpad())
 }
 
 /// `true` when the host OS turns a tap on that touchpad into a click. A source with no button
 /// of its own (a touchscreen) then sends no clicks of its own. When `false` it keeps making its
 /// clicks and passes `retract_taps = true`, so the host never adds a second one. `false`
-/// whenever [`punktfunk_connection_host_touchpad`] is.
+/// whenever [`lilynk_connection_host_touchpad`] is.
 ///
 /// # Safety
 /// `c` is a valid connection handle; `taps` is writable (NULL is skipped).
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_host_touchpad_taps(
-    c: *const PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_host_touchpad_taps(
+    c: *const LilynkConnection,
     taps: *mut bool,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     conn_out!(c, taps => c.inner.host_taps_click())
 }
 
-/// Live `PUNKTFUNK_GRANT_*` mask (`design/per-client-access.md`). Latest
-/// `AccessUpdate` wins; hosts that omit it read `PUNKTFUNK_GRANT_ALL`. Courtesy
+/// Live `LILYNK_GRANT_*` mask (`design/per-client-access.md`). Latest
+/// `AccessUpdate` wins; hosts that omit it read `LILYNK_GRANT_ALL`. Courtesy
 /// only — the host enforces. Poll; do not cache for the session.
 ///
 /// # Safety
 /// `c` is a valid connection handle; `grants` is writable (NULL is skipped).
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_grants(
-    c: *const PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_grants(
+    c: *const LilynkConnection,
     grants: *mut u32,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     conn_out!(c, grants => c.inner.access_grants())
 }
 
@@ -102,21 +102,21 @@ pub unsafe extern "C" fn punktfunk_connection_grants(
 /// `c` is a valid connection handle; `secs` is writable (NULL is skipped).
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_access_expires_in(
-    c: *const PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_access_expires_in(
+    c: *const LilynkConnection,
     secs: *mut u32,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         let remaining = c.inner.access_expires_in_secs();
         // SAFETY: the caller passes `secs` null or writable for one value.
         unsafe { put(secs, remaining) };
-        PunktfunkStatus::Ok
+        LilynkStatus::Ok
     })
 }
 
 /// The sentence the host sent with its mid-session rejection, NUL-terminated, into
 /// the caller's buffer; empty when it sent none — render the client's own wording
-/// for the code then. Ask alongside [`punktfunk_connection_end_reject`]. A 512-byte
+/// for the code then. Ask alongside [`lilynk_connection_end_reject`]. A 512-byte
 /// buffer is ample: the wire caps this at 256.
 ///
 /// Already stripped of control characters and capped by the core; a host cannot make
@@ -126,47 +126,47 @@ pub unsafe extern "C" fn punktfunk_connection_access_expires_in(
 /// `c` is a valid connection handle; `out` is writable for `cap` bytes.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_end_reject_said(
-    c: *const PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_end_reject_said(
+    c: *const LilynkConnection,
     out: *mut c_char,
     cap: usize,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         if out.is_null() || cap == 0 {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         let said = c.inner.end_reject_said().unwrap_or_default();
         // SAFETY: `out` is writable for `cap` bytes, per this function's contract.
         if !unsafe { write_cstr(out, cap, said) } {
-            return PunktfunkStatus::InvalidArg;
+            return LilynkStatus::InvalidArg;
         }
-        PunktfunkStatus::Ok
+        LilynkStatus::Ok
     })
 }
 
 /// The profile the host resolved this session to, NUL-terminated, into the caller's buffer;
-/// empty from a host without profiles. A buffer of [`PUNKTFUNK_PROFILE_ID_MAX`] + 1 bytes fits
+/// empty from a host without profiles. A buffer of [`LILYNK_PROFILE_ID_MAX`] + 1 bytes fits
 /// every id.
 ///
 /// # Safety
 /// `c` is a valid connection handle; `out` is writable for `cap` bytes.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_profile(
-    c: *const PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_profile(
+    c: *const LilynkConnection,
     out: *mut c_char,
     cap: usize,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         if out.is_null() || cap == 0 {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         let profile = c.inner.profile().unwrap_or_default();
         // SAFETY: `out` is writable for `cap` bytes, per this function's contract.
         if !unsafe { write_cstr(out, cap, profile) } {
-            return PunktfunkStatus::InvalidArg;
+            return LilynkStatus::InvalidArg;
         }
-        PunktfunkStatus::Ok
+        LilynkStatus::Ok
     })
 }
 
@@ -177,58 +177,58 @@ pub unsafe extern "C" fn punktfunk_connection_profile(
 /// `c` is a valid connection handle; `shared` is writable (NULL is skipped).
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_shares_screen(
-    c: *const PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_shares_screen(
+    c: *const LilynkConnection,
     shared: *mut bool,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     use lilynk_core::quic::v2::hello::ScreenEcho;
     conn_out!(c, shared => c.inner.screen() == Some(&ScreenEcho::Shared))
 }
 
-/// [`punktfunk_connection_screen_role`]: no role, or a host that does not say.
-pub const PUNKTFUNK_SCREEN_ROLE_NONE: u8 = 0;
-/// [`punktfunk_connection_screen_role`]: the only screen; the host's monitors are off.
-pub const PUNKTFUNK_SCREEN_ROLE_ONLY: u8 = 1;
-/// [`punktfunk_connection_screen_role`]: the main screen beside the host's monitors.
-pub const PUNKTFUNK_SCREEN_ROLE_MAIN: u8 = 2;
-/// [`punktfunk_connection_screen_role`]: one more screen beside the host's monitors.
-pub const PUNKTFUNK_SCREEN_ROLE_SECOND: u8 = 3;
-/// [`punktfunk_connection_screen_role_reason`]: as asked, or a host that does not say.
-pub const PUNKTFUNK_SCREEN_ROLE_REASON_AS_ASKED: u8 = 0;
-/// [`punktfunk_connection_screen_role_reason`]: this device may not choose its screen there.
-pub const PUNKTFUNK_SCREEN_ROLE_REASON_NOT_ALLOWED: u8 = 1;
-/// [`punktfunk_connection_screen_role_reason`]: an earlier session decided the monitors.
-pub const PUNKTFUNK_SCREEN_ROLE_REASON_MONITORS_HELD: u8 = 2;
-/// [`punktfunk_connection_screen_role_reason`]: the monitor asked for is off, taken or missing.
-pub const PUNKTFUNK_SCREEN_ROLE_REASON_UNAVAILABLE: u8 = 3;
-/// [`punktfunk_connection_screen_role_reason`]: the host's desktop has no monitors.
-pub const PUNKTFUNK_SCREEN_ROLE_REASON_NO_MONITORS: u8 = 4;
+/// [`lilynk_connection_screen_role`]: no role, or a host that does not say.
+pub const LILYNK_SCREEN_ROLE_NONE: u8 = 0;
+/// [`lilynk_connection_screen_role`]: the only screen; the host's monitors are off.
+pub const LILYNK_SCREEN_ROLE_ONLY: u8 = 1;
+/// [`lilynk_connection_screen_role`]: the main screen beside the host's monitors.
+pub const LILYNK_SCREEN_ROLE_MAIN: u8 = 2;
+/// [`lilynk_connection_screen_role`]: one more screen beside the host's monitors.
+pub const LILYNK_SCREEN_ROLE_SECOND: u8 = 3;
+/// [`lilynk_connection_screen_role_reason`]: as asked, or a host that does not say.
+pub const LILYNK_SCREEN_ROLE_REASON_AS_ASKED: u8 = 0;
+/// [`lilynk_connection_screen_role_reason`]: this device may not choose its screen there.
+pub const LILYNK_SCREEN_ROLE_REASON_NOT_ALLOWED: u8 = 1;
+/// [`lilynk_connection_screen_role_reason`]: an earlier session decided the monitors.
+pub const LILYNK_SCREEN_ROLE_REASON_MONITORS_HELD: u8 = 2;
+/// [`lilynk_connection_screen_role_reason`]: the monitor asked for is off, taken or missing.
+pub const LILYNK_SCREEN_ROLE_REASON_UNAVAILABLE: u8 = 3;
+/// [`lilynk_connection_screen_role_reason`]: the host's desktop has no monitors.
+pub const LILYNK_SCREEN_ROLE_REASON_NO_MONITORS: u8 = 4;
 
-/// The role this session got among the host's screens, `PUNKTFUNK_SCREEN_ROLE_*`. As the
+/// The role this session got among the host's screens, `LILYNK_SCREEN_ROLE_*`. As the
 /// session started.
 ///
 /// # Safety
 /// `c` is a valid connection handle; `role` is writable (NULL is skipped).
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_screen_role(
-    c: *const PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_screen_role(
+    c: *const LilynkConnection,
     role: *mut u8,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     conn_out!(c, role => c.inner.role().and_then(|r| r.role).map_or(0, |r| r.to_u8()))
 }
 
 /// Why this session's role is not the one its connect asked for,
-/// `PUNKTFUNK_SCREEN_ROLE_REASON_*`. As the session started.
+/// `LILYNK_SCREEN_ROLE_REASON_*`. As the session started.
 ///
 /// # Safety
 /// `c` is a valid connection handle; `reason` is writable (NULL is skipped).
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_screen_role_reason(
-    c: *const PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_screen_role_reason(
+    c: *const LilynkConnection,
     reason: *mut u8,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     conn_out!(c, reason => c.inner.role().map_or(0, |r| r.reason.to_u8()))
 }
 
@@ -240,14 +240,14 @@ pub unsafe extern "C" fn punktfunk_connection_screen_role_reason(
 /// `c` is a valid connection handle; `out` is writable for `cap` bytes.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_launch_notice(
-    c: *const PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_launch_notice(
+    c: *const LilynkConnection,
     out: *mut c_char,
     cap: usize,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         if out.is_null() || cap == 0 {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         let outcome = c.inner.launch_outcome();
         let notice = outcome
@@ -256,13 +256,13 @@ pub unsafe extern "C" fn punktfunk_connection_launch_notice(
             .unwrap_or_default();
         // SAFETY: `out` is writable for `cap` bytes, per this function's contract.
         if !unsafe { write_cstr(out, cap, notice) } {
-            return PunktfunkStatus::InvalidArg;
+            return LilynkStatus::InvalidArg;
         }
-        PunktfunkStatus::Ok
+        LilynkStatus::Ok
     })
 }
 
-/// [`punktfunk_connection_launch_notice`] by message: the host message the sentence is the
+/// [`lilynk_connection_launch_notice`] by message: the host message the sentence is the
 /// English of, then the sentence, then each placeholder as `name<TAB>value`, one per line,
 /// NUL-terminated, into the caller's buffer; empty when the launch needs no words. The id is
 /// empty from a host that names none. A 1200-byte buffer is ample: the wire caps the id at 64
@@ -272,14 +272,14 @@ pub unsafe extern "C" fn punktfunk_connection_launch_notice(
 /// `c` is a valid connection handle; `out` is writable for `cap` bytes.
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_launch_message(
-    c: *const PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_launch_message(
+    c: *const LilynkConnection,
     out: *mut c_char,
     cap: usize,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         if out.is_null() || cap == 0 {
-            return PunktfunkStatus::NullPointer;
+            return LilynkStatus::NullPointer;
         }
         let outcome = c.inner.launch_outcome();
         let said = match outcome.as_ref().filter(|o| o.notice().is_some()) {
@@ -288,13 +288,13 @@ pub unsafe extern "C" fn punktfunk_connection_launch_message(
         };
         // SAFETY: `out` is writable for `cap` bytes, per this function's contract.
         if !unsafe { write_cstr(out, cap, &said) } {
-            return PunktfunkStatus::InvalidArg;
+            return LilynkStatus::InvalidArg;
         }
-        PunktfunkStatus::Ok
+        LilynkStatus::Ok
     })
 }
 
-/// The lines [`punktfunk_connection_launch_message`] writes. A field is the host's text, so
+/// The lines [`lilynk_connection_launch_message`] writes. A field is the host's text, so
 /// a separator inside one reads as a space.
 #[cfg(feature = "quic")]
 fn launch_message_lines(o: &lilynk_core::quic::LaunchOutcome) -> String {
@@ -306,27 +306,27 @@ fn launch_message_lines(o: &lilynk_core::quic::LaunchOutcome) -> String {
     said
 }
 
-/// Mid-session typed rejection (`PUNKTFUNK_STATUS_REJECTED_*`); `0` = none.
+/// Mid-session typed rejection (`LILYNK_STATUS_REJECTED_*`); `0` = none.
 /// Ask after `Closed`, before free. Connect-time rejections come from connect.
 ///
 /// # Safety
 /// `c` is a valid connection handle; `status` is writable (NULL is skipped).
 #[cfg(feature = "quic")]
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn punktfunk_connection_end_reject(
-    c: *const PunktfunkConnection,
+pub unsafe extern "C" fn lilynk_connection_end_reject(
+    c: *const LilynkConnection,
     status: *mut i32,
-) -> PunktfunkStatus {
+) -> LilynkStatus {
     with_conn!(c => {
         let value = match c.inner.end_reject() {
             Some(reason) => {
-                lilynk_core::error::PunktfunkError::Rejected(reason, String::new()).status() as i32
+                lilynk_core::error::LilynkError::Rejected(reason, String::new()).status() as i32
             }
             None => 0,
         };
         // SAFETY: the caller passes `status` null or writable for one value.
         unsafe { put(status, value) };
-        PunktfunkStatus::Ok
+        LilynkStatus::Ok
     })
 }
 
@@ -344,12 +344,12 @@ mod tests {
         assert_eq!(
             roles,
             [
-                PUNKTFUNK_SCREEN_ROLE_ONLY,
-                PUNKTFUNK_SCREEN_ROLE_MAIN,
-                PUNKTFUNK_SCREEN_ROLE_SECOND
+                LILYNK_SCREEN_ROLE_ONLY,
+                LILYNK_SCREEN_ROLE_MAIN,
+                LILYNK_SCREEN_ROLE_SECOND
             ]
         );
-        assert_eq!(Role::from_u8(PUNKTFUNK_SCREEN_ROLE_NONE), None);
+        assert_eq!(Role::from_u8(LILYNK_SCREEN_ROLE_NONE), None);
         let reasons = [
             RoleReason::AsAsked,
             RoleReason::NotAllowed,
@@ -360,11 +360,11 @@ mod tests {
         assert_eq!(
             reasons.map(RoleReason::to_u8),
             [
-                PUNKTFUNK_SCREEN_ROLE_REASON_AS_ASKED,
-                PUNKTFUNK_SCREEN_ROLE_REASON_NOT_ALLOWED,
-                PUNKTFUNK_SCREEN_ROLE_REASON_MONITORS_HELD,
-                PUNKTFUNK_SCREEN_ROLE_REASON_UNAVAILABLE,
-                PUNKTFUNK_SCREEN_ROLE_REASON_NO_MONITORS
+                LILYNK_SCREEN_ROLE_REASON_AS_ASKED,
+                LILYNK_SCREEN_ROLE_REASON_NOT_ALLOWED,
+                LILYNK_SCREEN_ROLE_REASON_MONITORS_HELD,
+                LILYNK_SCREEN_ROLE_REASON_UNAVAILABLE,
+                LILYNK_SCREEN_ROLE_REASON_NO_MONITORS
             ]
         );
     }

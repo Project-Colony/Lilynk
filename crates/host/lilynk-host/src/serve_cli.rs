@@ -141,9 +141,9 @@ pub(crate) fn parse_serve_args(args: &[String]) -> Result<ServeArgs> {
     };
     if !webtransport_port_explicit {
         if let Some(s) = ly_host_config::config().webtransport_port.as_deref() {
-            webtransport_port = s.parse().map_err(|_| {
-                anyhow::anyhow!("bad PUNKTFUNK_WEBTRANSPORT_PORT '{s}' (want a port)")
-            })?;
+            webtransport_port = s
+                .parse()
+                .map_err(|_| anyhow::anyhow!("bad LILYNK_WEBTRANSPORT_PORT '{s}' (want a port)"))?;
         }
     }
     if !webtransport_bind_explicit {
@@ -174,7 +174,7 @@ pub(crate) fn parse_serve_args(args: &[String]) -> Result<ServeArgs> {
         anyhow::bail!(
             "--open leaves the browser plane unauthenticated, and with no origin list any page \
              the user visits can stream and inject input (WebTransport gets no same-origin rule). \
-             Set PUNKTFUNK_WEBTRANSPORT_ORIGINS, or drop --open"
+             Set LILYNK_WEBTRANSPORT_ORIGINS, or drop --open"
         );
     }
     Ok(ServeArgs {

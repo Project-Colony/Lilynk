@@ -445,7 +445,7 @@ internal fun LibraryScreen(
         }
     }
     removeAsk?.let { game ->
-        PunktfunkDialog(
+        LilynkDialog(
             title = stringResource(R.string.lib_remove_confirm_title, game.title),
             onDismiss = { removeAsk = null },
             actions = listOf(
@@ -458,7 +458,7 @@ internal fun LibraryScreen(
         ) { PromptText(stringResource(R.string.lib_remove_confirm_body)) }
     }
     endAsk?.let { game ->
-        PunktfunkDialog(
+        LilynkDialog(
             title = stringResource(R.string.lib_end_game_confirm_title, game.title),
             onDismiss = { endAsk = null },
             actions = listOf(

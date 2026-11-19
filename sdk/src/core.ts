@@ -1,6 +1,6 @@
 // `@punktfunk/host/core` — the SDK with nothing Node in it.
 //
-// The generated client and its Schemas, the `PunktfunkHost` service, the typed errors, the
+// The generated client and its Schemas, the `LilynkHost` service, the typed errors, the
 // event-stream decoder, and the credential kinds — everything a program needs to talk to a host
 // once it already knows how to reach one. What it lacks is deliberate: resolving a connection
 // from environment and token files is `config.ts`, which imports `node:fs`, and the runner,
@@ -24,8 +24,8 @@ export {
 	EventStreamError,
 	layerFrom,
 	makeService,
-	PunktfunkHost,
-	type PunktfunkHostService,
+	LilynkHost,
+	type LilynkHostService,
 	type RequestError,
 	SseAuthError,
 	TransportError,

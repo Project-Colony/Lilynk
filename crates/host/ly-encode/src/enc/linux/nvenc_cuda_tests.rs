@@ -986,7 +986,7 @@ fn nvenc_cuda_hdr10_cursor_blend() {
 }
 
 /// Hardware: a packed-RGB 8-bit capture under a 10-bit session encodes a 10-bit stream,
-/// BT.709, no PQ (the `.obu`/`.h265` land in `PUNKTFUNK_SMOKE_DIR` for `ffprobe`: each must
+/// BT.709, no PQ (the `.obu`/`.h265` land in `LILYNK_SMOKE_DIR` for `ffprobe`: each must
 /// read `yuv420p10le` bt709). The planar arms are the regression guard: real Linux capture
 /// is NV12 (and 4:4:4 is planar YUV444), which NVENC refuses in a 10-bit session — the
 /// encoder must degrade those to 8-bit rather than fail `register_resource`.
@@ -997,7 +997,7 @@ fn nvenc_cuda_hdr10_cursor_blend() {
 fn nvenc_cuda_sdr10_from_eight_bit_capture() {
     const W: u32 = 1280;
     const H: u32 = 720;
-    let dir = std::env::var("PUNKTFUNK_SMOKE_DIR").unwrap_or_else(|_| ".".into());
+    let dir = std::env::var("LILYNK_SMOKE_DIR").unwrap_or_else(|_| ".".into());
     let cpu_frame = |i: u32| CapturedFrame {
         provenance: Default::default(),
         width: W,
@@ -1214,8 +1214,8 @@ fn nvenc_cuda_split_reconfigure_in_place() {
     let two = M::NV_ENC_SPLIT_TWO_FORCED_MODE as u32;
 
     // Sub-frame off; open split-disabled so the switch is a real change.
-    set_env("PUNKTFUNK_NVENC_SUBFRAME", "0");
-    set_env("PUNKTFUNK_SPLIT_ENCODE", "0");
+    set_env("LILYNK_NVENC_SUBFRAME", "0");
+    set_env("LILYNK_SPLIT_ENCODE", "0");
 
     ly_zerocopy::cuda::make_current().expect("shared CUDA context current");
     let mut enc = NvencCudaEncoder::open(
@@ -1321,8 +1321,8 @@ fn nvenc_cuda_split_reconfigure_in_place() {
     }
 
     enc.flush().ok();
-    remove_env("PUNKTFUNK_SPLIT_ENCODE");
-    remove_env("PUNKTFUNK_NVENC_SUBFRAME");
+    remove_env("LILYNK_SPLIT_ENCODE");
+    remove_env("LILYNK_NVENC_SUBFRAME");
 }
 
 /// Hardware: did an accepted in-place split actually take effect? A = fresh DISABLE, B =
@@ -1343,7 +1343,7 @@ fn nvenc_cuda_split_reconfigure_takes_effect() {
     const SETTLE: u32 = 16;
     let two = M::NV_ENC_SPLIT_TWO_FORCED_MODE as u32;
 
-    set_env("PUNKTFUNK_NVENC_SUBFRAME", "0");
+    set_env("LILYNK_NVENC_SUBFRAME", "0");
 
     // Rotated buffers do not help: the driver still returns zeroed VRAM. This harness
     // measures pixel-proportional cost only.
@@ -1352,7 +1352,7 @@ fn nvenc_cuda_split_reconfigure_takes_effect() {
 
     // (early p50 µs, late p50 µs, median B/AU).
     let run_leg = |open_split: &str, switch_to: Option<u32>| -> (u128, u128, usize) {
-        set_env("PUNKTFUNK_SPLIT_ENCODE", open_split);
+        set_env("LILYNK_SPLIT_ENCODE", open_split);
         let mut enc = NvencCudaEncoder::open(
             Codec::H265,
             PixelFormat::Nv12,
@@ -1458,8 +1458,8 @@ fn nvenc_cuda_split_reconfigure_takes_effect() {
         }
     );
 
-    remove_env("PUNKTFUNK_SPLIT_ENCODE");
-    remove_env("PUNKTFUNK_NVENC_SUBFRAME");
+    remove_env("LILYNK_SPLIT_ENCODE");
+    remove_env("LILYNK_NVENC_SUBFRAME");
     let _ = (a_bytes, b_bytes, c_bytes);
 }
 
@@ -1477,8 +1477,8 @@ fn nvenc_cuda_split_subframe_pair_reconfigure() {
     let two = M::NV_ENC_SPLIT_TWO_FORCED_MODE as u32;
 
     // Split-disabled; sub-frame at the caps-gated default.
-    set_env("PUNKTFUNK_SPLIT_ENCODE", "0");
-    remove_env("PUNKTFUNK_NVENC_SUBFRAME");
+    set_env("LILYNK_SPLIT_ENCODE", "0");
+    remove_env("LILYNK_NVENC_SUBFRAME");
 
     ly_zerocopy::cuda::make_current().expect("shared CUDA context current");
     let mut enc = NvencCudaEncoder::open(
@@ -1526,7 +1526,7 @@ fn nvenc_cuda_split_subframe_pair_reconfigure() {
             "S1c SKIPPED: sub-frame is off at open on this GPU/driver, so there is no pair to \
              flip — the arbitration reduces to S1a's plain split switch here."
         );
-        remove_env("PUNKTFUNK_SPLIT_ENCODE");
+        remove_env("LILYNK_SPLIT_ENCODE");
         return;
     }
 
@@ -1576,7 +1576,7 @@ fn nvenc_cuda_split_subframe_pair_reconfigure() {
     }
 
     enc.flush().ok();
-    remove_env("PUNKTFUNK_SPLIT_ENCODE");
+    remove_env("LILYNK_SPLIT_ENCODE");
 }
 
 /// Hardware: does plain AUTO + default-on sub-frame actually split? HEVC split is
@@ -1598,12 +1598,12 @@ fn nvenc_cuda_auto_split_with_subframe() {
     // `split: None` = unset = plain AUTO. Env `1` is AUTO_FORCED, which disarms sub-frame.
     let run = |split: Option<&str>, subframe: Option<&str>| -> (u128, bool) {
         match split {
-            Some(v) => set_env("PUNKTFUNK_SPLIT_ENCODE", v),
-            None => remove_env("PUNKTFUNK_SPLIT_ENCODE"),
+            Some(v) => set_env("LILYNK_SPLIT_ENCODE", v),
+            None => remove_env("LILYNK_SPLIT_ENCODE"),
         }
         match subframe {
-            Some(v) => set_env("PUNKTFUNK_NVENC_SUBFRAME", v),
-            None => remove_env("PUNKTFUNK_NVENC_SUBFRAME"),
+            Some(v) => set_env("LILYNK_NVENC_SUBFRAME", v),
+            None => remove_env("LILYNK_NVENC_SUBFRAME"),
         }
         let mut enc = NvencCudaEncoder::open(
             Codec::H265,
@@ -1683,8 +1683,8 @@ fn nvenc_cuda_auto_split_with_subframe() {
         }
     );
 
-    remove_env("PUNKTFUNK_SPLIT_ENCODE");
-    remove_env("PUNKTFUNK_NVENC_SUBFRAME");
+    remove_env("LILYNK_SPLIT_ENCODE");
+    remove_env("LILYNK_NVENC_SUBFRAME");
 }
 
 /// Hardware: split ceiling. A refused mode falls back to DISABLE, not an error. Timing
@@ -1700,13 +1700,13 @@ fn nvenc_cuda_split_hardware_max() {
     const WARMUP: u32 = 8;
     const MEASURED: u32 = 24;
 
-    set_env("PUNKTFUNK_NVENC_SUBFRAME", "0");
+    set_env("LILYNK_NVENC_SUBFRAME", "0");
     ly_zerocopy::cuda::make_current().expect("shared CUDA context current");
     let frames: Vec<CapturedFrame> = (0..4).map(|i| nv12_frame(W, H, i)).collect();
 
     // (opened mode, p50 µs, engines).
     let run = |split: &str| -> (u32, u128, i32) {
-        set_env("PUNKTFUNK_SPLIT_ENCODE", split);
+        set_env("LILYNK_SPLIT_ENCODE", split);
         let mut enc = NvencCudaEncoder::open(
             Codec::H265,
             PixelFormat::Nv12,
@@ -1779,8 +1779,8 @@ fn nvenc_cuda_split_hardware_max() {
          HONOURED but no faster than DISABLE was accepted and did nothing."
     );
 
-    remove_env("PUNKTFUNK_SPLIT_ENCODE");
-    remove_env("PUNKTFUNK_NVENC_SUBFRAME");
+    remove_env("LILYNK_SPLIT_ENCODE");
+    remove_env("LILYNK_NVENC_SUBFRAME");
 }
 
 /// Hardware: live split arbitration at 4K. Sub-frame off so the no-trade gate arms.
@@ -1792,9 +1792,9 @@ fn nvenc_cuda_split_arbitration_converges() {
     const H: u32 = 2160;
     let disable = nv::NV_ENC_SPLIT_ENCODE_MODE::NV_ENC_SPLIT_DISABLE_MODE as u32;
 
-    set_env("PUNKTFUNK_NVENC_SPLIT_ARBITRATE", "1");
-    set_env("PUNKTFUNK_NVENC_SUBFRAME", "0");
-    remove_env("PUNKTFUNK_SPLIT_ENCODE");
+    set_env("LILYNK_NVENC_SPLIT_ARBITRATE", "1");
+    set_env("LILYNK_NVENC_SUBFRAME", "0");
+    remove_env("LILYNK_SPLIT_ENCODE");
 
     ly_zerocopy::cuda::make_current().expect("shared CUDA context current");
     let frames: Vec<CapturedFrame> = (0..4).map(|i| nv12_frame(W, H, i)).collect();
@@ -1862,8 +1862,8 @@ fn nvenc_cuda_split_arbitration_converges() {
         max_forced_split_mode(enc_engines)
     );
 
-    remove_env("PUNKTFUNK_NVENC_SPLIT_ARBITRATE");
-    remove_env("PUNKTFUNK_NVENC_SUBFRAME");
+    remove_env("LILYNK_NVENC_SPLIT_ARBITRATE");
+    remove_env("LILYNK_NVENC_SUBFRAME");
     // Process-global cache would steer later tests that open this config with split unset.
     super::super::nvenc_core::clear_split_verdicts();
 }
@@ -1886,13 +1886,13 @@ fn nvenc_cuda_main10_split_ab() {
         })
         .unwrap_or((3840, 2160, 60));
 
-    set_env("PUNKTFUNK_NVENC_SUBFRAME", "0");
+    set_env("LILYNK_NVENC_SUBFRAME", "0");
     ly_zerocopy::cuda::make_current().expect("shared CUDA context current");
     // Packed 10-bit: `bit_depth`/`hdr` are derived from the input, not the args.
     let frames: Vec<CapturedFrame> = (0..4).map(|i| rgb10_frame(w, h, i)).collect();
 
     let run = |split: &str| -> (u128, u8, usize) {
-        set_env("PUNKTFUNK_SPLIT_ENCODE", split);
+        set_env("LILYNK_SPLIT_ENCODE", split);
         let mut enc = NvencCudaEncoder::open(
             Codec::H265,
             PixelFormat::X2Rgb10,
@@ -1959,8 +1959,8 @@ fn nvenc_cuda_main10_split_ab() {
         }
     );
 
-    remove_env("PUNKTFUNK_SPLIT_ENCODE");
-    remove_env("PUNKTFUNK_NVENC_SUBFRAME");
+    remove_env("LILYNK_SPLIT_ENCODE");
+    remove_env("LILYNK_NVENC_SUBFRAME");
 }
 
 /// Hardware: bits/frame curve. Zeroed VRAM only measures pixel-proportional cost.
@@ -1979,7 +1979,7 @@ fn nvenc_cuda_bits_per_frame_curve() {
         })
         .unwrap_or((3840, 2160, 60));
 
-    set_env("PUNKTFUNK_NVENC_SUBFRAME", "0");
+    set_env("LILYNK_NVENC_SUBFRAME", "0");
     ly_zerocopy::cuda::make_current().expect("shared CUDA context current");
     // Sweep spatial detail, not nominal bitrate. Pure noise overshoots any low target;
     // the x-axis is bits/frame actually produced.
@@ -1992,7 +1992,7 @@ fn nvenc_cuda_bits_per_frame_curve() {
     for block in [64usize, 32, 16, 8, 4, 1] {
         let frames: Vec<CapturedFrame> = (0..4).map(|i| noise_nv12_frame(w, h, i, block)).collect();
         let run = |split: &str| -> (u128, usize) {
-            set_env("PUNKTFUNK_SPLIT_ENCODE", split);
+            set_env("LILYNK_SPLIT_ENCODE", split);
             let mut enc = NvencCudaEncoder::open(
                 Codec::H265,
                 PixelFormat::Nv12,
@@ -2038,8 +2038,8 @@ fn nvenc_cuda_bits_per_frame_curve() {
         );
     }
 
-    remove_env("PUNKTFUNK_SPLIT_ENCODE");
-    remove_env("PUNKTFUNK_NVENC_SUBFRAME");
+    remove_env("LILYNK_SPLIT_ENCODE");
+    remove_env("LILYNK_NVENC_SUBFRAME");
 }
 
 /// Pre-session / nonsense RFI declines. Skips if the NVENC `.so` is absent.
@@ -2358,7 +2358,7 @@ fn wedge_copy_stream(enc: &mut NvencCudaEncoder) {
 fn nvenc_cuda_stuck_fused_wait_releases() {
     const W: u32 = 640;
     const H: u32 = 360;
-    set_env("PUNKTFUNK_ZEROCOPY_INPROC", "1");
+    set_env("LILYNK_ZEROCOPY_INPROC", "1");
     ly_zerocopy::cuda::make_current().expect("shared CUDA context current");
     if !Knobs::from_env().nvenc_stream_ordered || async_retrieve_requested() {
         println!("skipped: stream-ordered submit disabled by env");
@@ -2411,7 +2411,7 @@ fn nvenc_cuda_stuck_fused_wait_releases() {
         t.elapsed() < std::time::Duration::from_secs(3),
         "teardown must not hang"
     );
-    remove_env("PUNKTFUNK_ZEROCOPY_INPROC");
+    remove_env("LILYNK_ZEROCOPY_INPROC");
 }
 
 /// Hardware: cursor frames stay on the stream-ordered path (`blend_ref_ordered`, ticket
@@ -2502,7 +2502,7 @@ fn nvenc_cuda_pipelined_escalation() {
     const H: u32 = 720;
     ly_zerocopy::cuda::make_current().expect("shared CUDA context current");
     if async_retrieve_vetoed() {
-        println!("skipped: PUNKTFUNK_NVENC_ASYNC=0 vetoes the escalation");
+        println!("skipped: LILYNK_NVENC_ASYNC=0 vetoes the escalation");
         return;
     }
     let mut enc = NvencCudaEncoder::open(
@@ -2582,7 +2582,7 @@ fn nvenc_cuda_pipelined_retrieve_rings_the_au_wake() {
     }
     ly_zerocopy::cuda::make_current().expect("shared CUDA context current");
     if async_retrieve_vetoed() {
-        println!("skipped: PUNKTFUNK_NVENC_ASYNC=0 vetoes the escalation");
+        println!("skipped: LILYNK_NVENC_ASYNC=0 vetoes the escalation");
         return;
     }
     let period = Duration::from_secs(1) / 120;
@@ -2665,12 +2665,12 @@ fn nvenc_cuda_subframe_slice_probe() {
     struct EnvGuard;
     impl Drop for EnvGuard {
         fn drop(&mut self) {
-            remove_env("PUNKTFUNK_NVENC_SLICES");
-            remove_env("PUNKTFUNK_NVENC_SUBFRAME");
+            remove_env("LILYNK_NVENC_SLICES");
+            remove_env("LILYNK_NVENC_SUBFRAME");
         }
     }
-    set_env("PUNKTFUNK_NVENC_SLICES", "4");
-    set_env("PUNKTFUNK_NVENC_SUBFRAME", "1");
+    set_env("LILYNK_NVENC_SLICES", "4");
+    set_env("LILYNK_NVENC_SUBFRAME", "1");
     let _guard = EnvGuard;
 
     ly_zerocopy::cuda::make_current().expect("shared CUDA context current");
@@ -2734,7 +2734,7 @@ fn nvenc_cuda_subframe_slice_probe() {
     let last = timeline.last().expect("at least one sample");
     assert_eq!(
         last.2, 4,
-        "4 slices must materialize (PUNKTFUNK_NVENC_SLICES=4 + subframe readback armed)"
+        "4 slices must materialize (LILYNK_NVENC_SLICES=4 + subframe readback armed)"
     );
     // One more frame — session still healthy.
     let frame = nv12_frame(W, H, 2);
@@ -2755,8 +2755,8 @@ fn nvenc_cuda_chunked_poll_end_to_end() {
     const W: u32 = 1920;
     const H: u32 = 1080;
     // Defaults under test — no leaked knobs.
-    remove_env("PUNKTFUNK_NVENC_SLICES");
-    remove_env("PUNKTFUNK_NVENC_SUBFRAME");
+    remove_env("LILYNK_NVENC_SLICES");
+    remove_env("LILYNK_NVENC_SUBFRAME");
 
     ly_zerocopy::cuda::make_current().expect("shared CUDA context current");
     let mut enc = NvencCudaEncoder::open(
@@ -2852,8 +2852,8 @@ fn nvenc_cuda_single_slice_client_ceiling() {
     const W: u32 = 1920;
     const H: u32 = 1080;
     // Negotiated ceiling, not the operator override.
-    remove_env("PUNKTFUNK_NVENC_SLICES");
-    remove_env("PUNKTFUNK_NVENC_SUBFRAME");
+    remove_env("LILYNK_NVENC_SLICES");
+    remove_env("LILYNK_NVENC_SUBFRAME");
     ly_zerocopy::cuda::make_current().expect("shared CUDA context current");
     let mut enc = NvencCudaEncoder::open(
         Codec::H265,
@@ -2888,7 +2888,7 @@ fn nvenc_cuda_single_slice_client_ceiling() {
     }
 }
 
-/// Hardware: `PUNKTFUNK_NVENC_SLICES=1` disarms chunked poll; `poll_chunk` is one
+/// Hardware: `LILYNK_NVENC_SLICES=1` disarms chunked poll; `poll_chunk` is one
 /// self-closing whole-AU chunk. `--test-threads=1`.
 #[test]
 #[ignore = "requires an NVIDIA GPU + driver — run manually on the RTX box (.21)"]
@@ -2898,22 +2898,22 @@ fn nvenc_cuda_chunked_poll_fallback_whole_au() {
     struct EnvGuard;
     impl Drop for EnvGuard {
         fn drop(&mut self) {
-            remove_env("PUNKTFUNK_NVENC_SLICES");
-            remove_env("PUNKTFUNK_NVENC_SUBFRAME");
+            remove_env("LILYNK_NVENC_SLICES");
+            remove_env("LILYNK_NVENC_SUBFRAME");
         }
     }
     let _guard = EnvGuard;
     ly_zerocopy::cuda::make_current().expect("shared CUDA context current");
 
     // Explicit single slice — no boundaries.
-    set_env("PUNKTFUNK_NVENC_SLICES", "1");
-    remove_env("PUNKTFUNK_NVENC_SUBFRAME");
+    set_env("LILYNK_NVENC_SLICES", "1");
+    remove_env("LILYNK_NVENC_SUBFRAME");
     let mut enc = open_h265();
     let frame = nv12_frame(W, H, 0);
     enc.submit_indexed(&frame, 0).expect("submit");
     assert!(
         !enc.supports_chunked_poll(),
-        "PUNKTFUNK_NVENC_SLICES=1 → chunked poll must not arm"
+        "LILYNK_NVENC_SLICES=1 → chunked poll must not arm"
     );
     let c = enc
         .poll_chunk()
@@ -2929,14 +2929,14 @@ fn nvenc_cuda_chunked_poll_fallback_whole_au() {
     drop(enc);
 
     // Sub-frame vetoed: slices stay, chunked poll disarms, plain `poll` carries.
-    remove_env("PUNKTFUNK_NVENC_SLICES");
-    set_env("PUNKTFUNK_NVENC_SUBFRAME", "0");
+    remove_env("LILYNK_NVENC_SLICES");
+    set_env("LILYNK_NVENC_SUBFRAME", "0");
     let mut enc = open_h265();
     let frame = nv12_frame(W, H, 0);
     enc.submit_indexed(&frame, 0).expect("submit");
     assert!(
         !enc.supports_chunked_poll(),
-        "PUNKTFUNK_NVENC_SUBFRAME=0 → chunked poll must not arm"
+        "LILYNK_NVENC_SUBFRAME=0 → chunked poll must not arm"
     );
     let au = enc.poll().expect("poll").expect("AU");
     assert!(au.keyframe && !au.data.is_empty());
@@ -3276,8 +3276,8 @@ fn nvenc_cuda_in_place_unaligned_pitch() {
 #[ignore = "requires an NVIDIA GPU + driver and ffmpeg"]
 fn nvenc_cuda_convert_lane_unaligned_pitch() {
     // In-process, so the convert under test is this build's and not an installed worker's.
-    set_env("PUNKTFUNK_ZEROCOPY_INPROC", "1");
-    set_env("PUNKTFUNK_NVENC_DIRECT", "0");
+    set_env("LILYNK_ZEROCOPY_INPROC", "1");
+    set_env("LILYNK_NVENC_DIRECT", "0");
     let bytes = edge_frame(ODD_W, ODD_H, ODD_W * 4);
     let buf = LinearDmabuf::new(&bytes);
     ly_zerocopy::cuda::make_current().expect("shared CUDA context current");
@@ -3310,8 +3310,8 @@ fn nvenc_cuda_convert_lane_unaligned_pitch() {
     while let Some(au) = enc.poll().expect("poll") {
         stream.extend_from_slice(&au.data);
     }
-    remove_env("PUNKTFUNK_ZEROCOPY_INPROC");
-    remove_env("PUNKTFUNK_NVENC_DIRECT");
+    remove_env("LILYNK_ZEROCOPY_INPROC");
+    remove_env("LILYNK_NVENC_DIRECT");
     assert!(enc.direct.is_none(), "a frame was encoded in place");
     assert!(enc.worker.is_some(), "no frame went through the worker");
     assert_edge_is_straight(&stream, "convert-lane-unaligned.h265", ODD_W, ODD_H);

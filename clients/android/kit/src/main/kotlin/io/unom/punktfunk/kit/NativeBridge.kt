@@ -335,7 +335,7 @@ object NativeBridge {
 
     /**
      * This device's link toward its default route as core reads it: `[kind, mbps]`, a
-     * `PUNKTFUNK_IFACE_KIND_*` (0 unknown, 1 Ethernet, 2 Wi-Fi, 3 other) and Mbit/s, `0` where
+     * `LILYNK_IFACE_KIND_*` (0 unknown, 1 Ethernet, 2 Wi-Fi, 3 other) and Mbit/s, `0` where
      * the OS did not say. A route lookup: nothing is sent. Cheap; UI-safe.
      */
     external fun nativeLocalLink(): IntArray?

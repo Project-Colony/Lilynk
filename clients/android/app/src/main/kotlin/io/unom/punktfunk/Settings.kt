@@ -96,7 +96,7 @@ data class Settings(
      * Off by default and deliberately: lossless takes 2.1–8.5 Mbps off the top of the link,
      * OUTSIDE the ABR loop that manages the video budget, against the ~256 kbps Opus it replaces —
      * so a user has to pick it. This setting is the ONLY opt-in: the host's half
-     * (`PUNKTFUNK_AUDIO_HIRES`) defaults ON and is an opt-OUT (`=0`), so this choice is enough on
+     * (`LILYNK_AUDIO_HIRES`) defaults ON and is an opt-OUT (`=0`), so this choice is enough on
      * any host that has not deliberately turned the plane off.
      * A REQUEST, never a fact: the host runs its gate and may answer Opus anyway, and
      * the native side downgrades the rate first if THIS device will not open it. What actually
@@ -417,7 +417,7 @@ enum class StatsVerbosity(@StringRes val label: Int) {
  */
 fun Settings.reset(tv: Boolean): Settings = Settings(reduceUiResolution = tv, defaultHost = defaultHost)
 
-/** Loads/saves [Settings] in the app-private `punktfunk_settings` prefs. */
+/** Loads/saves [Settings] in the app-private `lilynk_settings` prefs. */
 class SettingsStore(
     context: Context,
     /**
@@ -428,7 +428,7 @@ class SettingsStore(
     private val tv: Boolean = isTvDevice(context),
 ) {
     private val prefs =
-        context.applicationContext.getSharedPreferences("punktfunk_settings", Context.MODE_PRIVATE)
+        context.applicationContext.getSharedPreferences("lilynk_settings", Context.MODE_PRIVATE)
 
     fun load(): Settings =
         SettingsFields.ALL.fold(Settings(reduceUiResolution = tv)) { s, f -> f.load(s, prefs) }
@@ -809,7 +809,7 @@ val VIDEO_FIT_OPTIONS = listOf(
 
 /**
  * Stream-mode presets grouped by aspect ratio — the Kotlin twin of `lilynk_core::resolutions`
- * (and `PunktfunkShared/Resolutions.swift`). A picker shows one family at a time behind an aspect
+ * (and `LilynkShared/Resolutions.swift`). A picker shows one family at a time behind an aspect
  * switch, plus its own native rows; picking a family moves to its size nearest the current height
  * ([nearest]), so the switch and the list always agree without picker-side state. Pure + covered
  * by [ResolutionsTest].
@@ -1040,7 +1040,7 @@ val AUDIO_FORMAT_OPTIONS = listOf(
  * lossless rung as well as the legacy pair, so the other rule would make it the one rung nobody
  * could ask for. Sending `48000`/`16` for a user who chose Standard therefore advertises the
  * capability, and the host then hands that user 1.5 Mbps of lossless PCM instead of 256 kbps of
- * Opus. The host's `PUNKTFUNK_AUDIO_HIRES` gate is on by default, so that reaches every host that
+ * Opus. The host's `LILYNK_AUDIO_HIRES` gate is on by default, so that reaches every host that
  * has not opted out. The zeroes below are load-bearing.
  *
  * The zeroes are also what keeps a default `Hello` byte-identical to a pre-lossless one — the wire

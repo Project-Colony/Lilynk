@@ -99,7 +99,7 @@ object SkiaConsole {
     private const val BACKEND_PROP = "debug.lilynk.console_backend"
 
     /** Where the console-owned settings keys (`library_view`, `reduce_motion`, …) persist. */
-    internal const val PREFS = "punktfunk_console_settings"
+    internal const val PREFS = "lilynk_console_settings"
 
     /** Written once by [ensure] before the event thread starts; `0` until then. */
     @Volatile

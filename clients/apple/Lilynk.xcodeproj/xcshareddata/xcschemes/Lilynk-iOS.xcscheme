@@ -51,7 +51,7 @@
       </BuildableProductRunnable>
       <EnvironmentVariables>
          <EnvironmentVariable
-            key = "PUNKTFUNK_BILINEAR_LUMA"
+            key = "LILYNK_BILINEAR_LUMA"
             value = "1"
             isEnabled = "YES">
          </EnvironmentVariable>

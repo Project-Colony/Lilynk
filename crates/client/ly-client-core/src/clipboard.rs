@@ -69,7 +69,7 @@ pub fn run(client: Arc<NativeClient>, stop: Arc<AtomicBool>) {
         // FetchRequest first — the host is blocked on us.
         match client.next_clip(EVENT_WAIT) {
             Ok(ev) => handle_event(&client, &mut state, ev),
-            Err(lilynk_core::error::PunktfunkError::NoFrame) => {}
+            Err(lilynk_core::error::LilynkError::NoFrame) => {}
             Err(_) => break,
         }
         // Check the OS clipboard on [`POLL`]. This wait is short so teardown is not delayed.

@@ -165,7 +165,7 @@ $manifest = (Get-Content -Raw $manifestTemplate).Replace('{VERSION}', $Version).
 # The ARM64 session is built --no-default-features, which drops its Skia console: no tile for it.
 if ($Arch -eq 'arm64') {
     $manifest = [regex]::Replace($manifest, '(?s)\s*<!-- console:begin -->.*?<!-- console:end -->', '')
-    if ($manifest -match 'PunktfunkConsole') { throw 'the console entry survived the arm64 strip' }
+    if ($manifest -match 'LilynkConsole') { throw 'the console entry survived the arm64 strip' }
 }
 Set-Content -Path (Join-Path $layout 'AppxManifest.xml') -Value $manifest -Encoding UTF8
 

@@ -397,7 +397,7 @@ class MainActivity : FragmentActivity() {
             registerReceiver(receiver, filter)
         }
         setContent {
-            PunktfunkTheme {
+            LilynkTheme {
                 HoldWindowInsetsListeners()
                 // Focus hook for the SC2's synthetic navigation (see [sc2MoveFocus]). `Next` is
                 // the bootstrap: directional moves need an already-focused node, while one-

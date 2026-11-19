@@ -68,7 +68,7 @@ use input::ClientInput;
 
 mod handshake;
 pub(crate) use handshake::redirect;
-/// `PUNKTFUNK_WIRE_MTU`, the control-connection path-MTU watch, and the per-peer shard clamp.
+/// `LILYNK_WIRE_MTU`, the control-connection path-MTU watch, and the per-peer shard clamp.
 mod wire_mtu;
 
 mod control;
@@ -86,7 +86,7 @@ use stream::{
 mod wiring;
 pub use stream::{Content, KeyframeAnswer, SynthAbrShape, DEFAULT_IDR_PCT};
 use wiring::SessionWiring;
-/// Every `PUNKTFUNK_*` read of the plane.
+/// Every `LILYNK_*` read of the plane.
 mod knobs;
 pub(crate) use knobs::HostKnobs;
 use knobs::SessionKnobs;
@@ -102,7 +102,7 @@ mod lock;
 pub(crate) mod unlock;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Punktfunk1Source {
+pub enum Lilynk1Source {
     /// Protocol-test frames; the client byte-checks the payload.
     Synthetic,
     /// Frames sized from the live wire budget, on the real paced send path. No display and no
@@ -117,9 +117,9 @@ pub enum Punktfunk1Source {
     Software,
 }
 
-pub struct Punktfunk1Options {
+pub struct Lilynk1Options {
     pub port: u16,
-    pub source: Punktfunk1Source,
+    pub source: Lilynk1Source,
     pub seconds: u32,
     pub frames: u32,
     /// `0` = serve forever.
@@ -138,10 +138,10 @@ pub struct Punktfunk1Options {
     /// Tests: store path. `None` = the default config path.
     pub paired_store: Option<std::path::PathBuf>,
     /// Disconnect-detection latency. `None` = `endpoint::DEFAULT_IDLE_TIMEOUT`. From
-    /// `PUNKTFUNK_IDLE_TIMEOUT_MS`; ≥1 s floor, keep-alive scales so a live session
+    /// `LILYNK_IDLE_TIMEOUT_MS`; ≥1 s floor, keep-alive scales so a live session
     /// never false-closes.
     pub idle_timeout: Option<std::time::Duration>,
-    /// `_punktfunk._udp` advert. `--no-mdns` / `PUNKTFUNK_MDNS=0` skips it.
+    /// `_punktfunk._udp` advert. `--no-mdns` / `LILYNK_MDNS=0` skips it.
     pub mdns: bool,
 }
 
@@ -178,7 +178,7 @@ impl PairingClocks {
 
 use lilynk_core::quic::wall_clock_ns as now_ns;
 
-pub fn run(opts: Punktfunk1Options) -> Result<()> {
+pub fn run(opts: Lilynk1Options) -> Result<()> {
     let rt = tokio::runtime::Builder::new_multi_thread()
         .worker_threads(2)
         .enable_all()
@@ -206,7 +206,7 @@ pub fn run(opts: Punktfunk1Options) -> Result<()> {
 /// [`run`] with an in-memory identity. Tests must not mint `native-cert.pem` in the real
 /// config dir: a live host on the same box would adopt it and strand every pinned client.
 #[cfg(test)]
-fn run_ephemeral(opts: Punktfunk1Options) -> Result<()> {
+fn run_ephemeral(opts: Lilynk1Options) -> Result<()> {
     let rt = tokio::runtime::Builder::new_multi_thread()
         .worker_threads(2)
         .enable_all()
@@ -236,10 +236,10 @@ pub(crate) struct NativeServe {
     pub require_pairing: bool,
     /// Management API TCP port, advertised over mDNS so a client browses the library on this IP.
     pub mgmt_port: u16,
-    /// Gates `_punktfunk._udp` and GameStream `_nvstream` together. See [`Punktfunk1Options::mdns`].
+    /// Gates `_punktfunk._udp` and GameStream `_nvstream` together. See [`Lilynk1Options::mdns`].
     pub mdns: bool,
     /// Where the browser plane listens, or `None` when it is off — which is the default
-    /// (`--webtransport` / `PUNKTFUNK_WEBTRANSPORT`). See `crate::webtransport`.
+    /// (`--webtransport` / `LILYNK_WEBTRANSPORT`). See `crate::webtransport`.
     pub webtransport_bind: Option<std::net::SocketAddr>,
 }
 
@@ -247,9 +247,9 @@ pub(crate) struct NativeServe {
 /// accept queue.
 pub(crate) const DEFAULT_MAX_CONCURRENT: usize = 4;
 
-pub(crate) fn native_serve_opts(cfg: &NativeServe) -> Punktfunk1Options {
+pub(crate) fn native_serve_opts(cfg: &NativeServe) -> Lilynk1Options {
     let knobs = HostKnobs::get();
-    Punktfunk1Options {
+    Lilynk1Options {
         port: cfg.port,
         source: knobs.source,
         seconds: 7 * 24 * 3600, // 7 days: a cap, not a cut of a live stream
@@ -266,7 +266,7 @@ pub(crate) fn native_serve_opts(cfg: &NativeServe) -> Punktfunk1Options {
 }
 
 pub(crate) async fn serve(
-    opts: Punktfunk1Options,
+    opts: Lilynk1Options,
     mgmt_port: u16,
     np: Arc<NativePairing>,
     profiles: Arc<crate::profiles::Profiles>,
@@ -331,7 +331,7 @@ pub(crate) async fn serve(
             .as_ref()
             .map_or_else(|| std::sync::mpsc::sync_channel(1).0, |m| m.sender())
     };
-    // Windows (`PUNKTFUNK_PAD_AUDIO` / `_SLOTS`): pre-provision DualSense speaker endpoints
+    // Windows (`LILYNK_PAD_AUDIO` / `_SLOTS`): pre-provision DualSense speaker endpoints
     // once. A stored-but-not-served stamp triggers one Audiosrv restart before any session.
     // Failure logs once and leaves pads working without pad audio. A seat's pad endpoints come
     // from its listener's enumerator; the box-wide ones are the console host's.
@@ -442,7 +442,7 @@ pub(crate) async fn serve(
 /// The `_punktfunk._udp` advert. None on a seat host, with `--no-mdns`, or when discovery fails:
 /// a client still connects by address.
 fn advertise(
-    opts: &Punktfunk1Options,
+    opts: &Lilynk1Options,
     mgmt_port: u16,
     fingerprint: &[u8; 32],
 ) -> Option<crate::discovery::Advert> {
@@ -452,7 +452,7 @@ fn advertise(
     }
     if !opts.mdns {
         tracing::info!(
-            "mDNS advertisement disabled (--no-mdns / PUNKTFUNK_MDNS) — clients connect by address"
+            "mDNS advertisement disabled (--no-mdns / LILYNK_MDNS) — clients connect by address"
         );
         return None;
     }
@@ -958,7 +958,7 @@ pub(crate) fn setup_failed_sentence(e: &anyhow::Error) -> Option<Said> {
 #[allow(clippy::too_many_arguments)]
 async fn serve_session(
     conn: link::SessionLink,
-    opts: &Arc<Punktfunk1Options>,
+    opts: &Arc<Lilynk1Options>,
     audio_cap: &AudioCapSlot,
     inj_tx: std::sync::mpsc::Sender<InputEvent>,
     mic_tx: std::sync::mpsc::SyncSender<crate::audio::MicFrame>,
@@ -1191,7 +1191,7 @@ async fn serve_pkf1(
 /// exactly this session — and a second copy of the runner is the thing this must never become.
 #[derive(Clone)]
 pub(crate) struct SessionHost {
-    pub(crate) opts: Arc<Punktfunk1Options>,
+    pub(crate) opts: Arc<Lilynk1Options>,
     pub(crate) audio_cap: AudioCapSlot,
     pub(crate) inj_tx: std::sync::mpsc::Sender<InputEvent>,
     pub(crate) mic_tx: std::sync::mpsc::SyncSender<crate::audio::MicFrame>,
@@ -1213,9 +1213,9 @@ impl SessionHost {
         profiles: Arc<crate::profiles::Profiles>,
     ) -> SessionHost {
         SessionHost {
-            opts: Arc::new(Punktfunk1Options {
+            opts: Arc::new(Lilynk1Options {
                 port: 0,
-                source: Punktfunk1Source::Synthetic,
+                source: Lilynk1Source::Synthetic,
                 seconds: 0,
                 frames: 0,
                 max_sessions: 0,
@@ -1830,7 +1830,7 @@ fn spawn_control(
         preferred_codec: hello.preferred_codec,
         // The synthetic source encodes test frames under any codec it is told; the others switch
         // within what the session's resolution emits.
-        host_codecs: if source == Punktfunk1Source::Synthetic {
+        host_codecs: if source == Lilynk1Source::Synthetic {
             lilynk_core::quic::CODEC_H264
                 | lilynk_core::quic::CODEC_HEVC
                 | lilynk_core::quic::CODEC_AV1
@@ -2001,7 +2001,7 @@ async fn stream_session(
     let rt = tokio::runtime::Handle::current();
     let (done_tx, done) = tokio::sync::oneshot::channel();
     std::thread::Builder::new()
-        .name("punktfunk1-stream".into())
+        .name("lilynk1-stream".into())
         .spawn(move || {
             let _rt = rt.enter();
             let _ = done_tx.send(run_source(
@@ -2364,7 +2364,7 @@ fn hold_over(
 #[allow(clippy::too_many_arguments)]
 fn run_source(
     mut common: StreamCommon,
-    source: Punktfunk1Source,
+    source: Lilynk1Source,
     frames: u32,
     probe_only: bool,
     fit_pin: bool,
@@ -2380,7 +2380,7 @@ fn run_source(
         return stream::probe_only_stream(&mut common, probe_seq);
     }
     match source {
-        Punktfunk1Source::Software => software_stream(
+        Lilynk1Source::Software => software_stream(
             &mut common.session,
             common.codec,
             common.intent.mode(),
@@ -2391,7 +2391,7 @@ fn run_source(
             &common.shared.fec_target,
             common.probe_seq,
         ),
-        Punktfunk1Source::Synthetic => {
+        Lilynk1Source::Synthetic => {
             let opened_as = common.opened_as();
             synthetic_stream(
                 &mut common.session,
@@ -2404,7 +2404,7 @@ fn run_source(
                 opened_as,
             )
         }
-        Punktfunk1Source::SyntheticAbr(shape) => synthetic_abr_stream(SynthAbrContext {
+        Lilynk1Source::SyntheticAbr(shape) => synthetic_abr_stream(SynthAbrContext {
             common,
             content: shape.content,
             recovery: shape.recovery,
@@ -2415,7 +2415,7 @@ fn run_source(
             plane,
             peer,
         }),
-        Punktfunk1Source::Virtual => {
+        Lilynk1Source::Virtual => {
             let ctx = display(common);
             match prep {
                 // Display prep started at Welcome: hand it the bound plane's context.
@@ -2603,7 +2603,7 @@ fn send_hdr_baseline(conn: &link::SessionLink, display_hdr: Option<lilynk_core::
     );
 }
 
-/// `PUNKTFUNK_TEST_FEEDBACK=1` on the synthetic source: rumble (0xCA) and HID output (0xCD)
+/// `LILYNK_TEST_FEEDBACK=1` on the synthetic source: rumble (0xCA) and HID output (0xCD)
 /// for a loopback client, with no real pad.
 fn send_test_feedback(conn: &link::SessionLink) {
     use lilynk_core::quic::HidOutput;
@@ -2630,7 +2630,7 @@ fn send_test_feedback(conn: &link::SessionLink) {
     ] {
         let _ = conn.send_datagram(h.encode());
     }
-    tracing::info!("PUNKTFUNK_TEST_FEEDBACK: scripted rumble + hidout burst sent");
+    tracing::info!("LILYNK_TEST_FEEDBACK: scripted rumble + hidout burst sent");
 }
 
 /// A seat's own host, or the owner's on the owner's row in its headless session: every session

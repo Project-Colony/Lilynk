@@ -126,7 +126,7 @@ pub(crate) fn sdr10(r: &Resolved, codec: Codec) -> bool {
 }
 
 /// [`Resolved::rgb_full_range`] on Windows: AMF's conversion, measured on the render adapter
-/// unless `PUNKTFUNK_AMF_FULL_RANGE` says.
+/// unless `LILYNK_AMF_FULL_RANGE` says.
 pub(crate) fn rgb_full_range(r: &Resolved, _codec: Codec) -> RgbFullRange {
     if r.backend() != WindowsBackend::Amf {
         return RgbFullRange::BOTH;
@@ -187,7 +187,7 @@ enum GpuVendor {
     Intel,
 }
 
-/// Explicit `PUNKTFUNK_ENCODER` pin. `None` for `auto`, unset, and unknown.
+/// Explicit `LILYNK_ENCODER` pin. `None` for `auto`, unset, and unknown.
 fn windows_pinned_backend(pref: &str) -> Option<WindowsBackend> {
     match pref {
         "nvenc" | "hw" | "nvidia" | "cuda" => Some(WindowsBackend::Nvenc),

@@ -1127,12 +1127,12 @@ mod tests {
     /// `steam_get_serial` validates: `[0xAE, len, 0x01, ascii…]`.
     #[test]
     fn serial_reply_has_stripped_prefix() {
-        let r = serial_reply("PUNKTFUNK01");
+        let r = serial_reply("LILYNK01");
         assert_eq!(r[0], 0x00); // report id, stripped by steam_recv_report
         assert_eq!(r[1], ID_GET_STRING_ATTRIBUTE); // becomes reply[0] after strip
         assert!((1..=21).contains(&r[2]));
         assert_eq!(r[3], ATTRIB_STR_UNIT_SERIAL);
-        assert_eq!(&r[4..4 + r[2] as usize], b"PUNKTFUNK01");
+        assert_eq!(&r[4..4 + r[2] as usize], b"LILYNK01");
     }
 
     #[test]

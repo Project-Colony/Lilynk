@@ -203,7 +203,7 @@ class CompanionPanelTest {
     @Test
     fun aSwapKeptBeforeLayoutsReadsAsThePictureBelow() {
         val context = compose.activity
-        context.getSharedPreferences("punktfunk_companion", Context.MODE_PRIVATE)
+        context.getSharedPreferences("lilynk_companion", Context.MODE_PRIVATE)
             .edit().putBoolean("swap:Old Screen", true).commit()
         assertEquals(ScreenLayout.SWAPPED, CompanionMemory.layout(context, "Old Screen"))
         CompanionMemory.keepLayout(context, "Old Screen", ScreenLayout.PANEL)

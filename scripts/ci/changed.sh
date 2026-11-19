@@ -53,7 +53,7 @@ classify() {
                 about.toml|about.hbs|\
                 assets/os-icons/LICENSES/*|assets/launcher-icons/LICENSES/*|\
                 THIRD-PARTY-NOTICES.txt|clients/windows/THIRD-PARTY-NOTICES.txt|\
-                clients/apple/Sources/PunktfunkKit/Resources/THIRD-PARTY-NOTICES.txt|\
+                clients/apple/Sources/LilynkKit/Resources/THIRD-PARTY-NOTICES.txt|\
                 clients/android/app/src/main/assets/THIRD-PARTY-NOTICES.txt)
                     rust=true
                     ;;

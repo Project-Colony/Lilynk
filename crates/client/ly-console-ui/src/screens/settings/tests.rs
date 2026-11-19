@@ -501,7 +501,7 @@ pub(crate) fn fake_home() {
         // SAFETY: runs at most once, inside `get_or_init` — concurrent `fake_home`
         // callers block until it returns, and nothing else in this binary mutates
         // this variable.
-        unsafe { std::env::set_var("PUNKTFUNK_CONFIG_DIR", &cfg) };
+        unsafe { std::env::set_var("LILYNK_CONFIG_DIR", &cfg) };
         dir
     });
 }

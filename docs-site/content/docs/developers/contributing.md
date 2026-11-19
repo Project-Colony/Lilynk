@@ -70,7 +70,7 @@ These are checked in, and CI fails when the committed copy drifts:
 
 | File | Regenerate |
 |---|---|
-| `include/lilynk_core.h`, `include/punktfunk_console.h` | `cargo run -p gen-headers` |
+| `include/lilynk_core.h`, `include/lilynk_console.h` | `cargo run -p gen-headers` |
 | `api/openapi.json` | `cargo run -p lilynk-host -- openapi > api/openapi.json` |
 | `docs-site/public/openapi.json` | `cp api/openapi.json docs-site/public/openapi.json` |
 | `sdk/src/gen/lilynk.ts` | `cd sdk && bun run gen` |
@@ -96,8 +96,8 @@ Every user-facing fact has one home, and everything else links to it:
 When a change moves a user-facing fact, update the page that owns it in the same pull request. How
 to write a page: [docs/writing.md §4c](https://git.unom.io/unom/punktfunk/src/branch/main/docs/writing.md#4c-docs-pages).
 CI checks the textual half: `check-docs-drift.sh` (the OpenAPI and `platforms.json` snapshots,
-`PUNKTFUNK_*` and `PFVD_*` names the docs mention, host commands in [Host CLI](/docs/host-cli)) and
-`check-docs-links.sh` (page links, heading anchors, relative file links). A new `PUNKTFUNK_*` or
+`LILYNK_*` and `PFVD_*` names the docs mention, host commands in [Host CLI](/docs/host-cli)) and
+`check-docs-links.sh` (page links, heading anchors, relative file links). A new `LILYNK_*` or
 `PFVD_*` variable needs a docs mention, or a line in
 `scripts/ci/docs-undocumented-env-baseline.txt` in the same commit.
 

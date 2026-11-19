@@ -7,7 +7,7 @@
 //! One native thread per connection, not the per-frame hot path. DESCRIBE offers
 //! `SS_ENC_VIDEO` (per-shard AES-128-GCM), `SS_ENC_CONTROL_V2` (per-direction
 //! control nonces and sealed RTSP), and `SS_ENC_AUDIO` (AES-CBC Opus). Shipping
-//! modes never require them. `PUNKTFUNK_GAMESTREAM_ENCRYPT=0` offers none;
+//! modes never require them. `LILYNK_GAMESTREAM_ENCRYPT=0` offers none;
 //! `video` offers only video. Audio still follows a client that asks for it
 //! the legacy way. See [`EncOffer`].
 //!
@@ -445,7 +445,7 @@ const NVFF_AUDIO_ENCRYPTION: u32 = 0x20;
 /// catastrophic failure. Also lets the client seal RTSP; [`read_sealed_message`].
 const SS_ENC_CONTROL_V2: u32 = 0x01;
 
-/// Stream-encryption offer from `PUNKTFUNK_GAMESTREAM_ENCRYPT`.
+/// Stream-encryption offer from `LILYNK_GAMESTREAM_ENCRYPT`.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 enum EncOffer {
     /// `0` — advertise nothing. Escape hatch for a client that mis-negotiates.
@@ -465,7 +465,7 @@ enum EncOffer {
 fn gs_encryption_offer() -> EncOffer {
     static ON: std::sync::OnceLock<EncOffer> = std::sync::OnceLock::new();
     *ON.get_or_init(|| {
-        match ly_host_config::knob("PUNKTFUNK_GAMESTREAM_ENCRYPT")
+        match ly_host_config::knob("LILYNK_GAMESTREAM_ENCRYPT")
             .as_deref()
             .map(str::trim)
         {
@@ -620,7 +620,7 @@ fn read_sealed_message(
 fn describe_sdp(codecs: u32) -> String {
     // Advertise pen/touch only where we can inject. Else 0 so Moonlight keeps
     // client-side mouse emulation. gamescope gets the pen as touch (`GsPointer`).
-    // `PUNKTFUNK_PEN=0` is the kill-switch inside `pen_supported`.
+    // `LILYNK_PEN=0` is the kill-switch inside `pen_supported`.
     let feature_flags: u32 = if crate::inject::pen_supported() {
         SS_FF_PEN_TOUCH_EVENTS
     } else {
@@ -1482,7 +1482,7 @@ mod tests {
         let sdp = describe_sdp(
             super::super::SCM_H264 | super::super::SCM_HEVC | super::super::SCM_AV1_MAIN8,
         );
-        // Assert against `enc_flags`, not a literal: `PUNKTFUNK_GAMESTREAM_ENCRYPT`
+        // Assert against `enc_flags`, not a literal: `LILYNK_GAMESTREAM_ENCRYPT`
         // can still steer the offer.
         let (supported, requested) = enc_flags(gs_encryption_offer());
         assert!(sdp.contains(&format!("a=x-ss-general.encryptionSupported:{supported}")));

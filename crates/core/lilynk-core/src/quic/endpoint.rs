@@ -11,7 +11,7 @@
 //!
 //! Jumbo follows the client's adapter toward the host: above 1500 it raises the
 //! `max_udp_payload_size` advertisement, without which discovery cannot settle
-//! above 1472. `PUNKTFUNK_JUMBO` / `PUNKTFUNK_WIRE_MTU` override it on either end.
+//! above 1472. `LILYNK_JUMBO` / `LILYNK_WIRE_MTU` override it on either end.
 //! See `design/shard-payload-reneg.md`.
 use std::sync::{Arc, Mutex};
 
@@ -576,9 +576,9 @@ mod tests {
                 // `--test-threads=1`, so no concurrent thread reads or writes the environment.
                 unsafe {
                     if on {
-                        std::env::set_var("PUNKTFUNK_JUMBO", "1");
+                        std::env::set_var("LILYNK_JUMBO", "1");
                     } else {
-                        std::env::remove_var("PUNKTFUNK_JUMBO");
+                        std::env::remove_var("LILYNK_JUMBO");
                     }
                 }
             };

@@ -10,7 +10,7 @@ use lilynk_core::quic::endpoint;
 ///
 /// The private key is owner-only wherever the directory is. Unix uses mode 0600.
 /// Windows drops inherited ACEs and grants the owner, including when
-/// `PUNKTFUNK_CONFIG_DIR` points outside `%APPDATA%`.
+/// `LILYNK_CONFIG_DIR` points outside `%APPDATA%`.
 ///
 /// A missing pair, or one whose cert does not parse or whose key PEM has no END line (a
 /// write cut short by a crash or a full disk), is replaced: it could never have connected.
@@ -145,7 +145,7 @@ pub fn pair_with_host(
     identity: &(String, String),
     pin: &str,
     device_name: &str,
-) -> std::result::Result<[u8; 32], lilynk_core::PunktfunkError> {
+) -> std::result::Result<[u8; 32], lilynk_core::LilynkError> {
     NativeClient::pair(
         addr,
         port,
@@ -166,7 +166,7 @@ pub fn pair_and_save(
     device_name: &str,
     name: &str,
     mac: &[String],
-) -> std::result::Result<Paired, lilynk_core::PunktfunkError> {
+) -> std::result::Result<Paired, lilynk_core::LilynkError> {
     pair_with_host(addr, port, identity, pin, device_name)
         .map(|fp| save_paired(name, addr, port, fp, mac))
 }
@@ -193,7 +193,7 @@ pub fn request_access_to_host(
     pin: [u8; 32],
     device_name: &str,
     cancel: Option<std::sync::Arc<std::sync::atomic::AtomicBool>>,
-) -> std::result::Result<[u8; 32], lilynk_core::PunktfunkError> {
+) -> std::result::Result<[u8; 32], lilynk_core::LilynkError> {
     NativeClient::request_access(
         addr,
         port,

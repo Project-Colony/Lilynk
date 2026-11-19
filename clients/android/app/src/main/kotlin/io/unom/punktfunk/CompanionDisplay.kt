@@ -200,7 +200,7 @@ internal fun CompanionOnDisplay(
             setViewTreeLifecycleOwner(activity)
             setViewTreeViewModelStoreOwner(activity)
             setViewTreeSavedStateRegistryOwner(activity)
-            setContent { PunktfunkTheme { latest() } }
+            setContent { LilynkTheme { latest() } }
         }
         if (pictureHz != null) p.window?.let {
             holdPicture(it, view, display, pictureHz)
