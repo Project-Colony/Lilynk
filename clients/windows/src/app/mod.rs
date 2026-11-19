@@ -49,15 +49,15 @@ mod unlock;
 
 use crate::trust::{KnownHosts, Settings};
 use hosts::HostRef;
-use pf_client_core::collate::{GroupBy, SortKey};
-use pf_client_core::discovery::{self, DiscoveredHost};
-use pf_client_core::gamepad::GamepadService;
-use pf_client_core::orchestrate::{self, HostTarget};
-use pf_client_core::settings::GamepadUi;
-use pf_client_core::start;
-use pf_fluent::motion::Tween;
-use pf_fluent::Palette;
-use pf_l10n::{client, common, desktop};
+use ly_client_core::collate::{GroupBy, SortKey};
+use ly_client_core::discovery::{self, DiscoveredHost};
+use ly_client_core::gamepad::GamepadService;
+use ly_client_core::orchestrate::{self, HostTarget};
+use ly_client_core::settings::GamepadUi;
+use ly_client_core::start;
+use ly_fluent::motion::Tween;
+use ly_fluent::Palette;
+use ly_l10n::{client, common, desktop};
 use rules::LinkGate;
 use speed::{SpeedProps, SpeedState};
 use std::collections::HashMap;
@@ -152,10 +152,10 @@ pub(crate) struct Shared {
     /// The live session child (spawn mode) — the status page's Disconnect and the
     /// request-access Cancel kill it. A FRESH handle is installed per spawn, so a stale
     /// handle never kills a newer session.
-    pub(crate) session: Mutex<pf_client_core::orchestrate::CancelHandle>,
+    pub(crate) session: Mutex<ly_client_core::orchestrate::CancelHandle>,
     /// Latest stats window from the session child (spawn mode); mirrored into the HUD
     /// sample for the session status page.
-    pub(crate) stats: Mutex<Option<punktfunk_core::hud::StatsSnapshot>>,
+    pub(crate) stats: Mutex<Option<lilynk_core::hud::StatsSnapshot>>,
     /// Cancel flag for the in-flight "request access" connect. A FRESH flag is installed per
     /// request: the waiting screen's Cancel button reads it back from here and sets it, and that
     /// request's event loop (which captured the same `Arc` at spawn) then tears down silently when
@@ -360,11 +360,11 @@ pub(crate) enum Anim {
     AddHost,
 }
 
-/// Tween length in frames of `pf_fluent::motion::FRAME`: a navigation, the Add-host sheet.
+/// Tween length in frames of `ly_fluent::motion::FRAME`: a navigation, the Add-host sheet.
 const ENTER_FRAMES: u32 = 14;
 const ADD_FRAMES: u32 = 12;
 
-/// Outlasts the connect timeout of `pf_client_core::library::agent` behind an in-flight note,
+/// Outlasts the connect timeout of `ly_client_core::library::agent` behind an in-flight note,
 /// so a dead host's failure replaces the note rather than following a blank line.
 const NOTE_LIFE: std::time::Duration = std::time::Duration::from_secs(6);
 
@@ -396,7 +396,7 @@ pub(crate) struct Shell {
     end_game: library::EndGameUi,
     hide: library::HideUi,
     /// The shelf's titles as they stand: the catalog with what `hide` took and gave back.
-    shelf_games: Arc<Vec<pf_client_core::library::GameEntry>>,
+    shelf_games: Arc<Vec<ly_client_core::library::GameEntry>>,
     /// The shelf picked this run; empty rests on the remembered one.
     library_shelf: String,
     library_search: String,
@@ -437,7 +437,7 @@ pub(crate) struct Shell {
     section_enter: Tween,
     add_enter: Tween,
     /// Keeps [`Msg::Colors`] arriving while the window lives.
-    _colors: Option<pf_fluent::Watch>,
+    _colors: Option<ly_fluent::Watch>,
 }
 
 impl Shell {
@@ -521,7 +521,7 @@ impl Component for Shell {
             add_enter: Tween::settled(0.0),
             _colors: {
                 let queue = cx.completion();
-                pf_fluent::watch(move || {
+                ly_fluent::watch(move || {
                     let _ = queue.clone().complete(Msg::Colors(Palette::system()));
                 })
             },
@@ -592,7 +592,7 @@ impl Component for Shell {
             Msg::Shelf(key) => {
                 // The pick is this device's, kept under the key the GTK shell keeps it under.
                 Settings::update(|s| {
-                    let name = pf_client_core::settings::LIBRARY_SHELF_KEY;
+                    let name = ly_client_core::settings::LIBRARY_SHELF_KEY;
                     s.extra.insert(name.into(), key.as_str().into());
                     true
                 });
@@ -792,7 +792,7 @@ impl Component for Shell {
                 },
             )
             .into(),
-            // The stream runs in the punktfunk-session child's own window; this screen is
+            // The stream runs in the lilynk-session child's own window; this screen is
             // its status card.
             Screen::Stream => stream::session_page(pal, &self.ctx, &self.hud),
         };
@@ -1124,7 +1124,7 @@ fn open_start_screen(svc: &Svc) {
         connect::open_console(&svc.ctx, &svc.set_screen, &svc.set_status, false);
         return;
     }
-    let known = pf_client_core::trust::KnownHosts::load();
+    let known = ly_client_core::trust::KnownHosts::load();
     let (default, source) = start::default_host_with_source(&settings, &known);
     tracing::info!(
         start_in = start::StartIn::parse(&settings.start_in).as_str(),
@@ -1208,7 +1208,7 @@ fn route_link(
     screen_now: &Screen,
     set_screen: &AsyncSetState<Screen>,
     set_status: &AsyncSetState<String>,
-    set_link_confirm: &AsyncSetState<Option<Box<pf_client_core::orchestrate::ConnectPlan>>>,
+    set_link_confirm: &AsyncSetState<Option<Box<ly_client_core::orchestrate::ConnectPlan>>>,
 ) {
     let refuse = |msg: String| {
         tracing::info!(%msg, "deep link refused");
@@ -1228,13 +1228,13 @@ fn route_link(
         }
     };
     let known = KnownHosts::load();
-    let plan = pf_client_core::orchestrate::plan_from_link(
+    let plan = ly_client_core::orchestrate::plan_from_link(
         &link,
         &known,
-        &pf_client_core::presets::PresetsFile::load(),
+        &ly_client_core::presets::PresetsFile::load(),
         &ctx.settings.lock().unwrap().clone(),
     );
-    use pf_client_core::orchestrate::PlanOutcome;
+    use ly_client_core::orchestrate::PlanOutcome;
     match plan {
         Ok(PlanOutcome::Connect(mut p)) => {
             // The plan's profile is the link's `as=`, else the saved pick: only the
@@ -1288,7 +1288,7 @@ fn route_link(
 /// this, never a second implementation of it.
 fn dial_link(
     ctx: &Arc<AppCtx>,
-    plan: &pf_client_core::orchestrate::ConnectPlan,
+    plan: &ly_client_core::orchestrate::ConnectPlan,
     set_screen: &AsyncSetState<Screen>,
     set_status: &AsyncSetState<String>,
 ) {

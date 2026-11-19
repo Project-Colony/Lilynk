@@ -6,9 +6,9 @@ registry — canary on every `main` push that touches the client, stable on `vX.
 
 | Artifact | Notes |
 |---|---|
-| `punktfunk-client-setup_<arch>.exe` | **The default download.** Per-user, no-UAC, into `%LOCALAPPDATA%\Programs\Punktfunk`. |
-| `punktfunk-client-windows_<arch>-portable.zip` | The same signed file set, nothing registered. |
-| `punktfunk-client-windows_<arch>.msix` | Kept for Microsoft Store compatibility. |
+| `lilynk-client-setup_<arch>.exe` | **The default download.** Per-user, no-UAC, into `%LOCALAPPDATA%\Programs\Punktfunk`. |
+| `lilynk-client-windows_<arch>-portable.zip` | The same signed file set, nothing registered. |
+| `lilynk-client-windows_<arch>.msix` | Kept for Microsoft Store compatibility. |
 
 `pack-msix.ps1` assembles `layout/` and packs the MSIX; `pack-client-installer.ps1` consumes that
 same layout for the installer and zip, signing the four exes individually — the MSIX only signs its
@@ -24,7 +24,7 @@ and `{app}` on the user PATH for the `punktfunk` CLI.
 **Two architectures, one x64 runner.** `x86_64-pc-windows-msvc` builds natively and
 `aarch64-pc-windows-msvc` cross-compiles, because the x64 MSVC toolset ships the ARM64 cross
 compiler. Nothing in the package links FFmpeg, so neither arch needs a per-arch `FFMPEG_DIR` staged
-on the runner. ARM64 builds `punktfunk-session` with `--no-default-features` (no Skia console UI)
+on the runner. ARM64 builds `lilynk-session` with `--no-default-features` (no Skia console UI)
 until rust-skia ships aarch64-pc-windows-msvc prebuilts.
 
 **No FFmpeg DLLs, and no FFmpeg notice.** The client decodes natively, so shipping the LGPL notice
@@ -44,7 +44,7 @@ MSIX requires a strictly 4-part numeric version:
 - `vX.Y.Z` tag → `X.Y.Z.0`. Any `-rc` or `+meta` suffix is dropped. Published to the stable `latest/`
   alias and attached to the Gitea Release.
 - `main` push or `workflow_dispatch` → `X.<Y+1>.<run_number>.0` — the minor *after* the latest `v*`
-  tag, per `scripts/ci/pf-version.ps1`, climbing by run number. `canary/` alias.
+  tag, per `scripts/ci/ly-version.ps1`, climbing by run number. `canary/` alias.
 
 ## Signing
 
@@ -76,11 +76,11 @@ Two things about Azure mode are easy to get wrong:
 On a Windows box with MSVC and the Windows SDK, after a release build:
 
 ```powershell
-cargo build --release -p punktfunk-client-windows --target x86_64-pc-windows-msvc
+cargo build --release -p lilynk-client-windows --target x86_64-pc-windows-msvc
 pwsh -File clients/windows/packaging/pack-msix.ps1 `
   -Version 0.2.0.0 -TargetDir C:\t\x86_64-pc-windows-msvc\release -OutDir C:\t\msix
 
-cargo build --release -p punktfunk-client-windows --target aarch64-pc-windows-msvc
+cargo build --release -p lilynk-client-windows --target aarch64-pc-windows-msvc
 pwsh -File clients/windows/packaging/pack-msix.ps1 `
   -Version 0.2.0.0 -Arch arm64 -TargetDir C:\t\aarch64-pc-windows-msvc\release -OutDir C:\t\msix
 ```

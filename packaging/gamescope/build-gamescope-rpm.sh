@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
-# Package an already-built punktfunk-gamescope binary as an RPM, for the Gitea RPM registry.
+# Package an already-built lilynk-gamescope binary as an RPM, for the Gitea RPM registry.
 #
 # WHY this exists: a traditional Fedora-family box (Nobara, plain Fedora, Nobara-derived HTPCs) has
-# no other packaged route to punktfunk-gamescope. The Bazzite/Atomic sysext, the Arch package, the
+# no other packaged route to lilynk-gamescope. The Bazzite/Atomic sysext, the Arch package, the
 # SteamOS installer and the NixOS option serve other platforms; the alternative is building
 # gamescope from source.
 #
 # Nothing is BUILT here; CI builds once per Fedora major and caches the staged tree
-# (.gitea/workflows/rpm.yml). See punktfunk-gamescope.spec's header for why repacking beats
+# (.gitea/workflows/rpm.yml). See lilynk-gamescope.spec's header for why repacking beats
 # rebuilding.
 #
-# `--stage` is the DESTDIR that build-punktfunk-gamescope.sh wrote, not a single binary: that tree
+# `--stage` is the DESTDIR that build-lilynk-gamescope.sh wrote, not a single binary: that tree
 # carries the compositor AND the WSI layer built beside it, and a game gets an HDR10 swapchain from
 # that layer or from nowhere. Taking the whole tree rather than a file per artifact is deliberate —
 # it is what stops the next file added to the package needing a new flag in every packaging script.
@@ -20,7 +20,7 @@
 #     --stage gs-cache \
 #     [--version 3.16.25] [--release 1] [--outdir dist]
 #
-# Output: <outdir>/punktfunk-gamescope-<version>-<release>.<arch>.rpm
+# Output: <outdir>/lilynk-gamescope-<version>-<release>.<arch>.rpm
 set -euo pipefail
 
 STAGE=""
@@ -41,8 +41,8 @@ while [ $# -gt 0 ]; do
 done
 
 [ -n "$STAGE" ] || { echo "ERROR: --stage is required" >&2; exit 2; }
-# The layout build-punktfunk-gamescope.sh writes under its --destdir/--prefix.
-BINARY="$STAGE/usr/bin/punktfunk-gamescope"
+# The layout build-lilynk-gamescope.sh writes under its --destdir/--prefix.
+BINARY="$STAGE/usr/bin/lilynk-gamescope"
 REAPER="$STAGE/usr/lib/punktfunk/gamescope/gamescopereaper"
 LAYER_SO="$STAGE/usr/lib/punktfunk/libVkLayer_PUNKTFUNK_gamescope_wsi.so"
 LAYER_JSON="$STAGE/usr/lib/punktfunk/vulkan/implicit_layer.d/punktfunk_gamescope_wsi.json"
@@ -77,13 +77,13 @@ if [ -z "$VERSION" ]; then
   VERSION="${UPSTREAM}.${PFHDR}"
 fi
 
-echo "==> packaging $BINARY as punktfunk-gamescope-${VERSION}-${RELEASE}"
+echo "==> packaging $BINARY as lilynk-gamescope-${VERSION}-${RELEASE}"
 echo "    banner: $BANNER"
 
 TOP="$(mktemp -d)"
 trap 'rm -rf "$TOP"' EXIT
 mkdir -p "$TOP"/{SOURCES,SPECS,BUILD,BUILDROOT,RPMS,SRPMS}
-install -m0755 "$BINARY" "$TOP/SOURCES/punktfunk-gamescope"
+install -m0755 "$BINARY" "$TOP/SOURCES/lilynk-gamescope"
 install -m0755 "$REAPER" "$TOP/SOURCES/gamescopereaper"
 install -m0755 "$LAYER_SO" "$TOP/SOURCES/libVkLayer_PUNKTFUNK_gamescope_wsi.so"
 install -m0644 "$LAYER_JSON" "$TOP/SOURCES/punktfunk_gamescope_wsi.json"
@@ -91,9 +91,9 @@ install -m0644 "$LAYER_JSON" "$TOP/SOURCES/punktfunk_gamescope_wsi.json"
 mkdir -p "$OUTDIR"
 rpmbuild \
   --define "_topdir $TOP" \
-  --define "pf_version $VERSION" \
+  --define "ly_version $VERSION" \
   --define "pf_release $RELEASE" \
-  -bb packaging/gamescope/punktfunk-gamescope.spec
+  -bb packaging/gamescope/lilynk-gamescope.spec
 
 find "$TOP/RPMS" -name '*.rpm' -exec cp -v {} "$OUTDIR/" \;
-echo "==> wrote $(find "$OUTDIR" -name 'punktfunk-gamescope-*.rpm' -newer "$TOP" -print -quit 2>/dev/null || echo "$OUTDIR"/punktfunk-gamescope-*.rpm)"
+echo "==> wrote $(find "$OUTDIR" -name 'lilynk-gamescope-*.rpm' -newer "$TOP" -print -quit 2>/dev/null || echo "$OUTDIR"/lilynk-gamescope-*.rpm)"

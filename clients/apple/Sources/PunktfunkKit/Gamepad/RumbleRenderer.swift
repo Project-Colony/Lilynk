@@ -79,7 +79,7 @@ enum RumbleTuning {
 ///     nonzero→nonzero changes rebuild at most every `minRebakeSeconds` per motor.
 ///  4. **Escalating stop.** A throwing `player.stop` stops the whole engine, which is rebuilt
 ///     lazily behind the exponential backoff.
-///  5. **No deadlines here.** punktfunk-core's policy engine (`rumble.rs`) owns lease expiry,
+///  5. **No deadlines here.** lilynk-core's policy engine (`rumble.rs`) owns lease expiry,
 ///     staleness and session close, and ends each level with an explicit zero command.
 ///
 /// Engines are created lazily on the first nonzero amplitude and torn down on retarget;

@@ -650,13 +650,13 @@ const PROBE_BINDS: readonly string[] = [
 
 /**
  * The host binary beside the runner bundle: `<install>\scripting\runner-cli.js` and
- * `<install>\punktfunk-host.exe`, which `plugins spawn` runs a plugin's AppContainer through.
+ * `<install>\lilynk-host.exe`, which `plugins spawn` runs a plugin's AppContainer through.
  */
 export const hostExe = (): string =>
 	path.resolve(
 		path.dirname(process.env.PUNKTFUNK_RUNNER_ENTRY ?? process.argv[1] ?? ""),
 		"..",
-		"punktfunk-host.exe",
+		"lilynk-host.exe",
 	);
 
 /**

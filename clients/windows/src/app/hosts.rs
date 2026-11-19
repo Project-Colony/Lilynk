@@ -8,14 +8,14 @@ use super::library::open_library;
 use super::style::*;
 use super::{lucide, saved, AsyncSetState, Svc, Target};
 use crate::trust::{HostEdit, KnownHosts, Settings};
-use pf_client_core::discovery::DiscoveredHost;
-use pf_client_core::display_targets::{self, BoundPreset, DisplayTarget, Pick, Targets};
-use pf_client_core::host_order::{self, Arrangeable};
-use pf_client_core::host_status::Status;
-use pf_client_core::orchestrate::HostTarget;
-use pf_client_core::trust::KnownHost;
-use pf_fluent::{Palette, Token};
-use pf_l10n::{client, common, desktop};
+use ly_client_core::discovery::DiscoveredHost;
+use ly_client_core::display_targets::{self, BoundPreset, DisplayTarget, Pick, Targets};
+use ly_client_core::host_order::{self, Arrangeable};
+use ly_client_core::host_status::Status;
+use ly_client_core::orchestrate::HostTarget;
+use ly_client_core::trust::KnownHost;
+use ly_fluent::{Palette, Token};
+use ly_l10n::{client, common, desktop};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -141,7 +141,7 @@ impl HostsPage {
         a.name.reset(String::new());
         a.addr.reset(String::new());
         a.port
-            .reset(pf_client_core::deeplink::DEFAULT_PORT.to_string());
+            .reset(ly_client_core::deeplink::DEFAULT_PORT.to_string());
         a.mac.reset(String::new());
         self.refused.clear();
     }
@@ -203,7 +203,7 @@ pub(super) fn connect_saved(svc: &Svc, target: Target, online: bool) {
 /// up. This shell covers its window while it connects, so no card shows a session.
 pub(super) fn status_of(k: &KnownHost, online: bool, auto_wake: bool) -> Status {
     let playing = match online && k.paired {
-        true => pf_client_core::library::now_playing(&k.fp_hex),
+        true => ly_client_core::library::now_playing(&k.fp_hex),
         false => String::new(),
     };
     Status::of(k, online, None, &playing, auto_wake)
@@ -515,7 +515,7 @@ pub(super) struct CardPreset {
 impl CardPreset {
     /// Every preset in the catalog: one read per render, shared by every card.
     pub(super) fn catalog() -> Vec<CardPreset> {
-        pf_client_core::presets::PresetsFile::load()
+        ly_client_core::presets::PresetsFile::load()
             .presets
             .into_iter()
             .map(|p| CardPreset {
@@ -592,17 +592,17 @@ pub(super) fn keep_warm(k: &KnownHost, adverts: &[DiscoveredHost], online: bool)
     // its address as a place the probe sweep asks. No disk write when unchanged.
     if let Some(a) = adverts
         .iter()
-        .find(|h| pf_client_core::discovery::same_host(k, h))
+        .find(|h| ly_client_core::discovery::same_host(k, h))
     {
         crate::trust::learn_from_advert(&k.fp_hex, &k.addr, k.port, a);
     }
     if k.paired && online {
         let mgmt = k
             .mgmt_port
-            .unwrap_or(pf_client_core::library::DEFAULT_MGMT_PORT);
-        pf_client_core::host_actions::refresh(&k.addr, mgmt, k.port, &k.fp_hex);
+            .unwrap_or(ly_client_core::library::DEFAULT_MGMT_PORT);
+        ly_client_core::host_actions::refresh(&k.addr, mgmt, k.port, &k.fp_hex);
         display_targets::refresh(&k.addr, mgmt, k.port, &k.fp_hex);
-        pf_client_core::library::refresh_running(&k.addr, mgmt, k.port, &k.fp_hex);
+        ly_client_core::library::refresh_running(&k.addr, mgmt, k.port, &k.fp_hex);
     }
 }
 
@@ -804,12 +804,12 @@ fn saved_card(props: &HostsProps, c: &SavedCard, presets: &[CardPreset], default
                 );
             }
             MenuAction::CopyLink => {
-                let link = pf_client_core::deeplink::DeepLink::for_host(
+                let link = ly_client_core::deeplink::DeepLink::for_host(
                     &link_host,
                     None,
                     pin_id.as_deref(),
                 );
-                pf_client_core::clipboard::set_text(&link.to_url());
+                ly_client_core::clipboard::set_text(&link.to_url());
                 svc.note(client::hostcard_link_copied().to_string());
             }
             MenuAction::Details => svc.set_host_page.call(Some(who.clone())),
@@ -895,13 +895,13 @@ pub(super) fn set_host_screen(svc: &Svc, target: &Target, pick: &Pick, name: &st
     };
     let name = name.to_string();
     let _ = std::thread::Builder::new()
-        .name("punktfunk-screen".into())
+        .name("lilynk-screen".into())
         .spawn(move || {
             let h = &target.host;
             let fp = h.fp_hex.as_deref().unwrap_or_default();
             let mgmt = h
                 .mgmt_port
-                .unwrap_or(pf_client_core::library::DEFAULT_MGMT_PORT);
+                .unwrap_or(ly_client_core::library::DEFAULT_MGMT_PORT);
             match display_targets::set_pick(&h.addr, mgmt, h.port, &identity, fp, &pick) {
                 Ok(()) => svc.report(Ok(picked)),
                 Err(e) => {
@@ -922,7 +922,7 @@ fn discovered<'a>(props: &'a HostsProps, known: &KnownHosts) -> Vec<&'a Discover
             !known
                 .hosts
                 .iter()
-                .any(|k| pf_client_core::discovery::same_host(k, h))
+                .any(|k| ly_client_core::discovery::same_host(k, h))
         })
         .collect();
     found.sort_by(|a, b| (&a.name, &a.key).cmp(&(&b.name, &b.key)));
@@ -1068,7 +1068,7 @@ fn hosts_page(page: &HostsPage, props: &HostsProps, refuse: Callback<String>) ->
         host_order::arrange(&mut cards, &settings);
         let grouping = host_order::grouping(&settings);
         // The host Start in opens on: the explicit pointer, or the only paired host.
-        let default = pf_client_core::start::default_host(&settings, &known)
+        let default = ly_client_core::start::default_host(&settings, &known)
             .and_then(|i| known.hosts[i].id.clone());
         let mut bands: Vec<(Option<host_order::Band>, Vec<View>)> = Vec::new();
         for c in &cards {
@@ -1139,7 +1139,7 @@ fn add_host_slot(page: &HostsPage, props: &HostsProps, refuse: Callback<String>)
                 },
                 Err(e) => return refuse.call(e.message),
             };
-            if let Err(e) = pf_client_core::trust::add_host(&edit) {
+            if let Err(e) = ly_client_core::trust::add_host(&edit) {
                 return refuse.call(desktop::desktop_hosts_save_failed(format!("{e:#}")));
             }
             let shown = match edit.name.as_deref() {
@@ -1230,7 +1230,7 @@ mod tests {
             } else {
                 Vec::new()
             },
-            profile: profile.then(|| pf_client_core::profiles::ProfilePick {
+            profile: profile.then(|| ly_client_core::profiles::ProfilePick {
                 id: "p1".into(),
                 display_name: "Ada".into(),
                 ..Default::default()

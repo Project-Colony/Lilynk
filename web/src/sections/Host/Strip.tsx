@@ -119,7 +119,7 @@ export const HostStrip: FC<{
 								</Badge>
 							))}
 						</Facts>
-						{/* A Windows host drives the pf-vdisplay driver: no compositor backends. */}
+						{/* A Windows host drives the ly-vdisplay driver: no compositor backends. */}
 						{compositors.length > 0 && (
 							<Facts label={m.host_compositors()}>
 								{compositors.map((c) => (

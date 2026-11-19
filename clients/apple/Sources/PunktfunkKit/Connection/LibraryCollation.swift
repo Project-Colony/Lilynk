@@ -1,4 +1,4 @@
-// Sorting and grouping the library — the Swift port of `pf-client-core`'s `collate.rs`, which is
+// Sorting and grouping the library — the Swift port of `ly-client-core`'s `collate.rs`, which is
 // the portable SPEC every console shell implements: how titles fold for A–Z, what a platform-less
 // Steam title buckets under, why launchers always lead, and when a library is worth browsing as
 // collections at all. The rules are pinned by a shared vectors file rather than by prose:
@@ -17,7 +17,7 @@
 import Foundation
 import PunktfunkShared
 
-/// How titles are ordered within a group. The raw value is the persisted `punktfunk.librarySort`
+/// How titles are ordered within a group. The raw value is the persisted `lilynk.librarySort`
 /// string — a FILE FORMAT shared with the desktop's `library_sort`
 /// (`host|title|platform|store|recent|playtime`); renaming one silently resets every user's
 /// chosen sort on their next launch.
@@ -64,7 +64,7 @@ public enum LibrarySortKey: String, CaseIterable, Hashable, Sendable {
     ]
 }
 
-/// The two arrangements of the gamepad library. Persisted as `punktfunk.libraryView`
+/// The two arrangements of the gamepad library. Persisted as `lilynk.libraryView`
 /// (`shelf|grid`, the desktop's `library_view`); unset and unknown → grid, as the console that
 /// draws the library reads it.
 public enum LibraryArrangement: String, CaseIterable, Hashable, Sendable {
@@ -132,13 +132,13 @@ public struct LibraryGroup: Hashable, Sendable {
 public enum LibraryCollation {
     /// The desktop tile's id. No shelf in the app carries the tile: the Library tab lists desktops
     /// in their own section, and only the shot gallery builds a `desktopEntry`. The `\0` prefix
-    /// is the desktop console's (`pf-client-core`'s `DESKTOP_ID`): a host title id is a store
+    /// is the desktop console's (`ly-client-core`'s `DESKTOP_ID`): a host title id is a store
     /// reference, and none of them can start with a NUL.
     ///
     /// Presentation only. It is never persisted, never fetched, and never grouped.
     public static let desktopID = "\u{0}desktop"
 
-    /// The mark that tile draws (`pf-client-core`'s `DESKTOP_ICON`). A Lucide name on the shells
+    /// The mark that tile draws (`ly-client-core`'s `DESKTOP_ICON`). A Lucide name on the shells
     /// that carry that set; `launcherIconImage` maps it to this platform's own symbol.
     public static let desktopIcon = "monitor"
 
@@ -205,7 +205,7 @@ public enum LibraryCollation {
         }
     }
 
-    /// `punktfunk_core::search::fold`, scalar for scalar: lowercase, full-width ASCII and the
+    /// `lilynk_core::search::fold`, scalar for scalar: lowercase, full-width ASCII and the
     /// ideographic space as ASCII, half-width kana at full width, a kana and a combining voiced
     /// mark composed, conjoining jamo composed, then katakana as hiragana. ー stays.
     static func searchFold(_ text: String) -> [Unicode.Scalar] {

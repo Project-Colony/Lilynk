@@ -1,15 +1,15 @@
 # punktfunk Nix packages — built with crane (github:ipetkov/crane).
 #
-# The host and client mirror the RPM's `punktfunk` / `punktfunk-client` split (packaging/rpm/
-# punktfunk.spec) so a headless streaming host never drags in the GTK client closure:
+# The host and client mirror the RPM's `punktfunk` / `lilynk-client` split (packaging/rpm/
+# lilynk.spec) so a headless streaming host never drags in the GTK client closure:
 #
-#   * punktfunk-host   — the streaming host + status tray (punktfunk-host, punktfunk-tray).
+#   * lilynk-host   — the streaming host + status tray (lilynk-host, lilynk-tray).
 #                        Built with the same feature set CI ships: the direct-SDK NVENC path
 #                        (`nvenc`) + the raw Vulkan-Video HEVC encoder (`vulkan-encode`). Both are
 #                        AMD/Intel-safe (NVENC/CUDA entry points are dlopen'd at RUNTIME, never
 #                        link-imported), so ONE binary runs on NVIDIA, AMD and Intel.
-#   * punktfunk-client — the native Linux client: the GTK4/libadwaita shell (punktfunk-client) plus
-#                        the Vulkan/ash session streamer it execs (punktfunk-session).
+#   * lilynk-client — the native Linux client: the GTK4/libadwaita shell (lilynk-client) plus
+#                        the Vulkan/ash session streamer it execs (lilynk-session).
 #
 # The tray, the seat supervisor, the web console and the plugin runner are derivations of their
 # own, further down.
@@ -62,7 +62,7 @@
   librsvg,
   gsettings-desktop-schemas,
   adwaita-icon-theme,
-  # web console (punktfunk-web): a bun-built Nitro SSR bundle, run on bun.
+  # web console (lilynk-web): a bun-built Nitro SSR bundle, run on bun.
   bun,
   nodejs,
   makeWrapper,
@@ -133,34 +133,34 @@ let
   # Cargo unifies features across every package in a single `cargo build`, so co-building the tray
   # with the host would pull the host's `ashpd → zbus/tokio` onto the tray's SHARED `zbus`. The tray
   # deliberately runs zbus on `ksni`'s `async-io` executor with the `blocking` API and no tokio
-  # runtime (see crates/install/punktfunk-tray/Cargo.toml), so a tokio-flavoured zbus panics at startup:
+  # runtime (see crates/install/lilynk-tray/Cargo.toml), so a tokio-flavoured zbus panics at startup:
   # "there is no reactor running, must be called from the context of a Tokio 1.x runtime". A separate
   # invocation keeps the tray's zbus on async-io. (The host package copies this binary into its $out.)
-  punktfunk-tray = craneLib.buildPackage (
+  lilynk-tray = craneLib.buildPackage (
     commonArgs
     // {
-      pname = "punktfunk-tray";
-      cargoExtraArgs = "--locked -p punktfunk-tray";
+      pname = "lilynk-tray";
+      cargoExtraArgs = "--locked -p lilynk-tray";
       PUNKTFUNK_BUILD_VERSION = buildVersion;
-      # Pure-Rust leaf: ksni/zbus talk to the dbus socket, ureq+rustls(aws-lc-rs) + punktfunk-core
+      # Pure-Rust leaf: ksni/zbus talk to the dbus socket, ureq+rustls(aws-lc-rs) + lilynk-core
       # `tls` — nothing to link (no buildInputs) and no GPU driver runpath (it never dlopens
       # libcuda/EGL/vulkan).
       meta = meta // {
         description = "punktfunk host status tray (Linux StatusNotifierItem)";
-        mainProgram = "punktfunk-tray";
+        mainProgram = "lilynk-tray";
       };
     }
   );
 in
 {
-  inherit punktfunk-tray;
+  inherit lilynk-tray;
 
-  punktfunk-host = craneLib.buildPackage (
+  lilynk-host = craneLib.buildPackage (
     commonArgs
     // {
-      pname = "punktfunk-host";
+      pname = "lilynk-host";
       # HOST + ENCODE WORKER — the tray is a separate derivation (see the note above; co-building
-      # crashes it), but punktfunk-encode-worker belongs here: it is the capability-carrying half of
+      # crashes it), but lilynk-encode-worker belongs here: it is the capability-carrying half of
       # the PyroWave encode path, it shares the host's dependency graph by design, and host and
       # worker version-check each other over their socket, so they must be built and shipped
       # lockstep. It is a SEPARATE executable, never a hardlink or a host subcommand — on
@@ -168,8 +168,8 @@ in
       # unidentifiable to KWin (see the note in nixos-module.nix). Without `-p` here crane never
       # builds it and `$out/bin` simply would not contain it.
       cargoExtraArgs =
-        "--locked -p punktfunk-host -p punktfunk-encode-worker "
-        + "--features punktfunk-host/nvenc,punktfunk-host/vulkan-encode";
+        "--locked -p lilynk-host -p lilynk-encode-worker "
+        + "--features lilynk-host/nvenc,lilynk-host/vulkan-encode";
 
       PUNKTFUNK_BUILD_VERSION = buildVersion;
 
@@ -177,50 +177,50 @@ in
         pipewire # libpipewire-0.3 + libspa-0.2 (portal capture + the `pipewire` crate)
         wayland # libwayland-client (wlr / KWin fake_input backends)
         libxkbcommon # virtual-keyboard keymap build/validate
-        libGL # pf-zerocopy's imp/egl/gl.rs `#[link(name = "GL")]`
-        gbm # pf-zerocopy's imp/gbm.rs `#[link(name = "gbm")]`
+        libGL # ly-zerocopy's imp/egl/gl.rs `#[link(name = "GL")]`
+        gbm # ly-zerocopy's imp/gbm.rs `#[link(name = "gbm")]`
         vulkan-loader # ash (Vulkan-Video encode + the dmabuf→VK bridge); loaded at runtime
-        libva # pf-libva (native VAAPI encode); dlopen'd
+        libva # ly-libva (native VAAPI encode); dlopen'd
       ];
 
       # KWin resolves a streaming client to a .desktop by matching /proc/<pid>/exe against `Exec`, so
       # the host's authorization .desktop must name the ACTUAL binary path (the store path here). The
       # tray/client .desktop Exec lines are rewritten for the same reason (menu launch / autostart).
       postInstall = ''
-        # The status tray, built in its own derivation (see the punktfunk-tray note above) so its zbus
+        # The status tray, built in its own derivation (see the lilynk-tray note above) so its zbus
         # stays on async-io; ship it in the host's $out so the tray .desktop below resolves it.
-        install -Dm0755 ${punktfunk-tray}/bin/punktfunk-tray "$out/bin/punktfunk-tray"
+        install -Dm0755 ${lilynk-tray}/bin/lilynk-tray "$out/bin/lilynk-tray"
 
         # The user unit every channel ships, run from the store path itself: KWin identifies the
         # host by that path. The NixOS module adds its own settings as a drop-in.
-        install -Dm0644 scripts/punktfunk-host.service "$out/lib/systemd/user/punktfunk-host.service"
-        substituteInPlace "$out/lib/systemd/user/punktfunk-host.service" \
-          --replace-fail "%h/punktfunk/target/release/punktfunk-host" "$out/bin/punktfunk-host"
+        install -Dm0644 scripts/lilynk-host.service "$out/lib/systemd/user/lilynk-host.service"
+        substituteInPlace "$out/lib/systemd/user/lilynk-host.service" \
+          --replace-fail "%h/punktfunk/target/release/lilynk-host" "$out/bin/lilynk-host"
 
         # udev: /dev/uinput + /dev/uhid (virtual gamepads) + the vhci sysfs perms for the virtual Deck.
-        install -Dm0644 scripts/60-punktfunk.rules "$out/lib/udev/rules.d/60-punktfunk.rules"
+        install -Dm0644 scripts/60-lilynk.rules "$out/lib/udev/rules.d/60-lilynk.rules"
         # NetworkManager hook: a connected Steam Frame wireless adapter stays out of power save.
-        install -Dm0755 packaging/linux/90-punktfunk-frame-adapter \
-          "$out/lib/NetworkManager/dispatcher.d/90-punktfunk-frame-adapter"
+        install -Dm0755 packaging/linux/90-lilynk-frame-adapter \
+          "$out/lib/NetworkManager/dispatcher.d/90-lilynk-frame-adapter"
         # WirePlumber: hold a DualSense's sound card open + keep it off the graph clock.
-        install -Dm0644 scripts/60-punktfunk-dualsense.conf "$out/share/wireplumber/wireplumber.conf.d/60-punktfunk-dualsense.conf"
+        install -Dm0644 scripts/60-lilynk-dualsense.conf "$out/share/wireplumber/wireplumber.conf.d/60-lilynk-dualsense.conf"
 
         # KWin Desktop-mode authorization (zkde_screencast + fake_input). Point Exec at the store binary.
         install -Dm0644 packaging/linux/io.unom.punktfunk.host.desktop \
           "$out/share/applications/io.unom.punktfunk.host.desktop"
         substituteInPlace "$out/share/applications/io.unom.punktfunk.host.desktop" \
-          --replace-fail "/usr/bin/punktfunk-host" "$out/bin/punktfunk-host"
+          --replace-fail "/usr/bin/lilynk-host" "$out/bin/lilynk-host"
 
         # The tray's launcher + hicolor status icons. The host writes its per-user autostart entry.
         install -Dm0644 packaging/linux/io.unom.punktfunk.starthost.desktop \
           "$out/share/applications/io.unom.punktfunk.starthost.desktop"
         substituteInPlace "$out/share/applications/io.unom.punktfunk.starthost.desktop" \
-          --replace-fail "/usr/bin/punktfunk-tray" "$out/bin/punktfunk-tray"
+          --replace-fail "/usr/bin/lilynk-tray" "$out/bin/lilynk-tray"
         # Opens the web console signed in: a person's own inside their seat, the operator's elsewhere.
         install -Dm0644 packaging/linux/io.unom.punktfunk.webconsole.desktop \
           "$out/share/applications/io.unom.punktfunk.webconsole.desktop"
         substituteInPlace "$out/share/applications/io.unom.punktfunk.webconsole.desktop" \
-          --replace-fail "/usr/bin/punktfunk-host" "$out/bin/punktfunk-host"
+          --replace-fail "/usr/bin/lilynk-host" "$out/bin/lilynk-host"
         for sz in 22x22 48x48; do
           for png in packaging/linux/icons/hicolor/$sz/apps/*.png; do
             install -Dm0644 "$png" "$out/share/icons/hicolor/$sz/apps/$(basename "$png")"
@@ -228,19 +228,19 @@ in
         done
 
         # Reference material: headless session helpers, example env files, the OpenAPI doc.
-        install -Dm0755 scripts/headless/run-headless-kde.sh  "$out/share/punktfunk-host/headless/run-headless-kde.sh"
-        install -Dm0755 scripts/headless/run-headless-sway.sh "$out/share/punktfunk-host/headless/run-headless-sway.sh"
-        install -Dm0644 scripts/headless/kde-authorized       "$out/share/punktfunk-host/headless/kde-authorized"
-        install -Dm0644 scripts/headless/punktfunk-sink.conf  "$out/share/punktfunk-host/headless/punktfunk-sink.conf"
-        install -Dm0644 scripts/host.env.example              "$out/share/punktfunk-host/host.env.example"
-        install -Dm0644 packaging/bazzite/host.env            "$out/share/punktfunk-host/host.env.bazzite"
-        install -Dm0644 packaging/kde/host.env                "$out/share/punktfunk-host/host.env.kde"
-        install -Dm0644 api/openapi.json                      "$out/share/punktfunk-host/openapi.json"
+        install -Dm0755 scripts/headless/run-headless-kde.sh  "$out/share/lilynk-host/headless/run-headless-kde.sh"
+        install -Dm0755 scripts/headless/run-headless-sway.sh "$out/share/lilynk-host/headless/run-headless-sway.sh"
+        install -Dm0644 scripts/headless/kde-authorized       "$out/share/lilynk-host/headless/kde-authorized"
+        install -Dm0644 scripts/headless/lilynk-sink.conf  "$out/share/lilynk-host/headless/lilynk-sink.conf"
+        install -Dm0644 scripts/host.env.example              "$out/share/lilynk-host/host.env.example"
+        install -Dm0644 packaging/bazzite/host.env            "$out/share/lilynk-host/host.env.bazzite"
+        install -Dm0644 packaging/kde/host.env                "$out/share/lilynk-host/host.env.kde"
+        install -Dm0644 api/openapi.json                      "$out/share/lilynk-host/openapi.json"
       '';
 
       # Run AFTER fixup, and add every dlopen'd library by hand. A `buildInputs` entry only reaches
       # RUNPATH when something DT_NEEDEDs it, and nothing links these: ash and volk dlopen
-      # libvulkan.so.1, pf-libva dlopens libva.so.2. The driver link (`addDriverRunpath`) covers
+      # libvulkan.so.1, ly-libva dlopens libva.so.2. The driver link (`addDriverRunpath`) covers
       # libcuda.so.1 / libnvidia-encode.so.1 / libnvidia-ml.so.1 / libEGL.so.1 and the vendor ICD,
       # but carries neither the Khronos loader nor libva. A miss here is silent: the codepath just
       # reports "unavailable" and falls back.
@@ -248,7 +248,7 @@ in
         # Both binaries dlopen the GPU stack; the worker owns the Vulkan devices for PyroWave and
         # the NVIDIA frame convert, and without it the host silently falls back to default
         # priority. The tray (its own derivation, copied in above) does not.
-        for b in punktfunk-host punktfunk-encode-worker; do
+        for b in lilynk-host lilynk-encode-worker; do
           addDriverRunpath "$out/bin/$b"
           patchelf --add-rpath "${vulkan-loader.out}/lib" "$out/bin/$b"
           patchelf --add-rpath "${libva.out}/lib" "$out/bin/$b"
@@ -266,7 +266,7 @@ in
 
       meta = meta // {
         description = "Low-latency desktop/game streaming host (Moonlight-compatible + native punktfunk/2)";
-        mainProgram = "punktfunk-host";
+        mainProgram = "lilynk-host";
       };
     }
   );
@@ -275,62 +275,62 @@ in
   # rules with the /usr/libexec path rewritten to this store path. The NixOS module installs them
   # through `systemd.packages` and `systemd.tmpfiles.packages`. The door's files ride along: its
   # two host and console units still name /usr/bin, which the module points at its own packages.
-  # No GPU runpath: it links pf-inject for the pads it builds, not the capture or encode stack.
-  punktfunk-seats = craneLib.buildPackage (
+  # No GPU runpath: it links ly-inject for the pads it builds, not the capture or encode stack.
+  lilynk-seats = craneLib.buildPackage (
     commonArgs
     // {
-      pname = "punktfunk-seats";
-      cargoExtraArgs = "--locked -p punktfunk-seats --bin punktfunk-seats";
+      pname = "lilynk-seats";
+      cargoExtraArgs = "--locked -p lilynk-seats --bin lilynk-seats";
 
       # bash is a host input so the fixup rewrites the helpers' shebangs to it.
       buildInputs = [
-        libxkbcommon # pf-inject's keymap
+        libxkbcommon # ly-inject's keymap
         bash
       ];
 
       # Nothing links libpam, so a `buildInputs` entry never reaches RUNPATH: add it by hand, and
       # assert the soname resolves. A miss refuses every adopt of an existing account.
       postFixup = ''
-        patchelf --add-rpath "${linux-pam}/lib" "$out/libexec/punktfunk/punktfunk-seats"
+        patchelf --add-rpath "${linux-pam}/lib" "$out/libexec/punktfunk/lilynk-seats"
         ok=""
-        for d in $(patchelf --print-rpath "$out/libexec/punktfunk/punktfunk-seats" | tr : ' '); do
+        for d in $(patchelf --print-rpath "$out/libexec/punktfunk/lilynk-seats" | tr : ' '); do
           [ -e "$d/libpam.so.0" ] && ok=1
         done
-        [ -n "$ok" ] || { echo "punktfunk-seats: libpam.so.0 unresolvable from RUNPATH"; exit 1; }
+        [ -n "$ok" ] || { echo "lilynk-seats: libpam.so.0 unresolvable from RUNPATH"; exit 1; }
       '';
 
       postInstall = ''
         install -d "$out/libexec/punktfunk"
-        mv "$out/bin/punktfunk-seats" "$out/libexec/punktfunk/"
+        mv "$out/bin/lilynk-seats" "$out/libexec/punktfunk/"
         rmdir "$out/bin"
         for f in seat-session seat-reap; do
           install -Dm0755 "packaging/linux/$f" "$out/libexec/punktfunk/$f"
         done
-        for f in punktfunk-seats.service punktfunk-seat@.service; do
+        for f in lilynk-seats.service lilynk-seat@.service; do
           install -Dm0644 "packaging/linux/$f" "$out/lib/systemd/system/$f"
           substituteInPlace "$out/lib/systemd/system/$f" \
             --replace-fail /usr/libexec/punktfunk "$out/libexec/punktfunk"
         done
-        install -Dm0644 packaging/linux/punktfunk-seats.tmpfiles "$out/lib/tmpfiles.d/punktfunk-seats.conf"
-        # A seat's pads: the rule runs `punktfunk-seats fence` from this store path.
-        install -Dm0644 packaging/linux/65-punktfunk-seats.rules "$out/lib/udev/rules.d/65-punktfunk-seats.rules"
-        substituteInPlace "$out/lib/udev/rules.d/65-punktfunk-seats.rules" \
+        install -Dm0644 packaging/linux/lilynk-seats.tmpfiles "$out/lib/tmpfiles.d/lilynk-seats.conf"
+        # A seat's pads: the rule runs `lilynk-seats fence` from this store path.
+        install -Dm0644 packaging/linux/65-lilynk-seats.rules "$out/lib/udev/rules.d/65-lilynk-seats.rules"
+        substituteInPlace "$out/lib/udev/rules.d/65-lilynk-seats.rules" \
           --replace-fail /usr/libexec/punktfunk "$out/libexec/punktfunk"
         install -Dm0755 packaging/linux/door-helper "$out/libexec/punktfunk/door-helper"
         substituteInPlace "$out/libexec/punktfunk/door-helper" \
           --replace-fail /usr/libexec/punktfunk "$out/libexec/punktfunk"
-        for f in punktfunk-door.service punktfunk-door-on@.service punktfunk-door-off@.service; do
+        for f in lilynk-door.service lilynk-door-on@.service lilynk-door-off@.service; do
           install -Dm0644 "packaging/linux/$f" "$out/lib/systemd/system/$f"
           substituteInPlace "$out/lib/systemd/system/$f" \
             --replace-fail /usr/libexec/punktfunk "$out/libexec/punktfunk"
         done
-        install -Dm0644 packaging/linux/punktfunk-web-door.service \
-          "$out/lib/systemd/system/punktfunk-web-door.service"
-        install -Dm0644 packaging/linux/49-punktfunk-door.rules \
-          "$out/share/polkit-1/rules.d/49-punktfunk-door.rules"
+        install -Dm0644 packaging/linux/lilynk-web-door.service \
+          "$out/lib/systemd/system/lilynk-web-door.service"
+        install -Dm0644 packaging/linux/49-lilynk-door.rules \
+          "$out/share/polkit-1/rules.d/49-lilynk-door.rules"
         # seat-session seeds the portal grant and the virtual speaker from these two files. They
         # live in the package, not the host's, so the store path does not depend on the host build.
-        for f in kde-authorized punktfunk-sink.conf; do
+        for f in kde-authorized lilynk-sink.conf; do
           install -Dm0644 "scripts/headless/$f" "$out/share/punktfunk/headless/$f"
         done
         substituteInPlace "$out/libexec/punktfunk/seat-session" \
@@ -343,24 +343,24 @@ in
     }
   );
 
-  punktfunk-client = craneLib.buildPackage (
+  lilynk-client = craneLib.buildPackage (
     commonArgs
     // {
-      pname = "punktfunk-client";
+      pname = "lilynk-client";
       # The session's default `ui` feature pulls skia-safe, whose build DOWNLOADS a prebuilt Skia
       # (rust-skia releases) — impossible in Nix's network-less build sandbox, and a from-source Skia
       # build needs the full gn/ninja/python toolchain + network-fetched third-party. The `ui` feature
       # is explicitly droppable (clients/session/Cargo.toml: "same streaming, stats on stdout only"),
-      # so build the session without it. The GTK shell (punktfunk-client-linux) is skia-free; its
+      # so build the session without it. The GTK shell (lilynk-client-linux) is skia-free; its
       # `console` feature goes with the session's, so the shell drops the Console doorway.
       # The Skia OSD being off under Nix is noted in packaging/nix/README.md.
       cargoExtraArgs =
-        "--locked -p punktfunk-client-linux -p punktfunk-client-session -p punktfunk-cli "
-        + "--no-default-features --features punktfunk-client-session/pyrowave";
+        "--locked -p lilynk-client-linux -p lilynk-client-session -p lilynk-cli "
+        + "--no-default-features --features lilynk-client-session/pyrowave";
 
       nativeBuildInputs = commonArgs.nativeBuildInputs ++ [ wrapGAppsHook4 ];
 
-      # The client decodes natively (pf-vkdecode / pf-vaapi — libva is dlopen'd, never linked —
+      # The client decodes natively (ly-vkdecode / ly-vaapi — libva is dlopen'd, never linked —
       # / openh264 + rav1d, both built from vendored source).
       buildInputs = [
         pipewire # PipeWire audio playback + mic capture
@@ -374,7 +374,7 @@ in
         libxkbcommon
         libGL
         vulkan-loader # ash presenter + Vulkan-Video decode (loaded at runtime)
-        libva # pf-vaapi decode; dlopen'd, so the postFixup below is what actually finds it
+        libva # ly-vaapi decode; dlopen'd, so the postFixup below is what actually finds it
       ];
 
       # wrapGApp needs to run on the real ELF, and addDriverRunpath must run post-shrink — so disable
@@ -383,7 +383,7 @@ in
 
       postInstall = ''
         # hidraw access for the seated user's DualSense (SDL HIDAPI full-fidelity path).
-        install -Dm0644 scripts/70-punktfunk-client.rules "$out/lib/udev/rules.d/70-punktfunk-client.rules"
+        install -Dm0644 scripts/70-lilynk-client.rules "$out/lib/udev/rules.d/70-lilynk-client.rules"
 
         # The app icon the desktop entry (and the About dialog) name.
         install -Dm0644 packaging/linux/icons/hicolor/scalable/apps/io.unom.punktfunk.svg \
@@ -395,13 +395,13 @@ in
         install -Dm0644 packaging/linux/io.unom.punktfunk.desktop \
           "$out/share/applications/io.unom.punktfunk.desktop"
         substituteInPlace "$out/share/applications/io.unom.punktfunk.desktop" \
-          --replace-fail "Exec=punktfunk-client" "Exec=$out/bin/punktfunk-client"
+          --replace-fail "Exec=lilynk-client" "Exec=$out/bin/lilynk-client"
       '';
 
       postFixup = ''
         # Same three runpath entries as the host: the driver link for the vendor ICD and libEGL,
-        # vulkan-loader for the presenter and Vulkan-Video decode, libva for pf-vaapi decode.
-        for b in punktfunk-client punktfunk-session; do
+        # vulkan-loader for the presenter and Vulkan-Video decode, libva for ly-vaapi decode.
+        for b in lilynk-client lilynk-session; do
           addDriverRunpath "$out/bin/$b"
           patchelf --add-rpath "${vulkan-loader.out}/lib" "$out/bin/$b"
           patchelf --add-rpath "${libva.out}/lib" "$out/bin/$b"
@@ -415,28 +415,28 @@ in
         done
         # Only the GTK shell needs the GApps wrapper (GSETTINGS_SCHEMA_DIR, icon themes, typelibs);
         # the ash session binary is not a GTK app. Wrap last: it renames the ELF just patched.
-        wrapGApp "$out/bin/punktfunk-client"
+        wrapGApp "$out/bin/lilynk-client"
       '';
 
       meta = meta // {
         description = "Native Linux punktfunk/2 streaming client (GTK4 shell + Vulkan session)";
-        mainProgram = "punktfunk-client";
+        mainProgram = "lilynk-client";
       };
     }
   );
 
-  # --- management web console (punktfunk-web) ------------------------------------------------------
+  # --- management web console (lilynk-web) ------------------------------------------------------
   # The browser console every client needs for SPAKE2 PIN pairing + host status: a TanStack Start /
   # React app that vite builds into a Nitro SSR bundle, run on `bun` (the Nitro `bun` preset + a
   # custom Bun.serve TLS entry — node can't run it; web/nitro-entry/bun-https.mjs). This mirrors the
-  # Debian punktfunk-web .deb (packaging/debian/build-web-deb.sh) and the RPM's `--with web`
+  # Debian lilynk-web .deb (packaging/debian/build-web-deb.sh) and the RPM's `--with web`
   # subpackage, which the host package Recommends so a default install pulls the console too.
   #
   # Unlike apt/dnf — which have no bun in their repos and so VENDOR a bun binary into the package —
   # Nix has `pkgs.bun`, so the launcher just execs it from the store (no vendored runtime). The
   # systemd `--user` units ship here; the NixOS module adds its drop-ins and the firewall.
-  punktfunk-web = stdenvNoCC.mkDerivation {
-    pname = "punktfunk-web";
+  lilynk-web = stdenvNoCC.mkDerivation {
+    pname = "lilynk-web";
     inherit src version;
     # nodejs: `bun run codegen` ends in a literal `node tools/check-i18n.mjs`, so `node` must be on
     # PATH. (The JS CLIs' own `#!/usr/bin/env node` shebangs are already rewritten inside the
@@ -516,25 +516,25 @@ in
     installPhase = ''
       runHook preInstall
       # The SSR bundle + its static assets, plus the first-run helper and env sample.
-      mkdir -p $out/share/punktfunk-web/.output
-      cp -R web/.output/server $out/share/punktfunk-web/.output/server
-      cp -R web/.output/public $out/share/punktfunk-web/.output/public
-      install -Dm0755 scripts/web-init.sh $out/share/punktfunk-web/web-init.sh
-      install -Dm0644 web/web.env.example $out/share/punktfunk-web/web.env.example
+      mkdir -p $out/share/lilynk-web/.output
+      cp -R web/.output/server $out/share/lilynk-web/.output/server
+      cp -R web/.output/public $out/share/lilynk-web/.output/public
+      install -Dm0755 scripts/web-init.sh $out/share/lilynk-web/web-init.sh
+      install -Dm0644 web/web.env.example $out/share/lilynk-web/web.env.example
 
       # The user units every channel ships, pointed at this store path.
-      install -Dm0644 scripts/punktfunk-web.service $out/lib/systemd/user/punktfunk-web.service
-      install -Dm0644 scripts/punktfunk-web-init.service \
-        $out/lib/systemd/user/punktfunk-web-init.service
-      substituteInPlace $out/lib/systemd/user/punktfunk-web.service \
-        --replace-fail /usr/bin/punktfunk-web-server $out/bin/punktfunk-web-server
-      substituteInPlace $out/lib/systemd/user/punktfunk-web-init.service \
-        --replace-fail /usr/share/punktfunk-web $out/share/punktfunk-web
+      install -Dm0644 scripts/lilynk-web.service $out/lib/systemd/user/lilynk-web.service
+      install -Dm0644 scripts/lilynk-web-init.service \
+        $out/lib/systemd/user/lilynk-web-init.service
+      substituteInPlace $out/lib/systemd/user/lilynk-web.service \
+        --replace-fail /usr/bin/lilynk-web-server $out/bin/lilynk-web-server
+      substituteInPlace $out/lib/systemd/user/lilynk-web-init.service \
+        --replace-fail /usr/share/lilynk-web $out/share/lilynk-web
 
       # PATH-stable launcher: run the SSR bundle on bun from the store (mirrors the deb/rpm
-      # /usr/bin/punktfunk-web-server, minus the vendored-bun indirection).
-      makeWrapper ${bun}/bin/bun $out/bin/punktfunk-web-server \
-        --add-flags "$out/share/punktfunk-web/.output/server/index.mjs"
+      # /usr/bin/lilynk-web-server, minus the vendored-bun indirection).
+      makeWrapper ${bun}/bin/bun $out/bin/lilynk-web-server \
+        --add-flags "$out/share/lilynk-web/.output/server/index.mjs"
       runHook postInstall
     '';
 
@@ -542,21 +542,21 @@ in
 
     meta = meta // {
       description = "punktfunk management web console (Nitro SSR on bun + React)";
-      mainProgram = "punktfunk-web-server";
+      mainProgram = "lilynk-web-server";
     };
   };
 
-  # --- plugin/script runner (punktfunk-scripting) --------------------------------------------------
-  # The host's automation runner: the `@punktfunk/host` SDK's `punktfunk-scripting` CLI (built on
+  # --- plugin/script runner (lilynk-scripting) --------------------------------------------------
+  # The host's automation runner: the `@punktfunk/host` SDK's `lilynk-scripting` CLI (built on
   # Effect), which discovers ~/.config/punktfunk/{scripts,plugins} and supervises each unit as an
   # Effect fiber. It runs on `bun` (it import()s the operator's `.ts` plugin files, which only bun
-  # can do). Mirrors the Debian punktfunk-scripting .deb / the RPM's `--with scripting` subpackage,
+  # can do). Mirrors the Debian lilynk-scripting .deb / the RPM's `--with scripting` subpackage,
   # which the host package Recommends. Its systemd --user unit ships here too.
   #
   # Like the deb/rpm we `bun build` the runner into one self-contained JS (effect inlined), but
   # the launcher execs `pkgs.bun` from the store instead of a vendored bun.
-  punktfunk-scripting = stdenvNoCC.mkDerivation {
-    pname = "punktfunk-scripting";
+  lilynk-scripting = stdenvNoCC.mkDerivation {
+    pname = "lilynk-scripting";
     inherit src version;
     nativeBuildInputs = [
       bun
@@ -564,7 +564,7 @@ in
       bun2nix.hook
     ];
 
-    # Same bun2nix wiring as punktfunk-web, against sdk/bun.lock's generated sdk/bun.nix (kept in
+    # Same bun2nix wiring as lilynk-web, against sdk/bun.lock's generated sdk/bun.nix (kept in
     # step by the `bun2nix` devDependency's `prepare` script — `prepare`, not `postinstall`,
     # because sdk/ is the PUBLISHED @punktfunk/host package and a postinstall would then run on
     # every consumer's install). No aggregate deps hash to bump.
@@ -593,20 +593,20 @@ in
 
     installPhase = ''
       runHook preInstall
-      install -Dm0644 $TMPDIR/runner-cli.js $out/share/punktfunk-scripting/runner-cli.js
-      # Launcher: run the bundle on bun from the store (mirrors the deb/rpm /usr/bin/punktfunk-scripting).
-      makeWrapper ${bun}/bin/bun $out/bin/punktfunk-scripting \
-        --add-flags "$out/share/punktfunk-scripting/runner-cli.js"
+      install -Dm0644 $TMPDIR/runner-cli.js $out/share/lilynk-scripting/runner-cli.js
+      # Launcher: run the bundle on bun from the store (mirrors the deb/rpm /usr/bin/lilynk-scripting).
+      makeWrapper ${bun}/bin/bun $out/bin/lilynk-scripting \
+        --add-flags "$out/share/lilynk-scripting/runner-cli.js"
       # The user unit every channel ships, sandbox included. NixOS has no /bin/mkdir.
-      install -Dm0644 scripts/punktfunk-scripting.service \
-        $out/lib/systemd/user/punktfunk-scripting.service
-      install -Dm0644 scripts/punktfunk-scripting-seat@.service \
-        $out/lib/systemd/user/punktfunk-scripting-seat@.service
-      for unit in punktfunk-scripting.service punktfunk-scripting-seat@.service; do
+      install -Dm0644 scripts/lilynk-scripting.service \
+        $out/lib/systemd/user/lilynk-scripting.service
+      install -Dm0644 scripts/lilynk-scripting-seat@.service \
+        $out/lib/systemd/user/lilynk-scripting-seat@.service
+      for unit in lilynk-scripting.service lilynk-scripting-seat@.service; do
         substituteInPlace $out/lib/systemd/user/$unit \
-          --replace-fail /usr/bin/punktfunk-scripting $out/bin/punktfunk-scripting
+          --replace-fail /usr/bin/lilynk-scripting $out/bin/lilynk-scripting
       done
-      substituteInPlace $out/lib/systemd/user/punktfunk-scripting.service \
+      substituteInPlace $out/lib/systemd/user/lilynk-scripting.service \
         --replace-fail =+/bin/mkdir =+${coreutils}/bin/mkdir
       runHook postInstall
     '';
@@ -615,7 +615,7 @@ in
 
     meta = meta // {
       description = "punktfunk plugin/script runner (Effect SDK on bun)";
-      mainProgram = "punktfunk-scripting";
+      mainProgram = "lilynk-scripting";
     };
   };
 }

@@ -1,5 +1,5 @@
 #!/bin/sh
-# Run pf-encode's ignored GPU tests with one box's feature set and compare each test's result
+# Run ly-encode's ignored GPU tests with one box's feature set and compare each test's result
 # with the pass set recorded for that box in scripts/encode-gpu-tests/<box>.txt.
 #
 #   sh scripts/encode-gpu-tests.sh nvidia|amd|intel [extra cargo test args, e.g. --release]
@@ -19,12 +19,12 @@ case $box in
 esac
 
 recorded=$(cd "$(dirname "$0")" && pwd)/encode-gpu-tests/$box.txt
-log=$(mktemp "${TMPDIR:-/tmp}/pf-encode-gpu.XXXXXX")
+log=$(mktemp "${TMPDIR:-/tmp}/ly-encode-gpu.XXXXXX")
 now=$log.results
 trap 'rm -f "$log" "$now"' EXIT
 
-echo "== cargo test -p pf-encode --features $features -- --ignored"
-cargo test -p pf-encode --features "$features" "$@" -- --ignored --test-threads=1 2>&1 | tee "$log"
+echo "== cargo test -p ly-encode --features $features -- --ignored"
+cargo test -p ly-encode --features "$features" "$@" -- --ignored --test-threads=1 2>&1 | tee "$log"
 grep -E '^test .* \.\.\. (ok|FAILED|ignored)' "$log" | LC_ALL=C sort >"$now"
 if [ ! -s "$now" ]; then
   echo "encode-gpu-tests: no test results; did the build fail?" >&2

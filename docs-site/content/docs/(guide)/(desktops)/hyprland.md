@@ -42,8 +42,8 @@ picker you configured there still runs for every share the host didn't ask for.
 From inside your Hyprland session:
 
 ```sh
-systemctl --user enable --now punktfunk-host
-journalctl --user -u punktfunk-host -f    # watch it start and print its fingerprint
+systemctl --user enable --now lilynk-host
+journalctl --user -u lilynk-host -f    # watch it start and print its fingerprint
 ```
 
 Open [the web console](/docs/web-console) to pair a [client](/docs/clients). To serve Moonlight
@@ -83,14 +83,14 @@ shows black frames. When it's on, the host logs a warning at its first stream. G
 installed. In `hyprland.lua`:
 
 ```lua
-hl.permission("/usr/bin/punktfunk-host", "screencopy", "allow")
+hl.permission("/usr/bin/lilynk-host", "screencopy", "allow")
 hl.permission("/usr/(lib|libexec|lib64)/xdg-desktop-portal-hyprland", "screencopy", "allow")
 ```
 
 or in `hyprland.conf`:
 
 ```ini
-permission = /usr/bin/punktfunk-host, screencopy, allow
+permission = /usr/bin/lilynk-host, screencopy, allow
 permission = /usr/(lib|libexec|lib64)/xdg-desktop-portal-hyprland, screencopy, allow
 ```
 

@@ -92,7 +92,7 @@ shoot_macos() {
   # its binary, and macOS then draws it with the window chrome of that release.
   log "macOS — building (xcodebuild Punktfunk)…"
   local dd="${PF_SHOT_DERIVED_DATA:-$APPLE_DIR/.build/shots-macos}"
-  xcodebuild -project Punktfunk.xcodeproj -scheme Punktfunk -configuration Debug \
+  xcodebuild -project Lilynk.xcodeproj -scheme Punktfunk -configuration Debug \
     -destination platform=macOS -derivedDataPath "$dd" -skipMacroValidation \
     CODE_SIGNING_ALLOWED=NO build >/dev/null \
     || die "macOS: xcodebuild failed"
@@ -214,7 +214,7 @@ shoot_sim() {
   # workaround is temporarily unlinking SwiftUINavigationTransitions from the tvOS target
   # (HomeView's use is canImport-guarded — the push transition degrades to the crossfade).
   # -skipMacroValidation: nobody is there to approve a package's macros in a headless build.
-  xcodebuild -project Punktfunk.xcodeproj -scheme "$scheme" -configuration Debug \
+  xcodebuild -project Lilynk.xcodeproj -scheme "$scheme" -configuration Debug \
     -sdk "$sdk" -destination "id=$udid" -derivedDataPath "$dd" -skipMacroValidation \
     CODE_SIGNING_ALLOWED=NO build >/dev/null \
     || die "$prefix: xcodebuild failed"
@@ -276,20 +276,20 @@ pixels() { sips -g pixelWidth -g pixelHeight "$1" 2>/dev/null | awk '/pixel/{pri
 for target in "$@"; do
   case "$target" in
     macos) shoot_macos ;;
-    ios)   shoot_sim 'iPhone 16 Pro Max'   Punktfunk-iOS  iphonesimulator  iphone-6.9 iOS 'iPhone 16 Pro Max' ;;
-    ipad)  shoot_sim 'iPad Pro 13|iPad Pro .*M4|iPad Pro \(13' Punktfunk-iOS iphonesimulator ipad-13 iOS 'iPad Pro 13-inch (M4)' ;;
-    tvos)  shoot_sim 'Apple TV'            Punktfunk-tvOS appletvsimulator appletv    tvOS 'Apple TV 4K' ;;
+    ios)   shoot_sim 'iPhone 16 Pro Max'   Lilynk-iOS  iphonesimulator  iphone-6.9 iOS 'iPhone 16 Pro Max' ;;
+    ipad)  shoot_sim 'iPad Pro 13|iPad Pro .*M4|iPad Pro \(13' Lilynk-iOS iphonesimulator ipad-13 iOS 'iPad Pro 13-inch (M4)' ;;
+    tvos)  shoot_sim 'Apple TV'            Lilynk-tvOS appletvsimulator appletv    tvOS 'Apple TV 4K' ;;
     visionos)
       # A device of the 4K type captures 3840×2160. The other type's 2732×2048 the store refuses.
       [ -n "$SCENES_GIVEN" ] || SCENES=("${VISION_SCENES[@]}")
-      shoot_sim 'Apple Vision Pro \(' Punktfunk-iOS xrsimulator visionpro visionOS 'Apple Vision Pro'
+      shoot_sim 'Apple Vision Pro \(' Lilynk-iOS xrsimulator visionpro visionOS 'Apple Vision Pro'
       ;;
     all)
       shoot_macos
       if xcrun --find simctl >/dev/null 2>&1; then
-        shoot_sim 'iPhone 16 Pro Max' Punktfunk-iOS iphonesimulator iphone-6.9 iOS 'iPhone 16 Pro Max'
-        shoot_sim 'iPad Pro 13|iPad Pro .*M4|iPad Pro \(13' Punktfunk-iOS iphonesimulator ipad-13 iOS 'iPad Pro 13-inch (M4)'
-        shoot_sim 'Apple TV' Punktfunk-tvOS appletvsimulator appletv tvOS 'Apple TV 4K'
+        shoot_sim 'iPhone 16 Pro Max' Lilynk-iOS iphonesimulator iphone-6.9 iOS 'iPhone 16 Pro Max'
+        shoot_sim 'iPad Pro 13|iPad Pro .*M4|iPad Pro \(13' Lilynk-iOS iphonesimulator ipad-13 iOS 'iPad Pro 13-inch (M4)'
+        shoot_sim 'Apple TV' Lilynk-tvOS appletvsimulator appletv tvOS 'Apple TV 4K'
       else
         warn "Skipping iOS/iPadOS/tvOS — full Xcode not found (Command Line Tools only)."
       fi

@@ -11,12 +11,12 @@
 # argument is still accepted.)
 #
 # CI compiles `#[cfg(target_os = "windows")]` code only on Windows, so a Windows-side edit made on a
-# Mac is otherwise unverifiable until that job runs. None of pf-frame, pf-win-display, pf-capture
-# and pf-vdisplay takes punktfunk-core with its `quic` feature (pf-win-display and pf-vdisplay take
+# Mac is otherwise unverifiable until that job runs. None of ly-frame, ly-win-display, ly-capture
+# and ly-vdisplay takes lilynk-core with its `quic` feature (ly-win-display and ly-vdisplay take
 # it with default features off), so their Windows closure has no ring or opus build script that
 # needs the MSVC toolchain, and cargo checks them in the real workspace.
 #
-# There is no Linux leg: pf-capture's Linux half depends on the pipewire crate, whose build
+# There is no Linux leg: ly-capture's Linux half depends on the pipewire crate, whose build
 # script needs a Linux libpipewire. Check it on Linux.
 #
 # Note: `cargo fmt` needs none of this — rustfmt follows `mod`/`#[path]` without evaluating cfg, so
@@ -25,12 +25,12 @@ set -euo pipefail
 
 REPO="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
 TARGET=x86_64-pc-windows-msvc
-LINT=(-p pf-frame -p pf-win-display -p pf-capture -p pf-vdisplay)
+LINT=(-p ly-frame -p ly-win-display -p ly-capture -p ly-vdisplay)
 
 case "${1:-}" in
   windows) shift ;;
   linux)
-    echo "xcheck: pf-vdisplay's Linux half needs libpipewire; run cargo clippy -p pf-vdisplay on Linux" >&2
+    echo "xcheck: ly-vdisplay's Linux half needs libpipewire; run cargo clippy -p ly-vdisplay on Linux" >&2
     exit 2
     ;;
 esac

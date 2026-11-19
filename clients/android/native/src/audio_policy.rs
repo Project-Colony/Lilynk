@@ -41,8 +41,8 @@ pub(crate) struct OpenRung {
 /// streams that never route. Every mode is tried at the session's rate before one final
 /// unspecified-rate pass. No rung asks for a different explicit rate.
 ///
-/// `sharing` and `perf` are the raw `debug.punktfunk.audio_sharing` and
-/// `debug.punktfunk.audio_perf` values, which pin the modes for field diagnosis. Nothing pins
+/// `sharing` and `perf` are the raw `debug.lilynk.audio_sharing` and
+/// `debug.lilynk.audio_perf` values, which pin the modes for field diagnosis. Nothing pins
 /// the rate: it must match the wire format.
 ///
 /// With `track`, two `AudioTrack` rungs (LowLatency, then None) come first. The AAudio rungs
@@ -161,7 +161,7 @@ pub(crate) enum Next {
     /// Settle, then open the device again as a new generation.
     Reopen,
     /// The device went away and stays closed: the session is stopping, or
-    /// `debug.punktfunk.audio_reopen` pins reopening off.
+    /// `debug.lilynk.audio_reopen` pins reopening off.
     Stop,
     /// Nothing is left to reopen for.
     End,

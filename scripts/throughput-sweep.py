@@ -7,7 +7,7 @@ points to the host send path; rising `link_loss` points to the link or client re
 path. If delivered throughput tracks the target with little loss, investigate the
 encoder rather than transport.
 
-Pair `punktfunk-probe` with the host once before running this script. Use `--help`
+Pair `lilynk-probe` with the host once before running this script. Use `--help`
 for sweep options and `--self-test` to validate output parsing.
 """
 
@@ -23,7 +23,7 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-DEFAULT_BIN = REPO / "target" / "release" / "punktfunk-probe"
+DEFAULT_BIN = REPO / "target" / "release" / "lilynk-probe"
 DEFAULT_LADDER = "250,500,750,1000,1250,1500,2000,3000"
 DEFAULT_PORT = 9777
 SPEED_LINE = "SPEED TEST complete"
@@ -95,9 +95,9 @@ def scan_warnings(text: str) -> list[str]:
 
 def build_probe() -> None:
     env = dict(os.environ)
-    print("building punktfunk-probe (release)...", flush=True)
+    print("building lilynk-probe (release)...", flush=True)
     subprocess.run(
-        ["cargo", "build", "--release", "-p", "punktfunk-probe"],
+        ["cargo", "build", "--release", "-p", "lilynk-probe"],
         cwd=REPO, env=env, check=True,
     )
 
@@ -206,7 +206,7 @@ def print_table(rows: list[dict]) -> None:
 # ---- main -----------------------------------------------------------------
 
 SELF_TEST_LINE = (
-    '2026-07-13T12:00:00.000Z  INFO punktfunk_probe: SPEED TEST complete '
+    '2026-07-13T12:00:00.000Z  INFO lilynk_probe: SPEED TEST complete '
     'target_kbps=2000000 target_mbps=2000 delivered_mbps=512 '
     'link_loss_pct="3.4%" host_drop_pct="0.0%" wire_pkts_sent=170000 '
     'wire_pkts_recv=164220 send_dropped=0'

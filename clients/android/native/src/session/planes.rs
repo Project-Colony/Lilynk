@@ -393,10 +393,10 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeVideoDrain(
 }
 
 /// `NativeBridge.nativeVideoStatsLines(handle, tier, advanced, panelHz, panelModeHz, preset):
-/// String?` — close the overlay window and return it formatted by `punktfunk_core::hud`, one
+/// String?` — close the overlay window and return it formatted by `lilynk_core::hud`, one
 /// `<role>\t<text>` per line, or `null` when no decode thread runs. `panelHz` is the rate this app
 /// may render at and `panelModeHz` the panel's mode (0 = unknown). A picture smaller than the
-/// host's mode leads the mode line ([`punktfunk_core::hud::StatsSnapshot::picture`]). Poll ~1 Hz; each call closes
+/// host's mode leads the mode line ([`lilynk_core::hud::StatsSnapshot::picture`]). Poll ~1 Hz; each call closes
 /// the window. Not android-gated — pure `jni` + connector reads, so it links on the host build too.
 #[unsafe(no_mangle)]
 #[allow(clippy::too_many_arguments)]
@@ -410,7 +410,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeVideoStatsL
     panel_mode_hz: jfloat,
     preset: JString<'local>,
 ) -> JString<'local> {
-    use punktfunk_core::hud::{self, Extra, Role, StatsVerbosity};
+    use lilynk_core::hud::{self, Extra, Role, StatsVerbosity};
     env.with_env(|env| -> jni::errors::Result<JString<'local>> {
         let Some(h) = SESSIONS.get(handle) else {
             return Ok(JString::default());
@@ -459,7 +459,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeVideoStatsL
 
 /// The window as the companion panel's graphs read it, by the index `NativeBridge.STAT_*` names.
 /// Rates are per second of the window; a `-1` is a figure this platform does not have.
-fn sample_of(s: &punktfunk_core::hud::StatsSnapshot, judder: u32) -> Vec<f32> {
+fn sample_of(s: &lilynk_core::hud::StatsSnapshot, judder: u32) -> Vec<f32> {
     let secs = s.window_ms.max(1) as f32 / 1000.0;
     let per_sec = |n: u32| n as f32 / secs;
     let ms = |us: u32| us as f32 / 1000.0;
@@ -533,10 +533,10 @@ fn panel_warning(rate: f32, mode: f32, stream_hz: u32, received: u32) -> Option<
     }
     let shown = rate.round() as i32;
     if rate > 0.0 && mode > 0.0 && rate + 1.0 < mode {
-        return Some(pf_l10n::android::android_overlay_app_capped(shown));
+        return Some(ly_l10n::android::android_overlay_app_capped(shown));
     }
     (rate > 0.0 && stream_hz > 0 && rate + 1.0 < stream_hz as f32)
-        .then(|| pf_l10n::android::android_overlay_panel_rate(shown, stream_hz))
+        .then(|| ly_l10n::android::android_overlay_panel_rate(shown, stream_hz))
 }
 
 /// `NativeBridge.nativeVideoSize(handle): IntArray?` — the negotiated video mode as
@@ -783,10 +783,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSetPadSpeak
 ) {
     jni_guard((), || {
         if (0..16).contains(&pad) {
-            punktfunk_core::audio::pad_mix::set_speaker_volume(
-                pad as u8,
-                percent.clamp(0, 100) as u8,
-            );
+            lilynk_core::audio::pad_mix::set_speaker_volume(pad as u8, percent.clamp(0, 100) as u8);
         }
     })
 }

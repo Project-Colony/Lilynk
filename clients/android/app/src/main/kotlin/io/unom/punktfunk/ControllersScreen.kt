@@ -72,7 +72,7 @@ import kotlinx.coroutines.delay
  * device itself.
  *
  * The TOUCH presentation: the console reaches the same answer through its own Skia screen
- * (`crates/client/pf-console-ui/src/screens/players.rs`), which keeps the console's input on the
+ * (`crates/client/ly-console-ui/src/screens/players.rs`), which keeps the console's input on the
  * page instead of suspending it behind a Compose takeover, and has its own live input test
  * (`ConsoleCmd::PadTest`). Everything the console needs from here it asks for as a
  * `ConsoleCmd::PadAction` (see [SkiaConsoleShell]), which is why [padInfoOf] and [testRumble] are

@@ -1,6 +1,6 @@
-# Build the punktfunk Windows HOST as a signed punktfunk-setup-win installer and publish it to Gitea's
+# Build the punktfunk Windows HOST as a signed lilynk-setup-win installer and publish it to Gitea's
 # generic package registry, so a Windows GPU box can install the streaming host (SYSTEM service + bundled
-# pf-vdisplay virtual-display driver + the web management console + the opt-in plugin/script runner,
+# ly-vdisplay virtual-display driver + the web management console + the opt-in plugin/script runner,
 # both on a bundled bun) from one signed setup.exe. Runs on a self-hosted
 # windows-amd64 runner
 # (host mode; same MSVC/Windows-SDK/LLVM env as windows-client.yml — generic from unom/infra's
@@ -10,7 +10,7 @@
 # Why an installer and not MSIX: the host installs a LocalSystem SCM service that
 # CreateProcessAsUserW's into the interactive session for secure-desktop capture, and bundles
 # UMDF drivers — neither is expressible in MSIX's sandbox. The real install logic already lives
-# in `punktfunk-host service install` (crates/host/punktfunk-host/src/windows/service/setup.rs);
+# in `lilynk-host service install` (crates/host/lilynk-host/src/windows/service/setup.rs);
 # the installer just lays the exe down and calls it elevated. Packaging internals:
 # packaging/windows/README.md.
 #
@@ -20,7 +20,7 @@
 #   vX.Y.Z tag -> X.Y.Z   (THE release; published + stable `latest/` alias + attached to the
 #                          unified Gitea Release).
 #   main push / dispatch -> <major>.<next-minor>.<run_number>  (canary; `canary/` alias; base one
-#                          minor ahead of the latest stable tag via scripts/ci/pf-version.ps1).
+#                          minor ahead of the latest stable tag via scripts/ci/ly-version.ps1).
 #
 # Signing goes through Azure Artifact Signing (account `unomsigning`, profile `unom-io`) — a publicly
 # trusted CA, so there is no .cer for users to import and no SmartScreen "unknown publisher" prompt.
@@ -42,7 +42,7 @@
 #    vendored tree (libvpl-sys, cmake+bindgen — LIBCLANG_PATH already in the runner env for
 #    pyrowave-sys) and statically linked; the GPU runtime comes from the Intel driver store at run
 #    time, so no new DLL ships and non-Intel boxes are unaffected.
-#  - AMF (AMD, native SDK): unconditional, no feature and no build-time env — pf-encode-win loads
+#  - AMF (AMD, native SDK): unconditional, no feature and no build-time env — ly-encode-win loads
 #    amfrt64.dll from the AMD driver at run time.
 # CI launches the exe only for `--version`, so no GPU is needed here.
 #
@@ -69,37 +69,37 @@ on:
     # The crate lines are the Windows host + tray build closure. scripts/ci/check-workflow-paths.py
     # fails CI when one is missing, in either leg.
     paths:
-      - 'crates/client/punktfunk-ffi/**'
+      - 'crates/client/lilynk-ffi/**'
       - 'crates/codec/libvpl-sys/**'
-      - 'crates/codec/pf-bitstream/**'
+      - 'crates/codec/ly-bitstream/**'
       - 'crates/codec/pyrowave-sys/**'
-      - 'crates/core/pf-update-check/**'
-      - 'crates/core/punktfunk-core/**'
+      - 'crates/core/ly-update-check/**'
+      - 'crates/core/lilynk-core/**'
       - 'l10n/**'
-      - 'crates/host/pf-audio/**'
-      - 'crates/host/pf-capture/**'
-      - 'crates/host/pf-clipboard/**'
-      - 'crates/host/pf-driver-proto/**'
-      - 'crates/host/pf-encode/**'
-      - 'crates/host/pf-encode-core/**'
-      - 'crates/host/pf-encode-session/**'
-      - 'crates/host/pf-encode-win/**'
-      - 'crates/host/pf-frame/**'
-      - 'crates/host/pf-gpu/**'
-      - 'crates/host/pf-host-config/**'
-      - 'crates/host/pf-inject/**'
-      - 'crates/host/pf-paths/**'
-      - 'crates/host/pf-paths-win/**'
-      - 'crates/host/pf-portal/**'
-      - 'crates/host/pf-seat-audio/**'
-      - 'crates/host/pf-seat-keeper/**'
-      - 'crates/host/pf-seats/**'
-      - 'crates/host/pf-vdisplay/**'
-      - 'crates/host/pf-win-display/**'
-      - 'crates/host/pf-zerocopy/**'
-      - 'crates/host/punktfunk-capture-worker/**'
-      - 'crates/host/punktfunk-host/**'
-      - 'crates/install/punktfunk-tray/**'
+      - 'crates/host/ly-audio/**'
+      - 'crates/host/ly-capture/**'
+      - 'crates/host/ly-clipboard/**'
+      - 'crates/host/ly-driver-proto/**'
+      - 'crates/host/ly-encode/**'
+      - 'crates/host/ly-encode-core/**'
+      - 'crates/host/ly-encode-session/**'
+      - 'crates/host/ly-encode-win/**'
+      - 'crates/host/ly-frame/**'
+      - 'crates/host/ly-gpu/**'
+      - 'crates/host/ly-host-config/**'
+      - 'crates/host/ly-inject/**'
+      - 'crates/host/ly-paths/**'
+      - 'crates/host/ly-paths-win/**'
+      - 'crates/host/ly-portal/**'
+      - 'crates/host/ly-seat-audio/**'
+      - 'crates/host/ly-seat-keeper/**'
+      - 'crates/host/ly-seats/**'
+      - 'crates/host/ly-vdisplay/**'
+      - 'crates/host/ly-win-display/**'
+      - 'crates/host/ly-zerocopy/**'
+      - 'crates/host/lilynk-capture-worker/**'
+      - 'crates/host/lilynk-host/**'
+      - 'crates/install/lilynk-tray/**'
       - 'tools/display-disturb/**'
       - 'packaging/windows/**'
       - 'scripts/windows/**'
@@ -114,37 +114,37 @@ on:
   # code meets a compiler before merge.
   pull_request:
     paths:
-      - 'crates/client/punktfunk-ffi/**'
+      - 'crates/client/lilynk-ffi/**'
       - 'crates/codec/libvpl-sys/**'
-      - 'crates/codec/pf-bitstream/**'
+      - 'crates/codec/ly-bitstream/**'
       - 'crates/codec/pyrowave-sys/**'
-      - 'crates/core/pf-update-check/**'
-      - 'crates/core/punktfunk-core/**'
+      - 'crates/core/ly-update-check/**'
+      - 'crates/core/lilynk-core/**'
       - 'l10n/**'
-      - 'crates/host/pf-audio/**'
-      - 'crates/host/pf-capture/**'
-      - 'crates/host/pf-clipboard/**'
-      - 'crates/host/pf-driver-proto/**'
-      - 'crates/host/pf-encode/**'
-      - 'crates/host/pf-encode-core/**'
-      - 'crates/host/pf-encode-session/**'
-      - 'crates/host/pf-encode-win/**'
-      - 'crates/host/pf-frame/**'
-      - 'crates/host/pf-gpu/**'
-      - 'crates/host/pf-host-config/**'
-      - 'crates/host/pf-inject/**'
-      - 'crates/host/pf-paths/**'
-      - 'crates/host/pf-paths-win/**'
-      - 'crates/host/pf-portal/**'
-      - 'crates/host/pf-seat-audio/**'
-      - 'crates/host/pf-seat-keeper/**'
-      - 'crates/host/pf-seats/**'
-      - 'crates/host/pf-vdisplay/**'
-      - 'crates/host/pf-win-display/**'
-      - 'crates/host/pf-zerocopy/**'
-      - 'crates/host/punktfunk-capture-worker/**'
-      - 'crates/host/punktfunk-host/**'
-      - 'crates/install/punktfunk-tray/**'
+      - 'crates/host/ly-audio/**'
+      - 'crates/host/ly-capture/**'
+      - 'crates/host/ly-clipboard/**'
+      - 'crates/host/ly-driver-proto/**'
+      - 'crates/host/ly-encode/**'
+      - 'crates/host/ly-encode-core/**'
+      - 'crates/host/ly-encode-session/**'
+      - 'crates/host/ly-encode-win/**'
+      - 'crates/host/ly-frame/**'
+      - 'crates/host/ly-gpu/**'
+      - 'crates/host/ly-host-config/**'
+      - 'crates/host/ly-inject/**'
+      - 'crates/host/ly-paths/**'
+      - 'crates/host/ly-paths-win/**'
+      - 'crates/host/ly-portal/**'
+      - 'crates/host/ly-seat-audio/**'
+      - 'crates/host/ly-seat-keeper/**'
+      - 'crates/host/ly-seats/**'
+      - 'crates/host/ly-vdisplay/**'
+      - 'crates/host/ly-win-display/**'
+      - 'crates/host/ly-zerocopy/**'
+      - 'crates/host/lilynk-capture-worker/**'
+      - 'crates/host/lilynk-host/**'
+      - 'crates/install/lilynk-tray/**'
       - 'tools/display-disturb/**'
       - 'packaging/windows/**'
       - 'scripts/windows/**'
@@ -164,7 +164,7 @@ on:
 env:
   REGISTRY: git.unom.io
   OWNER: unom
-  PKG: punktfunk-host-windows
+  PKG: lilynk-host-windows
   RUSTC_WRAPPER: sccache
   SCCACHE_BUCKET: unom-ci-sccache
   SCCACHE_ENDPOINT: https://storage.unom.io
@@ -228,52 +228,52 @@ jobs:
       - name: Clippy (Windows host subsystem)
         # --release and --locked for the same reasons as the package job: reuse C:\t\release
         # instead of spawning a second dep tree, and resolve the graph that is committed.
-        # pf-encode-core, pf-encode-win, pf-inject, pf-audio, pf-win-display, pf-clipboard, pf-frame
+        # ly-encode-core, ly-encode-win, ly-inject, ly-audio, ly-win-display, ly-clipboard, ly-frame
         # and display-disturb are here because no other workflow's -p list type-checks their
         # Windows code or tests.
         # The encode crates take nvenc,qsv and not pyrowave: this lane never builds the PyroWave
         # C++ tree, and the drivers lane already compiles that backend. Two runs, not eight:
         # every extra feature set re-checks the crates the runs share.
         run: |
-          cargo clippy --release --locked -p punktfunk-host -p punktfunk-tray --features nvenc,qsv --target x86_64-pc-windows-msvc -- -D warnings; if ($LASTEXITCODE) { throw "host clippy" }
-          cargo clippy --release --locked -p pf-encode -p pf-encode-core -p pf-encode-win -p pf-encode-session -p pf-capture -p pf-vdisplay -p pf-win-display -p pf-inject -p pf-audio -p pf-seats -p pf-seat-audio -p pf-clipboard -p pf-frame -p display-disturb --all-targets --features nvenc,qsv --target x86_64-pc-windows-msvc -- -D warnings; if ($LASTEXITCODE) { throw "subsystem clippy" }
+          cargo clippy --release --locked -p lilynk-host -p lilynk-tray --features nvenc,qsv --target x86_64-pc-windows-msvc -- -D warnings; if ($LASTEXITCODE) { throw "host clippy" }
+          cargo clippy --release --locked -p ly-encode -p ly-encode-core -p ly-encode-win -p ly-encode-session -p ly-capture -p ly-vdisplay -p ly-win-display -p ly-inject -p ly-audio -p ly-seats -p ly-seat-audio -p ly-clipboard -p ly-frame -p display-disturb --all-targets --features nvenc,qsv --target x86_64-pc-windows-msvc -- -D warnings; if ($LASTEXITCODE) { throw "subsystem clippy" }
           # The seat keeper is its own workspace (IronRDP's lockfile); see its Cargo.toml.
-          cargo clippy --release --locked --manifest-path crates/host/pf-seat-keeper/Cargo.toml --all-targets --target x86_64-pc-windows-msvc -- -D warnings; if ($LASTEXITCODE) { throw "seat keeper clippy" }
+          cargo clippy --release --locked --manifest-path crates/host/ly-seat-keeper/Cargo.toml --all-targets --target x86_64-pc-windows-msvc -- -D warnings; if ($LASTEXITCODE) { throw "seat keeper clippy" }
 
       - name: Format check
         # Cheap, needs no compile, and the Linux lane cannot see these crates' Windows modules.
         run: |
-          cargo fmt -p punktfunk-host -p pf-encode -p pf-encode-core -p pf-encode-win -p pf-encode-session -p pf-capture -p pf-vdisplay -p pf-win-display -p pf-inject -p pf-audio -p pf-seats -p pf-seat-audio -p pf-clipboard -p pf-frame -p punktfunk-tray -p punktfunk-capture-worker --check; if ($LASTEXITCODE) { throw "fmt" }
-          cargo fmt --manifest-path crates/host/pf-seat-keeper/Cargo.toml --check; if ($LASTEXITCODE) { throw "seat keeper fmt" }
+          cargo fmt -p lilynk-host -p ly-encode -p ly-encode-core -p ly-encode-win -p ly-encode-session -p ly-capture -p ly-vdisplay -p ly-win-display -p ly-inject -p ly-audio -p ly-seats -p ly-seat-audio -p ly-clipboard -p ly-frame -p lilynk-tray -p lilynk-capture-worker --check; if ($LASTEXITCODE) { throw "fmt" }
+          cargo fmt --manifest-path crates/host/ly-seat-keeper/Cargo.toml --check; if ($LASTEXITCODE) { throw "seat keeper fmt" }
 
       - name: Test (subsystem crates, Windows)
         # The crates whose Windows test binaries link against nothing this runner lacks. The host
-        # and pf-encode stay clippy-only: nvidia-video-codec-sdk cannot link on MSVC. pf-encode-win
+        # and ly-encode stay clippy-only: nvidia-video-codec-sdk cannot link on MSVC. ly-encode-win
         # runs featureless, so no encoder SDK is in its graph.
         #
-        # pf-win-display joins them for the same reason as pf-capture: its manifest is
-        # punktfunk-core (default-features off), pf-paths, anyhow, tracing, serde_json and
+        # ly-win-display joins them for the same reason as ly-capture: its manifest is
+        # lilynk-core (default-features off), ly-paths, anyhow, tracing, serde_json and
         # windows — no encoder in the tree, so the link objection does not apply. Its tests
         # include the CCD path/mode array transforms (keep_only_supplied, remap_mode_idx,
         # anchor_kept_sources_at_origin, prune_saved_config_for_targets) — pure code that decides
         # what the operator's desktop looks like.
         run: |
-          cargo test --release --locked -p pf-capture --target x86_64-pc-windows-msvc; if ($LASTEXITCODE) { throw "pf-capture tests" }
-          cargo test --release --locked -p pf-vdisplay --target x86_64-pc-windows-msvc; if ($LASTEXITCODE) { throw "pf-vdisplay tests" }
-          cargo test --release --locked -p pf-win-display --target x86_64-pc-windows-msvc; if ($LASTEXITCODE) { throw "pf-win-display tests" }
+          cargo test --release --locked -p ly-capture --target x86_64-pc-windows-msvc; if ($LASTEXITCODE) { throw "ly-capture tests" }
+          cargo test --release --locked -p ly-vdisplay --target x86_64-pc-windows-msvc; if ($LASTEXITCODE) { throw "ly-vdisplay tests" }
+          cargo test --release --locked -p ly-win-display --target x86_64-pc-windows-msvc; if ($LASTEXITCODE) { throw "ly-win-display tests" }
           # The seat ledger, accounts and pipe. The pipe test opens a SYSTEM/Administrators pipe.
-          cargo test --release --locked -p pf-seats --target x86_64-pc-windows-msvc; if ($LASTEXITCODE) { throw "pf-seats tests" }
+          cargo test --release --locked -p ly-seats --target x86_64-pc-windows-msvc; if ($LASTEXITCODE) { throw "ly-seats tests" }
           # The pad and mouse hardware ids against the INF, the SendInput tables, the minted
           # audio devnodes, and the encode session's pixel targets (WARP when no GPU exists).
           # A test that needs a device or a session is `#[ignore]`d with its reason.
-          cargo test --release --locked -p pf-inject --target x86_64-pc-windows-msvc; if ($LASTEXITCODE) { throw "pf-inject tests" }
-          cargo test --release --locked -p pf-audio --target x86_64-pc-windows-msvc; if ($LASTEXITCODE) { throw "pf-audio tests" }
-          cargo test --release --locked -p pf-encode-session --target x86_64-pc-windows-msvc; if ($LASTEXITCODE) { throw "pf-encode-session tests" }
+          cargo test --release --locked -p ly-inject --target x86_64-pc-windows-msvc; if ($LASTEXITCODE) { throw "ly-inject tests" }
+          cargo test --release --locked -p ly-audio --target x86_64-pc-windows-msvc; if ($LASTEXITCODE) { throw "ly-audio tests" }
+          cargo test --release --locked -p ly-encode-session --target x86_64-pc-windows-msvc; if ($LASTEXITCODE) { throw "ly-encode-session tests" }
           # The AMF and Media Foundation tests that need a GPU are `#[ignore]`d with their reason.
-          cargo test --release --locked -p pf-encode-win --target x86_64-pc-windows-msvc; if ($LASTEXITCODE) { throw "pf-encode-win tests" }
+          cargo test --release --locked -p ly-encode-win --target x86_64-pc-windows-msvc; if ($LASTEXITCODE) { throw "ly-encode-win tests" }
           # The D3D11 map guard on a WARP device, and a clipboard block the clipboard refuses.
-          cargo test --release --locked -p pf-frame --target x86_64-pc-windows-msvc; if ($LASTEXITCODE) { throw "pf-frame tests" }
-          cargo test --release --locked -p pf-clipboard --target x86_64-pc-windows-msvc; if ($LASTEXITCODE) { throw "pf-clipboard tests" }
+          cargo test --release --locked -p ly-frame --target x86_64-pc-windows-msvc; if ($LASTEXITCODE) { throw "ly-frame tests" }
+          cargo test --release --locked -p ly-clipboard --target x86_64-pc-windows-msvc; if ($LASTEXITCODE) { throw "ly-clipboard tests" }
 
   package:
     runs-on: windows-amd64
@@ -344,7 +344,7 @@ jobs:
           "CARGO_TARGET_DIR=${{ matrix.td }}" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
           # No FFMPEG_DIR: neither the host nor the client links libav*.
           # LIBCLANG_PATH is in the runner daemon env.
-          $pf = & "$env:GITHUB_WORKSPACE/scripts/ci/pf-version.ps1"   # single source of truth: base is one minor ahead of the latest stable tag
+          $pf = & "$env:GITHUB_WORKSPACE/scripts/ci/ly-version.ps1"   # single source of truth: base is one minor ahead of the latest stable tag
           $v = if ($env:GITHUB_REF -like 'refs/tags/v*') {
             $env:GITHUB_REF_NAME -replace '^v', ''
           } else {
@@ -401,90 +401,90 @@ jobs:
         # The fingerprint log names why each rebuilt unit was dirty; a fresh unit prints nothing.
         env:
           CARGO_LOG: cargo::core::compiler::fingerprint=info
-        run: cargo build --release --locked -p punktfunk-host ${{ matrix.host_flags }} --target ${{ matrix.target }}
+        run: cargo build --release --locked -p lilynk-host ${{ matrix.host_flags }} --target ${{ matrix.target }}
 
       - name: Build (release, status tray)
         shell: pwsh
-        # The per-user notification-area companion the installer bundles (punktfunk-tray.exe).
-        run: cargo build --release --locked -p punktfunk-tray --target ${{ matrix.target }}
+        # The per-user notification-area companion the installer bundles (lilynk-tray.exe).
+        run: cargo build --release --locked -p lilynk-tray --target ${{ matrix.target }}
 
       - name: Build (release, seat keeper)
         shell: pwsh
-        # punktfunk-seat-keeper.exe, from its own workspace into the same CARGO_TARGET_DIR, so
-        # it lands beside punktfunk-host.exe where the pack script takes it.
-        run: cargo build --release --locked --manifest-path crates/host/pf-seat-keeper/Cargo.toml --target ${{ matrix.target }}
+        # lilynk-seat-keeper.exe, from its own workspace into the same CARGO_TARGET_DIR, so
+        # it lands beside lilynk-host.exe where the pack script takes it.
+        run: cargo build --release --locked --manifest-path crates/host/ly-seat-keeper/Cargo.toml --target ${{ matrix.target }}
 
       - name: Build (release, capture worker)
         shell: pwsh
-        # punktfunk-capture-worker.exe: captures and encodes a monitor the host did not create, as
+        # lilynk-capture-worker.exe: captures and encodes a monitor the host did not create, as
         # the signed-in user. The installer places it beside the host. Its backends follow the
         # target, as the driver's do, so it takes no feature flags.
-        run: cargo build --release --locked -p punktfunk-capture-worker --target ${{ matrix.target }}
+        run: cargo build --release --locked -p lilynk-capture-worker --target ${{ matrix.target }}
 
       - name: Clippy (host + tray, Windows)
         shell: pwsh
         # --release reuses the tree the Build steps made. A debug clippy builds a second one, which
         # tips this runner into C1069 (disk/temp exhaustion).
         # The subsystem crates take --all-targets so their Windows `#[cfg(test)]` modules are
-        # type-checked; `-p punktfunk-host` builds them only as dependencies. The host and
-        # pf-encode stay lint-only: with `nvenc` a test binary cannot link on MSVC.
+        # type-checked; `-p lilynk-host` builds them only as dependencies. The host and
+        # ly-encode stay lint-only: with `nvenc` a test binary cannot link on MSVC.
         # Three runs in the main workspace: every extra feature set re-checks the crates the
         # runs share.
         run: |
           $t = '${{ matrix.target }}'
-          cargo clippy --release --locked -p punktfunk-host -p punktfunk-tray ${{ matrix.host_flags }} --target $t -- -D warnings; if ($LASTEXITCODE) { throw "host clippy" }
-          cargo clippy --release --locked -p punktfunk-capture-worker --target $t -- -D warnings; if ($LASTEXITCODE) { throw "capture worker clippy" }
-          cargo clippy --release --locked -p pf-encode -p pf-encode-core -p pf-encode-win -p pf-encode-session -p pf-capture -p pf-vdisplay -p pf-win-display -p pf-inject -p pf-audio -p pf-seats -p display-disturb --all-targets ${{ matrix.encode_flags }} --target $t -- -D warnings; if ($LASTEXITCODE) { throw "subsystem clippy" }
-          cargo clippy --release --locked --manifest-path crates/host/pf-seat-keeper/Cargo.toml --target $t -- -D warnings; if ($LASTEXITCODE) { throw "seat keeper clippy" }
+          cargo clippy --release --locked -p lilynk-host -p lilynk-tray ${{ matrix.host_flags }} --target $t -- -D warnings; if ($LASTEXITCODE) { throw "host clippy" }
+          cargo clippy --release --locked -p lilynk-capture-worker --target $t -- -D warnings; if ($LASTEXITCODE) { throw "capture worker clippy" }
+          cargo clippy --release --locked -p ly-encode -p ly-encode-core -p ly-encode-win -p ly-encode-session -p ly-capture -p ly-vdisplay -p ly-win-display -p ly-inject -p ly-audio -p ly-seats -p display-disturb --all-targets ${{ matrix.encode_flags }} --target $t -- -D warnings; if ($LASTEXITCODE) { throw "subsystem clippy" }
+          cargo clippy --release --locked --manifest-path crates/host/ly-seat-keeper/Cargo.toml --target $t -- -D warnings; if ($LASTEXITCODE) { throw "seat keeper clippy" }
 
       - name: Test (subsystem crates, Windows)
         if: matrix.arch == 'x64'
         shell: pwsh
-        # pf-capture's `#[cfg(target_os = "windows")]` test modules cover code no Linux job
+        # ly-capture's `#[cfg(target_os = "windows")]` test modules cover code no Linux job
         # compiles, let alone executes — among them the CCD key packing (idd/mod.rs), the cursor
         # section's publish and bounds (idd/cursor.rs, over a pagefile section) and the ETW flow
         # windows (idd/dxgkrnl_etw.rs). None of those needs a device or a desktop. The
         # `f32_to_f16` tests and the `#[ignore]`d `hdr_p010_selftest_intel_1080_live` live in
-        # pf-encode-win/src/convert/selftest.rs and run in the pr-lint job's pf-encode-win step.
+        # ly-encode-win/src/convert/selftest.rs and run in the pr-lint job's ly-encode-win step.
         #
         # --release for the same reason as the clippy step: it reuses C:\t\release instead of
         # spawning a second debug dep tree (the C1069 disk-exhaustion trigger). If this step ever
         # starts tripping C1069 anyway, record THAT here rather than quietly dropping the step.
         run: |
-          cargo test --release --locked -p pf-capture --target ${{ matrix.target }}; if ($LASTEXITCODE) { throw "pf-capture tests" }
-          # Same argument, same tree shape: pf-win-display has no encoder dependency either.
-          cargo test --release --locked -p pf-win-display --target ${{ matrix.target }}; if ($LASTEXITCODE) { throw "pf-win-display tests" }
-          cargo test --release --locked -p pf-seats --target ${{ matrix.target }}; if ($LASTEXITCODE) { throw "pf-seats tests" }
-          # Same tree shape: pf-encode-session takes pf-encode-win featureless, so no encoder
+          cargo test --release --locked -p ly-capture --target ${{ matrix.target }}; if ($LASTEXITCODE) { throw "ly-capture tests" }
+          # Same argument, same tree shape: ly-win-display has no encoder dependency either.
+          cargo test --release --locked -p ly-win-display --target ${{ matrix.target }}; if ($LASTEXITCODE) { throw "ly-win-display tests" }
+          cargo test --release --locked -p ly-seats --target ${{ matrix.target }}; if ($LASTEXITCODE) { throw "ly-seats tests" }
+          # Same tree shape: ly-encode-session takes ly-encode-win featureless, so no encoder
           # SDK import library is asked for.
-          cargo test --release --locked -p pf-inject --target ${{ matrix.target }}; if ($LASTEXITCODE) { throw "pf-inject tests" }
-          cargo test --release --locked -p pf-audio --target ${{ matrix.target }}; if ($LASTEXITCODE) { throw "pf-audio tests" }
-          cargo test --release --locked -p pf-encode-session --target ${{ matrix.target }}; if ($LASTEXITCODE) { throw "pf-encode-session tests" }
+          cargo test --release --locked -p ly-inject --target ${{ matrix.target }}; if ($LASTEXITCODE) { throw "ly-inject tests" }
+          cargo test --release --locked -p ly-audio --target ${{ matrix.target }}; if ($LASTEXITCODE) { throw "ly-audio tests" }
+          cargo test --release --locked -p ly-encode-session --target ${{ matrix.target }}; if ($LASTEXITCODE) { throw "ly-encode-session tests" }
 
-      - name: Test (pf-vdisplay, Windows)
+      - name: Test (ly-vdisplay, Windows)
         if: matrix.arch == 'x64'
         shell: pwsh
-        # pf-vdisplay's Windows half (vdisplay/windows/) has test modules no other step in this
+        # ly-vdisplay's Windows half (vdisplay/windows/) has test modules no other step in this
         # job executes; the clippy step above only type-checks them. Its hardware tests are
         # `#[ignore]`d with their reason, so this step reports them as `ignored`.
         #
-        # The link objection recorded for the host and pf-encode above does NOT apply here: no
-        # pf-encode is in `-p pf-vdisplay`'s graph, so no nvidia/libvpl import libs are asked for.
+        # The link objection recorded for the host and ly-encode above does NOT apply here: no
+        # ly-encode is in `-p ly-vdisplay`'s graph, so no nvidia/libvpl import libs are asked for.
         #
         # --release to reuse C:\t\release rather than spawning a debug tree (the C1069 trigger).
         run: |
-          cargo test --release --locked -p pf-vdisplay --target ${{ matrix.target }}; if ($LASTEXITCODE) { throw "pf-vdisplay tests" }
+          cargo test --release --locked -p ly-vdisplay --target ${{ matrix.target }}; if ($LASTEXITCODE) { throw "ly-vdisplay tests" }
 
-      - name: Build + lint the HDR Vulkan layer (pf-vkhdr-layer)
+      - name: Build + lint the HDR Vulkan layer (ly-vkhdr-layer)
         shell: pwsh
         # Standalone cdylib (own [workspace]) the installer bundles + registers (it lets Vulkan games
         # like Doom use HDR on the virtual display). Lint here so a regression fails CI instead of
         # silently shipping the host without the layer (pack-host-installer.ps1 builds it non-fatally).
         # Windows-only FFI (user32 + the vk_layer loader glue) → can't be linted on the Linux CI.
         run: |
-          Push-Location packaging/windows/pf-vkhdr-layer
-          cargo fmt --check; if ($LASTEXITCODE) { throw "pf-vkhdr-layer rustfmt" }
-          cargo clippy --release --locked --target ${{ matrix.target }} -- -D warnings; if ($LASTEXITCODE) { throw "pf-vkhdr-layer clippy" }
+          Push-Location packaging/windows/ly-vkhdr-layer
+          cargo fmt --check; if ($LASTEXITCODE) { throw "ly-vkhdr-layer rustfmt" }
+          cargo clippy --release --locked --target ${{ matrix.target }} -- -D warnings; if ($LASTEXITCODE) { throw "ly-vkhdr-layer clippy" }
           Pop-Location
 
       # The console output is fully self-contained (Nitro noExternals) and most pushes
@@ -643,7 +643,7 @@ jobs:
           AZURE_CODESIGNING_ENDPOINT: https://neu.codesigning.azure.net/
           AZURE_CODESIGNING_ACCOUNT: ${{ vars.AZURE_CODESIGNING_ACCOUNT }}
           AZURE_CODESIGNING_PROFILE: ${{ vars.AZURE_CODESIGNING_PROFILE }}
-          # Service principal 'punktfunk-ci-signing', holding ONLY the Artifact Signing Certificate
+          # Service principal 'lilynk-ci-signing', holding ONLY the Artifact Signing Certificate
           # Profile Signer role, scoped to that profile — it can sign and nothing else.
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
@@ -659,7 +659,7 @@ jobs:
           DRIVER_CERT_PFX_B64: ${{ secrets.DRIVER_CERT_PFX_B64 }}
           DRIVER_CERT_PASSWORD: ${{ secrets.DRIVER_CERT_PASSWORD }}
         run: |
-          # The engine exe (punktfunk-setup-win + payload). It keeps the Inno silent flags (D5)
+          # The engine exe (lilynk-setup-win + payload). It keeps the Inno silent flags (D5)
           # and the ARP key + unins000.exe (D6), so the updater, winget and every fielded Inno
           # install upgrade onto it unchanged.
           & packaging/windows/pack-host-installer.ps1 `
@@ -696,8 +696,8 @@ jobs:
         if: matrix.arch == 'x64'
         shell: pwsh
         run: |
-          $got = & '${{ matrix.td }}\out\punktfunk-host.exe' --version
-          if ($got -ne "punktfunk-host $env:HOST_VERSION") { throw "stamped exe reports '$got', not $env:HOST_VERSION" }
+          $got = & '${{ matrix.td }}\out\lilynk-host.exe' --version
+          if ($got -ne "lilynk-host $env:HOST_VERSION") { throw "stamped exe reports '$got', not $env:HOST_VERSION" }
           Write-Output $got
 
       - name: Smoke the installer (silent dry-run)
@@ -713,7 +713,7 @@ jobs:
             -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-', "/LOG=$log", '--dry-run'
           if ($p.ExitCode -ne 0) { throw "silent dry-run exited $($p.ExitCode)" }
           $text = Get-Content $log -Raw
-          foreach ($line in @('==> Detected Windows', 'punktfunk-host.exe" service install', 'web setup', 'Done. Next:')) {
+          foreach ($line in @('==> Detected Windows', 'lilynk-host.exe" service install', 'web setup', 'Done. Next:')) {
             if (-not $text.Contains($line)) { throw "smoke transcript lacks: $line" }
           }
           Get-Content $log
@@ -766,9 +766,9 @@ jobs:
           # HOST_CER_PATH is unset — and an unset $env: var is $null, which is a HARD ERROR as a hash
           # literal key ("A null key is not allowed in a hash literal"), not the empty-string key it
           # looks like it should be. The $files guard above filters the missing .cer out.
-          $aliasNames = @{ $env:HOST_SETUP_PATH = 'punktfunk-host-setup${{ matrix.suffix }}.exe' }
+          $aliasNames = @{ $env:HOST_SETUP_PATH = 'lilynk-host-setup${{ matrix.suffix }}.exe' }
           # One signing cert for both arches: the x64 leg owns the .cer alias.
-          if ($env:HOST_CER_PATH -and '${{ matrix.arch }}' -eq 'x64') { $aliasNames[$env:HOST_CER_PATH] = 'punktfunk-host-windows.cer' }
+          if ($env:HOST_CER_PATH -and '${{ matrix.arch }}' -eq 'x64') { $aliasNames[$env:HOST_CER_PATH] = 'lilynk-host-windows.cer' }
           foreach ($f in $files) {
             $an = $aliasNames[$f]; if (-not $an) { continue }
             curl.exe -fsS -o NUL --user "enricobuehler:$($env:REGISTRY_TOKEN)" -X DELETE "$base/$alias/$an" 2>$null
@@ -829,13 +829,13 @@ jobs:
         run: |
           set -euo pipefail
           # Same derivation as the package job: canary = <next-minor base>'s major.minor + run#.
-          eval "$(bash scripts/ci/pf-version.sh)"
+          eval "$(bash scripts/ci/ly-version.sh)"
           VER="${PF_MAJOR}.${PF_MINOR}.${GITHUB_RUN_NUMBER}"
-          URL="https://${REGISTRY}/api/packages/${OWNER}/generic/${PKG}/${VER}/punktfunk-host-setup-${VER}.exe"
+          URL="https://${REGISTRY}/api/packages/${OWNER}/generic/${PKG}/${VER}/lilynk-host-setup-${VER}.exe"
           curl -fsSL "$URL" -o /tmp/installer.exe
           SHA="$(sha256sum /tmp/installer.exe | awk '{print $1}')"
           # The arm64 leg is continue-on-error; a missing asset leaves its key out of the manifest.
-          A64_URL="https://${REGISTRY}/api/packages/${OWNER}/generic/${PKG}/${VER}/punktfunk-host-setup-${VER}_arm64.exe"
+          A64_URL="https://${REGISTRY}/api/packages/${OWNER}/generic/${PKG}/${VER}/lilynk-host-setup-${VER}_arm64.exe"
           if curl -fsSL "$A64_URL" -o /tmp/installer-arm64.exe; then
             A64_SHA="$(sha256sum /tmp/installer-arm64.exe | awk '{print $1}')"
           else

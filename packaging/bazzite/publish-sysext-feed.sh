@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Publish a punktfunk sysext image into its feed on the Gitea generic package registry —
 # called by .gitea/workflows/rpm.yml after the RPM publish. A feed is one fixed URL
-# (…/punktfunk-sysext/<feed>/) holding versioned .raw files plus a SHA256SUMS manifest and its
-# detached OpenPGP signature SHA256SUMS.asc; punktfunk-sysext(8) on the boxes verifies that
+# (…/lilynk-sysext/<feed>/) holding versioned .raw files plus a SHA256SUMS manifest and its
+# detached OpenPGP signature SHA256SUMS.asc; lilynk-sysext(8) on the boxes verifies that
 # signature, then uses the manifest to find + check the newest image (the layout is also exactly
 # what systemd-sysupdate's url-file source expects, so a .transfer feed can be added later
 # without re-publishing anything).
@@ -18,7 +18,7 @@
 #   KEEP     newest images to keep in the feed; 0/unset-for-stable = keep all
 #   --seal   re-sign a feed's EXISTING manifest under a new serial without publishing an image,
 #            when the current key didn't sign it. Both modes carry lines only from a live manifest
-#            that verifies against FEED_KEY in punktfunk-sysext.sh and names this feed. A publish
+#            that verifies against FEED_KEY in lilynk-sysext.sh and names this feed. A publish
 #            over any other starts the feed over; a seal leaves it as it is.
 # Env: REGISTRY (git.unom.io), OWNER (unom), TOKEN (write:package PAT), CURL_USER (login name),
 #      RPM_GPG_PRIVATE_KEY (armored private key; absent => unsigned, fatal on a v* tag)
@@ -44,11 +44,11 @@ SUMS="$WORK/SHA256SUMS"
 SIG="$WORK/SHA256SUMS.asc"
 FETCHED="$WORK/SHA256SUMS.fetched"   # exactly what the registry served, before normalization
 
-# baked_key -> the armored public key block(s) of FEED_KEY in punktfunk-sysext.sh, the key boxes
+# baked_key -> the armored public key block(s) of FEED_KEY in lilynk-sysext.sh, the key boxes
 # verify the feed with. The block is a single-quoted shell literal there, so the first and last
 # lines lose the `FEED_KEY='` prefix and the closing quote.
 baked_key() {
-  sed -n '/BEGIN PGP PUBLIC KEY BLOCK/,/END PGP PUBLIC KEY BLOCK/p' "$HERE/punktfunk-sysext.sh" \
+  sed -n '/BEGIN PGP PUBLIC KEY BLOCK/,/END PGP PUBLIC KEY BLOCK/p' "$HERE/lilynk-sysext.sh" \
     | sed "s/^FEED_KEY='//; s/'\$//"
 }
 
@@ -109,10 +109,10 @@ read_manifest() {
 # stable feed, this month". So anyone who can WRITE the registry without holding the key — a leaked
 # write:package token — can copy this feed's manifest, signature and images into another
 # channel's path, or put an old pair back, and every box verifies them happily and merges the
-# result over /usr. punktfunk-sysext(8) refuses a manifest whose FEED is not the feed it fetched
+# result over /usr. lilynk-sysext(8) refuses a manifest whose FEED is not the feed it fetched
 # and one whose SERIAL is below the highest it has accepted, which is the same channel-binding
 # + monotonic-serial pair the Rust updater enforces on its own manifest
-# (crates/core/pf-update-check/src/{manifest,floor}.rs). Comment lines, so a `#`-skipping checksum
+# (crates/core/ly-update-check/src/{manifest,floor}.rs). Comment lines, so a `#`-skipping checksum
 # reader and the clients' image-line parsers are both unaffected by them.
 bind_manifest() {
   local serial prev
@@ -143,7 +143,7 @@ sign_manifest() {
   # by a key outside it is a feed nobody can install from.
   baked="$(first_baked_fpr)"
   if [ -z "$baked" ] || [ "$keyid" != "$baked" ]; then
-    echo "signing key $keyid does not match the key baked into punktfunk-sysext.sh ($baked)" >&2
+    echo "signing key $keyid does not match the key baked into lilynk-sysext.sh ($baked)" >&2
     echo "-> rotate BOTH (packaging/rpm/README.md), or clients cannot verify this feed." >&2
     rm -rf "$home"; return 1
   fi
@@ -175,7 +175,7 @@ if [ "$SEAL" = 1 ]; then
     exit 0
   fi
   # An empty result means the manifest was ALL junk. Signing that would hand clients a feed that
-  # verifies and offers no images, so `punktfunk-sysext update` stops at "no image in the feed".
+  # verifies and offers no images, so `lilynk-sysext update` stops at "no image in the feed".
   if [ ! -s "$SUMS" ]; then
     echo "$BASE/SHA256SUMS lists no images — refusing to seal it (feed needs a republish)" >&2
     exit 1

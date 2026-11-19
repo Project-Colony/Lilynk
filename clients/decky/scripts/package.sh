@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Assemble the Decky plugin into the canonical store/sideload layout:
 #
-#   out/punktfunk-v<version>.zip   ->  punktfunk/{dist/index.js,main.py,py_modules/pf_decky/,
+#   out/lilynk-v<version>.zip   ->  punktfunk/{dist/index.js,main.py,py_modules/ly_decky/,
 #                                                  bin/,assets/,controller_config/,plugin.json,
 #                                                  package.json,decky.pyi,LICENSE,README.md}
 #   out/punktfunk/                 (the same tree, unzipped — rsync this with scripts/deploy.sh)
@@ -30,8 +30,8 @@ cp dist/index.js "$DEST/dist/index.js"          # ship the bundle only, not the 
 cp main.py plugin.json package.json LICENSE "$DEST/"
 # The backend's modules, sources only: Decky puts py_modules/ on sys.path, and a stray
 # __pycache__ from a local test run must not ship.
-mkdir -p "$DEST/py_modules/pf_decky"
-cp py_modules/pf_decky/*.py "$DEST/py_modules/pf_decky/"
+mkdir -p "$DEST/py_modules/ly_decky"
+cp py_modules/ly_decky/*.py "$DEST/py_modules/ly_decky/"
 # The stream-launch wrapper (target of the Steam shortcut). Shipped 0755, though the shortcut
 # runs it through /bin/sh and never needs the bit.
 cp bin/punktfunkrun.sh "$DEST/bin/punktfunkrun.sh"
@@ -41,7 +41,7 @@ cp assets/*.png "$DEST/assets/"
 # The Steam Input controller layout (native touchscreen `ts_n` + gamepad passthrough) the
 # backend installs (apply_controller_config → controller_base/templates + the shortcut config).
 mkdir -p "$DEST/controller_config"
-cp controller_config/punktfunk.vdf "$DEST/controller_config/punktfunk.vdf"
+cp controller_config/lilynk.vdf "$DEST/controller_config/lilynk.vdf"
 [ -f decky.pyi ]  && cp decky.pyi  "$DEST/"
 [ -f README.md ]  && cp README.md  "$DEST/"
 

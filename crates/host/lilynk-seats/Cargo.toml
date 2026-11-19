@@ -1,0 +1,28 @@
+# The seat supervisor's binary: the root daemon, the operator's client for it, and the pad
+# broker, which links ly-inject to build a seat's pads. The library it drives stays in ly-seats,
+# which the Windows seat keeper's own workspace resolves beside IronRDP; ly-inject's graph (aes-gcm
+# through lilynk-core) does not fit next to the keeper's pinned picky.
+[package]
+name = "lilynk-seats"
+description = "punktfunk seat supervisor: the root daemon, its CLI and the seat pad broker"
+version.workspace = true
+edition.workspace = true
+license = "GPL-3.0-or-later"
+publish = false
+
+[[bin]]
+name = "lilynk-seats"
+path = "src/main.rs"
+
+[dependencies]
+ly-paths = { path = "../ly-paths" }
+ly-seats = { path = "../ly-seats" }
+tracing = "0.1"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+anyhow = "1"
+ly-inject = { path = "../ly-inject" }
+rustix = { version = "1", features = ["event", "net"] }
+
+[lints]
+workspace = true

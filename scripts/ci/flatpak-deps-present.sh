@@ -53,7 +53,7 @@ sdk: org.gnome.Sdk
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.rust-stable
   - org.freedesktop.Sdk.Extension.llvm20
-command: punktfunk-client
+command: lilynk-client
 YML
   # A manifest this script cannot read (the fail-open case).
   printf 'app-id: io.unom.punktfunk\n' > "$tmp/unparseable.yml"

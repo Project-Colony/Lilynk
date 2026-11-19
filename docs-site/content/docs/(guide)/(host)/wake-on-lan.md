@@ -89,7 +89,7 @@ Wake-on-WLAN is NOT armed on this host's Wi-Fi NIC — clients cannot wake it fr
 The warning names the interface and the command that fixes it. No line means the host couldn't
 tell (`ethtool` or `iw` missing, no answer from the driver) or local discovery is off. Read it
 in the console under **Diagnostics** → **Troubleshooting**, or with
-`journalctl --user -u punktfunk-host`. Windows hosts don't run this check.
+`journalctl --user -u lilynk-host`. Windows hosts don't run this check.
 
 ### Linux (wired)
 

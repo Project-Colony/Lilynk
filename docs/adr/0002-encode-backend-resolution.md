@@ -4,7 +4,7 @@ Status: accepted, 2026-10-20.
 
 ## Context
 
-Before and during every session the host asks `pf-encode` which backend opens and what it can
+Before and during every session the host asks `ly-encode` which backend opens and what it can
 do: the codecs to advertise, 10-bit, 4:4:4, the zero-copy plane, the cursor blend, the capture
 modifiers. Sixteen free functions answered, each reading the Encoder row and the selected GPU
 again and caching its probe under its own key. A key that missed an input answered for the
@@ -14,7 +14,7 @@ the handshake advertised could differ.
 
 ## Decision
 
-1. **Resolve once.** `pf_encode::resolve()` returns an `Arc<Resolved>`. Every capability
+1. **Resolve once.** `ly_encode::resolve()` returns an `Arc<Resolved>`. Every capability
    question is a method on it, and `open_video(&Resolved, OpenParams)` opens the backend it
    names. A host entry point (a handshake, a `/serverinfo` poll, the management host info, a
    diagnostic command) resolves once and passes the value down.
@@ -32,18 +32,18 @@ the handshake advertised could differ.
    off such a cell are kept only once it holds an answer.
 4. **Methods read the value.** A method reads the inputs and the cells, never the config or the
    GPU again, so the resolution table runs over hand-filled cells without a GPU.
-5. **Edges.** Capture never asks encode: the host resolves and hands pf-capture values
+5. **Edges.** Capture never asks encode: the host resolves and hands ly-capture values
    (`ZeroCopyPolicy`, the output format). Encode never reads capture.
 
 ## Consequences
 
 - A new capability is a method on `Resolved`; a new probe is a cell.
-- The resolution table in `pf-encode/src/resolve*` names the fix each row pins.
+- The resolution table in `ly-encode/src/resolve*` names the fix each row pins.
 - A session keeps the `Resolved` its handshake negotiated: every plan, capture and encoder open
   inside it, rebuilds included, reads that value, so an Encoder-row change applies at the next
   session.
 - Rejected: a capabilities struct filled at once (every poll would run every probe), and the
   per-function caches with wider keys (the drift this replaces).
 
-Evidence: `design/pf-encode-overhaul.md` §4.2 and `design/pf-encode-overhaul/04-design-note.md`
+Evidence: `design/ly-encode-overhaul.md` §4.2 and `design/ly-encode-overhaul/04-design-note.md`
 in the planning repository.

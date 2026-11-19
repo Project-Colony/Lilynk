@@ -7,11 +7,11 @@
   web/src/components/brand-mark.tsx (the canonical flattened geometry, shared with the Apple icon,
   the marketing site and the docs) into:
 
-    punktfunk.ico        multi-size icon (16..256; only the 128 and 256 entries are PNG-compressed,
+    lilynk.ico        multi-size icon (16..256; only the 128 and 256 entries are PNG-compressed,
                          the rest classic DIB). Shipped in {app} and used for the Apps & Features
                          entry; the tray's state icons are drawn separately, not by this script.
 
-  Outputs are COMMITTED next to this script (like include/punktfunk_core.h, generated-but-checked-in);
+  Outputs are COMMITTED next to this script (like include/lilynk_core.h, generated-but-checked-in);
   re-run only when the brand changes. Everything is drawn 4x supersampled and downscaled
   (System.Drawing regions/clips do not antialias), so edges stay clean at every size.
 
@@ -89,7 +89,7 @@ function Resize-Bitmap([System.Drawing.Bitmap]$src, [int]$w, [int]$h) {
 
 $SS = 4   # supersample factor
 
-# --- punktfunk.ico: rounded brand tile at 16..256 --------------------------------------------
+# --- lilynk.ico: rounded brand tile at 16..256 --------------------------------------------
 # Small sizes are classic 32bpp DIB entries (older shell consumers reject an all-PNG icon); only
 # 128/256 use PNG compression (the standard Vista+ layout).
 function New-IconTile([int]$sz) {
@@ -167,7 +167,7 @@ for ($i = 0; $i -lt $icoSizes.Count; $i++) {
 }
 foreach ($p in $pngs) { $bw.Write([byte[]]$p) }
 $bw.Flush()
-$icoPath = Join-Path $OutDir 'punktfunk.ico'
+$icoPath = Join-Path $OutDir 'lilynk.ico'
 [IO.File]::WriteAllBytes($icoPath, $ico.ToArray())
 $bw.Dispose(); $ico.Dispose()
 # Self-check: a malformed container here would only surface later as a shell that draws nothing.

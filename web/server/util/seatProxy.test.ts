@@ -113,7 +113,7 @@ test("each stream the box serves reaches a seat's page while it stays open", asy
 	const rust = readFileSync(
 		join(
 			import.meta.dir,
-			"../../../crates/host/punktfunk-host/src/mgmt/owner.rs",
+			"../../../crates/host/lilynk-host/src/mgmt/owner.rs",
 		),
 		"utf8",
 	);

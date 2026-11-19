@@ -1,10 +1,10 @@
 // PyroWave native Metal decoder: the Apple twin of the Vulkan decoder in
-// crates/client/pf-client-video/src/video_pyrowave.rs, on the presenter's own MTLDevice so decode,
+// crates/client/ly-client-video/src/video_pyrowave.rs, on the presenter's own MTLDevice so decode,
 // CSC and present share one device. The packet walk ports pyrowave_decoder.cpp's
 // push_packet/decode_packet; MetalWaveletShaders.swift hand-ports the vendored GLSL. A vendored
 // PyroWave bump means re-diffing both decode shaders and the two 8-byte header structs.
 //
-// Wire shape (fixed by the host encoder, pf-encode-core's pyrowave_wire.rs):
+// Wire shape (fixed by the host encoder, ly-encode-core's pyrowave_wire.rs):
 // • One AU is one frame of packets, each one 32x32 coefficient block for one (component, level,
 //   band), sized by its 8-byte BitstreamHeader. A per-frame START_OF_FRAME header carries dims,
 //   the block count and the VUI bits (4:2:0, BT.709/BT.2020, limited/full).

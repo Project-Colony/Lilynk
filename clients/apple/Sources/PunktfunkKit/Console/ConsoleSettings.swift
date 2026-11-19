@@ -1,4 +1,4 @@
-// The console's settings document (`pf_client_core::trust::Settings`) as this client reads and
+// The console's settings document (`ly_client_core::trust::Settings`) as this client reads and
 // writes it.
 //
 // The console owns keys this app has no field for (`follow_os_theme`, `pads`, `last_window_w`),
@@ -15,7 +15,7 @@ import PunktfunkShared
 
 public enum ConsoleSettings {
     /// Where the console's own document is kept, whole, between sessions.
-    public static let documentKey = "punktfunk.consoleSettings"
+    public static let documentKey = "lilynk.consoleSettings"
 
     /// What the console is handed: the base document with every key this app owns over it.
     public static func document(_ defaults: UserDefaults = .standard) -> [String: Any] {

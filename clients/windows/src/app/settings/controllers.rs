@@ -6,10 +6,10 @@ use super::{
 };
 use crate::app::style::*;
 use crate::trust::Settings;
-use pf_client_core::settings::Label;
-use pf_fluent::Token;
-use pf_l10n::{client, desktop};
-use punktfunk_core::config::GamepadPref;
+use lilynk_core::config::GamepadPref;
+use ly_client_core::settings::Label;
+use ly_fluent::Token;
+use ly_l10n::{client, desktop};
 use windows_reactor::*;
 
 /// Virtual-pad presets: `(stored value, display label)` — the pad the HOST creates. Same set the
@@ -115,7 +115,7 @@ pub(super) fn controllers_section(cx: &Cx) -> Vec<View> {
         cx,
         scope,
         "pad_speaker",
-        pf_client_core::pad_audio::speaker_active(&s.pad_speaker),
+        ly_client_core::pad_audio::speaker_active(&s.pad_speaker),
         |s, on| s.pad_speaker = if on { "pad".into() } else { "off".into() },
     );
     let (pad_names, pad_i) = presets(&labeled(GAMEPADS), |v| {

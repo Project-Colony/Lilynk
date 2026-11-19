@@ -3,7 +3,7 @@
 //! child components, the two destinations of one view stack
 //! (design/linux-client-overhaul.md §2.1); dialogs are plain GTK invoked from `update`. The
 //! connect flow is in `connect.rs`, host requests beside a stream in `host_ops.rs`. Every
-//! stream runs in the `punktfunk-session` Vulkan binary — the shell never touches video.
+//! stream runs in the `lilynk-session` Vulkan binary — the shell never touches video.
 
 mod connect;
 pub mod gate;
@@ -18,14 +18,14 @@ use crate::store::{Changed, Store};
 use crate::trust;
 use adw::prelude::*;
 use gtk::{gdk, gio, glib};
-use pf_client_core::orchestrate::{
+use ly_client_core::orchestrate::{
     self, trust_route, ConnectAttempt, ConnectOutcome, ExitRoute, HostTarget, TrustRoute,
 };
-use pf_client_core::profiles::{ListedProfile as ProfileRow, ProfilePick};
-use pf_client_core::settings::GamepadUi;
-use pf_client_core::start;
-use pf_client_core::unlock::{starting_line, Pending};
-use pf_l10n::{client, desktop};
+use ly_client_core::profiles::{ListedProfile as ProfileRow, ProfilePick};
+use ly_client_core::settings::GamepadUi;
+use ly_client_core::start;
+use ly_client_core::unlock::{starting_line, Pending};
+use ly_l10n::{client, desktop};
 use relm4::prelude::*;
 use spawn::{CancelHandle, SpawnOpts};
 use std::cell::RefCell;
@@ -48,7 +48,7 @@ pub struct AppModel {
     /// App-lifetime SDL gamepad service (Settings' controller list + pinning). Streams
     /// run in the session binary, which has its own.
     pub gamepad: crate::gamepad::GamepadService,
-    /// Device lists for the settings pickers (GPUs via `punktfunk-session
+    /// Device lists for the settings pickers (GPUs via `lilynk-session
     /// --list-adapters` — the shell deliberately links no Vulkan itself — and audio
     /// endpoints via the PipeWire registry), probed once at startup on a worker thread.
     /// Empty until the probe lands — empty lists simply hide their pickers.
@@ -156,10 +156,10 @@ pub enum AppMsg {
     SessionExited {
         req: ConnectRequest,
         code: i32,
-        error: Option<pf_client_core::orchestrate::SessionError>,
+        error: Option<ly_client_core::orchestrate::SessionError>,
         ended: Option<String>,
     },
-    /// Hand over to the gamepad console (`punktfunk-session --browse`) — the couch UI's
+    /// Hand over to the gamepad console (`lilynk-session --browse`) — the couch UI's
     /// door from the desktop shell.
     OpenConsole,
     /// The attached controller count changed (a 1 s poll).
@@ -278,7 +278,7 @@ impl SimpleComponent for AppModel {
                             .collect()
                     })
                     .unwrap_or_default();
-                let (speakers, mics) = pf_client_core::audio::devices().unwrap_or_default();
+                let (speakers, mics) = ly_client_core::audio::devices().unwrap_or_default();
                 let _ = tx.send_blocking(crate::settings::DeviceProbes {
                     adapters,
                     speakers,
@@ -638,7 +638,7 @@ impl SimpleComponent for AppModel {
             AppMsg::Toast(msg) => self.toast(&msg),
             AppMsg::Hidden(msg, id) => {
                 let toast = plain_toast(&msg);
-                toast.set_button_label(Some(pf_l10n::common::common_undo()));
+                toast.set_button_label(Some(ly_l10n::common::common_undo()));
                 let library = self.library.sender().clone();
                 toast.connect_button_clicked(move |_| {
                     library.emit(LibraryMsg::SetHidden(id.clone(), false));
@@ -770,14 +770,14 @@ fn clear_steam_sdl_device_filter() {
     }
 }
 
-/// Reads the OS's languages into `pf_l10n`. GTK and libadwaita translate their own strings
+/// Reads the OS's languages into `ly_l10n`. GTK and libadwaita translate their own strings
 /// through gettext; while Punktfunk reads English, their messages stay English too, so one
 /// window never mixes two languages. Every other locale category follows the OS. Call before
 /// GTK starts and before any other thread exists.
 #[allow(unsafe_code)]
 fn set_language() {
     // Another language leaves GTK on the OS's list; matching it needs `LANGUAGE` narrowed.
-    if pf_l10n::set_languages(&pf_l10n::os_languages()) != "en" {
+    if ly_l10n::set_languages(&ly_l10n::os_languages()) != "en" {
         return;
     }
     gtk::disable_setlocale();
@@ -793,7 +793,7 @@ fn set_language() {
 pub fn run() -> glib::ExitCode {
     // Logs to stdout and the ring "Send logs to host" uploads. The spawned session's stderr
     // joins the ring too, so a bundle carries the stream's trail. Colour only on a terminal.
-    pf_client_core::logring::init_tracing(
+    ly_client_core::logring::init_tracing(
         std::io::stdout,
         std::io::IsTerminal::is_terminal(&std::io::stdout()),
     );
@@ -823,7 +823,7 @@ pub fn run() -> glib::ExitCode {
     }
     set_language();
 
-    // HANDLES_OPEN is what makes `Exec=punktfunk-client %u` work: GApplication turns the URI
+    // HANDLES_OPEN is what makes `Exec=lilynk-client %u` work: GApplication turns the URI
     // into an `open` call, and — this is the part that matters — a SECOND invocation forwards
     // its URI to the already-running instance over D-Bus and exits, so clicking a link with
     // Punktfunk open reuses the window instead of racing a new one.
@@ -854,7 +854,7 @@ pub fn run() -> glib::ExitCode {
         Some(url) => vec![
             std::env::args()
                 .next()
-                .unwrap_or_else(|| "punktfunk-client".into()),
+                .unwrap_or_else(|| "lilynk-client".into()),
             url,
         ],
         None => Vec::new(),
@@ -871,10 +871,10 @@ pub fn run() -> glib::ExitCode {
 }
 
 /// Register the embedded gresource (built by build.rs from `data/`: the stylesheet and the
-/// OS and launcher marks) and point the icon theme at it, so the `pf-os-*-symbolic` marks
+/// OS and launcher marks) and point the icon theme at it, so the `ly-os-*-symbolic` marks
 /// resolve — and recolour — like any themed icon.
 fn install_resources() {
-    if let Err(e) = gio::resources_register_include!("punktfunk-client.gresource") {
+    if let Err(e) = gio::resources_register_include!("lilynk-client.gresource") {
         tracing::warn!(error = %e, "gresource did not register — no stylesheet, no OS marks");
         return;
     }
@@ -974,7 +974,7 @@ const ACCELS: &[Accel] = &[
 ];
 
 /// The `Settings::extra` key the window's size is kept under: width, height, maximized.
-const WINDOW_KEY: &str = pf_client_core::settings::SHELL_WINDOW_KEY;
+const WINDOW_KEY: &str = ly_client_core::settings::SHELL_WINDOW_KEY;
 
 /// Open at the size the window last closed at, and keep it on close.
 fn remember_size(window: &adw::ApplicationWindow, store: &Rc<Store>) {
@@ -1040,7 +1040,7 @@ impl Banners {
 /// "Your changes aren't being saved", while the last write to the config dir failed.
 fn store_health_banner(pages: &[adw::ToolbarView], store: &Store) {
     let banners = Banners::new(pages, || {});
-    let check = move || match pf_client_core::trust::store_health::last_error() {
+    let check = move || match ly_client_core::trust::store_health::last_error() {
         Some(_) => banners.show(desktop::desktop_store_unsaved_body(), None),
         None => banners.hide(),
     };
@@ -1059,8 +1059,8 @@ pub fn shortcuts_dialog(s: &crate::trust::Settings) -> adw::ShortcutsDialog {
 }
 
 fn shortcut_sections(s: &crate::trust::Settings) -> Vec<adw::ShortcutsSection> {
-    use pf_client_core::overlay_actions::{OverlayConfig, RingPlatform};
-    use pf_client_core::shortcuts::{Client, Kind};
+    use ly_client_core::overlay_actions::{OverlayConfig, RingPlatform};
+    use ly_client_core::shortcuts::{Client, Kind};
     let shell = adw::ShortcutsSection::new(Some(desktop::desktop_shortcuts_this_window()));
     for (title, action, _) in ACCELS {
         shell.add(adw::ShortcutsItem::from_action(title(), action));
@@ -1088,7 +1088,7 @@ fn shortcut_sections(s: &crate::trust::Settings) -> Vec<adw::ShortcutsSection> {
 mod shortcuts_tests {
     /// Every section of the dialog holds items, and the controller chords are in it.
     /// Needs a display and its own process:
-    /// `cargo test -p punktfunk-client-linux -- --ignored shortcuts_dialog_lists`.
+    /// `cargo test -p lilynk-client-linux -- --ignored shortcuts_dialog_lists`.
     #[test]
     #[ignore = "needs a Wayland/X display"]
     fn shortcuts_dialog_lists_the_controller_chords() {

@@ -7,7 +7,7 @@
 
 use std::collections::VecDeque;
 
-use punktfunk_core::session::Frame;
+use lilynk_core::session::Frame;
 
 use crate::au_intake::hand_on;
 use crate::feed_rules::{gate, spoiled, Cause, Gate, PartFeed, Piece, Spoiled};
@@ -204,7 +204,7 @@ impl Feed {
 mod tests {
     use super::{Feed, Handoff, Step, FRAME_PARK_CAP};
     use crate::feed_rules::{Cause, Spoiled};
-    use punktfunk_core::session::{Frame, FramePart};
+    use lilynk_core::session::{Frame, FramePart};
 
     /// What the codec answers one call.
     #[derive(Clone, Copy)]
@@ -342,7 +342,7 @@ mod tests {
             match op {
                 Whole(i) => feed.park(frame(i, None)),
                 Key(i) => feed.park(Frame {
-                    flags: u32::from(punktfunk_core::packet::FLAG_SOF),
+                    flags: u32::from(lilynk_core::packet::FLAG_SOF),
                     ..frame(i, None)
                 }),
                 Part(i, offset, first, last) => {

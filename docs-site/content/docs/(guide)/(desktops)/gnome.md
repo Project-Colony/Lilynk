@@ -35,8 +35,8 @@ gsettings set org.gnome.desktop.session idle-delay 0
 Then, from inside your GNOME session:
 
 ```sh
-systemctl --user enable --now punktfunk-host
-journalctl --user -u punktfunk-host -f    # watch it start and print its fingerprint
+systemctl --user enable --now lilynk-host
+journalctl --user -u lilynk-host -f    # watch it start and print its fingerprint
 ```
 
 Add the drop-in from
@@ -60,7 +60,7 @@ AutomaticLogin = your-user
 Turn off the lock screen as above, enable the host, and let it run without a login:
 
 ```sh
-systemctl --user enable --now punktfunk-host
+systemctl --user enable --now lilynk-host
 sudo loginctl enable-linger "$USER"
 ```
 

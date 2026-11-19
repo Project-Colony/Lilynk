@@ -7,7 +7,7 @@ import SwiftUI
 
 public enum WakePolicy {
     /// A wake can reach this host: its MACs are known (iOS and tvOS broadcast through the
-    /// multicast entitlement in `Config/Punktfunk.entitlements`). Gates the explicit Wake Host
+    /// multicast entitlement in `Config/Lilynk.entitlements`). Gates the explicit Wake Host
     /// action.
     public static func canWake(_ macs: [String]) -> Bool {
         !macs.isEmpty

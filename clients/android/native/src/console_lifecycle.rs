@@ -126,7 +126,7 @@ impl Lifecycle {
     }
 }
 
-/// `pf-console-ui`'s idle threshold (`console::IDLE_AFTER`, private to it).
+/// `ly-console-ui`'s idle threshold (`console::IDLE_AFTER`, private to it).
 const IDLE_AFTER: Duration = Duration::from_secs(60);
 
 /// Draw at half rate: no input for a minute (`console_idle`), and the surface up as long. A

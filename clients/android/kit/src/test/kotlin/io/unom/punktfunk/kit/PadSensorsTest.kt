@@ -9,7 +9,7 @@ import org.junit.Test
  * shared converters it goes through ([Gamepad.motionGyroWire] / [Gamepad.motionAccelWire]). Pure
  * JVM — the two `*ToWire` functions take plain float arrays and touch no Android class.
  *
- * The scale is the wire contract (`punktfunk_core::input::gamepad`: 20 LSB/°·s, 10000 LSB/g) and
+ * The scale is the wire contract (`lilynk_core::input::gamepad`: 20 LSB/°·s, 10000 LSB/g) and
  * must not drift. The axis mapping is straight through; [straightThroughFrame] makes a remap a
  * deliberate, visible edit rather than a quiet one.
  * Run: `./gradlew :kit:testDebugUnitTest`.
@@ -40,7 +40,7 @@ class PadSensorsTest {
     }
 
     /** A controller lying flat and still lands exactly on the host's neutral for a virtual
-     *  DualSense — 1 g on wire slot 1 (`punktfunk-core` `MOTION_NEUTRAL_ACCEL = [0, 10000, 0]`),
+     *  DualSense — 1 g on wire slot 1 (`lilynk-core` `MOTION_NEUTRAL_ACCEL = [0, 10000, 0]`),
      *  not the [0,0,0] that means free fall. */
     @Test
     fun restingPadIsTheHostNeutral() {

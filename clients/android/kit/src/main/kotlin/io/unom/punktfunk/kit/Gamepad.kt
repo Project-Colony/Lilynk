@@ -9,7 +9,7 @@ import kotlin.math.roundToInt
 /**
  * Android gamepad capture → punktfunk/1 gamepad wire (the `input.rs::gamepad` contract; the host
  * accumulates the incremental events into its virtual xpad). The Android analogue of the desktop
- * clients' SDL3 gamepad module (`pf-client-core`'s `gamepad/`) and the Apple client's
+ * clients' SDL3 gamepad module (`ly-client-core`'s `gamepad/`) and the Apple client's
  * `GamepadCapture.swift` (GameController) — all three emit byte-identical events. [GamepadRouter]
  * gives each forwarded controller its own wire pad index and its own [AxisMapper].
  *
@@ -22,7 +22,7 @@ import kotlin.math.roundToInt
  * (parity with the Linux/Apple clients).
  */
 object Gamepad {
-    // Button bits — must equal punktfunk-core `input.rs::gamepad::BTN_*`.
+    // Button bits — must equal lilynk-core `input.rs::gamepad::BTN_*`.
     const val BTN_DPAD_UP = 0x0001
     const val BTN_DPAD_DOWN = 0x0002
     const val BTN_DPAD_LEFT = 0x0004
@@ -52,7 +52,7 @@ object Gamepad {
     const val BTN_MISC2 = 0x400000
 
     /**
-     * What a synthetic Quick Access tap presses, in order (punktfunk-core's
+     * What a synthetic Quick Access tap presses, in order (lilynk-core's
      * `quick_access_presses`). A pad with the button takes [BTN_MISC1]. Every other pad takes
      * the chord Steam reads there: Guide held, then A.
      */
@@ -67,13 +67,13 @@ object Gamepad {
     const val AXIS_LT = 4
     const val AXIS_RT = 5
 
-    // Motion wire units — must equal punktfunk-core `input.rs::gamepad::MOTION_*`. Every motion
+    // Motion wire units — must equal lilynk-core `input.rs::gamepad::MOTION_*`. Every motion
     // sender on this client goes through the two converters below, so a scale that ever has to
     // change changes in ONE place.
     const val MOTION_GYRO_LSB_PER_DEG_S = 20
     const val MOTION_ACCEL_LSB_PER_G = 10_000
 
-    /** Standard gravity, as `pf-client-core`'s gamepad worker `G` — turns m/s² into g. */
+    /** Standard gravity, as `ly-client-core`'s gamepad worker `G` — turns m/s² into g. */
     const val GRAVITY = 9.80665f
 
     /** [MOTION_GYRO_LSB_PER_DEG_S] restated for Android's rad/s sensors: 1 rad/s ⇒ ~1145.9 raw. */
@@ -91,7 +91,7 @@ object Gamepad {
     fun motionAccelWire(mPerSecSq: Float): Int =
         (mPerSecSq / GRAVITY * MOTION_ACCEL_LSB_PER_G).roundToInt().coerceIn(-32768, 32767)
 
-    // GamepadPref wire bytes — must equal punktfunk-core `config.rs::GamepadPref::to_u8`.
+    // GamepadPref wire bytes — must equal lilynk-core `config.rs::GamepadPref::to_u8`.
     const val PREF_AUTO = 0
     const val PREF_XBOX360 = 1
     const val PREF_DUALSENSE = 2

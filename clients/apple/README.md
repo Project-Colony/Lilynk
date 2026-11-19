@@ -1,7 +1,7 @@
 # punktfunk — Apple client (macOS · iOS · iPadOS · tvOS · visionOS)
 
 One SwiftUI codebase for Mac, iPhone, iPad, Apple TV and Apple Vision Pro. Networking and protocol — QUIC control
-plane, UDP data plane, FEC, AES-GCM, Opus, cert pinning — are the shared Rust `punktfunk-core`,
+plane, UDP data plane, FEC, AES-GCM, Opus, cert pinning — are the shared Rust `lilynk-core`,
 statically linked as `PunktfunkCore.xcframework`; this package is the Swift half: decode, present,
 input, UI.
 
@@ -21,19 +21,19 @@ bash scripts/build-xcframework.sh     # → clients/apple/PunktfunkCore.xcframew
 bash scripts/gen-l10n-apple.sh        # after a change in l10n/messages; the line above runs it too
 
 cd clients/apple
-open Punktfunk.xcodeproj              # the real app: ⌘R
+open Lilynk.xcodeproj              # the real app: ⌘R
 swift run PunktfunkClient             # or the unbundled dev shell
 swift build && swift test             # units + loopback/remote (self-skip without a host)
 ```
 
 tvOS and visionOS slices are tier-3 Rust targets built from source:
 `rustup toolchain install nightly && rustup component add rust-src --toolchain nightly`.
-visionOS is a destination of the `Punktfunk-iOS` scheme.
+visionOS is a destination of the `Lilynk-iOS` scheme.
 
 Against a host:
 
 ```sh
-bash test-loopback.sh                 # builds punktfunk-host synthetic-source and byte-verifies frames
+bash test-loopback.sh                 # builds lilynk-host synthetic-source and byte-verifies frames
 PUNKTFUNK_REMOTE_HOST=<ip> swift test --filter RemoteFirstLightTests
 PUNKTFUNK_AUTOCONNECT=<ip> PUNKTFUNK_MODE=1280x720x60 swift run PunktfunkClient
 ```

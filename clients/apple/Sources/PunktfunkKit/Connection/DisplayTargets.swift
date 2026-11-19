@@ -1,7 +1,7 @@
 // Which host screen this device streams, and how: the host's answer, the Screen section every
 // surface draws from it (`DisplayTargets.rows`), and the write of a row's pick. A preset's wish:
 // its editor row (`HostScreenChoice.all`) and the card under it (`rows(under:)`). The Swift twin
-// of `pf-client-core::display_targets`; `clients/shared/screen-rows-vectors.json` pins both.
+// of `ly-client-core::display_targets`; `clients/shared/screen-rows-vectors.json` pins both.
 
 import Foundation
 

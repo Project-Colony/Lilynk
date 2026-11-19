@@ -5,14 +5,14 @@ use super::{
     setting_combo, setting_toggle, Cx,
 };
 use crate::trust::Settings;
-// The audio-format table lives in `pf_client_core::audio_format` (re-exported by `session`),
+// The audio-format table lives in `ly_client_core::audio_format` (re-exported by `session`),
 // not here: the same stored values also have to reach the wire, and they are shared verbatim
 // with the Apple and Android clients so one preset round-trips. A second copy of the spellings
 // here is the drift the shared table prevents, so this row has no `const` beside AUDIO_CHANNELS.
-use pf_client_core::audio_format::surround_over_limit;
-use pf_client_core::session::AUDIO_FORMATS;
-use pf_client_core::settings::Label;
-use pf_l10n::client;
+use ly_client_core::audio_format::surround_over_limit;
+use ly_client_core::session::AUDIO_FORMATS;
+use ly_client_core::settings::Label;
+use ly_l10n::client;
 use windows_reactor::*;
 
 /// Audio channel presets: `(channel count, label)`. The host clamps to what it can capture;
@@ -61,7 +61,7 @@ pub(super) fn audio_section(cx: &Cx) -> Vec<View> {
     };
     let dev_combo = |field: &'static str,
                      saved: &str,
-                     devs: &[pf_client_core::audio::AudioDevice],
+                     devs: &[ly_client_core::audio::AudioDevice],
                      apply: fn(&mut Settings, String),
                      system: &str,
                      missing: &dyn Fn(&str) -> String| {

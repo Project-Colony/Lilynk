@@ -19,12 +19,12 @@
 
 #[cfg(target_os = "android")]
 use {
+    lilynk_core::audio::mic::MicEncoder,
+    lilynk_core::client::NativeClient,
     ndk::audio::{
         AudioCallbackResult, AudioDirection, AudioFormat, AudioInputPreset, AudioPerformanceMode,
         AudioSharingMode, AudioStream, AudioStreamBuilder, SessionId,
     },
-    punktfunk_core::audio::mic::MicEncoder,
-    punktfunk_core::client::NativeClient,
     std::ffi::c_void,
     std::sync::atomic::{AtomicBool, AtomicU64, Ordering},
     std::sync::mpsc::{sync_channel, Receiver, RecvTimeoutError, SyncSender, TrySendError},

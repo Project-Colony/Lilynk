@@ -31,8 +31,8 @@ fn main() {
 #[cfg(target_os = "linux")]
 mod linux {
     use anyhow::{bail, Context, Result};
-    use punktfunk_core::input::scroll::{ScrollEvent, ScrollPhase, ScrollSource, SCROLL_SCALE};
-    use punktfunk_core::input::{InputEvent, InputKind, SCROLL_FLAG_PRECISE};
+    use lilynk_core::input::scroll::{ScrollEvent, ScrollPhase, ScrollSource, SCROLL_SCALE};
+    use lilynk_core::input::{InputEvent, InputKind, SCROLL_FLAG_PRECISE};
     use rustix::event::{poll, PollFd, PollFlags, Timespec};
     use std::collections::BTreeSet;
     use std::sync::atomic::{AtomicBool, Ordering};
@@ -306,7 +306,7 @@ mod linux {
                 .split_once('x')
                 .and_then(|(w, h)| Some((w.parse::<i32>().ok()?, h.parse::<i32>().ok()?)))
                 .context("--inject-at WxH")?;
-            let svc = pf_inject::InjectorService::start();
+            let svc = ly_inject::InjectorService::start();
             let tx = svc.sender();
             let centre = InputEvent {
                 kind: InputKind::MouseMoveAbs,
@@ -355,7 +355,7 @@ mod linux {
         let (w, h) = app.size;
         println!(
             "scroll-probe: window {w}x{h}, backend {:?}",
-            pf_inject::default_backend()
+            ly_inject::default_backend()
         );
 
         let done = Arc::new(AtomicBool::new(false));
@@ -373,7 +373,7 @@ mod linux {
                 done.store(true, Ordering::Relaxed);
             })
         } else {
-            let svc = pf_inject::InjectorService::start();
+            let svc = ly_inject::InjectorService::start();
             let tx = svc.sender();
             let entered = app.entered.clone();
             let done = done.clone();

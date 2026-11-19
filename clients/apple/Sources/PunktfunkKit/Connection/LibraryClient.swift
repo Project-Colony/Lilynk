@@ -9,7 +9,7 @@
 // authorized for the routes in `mgmt_routes::paired_may_access` by its **mTLS certificate** — no
 // bearer token. The host binds the API to all interfaces by DEFAULT (the bearer-gated admin lane
 // stays loopback-only), so a paired client browses a host's library with no operator step.
-// GameEntry and Artwork decode the part of `crates/host/punktfunk-host/src/library.rs`'s schema
+// GameEntry and Artwork decode the part of `crates/host/lilynk-host/src/library.rs`'s schema
 // a client shows.
 
 import Foundation
@@ -117,7 +117,7 @@ public struct GameEntry: Codable, Hashable, Identifiable, Sendable {
     }
 
     /// Display name for the store badge — the same table the Rust clients use
-    /// (`pf_client_core::library::store_label`).
+    /// (`ly_client_core::library::store_label`).
     public var storeLabel: String { storeName ?? String(localized: L10n.libStoreOther) }
 
     /// Whether `store` is an id this build has a name for; an unknown one reads as "Game".
@@ -162,7 +162,7 @@ public struct TitleInstall: Codable, Hashable, Sendable {
 }
 
 /// What a title menu offers for a title's files; at most one applies. The rules and words are the
-/// Rust client's (`pf_client_core::library::InstallAction`).
+/// Rust client's (`ly_client_core::library::InstallAction`).
 public enum InstallAction: String, Sendable {
     case install = "Install", pause = "Pause", resume = "Resume", remove = "Remove"
 

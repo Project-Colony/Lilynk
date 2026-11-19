@@ -1,14 +1,14 @@
-//! The shell↔session handoff: streams run in the spawned `punktfunk-session` binary,
-//! spawned and supervised by `pf_client_core::orchestrate` like the GTK shell's. This module
+//! The shell↔session handoff: streams run in the spawned `lilynk-session` binary,
+//! spawned and supervised by `ly_client_core::orchestrate` like the GTK shell's. This module
 //! adds what only this shell needs: CREATE_NO_WINDOW (the session keeps the console subsystem
 //! for its stdout contract, and a GUI parent would otherwise pop a console window),
 //! `--window-pos`, the log-file tee for the child's stderr, and [`SpawnEvent`]s for the app's
 //! navigation closure.
 
-use pf_client_core::orchestrate::{
+use lilynk_core::quic::v2::msg::ProfileUnlock;
+use ly_client_core::orchestrate::{
     self, CancelHandle, ConnectOutcome, ConnectPlan, HostTarget, SessionEvent,
 };
-use punktfunk_core::quic::v2::msg::ProfileUnlock;
 use std::os::windows::process::CommandExt as _;
 use std::path::PathBuf;
 use std::process::Command;
@@ -20,7 +20,7 @@ pub(crate) enum SpawnEvent {
     /// The child presented its first frame (its window is up and streaming).
     Ready,
     /// One stats window for the session status page.
-    Stats(Box<punktfunk_core::hud::StatsSnapshot>),
+    Stats(Box<lilynk_core::hud::StatsSnapshot>),
     /// The child exited (stdout EOF + reap; a kill lands here too), classified.
     Exited(ConnectOutcome),
 }
@@ -76,7 +76,7 @@ pub(crate) fn spawn_browse(
 ) -> Result<(), String> {
     let cmd = orchestrate::browse_command(fullscreen, until_no_pads);
     spawn(cmd, None, "console", slot, None, on_event)
-        .map_err(|_| pf_l10n::client::dial_console_not_started().to_string())
+        .map_err(|_| ly_l10n::client::dial_console_not_started().to_string())
 }
 
 /// Hand the shell window's position to the child (`--window-pos`) so the session window
@@ -123,7 +123,7 @@ fn spawn(
     })
     .map_err(|e| {
         tracing::error!(error = %e, "spawning the session binary");
-        pf_l10n::client::dial_session_not_started().to_string()
+        ly_l10n::client::dial_session_not_started().to_string()
     })?;
     tracing::info!(host = %label, "session binary spawned");
     Ok(())

@@ -263,7 +263,7 @@ public struct EffectiveSettings: Equatable, Sendable {
 /// than a free rate/depth pair, so the states that cannot be asked for are unrepresentable rather
 /// than merely validated.
 ///
-/// **The ladder is both rate families**, matching `punktfunk_core::audio::pcm::rate_is_supported`:
+/// **The ladder is both rate families**, matching `lilynk_core::audio::pcm::rate_is_supported`:
 /// 44 100 / 48 000 / 88 200 / 96 000 / 176 400 Hz. Jitter-buffer figures multiply before they
 /// divide (`AudioRing.swift`'s conversion helpers, `JitterPolicy::new_at_rate`): a whole number of
 /// samples per millisecond would truncate 44.1 kHz to 44 and put every target 0.23 % low.
@@ -308,7 +308,7 @@ public enum AudioFormatChoice: String, CaseIterable, Sendable {
 
     /// The stored raw value, falling back to `.opus` for anything a newer build wrote.
     ///
-    /// ⚠ **The raw values are shared VERBATIM with `pf_client_core::session::AUDIO_FORMATS` and the
+    /// ⚠ **The raw values are shared VERBATIM with `ly_client_core::session::AUDIO_FORMATS` and the
     /// Android client's `AUDIO_FORMAT_*`, and must never be renamed.** One preset catalog
     /// round-trips between the clients, and a spelling that differs by a single character
     /// fails in the worst possible way: the key is carried through untouched, so the preset keeps

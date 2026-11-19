@@ -9,23 +9,23 @@ on:
     branches: [main]
     paths:
       - 'l10n/**'
-      - "crates/install/punktfunk-setup/**"
-      - "crates/install/punktfunk-setup-win/**"
-      - "crates/core/pf-fluent/**"
-      - "crates/host/pf-paths/**"
-      - "crates/host/pf-paths-win/**"
-      - "crates/host/pf-host-config/**"
+      - "crates/install/lilynk-setup/**"
+      - "crates/install/lilynk-setup-win/**"
+      - "crates/core/ly-fluent/**"
+      - "crates/host/ly-paths/**"
+      - "crates/host/ly-paths-win/**"
+      - "crates/host/ly-host-config/**"
       - "data/platforms.json"
       - ".gitea/workflows/setup-windows.yml"
   pull_request:
     paths:
       - 'l10n/**'
-      - "crates/install/punktfunk-setup/**"
-      - "crates/install/punktfunk-setup-win/**"
-      - "crates/core/pf-fluent/**"
-      - "crates/host/pf-paths/**"
-      - "crates/host/pf-paths-win/**"
-      - "crates/host/pf-host-config/**"
+      - "crates/install/lilynk-setup/**"
+      - "crates/install/lilynk-setup-win/**"
+      - "crates/core/ly-fluent/**"
+      - "crates/host/ly-paths/**"
+      - "crates/host/ly-paths-win/**"
+      - "crates/host/ly-host-config/**"
       - "data/platforms.json"
       - ".gitea/workflows/setup-windows.yml"
 
@@ -91,13 +91,13 @@ jobs:
           # Unchanged crates stay fresh across checkouts; see scripts/ci/src-mtimes.rs.
           rustc -O scripts/ci/src-mtimes.rs -o "$env:RUNNER_TEMP\src-mtimes.exe"
           if ($LASTEXITCODE -eq 0) { & "$env:RUNNER_TEMP\src-mtimes.exe" $env:CARGO_TARGET_DIR }
-          cargo test -p punktfunk-setup
+          cargo test -p lilynk-setup
           if ($LASTEXITCODE -ne 0) { exit 1 }
           # The wizard crate: the headless reactor-harness flow tests (tests/wizard_flow.rs).
           # Its build.rs stages the WinAppSDK runtime (one nupkg download, cached per runner).
-          cargo test -p punktfunk-setup-win
+          cargo test -p lilynk-setup-win
           if ($LASTEXITCODE -ne 0) { exit 1 }
-          cargo clippy -p punktfunk-setup -p punktfunk-setup-win --all-targets -- -D warnings
+          cargo clippy -p lilynk-setup -p lilynk-setup-win --all-targets -- -D warnings
           if ($LASTEXITCODE -ne 0) { exit 1 }
-          cargo fmt -p punktfunk-setup -p punktfunk-setup-win -- --check
+          cargo fmt -p lilynk-setup -p lilynk-setup-win -- --check
           if ($LASTEXITCODE -ne 0) { exit 1 }

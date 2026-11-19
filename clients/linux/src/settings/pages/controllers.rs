@@ -6,7 +6,7 @@ use crate::settings::field::Field;
 use crate::settings::spec::{self, Page};
 use crate::settings::tables::*;
 use adw::prelude::*;
-use pf_l10n::{client, desktop};
+use ly_l10n::{client, desktop};
 use std::rc::Rc;
 
 pub fn controllers(b: &mut Build) {
@@ -78,7 +78,7 @@ pub fn controllers(b: &mut Build) {
     // `"mix"` is a value this switch cannot show; only moving the switch writes over it.
     let (field, speaker) = Field::switch(
         &spec::PAD_SPEAKER,
-        |s| pf_client_core::pad_audio::speaker_active(&s.pad_speaker),
+        |s| ly_client_core::pad_audio::speaker_active(&s.pad_speaker),
         |s, v| s.pad_speaker = if v { "pad" } else { "off" }.to_string(),
     );
     follows.push(speaker.upcast());

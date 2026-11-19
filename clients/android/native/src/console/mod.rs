@@ -18,15 +18,15 @@ use jni::sys::{jboolean, jfloat, jint, jlong};
 use jni::EnvUnowned;
 
 use crate::session::{jni_guard, HandleTable};
-use pf_client_core::menu_nav::MenuSample;
-use pf_console_ui::bridge::{
+use lilynk_core::quic::v2::msg::UNLOCK_PASSWORD;
+use ly_client_core::menu_nav::MenuSample;
+use ly_console_ui::bridge::{
     self, CreateOptions, EntryJson, GamesPush, MenuCode, PadsJson, PhasePush, PresetJson,
 };
-use pf_console_ui::{
+use ly_console_ui::{
     HiddenAnswer, HideAnswer, HostRow, Insets, PairStatus, Platform, ProfilesAnswer, SpeedPhase,
     Stale, WakeStatus,
 };
-use punktfunk_core::quic::v2::msg::UNLOCK_PASSWORD;
 use std::time::Duration;
 
 /// How long `nativeConsoleNextEvent` blocks at most — short enough that Kotlin's poll thread
@@ -105,18 +105,18 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleCrea
 }
 
 /// `NativeBridge.nativePadMark(pref)` — the console's 24-unit outline for a `GamepadPref` wire
-/// byte's pad family ([`pf_console_ui::glyphs::pad_icon`]), as SVG path data; empty for Automatic.
+/// byte's pad family ([`ly_console_ui::glyphs::pad_icon`]), as SVG path data; empty for Automatic.
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativePadMark<'local>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     pref: jint,
 ) -> JString<'local> {
-    use punktfunk_core::config::GamepadPref;
+    use lilynk_core::config::GamepadPref;
     let pref = GamepadPref::from_u8(pref.clamp(0, u8::MAX as jint) as u8);
     let path = match pref {
         GamepadPref::Auto => "",
-        other => pf_console_ui::glyphs::pad_icon(other).0,
+        other => ly_console_ui::glyphs::pad_icon(other).0,
     };
     env.with_env(|env| env.new_string(path))
         .resolve::<LogErrorAndDefault>()
@@ -635,7 +635,7 @@ json_pusher!(
 /// `NativeBridge.nativeConsoleSetPadTest(handle, json)` — `{"held": [..], "axes": [[name, v]]}`,
 /// the pad's reading while `ConsoleCmd::PadTest` is on.
     Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSetPadTest,
-    pf_console_ui::PadTestState,
+    ly_console_ui::PadTestState,
     |h, v| h.handles.console.set_pad_test(v)
 );
 
@@ -643,7 +643,7 @@ json_pusher!(
 /// `NativeBridge.nativeConsoleSetLicenses(handle, json)` — `[{"heading", "text"}]`, what this app
 /// bundles; the answer to `ConsoleCmd::LoadLicenses`.
     Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSetLicenses,
-    Vec<pf_console_ui::LicenseSection>,
+    Vec<ly_console_ui::LicenseSection>,
     |h, v| h.handles.console.set_licenses(v)
 );
 
@@ -727,7 +727,7 @@ json_pusher!(
 /// `NativeBridge.nativeConsoleLibraryRunning(handle, json)` — the host's `/status` `games[]`
 /// (`[{"app_id": "steam:570", "state": "running"}, …]`).
     Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleLibraryRunning,
-    Vec<pf_client_core::library::RunningGame>,
+    Vec<ly_client_core::library::RunningGame>,
     |h, games| h.handles.library.set_running(&games)
 );
 
@@ -736,7 +736,7 @@ json_pusher!(
 /// `{"downloads": [...], "grants": n}`, pushed before the same read's
 /// `nativeConsoleLibraryRunning`.
     Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleLibraryDownloads,
-    pf_console_ui::DownloadsPush,
+    ly_console_ui::DownloadsPush,
     |h, p| h.handles.library.set_downloads(&p.downloads, p.grants)
 );
 
@@ -761,7 +761,7 @@ json_pusher!(
 /// `NativeBridge.nativeConsoleSetSettings(handle, json)` — a settings change made elsewhere
 /// (the touch UI, a deep link): the shell reads this on its next mutation. Not a save.
     Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSetSettings,
-    pf_client_core::trust::Settings,
+    ly_client_core::trust::Settings,
     |h, s| h.store.set(s)
 );
 
@@ -777,6 +777,6 @@ json_pusher!(
 /// `NativeBridge.nativeConsoleSetKnownHosts(handle, json)` — the known-hosts records
 /// (`KnownHosts` JSON) the console builds `punktfunk://` links from.
     Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSetKnownHosts,
-    pf_client_core::trust::KnownHosts,
+    ly_client_core::trust::KnownHosts,
     |h, k| h.store.set_known_hosts(k)
 );

@@ -1,0 +1,17 @@
+# The process-wide host configuration (HostConfig + the config() snapshot) in a leaf crate, so
+# every subsystem crate (ly-encode, ly-capture, ly-vdisplay, ly-gpu) can read config WITHOUT
+# depending on the orchestrator.
+[package]
+name = "ly-host-config"
+version.workspace = true
+edition.workspace = true
+license = "GPL-3.0-or-later"
+description = "Process-wide punktfunk host configuration: the settings registry, its store, and the env knobs."
+publish = false
+
+[dependencies]
+ly-paths = { path = "../ly-paths" }
+serde_json = "1"
+
+[lints]
+workspace = true

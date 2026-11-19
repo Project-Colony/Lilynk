@@ -4,9 +4,9 @@
 //! each rule without a window.
 
 use super::{Dest, Screen};
-use pf_client_core::deeplink::{self, DeepLink};
-use pf_client_core::discovery::{DiscoveredHost, DiscoveryEvent};
-use pf_l10n::client;
+use ly_client_core::deeplink::{self, DeepLink};
+use ly_client_core::discovery::{DiscoveredHost, DiscoveryEvent};
+use ly_l10n::client;
 
 /// Whether something holds the shell, so a controller connecting waits for the next first pad
 /// instead of opening the console: a connect, a stream, a pairing, a trust question, a speed
@@ -75,14 +75,14 @@ pub(super) fn link_prompt(
     name: &str,
     addr: &str,
     launch: Option<&str>,
-    overrides: Option<&pf_client_core::library::GameOverrides>,
+    overrides: Option<&ly_client_core::library::GameOverrides>,
 ) -> String {
     let mut s = client::link_confirm_asks(name, addr);
     if let Some(id) = launch {
         s.push_str("\n\n");
         s.push_str(&client::link_confirm_launch(id));
     }
-    if let Some(line) = overrides.and_then(pf_client_core::library::host_line) {
+    if let Some(line) = overrides.and_then(ly_client_core::library::host_line) {
         s.push_str("\n\n");
         s.push_str(&line);
     }
@@ -388,7 +388,7 @@ mod tests {
              anything that can open a link could guess. Shortcuts made in Punktfunk name the \
              host's id and connect without asking."
         );
-        let set = pf_client_core::library::GameOverrides {
+        let set = ly_client_core::library::GameOverrides {
             lines: Some(1080),
             ..Default::default()
         };

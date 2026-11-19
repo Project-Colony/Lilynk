@@ -8,8 +8,8 @@ use crate::hosts::ConnectRequest;
 use crate::trust;
 use adw::prelude::*;
 use gtk::glib;
-use pf_client_core::orchestrate::{wake_parked_line, WakeOutcome, WakeWait};
-use pf_l10n::{client, common, desktop};
+use ly_client_core::orchestrate::{wake_parked_line, WakeOutcome, WakeWait};
+use ly_l10n::{client, common, desktop};
 use relm4::prelude::*;
 
 /// The waiting dialog plus its Cancel handler. Both halves are needed to dismiss it: a bare
@@ -389,7 +389,7 @@ fn request_access(
         }
         // `persist_on_ready` keeps what the advert taught, the wake MACs among it.
         let msg = match result {
-            Ok(fp) => match pf_client_core::orchestrate::persist_on_ready(
+            Ok(fp) => match ly_client_core::orchestrate::persist_on_ready(
                 &req.host,
                 &trust::hex(&fp),
                 true,

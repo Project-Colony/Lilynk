@@ -2,7 +2,7 @@
 
 use super::form::ConnectionRows;
 use super::*;
-use pf_l10n::{client, common, desktop};
+use ly_l10n::{client, common, desktop};
 
 impl HostsPage {
     /// Write the shortcut, or hand the user the URL when sandboxed.

@@ -3,8 +3,8 @@
 use super::{described_labeled, group};
 use crate::app::style::*;
 use crate::app::{AsyncSetState, Screen};
-use pf_fluent::{Palette, Token};
-use pf_l10n::{client, desktop};
+use ly_fluent::{Palette, Token};
+use ly_l10n::{client, desktop};
 use windows_reactor::*;
 
 pub(super) fn about_section(pal: &Palette, set_screen: &AsyncSetState<Screen>) -> Vec<View> {

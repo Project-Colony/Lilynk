@@ -1,5 +1,5 @@
 {
-	"name": "punktfunk-web",
+	"name": "lilynk-web",
 	"private": true,
 	"type": "module",
 	"description": "punktfunk management console — TanStack Start + React Query (orval) + @unom/ui + Paraglide i18n",

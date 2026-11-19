@@ -44,7 +44,7 @@ catch { Write-Warning "disk reclaim step failed (non-fatal): $_" }
 
 $ciDir = $PSScriptRoot
 & "$ciDir\provision-windows-wdk.ps1"
-& "$ciDir\provision-windows-punktfunk-extras.ps1"
+& "$ciDir\provision-windows-lilynk-extras.ps1"
 
 # --- sccache: shared compile cache (RustFS S3 over the LAN). The Windows workflows set
 # RUSTC_WRAPPER=sccache, so the binary must exist on any runner regardless of when the

@@ -8,16 +8,16 @@ errors are on [Troubleshooting](/docs/troubleshooting#install--startup).
 
 ## Linux
 
-### `systemctl --user status punktfunk-web`: unit not found
+### `systemctl --user status lilynk-web`: unit not found
 
 The console is its own package, and installing only the host can leave it out. Install it by name
 and start it:
 
 ```sh
-sudo apt install punktfunk-web      # Debian, Ubuntu
-sudo dnf install punktfunk-web      # Fedora
-sudo pacman -S punktfunk-web        # Arch
-systemctl --user enable --now punktfunk-web
+sudo apt install lilynk-web      # Debian, Ubuntu
+sudo dnf install lilynk-web      # Fedora
+sudo pacman -S lilynk-web        # Arch
+systemctl --user enable --now lilynk-web
 ```
 
 On Fedora, `No match for argument` means the COPR repo, which has no console. Use the repo from
@@ -35,7 +35,7 @@ The NVIDIA GL/EGL userspace package is missing. Install it and check its vendor 
 ### The session fails right after editing host.env
 
 A key is misspelled, or a line points the host at the wrong session. The host reads `host.env` only
-when it starts, so restart after every edit: `systemctl --user restart punktfunk-host`.
+when it starts, so restart after every edit: `systemctl --user restart lilynk-host`.
 
 - Keys are case-sensitive: `punktfunk_gamescope_attach=1` sets nothing.
 - `XDG_RUNTIME_DIR=/run/user/1000` on a box where `id -u` isn't 1000 points the host at another
@@ -52,11 +52,11 @@ The `PunktfunkHost` service runs both and restarts either one that stops. Check 
 PowerShell:
 
 ```powershell
-punktfunk-host service status
-punktfunk-host service restart
+lilynk-host service status
+lilynk-host service restart
 ```
 
-- Two `punktfunk-host.exe` processes are normal: one supervises, one streams in your session. Don't
+- Two `lilynk-host.exe` processes are normal: one supervises, one streams in your session. Don't
   end either.
 - If the console page stays down, read its log from the elevated PowerShell:
   `Get-Content -Tail 50 $env:ProgramData\punktfunk\logs\web.log`.
@@ -67,5 +67,5 @@ The host starts the tray again within a minute of restarting, unless **Tray auto
 under **Host → System**. To start it now, from a normal PowerShell, not an elevated one:
 
 ```powershell
-punktfunk-host tray start
+lilynk-host tray start
 ```

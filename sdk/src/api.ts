@@ -3,7 +3,7 @@
 // OpenAPI document (`listPairedClients`, `stopSession`, `reconcileProviderEntries`, …). This is
 // the typed front door; `pf.request(method, path, body)` stays as the untyped escape hatch.
 //
-// It's a thin, zero-drift veneer over the generated client (`./gen/punktfunk.ts`, from
+// It's a thin, zero-drift veneer over the generated client (`./gen/lilynk.ts`, from
 // `@effect/openapi-generator`): the generated methods return Effects, so each is run to a Promise
 // here. The transport is the SAME CA-pinning fetch the rest of the SDK uses (config.ts), fed to
 // Effect's `HttpClient` via the overridable `FetchHttpClient.Fetch` reference — so the loopback
@@ -14,7 +14,7 @@ import * as HttpClient from "effect/http/HttpClient";
 import * as HttpClientRequest from "effect/http/HttpClientRequest";
 import type { HttpClientResponse } from "effect/http/HttpClientResponse";
 import type { Connection } from "./connection.js";
-import * as gen from "./gen/punktfunk.js";
+import * as gen from "./gen/lilynk.js";
 
 /**
  * Make a trailing argument that merely *accepts* `undefined` genuinely optional. The generated

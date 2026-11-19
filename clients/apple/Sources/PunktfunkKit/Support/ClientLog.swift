@@ -1,6 +1,6 @@
 // The client's own recent-log ring + the drop-in logger that feeds it — the source for the
 // "Send logs to host" action (`LibraryClient.sendLogs`), the Apple port of
-// `pf_client_core::logring` and its `RingLayer`.
+// `ly_client_core::logring` and its `RingLayer`.
 //
 // WHY A RING AND NOT `OSLogStore`. The unified log already holds everything these loggers write,
 // and `OSLogStore(scope: .currentProcessIdentifier)` can read it back — but only `.notice`/
@@ -77,7 +77,7 @@ public enum ClientLogRing {
         }
     }
 
-    /// The bundle's first line: `punktfunk-apple 0.31.0 (42) (iOS 26.0.0 arm64; Apple TV) — client
+    /// The bundle's first line: `lilynk-apple 0.31.0 (42) (iOS 26.0.0 arm64; Apple TV) — client
     /// log bundle` — the same shape as the session client's, so the host's log page reads them alike.
     public static func header() -> String {
         let info = Bundle.main.infoDictionary
@@ -99,7 +99,7 @@ public enum ClientLogRing {
         let arch = "x86_64"
         #endif
         let v = build.map { "\(version) (\($0))" } ?? version
-        return "punktfunk-apple \(v) (\(platform) \(os.majorVersion).\(os.minorVersion).\(os.patchVersion) "
+        return "lilynk-apple \(v) (\(platform) \(os.majorVersion).\(os.minorVersion).\(os.patchVersion) "
             + "\(arch); \(DeviceName.kind)) — client log bundle"
     }
 

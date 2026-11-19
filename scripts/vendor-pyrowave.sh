@@ -106,7 +106,7 @@ number is never reused.
     program.
     NOTE the related UNPATCHED limit: the packed 16-bit block_index wraps when
     block_count_32x32 > 65535 (~8K 4:4:4) — guarded host-side instead
-    (pf-encode rejects such modes for PyroWave).
+    (ly-encode rejects such modes for PyroWave).
   0005-global-priority-queue.patch — Context::create_device requests a global-
     priority Vulkan compute queue (VK_KHR_global_priority,
     PYROWAVE_QUEUE_PRIORITY=off|high|realtime, default realtime) so the
@@ -115,7 +115,7 @@ number is never reused.
     class never regresses the encoder. Gated on !inherit_info, so it is live
     only on the Windows path (pyrowave_create_device_by_compat, where Granite
     builds its own device); Linux passes its own create-infos and the same
-    request lives in crates/host/pf-encode/src/enc/linux/pyrowave.rs
+    request lives in crates/host/ly-encode/src/enc/linux/pyrowave.rs
     (queue_priority_candidates). Change one, change both. Upstream's own
     request (the priority argument of create_device_by_compat) needs Vulkan
     1.4 and moves the encode to the async compute queue, so it does not

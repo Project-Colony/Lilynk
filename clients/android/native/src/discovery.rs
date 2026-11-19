@@ -1,4 +1,4 @@
-//! LAN host discovery: `pf_client_core::discovery`'s browse, folded for Kotlin.
+//! LAN host discovery: `ly_client_core::discovery`'s browse, folded for Kotlin.
 //!
 //! Kotlin holds the Wi-Fi multicast lock and owns permission UX. Rust owns the browse; each poll
 //! folds the events since the last one into a map keyed by host id, newest advert winning, and
@@ -14,7 +14,7 @@ use jni::errors::LogErrorAndDefault;
 use jni::objects::{JObject, JString};
 use jni::sys::jlong;
 use jni::EnvUnowned;
-use pf_client_core::discovery::{self, Adverts, DiscoveredHost, DiscoveryEvent, Rescan};
+use ly_client_core::discovery::{self, Adverts, DiscoveredHost, DiscoveryEvent, Rescan};
 use std::sync::Mutex;
 
 /// Field separator inside one serialized record (ASCII Unit Separator — never in a field value).

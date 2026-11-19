@@ -12,7 +12,7 @@ import kotlin.math.abs
  * USB output reports itself.
  *
  * Protocol ground truth: the Linux kernel's `hid-playstation` / `hid-sony` structs, SDL's
- * `SDL_hidapi_ps5.c` / `SDL_hidapi_ps4.c`, mirrored host-side in `pf-inject`'s
+ * `SDL_hidapi_ps5.c` / `SDL_hidapi_ps4.c`, mirrored host-side in `ly-inject`'s
  * `dualsense_proto.rs` / `dualshock4_proto.rs` — this file is the byte-exact inverse of those
  * serializers (offsets cross-referenced below). USB only: over Bluetooth the reports change
  * (DualSense `0x31`, DS4 `0x11`, each with a CRC32) AND Android's public SDK (API 37) exposes no
@@ -51,7 +51,7 @@ object DsDevice {
 
     /**
      * One pad's own IMU calibration: the factory scale factors that turn its raw motion counts
-     * into the wire's fixed units (`punktfunk_core::input::gamepad` — 20 LSB per °/s, 10000 LSB
+     * into the wire's fixed units (`lilynk_core::input::gamepad` — 20 LSB per °/s, 10000 LSB
      * per g), read out of the calibration feature report the pad serves on EP0.
      *
      * **Why the pad's blob and not a constant.** Forwarding the raw i16s verbatim reads 1 g as
@@ -61,7 +61,7 @@ object DsDevice {
      * per unit; only the pad knows it.
      *
      * The arithmetic is `hid-playstation`'s, and the host's contract test
-     * (`crates/host/pf-inject/tests/motion_contract.rs`, `SonyImuCalibration`) is the same math read
+     * (`crates/host/ly-inject/tests/motion_contract.rs`, `SonyImuCalibration`) is the same math read
      * from the other end — it applies it to the blobs our *virtual* pads declare and asserts they
      * land on the wire constants. Per axis: gyro `raw × speed_2x × 20 / (|plus − bias| +
      * |minus − bias|)`, accel `(raw − (plus − range/2)) × 20000 / range`, where `range = plus −

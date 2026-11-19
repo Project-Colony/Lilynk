@@ -25,7 +25,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeNetworkChec
     _this: JObject<'local>,
     handle: jlong,
 ) -> JDoubleArray<'local> {
-    use punktfunk_core::client::health::{self, LegShape};
+    use lilynk_core::client::health::{self, LegShape};
     env.with_env(|env| -> jni::errors::Result<JDoubleArray<'local>> {
         let Some(h) = SESSIONS.get(handle) else {
             return Ok(JDoubleArray::default());

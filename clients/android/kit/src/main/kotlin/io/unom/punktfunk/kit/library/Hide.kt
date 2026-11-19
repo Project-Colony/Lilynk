@@ -14,7 +14,7 @@ import java.net.URLEncoder
 /**
  * "Hide for me": a player takes a title off the shelf of the locked profile this device is let
  * into, and brings it back. `enumerate` marks such a row `person`; the action exists only on the
- * saved pick's row so marked. A port of `pf-client-core`'s `hide.rs`;
+ * saved pick's row so marked. A port of `ly-client-core`'s `hide.rs`;
  * `clients/shared/hide-for-me-vectors.json` pins it there, here and in Swift.
  */
 object Hide {

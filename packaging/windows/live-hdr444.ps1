@@ -58,12 +58,12 @@ if ($NoPrep) {
 }
 try {
   $wudf = Get-Process WUDFHost -ErrorAction SilentlyContinue |
-    Where-Object { $_.Modules.ModuleName -contains 'pf_vdisplay.dll' }
+    Where-Object { $_.Modules.ModuleName -contains 'ly_vdisplay.dll' }
   if ($wudf) {
     Say ("WUDFHost pid=" + $wudf.Id + " started=" + $wudf.StartTime.ToString('HH.mm.ss') +
          " -- older than the redeploy above means it still has the OLD dll mapped")
   } else {
-    Say 'WUDFHost with pf_vdisplay.dll not loaded yet (it starts on the first open)'
+    Say 'WUDFHost with ly_vdisplay.dll not loaded yet (it starts on the first open)'
   }
 } catch {
   Say ('WUDFHost module read failed -- ' + $_.Exception.Message)

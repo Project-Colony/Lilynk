@@ -9,7 +9,7 @@ id: io.unom.punktfunk
 runtime: org.gnome.Platform
 runtime-version: '51'
 sdk: org.gnome.Sdk
-command: punktfunk-client
+command: lilynk-client
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.rust-stable
   # libclang for bindgen (sdl3-sys, pyrowave-sys, skia-bindings) and clang for Skia.
@@ -122,15 +122,15 @@ modules:
           #define LAST_COMMIT_POSITION "0 (b2afae122eeb)"
         dest-filename: last_commit_position.h
 
-  - name: punktfunk-client
+  - name: lilynk-client
     buildsystem: simple
     build-options:
       env:
-        CARGO_HOME: /run/build/punktfunk-client/cargo
+        CARGO_HOME: /run/build/lilynk-client/cargo
         CARGO_NET_OFFLINE: 'true'
         # A source dir makes skia-bindings build Skia offline instead of downloading it.
         # Image codecs, fonts, ICU and HarfBuzz come from the runtime.
-        SKIA_SOURCE_DIR: /run/build/punktfunk-client/skia
+        SKIA_SOURCE_DIR: /run/build/lilynk-client/skia
         SKIA_USE_SYSTEM_LIBRARIES: '1'
         SKIA_GN_COMMAND: /app/bin/gn
         SKIA_NINJA_COMMAND: /usr/bin/ninja
@@ -139,15 +139,15 @@ modules:
       # source for every declared dependency. The Windows members leave the workspace and the
       # Linux members drop their cfg(windows) pins.
       - sed -i '\#"clients/windows",#d' Cargo.toml
-      - sed -i '\#"crates/install/punktfunk-setup-win",#d' Cargo.toml
-      - sed -i '\#"crates/core/pf-fluent",#d' Cargo.toml
-      - python3 packaging/flatpak/prune-windows-toml.py crates/client/pf-client-core/Cargo.toml
-          crates/client/pf-client-video/Cargo.toml crates/client/pf-presenter/Cargo.toml
-      - cargo --offline build --release -p punktfunk-client-linux -p punktfunk-client-session
-          -p punktfunk-cli
-      - install -Dm755 target/release/punktfunk-client -t ${FLATPAK_DEST}/bin
-      - install -Dm755 target/release/punktfunk-session -t ${FLATPAK_DEST}/bin
-      - install -Dm755 target/release/punktfunk -t ${FLATPAK_DEST}/bin
+      - sed -i '\#"crates/install/lilynk-setup-win",#d' Cargo.toml
+      - sed -i '\#"crates/core/ly-fluent",#d' Cargo.toml
+      - python3 packaging/flatpak/prune-windows-toml.py crates/client/ly-client-core/Cargo.toml
+          crates/client/ly-client-video/Cargo.toml crates/client/ly-presenter/Cargo.toml
+      - cargo --offline build --release -p lilynk-client-linux -p lilynk-client-session
+          -p lilynk-cli
+      - install -Dm755 target/release/lilynk-client -t ${FLATPAK_DEST}/bin
+      - install -Dm755 target/release/lilynk-session -t ${FLATPAK_DEST}/bin
+      - install -Dm755 target/release/lilynk -t ${FLATPAK_DEST}/bin
       - install -Dm644 packaging/linux/io.unom.punktfunk.desktop -t ${FLATPAK_DEST}/share/applications
       - install -Dm644 packaging/linux/io.unom.punktfunk.console.desktop -t ${FLATPAK_DEST}/share/applications
       - install -Dm644 packaging/flatpak/io.unom.punktfunk.metainfo.xml -t ${FLATPAK_DEST}/share/metainfo

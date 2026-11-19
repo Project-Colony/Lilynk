@@ -226,7 +226,7 @@ pub(super) fn picture_size(codec: &MediaCodec) -> Option<(i32, i32)> {
 /// The dataspace a format change leaves: the stream's own colour, else the decoder's report.
 pub(super) fn stream_dataspace(
     codec: &MediaCodec,
-    stream: Option<punktfunk_core::quic::ColorInfo>,
+    stream: Option<lilynk_core::quic::ColorInfo>,
 ) -> Option<DataSpace> {
     stream
         .map(|c| color_dataspace(&c))
@@ -240,12 +240,12 @@ fn reported_dataspace(codec: &MediaCodec) -> Option<DataSpace> {
 }
 
 /// The dataspace the presenters tag buffers with ([`negotiated_space`]).
-pub(super) fn color_dataspace(color: &punktfunk_core::quic::ColorInfo) -> DataSpace {
+pub(super) fn color_dataspace(color: &lilynk_core::quic::ColorInfo) -> DataSpace {
     ndk_space(negotiated_space(color))
 }
 
 /// The `ADataSpace` an ASurfaceControl layer on `sdk` takes ([`layer_space`]).
-pub(super) fn layer_dataspace(color: &punktfunk_core::quic::ColorInfo, sdk: u32) -> Option<i32> {
+pub(super) fn layer_dataspace(color: &lilynk_core::quic::ColorInfo, sdk: u32) -> Option<i32> {
     layer_space(color, sdk).map(|space| i32::from(ndk_space(space)))
 }
 

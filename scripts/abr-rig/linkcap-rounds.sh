@@ -16,7 +16,7 @@ keep() { # <tag> <profile>
 "$HERE/run.sh" nowall_720p 1 >/dev/null 2>&1 || true
 # The drain guard's per-window line is debug; without this the reader can count
 # guard endings but not the windows each one covered.
-export RUST_LOG=${RUST_LOG:-info,punktfunk_core::abr=debug}
+export RUST_LOG=${RUST_LOG:-info,lilynk_core::abr=debug}
 
 echo "== 5: nowall_720p 120 s, the control =="
 "$HERE/run.sh" nowall_720p 120 > "$OUT/lc-nowall-1.run" 2>&1 && keep lc-nowall-1 nowall_720p

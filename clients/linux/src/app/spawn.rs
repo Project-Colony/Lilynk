@@ -1,18 +1,18 @@
-//! The shell↔session handoff: every stream runs in the spawned `punktfunk-session`
+//! The shell↔session handoff: every stream runs in the spawned `lilynk-session`
 //! Vulkan binary. This module is the TRANSLATION: a [`ConnectRequest`] becomes a
 //! `ConnectPlan`, and the session's typed lifecycle events become the [`AppMsg`]s the relm4
 //! app consumes — spinner until `{"ready":true}`, banner from the `{"error"|"ended": …}`
 //! line, exit code 3 + `trust_rejected` routed to the re-pair PIN ceremony.
 //!
 //! Spawning, the argv, the stdout contract and the child handle live in
-//! `pf_client_core::orchestrate` (design/client-architecture-split.md §3) — the WinUI shell
+//! `ly_client_core::orchestrate` (design/client-architecture-split.md §3) — the WinUI shell
 //! and the CLI spawn through the same code, so "what flags does a stream get" and
 //! "what does ready mean" have exactly one answer.
 
 use crate::app::AppMsg;
 use crate::hosts::ConnectRequest;
-use pf_client_core::orchestrate::{self, ConnectOutcome, ConnectPlan, HostTarget, SessionEvent};
-use punktfunk_core::quic::v2::msg::ProfileUnlock;
+use lilynk_core::quic::v2::msg::ProfileUnlock;
+use ly_client_core::orchestrate::{self, ConnectOutcome, ConnectPlan, HostTarget, SessionEvent};
 
 /// Spawn tunables beyond a plain connect.
 #[derive(Debug, Default)]
@@ -142,7 +142,7 @@ pub fn spawn_console(
         .map(drop)
         .map_err(|e| {
             tracing::error!(error = %e, "console did not launch");
-            pf_l10n::client::dial_console_not_started().to_string()
+            ly_l10n::client::dial_console_not_started().to_string()
         })
 }
 
@@ -162,8 +162,8 @@ mod tests {
     // The crate's one test env mutation (the config-dir write below) — see main.rs's deny note.
     #[allow(unsafe_code)]
     fn the_plan_carries_resolved_settings_not_defaults() {
-        use pf_client_core::presets::{PresetsFile, SettingsOverlay, StreamPreset};
-        use pf_client_core::trust::{KnownHost, KnownHosts, Settings};
+        use ly_client_core::presets::{PresetsFile, SettingsOverlay, StreamPreset};
+        use ly_client_core::trust::{KnownHost, KnownHosts, Settings};
 
         let home = std::env::temp_dir().join(format!("pf-spawn-test-{}", std::process::id()));
         let cfg = home.join(".config/punktfunk");
@@ -207,7 +207,7 @@ mod tests {
                 paired: true,
                 preset_id: Some("aaaaaaaaaaaa".into()),
                 clipboard_sync: true,
-                profile: Some(pf_client_core::profiles::ProfilePick {
+                profile: Some(ly_client_core::profiles::ProfilePick {
                     id: "saved".into(),
                     display_name: "Kid".into(),
                     remember: false,

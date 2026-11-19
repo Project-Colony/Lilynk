@@ -6,27 +6,27 @@
 <gresources>
   <gresource prefix="/io/unom/punktfunk">
     <file>style.css</file>
-    <file>icons/scalable/actions/pf-launcher-steam-symbolic.svg</file>
-    <file>icons/scalable/actions/pf-launcher-lutris-symbolic.svg</file>
-    <file>icons/scalable/actions/pf-launcher-heroic-symbolic.svg</file>
-    <file>icons/scalable/actions/pf-launcher-playnite-symbolic.svg</file>
-    <file>icons/scalable/actions/pf-launcher-epic-symbolic.svg</file>
-    <file>icons/scalable/actions/pf-launcher-gog-symbolic.svg</file>
-    <file>icons/scalable/actions/pf-launcher-xbox-symbolic.svg</file>
-    <file>icons/scalable/actions/pf-launcher-hydra-symbolic.svg</file>
-    <file>icons/scalable/actions/pf-os-windows-symbolic.svg</file>
-    <file>icons/scalable/actions/pf-os-apple-symbolic.svg</file>
-    <file>icons/scalable/actions/pf-os-linux-symbolic.svg</file>
-    <file>icons/scalable/actions/pf-os-steam-symbolic.svg</file>
-    <file>icons/scalable/actions/pf-os-ubuntu-symbolic.svg</file>
-    <file>icons/scalable/actions/pf-os-fedora-symbolic.svg</file>
-    <file>icons/scalable/actions/pf-os-arch-symbolic.svg</file>
-    <file>icons/scalable/actions/pf-os-debian-symbolic.svg</file>
-    <file>icons/scalable/actions/pf-os-nixos-symbolic.svg</file>
-    <file>icons/scalable/actions/pf-os-opensuse-symbolic.svg</file>
-    <file>icons/scalable/actions/pf-os-bazzite-symbolic.svg</file>
-    <file>icons/scalable/actions/pf-os-cachyos-symbolic.svg</file>
-    <file>icons/scalable/actions/pf-os-nobara-symbolic.svg</file>
-    <file>icons/scalable/actions/pf-os-omarchy-symbolic.svg</file>
+    <file>icons/scalable/actions/ly-launcher-steam-symbolic.svg</file>
+    <file>icons/scalable/actions/ly-launcher-lutris-symbolic.svg</file>
+    <file>icons/scalable/actions/ly-launcher-heroic-symbolic.svg</file>
+    <file>icons/scalable/actions/ly-launcher-playnite-symbolic.svg</file>
+    <file>icons/scalable/actions/ly-launcher-epic-symbolic.svg</file>
+    <file>icons/scalable/actions/ly-launcher-gog-symbolic.svg</file>
+    <file>icons/scalable/actions/ly-launcher-xbox-symbolic.svg</file>
+    <file>icons/scalable/actions/ly-launcher-hydra-symbolic.svg</file>
+    <file>icons/scalable/actions/ly-os-windows-symbolic.svg</file>
+    <file>icons/scalable/actions/ly-os-apple-symbolic.svg</file>
+    <file>icons/scalable/actions/ly-os-linux-symbolic.svg</file>
+    <file>icons/scalable/actions/ly-os-steam-symbolic.svg</file>
+    <file>icons/scalable/actions/ly-os-ubuntu-symbolic.svg</file>
+    <file>icons/scalable/actions/ly-os-fedora-symbolic.svg</file>
+    <file>icons/scalable/actions/ly-os-arch-symbolic.svg</file>
+    <file>icons/scalable/actions/ly-os-debian-symbolic.svg</file>
+    <file>icons/scalable/actions/ly-os-nixos-symbolic.svg</file>
+    <file>icons/scalable/actions/ly-os-opensuse-symbolic.svg</file>
+    <file>icons/scalable/actions/ly-os-bazzite-symbolic.svg</file>
+    <file>icons/scalable/actions/ly-os-cachyos-symbolic.svg</file>
+    <file>icons/scalable/actions/ly-os-nobara-symbolic.svg</file>
+    <file>icons/scalable/actions/ly-os-omarchy-symbolic.svg</file>
   </gresource>
 </gresources>

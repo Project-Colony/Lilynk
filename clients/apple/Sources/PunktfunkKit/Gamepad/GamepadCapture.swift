@@ -1,5 +1,5 @@
 // Gamepad capture → punktfunk/1 datagrams. Forwards every controller GamepadManager selected,
-// each on its own stable wire pad index (pf-client-core's slot model), for a streaming session.
+// each on its own stable wire pad index (ly-client-core's slot model), for a streaming session.
 // One unpinned controller is pad 0; a pin forwards only that one, also as pad 0.
 //
 // Each forwarded controller gets a `Slot`: its GC handlers plus the wire state for its pad index.
@@ -46,7 +46,7 @@ public final class GamepadCapture {
 
     /// One forwarded controller: the open device plus the last wire state for its pad index (the
     /// diff base — also what `flush` unwinds). Held per Slot so two controllers never clobber each
-    /// other's held buttons/axes/fingers. Mirrors pf-client-core's `Slot`. Main-actor like its
+    /// other's held buttons/axes/fingers. Mirrors ly-client-core's `Slot`. Main-actor like its
     /// owner, so the main-run-loop timers that fire on it may hold it.
     @MainActor private final class Slot {
         let controller: GCController
@@ -158,7 +158,7 @@ public final class GamepadCapture {
         return profile.buttons[alias]?.sfSymbolsName
     }
 
-    /// pf-client-core's `TAP_PRESS`: a synthetic tap's presses and release this far apart, or
+    /// ly-client-core's `TAP_PRESS`: a synthetic tap's presses and release this far apart, or
     /// back-to-back transitions fold into nothing in the host's per-pad input fold.
     nonisolated private static let tapPress: TimeInterval = 0.05
     /// Wakes the engines when a hold or an owed tap release comes due, and sends what `owed`
@@ -209,7 +209,7 @@ public final class GamepadCapture {
     /// Off still opens slots and tracks button state; it just sends nothing (see `wire`).
     /// The escape chord is read off the same slots, and on tvOS it is the ONLY controller way
     /// out of a stream, so a session with forwarding off would otherwise lose its exit.
-    /// Unlike pf-client-core's slots, GameController claims nothing exclusive, so holding one
+    /// Unlike ly-client-core's slots, GameController claims nothing exclusive, so holding one
     /// open costs the host nothing and blocks no passthrough tool.
     public let forwarding: Bool
 
@@ -257,7 +257,7 @@ public final class GamepadCapture {
     public func start() {
         claim()
         // Session-scoped index assignment: a controller pinned before the session forwards as
-        // pad 0 (pf-client-core assigns indices at slot-open time, not app-launch time).
+        // pad 0 (ly-client-core assigns indices at slot-open time, not app-launch time).
         manager.resetForwardingAssignment()
         // Fires immediately with the current forwarded set, then on every change — a connect,
         // disconnect, or pin change reconciles the open slots against it (opening/closing devices
@@ -346,7 +346,7 @@ public final class GamepadCapture {
         onOwnershipChange?(false)
     }
 
-    /// A one-shot synthetic tap of a system button on the host's pad (pf-client-core's
+    /// A one-shot synthetic tap of a system button on the host's pad (ly-client-core's
     /// `GamepadService::tap_button`), on wire pad `pad` — by default the first forwarded slot's,
     /// pad 0 when none is open, which is best-effort (the host pad may not exist). The dial's
     /// and the shortcuts' route to the host's guide on a device whose OS keeps the physical Home
@@ -394,7 +394,7 @@ public final class GamepadCapture {
         slot.synthetic = down ? slot.synthetic | bit : slot.synthetic & ~bit
     }
 
-    /// A synthetic tap's wire events (pf-client-core's `tap_events`): each press `tapPress`
+    /// A synthetic tap's wire events (ly-client-core's `tap_events`): each press `tapPress`
     /// after the one before, then every release together, last pressed first. Apart, because
     /// core folds per-transition sends into one state, and because a chord's first button has
     /// to be held before its second counts.
@@ -431,7 +431,7 @@ public final class GamepadCapture {
     /// Bring `slots` in line with the forwarded set: close any slot no longer wanted (flushing its
     /// held wire state and sending GamepadRemove first) and open any newly-forwarded controller into
     /// its assigned wire index. A controller that stays forwarded on its index keeps its slot
-    /// untouched, so a second pad connecting never disturbs the first. Mirrors pf-client-core's
+    /// untouched, so a second pad connecting never disturbs the first. Mirrors ly-client-core's
     /// `reconcile_slots`.
     ///
     /// A slot whose index moved is closed and opened on the new one. Another window's session
@@ -529,7 +529,7 @@ public final class GamepadCapture {
     /// Flush a slot's held wire state (so nothing sticks down host-side), signal the host to tear
     /// its virtual device down (GamepadRemove), then `detach` unless parked. Wire-only until the
     /// GC cleanup, so it is safe even when the device already physically unplugged. Mirrors
-    /// pf-client-core's `close_slot_at`.
+    /// ly-client-core's `close_slot_at`.
     private func closeSlot(_ slot: Slot) {
         resetShortcuts(slot)
         flush(slot)
@@ -724,7 +724,7 @@ public final class GamepadCapture {
     /// The ring slot the left stick points at, given the sector already engaged: past the dead
     /// zone by MAGNITUDE (a diagonal counts) the angle falls into one of six 60° sectors centred
     /// on the slots, slot `k` at `-90° + 60°·k`, 12 o'clock first, clockwise. The Swift half of
-    /// `pf_client_core::menu_nav::ring_sector` — same 0.5 engage / 0.3 release thresholds, so the
+    /// `ly_client_core::menu_nav::ring_sector` — same 0.5 engage / 0.3 release thresholds, so the
     /// dial feels identical on a Mac and on a Steam Deck. GameController is +y = up.
     nonisolated static func ringSector(_ lx: Float, _ ly: Float, _ current: Int?) -> Int? {
         guard hypot(lx, ly) > (current == nil ? 0.5 : 0.3) else { return nil }
@@ -934,7 +934,7 @@ public final class GamepadCapture {
     }
 }
 
-/// Synthetic pad presses and releases not yet sent, in send order (pf-client-core's
+/// Synthetic pad presses and releases not yet sent, in send order (ly-client-core's
 /// `synthetic` queue). A pad's new events queue behind what it still owes, so a release never
 /// overtakes the press it lifts: a hold let go inside `tapPress` must not leave its second
 /// button down on the host.

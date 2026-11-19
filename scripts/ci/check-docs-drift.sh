@@ -19,7 +19,7 @@
 #      a decision instead of an accident. A baseline line whose knob left the code or got
 #      documented only prints a note; the C header names in cbindgen.toml are not knobs.
 #   4. Every command the host-cli.md tables list must still exist as a string literal in
-#      crates/host/punktfunk-host (same "docs describing removed things" class as gate 2).
+#      crates/host/lilynk-host (same "docs describing removed things" class as gate 2).
 #   5. data/platforms.json (the single source for install/port facts that docs, the website
 #      download page and the guided installer consume) must parse, and docs-site/src/data/
 #      platforms.json — the snapshot the <Install/> and <Ports/> MDX components render from
@@ -96,8 +96,8 @@ fi
 grep -E '^\|' 'docs-site/content/docs/(reference)/host-cli.md' | awk -F'|' '{print $2}' \
     | grep -oE '`[a-z0-9-]+`|`--[a-z-]+`' | tr -d '`' | sort -u > "$tmp/cli-cmds"
 while IFS= read -r cmd; do
-    if ! git grep -qF "\"$cmd\"" -- crates/host/punktfunk-host; then
-        echo "::error::host-cli.md documents \`$cmd\` but crates/host/punktfunk-host has no \"$cmd\" literal — removed or renamed; fix the docs page"
+    if ! git grep -qF "\"$cmd\"" -- crates/host/lilynk-host; then
+        echo "::error::host-cli.md documents \`$cmd\` but crates/host/lilynk-host has no \"$cmd\" literal — removed or renamed; fix the docs page"
         fail=1
     fi
 done < "$tmp/cli-cmds"
@@ -121,12 +121,12 @@ if [ "$(cksum < data/platforms.json)" != "$(cksum < docs-site/src/data/platforms
 fi
 
 # ---------------------------------------------------------------- gate 6: the installer stub stays dumb
-# scripts/install.sh is a stub: it downloads punktfunk-setup, verifies its sha256 and execs it
+# scripts/install.sh is a stub: it downloads lilynk-setup, verifies its sha256 and execs it
 # (design/installer-v2.md D1). Its whole value is being boring, so this checks that it still is.
 #
 # The install lines live in the binary. It embeds data/platforms.json and generates its commands
 # from it, so they are verbatim by construction rather than by a substring check —
-# crates/install/punktfunk-setup/tests/plan_goldens.rs asserts it. The detection and channel
+# crates/install/lilynk-setup/tests/plan_goldens.rs asserts it. The detection and channel
 # matrices are scripts/ci/check-installer-behavior.sh, run in the rust lane where a binary can
 # be built.
 if ! sh -n scripts/install.sh; then
@@ -158,8 +158,8 @@ elif command -v node >/dev/null 2>&1; then
 fi
 
 # ------------------------------------------------- gate 7: the web console's host-readiness gate
-# scripts/web-init.sh is what stops punktfunk-web.service from starting before the host has written
-# the files it cannot start without. `After=punktfunk-host.service` does not do that (the host is
+# scripts/web-init.sh is what stops lilynk-web.service from starting before the host has written
+# the files it cannot start without. `After=lilynk-host.service` does not do that (the host is
 # Type=simple), so the console's first enable on a fresh install can fail at the systemd level.
 # Run the real script against a faked config dir.
 wi="$tmp/web-init"
@@ -196,7 +196,7 @@ seed_pair() { printf 'cert\n' > "$1/punktfunk/$2cert.pem"; printf 'key\n' > "$1/
 mkdir -p "$wi/empty/punktfunk"
 run_web_init 1 "$wi/empty"
 web_init_case "nothing written yet" wait
-case "$wi_out" in *'waiting for punktfunk-host'*) ;; *)
+case "$wi_out" in *'waiting for lilynk-host'*) ;; *)
     echo "::error::web-init.sh never announced the wait — the sleep path did not run:"
     printf '%s\n' "$wi_out" | sed 's/^/    /'
     fail=1 ;;

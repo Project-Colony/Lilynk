@@ -3,8 +3,8 @@
 
 use super::connect::Slot;
 use super::*;
-use pf_client_core::profiles::{self, SeatGate};
-use pf_l10n::{client, common, desktop};
+use ly_client_core::profiles::{self, SeatGate};
+use ly_l10n::{client, common, desktop};
 use std::sync::atomic::Ordering;
 use std::time::Duration;
 
@@ -73,7 +73,7 @@ impl AppModel {
         self.store
             .hosts()
             .find_by_fp(fp_hex)
-            .map_or(pf_client_core::library::DEFAULT_MGMT_PORT, |h| {
+            .map_or(ly_client_core::library::DEFAULT_MGMT_PORT, |h| {
                 h.effective_mgmt_port()
             })
     }

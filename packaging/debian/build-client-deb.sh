@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build the punktfunk-client .deb (the native GTK4 client) for Ubuntu/Debian desktops.
+# Build the lilynk-client .deb (the native GTK4 client) for Ubuntu/Debian desktops.
 #
 # Counterpart to build-deb.sh (the host package); same conventions: runtime Depends are
 # computed by dpkg-shlibdeps from the binaries' DT_NEEDED (GTK4/libadwaita, SDL3, the
@@ -7,14 +7,14 @@
 # the package names the target boxes ship. The client links no NVIDIA libs — no filter
 # needed.
 #
-# The client decodes with pf-vkdecode / pf-vaapi (libva is dlopen'd, never linked) /
+# The client decodes with ly-vkdecode / ly-vaapi (libva is dlopen'd, never linked) /
 # openh264+rav1d, so neither binary carries a codec-library DT_NEEDED and shlibdeps emits
 # no soname the target box must match. There is no list here to prune, which is exactly the
 # property to keep.
 #
 # Usage: VERSION=0.0.1~ci42.gdeadbee [ARCH=amd64] [TARGET=<rust triple>] \
 #          bash packaging/debian/build-client-deb.sh
-# Output: dist/punktfunk-client_<version>_<arch>.deb
+# Output: dist/lilynk-client_<version>_<arch>.deb
 #
 # TARGET cross-compiles (and moves the binaries under target/<triple>/release). Set it
 # together with ARCH — e.g. ARCH=arm64 TARGET=aarch64-unknown-linux-gnu inside the
@@ -24,8 +24,8 @@ set -euo pipefail
 VERSION="${VERSION:?set VERSION (e.g. 0.0.1 or 0.0.1~ci42.gdeadbee)}"
 ARCH="${ARCH:-amd64}"
 TARGET="${TARGET:-}"
-PKG="punktfunk-client"
-CRATE="punktfunk-client-linux"
+PKG="lilynk-client"
+CRATE="lilynk-client-linux"
 ROOTDIR="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOTDIR"
 
@@ -42,17 +42,17 @@ fi
 BIN="$OUTDIR/$PKG"
 # The Vulkan/Skia session streamer the shell execs for a connect — shipped alongside the shell
 # (the shell resolves it as its /usr/bin sibling), or desktop streaming breaks.
-SESSION_BIN="$OUTDIR/punktfunk-session"
+SESSION_BIN="$OUTDIR/lilynk-session"
 # The headless CLI (design/client-architecture-split.md §4) ships with every client.
-CLI_BIN="$OUTDIR/punktfunk"
-# pf-update: the client's own copy of the root helper (`punktfunk-client --apply-update`).
-UPDATE_BIN="$OUTDIR/pf-update"
+CLI_BIN="$OUTDIR/lilynk"
+# ly-update: the client's own copy of the root helper (`lilynk-client --apply-update`).
+UPDATE_BIN="$OUTDIR/ly-update"
 # Builds only when a binary is missing, so it tests every binary installed below. A caller with
 # a restored target must build first: an existing binary is packaged as-is, however old.
 if [ ! -x "$BIN" ] || [ ! -x "$SESSION_BIN" ] || [ ! -x "$CLI_BIN" ] || [ ! -x "$UPDATE_BIN" ]; then
-  echo "==> building $CRATE + punktfunk-client-session + punktfunk-cli + pf-update (release${TARGET:+ for $TARGET})"
-  cargo build --release --locked "${CARGO_TARGET_ARGS[@]}" -p "$CRATE" -p punktfunk-client-session \
-    -p punktfunk-cli -p pf-update
+  echo "==> building $CRATE + lilynk-client-session + lilynk-cli + ly-update (release${TARGET:+ for $TARGET})"
+  cargo build --release --locked "${CARGO_TARGET_ARGS[@]}" -p "$CRATE" -p lilynk-client-session \
+    -p lilynk-cli -p ly-update
 fi
 
 STAGE="$(mktemp -d)"
@@ -61,8 +61,8 @@ DOCDIR="$STAGE/usr/share/doc/$PKG"
 
 # --- file layout --------------------------------------------------------------
 install -Dm0755 "$BIN"                                   "$STAGE/usr/bin/$PKG"
-install -Dm0755 "$SESSION_BIN"                           "$STAGE/usr/bin/punktfunk-session"
-install -Dm0755 "$CLI_BIN"                               "$STAGE/usr/bin/punktfunk"
+install -Dm0755 "$SESSION_BIN"                           "$STAGE/usr/bin/lilynk-session"
+install -Dm0755 "$CLI_BIN"                               "$STAGE/usr/bin/lilynk"
 install -Dm0644 packaging/linux/io.unom.punktfunk.desktop \
                 "$STAGE/usr/share/applications/io.unom.punktfunk.desktop"
 # Second launcher, straight into the gamepad console (`--browse`): the couch entry point a
@@ -76,29 +76,29 @@ install -Dm0644 packaging/linux/icons/hicolor/scalable/apps/io.unom.punktfunk.sv
 # The CamelCase icon name, which desktop entries users already have still name.
 ln -s io.unom.punktfunk.svg "$STAGE/usr/share/icons/hicolor/scalable/apps/io.unom.Punktfunk.svg"
 # DualSense hidraw access (full pad fidelity through SDL's HIDAPI driver).
-install -Dm0644 scripts/70-punktfunk-client.rules \
-                "$STAGE/usr/lib/udev/rules.d/70-punktfunk-client.rules"
+install -Dm0644 scripts/70-lilynk-client.rules \
+                "$STAGE/usr/lib/udev/rules.d/70-lilynk-client.rules"
 # UDP receive-buffer tuning (32 MB) — without it the kernel clamps the client's SO_RCVBUF and
 # high-bitrate streams overflow it at the receiver (measured: 4 MB cap = 31.6% loss at 2 Gbps,
 # 32 MB = 0%). systemd-sysctl applies it at boot; the postinst applies it on install.
-install -Dm0644 scripts/99-punktfunk-client-net.conf \
-                "$STAGE/usr/lib/sysctl.d/99-punktfunk-client-net.conf"
-# One-tap client updates (`punktfunk-client --apply-update`, which is what the Decky plugin
+install -Dm0644 scripts/99-lilynk-client-net.conf \
+                "$STAGE/usr/lib/sysctl.d/99-lilynk-client-net.conf"
+# One-tap client updates (`lilynk-client --apply-update`, which is what the Decky plugin
 # runs): the same root helper the host package ships, under the CLIENT's own paths + its own
 # unit and polkit rule. Separate paths because dpkg refuses two packages owning one file, and a
-# client-only box must be able to install this without punktfunk-host. Opt-in = joining the
-# (shipped-empty) punktfunk-update group (punktfunk.sysusers).
-install -Dm0755 "$UPDATE_BIN"                      "$STAGE/usr/libexec/punktfunk/pf-update-client"
-install -Dm0644 packaging/linux/punktfunk-client-update.service \
-                "$STAGE/usr/lib/systemd/system/punktfunk-client-update.service"
-sed -i 's#/usr/libexec/punktfunk/pf-update#/usr/libexec/punktfunk/pf-update-client#' \
-       "$STAGE/usr/lib/systemd/system/punktfunk-client-update.service"
-install -Dm0644 packaging/linux/49-punktfunk-client-update.rules \
-                "$STAGE/usr/share/polkit-1/rules.d/49-punktfunk-client-update.rules"
-# The punktfunk-update group, from the same file the host package ships under its own name.
-install -Dm0644 packaging/linux/punktfunk.sysusers \
-                "$STAGE/usr/lib/sysusers.d/punktfunk-client.conf"
-# Install-kind + channel marker for the CLIENT, read by `punktfunk-client --check-update`
+# client-only box must be able to install this without lilynk-host. Opt-in = joining the
+# (shipped-empty) lilynk-update group (lilynk.sysusers).
+install -Dm0755 "$UPDATE_BIN"                      "$STAGE/usr/libexec/punktfunk/ly-update-client"
+install -Dm0644 packaging/linux/lilynk-client-update.service \
+                "$STAGE/usr/lib/systemd/system/lilynk-client-update.service"
+sed -i 's#/usr/libexec/punktfunk/ly-update#/usr/libexec/punktfunk/ly-update-client#' \
+       "$STAGE/usr/lib/systemd/system/lilynk-client-update.service"
+install -Dm0644 packaging/linux/49-lilynk-client-update.rules \
+                "$STAGE/usr/share/polkit-1/rules.d/49-lilynk-client-update.rules"
+# The lilynk-update group, from the same file the host package ships under its own name.
+install -Dm0644 packaging/linux/lilynk.sysusers \
+                "$STAGE/usr/lib/sysusers.d/lilynk-client.conf"
+# Install-kind + channel marker for the CLIENT, read by `lilynk-client --check-update`
 # (planning: host-update-from-web-console.md §4.1). Its own directory, matching the RPM. A
 # canary build's version carries `~ciN`; anything else is stable.
 case "$VERSION" in
@@ -106,7 +106,7 @@ case "$VERSION" in
   *)     _pf_client_channel=stable ;;
 esac
 printf 'apt %s\n' "$_pf_client_channel" | \
-    install -Dm0644 /dev/stdin "$STAGE/usr/share/punktfunk-client/install-kind"
+    install -Dm0644 /dev/stdin "$STAGE/usr/share/lilynk-client/install-kind"
 install -Dm0644 LICENSE-MIT                              "$DOCDIR/LICENSE-MIT"
 install -Dm0644 LICENSE-APACHE                           "$DOCDIR/LICENSE-APACHE"
 install -Dm0644 README.md                                "$DOCDIR/README.md"
@@ -191,7 +191,7 @@ Description: Low-latency desktop/game streaming client (punktfunk/2, GTK4)
  motion, adaptive triggers and lightbar through SDL3.
  .
  The host creates a virtual output at exactly this client's resolution and
- refresh rate — no scaling. See the punktfunk-host package for the host side.
+ refresh rate — no scaling. See the lilynk-host package for the host side.
 EOF
 
 cat > "$STAGE/DEBIAN/postinst" <<'EOF'
@@ -199,13 +199,13 @@ cat > "$STAGE/DEBIAN/postinst" <<'EOF'
 set -e
 if [ "$1" = "configure" ]; then
     # dpkg applies no sysusers.d file by itself.
-    systemd-sysusers punktfunk-client.conf >/dev/null 2>&1 || true
+    systemd-sysusers lilynk-client.conf >/dev/null 2>&1 || true
     # Pick up the DualSense hidraw rule without a reboot (best-effort, no-op in containers).
     udevadm control --reload-rules 2>/dev/null || true
     udevadm trigger --subsystem-match=hidraw 2>/dev/null || true
     update-desktop-database /usr/share/applications 2>/dev/null || true
     # Apply the UDP recv-buffer tuning now (also auto-applied at boot by systemd-sysctl).
-    sysctl -p /usr/lib/sysctl.d/99-punktfunk-client-net.conf >/dev/null 2>&1 || true
+    sysctl -p /usr/lib/sysctl.d/99-lilynk-client-net.conf >/dev/null 2>&1 || true
 fi
 exit 0
 EOF

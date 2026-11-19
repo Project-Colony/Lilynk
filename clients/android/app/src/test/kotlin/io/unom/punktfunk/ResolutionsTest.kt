@@ -7,7 +7,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * Pure JVM test of the aspect-family table ([Resolutions]) — the Kotlin twin of `punktfunk-core`'s
+ * Pure JVM test of the aspect-family table ([Resolutions]) — the Kotlin twin of `lilynk-core`'s
  * `resolutions` module. Run: `./gradlew :app:testDebugUnitTest`.
  */
 class ResolutionsTest {

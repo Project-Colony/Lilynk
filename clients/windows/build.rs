@@ -1,5 +1,5 @@
-//! Embed the Windows version-info + icon resources into `punktfunk-client-windows.exe` and
-//! `punktfunk-console.exe`; both bins share the one resource. The icon drives Explorer /
+//! Embed the Windows version-info + icon resources into `lilynk-client-windows.exe` and
+//! `lilynk-console.exe`; both bins share the one resource. The icon drives Explorer /
 //! Alt-Tab / the unpackaged taskbar, and `shell_window::set_icon` stamps it onto the WinUI
 //! window's title bar via `WM_SETICON` (the MSIX taskbar/Start icons come from the package
 //! assets instead).
@@ -24,7 +24,7 @@ fn main() {
         std::fs::create_dir_all(&assets).expect("create the staged Assets directory");
         std::fs::copy(font, assets.join("lucide.ttf")).expect("stage the Lucide icon font");
 
-        let icon = "../../packaging/windows/branding/punktfunk.ico";
+        let icon = "../../packaging/windows/branding/lilynk.ico";
         println!("cargo:rerun-if-changed={icon}");
         winresource::WindowsResource::new()
             // Ordinal 1 — shell_window.rs loads it by this id for WM_SETICON.

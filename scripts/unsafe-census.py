@@ -35,14 +35,14 @@ from cargo_graph import closure  # noqa: E402
 # on (no dev-dependencies), plus the cdylibs Windows loads into other processes and the crates
 # that build in their own workspaces. `cargo metadata` resolves a target it cannot build for,
 # so the Apple and Android closures need no installed toolchain.
-SHIPPED = ["punktfunk-host", "punktfunk-encode-worker", "punktfunk-capture-worker",
-           "punktfunk-seats", "punktfunk-tray", "pf-seat-audio",
-           "punktfunk-cli", "punktfunk-client-linux", "punktfunk-client-windows",
-           "punktfunk-client-android", "punktfunk-client-apple", "punktfunk-ffi"]
+SHIPPED = ["lilynk-host", "lilynk-encode-worker", "lilynk-capture-worker",
+           "lilynk-seats", "lilynk-tray", "ly-seat-audio",
+           "lilynk-cli", "lilynk-client-linux", "lilynk-client-windows",
+           "lilynk-client-android", "lilynk-client-apple", "lilynk-ffi"]
 TRIPLES = ["x86_64-unknown-linux-gnu", "x86_64-pc-windows-msvc", "aarch64-apple-darwin",
            "aarch64-apple-ios", "aarch64-linux-android"]
-EXTRA_ROOTS = ["packaging/windows/drivers", "packaging/windows/pf-vkhdr-layer",
-               "crates/host/pf-seat-keeper"]
+EXTRA_ROOTS = ["packaging/windows/drivers", "packaging/windows/ly-vkhdr-layer",
+               "crates/host/ly-seat-keeper"]
 
 
 def scope_roots():

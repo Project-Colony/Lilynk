@@ -339,7 +339,7 @@ impl Layer {
         // SAFETY: `window.ptr()` is the live `ANativeWindow` the decode thread owns; the name is a
         // static NUL-terminated string; the call returns null on failure (checked).
         let sc =
-            unsafe { (api.create_from_window)(window.ptr().as_ptr(), c"punktfunk-video".as_ptr()) };
+            unsafe { (api.create_from_window)(window.ptr().as_ptr(), c"lilynk-video".as_ptr()) };
         if sc.is_null() {
             log::warn!("asc: createFromWindow returned null — falling back to SurfaceView");
             return None;
@@ -392,7 +392,7 @@ impl Layer {
         src_h: i32,
         fence_fd: RawFd,
         dataspace: i32,
-        hdr: Option<&punktfunk_core::quic::HdrMeta>,
+        hdr: Option<&lilynk_core::quic::HdrMeta>,
         frame_rate: f32,
     ) {
         // SAFETY: every setter takes the caller's live transaction + this layer's live `sc` +
@@ -485,7 +485,7 @@ pub(crate) fn present(
     acquire_fence: &mut Option<OwnedFd>,
     desired_present_ns: i64,
     dataspace: i32,
-    hdr: Option<&punktfunk_core::quic::HdrMeta>,
+    hdr: Option<&lilynk_core::quic::HdrMeta>,
     frame_rate: f32,
     seq: u64,
     ev_tx: &mpsc::Sender<DecodeEvent>,
@@ -595,7 +595,7 @@ fn merge_fences(a: OwnedFd, b: OwnedFd) -> OwnedFd {
     };
     // SAFETY: two valid fence fds we own; `sync_merge` returns a new fd (or `-1`) and leaves both
     // inputs ours to close, which the `OwnedFd` drops do.
-    let fd = unsafe { (api.merge)(c"punktfunk-release".as_ptr(), a.as_raw_fd(), b.as_raw_fd()) };
+    let fd = unsafe { (api.merge)(c"lilynk-release".as_ptr(), a.as_raw_fd(), b.as_raw_fd()) };
     if fd < 0 {
         return a;
     }

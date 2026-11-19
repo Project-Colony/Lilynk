@@ -153,7 +153,7 @@ describe("folder access", () => {
 	});
 
 	test("missing counts only inside the sandbox", () => {
-		const missing = `/definitely-missing-punktfunk-${process.pid}`;
+		const missing = `/definitely-missing-lilynk-${process.pid}`;
 		const previous = process.env.PUNKTFUNK_MGMT_UNIX;
 		try {
 			delete process.env.PUNKTFUNK_MGMT_UNIX;
@@ -167,7 +167,7 @@ describe("folder access", () => {
 	});
 
 	test("a folder asked for by its files keeps that through the check", () => {
-		const missing = `/definitely-missing-punktfunk-${process.pid}`;
+		const missing = `/definitely-missing-lilynk-${process.pid}`;
 		const previous = process.env.PUNKTFUNK_MGMT_UNIX;
 		try {
 			process.env.PUNKTFUNK_MGMT_UNIX = "/run/punktfunk/host.sock";

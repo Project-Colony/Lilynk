@@ -14,12 +14,12 @@
 #                         (A 26.04-built host .deb is uninstallable on 24.04 — the reason this job
 #                         exists; see packaging/debian/README.md.)
 #   build-publish-gamescope
-#                       — the patched `punktfunk-gamescope`, on DEBIAN 13; one .deb serves
+#                       — the patched `lilynk-gamescope`, on DEBIAN 13; one .deb serves
 #                         Debian 13 and Ubuntu 26.04 (ci/gamescope-trixie.Dockerfile).
 #   smoke-install       — installs what was just published, from the registry, in pristine
 #                         ubuntu:24.04 / ubuntu:26.04 / debian:trixie images.
 #
-# The client and host builders compute VERSION identically (scripts/ci/pf-version.sh is
+# The client and host builders compute VERSION identically (scripts/ci/ly-version.sh is
 # deterministic per commit), so those packages always share a version line; gamescope derives its
 # own. The release-attach helpers are race-safe (ensure_release create-or-fetch; upsert_asset only
 # conflicts on same-name), so the jobs run parallel.
@@ -46,35 +46,35 @@ on:
     # tag runs are matched by `tags:`.
     paths:
       - 'crates/client/**'
-      - 'crates/codec/pf-bitstream/**'
-      - 'crates/codec/pf-libva/**'
-      - 'crates/codec/pf-v4l2/**'
-      - 'crates/codec/pf-v4l2dec/**'
-      - 'crates/codec/pf-vaapi/**'
-      - 'crates/codec/pf-vkdecode/**'
+      - 'crates/codec/ly-bitstream/**'
+      - 'crates/codec/ly-libva/**'
+      - 'crates/codec/ly-v4l2/**'
+      - 'crates/codec/ly-v4l2dec/**'
+      - 'crates/codec/ly-vaapi/**'
+      - 'crates/codec/ly-vkdecode/**'
       - 'crates/codec/pyrowave-sys/**'
       - 'crates/core/**'
-      - 'crates/host/pf-audio/**'
-      - 'crates/host/pf-capture/**'
-      - 'crates/host/pf-clipboard/**'
-      - 'crates/host/pf-driver-proto/**'
-      - 'crates/host/pf-encode/**'
-      - 'crates/host/pf-encode-core/**'
-      - 'crates/host/pf-frame/**'
-      - 'crates/host/pf-gpu/**'
-      - 'crates/host/pf-host-config/**'
-      - 'crates/host/pf-inject/**'
-      - 'crates/host/pf-paths/**'
-      - 'crates/host/pf-paths-win/**'
-      - 'crates/host/pf-portal/**'
-      - 'crates/host/pf-seats/**'
-      - 'crates/host/pf-vdisplay/**'
-      - 'crates/host/pf-win-display/**'
-      - 'crates/host/pf-zerocopy/**'
-      - 'crates/host/punktfunk-encode-worker/**'
-      - 'crates/host/punktfunk-host/**'
-      - 'crates/install/pf-update/**'
-      - 'crates/install/punktfunk-tray/**'
+      - 'crates/host/ly-audio/**'
+      - 'crates/host/ly-capture/**'
+      - 'crates/host/ly-clipboard/**'
+      - 'crates/host/ly-driver-proto/**'
+      - 'crates/host/ly-encode/**'
+      - 'crates/host/ly-encode-core/**'
+      - 'crates/host/ly-frame/**'
+      - 'crates/host/ly-gpu/**'
+      - 'crates/host/ly-host-config/**'
+      - 'crates/host/ly-inject/**'
+      - 'crates/host/ly-paths/**'
+      - 'crates/host/ly-paths-win/**'
+      - 'crates/host/ly-portal/**'
+      - 'crates/host/ly-seats/**'
+      - 'crates/host/ly-vdisplay/**'
+      - 'crates/host/ly-win-display/**'
+      - 'crates/host/ly-zerocopy/**'
+      - 'crates/host/lilynk-encode-worker/**'
+      - 'crates/host/lilynk-host/**'
+      - 'crates/install/ly-update/**'
+      - 'crates/install/lilynk-tray/**'
       - 'clients/linux/**'
       - 'clients/session/**'
       - 'clients/shared/**'
@@ -97,7 +97,7 @@ on:
       - 'packaging/linux/*.tmpfiles'
       - 'packaging/linux/*.sysusers'
       - 'packaging/linux/payload.txt'
-      - 'packaging/linux/90-punktfunk-frame-adapter'
+      - 'packaging/linux/90-lilynk-frame-adapter'
       - 'packaging/linux/seat-*'
       - 'packaging/linux/door-*'
       - 'packaging/linux/*.ufw'
@@ -112,23 +112,23 @@ on:
       - 'Cargo.toml'
       - 'Cargo.lock'
       - 'rust-toolchain.toml'
-      - 'scripts/60-punktfunk.rules'
-      - 'scripts/60-punktfunk-dualsense.conf'
-      - 'scripts/70-punktfunk-client.rules'
-      - 'scripts/99-punktfunk-net.conf'
-      - 'scripts/99-punktfunk-client-net.conf'
+      - 'scripts/60-lilynk.rules'
+      - 'scripts/60-lilynk-dualsense.conf'
+      - 'scripts/70-lilynk-client.rules'
+      - 'scripts/99-lilynk-net.conf'
+      - 'scripts/99-lilynk-client-net.conf'
       - 'scripts/headless/**'
       - 'scripts/host.env.example'
       - 'scripts/io.unom.punktfunk.dm-helper.policy'
-      - 'scripts/pf-dm-helper'
-      - 'scripts/punktfunk-host-desktop-session.conf'
-      - 'scripts/punktfunk-host.service'
-      - 'scripts/punktfunk-kde-session.service'
-      - 'scripts/punktfunk-modules.conf'
-      - 'scripts/punktfunk-scripting.service'
-      - 'scripts/punktfunk-scripting-seat@.service'
-      - 'scripts/punktfunk-web-init.service'
-      - 'scripts/punktfunk-web.service'
+      - 'scripts/ly-dm-helper'
+      - 'scripts/lilynk-host-desktop-session.conf'
+      - 'scripts/lilynk-host.service'
+      - 'scripts/lilynk-kde-session.service'
+      - 'scripts/lilynk-modules.conf'
+      - 'scripts/lilynk-scripting.service'
+      - 'scripts/lilynk-scripting-seat@.service'
+      - 'scripts/lilynk-web-init.service'
+      - 'scripts/lilynk-web.service'
       - 'scripts/web-init.sh'
       - 'scripts/alsa-ucm2/**'
       - 'scripts/ci/assert-cap-matrix.sh'
@@ -137,7 +137,7 @@ on:
       - 'scripts/ci/drop-partial-target.sh'
       - 'scripts/ci/ensure-sccache.sh'
       - 'scripts/ci/gitea-release.sh'
-      - 'scripts/ci/pf-version.sh'
+      - 'scripts/ci/ly-version.sh'
       - 'scripts/ci/retry.sh'
       - 'ci/skia-binaries.sh'
       - 'ci/bun.env'
@@ -172,7 +172,7 @@ jobs:
   build-publish:
     runs-on: ubuntu-24.04
     container:
-      image: 192.168.1.58:5010/punktfunk-rust-ci:latest
+      image: 192.168.1.58:5010/lilynk-rust-ci:latest
     timeout-minutes: 90
     env:
       # ⚠ Job-scoped, never workflow-scoped: build-publish-client-arm64 runs in the cross image
@@ -191,11 +191,11 @@ jobs:
 
       - name: Version + channel
         # vX.Y.Z tag -> X.Y.Z in the `stable` apt distribution; a main push -> <next-minor>~ciN.g<sha>
-        # in `canary`, where the '~' sorts below the eventual tag (scripts/ci/pf-version.sh owns the
+        # in `canary`, where the '~' sorts below the eventual tag (scripts/ci/ly-version.sh owns the
         # rule, see channels.md). Computed BEFORE the build so it's stamped into the binary
         # (PUNKTFUNK_BUILD_VERSION -> build.rs -> --version).
         run: |
-          eval "$(bash scripts/ci/pf-version.sh --format deb)"   # -> PF_VERSION, PF_CHANNEL
+          eval "$(bash scripts/ci/ly-version.sh --format deb)"   # -> PF_VERSION, PF_CHANNEL
           echo "VERSION=$PF_VERSION" >> "$GITHUB_ENV"
           echo "DISTRIBUTION=$PF_CHANNEL" >> "$GITHUB_ENV"
           echo "package version $PF_VERSION -> apt distribution '$PF_CHANNEL'"
@@ -209,7 +209,7 @@ jobs:
           apt-get update
           # python3 is used by scripts/ci/gitea-release.sh for the stable-tag release attach.
           # No libvulkan-dev: nothing here compiles or links against Vulkan (ash dlopens
-          # libvulkan and pf-vkdecode binds nothing at build time), so neither the compile nor
+          # libvulkan and ly-vkdecode binds nothing at build time), so neither the compile nor
           # dpkg-shlibdeps — which resolves DT_NEEDED sonames only — ever asks for it. The
           # client's `Depends: libvulkan1` is added by hand in packaging/debian/build-client-deb.sh
           # precisely because a dlopen is invisible to shlibdeps.
@@ -257,13 +257,13 @@ jobs:
         run: |
           git config --global --add safe.directory "$PWD"
           # FOUR binaries ship in the client .deb, so all four are built here: the GTK shell,
-          # punktfunk-client-session (the Vulkan/Skia streamer the shell execs for a connect),
-          # punktfunk-cli (the headless `punktfunk` front-end), and pf-update (the root helper
-          # behind `punktfunk-client --apply-update`). build-client-deb.sh installs all four and
+          # lilynk-client-session (the Vulkan/Skia streamer the shell execs for a connect),
+          # lilynk-cli (the headless `punktfunk` front-end), and ly-update (the root helper
+          # behind `lilynk-client --apply-update`). build-client-deb.sh installs all four and
           # builds only when one is missing, so a restored target must be built first. The HOST
           # is built separately in the build-publish-host job (Ubuntu 24.04 image).
           cargo build --release --locked \
-            -p punktfunk-client-linux -p punktfunk-client-session -p punktfunk-cli -p pf-update
+            -p lilynk-client-linux -p lilynk-client-session -p lilynk-cli -p ly-update
 
       # ── The web console, built ONCE per (web+sdk content, bun) rather than once per job ────────
       # The bundle is a pure function of web/, sdk/ and l10n/messages/. deb.yml, rpm.yml and
@@ -288,11 +288,11 @@ jobs:
         # below is what makes that safe. The bundle in the cache was smoke-booted by the run that
         # produced it, and ci.yml's `web` job still builds and tests the console on every push.
         if: steps.webconsole.outputs.cache-hit != 'true'
-        # Gate the .deb on a real bun boot: the punktfunk-web .deb runs the Nitro `bun` preset
+        # Gate the .deb on a real bun boot: the lilynk-web .deb runs the Nitro `bun` preset
         # (our Bun.serve TLS entry), so prove the build IS a bun bundle and serves /login.
         # No TLS env here, so the custom entry binds plain HTTP — the smoke curl stays simple.
         run: |
-          # bun builds AND runs the console, and build-bun-deb.sh vendors it into punktfunk-bun
+          # bun builds AND runs the console, and build-bun-deb.sh vendors it into lilynk-bun
           # (BUN_BIN, below). Baked into the rust-ci image; the script heals an image that lags the
           # pin in ci/bun.env (docker.yml bootstrap lag).
           sh ci/install-bun.sh
@@ -346,7 +346,7 @@ jobs:
       - name: Assert the shared payload (client .deb)
         run: |
           bash scripts/ci/assert-payload-parity.sh --self-test
-          bash scripts/ci/assert-payload-parity.sh dist/punktfunk-client_*.deb
+          bash scripts/ci/assert-payload-parity.sh dist/lilynk-client_*.deb
 
       # Visibility only. The target cache saves release artifacts (see the cache key note above);
       # a run that suddenly reports thousands of misses is a cache that stopped restoring.
@@ -402,11 +402,11 @@ jobs:
   # The HOST .deb — built on Ubuntu 24.04 (noble), so it installs on Ubuntu 24.04 LTS through
   # 26.04 (see the file header + packaging/debian/README.md). Runs in
   # parallel with build-publish and publishes to the SAME distribution/component; its version step
-  # runs the same `pf-version.sh --format deb`, so host and clients share a version line.
+  # runs the same `ly-version.sh --format deb`, so host and clients share a version line.
   build-publish-host:
     runs-on: ubuntu-24.04
     container:
-      image: 192.168.1.58:5010/punktfunk-rust-ci-noble:latest
+      image: 192.168.1.58:5010/lilynk-rust-ci-noble:latest
     timeout-minutes: 90
     env:
       # ⚠ Job-scoped — see build-publish above and ci.yml's `rust` job.
@@ -423,7 +423,7 @@ jobs:
       - name: Version + channel
         run: |
           git config --global --add safe.directory "$PWD"
-          eval "$(bash scripts/ci/pf-version.sh --format deb)"   # -> PF_VERSION, PF_CHANNEL
+          eval "$(bash scripts/ci/ly-version.sh --format deb)"   # -> PF_VERSION, PF_CHANNEL
           echo "VERSION=$PF_VERSION" >> "$GITHUB_ENV"
           echo "DISTRIBUTION=$PF_CHANNEL" >> "$GITHUB_ENV"
           echo "host package version $PF_VERSION -> apt distribution '$PF_CHANNEL'"
@@ -474,22 +474,22 @@ jobs:
           # dep, so this image needs no libcuda stub) + vulkan-encode (raw VK_KHR_video_encode_h265
           # on AMD/Intel, pure ash).
           #
-          # punktfunk-tray is deliberately NOT in this invocation — build-deb.sh builds it separately,
+          # lilynk-tray is deliberately NOT in this invocation — build-deb.sh builds it separately,
           # and that split is load-bearing (see the identical note in the RPM spec / Arch PKGBUILD):
           # cargo unifies features across one build, so co-building the tray with the host pulls the
           # host's ashpd -> zbus/tokio onto the tray's shared zbus and the tray panics at every launch
           # with "there is no reactor running, must be called from the context of a Tokio 1.x runtime".
           #
-          # punktfunk-encode-worker IS in this invocation: it is the capability-carrying PyroWave
+          # lilynk-encode-worker IS in this invocation: it is the capability-carrying PyroWave
           # encode worker that ships next to the host in /usr/bin, and build-deb.sh only builds it
           # if the artifact is missing — building it here keeps it on the same sccache pass as the
           # host. Unlike the tray it shares the host's dependency graph by design, so feature
           # unification here is harmless.
           #
-          # punktfunk-seats is the seat supervisor's binary. punktfunk-host already links its
-          # library and pf-inject, so this adds no feature unification, only the one executable.
-          cargo build --release --locked --features punktfunk-host/nvenc,punktfunk-host/vulkan-encode \
-            -p punktfunk-host -p punktfunk-encode-worker -p punktfunk-seats
+          # lilynk-seats is the seat supervisor's binary. lilynk-host already links its
+          # library and ly-inject, so this adds no feature unification, only the one executable.
+          cargo build --release --locked --features lilynk-host/nvenc,lilynk-host/vulkan-encode \
+            -p lilynk-host -p lilynk-encode-worker -p lilynk-seats
 
       - name: Build host .deb
         run: |
@@ -511,13 +511,13 @@ jobs:
       - name: Assert the capability matrix (host .deb)
         run: |
           bash scripts/ci/assert-cap-matrix.sh --self-test
-          bash scripts/ci/assert-cap-matrix.sh dist/punktfunk-host_*.deb
+          bash scripts/ci/assert-cap-matrix.sh dist/lilynk-host_*.deb
 
       # Every path packaging/linux/payload.txt names for the host and seats, read out of the built .debs.
       - name: Assert the shared payload (host and seats .debs)
         run: |
           bash scripts/ci/assert-payload-parity.sh --self-test
-          bash scripts/ci/assert-payload-parity.sh dist/punktfunk-host_*.deb dist/punktfunk-seats_*.deb
+          bash scripts/ci/assert-payload-parity.sh dist/lilynk-host_*.deb dist/lilynk-seats_*.deb
 
       - name: Publish to the Gitea apt registry
         env:
@@ -555,7 +555,7 @@ jobs:
           key: cargo-target-noble-release-v1-${{ env.rustc }}-${{ hashFiles('Cargo.lock') }}
 
   # ---------------------------------------------------------------------------------------------
-  # `punktfunk-gamescope` for apt — the patched build that gives a gamescope session HDR, a cursor,
+  # `lilynk-gamescope` for apt — the patched build that gives a gamescope session HDR, a cursor,
   # and the client's real refresh rate instead of a hardcoded 60 Hz. Same reasoning as the RPM leg
   # in rpm.yml: without a package, a Debian/Ubuntu box has no route to it except compiling by hand.
   #
@@ -566,7 +566,7 @@ jobs:
   build-publish-gamescope:
     runs-on: ubuntu-24.04
     container:
-      image: 192.168.1.58:5010/punktfunk-gamescope-trixie:latest
+      image: 192.168.1.58:5010/lilynk-gamescope-trixie:latest
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -577,7 +577,7 @@ jobs:
       - name: Channel
         run: |
           git config --global --add safe.directory "$PWD"
-          eval "$(bash scripts/ci/pf-version.sh)"   # -> PF_CHANNEL
+          eval "$(bash scripts/ci/ly-version.sh)"   # -> PF_CHANNEL
           echo "DISTRIBUTION=$PF_CHANNEL" >> "$GITHUB_ENV"
           echo "gamescope -> apt distribution '$PF_CHANNEL'"
 
@@ -588,7 +588,7 @@ jobs:
         id: gamescope
         with:
           path: gs-cache
-          key: punktfunk-gamescope-trixie-${{ hashFiles('packaging/gamescope/**') }}
+          key: lilynk-gamescope-trixie-${{ hashFiles('packaging/gamescope/**') }}
 
       # NOT best-effort: every dependency comes from the image or a pinned wrap, so a failure here
       # is a real regression in the tree or the pin.
@@ -606,7 +606,7 @@ jobs:
           # Baked into the image; a no-op once docker.yml republishes it (bootstrap lag).
           apt-get update
           apt-get install -y --no-install-recommends libeis-dev bison libexpat1-dev
-          bash packaging/gamescope/build-punktfunk-gamescope.sh \
+          bash packaging/gamescope/build-lilynk-gamescope.sh \
             --destdir "$PWD/gs-stage" --prefix /usr --jobs "$(nproc)" \
             --extra-fallback libdisplay-info
           # The WHOLE staged tree, not just the binary: it also carries the Vulkan WSI layer built
@@ -617,14 +617,14 @@ jobs:
       # static-libstdc++ trick and the vendored wlroots actually produced a working compositor.
       - name: Build the .deb
         run: |
-          gs-cache/usr/bin/punktfunk-gamescope --version
+          gs-cache/usr/bin/lilynk-gamescope --version
           bash packaging/debian/build-gamescope-deb.sh --stage gs-cache
 
       - name: Publish to the Gitea apt registry
         env:
           TOKEN: ${{ secrets.REGISTRY_TOKEN }}
         run: |
-          for DEB in dist/punktfunk-gamescope_*.deb; do
+          for DEB in dist/lilynk-gamescope_*.deb; do
             echo "uploading $DEB"
             NAME=$(dpkg-deb -f "$DEB" Package)
             VER=$(dpkg-deb -f "$DEB" Version)
@@ -643,13 +643,13 @@ jobs:
         run: |
           . scripts/ci/gitea-release.sh
           RID=$(ensure_release "$GITHUB_REF_NAME" "$GITHUB_REF_NAME" auto)
-          for DEB in dist/punktfunk-gamescope_*.deb; do
+          for DEB in dist/lilynk-gamescope_*.deb; do
             upsert_asset "$RID" "$DEB"
           done
 
   # ---------------------------------------------------------------------------------------------
   # The aarch64 CLIENT .deb. Cross-compiled on the ordinary amd64 runner in the
-  # punktfunk-rust-ci-arm64cross image (the rust-ci toolchain + an arm64 multiarch sysroot — see
+  # lilynk-rust-ci-arm64cross image (the rust-ci toolchain + an arm64 multiarch sysroot — see
   # ci/rust-ci-arm64cross.Dockerfile); there is no arm64 runner in the fleet and none is needed.
   # Client only, by decision: the Linux host encodes with NVENC/QSV/AMF, all x86.
   # Publishes to the same distribution/component as the amd64 jobs — the apt registry keys pool
@@ -657,7 +657,7 @@ jobs:
   build-publish-client-arm64:
     runs-on: ubuntu-24.04
     container:
-      image: 192.168.1.58:5010/punktfunk-rust-ci-arm64cross:latest
+      image: 192.168.1.58:5010/lilynk-rust-ci-arm64cross:latest
     timeout-minutes: 90
     env:
       SKIA_BINARIES_URL: file:///opt/skia-binaries/skia-binaries-{key}.tar.gz
@@ -673,10 +673,10 @@ jobs:
       - name: sccache (no-op once the image bakes it)
         run: sh scripts/ci/ensure-sccache.sh
 
-      # pf-version.sh is deterministic per commit, so the arm64 package shares the amd64 version line.
+      # ly-version.sh is deterministic per commit, so the arm64 package shares the amd64 version line.
       - name: Version + channel
         run: |
-          eval "$(bash scripts/ci/pf-version.sh --format deb)"   # -> PF_VERSION, PF_CHANNEL
+          eval "$(bash scripts/ci/ly-version.sh --format deb)"   # -> PF_VERSION, PF_CHANNEL
           echo "VERSION=$PF_VERSION" >> "$GITHUB_ENV"
           echo "DISTRIBUTION=$PF_CHANNEL" >> "$GITHUB_ENV"
           echo "package version $PF_VERSION -> apt distribution '$PF_CHANNEL' (arm64)"
@@ -727,15 +727,15 @@ jobs:
           # The restored target holds the binaries the cache was saved with, and the packer
           # ships any binary it finds. Build first, as build-publish does.
           cargo build --release --locked --target aarch64-unknown-linux-gnu \
-            -p punktfunk-client-linux -p punktfunk-client-session -p punktfunk-cli -p pf-update
+            -p lilynk-client-linux -p lilynk-client-session -p lilynk-cli -p ly-update
           ARCH=arm64 TARGET=aarch64-unknown-linux-gnu \
             bash packaging/debian/build-client-deb.sh
           # Fail here rather than shipping an amd64 binary under an arm64 package name.
-          readelf -h target/aarch64-unknown-linux-gnu/release/punktfunk-session \
+          readelf -h target/aarch64-unknown-linux-gnu/release/lilynk-session \
             | grep -q AArch64 || { echo "ERROR: session binary is not AArch64"; exit 1; }
           # The update check compares the version the shell carries; it must be this run's.
-          grep -qaF "$VERSION" target/aarch64-unknown-linux-gnu/release/punktfunk-client \
-            || { echo "ERROR: punktfunk-client does not carry version $VERSION"; exit 1; }
+          grep -qaF "$VERSION" target/aarch64-unknown-linux-gnu/release/lilynk-client \
+            || { echo "ERROR: lilynk-client does not carry version $VERSION"; exit 1; }
 
       - name: sccache stats (visibility only)
         if: always()
@@ -799,14 +799,14 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      # Recomputes the SAME version string the builder jobs stamped — pf-version.sh is
+      # Recomputes the SAME version string the builder jobs stamped — ly-version.sh is
       # deterministic per commit and GITHUB_RUN_NUMBER is shared across a run's jobs — so the check
       # below can insist the registry is serving THIS run's build. Without that, a smoke job that
       # beats the index regeneration installs the previous build, passes, and proves nothing.
       - name: Channel + expected version
         run: |
           git config --global --add safe.directory "$PWD"
-          eval "$(bash scripts/ci/pf-version.sh --format deb)"   # -> PF_VERSION, PF_CHANNEL
+          eval "$(bash scripts/ci/ly-version.sh --format deb)"   # -> PF_VERSION, PF_CHANNEL
           echo "DISTRIBUTION=$PF_CHANNEL" >> "$GITHUB_ENV"
           echo "EXPECT_VERSION=$PF_VERSION" >> "$GITHUB_ENV"
           echo "expecting $PF_VERSION in apt distribution '$PF_CHANNEL'"

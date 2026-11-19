@@ -5,7 +5,7 @@
 
 use gtk::prelude::*;
 use gtk::{gdk, gio, glib};
-use pf_client_core::library::{ArtJob, ArtPool, GameEntry, HostApi};
+use ly_client_core::library::{ArtJob, ArtPool, GameEntry, HostApi};
 use std::cell::RefCell;
 use std::collections::{HashMap, HashSet};
 use std::rc::Rc;

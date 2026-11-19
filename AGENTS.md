@@ -75,7 +75,7 @@ English: `docs/l10n.md`. Wording rules: `docs/writing.md` §4d.
 - Text is never identity. Do not compare, parse or key a map on a message; give it an id.
 - One message is one whole sentence. A count is a plural message. No button, key chord or device
   in prose.
-- `cargo run -p pf-l10n -- check` and `python3 scripts/l10n-census.py . --check` stay green. The
+- `cargo run -p ly-l10n -- check` and `python3 scripts/l10n-census.py . --check` stay green. The
   census only falls: after moving text, run it with `--update`.
 
 ## Identifiers
@@ -118,16 +118,16 @@ workspace. See `docs/agents/domain.md`.
 
 ## Scroll verification
 
-- `cargo test -p punktfunk-core --features quic scroll` checks wire and compatibility.
-- `cargo test -p pf-inject --lib scroll` checks the production host mapping plans on any OS.
-- `cargo test -p pf-presenter --no-default-features` runs pure touch and scroll tests on macOS;
+- `cargo test -p lilynk-core --features quic scroll` checks wire and compatibility.
+- `cargo test -p ly-inject --lib scroll` checks the production host mapping plans on any OS.
+- `cargo test -p ly-presenter --no-default-features` runs pure touch and scroll tests on macOS;
   it does not compile the Linux/Windows presenter or injector implementations.
 - `swift test --package-path clients/apple --filter ScrollCaptureTests` needs an ABI-matched,
   signed XCFramework. Its packaged header must define `PUNKTFUNK_FEATURE_QUIC`.
 - `scroll-probe` (`tools/scroll-probe`), run in a Linux host's session, prints what an app
   receives from injected scroll: source, distance, value120, stops, cadence. `--listen N` only
   listens, for a real client scrolling over its window; the host's
-  `RUST_LOG=pf_inject::scroll=trace` logs the same scroll as it came off the wire.
+  `RUST_LOG=ly_inject::scroll=trace` logs the same scroll as it came off the wire.
 - `scroll-probe --inject-at WxH` opens no window and injects at that desktop's centre, onto a
   real app. `tools/scroll-probe/gtk-scroll-logger.py <log>` is that app for GTK 4: it logs each
   scroll event, each kinetic `decelerate`, and the scrolled window's position per frame. A
@@ -138,18 +138,18 @@ workspace. See `docs/agents/domain.md`.
 
 ## Console verification
 
-- `cargo test -p pf-console-ui` runs the console's tests on macOS; CPU raster, no GPU.
-- `PF_CONSOLE_DUMP=<dir> cargo test -p pf-console-ui --lib -- --ignored dump` writes every
+- `cargo test -p ly-console-ui` runs the console's tests on macOS; CPU raster, no GPU.
+- `PF_CONSOLE_DUMP=<dir> cargo test -p ly-console-ui --lib -- --ignored dump` writes every
   screen as a PNG.
 
 ## Vulkan verification
 
-- `sh scripts/vk-validation-tests.sh` runs the ignored GPU tests of pf-zerocopy, pf-encode,
-  pf-vkdecode and the presenter's CSC under the Khronos validation layer, on a box with a device
+- `sh scripts/vk-validation-tests.sh` runs the ignored GPU tests of ly-zerocopy, ly-encode,
+  ly-vkdecode and the presenter's CSC under the Khronos validation layer, on a box with a device
   and the layer installed. It exits 1 on any validation error and prints each under its test. A
   test that fails for the driver's own reasons does not change the exit code: compare those with
   `main`.
 - `PUNKTFUNK_VKDECODE_ARRANGEMENT=sampler` puts any card on the route a device with no plane
-  views takes (Pascal on Linux, which we do not own). The script runs pf-vkdecode's tests that way.
+  views takes (Pascal on Linux, which we do not own). The script runs ly-vkdecode's tests that way.
 - On NVIDIA an H.264 decode faults inside the driver under the layer (615.78), and that ends its
   test binary. Run those tests bare, and the layer with `--skip h264`.

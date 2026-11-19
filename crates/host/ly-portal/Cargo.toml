@@ -1,0 +1,25 @@
+# The one process-lifetime tokio runtime every xdg-desktop-portal call runs on, plus the bounded
+# handshake steps and the ScreenCast cursor negotiation, in a leaf so the libei injector (ly-inject)
+# and the virtual displays share them with capture without compiling the PipeWire capture stack.
+# Linux-only except the pure cursor ladder (`cursor_mode`), which compiles everywhere.
+[package]
+name = "ly-portal"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license = "GPL-3.0-or-later"
+description = "punktfunk host: the never-dropped tokio runtime every xdg-desktop-portal call runs on, and its bounded handshake steps."
+publish = false
+
+[target.'cfg(target_os = "linux")'.dependencies]
+# `enable_all` turns on the IO and time drivers the zbus reader and the handshake timeouts need.
+tokio = { version = "1", features = ["rt", "rt-multi-thread", "net", "time"] }
+# `screencast` for the cursor negotiation; capture, ly-inject and ly-vdisplay already enable it.
+ashpd = { version = "0.13", features = ["screencast"] }
+anyhow = "1"
+tracing = "0.1"
+# `PUNKTFUNK_PORTAL_CURSOR_MODE`, read by the cursor negotiation.
+ly-host-config = { path = "../ly-host-config" }
+
+[lints]
+workspace = true

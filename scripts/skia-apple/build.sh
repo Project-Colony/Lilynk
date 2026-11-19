@@ -1,6 +1,6 @@
 #!/bin/bash
 # Build the Apple Skia archives rust-skia does not publish (tvOS and visionOS, device and arm64
-# simulator), for the skia-bindings version pf-console-ui pins. Its build script knows visionOS
+# simulator), for the skia-bindings version ly-console-ui pins. Its build script knows visionOS
 # but not tvOS; the patch beside this adds tvOS. Upload the archives to
 # git.unom.io/unom/skia-binaries under the same tag, then pin their SHA-256s in
 # scripts/build-xcframework.sh.

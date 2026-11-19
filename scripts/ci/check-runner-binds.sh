@@ -9,9 +9,9 @@
 set -eu
 cd "$(dirname "$0")/../.."
 
-UNIT=scripts/punktfunk-scripting.service
-SEAT=scripts/punktfunk-scripting-seat@.service
-AA=packaging/linux/apparmor/punktfunk-scripting
+UNIT=scripts/lilynk-scripting.service
+SEAT=scripts/lilynk-scripting-seat@.service
+AA=packaging/linux/apparmor/lilynk-scripting
 
 names=$(grep -rhoE 'path\.join\((configDir\(\)|configDir|config), "[^"]+"' sdk/src |
 	sed -E 's/.*"([^"]+)"/\1/' | sort -u)
@@ -31,7 +31,7 @@ for n in $names; do
 		echo "$AA: the runner reads \$config/$n and its profile never allows it"
 		rc=1
 	}
-	[ "$n" = scripts ] || grep '^ *priority=1 .*punktfunk-seats' "$AA" | grep -qE "[/{,]${n}[,}/ ]" || {
+	[ "$n" = scripts ] || grep '^ *priority=1 .*lilynk-seats' "$AA" | grep -qE "[/{,]${n}[,}/ ]" || {
 		echo "$AA: the seat's runner reads \$config/$n and its profile never allows it"
 		rc=1
 	}

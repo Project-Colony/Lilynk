@@ -17,7 +17,7 @@ to a channel is [Release channels](/docs/channels).
 | Apple | TestFlight | TestFlight; the App Store after you submit it |
 | Host update check | Canary manifest, after each Windows host canary | Stable manifest, published by `announce` |
 
-`scripts/ci/pf-version.sh` (and its PowerShell twin `pf-version.ps1`) derives every version, so
+`scripts/ci/ly-version.sh` (and its PowerShell twin `ly-version.ps1`) derives every version, so
 nothing is bumped by hand to move canary: cutting `v0.40.0` moves the next canary to `0.41.0`.
 Where a store needs a numeric version (MSIX, the App Store), a `-rc` or `+meta` suffix is dropped.
 The Linux packages hand the version to the build as `PUNKTFUNK_BUILD_VERSION`, which `--version`
@@ -28,7 +28,7 @@ reports; the Windows packer stamps it into the finished binary.
 1. **Prepare the cut on a branch** (`release/vX.Y.Z`). One commit, `chore(release): cut X.Y.Z`,
    carries:
    - the `version` in the root `Cargo.toml`, with all four lockfiles refreshed: the root,
-     `packaging/windows/drivers`, `crates/host/pf-seat-keeper` and `fuzz`;
+     `packaging/windows/drivers`, `crates/host/ly-seat-keeper` and `fuzz`;
    - both OpenAPI copies, whose `info.version` follows the crate version;
    - `docs/releases/vX.Y.Z.md`, `docs/releases/whatsnew/vX.Y.Z.txt`, the `CHANGELOG.md` card and a
      `<release>` entry in `packaging/flatpak/io.unom.punktfunk.metainfo.xml`
@@ -39,8 +39,8 @@ reports; the Windows packer stamps it into the finished binary.
    for d in packaging/windows/drivers fuzz; do
      cargo metadata --offline --format-version 1 --manifest-path "$d/Cargo.toml" >/dev/null
    done
-   cargo update --manifest-path crates/host/pf-seat-keeper/Cargo.toml -p pf-seats -p pf-paths
-   cargo run -p punktfunk-host --locked -- openapi > api/openapi.json
+   cargo update --manifest-path crates/host/ly-seat-keeper/Cargo.toml -p ly-seats -p ly-paths
+   cargo run -p lilynk-host --locked -- openapi > api/openapi.json
    cp api/openapi.json docs-site/public/openapi.json
    ```
 

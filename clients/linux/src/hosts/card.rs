@@ -7,7 +7,7 @@ use super::model::{CardKind, CardModel, Preset, Status};
 use super::{Act, HostRef, HostsMsg};
 use adw::prelude::*;
 use gtk::{gdk, gio, glib};
-use pf_l10n::{client, desktop};
+use ly_l10n::{client, desktop};
 use std::cell::RefCell;
 use std::collections::HashSet;
 
@@ -379,7 +379,7 @@ fn attach_menu(child: &gtk::FlowBoxChild, anchor: &gtk::Box, menu: &gio::Menu) {
     child.add_controller(keys);
 }
 
-/// The OS-icon tokens this shell ships symbolic art for (`data/icons/.../pf-os-<t>-symbolic.svg`,
+/// The OS-icon tokens this shell ships symbolic art for (`data/icons/.../ly-os-<t>-symbolic.svg`,
 /// embedded via gresource): the families a chain can land on, plus the distro leaves that earn
 /// their own mark because "a Bazzite box" and "a Fedora box" are different machines to the person
 /// reading the card. Chains walk most-specific-first, so a distro without a mark of its own still
@@ -395,7 +395,7 @@ pub fn os_icon_name(chain: &str) -> Option<String> {
     let token = crate::os::os_icon_tokens(chain)
         .into_iter()
         .find(|t| OS_ICON_TOKENS.contains(&t.as_str()))?;
-    Some(format!("pf-os-{token}-symbolic"))
+    Some(format!("ly-os-{token}-symbolic"))
 }
 
 /// A preset chip in that preset's colour. `accent` is the field the catalog schema reserved

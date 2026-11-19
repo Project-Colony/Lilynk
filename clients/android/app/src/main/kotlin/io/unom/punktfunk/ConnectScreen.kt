@@ -39,7 +39,7 @@ import kotlinx.coroutines.withContext
 
 /**
  * How long a host's advertised actions stay fresh before this screen asks again — the desktop's
- * `pf_client_core::host_actions::TTL`. Long on purpose: what it governs (whether this device
+ * `ly_client_core::host_actions::TTL`. Long on purpose: what it governs (whether this device
  * holds the Host-power grant, whether the box can suspend) changes when an operator edits
  * access, not minute to minute, and every refresh is a TLS handshake against an idle host.
  */

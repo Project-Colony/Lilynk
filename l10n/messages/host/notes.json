@@ -42,7 +42,7 @@
 	"apierr_credential_wrong_windows": "{account} is an account name.",
 	"apierr_door_deck_stale": "The command and \"Konsole\" (an app name) are literal: keep them.",
 	"apierr_door_missing_nix": "The option is literal: keep it.",
-	"apierr_door_missing_package": "Why the door can't turn on. {command} is a literal install command such as \"sudo apt install punktfunk-seats\".",
+	"apierr_door_missing_package": "Why the door can't turn on. {command} is a literal install command such as \"sudo apt install lilynk-seats\".",
 	"apierr_door_missing_package_rpm_ostree": "The command after the colon is literal: keep it.",
 	"apierr_door_missing_steamos": "The command and \"Konsole\" (an app name) are literal: keep them.",
 	"apierr_door_missing_sysext": "The command after the colon is literal: keep it.",

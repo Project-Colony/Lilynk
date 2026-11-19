@@ -6,8 +6,8 @@
 //! caption 12 in the secondary text colour.
 
 use super::lucide;
-use pf_fluent::{Palette, Token};
-use pf_l10n::common;
+use ly_fluent::{Palette, Token};
+use ly_l10n::common;
 use windows_reactor::*;
 
 pub(crate) fn uniform(v: f64) -> Thickness {
@@ -532,7 +532,7 @@ pub(crate) fn profile_face(
     fill: Option<Color>,
 ) -> Border {
     let Some(picture) = picture else {
-        return monogram(pal, &pf_client_core::profiles::initials(name), size, fill);
+        return monogram(pal, &ly_client_core::profiles::initials(name), size, fill);
     };
     let image = Image::new()
         .source_data(picture)

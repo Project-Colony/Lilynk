@@ -18,7 +18,7 @@ export const PLANE_SETTINGS = [
 export const touchesPlane = (patch: object): boolean =>
 	PLANE_SETTINGS.some((id) => id in patch);
 
-/** `GRANT_ALL` in `punktfunk-core` `quic/access.rs`; an absent stored mask means it. */
+/** `GRANT_ALL` in `lilynk-core` `quic/access.rs`; an absent stored mask means it. */
 const GRANT_ALL = 0x1ff;
 
 /** A paired device's access as the host stores it. */

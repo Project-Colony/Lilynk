@@ -1524,7 +1524,7 @@ public final class Stage2Pipeline {
     private let frameHDR = FrameHDRReporter()
     private var token = StopFlag()
     /// Live host↔client clock offset, read at each record and never cached: the core re-syncs it
-    /// mid-stream (punktfunk-core's `CLOCK_RESYNC_INTERVAL`, plus step detection), as a host's
+    /// mid-stream (lilynk-core's `CLOCK_RESYNC_INTERVAL`, plus step detection), as a host's
     /// wall clock can step. Each call is an atomic load behind the FFI.
     private var clockOffset: () -> Int64 = { 0 }
     /// Signalled when the pump thread exits, so `stop()` can join it (bounded) before `decoder.reset()`
@@ -1732,7 +1732,7 @@ public final class Stage2Pipeline {
                 decoder: decoder,
                 onFrame: onFrame, onSessionEnd: onSessionEnd, onDecodedSize: onDecodedSize,
                 onHdrMeta: { presenter.setHdrMeta($0) }, screen: screen)
-        thread.name = "punktfunk-stage2-pump"
+        thread.name = "lilynk-stage2-pump"
         thread.qualityOfService = .userInteractive
         pumpJoinable = true
         thread.start()
@@ -1900,7 +1900,7 @@ public final class Stage2Pipeline {
                 debugStats.flushIfDue(ring: ring, gate: gate)
             } }
         }
-        renderThread.name = "punktfunk-stage2-render"
+        renderThread.name = "lilynk-stage2-render"
         renderThread.qualityOfService = .userInteractive
         renderJoinable = true
         renderThread.start()
@@ -1987,7 +1987,7 @@ public final class Stage2Pipeline {
                 link.invalidate()
                 gone.signal()
             }
-            linkThread.name = "punktfunk-stage4-link"
+            linkThread.name = "lilynk-stage4-link"
             linkThread.qualityOfService = .userInteractive
             linkThread.start()
             return gone
@@ -2277,7 +2277,7 @@ public final class Stage2Pipeline {
             _ = linkGone?.wait(timeout: .now() + 0.2)
             presenter.flushParked()
         }
-        renderThread.name = "punktfunk-stage2-render"
+        renderThread.name = "lilynk-stage2-render"
         renderThread.qualityOfService = .userInteractive
         renderJoinable = true
         renderThread.start()

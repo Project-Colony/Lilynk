@@ -16,7 +16,7 @@
 // `pf://` parses as an alias so a hand-typed or legacy link still works, but nothing ever *emits*
 // or registers it (design/client-deep-links.md §2).
 //
-// This is a port of `crates/client/pf-client-core/src/deeplink.rs`, and Rust, Kotlin and Swift are
+// This is a port of `crates/client/ly-client-core/src/deeplink.rs`, and Rust, Kotlin and Swift are
 // held together by `clients/shared/deeplink-vectors.json` — cases for every refusal code, run
 // verbatim by all three test suites. Change one parser and the others' suites fail, which is the
 // point: three parsers that drift are three different security postures.

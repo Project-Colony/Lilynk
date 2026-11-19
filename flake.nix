@@ -8,7 +8,7 @@
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # The bun packages' node_modules (punktfunk-web, punktfunk-scripting): one fetchurl per package,
+    # The bun packages' node_modules (lilynk-web, lilynk-scripting): one fetchurl per package,
     # straight out of `bun.lock`'s integrity hashes — no hand-maintained aggregate deps hash to bump.
     # PIN THE TAG. `bun.nix` has no schema stability guarantee across bun2nix versions, so this ref
     # must move together with the `bun2nix` devDependency in web/package.json + sdk/package.json
@@ -87,11 +87,11 @@
           # Kept OUT of packages.nix (a Rust/crane file) — it is a C++ meson override with a
           # disjoint dependency set — and out of `checks` below, because it rebuilds gamescope
           # from source and would make `nix flake check` an hour long.
-          punktfunk-gamescope = pkgs.callPackage ./packaging/nix/gamescope.nix {
+          lilynk-gamescope = pkgs.callPackage ./packaging/nix/gamescope.nix {
             # The pinned recipe on `pkgs`' libraries: its NixOS patches match our gamescope source.
             gamescope = pkgs.callPackage "${nixpkgs}/pkgs/by-name/ga/gamescope/package.nix" { };
             patchDir = ./packaging/gamescope/patches;
-            # Shared verbatim with build-punktfunk-gamescope.sh, which is the whole reason it is a
+            # Shared verbatim with build-lilynk-gamescope.sh, which is the whole reason it is a
             # file: the FHS packages and the Nix store must rename the WSI layer identically, or
             # the host looks for a layer name that only one of them produces.
             manifestRewriter = ./packaging/gamescope/rewrite-wsi-layer-manifest.py;
@@ -112,45 +112,45 @@
         in
         {
           inherit (pf)
-            punktfunk-host
-            punktfunk-client
-            punktfunk-web
-            punktfunk-scripting
-            punktfunk-seats
-            punktfunk-tray
-            punktfunk-gamescope
+            lilynk-host
+            lilynk-client
+            lilynk-web
+            lilynk-scripting
+            lilynk-seats
+            lilynk-tray
+            lilynk-gamescope
             ;
-          default = pf.punktfunk-host;
+          default = pf.lilynk-host;
         }
       );
 
-      # `nix run .#punktfunk-host -- serve` / `nix run .#punktfunk-client`.
+      # `nix run .#lilynk-host -- serve` / `nix run .#lilynk-client`.
       apps = forAllSystems (
         system:
         let
           pf = packagesFor system;
         in
         {
-          punktfunk-host = {
+          lilynk-host = {
             type = "app";
-            program = "${pf.punktfunk-host}/bin/punktfunk-host";
+            program = "${pf.lilynk-host}/bin/lilynk-host";
           };
-          punktfunk-client = {
+          lilynk-client = {
             type = "app";
-            program = "${pf.punktfunk-client}/bin/punktfunk-client";
+            program = "${pf.lilynk-client}/bin/lilynk-client";
           };
-          # `nix run .#punktfunk-web` — the console (auto-wire the mgmt token / cert via env or the
+          # `nix run .#lilynk-web` — the console (auto-wire the mgmt token / cert via env or the
           # NixOS module; see packaging/nix/README.md).
-          punktfunk-web = {
+          lilynk-web = {
             type = "app";
-            program = "${pf.punktfunk-web}/bin/punktfunk-web-server";
+            program = "${pf.lilynk-web}/bin/lilynk-web-server";
           };
-          # `nix run .#punktfunk-scripting -- --list` — the plugin/script runner.
-          punktfunk-scripting = {
+          # `nix run .#lilynk-scripting -- --list` — the plugin/script runner.
+          lilynk-scripting = {
             type = "app";
-            program = "${pf.punktfunk-scripting}/bin/punktfunk-scripting";
+            program = "${pf.lilynk-scripting}/bin/lilynk-scripting";
           };
-          default = self.apps.${system}.punktfunk-host;
+          default = self.apps.${system}.lilynk-host;
         }
       );
 
@@ -163,11 +163,11 @@
         in
         {
           inherit (pf)
-            punktfunk-host
-            punktfunk-client
-            punktfunk-web
-            punktfunk-scripting
-            punktfunk-seats
+            lilynk-host
+            lilynk-client
+            lilynk-web
+            lilynk-scripting
+            lilynk-seats
             ;
 
           # The NixOS module, actually evaluated. `nix flake check` does NOT do this for
@@ -241,9 +241,9 @@
       formatter = forAllSystems (system: (pkgsFor system).nixfmt-rfc-style);
 
       # NixOS integration — see packaging/nix/nixos-module.nix and packaging/nix/README.md.
-      #   imports = [ punktfunk.nixosModules.default ];
-      #   services.punktfunk.host.enable = true;
+      #   imports = [ lilynk.nixosModules.default ];
+      #   services.lilynk.host.enable = true;
       nixosModules.default = import ./packaging/nix/nixos-module.nix self;
-      nixosModules.punktfunk = self.nixosModules.default;
+      nixosModules.lilynk = self.nixosModules.default;
     };
 }

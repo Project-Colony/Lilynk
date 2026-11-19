@@ -73,8 +73,8 @@ web console, a settings form (`config`) or a tab on each library entry's page (`
 
 [Writing plugins](https://docs.punktfunk.unom.io/docs/developers/writing-plugins) covers the
 manifest, the sandbox, a complete minimal plugin, testing on a host and publishing.
-[`punktfunk-plugin-steam`](https://git.unom.io/unom/punktfunk-plugin-steam) and
-[`punktfunk-plugin-rom-manager`](https://git.unom.io/unom/punktfunk-plugin-rom-manager) are real
+[`lilynk-plugin-steam`](https://git.unom.io/unom/punktfunk-plugin-steam) and
+[`lilynk-plugin-rom-manager`](https://git.unom.io/unom/punktfunk-plugin-rom-manager) are real
 plugins to copy.
 
 ## Development

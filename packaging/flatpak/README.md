@@ -1,18 +1,18 @@
 # punktfunk client — Flatpak (Steam Deck / SteamOS, and any flatpak distro)
 
-The native Linux **client** — the shell (crate `punktfunk-client-linux`, binary
-`punktfunk-client`) plus the Vulkan session binary it execs for streaming (crate
-`punktfunk-client-session`, binary `punktfunk-session`) — is
+The native Linux **client** — the shell (crate `lilynk-client-linux`, binary
+`lilynk-client`) plus the Vulkan session binary it execs for streaming (crate
+`lilynk-client-session`, binary `lilynk-session`) — is
 published two ways by CI (`.gitea/workflows/flatpak.yml`), on every push to `main` (a rolling
 `<next-minor>-ciN.g<sha>` build, base derived from the latest stable tag by
-`scripts/ci/pf-version.sh`) and on `v*` tags (a clean `X.Y.Z`):
+`scripts/ci/ly-version.sh`) and on `v*` tags (a clean `X.Y.Z`):
 
 1. **Hosted OSTree repo at `https://flatpak.unom.io`** (recommended) — a GPG-signed Flatpak
    remote served by a static Caddy container on unom-1, so users **install once and then
    `flatpak update`**. Shared unom-wide repo (remote name `unom`), reusable by other unom apps
    under the same signing key. See "Install (recommended)" below.
 2. **Single-file `.flatpak` bundle** in **Gitea's generic package registry** (`unom` org) — the
-   no-remote fallback the **Decky plugin** consumes (stable `latest/punktfunk-client.flatpak`
+   no-remote fallback the **Decky plugin** consumes (stable `latest/lilynk-client.flatpak`
    URL) and the offline/manual path. On tags it's also attached to the Gitea release.
 
 > The **host** is NOT a flatpak (it needs unsandboxed `/dev/uinput` + zero-copy NVENC — see
@@ -21,7 +21,7 @@ published two ways by CI (`.gitea/workflows/flatpak.yml`), on every push to `mai
 ## Why flatpak for the Steam Deck
 
 SteamOS `/usr` is read-only and image-based, and the system is **missing `libadwaita` and
-`libSDL3`** — so a bare `punktfunk-client` binary dropped into `~/.local/bin` won't run. Flatpak
+`libSDL3`** — so a bare `lilynk-client` binary dropped into `~/.local/bin` won't run. Flatpak
 is the Deck's native, update-survivable app path (the user already runs Moonlight and chiaki-ng
 as flatpaks), and the bundle carries libadwaita (from `org.gnome.Platform//50`) + a bundled SDL3.
 It carries no FFmpeg: since M10 the client decodes on the user's own GPU drivers (Vulkan Video,
@@ -53,12 +53,12 @@ user-scope, no root):
 flatpak install --user -y flathub org.flatpak.Builder
 
 # build-flatpak.sh auto-detects org.flatpak.Builder, generates cargo-sources.json (or reuses an
-# existing one — see below), builds, and exports dist/punktfunk-client-<version>.flatpak:
+# existing one — see below), builds, and exports dist/lilynk-client-<version>.flatpak:
 bash packaging/flatpak/build-flatpak.sh
 
 # Upload to the generic registry (PAT with write:package):
 curl -fsS --user "enricobuehler:$REGISTRY_TOKEN" \
-  --upload-file dist/punktfunk-client-*.flatpak \
+  --upload-file dist/lilynk-client-*.flatpak \
   "https://git.unom.io/api/packages/unom/generic/punktfunk-client-flatpak/0.0.1-manual/punktfunk-client.flatpak"
 ```
 
@@ -91,7 +91,7 @@ are now expressed properly rather than hardcoded:
 
 ```sh
 ARCH=aarch64 bash packaging/flatpak/build-flatpak.sh
-# -> dist/punktfunk-client-<version>-aarch64.flatpak
+# -> dist/lilynk-client-<version>-aarch64.flatpak
 ```
 
 `ARCH` defaults to this machine's, and the bundle name now carries the architecture so an x86_64
@@ -100,9 +100,9 @@ the build in a sandbox for the target arch, so building aarch64 anywhere but an 
 needs qemu binfmt and is very slow.
 
 CI builds aarch64 as a second leg of `flatpak.yml`, on a runner labelled `linux-arm64`, in the
-image `punktfunk-flatpak-ci-arm64` (a `docker.yml` `builders` row that runs on that runner). Both legs publish
+image `lilynk-flatpak-ci-arm64` (a `docker.yml` `builders` row that runs on that runner). Both legs publish
 into the same OSTree repo, so the `.flatpakref` installs the right arch on its own. The bundle is
-`punktfunk-client-<version>-aarch64.flatpak`, and the alias is `<channel>/punktfunk-client-aarch64.flatpak`.
+`lilynk-client-<version>-aarch64.flatpak`, and the alias is `<channel>/lilynk-client-aarch64.flatpak`.
 The leg is `continue-on-error` and never holds back x86_64.
 
 The runner is a VM on the macOS CI Mac mini (unom/infra `runners/home-runner-arm-1`). It sits on
@@ -130,7 +130,7 @@ FFmpeg's `hwcontext_vulkan.h`, and ash generates its own bindings and dlopens th
 network + `python3`/`aiohttp`/`tomlkit` (`build-flatpak.sh` does this automatically) and, for a
 build host that lacks those (the Deck), rsync the generated file in alongside the manifest.
 
-**Offline Skia:** the session binary's Skia console UI (`pf-console-ui` → `skia-safe`) normally
+**Offline Skia:** the session binary's Skia console UI (`ly-console-ui` → `skia-safe`) normally
 downloads prebuilt `libskia` binaries at build time, which is dead in the offline sandbox — so the
 manifest pins a `skia-binaries-….tar.gz` source and points the build at it with
 `SKIA_BINARIES_URL: file://…`. When bumping the `skia-safe`/`skia-bindings` crate version, update
@@ -183,7 +183,7 @@ client must re-add the remote (the `GPGKey` changed), so rotate rarely.
   produces the repo, so the marginal cost is GPG signing + an rsync + a 10-line static container.
 - **Generic registry bundle (kept as fallback):** one curl to publish, one `flatpak install
   --bundle` to consume; mirrors the deb/rpm curl-upload pattern. No auto-update — this is what the
-  **Decky plugin** pulls (stable `latest/punktfunk-client.flatpak`), plus the offline/manual path.
+  **Decky plugin** pulls (stable `latest/lilynk-client.flatpak`), plus the offline/manual path.
 - **Release attachment:** also done on tags, good for a human-facing download page.
 - **Flathub (blocked):** its [Generative AI policy](https://docs.flathub.org/docs/for-app-authors/requirements)
   bans AI-assisted manifests and AI-opened submissions, so a person writes both, not a copy of this

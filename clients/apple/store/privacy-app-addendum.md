@@ -56,9 +56,9 @@ stating in the policy text anyway, because they are true and pre-empt questions:
 
 ## Text to append — Deutsch
 
-> ## Die Punktfunk-Apps
+> ## Die Lilynk-Apps
 >
-> Dieser Abschnitt betrifft die Punktfunk-Apps für iPhone, iPad, Apple TV, Mac, Windows, Linux und
+> Dieser Abschnitt betrifft die Lilynk-Apps für iPhone, iPad, Apple TV, Mac, Windows, Linux und
 > Android – im Unterschied zu den vorstehenden Abschnitten, die sich auf diese Website beziehen.
 >
 > **Die Apps erheben keine personenbezogenen Daten.** Es gibt keine Benutzerkonten, keine
@@ -92,7 +92,7 @@ stating in the policy text anyway, because they are true and pre-empt questions:
 > Datenschutzbestimmungen des jeweiligen Anbieters. Aggregierte Statistiken, die uns Apple oder
 > Google in ihren Entwicklerkonsolen anzeigen, lassen keinen Rückschluss auf einzelne Personen zu.
 >
-> **Der Host.** Der Punktfunk-Host ist quelloffene Software, die Sie selbst auf Ihrem eigenen
+> **Der Host.** Der Lilynk-Host ist quelloffene Software, die Sie selbst auf Ihrem eigenen
 > Rechner betreiben. Welche Daten dabei anfallen – etwa lokale Protokolldateien –, bleibt
 > vollständig unter Ihrer Kontrolle; wir erhalten davon nichts. Der Quellcode ist unter
 > git.unom.io/unom/punktfunk einsehbar.

@@ -6,8 +6,8 @@ use jni::errors::LogErrorAndDefault;
 use jni::objects::{JIntArray, JObject};
 use jni::sys::{jboolean, jlong};
 use jni::EnvUnowned;
-use punktfunk_core::error::PunktfunkError;
-use punktfunk_core::quic::HOST_CAP_CURSOR;
+use lilynk_core::error::PunktfunkError;
+use lilynk_core::quic::HOST_CAP_CURSOR;
 use std::time::Duration;
 
 use super::{jni_guard, SESSIONS};

@@ -1,6 +1,6 @@
 [package]
-name = "punktfunk-client-windows"
-description = "Native Windows punktfunk/1 client — WinUI 3 (windows-reactor) shell, SDL3 gamepads; streaming runs in the spawned punktfunk-session binary"
+name = "lilynk-client-windows"
+description = "Native Windows punktfunk/1 client — WinUI 3 (windows-reactor) shell, SDL3 gamepads; streaming runs in the spawned lilynk-session binary"
 version.workspace = true
 edition.workspace = true
 # Not workspace-inherited (1.85): windows-reactor at the pinned rev declares rust-version 1.95+
@@ -10,17 +10,17 @@ license.workspace = true
 authors.workspace = true
 repository.workspace = true
 
-# Not `punktfunk-client`: the Linux client builds that bin, and two same-named bins collide in
-# one workspace target dir. pack-msix.ps1 ships this exe as `punktfunk-client.exe`.
+# Not `lilynk-client`: the Linux client builds that bin, and two same-named bins collide in
+# one workspace target dir. pack-msix.ps1 ships this exe as `lilynk-client.exe`.
 [[bin]]
-name = "punktfunk-client-windows"
+name = "lilynk-client-windows"
 path = "src/main.rs"
 
 # The couch/HTPC Start-menu entry. Its own executable because an MSIX <Application> cannot
 # pass arguments to a full-trust exe — see the binary's own docs.
 [[bin]]
-name = "punktfunk-console"
-path = "src/bin/punktfunk-console.rs"
+name = "lilynk-console"
+path = "src/bin/lilynk-console.rs"
 
 # Everything is Windows-gated so `cargo build --workspace` stays green on Linux/macOS (the
 # other native clients live in clients/linux and clients/apple); on other
@@ -29,26 +29,26 @@ path = "src/bin/punktfunk-console.rs"
 [target.'cfg(windows)'.dependencies]
 # The protocol core, linked directly (no C ABI) — same as the GTK Linux client. NativeClient
 # is Sync (mutexed plane receivers), so it drops into a UI app cleanly.
-punktfunk-core = { path = "../../crates/core/punktfunk-core", features = ["quic"] }
+lilynk-core = { path = "../../crates/core/lilynk-core", features = ["quic"] }
 # The shared client service layer: the trust/settings stores (ONE `Settings` struct for the
 # shell and the spawned session binary — src/trust.rs re-exports it) and the game-library
 # data model (fetch + art pipeline) behind the library page.
 #
-# `default-features = false` drops pf-client-core's default `pyrowave`, which would otherwise
+# `default-features = false` drops ly-client-core's default `pyrowave`, which would otherwise
 # build the vendored PyroWave C++ INTO THE SHELL — dead weight here (the shell never decodes;
 # it only offers "pyrowave" as a codec preference string the session binary acts on) and fatal
 # on ARM64, where cl.exe defines no `__ARM_NEON` and Granite's `simd.hpp` stops at
 # `#error "Implement me."`. This does NOT drop PyroWave from the Windows client:
-# decode lives in the spawned punktfunk-session binary, whose own default enables the feature,
-# and cargo's feature unification turns it back on for the shared pf-client-core whenever that
+# decode lives in the spawned lilynk-session binary, whose own default enables the feature,
+# and cargo's feature unification turns it back on for the shared ly-client-core whenever that
 # binary is in the same build (x64). On the ARM64 leg both are built --no-default-features, so
 # nothing enables it and the C++ is never compiled.
-pf-client-core = { path = "../../crates/client/pf-client-core", default-features = false, features = ["desktop"] }
+ly-client-core = { path = "../../crates/client/ly-client-core", default-features = false, features = ["desktop"] }
 # The words, in the OS's language.
-pf-l10n = { path = "../../l10n", features = ["client", "desktop", "host", "os"] }
+ly-l10n = { path = "../../l10n", features = ["client", "desktop", "host", "os"] }
 
 # WinUI 3 UI via windows-reactor (a declarative React-like framework backed by WinUI). The
-# windows-rs revs are the workspace entries' (root Cargo.toml). `wasapi` (via pf-client-core)
+# windows-rs revs are the workspace entries' (root Cargo.toml). `wasapi` (via ly-client-core)
 # still pulls crates.io `windows 0.62`, so several windows-rs copies compile: build time, not
 # correctness.
 # ⛔ No blanket `[patch.crates-io] windows`: this rev uses header-named features (`dxgi`) while
@@ -56,7 +56,7 @@ pf-l10n = { path = "../../l10n", features = ["client", "desktop", "host", "os"] 
 windows-reactor = { workspace = true }
 # The WinUI theme colours and the timer-driven tween reactor does not ship, shared with the
 # installer wizard.
-pf-fluent = { path = "../../crates/core/pf-fluent" }
+ly-fluent = { path = "../../crates/core/ly-fluent" }
 # Win32 / DXGI for the GPU picker and the shell's window plumbing. Features are header-named:
 # one per SDK header (microsoft/windows-rs#4689, windows 0.100).
 windows = { workspace = true, features = [
@@ -88,20 +88,20 @@ windows = { workspace = true, features = [
     "UI",
 ] }
 
-# No direct SDL3 dep. Gamepad enumeration + pin persistence for Settings runs on pf-client-core's
-# shared SDL service (see the `gamepad` field in app/); the spawned punktfunk-session does the
-# actual forwarding. SDL3 itself is pulled transitively by pf-client-core, which builds it from
+# No direct SDL3 dep. Gamepad enumeration + pin persistence for Settings runs on ly-client-core's
+# shared SDL service (see the `gamepad` field in app/); the spawned lilynk-session does the
+# actual forwarding. SDL3 itself is pulled transitively by ly-client-core, which builds it from
 # source on Windows (`build-from-source,hidapi`).
 #
 # Log events from the shell.
 tracing = "0.1"
 
 # The settings rows' catalog test reads `clients/shared/settings-catalog.json`, and the rows
-# read their labels from pf-l10n. Not Windows-gated: `tests/settings_catalog.rs` builds that
+# read their labels from ly-l10n. Not Windows-gated: `tests/settings_catalog.rs` builds that
 # test where the client is a stub.
 [dev-dependencies]
 serde_json = "1"
-pf-l10n = { path = "../../l10n", features = ["client", "desktop"] }
+ly-l10n = { path = "../../l10n", features = ["client", "desktop"] }
 
 # Embeds the app icon as an exe resource (build.rs) — Windows hosts only (rc.exe from the SDK).
 [target.'cfg(windows)'.build-dependencies]

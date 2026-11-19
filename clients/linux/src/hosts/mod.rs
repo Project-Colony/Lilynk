@@ -19,12 +19,12 @@ use crate::trust::{self, HostEdit, KnownHost, KnownHosts, Settings};
 use adw::prelude::*;
 pub(crate) use card::os_icon_name;
 use gtk::{gio, glib};
+use ly_client_core::display_targets::{self, Pick};
+use ly_client_core::host_order;
+use ly_client_core::orchestrate::HostTarget;
+use ly_l10n::{client, desktop};
 pub use model::Phase;
 use model::{Band, CardModel, Live, Preset, Status};
-use pf_client_core::display_targets::{self, Pick};
-use pf_client_core::host_order;
-use pf_client_core::orchestrate::HostTarget;
-use pf_l10n::{client, desktop};
 use relm4::prelude::*;
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -391,7 +391,7 @@ impl SimpleComponent for HostsPage {
                     if !hosts.is_empty() {
                         let (tx, rx) = async_channel::bounded(1);
                         std::thread::Builder::new()
-                            .name("punktfunk-probe".into())
+                            .name("lilynk-probe".into())
                             .spawn(move || {
                                 let results =
                                     crate::trust::probe_known(&hosts, crate::trust::PROBE_TIMEOUT);
@@ -592,9 +592,9 @@ impl HostsPage {
                 continue;
             }
             let mgmt = self.mgmt_port(&k.fp_hex, &k.addr, k.port);
-            pf_client_core::host_actions::refresh(&k.addr, mgmt, k.port, &k.fp_hex);
+            ly_client_core::host_actions::refresh(&k.addr, mgmt, k.port, &k.fp_hex);
             display_targets::refresh(&k.addr, mgmt, k.port, &k.fp_hex);
-            pf_client_core::library::refresh_running(&k.addr, mgmt, k.port, &k.fp_hex);
+            ly_client_core::library::refresh_running(&k.addr, mgmt, k.port, &k.fp_hex);
         }
     }
 
@@ -617,7 +617,7 @@ impl HostsPage {
         let hosts = self.store.hosts().hosts.clone();
         let settings = self.store.settings().clone();
         let presets = self.presets();
-        let playing = |fp: &str| pf_client_core::library::now_playing(fp);
+        let playing = |fp: &str| ly_client_core::library::now_playing(fp);
         let screen = |fp: &str| display_targets::cached(fp);
         let live = Live {
             probed: &self.probed,
@@ -702,7 +702,7 @@ impl HostsPage {
         let playing = if k.fp_hex.is_empty() {
             String::new()
         } else {
-            pf_client_core::library::now_playing(&k.fp_hex)
+            ly_client_core::library::now_playing(&k.fp_hex)
         };
         let phase = self.sessions.get(&k.card_key()).copied();
         detail::Live {
@@ -712,7 +712,7 @@ impl HostsPage {
             actions: if k.fp_hex.is_empty() {
                 Vec::new()
             } else {
-                pf_client_core::host_actions::cached(&k.fp_hex)
+                ly_client_core::host_actions::cached(&k.fp_hex)
             },
             screens: if k.paired && !k.fp_hex.is_empty() {
                 display_targets::cached(&k.fp_hex)
@@ -720,7 +720,7 @@ impl HostsPage {
                 None
             },
             is_default: k.id.is_some() && settings.default_host == k.id,
-            start_in: pf_client_core::start::StartIn::parse(&settings.start_in),
+            start_in: ly_client_core::start::StartIn::parse(&settings.start_in),
         }
     }
 
@@ -792,10 +792,10 @@ impl HostsPage {
     fn set_screen(&self, req: ConnectRequest, pick: Pick, label: String) {
         let mgmt = self
             .mgmt_port_for(&req)
-            .unwrap_or(pf_client_core::library::DEFAULT_MGMT_PORT);
+            .unwrap_or(ly_client_core::library::DEFAULT_MGMT_PORT);
         let (identity, sender) = (self.identity.clone(), self.sender.clone());
         std::thread::Builder::new()
-            .name("punktfunk-screen".into())
+            .name("lilynk-screen".into())
             .spawn(move || {
                 let (addr, port) = (&req.host.addr, req.host.port);
                 let fp = req.host.fp_hex.as_deref().unwrap_or_default();
@@ -814,7 +814,7 @@ impl HostsPage {
     fn link(&self, host: &HostRef, preset: Option<&str>) -> Option<(String, String)> {
         let known = self.store.hosts();
         let k = &known.hosts[host.index(&known)?];
-        let url = pf_client_core::deeplink::DeepLink::for_host(k, None, preset).to_url();
+        let url = ly_client_core::deeplink::DeepLink::for_host(k, None, preset).to_url();
         let label = match preset.and_then(|id| self.presets().into_iter().find(|p| p.id == id)) {
             Some(p) => format!("{} \u{b7} {}", k.name, p.name),
             None => k.name.clone(),
@@ -867,6 +867,6 @@ impl HostsPage {
     /// [`Self::mgmt_port_for`] with the default filled in.
     fn mgmt_port(&self, fp: &str, addr: &str, port: u16) -> u16 {
         self.learned_mgmt_port(fp, addr, port)
-            .unwrap_or(pf_client_core::library::DEFAULT_MGMT_PORT)
+            .unwrap_or(ly_client_core::library::DEFAULT_MGMT_PORT)
     }
 }

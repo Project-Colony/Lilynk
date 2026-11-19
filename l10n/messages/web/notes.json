@@ -794,7 +794,7 @@
 	"store_runner_state_stopped": "Badge in the Plugin runner card: the service is switched on but isn't up right now.",
 	"store_runner_state_disabled": "Badge in the Plugin runner card: the operator switched the service off.",
 	"store_runner_state_missing": "Badge in the Plugin runner card: the service isn't installed on this host.",
-	"store_runner_unit": "Label of a label/value pair in the runner card; the value is the service's system name, such as punktfunk-scripting.",
+	"store_runner_unit": "Label of a label/value pair in the runner card; the value is the service's system name, such as lilynk-scripting.",
 	"store_runner_principal": "Label of a label/value pair in the runner card; the value is the OS account the service runs under.",
 	"store_runner_failed": "Error toast when switching the plugin runner on or off didn't work.",
 	"store_installed_title": "Title of the card on the Installed tab that lists the installed plugins.",

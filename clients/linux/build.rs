@@ -4,10 +4,10 @@
 //! against.
 
 fn main() {
-    // Build provenance, as in crates/host/punktfunk-host/build.rs: packaging sets
+    // Build provenance, as in crates/host/lilynk-host/build.rs: packaging sets
     // PUNKTFUNK_BUILD_VERSION to the full package version; a plain `cargo build` uses the crate's.
     // `--version` prints it and `--check-update` compares it with the signed manifest. Canary
-    // channels compare the CI run number in its suffix (pf_update_check::version).
+    // channels compare the CI run number in its suffix (ly_update_check::version).
     let version = std::env::var("PUNKTFUNK_BUILD_VERSION")
         .ok()
         .filter(|v| !v.trim().is_empty())
@@ -22,7 +22,7 @@ fn main() {
         glib_build_tools::compile_resources(
             &["data"],
             "data/resources.gresource.xml",
-            "punktfunk-client.gresource",
+            "lilynk-client.gresource",
         );
     }
 }

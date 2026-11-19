@@ -1,7 +1,7 @@
 # The message format
 
-`pf-l10n`, Paraglide and unom translate read the same files. This is the part of the inlang
-message format all three agree on. The build and `pf-l10n check` enforce it, and
+`ly-l10n`, Paraglide and unom translate read the same files. This is the part of the inlang
+message format all three agree on. The build and `ly-l10n check` enforce it, and
 `vectors.json` pins what a reader must produce from it.
 
 ## Files

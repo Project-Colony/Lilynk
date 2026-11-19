@@ -23,7 +23,7 @@ import org.json.JSONObject
  * menu row costs a menu row and a thrown exception costs the screen.
  *
  * ONE implementation for both Android shells, like [SendLogs]: the Skia console's host menu and
- * the touch home's card menu. Wording is the desktop's (`pf_client_core::host_actions`) so a
+ * the touch home's card menu. Wording is the desktop's (`ly_client_core::host_actions`) so a
  * quoted message means the same thing on every client.
  *
  * Blocking — call it off the main thread.

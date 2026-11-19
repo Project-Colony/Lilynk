@@ -3,12 +3,12 @@
 //! One console-subsystem binary over the same brain the GUI shells use, so a script gets the
 //! same behaviour a click does — including wake-then-connect, which the Linux shell's
 //! exec-style `--connect` never had. It is a FRONT-END, not the brain: policy lives in
-//! `pf_client_core`, and the shells call the same functions in-process rather than shelling
+//! `ly_client_core`, and the shells call the same functions in-process rather than shelling
 //! out to this. That is the whole point of the split — if the GUI shelled out for connects,
 //! trust prompts and wake progress would have to squeeze through an IPC contract.
 //!
 //! Existing surfaces are a frozen compatibility contract and are NOT replaced by this: the
-//! Linux shell keeps its headless flags (Decky invokes them), and `punktfunk-probe` stays the
+//! Linux shell keeps its headless flags (Decky invokes them), and `lilynk-probe` stays the
 //! diagnostics tool. This is the door new consumers should use — the Playnite importer shells
 //! to `punktfunk library <host> --json`.
 //!
@@ -21,18 +21,18 @@
 
 #[cfg(any(target_os = "linux", windows))]
 mod cli {
-    use pf_client_core::deeplink::{self, DeepLink, HostResolution};
-    use pf_client_core::display_targets::{self, BoundPreset, Pick, RowKind, Targets};
-    use pf_client_core::orchestrate::{
+    use lilynk_core::client::health::{self, CleanRound, FindingId, HealthReport, LegShape};
+    use lilynk_core::client::ProbeOutcome;
+    use ly_client_core::deeplink::{self, DeepLink, HostResolution};
+    use ly_client_core::display_targets::{self, BoundPreset, Pick, RowKind, Targets};
+    use ly_client_core::orchestrate::{
         self, ConnectOutcome, ConnectPlan, PlanOutcome, SessionEvent, WakeOutcome, WakeTick,
         WAKE_TIMEOUT_SECS,
     };
-    use pf_client_core::presets::PresetsFile;
-    use pf_client_core::profiles::{self, ListedProfile};
-    use pf_client_core::trust::{self, AddOutcome, HostEdit, KnownHost, KnownHosts, Settings};
-    use pf_client_core::{host_actions, library, start, wol};
-    use punktfunk_core::client::health::{self, CleanRound, FindingId, HealthReport, LegShape};
-    use punktfunk_core::client::ProbeOutcome;
+    use ly_client_core::presets::PresetsFile;
+    use ly_client_core::profiles::{self, ListedProfile};
+    use ly_client_core::trust::{self, AddOutcome, HostEdit, KnownHost, KnownHosts, Settings};
+    use ly_client_core::{host_actions, library, start, wol};
     use std::time::Duration;
 
     pub const OK: u8 = 0;
@@ -251,7 +251,7 @@ punktfunk launch [<host-ref>] [--game ID] [--preset REF] [--as PROFILE]
                               [--request-access] [--exec] [--fullscreen]
 
 Start a stream — waking the host first if it is asleep and its MAC is known.
-The stream runs in the punktfunk-session renderer; this command supervises it
+The stream runs in the lilynk-session renderer; this command supervises it
 and relays its lifecycle to stderr. With no <host-ref> it streams the default
 host (`punktfunk default-host`), and exits 5 when there is none.
 
@@ -619,14 +619,14 @@ from the config directory for a true factory reset."
             .filter(|s| *s > 0.0)
             .unwrap_or(DISCOVER_DEFAULT_SECS)
             .min(DISCOVER_MAX_SECS);
-        let found = pf_client_core::discovery::discover_for(Duration::from_secs_f64(secs));
+        let found = ly_client_core::discovery::discover_for(Duration::from_secs_f64(secs));
         // `read`, not `load`: this verb has no business MINTING ids. `load` would mint them for
         // a pre-mint store and save them, racing the `hosts list` a caller is very likely running
         // at the same moment (the Decky panel issues both together) — after which the ids one of
         // them already handed out no longer resolve.
         let known = KnownHosts::read();
         let rows: Vec<(
-            &pf_client_core::discovery::DiscoveredHost,
+            &ly_client_core::discovery::DiscoveredHost,
             Option<&KnownHost>,
         )> = found.iter().map(|d| (d, match_saved(&known, d))).collect();
         // The one write this verb makes: an advert is the only place a host's wake MAC is
@@ -685,7 +685,7 @@ from the config directory for a true factory reset."
     }
 
     /// The saved record an advert belongs to, if any: an exact fingerprint first, then
-    /// [`same_host`](pf_client_core::discovery::same_host).
+    /// [`same_host`](ly_client_core::discovery::same_host).
     ///
     /// Two known fingerprints settle it on their own, so a host that moved lease still matches
     /// its record and a different box at the old address (the other OS of a dual-boot machine,
@@ -693,7 +693,7 @@ from the config directory for a true factory reset."
     /// and the shells' hosts pages use the same rule.
     fn match_saved<'a>(
         known: &'a KnownHosts,
-        advert: &pf_client_core::discovery::DiscoveredHost,
+        advert: &ly_client_core::discovery::DiscoveredHost,
     ) -> Option<&'a KnownHost> {
         known
             .hosts
@@ -703,7 +703,7 @@ from the config directory for a true factory reset."
                 known
                     .hosts
                     .iter()
-                    .find(|h| pf_client_core::discovery::same_host(h, advert))
+                    .find(|h| ly_client_core::discovery::same_host(h, advert))
             })
     }
 
@@ -815,8 +815,8 @@ from the config directory for a true factory reset."
     }
 
     impl PairFailure {
-        fn new(err: &punktfunk_core::PunktfunkError, msg: String) -> Self {
-            use punktfunk_core::PunktfunkError as E;
+        fn new(err: &lilynk_core::PunktfunkError, msg: String) -> Self {
+            use lilynk_core::PunktfunkError as E;
             let (kind, reject) = match err {
                 E::Rejected(reason, _) => ("rejected", Some(reason.as_str())),
                 E::Crypto => ("crypto", None),
@@ -1811,7 +1811,7 @@ from the config directory for a true factory reset."
             }
             _ => split_host_port(&reference),
         };
-        if punktfunk_core::client::NativeClient::probe(&addr, port, PROBE_TIMEOUT) {
+        if lilynk_core::client::NativeClient::probe(&addr, port, PROBE_TIMEOUT) {
             println!("reachable {addr}:{port}");
             OK
         } else {
@@ -1827,7 +1827,7 @@ from the config directory for a true factory reset."
         args: &[String],
         verb: &str,
         probe_only: bool,
-    ) -> Result<punktfunk_core::client::NativeClient, u8> {
+    ) -> Result<lilynk_core::client::NativeClient, u8> {
         let Some(reference) = positional(args, 0) else {
             eprintln!("usage: punktfunk {verb} <host-ref>");
             return Err(UNRESOLVED);
@@ -1846,25 +1846,25 @@ from the config directory for a true factory reset."
             }
         };
         // Every Hello field at its default: this connect only runs probes and never presents.
-        let mode = punktfunk_core::config::Mode {
+        let mode = lilynk_core::config::Mode {
             width: 1280,
             height: 720,
             refresh_hz: 60,
             refresh_mhz: 0,
         };
-        let params = punktfunk_core::client::ConnectParams {
-            name: Some(punktfunk_core::client::device_name()),
+        let params = lilynk_core::client::ConnectParams {
+            name: Some(lilynk_core::client::device_name()),
             pin: Some(pin),
             identity: Some(identity),
             probe_only,
-            ..punktfunk_core::client::ConnectParams::new(
+            ..lilynk_core::client::ConnectParams::new(
                 &host.addr,
                 host.port,
                 mode,
                 Duration::from_secs(15),
             )
         };
-        punktfunk_core::client::NativeClient::connect(params).map_err(|e| {
+        lilynk_core::client::NativeClient::connect(params).map_err(|e| {
             eprintln!("connect: {e:?}");
             CONNECT_FAILED
         })
@@ -2140,8 +2140,8 @@ from the config directory for a true factory reset."
     /// A user-typed `<host[:port]>`. Shared parser: a plain `rsplit_once(':')` reads the
     /// bare IPv6 `::1` as host `:` port `1`, and this value goes on to be dialled and stored.
     fn split_host_port(target: &str) -> (String, u16) {
-        pf_client_core::deeplink::parse_addr_port(target)
-            .unwrap_or_else(|| (target.to_string(), pf_client_core::deeplink::DEFAULT_PORT))
+        ly_client_core::deeplink::parse_addr_port(target)
+            .unwrap_or_else(|| (target.to_string(), ly_client_core::deeplink::DEFAULT_PORT))
     }
 
     /// Is stdin a terminal? Decides whether a verb may ask a question or must refuse with
@@ -2198,7 +2198,7 @@ from the config directory for a true factory reset."
                 ..Default::default()
             };
             let known = KnownHosts { hosts: vec![saved] };
-            let mut advert = pf_client_core::discovery::DiscoveredHost {
+            let mut advert = ly_client_core::discovery::DiscoveredHost {
                 key: "id-2".into(),
                 fullname: "desk._punktfunk._udp.local.".into(),
                 name: "desk".into(),
@@ -2620,8 +2620,8 @@ from the config directory for a true factory reset."
         /// prose; a failure the host did not send carries `null`.
         #[test]
         fn pair_json_carries_the_kind_and_the_reject_token() {
-            use punktfunk_core::reject::RejectReason;
-            use punktfunk_core::PunktfunkError;
+            use lilynk_core::reject::RejectReason;
+            use lilynk_core::PunktfunkError;
             let json = |err: PunktfunkError| {
                 let failure = PairFailure::new(&err, String::new());
                 serde_json::from_str::<serde_json::Value>(&pair_json(
@@ -2787,7 +2787,7 @@ from the config directory for a true factory reset."
 
 #[cfg(any(target_os = "linux", windows))]
 fn main() -> std::process::ExitCode {
-    punktfunk_core::tls::install_default_provider();
+    lilynk_core::tls::install_default_provider();
     // Logs to stderr; stdout is the machine interface (TSV/JSON), exactly like the session
     // binary's contract.
     tracing_subscriber::fmt()

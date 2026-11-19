@@ -1,4 +1,4 @@
-// Swift wrapper around the punktfunk-core C ABI's punktfunk/1 connection API.
+// Swift wrapper around the lilynk-core C ABI's punktfunk/1 connection API.
 //
 // Threading contract (mirrors the C header): each plane has one puller thread. Video pulls
 // nextAU() and nextHdrMeta(); each further screen's pump pulls nextScreenAU(); audio pulls
@@ -246,7 +246,7 @@ public enum HostRejection: Sendable {
     /// going to sleep or shutting down, deliberately, not failing.
     case hostPower
     /// The host accepted the connection and then failed to bring the stream up — no encoder
-    /// for the codec, pf-vdisplay missing, capture open failed. Everything host-side funnels
+    /// for the codec, ly-vdisplay missing, capture open failed. Everything host-side funnels
     /// here, so the cause is in the host's log, not on this device. The host is reachable:
     /// nothing here calls for Wake-on-LAN.
     case setupFailed
@@ -386,7 +386,7 @@ public extension PunktfunkConnection {
     static func probeIdentity(host: String, port: UInt16, timeoutMs: UInt32 = 1500) -> Data? {
         var fp = [UInt8](repeating: 0, count: 32)
         let rc: Int32 = host.withCString { h in
-            fp.withUnsafeMutableBufferPointer { punktfunk_probe(h, port, timeoutMs, $0.baseAddress) }
+            fp.withUnsafeMutableBufferPointer { lilynk_probe(h, port, timeoutMs, $0.baseAddress) }
         }
         return rc == statusOK ? Data(fp) : nil
     }
@@ -407,7 +407,7 @@ public final class PunktfunkConnection: @unchecked Sendable {
         let built = UInt32(PUNKTFUNK_ABI_VERSION)
         if linked != built {
             fatalError(
-                "punktfunk-core ABI mismatch: header is v\(built), linked core is v\(linked)"
+                "lilynk-core ABI mismatch: header is v\(built), linked core is v\(linked)"
                     + " — rebuild the xcframework")
         }
     }()
@@ -658,7 +658,7 @@ public final class PunktfunkConnection: @unchecked Sendable {
 
         /// Whether motion sent for ONE pad can reach the game: `declared` is the kind that pad
         /// announced in its `gamepadArrival`, `asked` is the session default the handshake carried,
-        /// and `resolved` is the host's echo. Mirrors punktfunk-core's `pad_motion_reaches`, which
+        /// and `resolved` is the host's echo. Mirrors lilynk-core's `pad_motion_reaches`, which
         /// carries the full argument; in short:
         ///
         /// - the host builds each virtual device from that pad's declaration, so the echo is simply
@@ -680,7 +680,7 @@ public final class PunktfunkConnection: @unchecked Sendable {
 
         /// Whether this backend's pad has a Quick Access button, which wire `misc1` presses.
         /// On every other pad `misc1` is another control (mute, Share, Capture) or nothing.
-        /// Mirrors punktfunk-core's `GamepadPref::has_quick_access`. `.auto` is `false`: a host
+        /// Mirrors lilynk-core's `GamepadPref::has_quick_access`. `.auto` is `false`: a host
         /// that names no backend builds an Xbox 360 pad.
         public var hasQuickAccess: Bool {
             switch self {
@@ -1469,7 +1469,7 @@ public final class PunktfunkConnection: @unchecked Sendable {
         pathMonitor.pathUpdateHandler = { [weak self] path in
             if path.status == .satisfied { self?.pathChanged() }
         }
-        pathMonitor.start(queue: DispatchQueue(label: "punktfunk.path", qos: .userInitiated))
+        pathMonitor.start(queue: DispatchQueue(label: "lilynk.path", qos: .userInitiated))
     }
 
     /// The device's network path changed. The core re-picks the socket's source address and

@@ -5,20 +5,20 @@
 //! The shell is bound to the thread that created it: `frame`, `menu`, `at_root`, `holds_launch`,
 //! `pointer`, `key`, `text`, `phase` and `free` run there (the main thread). `push`, `art`,
 //! `avatar`, `take_unlock`, `next_event` and `drain_cmds` are safe from any thread. The JSON is
-//! `pf_console_ui::bridge`'s, which Android speaks too.
+//! `ly_console_ui::bridge`'s, which Android speaks too.
 
-use pf_client_core::console::OverlayAction;
-use pf_console_ui::bridge::{
+use lilynk_core::quic::v2::msg::{ProfileUnlock, UNLOCK_PASSWORD, UNLOCK_PASSWORD_MAX};
+use ly_client_core::console::OverlayAction;
+use ly_console_ui::bridge::{
     self, CreateOptions, EntryJson, Event, GamesPush, MenuCode, Pads, PadsJson, PhasePush,
     PresetJson, Published,
 };
-use pf_console_ui::console::FrameCost;
-use pf_console_ui::{
+use ly_console_ui::console::FrameCost;
+use ly_console_ui::{
     Console, ConsoleEntry, ConsoleHandles, HiddenAnswer, HideAnswer, HostRow, InputSource, Insets,
     LicenseSection, PadTestState, PairStatus, Platform, ProfilesAnswer, Prompt, SnapshotStore,
     SpeedPhase, Viewport, WakeStatus,
 };
-use punktfunk_core::quic::v2::msg::{ProfileUnlock, UNLOCK_PASSWORD, UNLOCK_PASSWORD_MAX};
 use skia_safe::gpu::{self, mtl, DirectContext, SurfaceOrigin};
 use skia_safe::ColorType;
 use std::collections::VecDeque;
@@ -84,7 +84,7 @@ pub const PUNKTFUNK_CONSOLE_PUSH_PRESETS: u8 = 12;
 /// `KnownHosts` — the records `punktfunk://` links are built from.
 pub const PUNKTFUNK_CONSOLE_PUSH_KNOWN_HOSTS: u8 = 13;
 /// `{"label", "pref", "pads": [..], "others": [..]}` — the connected controllers and the other
-/// input devices; `pf_console_ui::bridge::PadsJson` has the fields.
+/// input devices; `ly_console_ui::bridge::PadsJson` has the fields.
 pub const PUNKTFUNK_CONSOLE_PUSH_PADS: u8 = 14;
 /// `{}` for Home, else one key holding a `HostRow`: `library` (its shelf), `stream` (the shelf
 /// plus a connect to its desktop) or `pair` (its Pair screen). Re-roots on the next frame.
@@ -694,10 +694,10 @@ pub unsafe extern "C" fn punktfunk_console_push(
                 json::<GamesPush>(text).map(|v| library.set_games_cached(&v.req, v.games))
             }
             PUNKTFUNK_CONSOLE_PUSH_LIBRARY_RUNNING => {
-                json::<Vec<pf_client_core::library::RunningGame>>(text)
+                json::<Vec<ly_client_core::library::RunningGame>>(text)
                     .map(|v| library.set_running(&v))
             }
-            PUNKTFUNK_CONSOLE_PUSH_LIBRARY_DOWNLOADS => json::<pf_console_ui::DownloadsPush>(text)
+            PUNKTFUNK_CONSOLE_PUSH_LIBRARY_DOWNLOADS => json::<ly_console_ui::DownloadsPush>(text)
                 .map(|p| library.set_downloads(&p.downloads, p.grants)),
             PUNKTFUNK_CONSOLE_PUSH_LIBRARY_STALE => {
                 json::<u8>(text).map(|v| library.set_stale(bridge::stale_code(v)))
@@ -810,7 +810,7 @@ pub unsafe extern "C" fn punktfunk_console_drain_cmds(c: *const PunktfunkConsole
 #[unsafe(no_mangle)]
 pub extern "C" fn punktfunk_console_palettes() -> *mut c_char {
     guard(std::ptr::null_mut(), || {
-        let list: Vec<_> = (pf_console_ui::palette::PALETTES.iter())
+        let list: Vec<_> = (ly_console_ui::palette::PALETTES.iter())
             .map(|p| serde_json::json!({ "id": p.id, "name": (p.name)() }))
             .collect();
         out_string(serde_json::Value::from(list).to_string())
@@ -829,7 +829,7 @@ pub unsafe extern "C" fn punktfunk_console_set_languages(languages_json: *const 
     guard((), || {
         // SAFETY: NULL or NUL-terminated per this function's contract.
         if let Some(tags) = unsafe { str_arg(languages_json) }.and_then(json::<Vec<String>>) {
-            pf_l10n::set_languages(&tags);
+            ly_l10n::set_languages(&tags);
         }
     })
 }
@@ -850,7 +850,7 @@ pub unsafe extern "C" fn punktfunk_console_string_free(s: *mut c_char) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use punktfunk_core::quic::v2::msg::{Zeroizing, UNLOCK_KEY_PROOF};
+    use lilynk_core::quic::v2::msg::{Zeroizing, UNLOCK_KEY_PROOF};
 
     fn unlock(kind: u8, secret: &[u8], stay: bool) -> ProfileUnlock {
         ProfileUnlock::new(kind, Zeroizing::new(secret.to_vec()), stay, 0, Vec::new()).unwrap()
@@ -860,7 +860,7 @@ mod tests {
     #[test]
     fn palette_names_are_worded_from_messages() {
         let names = |tag: &str| {
-            pf_l10n::with_language(tag, || {
+            ly_l10n::with_language(tag, || {
                 let raw = punktfunk_console_palettes();
                 // SAFETY: a NUL-terminated string from `punktfunk_console_palettes`, freed once.
                 let text = unsafe { CStr::from_ptr(raw) }.to_str().unwrap().to_owned();
@@ -881,15 +881,15 @@ mod tests {
     /// Bad input leaves the language alone; a list it ships is taken.
     #[test]
     fn set_languages_takes_a_list_and_ignores_the_rest() {
-        let before = pf_l10n::language();
+        let before = ly_l10n::language();
         // SAFETY: NULL, or a NUL-terminated literal.
         unsafe {
             punktfunk_console_set_languages(std::ptr::null());
             punktfunk_console_set_languages(c"not json".as_ptr());
-            assert_eq!(pf_l10n::language(), before);
+            assert_eq!(ly_l10n::language(), before);
             punktfunk_console_set_languages(c"[\"en-GB\"]".as_ptr());
         }
-        assert_eq!(pf_l10n::language(), "en");
+        assert_eq!(ly_l10n::language(), "en");
     }
 
     /// A password that fits goes over with its switch. One that does not fit, a key proof and

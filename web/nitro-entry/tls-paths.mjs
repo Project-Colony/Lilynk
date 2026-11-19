@@ -12,7 +12,7 @@
 //                                     list), kept byte-stable because Moonlight pins it and the
 //                                     pairing hashes bind its X.509 signature bytes.
 //
-// Every launcher names the LEGACY pair — scripts/punktfunk-web.service, the NixOS module, the
+// Every launcher names the LEGACY pair — scripts/lilynk-web.service, the NixOS module, the
 // Windows service supervisor, web-run.cmd, the Steam Deck installer — and none of them CAN
 // choose: systemd `Environment=` has no "this file, else that one". Serving the legacy pair
 // costs twice:
@@ -55,7 +55,7 @@ export function dirPrefix(p, base) {
 }
 
 /**
- * A readable, NON-EMPTY file. Emptiness matters: `pf_paths::write_secret_file` creates the file
+ * A readable, NON-EMPTY file. Emptiness matters: `ly_paths::write_secret_file` creates the file
  * and then writes it in place rather than temp+rename, so a console starting mid-write could
  * otherwise adopt a 0-byte cert and leave `Bun.serve` throwing on every restart — and not every
  * launcher retries forever (the Steam Deck unit is `Restart=on-failure` under the default rate

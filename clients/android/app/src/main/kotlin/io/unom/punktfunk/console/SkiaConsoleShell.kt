@@ -54,7 +54,7 @@ import io.unom.punktfunk.testRumble
 import kotlin.math.roundToInt
 
 /**
- * The console UI drawn by the Skia shell (`crates/client/pf-console-ui`), hosted on a `SurfaceView` this
+ * The console UI drawn by the Skia shell (`crates/client/ly-console-ui`), hosted on a `SurfaceView` this
  * composable owns and driven through [SkiaConsole]. `App.kt` shows it when [SkiaConsole.wanted],
  * [SkiaConsole.healthy] and the gamepad-UI gate hold.
  *

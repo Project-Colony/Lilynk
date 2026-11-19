@@ -1,26 +1,26 @@
 # NixOS integration for punktfunk — the declarative equivalent of everything the RPM/deb do in
-# their %install + %post (packaging/rpm/punktfunk.spec, packaging/debian/build-deb.sh):
+# their %install + %post (packaging/rpm/lilynk.spec, packaging/debian/build-deb.sh):
 # the systemd *user* service, the uinput/uhid/vhci udev rules, the vhci-hcd autoload, the 32 MB
 # UDP socket-buffer sysctls, the firewall openers, the `input`- and `punktfunk`-group membership
-# for virtual gamepads, the management web console (`services.punktfunk.web`, on by default with
+# for virtual gamepads, the management web console (`services.lilynk.web`, on by default with
 # the host — the RPM/deb Recommends), and the plugin/script runner
-# (`services.punktfunk.scripting`, likewise on by default — the game-library scanners are plugins),
-# and the seat supervisor (`services.punktfunk.seats`, off by default).
+# (`services.lilynk.scripting`, likewise on by default — the game-library scanners are plugins),
+# and the seat supervisor (`services.lilynk.seats`, off by default).
 #
 # Usage (flake):
-#   { inputs.punktfunk.url = "git+https://git.unom.io/unom/punktfunk?ref=nix-stable";
+#   { inputs.lilynk.url = "git+https://git.unom.io/unom/punktfunk?ref=nix-stable";
 #     outputs = { punktfunk, nixpkgs, ... }: {
 #       nixosConfigurations.myhost = nixpkgs.lib.nixosSystem {
-#         modules = [ punktfunk.nixosModules.default
-#                     { services.punktfunk.host.enable = true;
-#                       services.punktfunk.host.users = [ "alice" ]; } ];
+#         modules = [ lilynk.nixosModules.default
+#                     { services.lilynk.host.enable = true;
+#                       services.lilynk.host.users = [ "alice" ]; } ];
 #       };
 #     };
 #   }
 #
 # The host is fundamentally a per-user, in-graphical-session service (it drives the live
 # compositor, PipeWire and the desktop portals), so it ships as a `systemd.user` unit. Enable it
-# for a session with `systemctl --user enable --now punktfunk-host` (or set `autoStart = true` for a
+# for a session with `systemctl --user enable --now lilynk-host` (or set `autoStart = true` for a
 # headless appliance with `users.users.<u>.linger = true`).
 self:
 {
@@ -45,7 +45,7 @@ let
     genAttrs
     ;
 
-  cfg = config.services.punktfunk;
+  cfg = config.services.lilynk;
   system = pkgs.stdenv.hostPlatform.system;
 
   # The host, client and gamescope dlopen Mesa from /run/opengl-driver, which loads only on the
@@ -57,12 +57,12 @@ let
   renderEnv =
     attrs: concatStringsSep "\n" (mapAttrsToList (k: v: "${k}=${renderVal v}") attrs) + "\n";
 
-  hostSettingsFile = pkgs.writeText "punktfunk-host.env" (renderEnv cfg.host.settings);
+  hostSettingsFile = pkgs.writeText "lilynk-host.env" (renderEnv cfg.host.settings);
 
   # The owner's row runs the owner's host from seat-session, not from the user unit, so it takes
   # the same settings and the `gamestream` flag as a file: seat-session reads it for the owner
   # alone (PUNKTFUNK_OWNER_ENV), so a seat of its own never sees them.
-  ownerSettingsFile = pkgs.writeText "punktfunk-owner.env" (
+  ownerSettingsFile = pkgs.writeText "lilynk-owner.env" (
     renderEnv (cfg.host.settings // lib.optionalAttrs cfg.host.gamestream { PUNKTFUNK_GAMESTREAM = true; })
   );
 
@@ -79,11 +79,11 @@ let
   # `host.users` is already documented as "the host runs as these users' systemd --user service",
   # so it is the right scope. When it is empty we cannot name the intended user, so fall back to
   # excluding system users — which is precisely what keeps root out — and leave the module header's
-  # manual `systemctl --user enable --now punktfunk-host` route working for any normal login.
+  # manual `systemctl --user enable --now lilynk-host` route working for any normal login.
   #
   # ⚠ The `|` prefix is load-bearing: it makes each entry a TRIGGERING condition, and systemd ORs
   # those. Plain repeated `ConditionUser=` lines are ANDed, so a two-user list would match NOBODY.
-  # Non-triggering conditions on the same unit (punktfunk-host's and punktfunk-web's
+  # Non-triggering conditions on the same unit (lilynk-host's and lilynk-web's
   # ConditionPathExists) still have to hold, which is the behaviour we want.
   userScope = if cfg.host.users == [ ] then [ "!@system" ] else map (u: "|${u}") cfg.host.users;
 
@@ -122,16 +122,16 @@ let
   ];
 in
 {
-  options.services.punktfunk = {
+  options.services.lilynk = {
     host = {
       enable = mkEnableOption "the punktfunk streaming host (systemd --user service + system wiring)";
 
       package = mkOption {
         type = types.package;
-        default = systemBuilt.punktfunk-host;
-        defaultText = literalExpression "(punktfunk.lib.packagesWith pkgs).punktfunk-host";
+        default = systemBuilt.lilynk-host;
+        defaultText = literalExpression "(lilynk.lib.packagesWith pkgs).lilynk-host";
         description = ''
-          The punktfunk-host package (bundles punktfunk-host + punktfunk-tray). Built from this
+          The lilynk-host package (bundles lilynk-host + lilynk-tray). Built from this
           system's nixpkgs so it can load the system's GPU driver.
         '';
       };
@@ -185,7 +185,7 @@ in
           that target either): there, start the host from the compositor's own config, after
           `systemctl --user import-environment`, so it dies and comes back with the session.
 
-          This is the declarative equivalent of the `scripts/punktfunk-host-desktop-session.conf`
+          This is the declarative equivalent of the `scripts/lilynk-host-desktop-session.conf`
           drop-in the deb/rpm document for the same route.
         '';
       };
@@ -233,7 +233,7 @@ in
         '';
         description = ''
           `host.env` key/value pairs passed to the service via `EnvironmentFile`. See
-          `''${package}/share/punktfunk-host/host.env.example` for the full surface. Booleans render
+          `''${package}/share/lilynk-host/host.env.example` for the full surface. Booleans render
           as `1`/`0`. A key the web console also offers (Host → Settings) is locked there while it
           is set here. Leave empty to rely on the host's per-connect auto-detection of the
           compositor + input backend. Secrets are REFUSED here (this renders to a world-readable
@@ -244,7 +244,7 @@ in
       environmentFile = mkOption {
         type = types.nullOr types.path;
         default = null;
-        example = "/run/secrets/punktfunk-host.env";
+        example = "/run/secrets/lilynk-host.env";
         description = ''
           Extra `EnvironmentFile` layered AFTER `settings` (its values win), for values that must
           not reach the store. Loaded optionally (a missing file does not fail the unit). With
@@ -262,7 +262,7 @@ in
           Open the host's inbound ports. Native punktfunk always: UDP 9777 (QUIC control and
           media), 9778 (browser streaming) + 5353 (mDNS), TCP 47990 (mgmt API). With
           `gamestream = true` also TCP 47984/47989/48010 and UDP 47998/47999/48000. With
-          `services.punktfunk.seats.enable` also UDP 9779-9786, the seats a door redirects to and
+          `services.lilynk.seats.enable` also UDP 9779-9786, the seats a door redirects to and
           their browser streaming.
         '';
       };
@@ -271,7 +271,7 @@ in
         type = types.bool;
         default = true;
         description = ''
-          Put `punktfunk-gamescope` — gamescope carrying punktfunk's `pipewire-hdr` patches — on
+          Put `lilynk-gamescope` — gamescope carrying punktfunk's `pipewire-hdr` patches — on
           the host service's PATH, so a 10-bit-capable client can stream true HDR10 (BT.2020 PQ)
           off a gamescope virtual output. HDR is attempted by default once the binary is present
           (`PUNKTFUNK_GAMESCOPE_HDR=0` in `settings`/`environmentFile` forces SDR).
@@ -284,8 +284,8 @@ in
 
       gamescopePackage = mkOption {
         type = types.package;
-        default = systemBuilt.punktfunk-gamescope;
-        defaultText = literalExpression "(punktfunk.lib.packagesWith pkgs).punktfunk-gamescope";
+        default = systemBuilt.lilynk-gamescope;
+        defaultText = literalExpression "(lilynk.lib.packagesWith pkgs).lilynk-gamescope";
         description = ''
           The patched gamescope used when `gamescopeHdr = true`. Built from this system's
           nixpkgs, like the host.
@@ -298,10 +298,10 @@ in
 
       package = mkOption {
         type = types.package;
-        default = systemBuilt.punktfunk-client;
-        defaultText = literalExpression "(punktfunk.lib.packagesWith pkgs).punktfunk-client";
+        default = systemBuilt.lilynk-client;
+        defaultText = literalExpression "(lilynk.lib.packagesWith pkgs).lilynk-client";
         description = ''
-          The punktfunk-client package (bundles punktfunk-client + punktfunk-session). Built from
+          The lilynk-client package (bundles lilynk-client + lilynk-session). Built from
           this system's nixpkgs so it can load the system's GPU driver.
         '';
       };
@@ -314,13 +314,13 @@ in
     };
 
     # The management web console (SPAKE2 PIN pairing + host status) — the browser UI every client
-    # needs. Ships by DEFAULT alongside the host (mirrors the RPM's `Recommends: punktfunk-web` and
+    # needs. Ships by DEFAULT alongside the host (mirrors the RPM's `Recommends: lilynk-web` and
     # the .deb the host package pulls in), auto-wired to the host's mgmt token + identity cert.
     web = {
       enable = mkOption {
         type = types.bool;
         default = cfg.host.enable;
-        defaultText = literalExpression "config.services.punktfunk.host.enable";
+        defaultText = literalExpression "config.services.lilynk.host.enable";
         description = ''
           Run the management web console as a `systemd --user` service on TCP 47992 (HTTPS). Enabled
           by default whenever the host is enabled — set to `false` for a console-less host. It
@@ -331,15 +331,15 @@ in
 
       package = mkOption {
         type = types.package;
-        default = self.packages.${system}.punktfunk-web;
-        defaultText = literalExpression "punktfunk.packages.\${system}.punktfunk-web";
-        description = "The punktfunk-web package (the bun-built Nitro SSR console bundle).";
+        default = self.packages.${system}.lilynk-web;
+        defaultText = literalExpression "lilynk.packages.\${system}.lilynk-web";
+        description = "The lilynk-web package (the bun-built Nitro SSR console bundle).";
       };
 
       openFirewall = mkOption {
         type = types.bool;
         default = cfg.host.openFirewall;
-        defaultText = literalExpression "config.services.punktfunk.host.openFirewall";
+        defaultText = literalExpression "config.services.lilynk.host.openFirewall";
         description = ''
           Open TCP 47992 so the console is reachable from other devices on the LAN, and TCP 47993,
           the separate origin its plugin UIs are served from (without it, plugin interfaces do not
@@ -366,7 +366,7 @@ in
       autoStart = mkOption {
         type = types.bool;
         default = cfg.host.autoStart;
-        defaultText = literalExpression "config.services.punktfunk.host.autoStart";
+        defaultText = literalExpression "config.services.lilynk.host.autoStart";
         description = ''
           Start the console automatically in every user's graphical session (adds it to the user
           `default.target`). Follows the host's `autoStart` by default — for a login-less appliance,
@@ -378,46 +378,46 @@ in
     # The plugin/script runner — host automation on bun. Ships with the host (the RPM/deb Recommends
     # it) and, like them, runs by default: the game-library scanners are plugins, so a host with the
     # runner off has an empty library. Opt out with `scripting.autoStart = false` or, per user,
-    # `systemctl --user mask punktfunk-scripting`.
+    # `systemctl --user mask lilynk-scripting`.
     scripting = {
       enable = mkOption {
         type = types.bool;
         default = cfg.host.enable;
-        defaultText = literalExpression "config.services.punktfunk.host.enable";
+        defaultText = literalExpression "config.services.lilynk.host.enable";
         description = ''
           Install the plugin/script runner and define its `systemd --user` unit
-          (`punktfunk-scripting`). Enabled by default whenever the host is, and started by default
+          (`lilynk-scripting`). Enabled by default whenever the host is, and started by default
           too (see `autoStart`) — the game-library scanners are plugins, so a host without the
           runner has an empty library. It also runs whatever you put in
-          `~/.config/punktfunk/scripts` or install as `punktfunk-plugin-*` under
+          `~/.config/punktfunk/scripts` or install as `lilynk-plugin-*` under
           `~/.config/punktfunk/plugins`. A plugin auto-wires to the host's mgmt token + identity cert.
         '';
       };
 
       package = mkOption {
         type = types.package;
-        default = self.packages.${system}.punktfunk-scripting;
-        defaultText = literalExpression "punktfunk.packages.\${system}.punktfunk-scripting";
-        description = "The punktfunk-scripting package (the bun-bundled Effect SDK runner).";
+        default = self.packages.${system}.lilynk-scripting;
+        defaultText = literalExpression "lilynk.packages.\${system}.lilynk-scripting";
+        description = "The lilynk-scripting package (the bun-bundled Effect SDK runner).";
       };
 
       autoStart = mkOption {
         type = types.bool;
         default = cfg.scripting.enable;
-        defaultText = literalExpression "config.services.punktfunk.scripting.enable";
+        defaultText = literalExpression "config.services.lilynk.scripting.enable";
         description = ''
           Start the runner automatically in every user's graphical session (adds it to the user
           `default.target`).
 
           ON by default, matching every other channel: the deb postinst and the RPM `%post` both
-          run `systemctl --global enable punktfunk-scripting.service`, and the sysext image bakes
+          run `systemctl --global enable lilynk-scripting.service`, and the sysext image bakes
           in the `default.target.wants` symlink. It used to be opt-in here, on the reasoning that
           the runner does nothing until you add scripts or plugins — that stopped being true when
           the game-library scanners became plugins. A host whose runner is off now comes up with an
           empty library and no obvious reason why (design/library-scanner-plugins.md D9).
 
           It remains opt-OUT: set this to `false`, or per user
-          `systemctl --user mask punktfunk-scripting`.
+          `systemctl --user mask lilynk-scripting`.
         '';
       };
     };
@@ -430,9 +430,9 @@ in
 
       package = mkOption {
         type = types.package;
-        default = self.packages.${system}.punktfunk-seats;
-        defaultText = literalExpression "punktfunk.packages.\${system}.punktfunk-seats";
-        description = "The punktfunk-seats package (the root daemon, its units and its tmpfiles rules).";
+        default = self.packages.${system}.lilynk-seats;
+        defaultText = literalExpression "lilynk.packages.\${system}.lilynk-seats";
+        description = "The lilynk-seats package (the root daemon, its units and its tmpfiles rules).";
       };
     };
   };
@@ -448,14 +448,14 @@ in
             lib.attrNames cfg.host.settings
           ));
           message = ''
-            services.punktfunk.host.settings must not carry a token or a password: it becomes a
-            world-readable file in the Nix store. Use services.punktfunk.host.environmentFile, or
+            services.lilynk.host.settings must not carry a token or a password: it becomes a
+            world-readable file in the Nix store. Use services.lilynk.host.environmentFile, or
             let the host generate its own credentials in ~/.config/punktfunk/.
           '';
         }
         {
           assertion = system == "x86_64-linux";
-          message = "services.punktfunk is x86_64-linux only (desktop NVENC host; no aarch64 build).";
+          message = "services.lilynk is x86_64-linux only (desktop NVENC host; no aarch64 build).";
         }
       ];
       # The GPU driver libs the binaries dlopen at runtime (libcuda / libnvidia-encode / libEGL /
@@ -470,7 +470,7 @@ in
       # Mutter's virtual output is ashpd ScreenCast/RemoteDesktop, and the libei input path's own
       # error message is "is xdg-desktop-portal-kde/gnome running and XDG_CURRENT_DESKTOP set?".
       warnings = optional (cfg.host.enable && !config.xdg.portal.enable) ''
-        services.punktfunk.host is enabled but xdg.portal.enable is false. The host drives the
+        services.lilynk.host is enabled but xdg.portal.enable is false. The host drives the
         compositor through xdg-desktop-portal on several backends (Mutter's ScreenCast/RemoteDesktop
         and the libei input path), so capture or input will fail there with a portal error. Set
         xdg.portal.enable = true and add the backend for your compositor, e.g.
@@ -489,7 +489,7 @@ in
     # --- host ----------------------------------------------------------------------------------
     (mkIf cfg.host.enable {
       environment.systemPackages = [ cfg.host.package ];
-      # 60-punktfunk.rules: /dev/uinput + /dev/uhid group access + the vhci sysfs perms.
+      # 60-lilynk.rules: /dev/uinput + /dev/uhid group access + the vhci sysfs perms.
       services.udev.packages = [ cfg.host.package ];
       # The vhci attach/detach rule shells out to chgrp/chmod (coreutils) — put them on udev's PATH.
       services.udev.path = [ pkgs.coreutils ];
@@ -504,7 +504,7 @@ in
       # link. The dispatcher gives its scripts no PATH, so the hook gets the tools it names.
       networking.networkmanager.dispatcherScripts = mkIf config.networking.networkmanager.enable [
         {
-          source = pkgs.writeShellScript "90-punktfunk-frame-adapter" ''
+          source = pkgs.writeShellScript "90-lilynk-frame-adapter" ''
             export PATH=${
               lib.makeBinPath [
                 pkgs.coreutils
@@ -514,14 +514,14 @@ in
                 pkgs.util-linux
               ]
             }
-            exec ${pkgs.runtimeShell} ${cfg.host.package}/lib/NetworkManager/dispatcher.d/90-punktfunk-frame-adapter "$@"
+            exec ${pkgs.runtimeShell} ${cfg.host.package}/lib/NetworkManager/dispatcher.d/90-lilynk-frame-adapter "$@"
           '';
         }
       ];
 
       # `input` group membership for the virtual-gamepad nodes (mirrors the RPM's usermod hint).
       #
-      # `punktfunk` is the SECOND group 60-punktfunk.rules needs: it owns the usbip vhci
+      # `punktfunk` is the SECOND group 60-lilynk.rules needs: it owns the usbip vhci
       # attach/detach nodes, and is deliberately not `input` because writing `attach` materialises
       # an arbitrary emulated USB device — a root-only kernel primitive that must not ride on the
       # group every gamepad guide tells you to join. Declaring the
@@ -558,12 +558,12 @@ in
       # exec'ing the store binary, precisely so the capability survives — which lands CAP_SYS_NICE
       # in the exec'd process's permitted set and fails the readlink identically. Measured: an
       # ambient-only grant (dumpable=1, CapPrm set) is refused exactly like a file capability. See
-      # packaging/arch/punktfunk-host.install for the full matrix.
+      # packaging/arch/lilynk-host.install for the full matrix.
       #
       # The capability lives on the ENCODE WORKER instead — a different binary, and one nothing
       # ever has to identify.
       #
-      # punktfunk-encode-worker is spawned per PyroWave session and per NVIDIA capture (the frame
+      # lilynk-encode-worker is spawned per PyroWave session and per NVIDIA capture (the frame
       # convert), speaks one socketpair to its parent, and never connects to Wayland, D-Bus or
       # the network. Nothing resolves ITS
       # /proc/<pid>/exe, so the ambient grant a NixOS wrapper performs — the very thing that makes
@@ -584,15 +584,15 @@ in
       #
       # Narrow: CAP_SYS_NICE permits raising scheduling priority only — no filesystem, network or
       # user-switching privilege, and the wrapper is capability-based, NOT setuid.
-      security.wrappers.punktfunk-encode-worker = {
-        source = "${cfg.host.package}/bin/punktfunk-encode-worker";
+      security.wrappers.lilynk-encode-worker = {
+        source = "${cfg.host.package}/bin/lilynk-encode-worker";
         capabilities = "cap_sys_nice=ep";
         owner = "root";
         # The worker runs with AT_SECURE 0, so the GPU loaders read the caller's environment: only
-        # the host's users get it. `punktfunk` holds `host.users`; on a seats box `punktfunk-games`
+        # the host's users get it. `punktfunk` holds `host.users`; on a seats box `lilynk-games`
         # holds them and every seat user, and each seat's unit carries it for its own session.
         # Readable: the host pins the wrapper's inode by fd.
-        group = if cfg.seats.enable then "punktfunk-games" else "punktfunk";
+        group = if cfg.seats.enable then "lilynk-games" else "punktfunk";
         permissions = "u+rx,g+rx";
       };
 
@@ -605,9 +605,9 @@ in
       # best-effort no-op, a pacing cost only).
       security.rtkit.enable = mkDefault true;
 
-      # The unit is the package's own (scripts/punktfunk-host.service); this is its NixOS drop-in.
+      # The unit is the package's own (scripts/lilynk-host.service); this is its NixOS drop-in.
       systemd.packages = [ cfg.host.package ];
-      systemd.user.services.punktfunk-host = {
+      systemd.user.services.lilynk-host = {
         # Keep root (and every other system user) from starting a second host that steals the
         # fixed ports from the desktop user's — see `userScope`.
         unitConfig.ConditionUser = userScope;
@@ -633,7 +633,7 @@ in
         # PUNKTFUNK_GAMESCOPE_BIN so an operator's own override of that env still wins.
         ++ optional cfg.host.gamescopeHdr cfg.host.gamescopePackage
         # The plugin runner, if enabled. Package ops (`plugins add`, and the console's store jobs,
-        # which run INSIDE this service) exec `punktfunk-scripting`; its resolution order is
+        # which run INSIDE this service) exec `lilynk-scripting`; its resolution order is
         # PUNKTFUNK_SCRIPTING -> beside the host binary -> PATH -> the /usr and ~/.local layouts.
         # On NixOS only the PATH rung can ever match: the runner is a derivation of its OWN, so it
         # is never beside the host binary and nothing lands in /usr. `environment.systemPackages`
@@ -655,7 +655,7 @@ in
         #
         # An `EnvironmentFile=` value beats `Environment=`, so `settings`/`environmentFile` can
         # still override this (`off` forces the in-process encoder).
-        environment.PUNKTFUNK_ENCODE_WORKER = "${config.security.wrapperDir}/punktfunk-encode-worker";
+        environment.PUNKTFUNK_ENCODE_WORKER = "${config.security.wrapperDir}/lilynk-encode-worker";
         # Where our Vulkan WSI layer's manifest lives. The host defaults to the FHS path every
         # distro package uses, which no NixOS box has — here the layer travels inside the gamescope
         # derivation, so point at it. Without this a game nested under the compositor gets no HDR10
@@ -671,7 +671,7 @@ in
           # entry clears the packaged ExecStart.
           ExecStart = mkIf cfg.host.gamestream [
             ""
-            "${cfg.host.package}/bin/punktfunk-host serve --gamestream"
+            "${cfg.host.package}/bin/lilynk-host serve --gamestream"
           ];
           # `settings` and `environmentFile` stand in for host.env, which NixOS does not read. The
           # empty entry clears the packaged list; the seat env stays last, so the owner row wins.
@@ -689,7 +689,7 @@ in
 
       # A switch reloads user managers but never restarts a user service. A changed package
       # reloads this unit instead, which restarts the running host, console and runner.
-      systemd.services.punktfunk-restart-user-units = {
+      systemd.services.lilynk-restart-user-units = {
         description = "Restart the punktfunk user services after a package change";
         wantedBy = [ "multi-user.target" ];
         reloadTriggers =
@@ -708,7 +708,7 @@ in
     # --- client --------------------------------------------------------------------------------
     (mkIf cfg.client.enable {
       environment.systemPackages = [ cfg.client.package ];
-      # 70-punktfunk-client.rules: the seated user's DualSense hidraw and Switch 2 USB nodes (SDL).
+      # 70-lilynk-client.rules: the seated user's DualSense hidraw and Switch 2 USB nodes (SDL).
       # The rule is uaccess-tagged, so the active-seat user gets it with no group membership.
       services.udev.packages = [ cfg.client.package ];
 
@@ -718,7 +718,7 @@ in
     })
 
     # --- web console ---------------------------------------------------------------------------
-    # The declarative equivalent of the punktfunk-web .deb / RPM subpackage: its two systemd --user
+    # The declarative equivalent of the lilynk-web .deb / RPM subpackage: its two systemd --user
     # units (the console + its pre-start), auto-wired to the host's per-user mgmt token + identity
     # cert, plus the firewall opener.
     (mkIf cfg.web.enable {
@@ -729,18 +729,18 @@ in
         # (console port + 1): same host and certificate, different port, so the browser's same-origin
         # policy keeps a plugin from acting as the logged-in operator. Leaving it closed does not
         # degrade gracefully — every plugin interface is simply an empty panel from any other device.
-        # Keep in step with packaging/linux/punktfunk-web.xml and punktfunk.ufw.
+        # Keep in step with packaging/linux/lilynk-web.xml and lilynk.ufw.
         allowedTCPPorts = [
           47992
           47993
         ];
       };
 
-      # The units are the package's own (scripts/punktfunk-web{,-init}.service); these are their
+      # The units are the package's own (scripts/lilynk-web{,-init}.service); these are their
       # NixOS drop-ins. Same scoping as the host: root's instance would take 47992 from the real one.
       systemd.packages = [ cfg.web.package ];
-      systemd.user.services.punktfunk-web-init.unitConfig.ConditionUser = userScope;
-      systemd.user.services.punktfunk-web = {
+      systemd.user.services.lilynk-web-init.unitConfig.ConditionUser = userScope;
+      systemd.user.services.lilynk-web = {
         unitConfig.ConditionUser = userScope;
         wantedBy = optional cfg.web.autoStart "default.target";
         # Where both listeners bind (`web.bind`).
@@ -757,7 +757,7 @@ in
     })
 
     # --- plugin/script runner ------------------------------------------------------------------
-    # The deb/rpm punktfunk-scripting subpackage: the runner and its `systemd --user` unit, with the
+    # The deb/rpm lilynk-scripting subpackage: the runner and its `systemd --user` unit, with the
     # unit's own sandbox. Started unless `scripting.autoStart` is off.
     (mkIf cfg.scripting.enable {
       environment.systemPackages = [
@@ -766,9 +766,9 @@ in
         pkgs.passt
       ];
 
-      # The unit is the package's own (scripts/punktfunk-scripting.service); this is its drop-in.
+      # The unit is the package's own (scripts/lilynk-scripting.service); this is its drop-in.
       systemd.packages = [ cfg.scripting.package ];
-      systemd.user.services.punktfunk-scripting = {
+      systemd.user.services.lilynk-scripting = {
         # Same scoping as the host: a root-side runner would talk to the wrong session's mgmt API.
         unitConfig.ConditionUser = userScope;
         wantedBy = optional cfg.scripting.autoStart "default.target";
@@ -781,7 +781,7 @@ in
         ];
       };
       # A seat on a person's own account: its host starts this as that person.
-      systemd.user.services."punktfunk-scripting-seat@".path = [
+      systemd.user.services."lilynk-scripting-seat@".path = [
         pkgs.bubblewrap
         pkgs.passt
         pkgs.util-linux
@@ -798,12 +798,12 @@ in
         {
           # Every seat runs the host, and `users.groups.punktfunk` is declared with it.
           assertion = cfg.host.enable;
-          message = "services.punktfunk.seats needs services.punktfunk.host.enable: each seat runs the host.";
+          message = "services.lilynk.seats needs services.lilynk.host.enable: each seat runs the host.";
         }
         {
           # The supervisor creates a seat's user with useradd, which rewrites /etc/passwd.
           assertion = config.users.mutableUsers;
-          message = "services.punktfunk.seats needs users.mutableUsers = true: the supervisor creates seat users with useradd.";
+          message = "services.lilynk.seats needs users.mutableUsers = true: the supervisor creates seat users with useradd.";
         }
       ];
 
@@ -815,32 +815,32 @@ in
       # Each seat's /dev/uinput is a CUSE device the supervisor makes through /dev/cuse.
       boot.kernelModules = [ "cuse" ];
 
-      systemd.services.punktfunk-seats = {
+      systemd.services.lilynk-seats = {
         wantedBy = [ "multi-user.target" ];
         path = seatPath;
       };
-      # packaging/linux/punktfunk-seats-user.conf: a lingering owner's units wait for the contract.
-      systemd.services."user@".after = [ "punktfunk-seats.service" ];
+      # packaging/linux/lilynk-seats-user.conf: a lingering owner's units wait for the contract.
+      systemd.services."user@".after = [ "lilynk-seats.service" ];
 
       # The login helper's PAM service: the box's own `login` stack. The wallet lines name
       # modules by bare name, which NixOS doesn't resolve, so they are skipped here; a `login`
       # with the wallet enabled brings it.
-      security.pam.services.punktfunk-seat.text = builtins.readFile ../linux/punktfunk-seat.pam;
+      security.pam.services.lilynk-seat.text = builtins.readFile ../linux/lilynk-seat.pam;
 
-      systemd.services."punktfunk-seat@" = {
+      systemd.services."lilynk-seat@" = {
         path = seatPath;
-        # seat-session starts this host; the packaged default is /usr/bin/punktfunk-host.
-        environment.PUNKTFUNK_HOST_BIN = "${cfg.host.package}/bin/punktfunk-host";
+        # seat-session starts this host; the packaged default is /usr/bin/lilynk-host.
+        environment.PUNKTFUNK_HOST_BIN = "${cfg.host.package}/bin/lilynk-host";
         # The owner's settings and `environmentFile`, for the owner's row only (see
         # ownerSettingsFile). An `environmentFile` the owner can't read is skipped there.
         environment.PUNKTFUNK_OWNER_ENV = concatStringsSep " " (
           [ "${ownerSettingsFile}" ] ++ optional (cfg.host.environmentFile != null) (toString cfg.host.environmentFile)
         );
         # Every seat's host encodes: the capped worker and the WSI layer, as the user unit has them.
-        environment.PUNKTFUNK_ENCODE_WORKER = "${config.security.wrapperDir}/punktfunk-encode-worker";
-        # The wrapper runs for `punktfunk-games` alone, and a seat on a person's own account is in
+        environment.PUNKTFUNK_ENCODE_WORKER = "${config.security.wrapperDir}/lilynk-encode-worker";
+        # The wrapper runs for `lilynk-games` alone, and a seat on a person's own account is in
         # no group of ours: the unit gives each seat's session that group, and no account changes.
-        serviceConfig.SupplementaryGroups = [ "punktfunk-games" ];
+        serviceConfig.SupplementaryGroups = [ "lilynk-games" ];
         environment.PUNKTFUNK_GAMESCOPE_WSI_LAYER_DIR = mkIf cfg.host.gamescopeHdr
           "${cfg.host.gamescopePackage}/lib/punktfunk/vulkan/implicit_layer.d";
         # A switch must not end a seat's session. Seats survive an update on every other package.
@@ -850,28 +850,28 @@ in
       # The door ("Reachable without logging in"). Its host and console units name /usr/bin; the
       # leading empty ExecStart clears the packaged one. The door's ExecStartPre and both helper
       # templates already name the store path.
-      systemd.services.punktfunk-door.serviceConfig.ExecStart = [
+      systemd.services.lilynk-door.serviceConfig.ExecStart = [
         ""
-        "${cfg.host.package}/bin/punktfunk-host serve --door"
+        "${cfg.host.package}/bin/lilynk-host serve --door"
       ];
-      systemd.services.punktfunk-web-door.serviceConfig.ExecStart = [
+      systemd.services.lilynk-web-door.serviceConfig.ExecStart = [
         ""
-        "${cfg.web.package}/bin/punktfunk-web-server"
+        "${cfg.web.package}/bin/lilynk-web-server"
       ];
       # The door's console binds where `web.bind` says, as the user's does. The packaged list
       # holds the door's host.env copy, which would beat it: the empty entry clears the list.
       # The console reads the door's own files itself (the unit's PUNKTFUNK_ENV_FILES).
-      systemd.services.punktfunk-web-door.environment.PUNKTFUNK_UI_BIND = cfg.web.bind;
-      systemd.services.punktfunk-web-door.serviceConfig.EnvironmentFile = [ "" ];
+      systemd.services.lilynk-web-door.environment.PUNKTFUNK_UI_BIND = cfg.web.bind;
+      systemd.services.lilynk-web-door.serviceConfig.EnvironmentFile = [ "" ];
       # NixOS ignores a packaged unit's [Install] and can't write its unit directory, so the
       # helper's `systemctl enable` has no effect. The units are wanted here, and their own
       # condition keeps them off without the owner record.
-      systemd.services.punktfunk-door.wantedBy = [ "multi-user.target" ];
-      systemd.services.punktfunk-web-door.wantedBy = [ "multi-user.target" ];
+      systemd.services.lilynk-door.wantedBy = [ "multi-user.target" ];
+      systemd.services.lilynk-web-door.wantedBy = [ "multi-user.target" ];
       # The door's ports: the two `host.settings` keys that move them, and no other host knob.
       # The host.env lines its ExecStartPre copies win over these.
-      systemd.services.punktfunk-door.path = seatPath;
-      systemd.services.punktfunk-door.environment = lib.mapAttrs (_: renderVal) (
+      systemd.services.lilynk-door.path = seatPath;
+      systemd.services.lilynk-door.environment = lib.mapAttrs (_: renderVal) (
         lib.filterAttrs (
           name: _:
           builtins.elem name [
@@ -880,27 +880,27 @@ in
           ]
         ) cfg.host.settings
       );
-      systemd.services."punktfunk-door-on@".path = seatPath;
-      systemd.services."punktfunk-door-off@".path = seatPath;
+      systemd.services."lilynk-door-on@".path = seatPath;
+      systemd.services."lilynk-door-off@".path = seatPath;
 
       # Members of this group may start the helper templates; the helper refuses anyone else. The
       # polkit rule is the package's own file, which other distros read from /usr/share. Turning
       # seats on is the opt-in the other distros ask for with `usermod`, so `host.users` join it.
-      users.groups.punktfunk-update = { };
+      users.groups.lilynk-update = { };
       # Every seat user and the owner (the supervisor adds seat users at each start); it also
       # gates the encode-worker wrapper.
-      users.groups.punktfunk-games = { };
+      users.groups.lilynk-games = { };
       users.users = genAttrs cfg.host.users (_: {
         extraGroups = [
-          "punktfunk-update"
-          "punktfunk-games"
+          "lilynk-update"
+          "lilynk-games"
         ];
       });
       # The door user's own group, in place of `punktfunk`, which owns the usbip attach nodes.
-      users.groups.punktfunk-door = { };
+      users.groups.lilynk-door = { };
       security.polkit.enable = mkDefault true;
-      environment.etc."polkit-1/rules.d/49-punktfunk-door.rules".source =
-        "${cfg.seats.package}/share/polkit-1/rules.d/49-punktfunk-door.rules";
+      environment.etc."polkit-1/rules.d/49-lilynk-door.rules".source =
+        "${cfg.seats.package}/share/polkit-1/rules.d/49-lilynk-door.rules";
 
       # The seats a door redirects a client to, then their browser planes. The xml and ufw
       # openers carry the same range.

@@ -22,7 +22,7 @@ That is silently fatal on the decode side. `pyrowave_decoder.cpp` computes
 reads as "more blocks of the same frame": `clear()` never runs, `decoded_frame_for_current_sequence`
 stays true, and every second frame is swallowed. The symptom is "it works, just at half rate, with
 occasional mixed-frame blocks" — the kind of failure that passes a smoke test. It would hit every
-client, since pf-client-core and the Apple Metal hand-port parse the same field.
+client, since ly-client-core and the Apple Metal hand-port parse the same field.
 
 WHAT IT DOES. `set_next_sequence(seq)` stores `(seq - 1) & SequenceCountMask`, because
 `Impl::encode` pre-increments before stamping — the setter's contract is about the next ENCODE, not

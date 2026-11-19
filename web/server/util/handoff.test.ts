@@ -1,6 +1,6 @@
 // The handoff verifier decides whether a URL may become a logged-in session, so every way of
 // getting it wrong is a way of handing the admin surface to a stranger. The vector at the bottom
-// pins the message the host's `handoff_ticket` (crates/host/punktfunk-host/src/ctl.rs) signs; that
+// pins the message the host's `handoff_ticket` (crates/host/lilynk-host/src/ctl.rs) signs; that
 // file's own test pins the MAC.
 import { describe, expect, test } from "bun:test";
 import { mkdtempSync, writeFileSync } from "node:fs";

@@ -1,14 +1,14 @@
 //! Recolour the GTK shell from the Omarchy desktop theme.
 //!
 //! The theme itself — where it lives, how it parses, the contrast maths — is
-//! `pf_client_core::omarchy`, shared with the session console. This file owns only the GTK
+//! `ly_client_core::omarchy`, shared with the session console. This file owns only the GTK
 //! half: turning an [`OsTheme`] into libadwaita `@define-color`s and keeping them current.
 //!
 //! **Colours only.** The widget vocabulary stays Adwaita — this recolours the shell, it does
 //! not reshape it. Rounded cards, boxed lists and the header bar are unchanged.
 
 use gtk::{gdk, glib};
-use pf_client_core::omarchy::{current, on_accent, present, readable, OsTheme};
+use ly_client_core::omarchy::{current, on_accent, present, readable, OsTheme};
 use std::cell::{Cell, RefCell};
 
 thread_local! {
@@ -147,7 +147,7 @@ pub fn set_enabled(on: bool) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use pf_client_core::omarchy::{parse_hex, parse_punktfunk_json};
+    use ly_client_core::omarchy::{parse_hex, parse_punktfunk_json};
 
     fn theme() -> OsTheme {
         OsTheme {
@@ -188,7 +188,7 @@ mod tests {
     #[test]
     fn the_fill_keeps_the_themes_exact_accent() {
         // Everforest Light's shape: the accent is handsome as a fill and illegible as text.
-        // The text form moves (see pf-client-core's `readable` tests); the fill must not.
+        // The text form moves (see ly-client-core's `readable` tests); the fill must not.
         let raw = r##"{"schema":1,"mode":"light","background":"#fdf6e3","foreground":"#5c6a72","accent":"#dfa000"}"##;
         let t = parse_punktfunk_json(raw).unwrap();
         assert!(css(&t).contains("@define-color accent_bg_color #dfa000;"));
@@ -204,7 +204,7 @@ mod tests {
     /// in their OWN process; whichever starts first wins and the rest panic with "Attempted
     /// to initialize GTK from two different threads". Run it by name:
     ///
-    ///     cargo test -p punktfunk-client-linux -- --ignored the_theme_reaches_a_widget
+    ///     cargo test -p lilynk-client-linux -- --ignored the_theme_reaches_a_widget
     #[test]
     #[ignore = "needs a Wayland/X display"]
     fn the_theme_reaches_a_widget_through_the_app_stylesheet() {
@@ -239,7 +239,7 @@ mod tests {
         while glib::MainContext::default().iteration(false) {}
 
         let c = label.color();
-        let hex = pf_client_core::omarchy::Rgb(
+        let hex = ly_client_core::omarchy::Rgb(
             f64::from(c.red()),
             f64::from(c.green()),
             f64::from(c.blue()),

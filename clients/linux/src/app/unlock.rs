@@ -1,13 +1,13 @@
 //! The prompt in front of a dial to a profile on a person's own account, which asks for its
 //! password, or to a locked profile, which asks for its PIN; and its return when the host
-//! refuses the unlock. The rules are `pf_client_core::unlock`. Linux has no device keys, so the
+//! refuses the unlock. The rules are `ly_client_core::unlock`. Linux has no device keys, so the
 //! prompt's one switch is "Stay signed in on this device".
 
 use super::*;
-use pf_client_core::profiles;
-use pf_client_core::unlock::{self, Gate};
-use pf_l10n::{client, common};
-use punktfunk_core::quic::v2::msg::Zeroizing;
+use lilynk_core::quic::v2::msg::Zeroizing;
+use ly_client_core::profiles;
+use ly_client_core::unlock::{self, Gate};
+use ly_l10n::{client, common};
 
 impl AppModel {
     /// Dials as `id` (`None` names none) once `row`'s unlock allows: the password prompt
@@ -95,9 +95,7 @@ impl AppModel {
             None => self
                 .hosts
                 .emit(HostsMsg::ShowError(error.unwrap_or_else(|| {
-                    trust::connect_reject_message(
-                        punktfunk_core::reject::RejectReason::ProfileLocked,
-                    )
+                    trust::connect_reject_message(lilynk_core::reject::RejectReason::ProfileLocked)
                 }))),
         }
     }

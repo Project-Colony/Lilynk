@@ -3,11 +3,11 @@
   Run one cargo command in the driver workspace through a short filesystem root.
 
 .EXAMPLE
-  ..\drivers-cargo.ps1 'clippy -p pf-vdisplay --all-targets -- -D warnings'
+  ..\drivers-cargo.ps1 'clippy -p ly-vdisplay --all-targets -- -D warnings'
   The whole command is ONE quoted string; see the param note below for why.
 
 .DESCRIPTION
-  The driver's encoder deps (pf-encode-win's `pyrowave` and `qsv` features) build PyroWave and
+  The driver's encoder deps (ly-encode-win's `pyrowave` and `qsv` features) build PyroWave and
   oneVPL from source with CMake, and CMake probes the toolchain by building a tiny MSBuild
   project. MSBuild writes .tlog paths under the CMake tree and cannot exceed MAX_PATH, so a deep
   checkout fails before anything compiles - the CI runner's root is ~80 characters, which is
@@ -17,8 +17,8 @@
   for the first ancestor with a Cargo.lock and does not support a relocated CARGO_TARGET_DIR.
   So shorten the ROOT instead - subst a drive letter onto the repo and run cargo through it.
 
-  It must be the repo root, not the driver workspace: the workspace's path deps (pf-encode-win,
-  pf-frame) live in crates/ and resolve UPWARD, which a drive mapped at the workspace has no
+  It must be the repo root, not the driver workspace: the workspace's path deps (ly-encode-win,
+  ly-frame) live in crates/ and resolve UPWARD, which a drive mapped at the workspace has no
   parent for. Falls back to running in place when no drive letter is free.
 #>
 # ONE STRING, not $args and not a param() with [Parameter()]. Both lose arguments to PowerShell's

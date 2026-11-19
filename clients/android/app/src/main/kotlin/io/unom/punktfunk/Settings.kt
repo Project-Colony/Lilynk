@@ -212,7 +212,7 @@ data class Settings(
     val gamepadUiMode: String = GAMEPAD_UI_WHEN_CONNECTED,
     /**
      * The console's backdrop palette — the cross-client `ui_palette` key, named by the table in
-     * `pf-console-ui`'s `theme.rs`. A device preference, never part of a preset. An unknown value
+     * `ly-console-ui`'s `theme.rs`. A device preference, never part of a preset. An unknown value
      * reads as the default: a newer client may have shipped a palette this build doesn't know.
      */
     val uiPalette: String = "violet",
@@ -719,7 +719,7 @@ fun Settings.effectiveRefreshMilliHz(context: Context): Int =
     if (hz > 0) hz * 1000 else nativeRefreshMilliHz(context, secondScreen)
 
 /**
- * Client-side render-scale geometry — the Kotlin twin of `punktfunk-core`'s `render_scale` module
+ * Client-side render-scale geometry — the Kotlin twin of `lilynk-core`'s `render_scale` module
  * (and the Apple client's `RenderScale`). Multiply a base size, preserve aspect, even-floor (the
  * host rejects odd sizes), and clamp uniformly to the codec's per-axis ceiling so a connect can't
  * ask for a size the encoder rejects. `1.0` = Native. Pure + covered by [RenderScaleTest].
@@ -808,7 +808,7 @@ val VIDEO_FIT_OPTIONS = listOf(
 )
 
 /**
- * Stream-mode presets grouped by aspect ratio — the Kotlin twin of `punktfunk_core::resolutions`
+ * Stream-mode presets grouped by aspect ratio — the Kotlin twin of `lilynk_core::resolutions`
  * (and `PunktfunkShared/Resolutions.swift`). A picker shows one family at a time behind an aspect
  * switch, plus its own native rows; picking a family moves to its size nearest the current height
  * ([nearest]), so the switch and the list always agree without picker-side state. Pure + covered
@@ -853,7 +853,7 @@ object Resolutions {
 
     /** A typed `w`×`h` as a mode the host takes: each side at least [MIN_WIDTH]×[MIN_HEIGHT], at
      * most the codec's per-side ceiling, then floored even. Twin of
-     * `punktfunk_core::resolutions::custom`. */
+     * `lilynk_core::resolutions::custom`. */
     fun custom(w: Int, h: Int, codec: String): Pair<Int, Int> {
         val cap = RenderScale.maxDimension(codec)
         return w.coerceIn(MIN_WIDTH, cap) / 2 * 2 to h.coerceIn(MIN_HEIGHT, cap) / 2 * 2
@@ -882,7 +882,7 @@ object Resolutions {
     /**
      * The aspect switch on this device: "Screen", then "Safe area", then [ASPECTS]. Each device
      * entry appears only when no standard family has its shape, and the safe area only when it
-     * differs from the screen. Twin of `punktfunk_core::resolutions::families`.
+     * differs from the screen. Twin of `lilynk_core::resolutions::families`.
      */
     fun families(screen: Pair<Int, Int>?, safe: Pair<Int, Int>?): List<Aspect> {
         val devices = listOf(
@@ -1225,7 +1225,7 @@ val MOUSE_MODE_OPTIONS = MouseMode.entries.map { it to it.label }
 
 /**
  * (GamepadPref wire byte, label) for the emulated pad the host creates. NOT positional: the wire
- * bytes are `punktfunk_core::config::GamepadPref` (see `Gamepad.PREF_*`), and Steam Deck is `6`
+ * bytes are `lilynk_core::config::GamepadPref` (see `Gamepad.PREF_*`), and Steam Deck is `6`
  * with `5` (the classic Steam Controller) deliberately not offered — the same subset the desktop
  * clients' picker shows.
  */

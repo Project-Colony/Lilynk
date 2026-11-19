@@ -78,7 +78,7 @@ describe("reconcileSharedSdk", () => {
 	test("restores the lockfile and the packages and keeps going when the refresh fails", () => {
 		const dir = tree("0.0.1-not-a-real-version");
 		// A plugin's own file, which the failed install must leave exactly as it was.
-		const plugin = path.join(dir, "node_modules", "punktfunk-plugin-x", "index.js");
+		const plugin = path.join(dir, "node_modules", "lilynk-plugin-x", "index.js");
 		fs.mkdirSync(path.dirname(plugin), { recursive: true });
 		fs.writeFileSync(plugin, "the bytes that ran before");
 		const lines: string[] = [];

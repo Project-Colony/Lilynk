@@ -1,9 +1,9 @@
 ---
 title: Host CLI
-description: Every punktfunk-host command and flag you would run by hand, plus where the client's punktfunk command is documented.
+description: Every lilynk-host command and flag you would run by hand, plus where the client's punktfunk command is documented.
 ---
 
-Look up a `punktfunk-host` command or flag here. Most behaviour comes from
+Look up a `lilynk-host` command or flag here. Most behaviour comes from
 [`host.env`](/docs/configuration), not the command line; a flag wins over its `host.env` twin.
 
 | Command | What it does | Platform |
@@ -30,7 +30,7 @@ Look up a `punktfunk-host` command or flag here. Most behaviour comes from
 | [`hooks`](#hooks-windows) | Let hooks and prep steps run as administrator. | Windows |
 | [`web`](#web-windows) | Print the web-console login password. | Windows |
 
-`punktfunk-host --help` prints the common commands. `ctl`, `plugins`, `service`, `tray`, `driver`
+`lilynk-host --help` prints the common commands. `ctl`, `plugins`, `service`, `tray`, `driver`
 and `web` print their usage when run with no arguments. Commands not listed here, such as `spike`,
 `input-test` and `zerocopy-probe`, are developer tools.
 
@@ -40,7 +40,7 @@ Runs the native `punktfunk/2` host and the management API in one process. The na
 runs.
 
 ```sh
-punktfunk-host serve
+lilynk-host serve
 ```
 
 | Flag | `host.env` twin | Meaning |
@@ -72,8 +72,8 @@ Drives a running host over loopback: everything the [web console](/docs/web-cons
 day, from a terminal.
 
 ```sh
-punktfunk-host ctl pending
-punktfunk-host ctl approve 3
+lilynk-host ctl pending
+lilynk-host ctl approve 3
 ```
 
 | Verb | What it does |
@@ -126,7 +126,7 @@ never creates a token and takes none on the command line or from the environment
 ## `settings`
 
 ```sh
-punktfunk-host settings set gamestream true
+lilynk-host settings set gamestream true
 ```
 
 Writes one **Host** value to `host-settings.json`, as the console does, without a
@@ -135,26 +135,26 @@ JSON (`true`, `30`, `null` to clear) or a bare string. Restart the host to apply
 
 ## `plugins`
 
-`punktfunk-host plugins` does what the console's **Plugins** page does. A plugin is code on your
+`lilynk-host plugins` does what the console's **Plugins** page does. A plugin is code on your
 host; read [Plugins](/docs/plugins) first.
 
 | Command | What it does |
 |---|---|
-| `punktfunk-host plugins add <name…>` | Install plugins and restart the runner. |
-| `punktfunk-host plugins remove <name…>` | Uninstall plugins, drop their library titles, restart the runner. |
-| `punktfunk-host plugins list` | List installed plugins and their versions. |
-| `punktfunk-host plugins enable` | Enable and start the runner. |
-| `punktfunk-host plugins disable` | Stop and disable the runner. |
-| `punktfunk-host plugins status` | Show whether the runner is installed, enabled and running. |
-| `punktfunk-host plugins grant <plugin> <dir> [--write]` | Let a plugin reach a folder; read-only unless `--write`. |
-| `punktfunk-host plugins grant <plugin> 127.0.0.1:<port>` | Let a plugin connect to a server on this computer. `revoke` takes it back. |
-| `punktfunk-host plugins access` | List grants, pending requests and denials. |
-| `punktfunk-host plugins revoke <plugin> <dir>` | Take one grant back. |
+| `lilynk-host plugins add <name…>` | Install plugins and restart the runner. |
+| `lilynk-host plugins remove <name…>` | Uninstall plugins, drop their library titles, restart the runner. |
+| `lilynk-host plugins list` | List installed plugins and their versions. |
+| `lilynk-host plugins enable` | Enable and start the runner. |
+| `lilynk-host plugins disable` | Stop and disable the runner. |
+| `lilynk-host plugins status` | Show whether the runner is installed, enabled and running. |
+| `lilynk-host plugins grant <plugin> <dir> [--write]` | Let a plugin reach a folder; read-only unless `--write`. |
+| `lilynk-host plugins grant <plugin> 127.0.0.1:<port>` | Let a plugin connect to a server on this computer. `revoke` takes it back. |
+| `lilynk-host plugins access` | List grants, pending requests and denials. |
+| `lilynk-host plugins revoke <plugin> <dir>` | Take one grant back. |
 
 ## `library`
 
-`punktfunk-host library` prints the game library as JSON, the same as `GET /api/v1/library` — the
-quick answer to "does the host see my games?". `punktfunk-host library art --clear` deletes the
+`lilynk-host library` prints the game library as JSON, the same as `GET /api/v1/library` — the
+quick answer to "does the host see my games?". `lilynk-host library art --clear` deletes the
 covers the host cached for clients.
 
 ## `punktfunk1-host`
@@ -163,7 +163,7 @@ A standalone native-only host for testing the `punktfunk/2` path, with no GameSt
 Pairing is required; it logs a PIN at startup.
 
 ```sh
-punktfunk-host punktfunk1-host --source virtual
+lilynk-host punktfunk1-host --source virtual
 ```
 
 | Flag | Meaning |
@@ -192,9 +192,9 @@ The installer runs `service install`; you need these only to change an option or
 service. Run them from an **Administrator** prompt.
 
 ```powershell
-punktfunk-host service install [--gamestream=on|off] [--allow-public-network[=on|off]]
+lilynk-host service install [--gamestream=on|off] [--allow-public-network[=on|off]]
                                [--mgmt-bind=IP:PORT] [--web-bind=ADDR]
-punktfunk-host service start | stop | restart | status | uninstall
+lilynk-host service start | stop | restart | status | uninstall
 ```
 
 | Subcommand or option | What it does |
@@ -212,7 +212,7 @@ See [Running as a Service](/docs/running-as-a-service) and [Windows Host](/docs/
 
 ## `tray` (Windows)
 
-`punktfunk-host tray start|stop|status` brings the per-user status tray back after an update or a
+`lilynk-host tray start|stop|status` brings the per-user status tray back after an update or a
 crash, without signing out. `status` says whether it is installed and running.
 
 ## `driver` (Windows)
@@ -220,28 +220,28 @@ crash, without signing out. `status` says whether it is installed and running.
 The installer manages the drivers. These remove one without uninstalling the host:
 
 ```powershell
-punktfunk-host driver check                # does the virtual display driver answer?
-punktfunk-host driver uninstall            # the virtual display driver
-punktfunk-host driver uninstall --gamepad  # the virtual gamepad driver
-punktfunk-host driver uninstall --audio    # the host's virtual speaker and microphone devices
+lilynk-host driver check                # does the virtual display driver answer?
+lilynk-host driver uninstall            # the virtual display driver
+lilynk-host driver uninstall --gamepad  # the virtual gamepad driver
+lilynk-host driver uninstall --audio    # the host's virtual speaker and microphone devices
 ```
 
 ## `seats` (Windows)
 
-`punktfunk-host seats off`, run elevated, turns [seats](/docs/windows-seats) off without the
+`lilynk-host seats off`, run elevated, turns [seats](/docs/windows-seats) off without the
 service: Remote Desktop's listener and firewall rules and the shared Steam shortcuts go back to how
 they were before seats, and the seat listener goes. The seat accounts stay. Uninstalling runs it; while the host runs, use
 **Profiles** → **Seats** instead, which also stops the seats first.
 
 ## `hooks` (Windows)
 
-`punktfunk-host hooks elevated on`, run elevated, lets hooks and prep steps marked `elevated` run
+`lilynk-host hooks elevated on`, run elevated, lets hooks and prep steps marked `elevated` run
 with the signed-in administrator's full rights. `off` stops them. The host reads it on every run,
 with no restart. See [Run as administrator](/docs/automation#run-as-administrator).
 
 ## `web` (Windows)
 
-`punktfunk-host web password` prints the [web console](/docs/web-console) login password. Run it
+`lilynk-host web password` prints the [web console](/docs/web-console) login password. Run it
 elevated: the file is readable by Administrators and SYSTEM only. A silent install (winget,
 `/VERYSILENT`) shows the password nowhere else.
 
@@ -252,7 +252,7 @@ Prints the physical monitors by connector name, the name `PUNKTFUNK_CAPTURE_MONI
 session you want to stream.
 
 ```
-$ punktfunk-host list-monitors
+$ lilynk-host list-monitors
 Kwin:
   HDMI-A-1        1920x1080@60 at +0,+0    scale 1  Dell U2412M  [primary]
   DP-2            2560x1440@144 at +1920,+0  scale 1  ACME 27  [PINNED]
@@ -261,11 +261,11 @@ Kwin:
 Tags: `primary`, `disabled`, `punktfunk virtual display` (one of the host's own), `PINNED` (the
 current pick).
 
-`punktfunk-host mirror-test --monitor <CONNECTOR> [--seconds N] [--cpu]` captures that monitor with
+`lilynk-host mirror-test --monitor <CONNECTOR> [--seconds N] [--cpu]` captures that monitor with
 no client and reports the first frame, the frame count and the size. Move the mouse while it runs:
 a still screen produces almost no frames.
 
-`punktfunk-host anchor-test --monitor <CONNECTOR> [--width W --height H]` walks the pointer to the
+`lilynk-host anchor-test --monitor <CONNECTOR> [--width W --height H]` walks the pointer to the
 centre and four corners of that monitor, one second apart; `--none` walks it unanchored for
 comparison. The log line `libei: absolute input maps into this output` names the monitor it hit.
 It needs the libei input backend (GNOME, or `PUNKTFUNK_INPUT_BACKEND=libei`).
@@ -275,12 +275,12 @@ It needs the libei input backend (GNOME, or `PUNKTFUNK_INPUT_BACKEND=libei`).
 Linux checks that need no client.
 
 ```sh
-punktfunk-host hdr-probe
-punktfunk-host probe-compositor
+lilynk-host hdr-probe
+lilynk-host probe-compositor
 ```
 
 `hdr-probe` answers "why isn't my stream HDR?": a monitor in HDR mode (GNOME), a
-`punktfunk-gamescope` with HDR on, 10-bit HEVC and AV1 encode, and the verdict for each plane. Run
+`lilynk-gamescope` with HDR on, 10-bit HEVC and AV1 encode, and the verdict for each plane. Run
 it with the host service's environment: [HDR → Check it](/docs/hdr#check-it) has the command
 and reads the output.
 
@@ -292,7 +292,7 @@ On Windows, `hdr-p010-selftest` checks the GPU's HDR capture conversion with no 
 and prints PASS or FAIL with the largest error:
 
 ```powershell
-punktfunk-host hdr-p010-selftest 1920x1080 nvidia
+lilynk-host hdr-p010-selftest 1920x1080 nvidia
 ```
 
 Both arguments are optional: your capture size (default `64x64`; 1080 takes a different driver

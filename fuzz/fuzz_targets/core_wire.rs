@@ -1,4 +1,4 @@
-//! Every decoder punktfunk-core runs on a peer's bytes, behind one libFuzzer target.
+//! Every decoder lilynk-core runs on a peer's bytes, behind one libFuzzer target.
 //!
 //! `data[0]` picks the arm and the rest is the wire. The crate is `deny(unsafe_code)`, so a
 //! finding is a panic, which is a remote stop of a network-facing host and not a memory bug.
@@ -7,17 +7,17 @@
 #![no_main]
 
 use libfuzzer_sys::fuzz_target;
-use punktfunk_core::input::InputEvent;
-use punktfunk_core::quic::v2::dgram::{self, Dgram, Feedback, RetiredFeedback};
-use punktfunk_core::quic::v2::features::FeatureSet;
-use punktfunk_core::quic::v2::hello::{ClientHello, Ready, ServerHello};
-use punktfunk_core::quic::v2::msg::{
+use lilynk_core::input::InputEvent;
+use lilynk_core::quic::v2::dgram::{self, Dgram, Feedback, RetiredFeedback};
+use lilynk_core::quic::v2::features::FeatureSet;
+use lilynk_core::quic::v2::hello::{ClientHello, Ready, ServerHello};
+use lilynk_core::quic::v2::msg::{
     self, AudioConfig, Pending, ProfileUnlock, Redirect, ScreenLayout, Screens, StreamConfig,
     V2Message,
 };
-use punktfunk_core::quic::v2::{field, registry as reg};
-use punktfunk_core::quic::*;
-use punktfunk_core::{discovery, fp, packet, wol};
+use lilynk_core::quic::v2::{field, registry as reg};
+use lilynk_core::quic::*;
+use lilynk_core::{discovery, fp, packet, wol};
 
 /// What decodes must encode to bytes that decode and encode the same.
 fn settle<T>(b: &[u8], dec: impl Fn(&[u8]) -> Option<T>, enc: impl Fn(&T) -> Vec<u8>) {

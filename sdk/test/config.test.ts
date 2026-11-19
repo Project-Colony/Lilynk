@@ -133,7 +133,7 @@ describe("hostFetch", () => {
 		// CN-only, no SAN: the shape of the host's identity cert.
 		const made = spawnSync("openssl", [
 			"req", "-x509", "-newkey", "rsa:2048", "-nodes", "-days", "1",
-			"-subj", "/CN=punktfunk-host", "-keyout", key, "-out", cert,
+			"-subj", "/CN=lilynk-host", "-keyout", key, "-out", cert,
 		]);
 		expect(made.status).toBe(0);
 		const server = Bun.serve({

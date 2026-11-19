@@ -7,8 +7,8 @@ use super::{LibraryMsg, View};
 use adw::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::{gdk, gio, glib};
-use pf_client_core::library::{initials, store_label, GameEntry};
-use pf_l10n::{client, common};
+use ly_client_core::library::{initials, store_label, GameEntry};
+use ly_l10n::{client, common};
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -301,17 +301,17 @@ impl Poster {
                 .map_or(0, |d| d.as_millis() as u64);
             let text = caption.text(g, now);
             p.caption.set_label(text.as_deref().unwrap_or("\u{a0}"));
-            set_class(p.face.upcast_ref(), "pf-launcher", launcher);
+            set_class(p.face.upcast_ref(), "ly-launcher", launcher);
             p.badge.set_visible(true);
             p.badge.set_label(store_label(&g.store));
-            set_class(p.badge.upcast_ref(), "pf-launcher", launcher);
+            set_class(p.badge.upcast_ref(), "ly-launcher", launcher);
             p.running
                 .set_visible(view.running.borrow().contains_key(&g.id));
             // A launcher usually ships no poster: its mark, or its name on an accent face, says
             // "opens Steam" where a monogram would say a cover failed to load.
             let mark = g.art.is_empty().then(|| g.icon_token()).flatten();
             let mark = mark.filter(|t| {
-                LAUNCHER_ICON_TOKENS.contains(t) || pf_client_core::lucide::path(t).is_some()
+                LAUNCHER_ICON_TOKENS.contains(t) || ly_client_core::lucide::path(t).is_some()
             });
             match mark {
                 Some(token) => self.show_mark(p, token),
@@ -350,7 +350,7 @@ impl Poster {
             p.caption.set_visible(false);
             p.badge.set_visible(false);
             p.running.set_visible(false);
-            set_class(p.face.upcast_ref(), "pf-launcher", true);
+            set_class(p.face.upcast_ref(), "ly-launcher", true);
             self.show_mark(p, "monitor");
             p.picture.set_widget_name("");
             p.picture.set_paintable(None::<&gdk::Paintable>);
@@ -380,7 +380,7 @@ impl Poster {
             return;
         }
         let w: gtk::Widget = if LAUNCHER_ICON_TOKENS.contains(&token) {
-            let img = gtk::Image::from_icon_name(&format!("pf-launcher-{token}-symbolic"));
+            let img = gtk::Image::from_icon_name(&format!("ly-launcher-{token}-symbolic"));
             img.set_pixel_size(72);
             img.upcast()
         } else {
@@ -437,7 +437,7 @@ fn open_menu(button: &gtk::Button, view: &View, id: &str, at: Option<(f64, f64)>
 /// A title's rows on the shelf, `hides` the name of the profile it may hide for.
 fn title_items(
     item: &impl Fn(&str, &str),
-    running: Option<&pf_client_core::library::RunningGame>,
+    running: Option<&ly_client_core::library::RunningGame>,
     favorite: bool,
     hides: Option<&str>,
 ) {

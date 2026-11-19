@@ -27,7 +27,7 @@ exposes other users before a fix exists.
 
 The more of this you can give us, the faster we can act:
 
-- The component and version (e.g. `punktfunk-host 0.22.3`, Windows or Linux, which client).
+- The component and version (e.g. `lilynk-host 0.22.3`, Windows or Linux, which client).
 - The impact — what an attacker can do, and from what position (same LAN, a local service account,
   admin, a paired client, …).
 - Steps to reproduce, a proof-of-concept, or a crash/log if you have one.
@@ -51,7 +51,7 @@ date with you.
 
 In scope — the code in this repository:
 
-- The host (`punktfunk-host`), its Windows drivers, and the protocol/crypto core (`punktfunk-core`).
+- The host (`lilynk-host`), its Windows drivers, and the protocol/crypto core (`lilynk-core`).
 - The native clients (Apple, Linux, Windows, Android), the web management console, and the management
   API.
 
@@ -76,16 +76,16 @@ us beyond the download itself.
 
 - **Release-page downloads** (DMG, MSIX, setup.exe, APK, decky zip, .deb/.rpm) each ship a
   `<file>.sha256` next to them. In your download directory:
-  `sha256sum -c punktfunk-1.2.3.dmg.sha256` (macOS: `shasum -a 256 -c …`).
+  `sha256sum -c lilynk-1.2.3.dmg.sha256` (macOS: `shasum -a 256 -c …`).
 - **Windows installers and MSIX packages** are Authenticode-signed; a release build that cannot
   reach its code-signing certificate fails to build rather than falling back to a self-signed one.
-  Check with `Get-AuthenticodeSignature punktfunk-host-setup-1.2.3.exe`.
+  Check with `Get-AuthenticodeSignature lilynk-host-setup-1.2.3.exe`.
 - **The Windows drivers** (virtual display, virtual gamepads) are signed with a stable self-signed
-  certificate, `CN=punktfunk-driver`. The installer has to add it to the
+  certificate, `CN=lilynk-driver`. The installer has to add it to the
   machine's trusted roots for a self-signed driver to install at all, so — unlike the cases above —
   this signature does **not** authenticate the download: it gives the drivers a stable publisher
   identity you can compare against the published fingerprint, and it is removed again on uninstall.
-  Verify with `Get-AuthenticodeSignature` on the installed `pf_vdisplay.dll`, or list what is
+  Verify with `Get-AuthenticodeSignature` on the installed `ly_vdisplay.dll`, or list what is
   trusted with `Get-ChildItem Cert:\LocalMachine\Root | ? Subject -like '*punktfunk*'`.
 
 A checksum on its own only tells you the download wasn't corrupted in transit — it says nothing

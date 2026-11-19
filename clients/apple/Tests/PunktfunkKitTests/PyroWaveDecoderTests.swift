@@ -5,7 +5,7 @@
 //    framing (4-byte window prefix, FRAG chains, zeroed missing shards).
 //
 // 2. Golden-frame PSNR tests (Metal GPU): host-encoded fixtures (`pyrowave_dump_golden` in
-//    crates/host/pf-encode/src/enc/linux/pyrowave_tests.rs, run on a Vulkan box) decoded by
+//    crates/host/ly-encode/src/enc/linux/pyrowave_tests.rs, run on a Vulkan box) decoded by
 //    the Metal port and PSNR-matched against upstream's own decoder output. Float wavelet math
 //    is not bit-exact across implementations (upstream ships precision variants), so the gate
 //    is PSNR, not equality. This is the validation oracle (design/pyrowave-codec-plan.md §4.7)

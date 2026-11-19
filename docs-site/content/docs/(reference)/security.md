@@ -89,7 +89,7 @@ then **Restart Punktfunk**. If the setting shows as locked, remove the pin where
 | `PUNKTFUNK_GAMESTREAM=1` in `host.env` | Delete the line. |
 | `serve --gamestream` in a unit drop-in or `PUNKTFUNK_HOST_CMD` | Drop the flag. See [What the unit starts](/docs/running-as-a-service#what-the-unit-starts). |
 | The SteamOS installer's `--gamestream`, on an older install | Update the host; the update moves it into the console setting. |
-| NixOS | `services.punktfunk.host.gamestream = false;` — this also closes the GameStream ports. |
+| NixOS | `services.lilynk.host.gamestream = false;` — this also closes the GameStream ports. |
 
 If you need Moonlight, pair it on a network you trust — not one you share with strangers.
 
@@ -131,8 +131,8 @@ runs as that account too, so a compromise is scoped to that user.
 ### Linux seats share your games
 
 **Reachable without logging in** runs the box's host as the `punktfunk` system user, and a root
-service, `punktfunk-seats`, gives each profile with an [own desktop](/docs/profiles#on-linux) a
-Linux user and host of its own. The service keeps its state in `/var/lib/punktfunk-seats`, which
+service, `lilynk-seats`, gives each profile with an [own desktop](/docs/profiles#on-linux) a
+Linux user and host of its own. The service keeps its state in `/var/lib/lilynk-seats`, which
 only root can change.
 
 - **Controllers.** The service builds a seat's controllers from its own tables, and their device
@@ -141,12 +141,12 @@ only root can change.
 - **The owner.** Only the account that turned on **Reachable without logging in** is hosted as
   the box's owner. To hand that to another account, turn it off, then on from that account. The
   box keeps none of the first account's pairings, profiles or console password for the next. If the
-  owner's account is deleted, a member of `punktfunk-update` can turn it on from their own account,
+  owner's account is deleted, a member of `lilynk-update` can turn it on from their own account,
   and turning it off leaves the files in `/var/lib/punktfunk`. The box only takes that on when its
   accounts are all local. With a directory service such as LDAP, a missing account might be an
-  outage, so the door refuses; delete `/var/lib/punktfunk-seats/owner` as root once you know the
+  outage, so the door refuses; delete `/var/lib/lilynk-seats/owner` as root once you know the
   account is gone.
-- **Games.** Every seat writes the shared games folder, `/var/lib/punktfunk-seats/games`. With
+- **Games.** Every seat writes the shared games folder, `/var/lib/lilynk-seats/games`. With
   **Seats update your games** on, the default, every seat also updates and installs into your own
   Steam libraries. So a seat can change game files that you and the other seats run. Turn
   **Seats update your games** off to keep your libraries read-only to seats.
@@ -170,12 +170,12 @@ signed in, never with the console password:
 
 | | |
 |---|---|
-| Who decides | `punktfunk-seats`, as root. It checks the password through the machine's login (PAM), keeps the seat's list of signed-in devices, and starts the session. The host that faces the network only passes the password on: taken over, it can read a password typed after that, but can't open the session or add a device. |
+| Who decides | `lilynk-seats`, as root. It checks the password through the machine's login (PAM), keeps the seat's list of signed-in devices, and starts the session. The host that faces the network only passes the password on: taken over, it can read a password typed after that, but can't open the session or add a device. |
 | The password | The app sends it only to a host whose certificate it pinned at pairing, over the encrypted connection, and the host reads it only from a paired device. It is wiped after the check and never written to disk, a log, a command line or an environment. Nothing on the device stores it. |
 | Limits | 5 wrong passwords per device, then 15 minutes. At most 2 wrong passwords per account in 15 minutes reach the login, so a distro that locks an account after 3 failures never does it from a stream. |
-| Face or finger unlock | A key in the device's secure hardware (Secure Enclave, Android Keystore, Windows Hello) that signs only after a match. `punktfunk-seats` checks its signature over a one-time challenge, good for 2 minutes and bound to this seat, this device and this box. A failed signature never reaches the login. |
+| Face or finger unlock | A key in the device's secure hardware (Secure Enclave, Android Keystore, Windows Hello) that signs only after a match. `lilynk-seats` checks its signature over a one-time challenge, good for 2 minutes and bound to this seat, this device and this box. A failed signature never reaches the login. |
 | Which devices get on | The seat's host admits only the devices on its list, not every device paired with the box. A device with face or finger unlock is on it only after a fresh match, until 10 minutes after it leaves, so a copy of its pairing can't skip the match. **Sign out** on the profile's card takes a device and its key off. |
-| Record | Each unlock writes one line to the journal of `punktfunk-seats`: seat, account, device, how it unlocked, the result and the failures so far. Never the password. |
+| Record | Each unlock writes one line to the journal of `lilynk-seats`: seat, account, device, how it unlocked, the result and the failures so far. Never the password. |
 
 An existing Windows account is different: Windows needs its password at each sign-in, so the PC
 keeps it, encrypted for the system account. Anyone with administrator rights on the PC can recover
@@ -233,7 +233,7 @@ it:
 
 **Email [security@punktfunk.com](mailto:security@punktfunk.com).** Don't open a public issue, pull
 request or chat post — that exposes other users before a fix exists. Include the component and
-version (for example `punktfunk-host 0.39.0` on Windows, and which client), the impact and the
+version (for example `lilynk-host 0.39.0` on Windows, and which client), the impact and the
 attacker's position (same LAN, paired client, local account, admin), and steps to reproduce or a
 log.
 

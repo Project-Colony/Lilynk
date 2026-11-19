@@ -5,10 +5,10 @@
 # ITSELF (PUNKTFUNK_SHOT_OUT: widget snapshot → gsk render → PNG) before printing
 # `PF_SHOT_READY`. Self-capture needs no Xvfb/ImageMagick and runs under a live Wayland
 # session too; the X11 root-grab path is kept as a fallback for old binaries. No host,
-# GPU, or live stream — only the chrome scenes (the stream runs in the punktfunk-session
+# GPU, or live stream — only the chrome scenes (the stream runs in the lilynk-session
 # binary).
 #
-#   cargo build --release -p punktfunk-client-linux
+#   cargo build --release -p lilynk-client-linux
 #   bash clients/linux/tools/screenshots.sh            # → clients/linux/screenshots/<scene>.png
 #   bash clients/linux/tools/screenshots.sh hosts pair # a subset
 #
@@ -19,7 +19,7 @@
 set -euo pipefail
 
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)" # clients/linux
-BIN="${BIN:-$here/../../target/release/punktfunk-client}"
+BIN="${BIN:-$here/../../target/release/lilynk-client}"
 OUT="${OUT:-$here/screenshots}"
 # X11 fallback only: the client window maps at its 1200x780 default; with no WM under
 # Xvfb it lands at the top-left, so keep the root just larger so the full window (incl.
@@ -31,7 +31,7 @@ SHOT_DISPLAY="${SHOT_DISPLAY:-:99}"
 if [ "$#" -gt 0 ]; then SCENES=("$@"); else SCENES=(hosts settings trust pair addhost shortcuts library); fi
 
 [ -x "$BIN" ] || {
-	echo "client binary not found: $BIN (build it first: cargo build --release -p punktfunk-client-linux)" >&2
+	echo "client binary not found: $BIN (build it first: cargo build --release -p lilynk-client-linux)" >&2
 	exit 1
 }
 

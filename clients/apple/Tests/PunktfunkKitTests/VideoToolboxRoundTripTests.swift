@@ -1,6 +1,6 @@
 // Real-bitstream proof of the decode-prep path: VTCompressionSession encodes HEVC, we
 // rebuild the host's wire shape (Annex-B AU with in-band VPS/SPS/PPS — exactly what
-// punktfunk-host emits on every IDR), run it through AnnexB, and hand the result to a real
+// lilynk-host emits on every IDR), run it through AnnexB, and hand the result to a real
 // VTDecompressionSession. Pixels out = the whole client decode path is sound.
 
 import AVFoundation

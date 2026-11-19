@@ -1,15 +1,15 @@
 #requires -Version 7
 <#
 .SYNOPSIS
-  Gate G3 fault injection on the test box: deploy the encode-probe pf-vdisplay, stream a loopback
+  Gate G3 fault injection on the test box: deploy the encode-probe ly-vdisplay, stream a loopback
   session, wedge the driver's encode thread with an unbounded wait, and measure what it cost.
 
 .DESCRIPTION
   The driver's encode thread parks forever once it has encoded PFVD_ENCODE_BLOCK_AFTER frames
-  (probe builds only, packaging/windows/drivers/pf-vdisplay/src/encode/thread.rs). The G3 claim is
+  (probe builds only, packaging/windows/drivers/ly-vdisplay/src/encode/thread.rs). The G3 claim is
   that this costs one IDR and never a compose hitch, so the run measures three things:
 
-    * COMPOSE - `capture.dropped_total` + `capture.published_total` from `punktfunk-host ctl
+    * COMPOSE - `capture.dropped_total` + `capture.published_total` from `lilynk-host ctl
       --json status`, polled twice a second. Every drain-worker pass through the block window
       bumps one of them (the pool has no free slot, so the frame is counted and dropped), so their
       combined rate IS the drain worker's cadence. A hitch shows as an interval below refresh.
@@ -46,8 +46,8 @@ param(
     [switch]$SkipBuild,
     [switch]$SkipDeploy,
     [string]$Repo = 'C:\Users\Public\pf-phase0',
-    [string]$Client = 'C:\Users\Public\punktfunk-native\target\release\punktfunk-session.exe',
-    [string]$HostExe = 'C:\Program Files\punktfunk\punktfunk-host.exe',
+    [string]$Client = 'C:\Users\Public\lilynk-native\target\release\lilynk-session.exe',
+    [string]$HostExe = 'C:\Program Files\punktfunk\lilynk-host.exe',
     [string]$Service = 'PunktfunkHost',
     [string]$OutDir = 'C:\Users\Public'
 )
@@ -104,10 +104,10 @@ if (-not $SkipBuild) {
     }
     # wdk-sys walks up from OUT_DIR for a Cargo.lock, so the driver must use its own target dir.
     Remove-Item Env:\CARGO_TARGET_DIR -ErrorAction SilentlyContinue
-    Say 'cargo build --release -p pf-vdisplay --features encode-probe'
+    Say 'cargo build --release -p ly-vdisplay --features encode-probe'
     Push-Location $drivers
     try {
-        & cargo build --release -p pf-vdisplay --features encode-probe
+        & cargo build --release -p ly-vdisplay --features encode-probe
         if ($LASTEXITCODE -ne 0) { throw "driver build failed ($LASTEXITCODE)" }
     }
     finally { Pop-Location }
@@ -116,18 +116,18 @@ if (-not $SkipBuild) {
 # --- 2. deploy + prove a FRESH WUDFHost picked the new image up ---------------------------------
 if (-not $SkipDeploy) {
     $deployedAt = Get-Date
-    Say 'redeploy-pf-vdisplay.ps1'
-    & (Join-Path $Repo 'packaging\windows\redeploy-pf-vdisplay.ps1') -Service $Service
+    Say 'redeploy-ly-vdisplay.ps1'
+    & (Join-Path $Repo 'packaging\windows\redeploy-ly-vdisplay.ps1') -Service $Service
     # A redeploy replaces the DLL under a WUDFHost that keeps the OLD mapped image, and reports
     # success either way: only a host started after the deploy is running the probe build.
     $wudf = Get-Process WUDFHost -ErrorAction SilentlyContinue |
-        Where-Object { $_.Modules.ModuleName -contains 'pf_vdisplay.dll' }
+        Where-Object { $_.Modules.ModuleName -contains 'ly_vdisplay.dll' }
     if ($wudf -and ($wudf | Where-Object { $_.StartTime -lt $deployedAt })) {
-        Say 'stale WUDFHost still holds pf_vdisplay.dll - forcing a fresh one'
+        Say 'stale WUDFHost still holds ly_vdisplay.dll - forcing a fresh one'
         Stop-Service $Service -Force -ErrorAction SilentlyContinue
         $wudf | Stop-Process -Force -ErrorAction SilentlyContinue
         Start-Sleep -Seconds 2
-        & (Join-Path $Repo 'packaging\windows\reset-pf-vdisplay.ps1') -NoHost
+        & (Join-Path $Repo 'packaging\windows\reset-ly-vdisplay.ps1') -NoHost
         Start-Service $Service
         Start-Sleep -Seconds 3
     }
@@ -216,7 +216,7 @@ $marks = @(
     'capture health changed', 'IDD push: recovery stage', 'recovery: encoder reset applied',
     'forced same-mode reset applied', 'IDD push: same-mode presentation restart',
     'recovery: driver cycle', 'IDD push: recovery episode closed', 'IDD push: recovery ladder exhausted',
-    'same-mode recovery refused', 'IDD push: the pf-vdisplay WUDFHost is gone'
+    'same-mode recovery refused', 'IDD push: the ly-vdisplay WUDFHost is gone'
 )
 $rx = ($marks | ForEach-Object { [regex]::Escape($_) }) -join '|'
 $fs = [IO.File]::Open($hostLog, 'Open', 'Read', 'ReadWrite')

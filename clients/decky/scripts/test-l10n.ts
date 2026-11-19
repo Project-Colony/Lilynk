@@ -81,7 +81,7 @@ console.log(`l10n-languages: ${drafts.join(", ")} render`);
 
 // Every reason a host can refuse with has words in the host part: the CLI prints its token.
 const reject = readFileSync(
-  new URL("../../../crates/core/punktfunk-core/src/reject.rs", import.meta.url),
+  new URL("../../../crates/core/lilynk-core/src/reject.rs", import.meta.url),
   "utf8",
 );
 const tokens = [...reject.matchAll(/= \w+_CLOSE_CODE,\s*"([a-z-]+)"/g)].map((m) => m[1]);

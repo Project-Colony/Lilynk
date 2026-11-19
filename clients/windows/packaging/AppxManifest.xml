@@ -52,7 +52,7 @@
   </Resources>
 
   <Applications>
-    <Application Id="Punktfunk" Executable="punktfunk-client.exe" EntryPoint="Windows.FullTrustApplication">
+    <Application Id="Punktfunk" Executable="lilynk-client.exe" EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements
         DisplayName="Punktfunk"
         Description="Low-latency desktop and game streaming client"
@@ -77,13 +77,13 @@
           </uap:Protocol>
         </uap:Extension>
         <!--
-          An app execution alias so a written shortcut can target punktfunk-client.exe by name
+          An app execution alias so a written shortcut can target lilynk-client.exe by name
           from anywhere, without knowing the package install path (which changes on every
           update). The .lnk writer uses exactly this.
         -->
         <uap5:Extension Category="windows.appExecutionAlias">
           <uap5:AppExecutionAlias>
-            <uap5:ExecutionAlias Alias="punktfunk-client.exe" />
+            <uap5:ExecutionAlias Alias="lilynk-client.exe" />
           </uap5:AppExecutionAlias>
         </uap5:Extension>
       </Extensions>
@@ -91,7 +91,7 @@
     <!-- console:begin -->
     <!--
       Second entry point: the couch/console UI, for an HTPC or a TV-attached box where the
-      desktop shell is the wrong first screen. Its own executable (punktfunk-console.exe)
+      desktop shell is the wrong first screen. Its own executable (lilynk-console.exe)
       because an MSIX Application entry cannot pass arguments to a full-trust exe; it hands
       straight off to the session binary's controller-driven browse mode (host list,
       pairing, settings, library) fullscreen.
@@ -100,7 +100,7 @@
       makepri rejects the whole manifest ("Appx manifest not found or is invalid") — which
       is exactly how the console flag spelled out here broke the v0.15.0 MSIX build.
     -->
-    <Application Id="PunktfunkConsole" Executable="punktfunk-console.exe"
+    <Application Id="PunktfunkConsole" Executable="lilynk-console.exe"
                  EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements
         DisplayName="Punktfunk Console"
@@ -117,7 +117,7 @@
       out of the Start menu: it is a command, not a tile. Its alias is what a plugin or a
       script types, and what the Playnite importer shells to for `punktfunk library`.
     -->
-    <Application Id="PunktfunkCli" Executable="punktfunk.exe"
+    <Application Id="PunktfunkCli" Executable="lilynk.exe"
                  EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements AppListEntry="none"
         DisplayName="Punktfunk CLI"
@@ -128,7 +128,7 @@
       <Extensions>
         <uap5:Extension Category="windows.appExecutionAlias">
           <uap5:AppExecutionAlias>
-            <uap5:ExecutionAlias Alias="punktfunk.exe" />
+            <uap5:ExecutionAlias Alias="lilynk.exe" />
           </uap5:AppExecutionAlias>
         </uap5:Extension>
       </Extensions>

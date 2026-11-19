@@ -11,7 +11,7 @@ enum DemoMode {
     /// Fixed, so the record survives relaunches and every surface can recognise it.
     static let hostID = UUID(uuidString: "5D3E0000-DE70-4000-8000-00000000DE70")!
     /// Typed into Add Host, saves the demo host. `.punktfunk` is no TLD, so no real host has it.
-    static let address = "demo.punktfunk"
+    static let address = "demo.lilynk"
     @MainActor private static var server: DemoHost?
 
     static func isDemo(_ host: StoredHost) -> Bool { host.id == hostID }

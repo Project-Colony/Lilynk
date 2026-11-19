@@ -330,15 +330,15 @@ class DsCapture(
             return
         }
         padAudioStarted = true
-        // Real-world self test, opt-in: `adb shell setprop debug.punktfunk.pad_audio_selftest 3`
+        // Real-world self test, opt-in: `adb shell setprop debug.lilynk.pad_audio_selftest 3`
         // drives the voice coils for N seconds through the actual client path before the renderer
         // takes over — the one check that proves the descriptor, the interface claim and the write
         // path all work on THIS device, without needing a host to be streaming. Same convention as
-        // debug.punktfunk.force_parts.
+        // debug.lilynk.force_parts.
         val secs = runCatching {
             Class.forName("android.os.SystemProperties")
                 .getMethod("get", String::class.java, String::class.java)
-                .invoke(null, "debug.punktfunk.pad_audio_selftest", "0") as String
+                .invoke(null, "debug.lilynk.pad_audio_selftest", "0") as String
         }.getOrNull()?.toIntOrNull() ?: 0
         if (secs > 0) {
             // Diagnostic mode: the self test OWNS this connection and closes it once the native

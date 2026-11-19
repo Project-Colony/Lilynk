@@ -27,8 +27,8 @@ const paths = {
 	tokenFile: "/home/u/.config/punktfunk/plugin-state/demo/.plugin-token",
 	socket: "/run/user/1000/punktfunk/plugin-demo.sock",
 	pluginsDir: "/home/u/.config/punktfunk/plugins",
-	bun: "/usr/lib/punktfunk-bun/bun",
-	runner: "/usr/share/punktfunk-scripting/runner-cli.js",
+	bun: "/usr/lib/lilynk-bun/bun",
+	runner: "/usr/share/lilynk-scripting/runner-cli.js",
 	home: "/home/u",
 	configDir: "/home/u/.config/punktfunk",
 };
@@ -72,7 +72,7 @@ describe("refusedRoot", () => {
 			"/home/u/.config/",
 			"/home/u/.config/punktfunk",
 			"/home/u/.config/punktfunk/plugin-run",
-			"/home/u/.config/punktfunk-extra",
+			"/home/u/.config/lilynk-extra",
 			"/home/u/Games/../.ssh",
 		]) {
 			for (const write of [false, true]) {
@@ -299,7 +299,7 @@ describe("refusedRoot", () => {
 	test("refuses what the host's bind_refusal refuses, wherever the config dir is", () => {
 		const file = path.join(
 			import.meta.dir,
-			"../../crates/host/punktfunk-host/testdata/path-refusal-vectors.json",
+			"../../crates/host/lilynk-host/testdata/path-refusal-vectors.json",
 		);
 		const { vectors } = JSON.parse(fs.readFileSync(file, "utf8")) as {
 			vectors: {

@@ -3,17 +3,17 @@
 use crate::codec_format::{low_latency_keys, low_latency_profile, qti_fence_eligible};
 use crate::colour::android_hdr_static_info;
 use crate::sys::{set_thread_nice, sysprop};
+use lilynk_core::client::NativeClient;
+use lilynk_core::config::Mode;
 use ndk::media::media_codec::MediaCodec;
 use ndk::media::media_format::MediaFormat;
 use ndk::native_window::NativeWindow;
-use punktfunk_core::client::NativeClient;
-use punktfunk_core::config::Mode;
 use std::ffi::c_void;
 use std::time::Duration;
 
 /// The codec the host resolved, as every overlay names it: empty for an id this build does not
 /// know, which the stream notification leaves out.
-pub(crate) use punktfunk_core::hud::codec_label;
+pub(crate) use lilynk_core::hud::codec_label;
 
 /// Create the decoder: prefer the specific codec Kotlin ranked from `MediaCodecList`
 /// (`from_codec_name`), falling back to the platform's default decoder for the MIME
@@ -114,7 +114,7 @@ pub(super) fn try_set_frame_rate(window: &NativeWindow, frame_rate: f32, always:
 /// otherwise. The Surface DataSpace (applied on the format change) carries transfer/primaries
 /// regardless — this adds the luminance the tone-mapper needs. `None` on an SDR session.
 /// The newest entry, not the first: the host follows its generic baseline with the source's grade.
-pub(super) fn hdr_static(client: &NativeClient) -> Option<punktfunk_core::quic::HdrMeta> {
+pub(super) fn hdr_static(client: &NativeClient) -> Option<lilynk_core::quic::HdrMeta> {
     if !client.video_format().color.is_hdr() {
         return None;
     }
@@ -141,8 +141,8 @@ pub(super) fn hdr_static(client: &NativeClient) -> Option<punktfunk_core::quic::
 /// the codec time the HUD `decode` then no longer sees.
 /// `rtk-lowdelay` (standard plus `video-lowdelay-mode` whatever [`super::realtek`] read): the
 /// key a Realtek decoder gets on its own once the framework is found to read it.
-/// `adb shell setprop debug.punktfunk.low_latency_key mtk-boost`.
-pub(super) const LOW_LATENCY_KEY_PROP: &std::ffi::CStr = c"debug.punktfunk.low_latency_key";
+/// `adb shell setprop debug.lilynk.low_latency_key mtk-boost`.
+pub(super) const LOW_LATENCY_KEY_PROP: &std::ffi::CStr = c"debug.lilynk.low_latency_key";
 
 /// TV platforms players report showing half the stream rate, as (`ro.product.manufacturer`,
 /// `ro.product.device`): Philips' Pentonic 1000 sets (OLED809/810/888, PUS8508) and TCL's
@@ -176,7 +176,7 @@ pub(super) fn low_latency_format(
     mode: &Mode,
     codec_name: &str,
     keys: Option<bool>,
-    hdr_static: Option<&punktfunk_core::quic::HdrMeta>,
+    hdr_static: Option<&lilynk_core::quic::HdrMeta>,
     low_delay: bool,
 ) -> MediaFormat {
     let mut format = MediaFormat::new();

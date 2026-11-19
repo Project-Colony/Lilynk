@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-# WP3 — the on-glass validation kit for `punktfunk-encode-worker`.
+# WP3 — the on-glass validation kit for `lilynk-encode-worker`.
 #
 # Plan: punktfunk-planning/design/gpu-priority-capability-worker-implementation-plan.md §2/WP3.
 # This script is the mechanical half of that table. It runs ON a real box; it needs a GPU, and for
 # the KDE legs a live KDE session. Nothing here talks to another machine: no ssh, no sudo, no
 # setcap.
 #
-# WHAT IS BEING VALIDATED. `punktfunk-encode-worker` is a separate binary carrying
+# WHAT IS BEING VALIDATED. `lilynk-encode-worker` is a separate binary carrying
 # `cap_sys_nice=ep`; it encodes PyroWave at an elevated VK_KHR_global_priority class so the encode
-# dispatch can preempt a GPU-bound game. `punktfunk-host` carries NO capability, ever: KWin
+# dispatch can preempt a GPU-bound game. `lilynk-host` carries NO capability, ever: KWin
 # identifies a Wayland client by resolving its /proc/<pid>/exe, the kernel refuses that readlink to
 # any reader whose effective set is not a superset of the target's PERMITTED set
 # (cap_ptrace_access_check), KWin holds no capabilities — so a capability-carrying host is
@@ -84,8 +84,8 @@ eval "$_saved_opts"
 unset _saved_opts
 set +e   # `eval` above restored -e from the sourced file's perspective; this is our posture.
 
-WORKER_BIN_NAME='punktfunk-encode-worker'
-HOST_BIN_NAME='punktfunk-host'
+WORKER_BIN_NAME='lilynk-encode-worker'
+HOST_BIN_NAME='lilynk-host'
 # CAP_SYS_NICE is capability bit 23, so the kernel prints it as CapPrm: 0000000000800000.
 CAP_SYS_NICE_BIT=23
 
@@ -111,7 +111,7 @@ L_NORESPAWN='the encode worker would not respawn'
 # never reaches `Encoder::reset`, which is where L_DIED/L_RESPAWNED are emitted. See v4.e.
 L_PEERGONE='no reply from the encode worker'
 L_PEERPIPE='send to the encode worker'
-L_WORKER_READY='punktfunk-encode-worker ready'
+L_WORKER_READY='lilynk-encode-worker ready'
 L_PERF='pyrowave encode, submit->AU'
 L_CAPTURE='capture pipeline resolved:'
 L_KWIN_DENIED='does not expose zkde_screencast_unstable_v1'
@@ -140,11 +140,11 @@ usage() {
   cat <<'EOF'
 
   Options:
-    --host-bin PATH     the INSTALLED punktfunk-host (default: from a running host, then the
+    --host-bin PATH     the INSTALLED lilynk-host (default: from a running host, then the
                         installed .desktop's Exec=, then PATH)
-    --worker-bin PATH   the INSTALLED punktfunk-encode-worker (default: $PUNKTFUNK_ENCODE_WORKER,
+    --worker-bin PATH   the INSTALLED lilynk-encode-worker (default: $PUNKTFUNK_ENCODE_WORKER,
                         then beside the host binary, then PATH — mirrors the host's own resolution)
-    --host-pid PID      inspect this host process only (default: every running punktfunk-host)
+    --host-pid PID      inspect this host process only (default: every running lilynk-host)
     --source SRC        spike capture source: kwin-virtual | portal (default: kwin-virtual under
                         KWin, portal elsewhere). ⚠ synthetic is NOT usable — see the note in v3a.
     --seconds N         wall clock per measured arm (default 45)
@@ -153,7 +153,7 @@ usage() {
     --bitrate MBPS      spike bitrate (default 20)
     --gate-ms X         v3a abandonment gate, p99 headroom in ms (default 1.0)
     --fd-tolerance N    v5 allowed fd growth in the steady-state window (default 0)
-    --with-loopback     keep the spike's punktfunk-core loopback on (default: --no-loopback, less
+    --with-loopback     keep the spike's lilynk-core loopback on (default: --no-loopback, less
                         CPU noise in the latency arms)
     --allow-mutate      permit the legs that change the box: v4's `kill -9` of a live worker
     --log-dir DIR       where the captured spike logs go (default: a mktemp dir)
@@ -265,16 +265,16 @@ capprm_has_bit() {
 
 host_pids() {
   if [ -n "$OPT_HOST_PID" ]; then printf '%s\n' "$OPT_HOST_PID"; return 0; fi
-  # -x matches `comm`, which for a normally-exec'd host IS punktfunk-host.
+  # -x matches `comm`, which for a normally-exec'd host IS lilynk-host.
   pgrep -x "$HOST_BIN_NAME" 2>/dev/null
 }
 
 # The worker processes spawned by a given host pid.
 #
-# ⚠ `pgrep -x punktfunk-encode-worker` does NOT find them. The host execs the worker through the
+# ⚠ `pgrep -x lilynk-encode-worker` does NOT find them. The host execs the worker through the
 # pinned `/proc/self/fd/<n>` path (so a replaced binary cannot be swapped under a spawn), and the
 # kernel sets `comm` from the basename of the path passed to execve — i.e. a bare number. argv[0]
-# IS `punktfunk-encode-worker`, so a full-cmdline match works — but matching by PARENT is exact and
+# IS `lilynk-encode-worker`, so a full-cmdline match works — but matching by PARENT is exact and
 # cannot pick up somebody else's worker, which matters a great deal before a `kill -9`.
 worker_pids_of() {
   local parent="$1" p cmd
@@ -334,7 +334,7 @@ resolve_binaries() {
   [ -n "$HOST_BIN" ] && HOST_BIN="$(readlink -f "$HOST_BIN" 2>/dev/null || printf '%s' "$HOST_BIN")"
   find_desktop >/dev/null 2>&1
 
-  # Mirror the host's own resolution order (pf-zerocopy's ipc::resolve_worker_path).
+  # Mirror the host's own resolution order (ly-zerocopy's ipc::resolve_worker_path).
   if [ -n "$OPT_WORKER_BIN" ]; then
     WORKER_BIN="$OPT_WORKER_BIN"; WORKER_BIN_FROM='--worker-bin'
   elif [ -n "${PUNKTFUNK_ENCODE_WORKER:-}" ] && \
@@ -514,7 +514,7 @@ compositor_guess() {
 
 # run_spike <arm-name> <wall-seconds> <env-assignment>...
 #
-# Launches `punktfunk-host spike --codec pyrowave` with PUNKTFUNK_PERF armed, captures the combined
+# Launches `lilynk-host spike --codec pyrowave` with PUNKTFUNK_PERF armed, captures the combined
 # stderr of the host AND its worker (one inherited stream), waits at most `wall + grace`, then
 # terminates it. Echoes the log path. Returns non-zero only if the spike could not be started.
 #
@@ -1089,8 +1089,8 @@ leg_v4() {
           info "⚠ THE RESPAWN RUNG IS NOT OBSERVABLE HERE. \`spike\` has no encoder-recovery loop"
           info "(submit errors propagate and it exits), so \`Encoder::reset\` — the only emitter of"
           info "'$L_DIED' — is never called. Verify that half against a REAL session:"
-          info "    1. connect a client, then:  pkill -f punktfunk-encode-worker"
-          info "    2. journalctl --user -u punktfunk-host -b | grep -E 'died mid-session|respawned'"
+          info "    1. connect a client, then:  pkill -f lilynk-encode-worker"
+          info "    2. journalctl --user -u lilynk-host -b | grep -E 'died mid-session|respawned'"
           info "  Confirmed on glass 2026-08-10 (home-nobara-1, KDE, RTX 5070 Ti): stream never"
           info "  dropped, 'respawned the encode worker after a mid-session death"
           info "  priority=Granted(Realtime)', 'encoder rebuilt in place, forcing an IDR reset=1'."
@@ -1305,7 +1305,7 @@ leg_selftest() {
   local wl="$d/worker.log" il="$d/inline.log" cl="$d/cpu.log"
   {
     printf '%s\n' "  INFO x: $L_CAPTURE dmabuf-passthrough → pyrowave"
-    printf '%s\n' "  INFO x: priority=Realtime device=NVIDIA worker=/usr/bin/punktfunk-encode-worker pyrowave: $L_GRANTED (…)"
+    printf '%s\n' "  INFO x: priority=Realtime device=NVIDIA worker=/usr/bin/lilynk-encode-worker pyrowave: $L_GRANTED (…)"
   } > "$wl"
   printf '%s\n' "  INFO x: $L_OFF — $L_FALLBACK" > "$il"
   # A CPU capture arm: the worker takes the session, then leaves it on the first frame. Every
@@ -1392,8 +1392,8 @@ is a new inode).
      grant; an already-running session will not pick up a newly written file.
 
   2. Verify by hand, no root needed:
-         getcap ~/punktfunk/target-steamos/release/punktfunk-host            # MUST print nothing
-         getcap ~/punktfunk/target-steamos/release/punktfunk-encode-worker   # cap_sys_nice=ep
+         getcap ~/punktfunk/target-steamos/release/lilynk-host            # MUST print nothing
+         getcap ~/punktfunk/target-steamos/release/lilynk-encode-worker   # cap_sys_nice=ep
 
   3. Unprivileged, from a Desktop-mode terminal:
          scripts/validate-encode-worker.sh inspect v1 v2 v4
@@ -1418,8 +1418,8 @@ propagate and it exits. `Encoder::reset` is therefore never called, and reset is
 can see (the death is surfaced as an attributable worker-IPC error, host still alive) and leaves the
 respawn to a real session. To close it, with a client connected and streaming:
 
-         pkill -f punktfunk-encode-worker
-         journalctl --user -u punktfunk-host -b | grep -E 'died mid-session|respawned|rebuilt in place'
+         pkill -f lilynk-encode-worker
+         journalctl --user -u lilynk-host -b | grep -E 'died mid-session|respawned|rebuilt in place'
 
 Expect the stream never to drop, plus "respawned the encode worker after a mid-session death
 priority=Granted(Realtime)" and "encoder submit failed — encoder rebuilt in place, forcing an IDR
@@ -1428,16 +1428,16 @@ reset=1 max=5". Confirmed on home-nobara-1 (KDE, RTX 5070 Ti) 2026-08-10.
 --- the one step this script will never do --------------------------------------------------------
 It never calls setcap. If a leg says the worker is uncapped and you want the lever:
 
-         sudo setcap 'cap_sys_nice=ep' /path/to/punktfunk-encode-worker
+         sudo setcap 'cap_sys_nice=ep' /path/to/lilynk-encode-worker
 
-NEVER setcap punktfunk-host. Not "temporarily", not "to test". A capability on the host makes it
+NEVER setcap lilynk-host. Not "temporarily", not "to test". A capability on the host makes it
 unidentifiable to KWin and takes out desktop streaming on every KDE box — that is 0.26.0-1, and I2
-above hard-fails on it. To undo one:  sudo setcap -r /path/to/punktfunk-host
+above hard-fails on it. To undo one:  sudo setcap -r /path/to/lilynk-host
 
 --- reading the logs afterwards -------------------------------------------------------------------
 Every fallback rung ends with the same clause, so one grep finds them all whichever rung fired:
 
-         journalctl --user -u punktfunk-host -b | grep -F 'encoding in-process at default GPU priority'
+         journalctl --user -u lilynk-host -b | grep -F 'encoding in-process at default GPU priority'
 
 ⚠ The worker's PUNKTFUNK_PERF p50/p99 summary is written by the WORKER process to inherited stderr.
   It reaches journalctl. It does NOT reach the web console's Logs tab — that ring is a tracing layer
@@ -1461,7 +1461,7 @@ fi
 
 resolve_binaries
 
-printf '%s — punktfunk-encode-worker on-glass validation (%s)\n' "$(hostname 2>/dev/null || echo box)" "$VERSION"
+printf '%s — lilynk-encode-worker on-glass validation (%s)\n' "$(hostname 2>/dev/null || echo box)" "$VERSION"
 printf 'kernel %s · compositor %s · uid %s%s\n' \
   "$(uname -r)" "$(compositor_guess)" "$(id -u)" \
   "$([ -n "${WAYLAND_DISPLAY:-}" ] && printf ' · WAYLAND_DISPLAY=%s' "$WAYLAND_DISPLAY")"

@@ -6,7 +6,7 @@ use super::rows::{Caption, Row, Tile};
 use super::{LibraryMsg, View};
 use crate::hosts::os_icon_name;
 use adw::prelude::*;
-use pf_l10n::client;
+use ly_l10n::client;
 use std::rc::Rc;
 
 /// The space between posters across a row.

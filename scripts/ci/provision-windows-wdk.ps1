@@ -1,5 +1,5 @@
 # Provision the Windows Driver Kit (WDK) + cargo-wdk on the self-hosted windows-amd64 runner, so the
-# all-Rust UMDF drivers (pf-vdisplay + the gamepad drivers, unified on microsoft/windows-drivers-rs)
+# all-Rust UMDF drivers (ly-vdisplay + the gamepad drivers, unified on microsoft/windows-drivers-rs)
 # can build there. See design/windows-host-rewrite.md (M0).
 #
 # The runner already has the base Windows SDK 10.0.26100 (um/ headers) + MSVC + LLVM + Rust, but NOT the
@@ -10,7 +10,7 @@
 # Invoked by scripts/ci/ensure-windows-toolchain.ps1, the shared self-provision step the Windows
 # CI workflows that need a toolchain run at job start (windows-drivers.yml, windows-client.yml,
 # windows-host.yml), on top of the generic runner unom/infra provisions (windows-runner/) and
-# provision-windows-punktfunk-extras.ps1's ARM64-target layer. Run as the
+# provision-windows-lilynk-extras.ps1's ARM64-target layer. Run as the
 # runner's account (SYSTEM) with admin rights.
 [CmdletBinding()]
 param(

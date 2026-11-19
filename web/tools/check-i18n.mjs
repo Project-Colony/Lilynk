@@ -3,7 +3,7 @@
 // A plugin that fails to import is only a warning to the inlang SDK: `paraglide-js compile`
 // then exits 0 with no messages, and the console dies at SSR on the first `m.foo()`. A
 // message file the build cannot reach is skipped the same way. So this counts the output.
-// Budgets, parity and key rules are `cargo run -p pf-l10n -- check` (l10n/rules.json).
+// Budgets, parity and key rules are `cargo run -p ly-l10n -- check` (l10n/rules.json).
 //
 //   node tools/check-i18n.mjs          # run from web/, after `paraglide-js compile`
 //

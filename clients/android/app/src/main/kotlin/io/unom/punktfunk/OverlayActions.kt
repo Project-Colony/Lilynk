@@ -11,7 +11,7 @@ import org.json.JSONObject
 
 /*
  * The in-stream quick-action ring's configuration — the `overlay_actions` setting, one JSON blob
- * (schema v2, design/touch-client-overlay.md §3.2). The Kotlin twin of pf-client-core's
+ * (schema v2, design/touch-client-overlay.md §3.2). The Kotlin twin of ly-client-core's
  * `overlay_actions.rs`; `OverlayActionsTest` replays the shared contract,
  * `clients/shared/overlay-actions-vectors.json`. The slot ids and key names are the kit's
  * ([SlotId], [keyVk]), which the shortcuts share.

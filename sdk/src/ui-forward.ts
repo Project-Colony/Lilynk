@@ -134,8 +134,8 @@ export const attachOverPipe = (
 		let attached = false;
 		socket.on("connect", () => {
 			socket.write(
-				`GET /api/v1/plugins/${id}/ui/attach HTTP/1.1\r\nhost: punktfunk.host\r\n` +
-					"connection: Upgrade\r\nupgrade: punktfunk-ui\r\n\r\n",
+				`GET /api/v1/plugins/${id}/ui/attach HTTP/1.1\r\nhost: lilynk.host\r\n` +
+					"connection: Upgrade\r\nupgrade: lilynk-ui\r\n\r\n",
 			);
 		});
 		const onHead = (chunk: Buffer): void => {

@@ -43,14 +43,14 @@ game from the client's library: it opens in its own gamescope
 ([Dedicated game sessions](/docs/virtual-displays#dedicated-game-sessions), the default). A
 desktop stream stays SDR.
 
-1. Have **`punktfunk-gamescope`**; stock gamescope captures 8-bit. The host packages install it;
+1. Have **`lilynk-gamescope`**; stock gamescope captures 8-bit. The host packages install it;
    [HDR on gamescope](/docs/gamescope#hdr-on-gamescope) covers every distro.
 2. Restart the host. It reads what the gamescope build can do once, at startup.
 3. Let the host start the gamescope session, which is the default. A session it attaches to
    instead streams SDR: clear **Stream this monitor** under **Displays**, and delete any
    `PUNKTFUNK_GAMESCOPE_ATTACH` line from `host.env`.
 4. For Steam's own HDR setting to be available, the build must be `+pfhdr14` or newer. Check with
-   `punktfunk-gamescope --version`.
+   `lilynk-gamescope --version`.
 
 The stream is HDR while a game shows HDR and SDR the rest of the time: the Steam UI and SDR
 games stream as SDR, and the picture pauses for a moment when a game turns HDR on or off. The
@@ -124,7 +124,7 @@ The client's **10-bit SDR** setting asks for a 10-bit stream without HDR.
 
 A Windows 11 24H2 (or later) host composes the virtual display in wide colour for that session,
 at some GPU cost, and Windows shows it as a 10-bit display. A gamescope session on
-`punktfunk-gamescope` `+pfhdr26` or newer captures 10-bit SDR too. The stream then carries the
+`lilynk-gamescope` `+pfhdr26` or newer captures 10-bit SDR too. The stream then carries the
 desktop's own bits past 8, wherever a game or app renders them.
 
 Other desktops hand the host only 8 bits of SDR, so the host could only widen each frame:
@@ -152,7 +152,7 @@ Windows client tone-maps it because the display offers no HDR10.
 **On a Linux host**, one command checks every link:
 
 ```bash
-punktfunk-host hdr-probe
+lilynk-host hdr-probe
 ```
 
 It reports the monitor's HDR mode, whether the gamescope build offers 10-bit capture, the Game
@@ -162,7 +162,7 @@ first, or the answers describe your shell:
 
 ```bash
 set -a; . ~/.config/punktfunk/host.env; set +a
-punktfunk-host hdr-probe
+lilynk-host hdr-probe
 ```
 
 On Windows, [`hdr-p010-selftest`](/docs/host-cli#hdr-probe-and-probe-compositor) checks the GPU's

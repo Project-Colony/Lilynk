@@ -16,8 +16,8 @@ import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Multi-controller router for one stream session — the Android analogue of the Linux client's
- * gamepad `Worker`/`Slot` model (`pf-client-core/src/gamepad/worker.rs`) over the shared
- * native-plane wire contract (`punktfunk-core/src/input.rs`). Each physical controller (Android
+ * gamepad `Worker`/`Slot` model (`ly-client-core/src/gamepad/worker.rs`) over the shared
+ * native-plane wire contract (`lilynk-core/src/input.rs`). Each physical controller (Android
  * `deviceId`) gets a STABLE lowest-free wire pad index (0..15) held for its lifetime and freed
  * only on disconnect, so a pad dropping never renumbers the others (a game must not see its
  * players shuffle). Every forwarded event carries that pad index; a
@@ -271,7 +271,7 @@ class GamepadRouter(
     }
 
     /**
-     * A one-shot synthetic tap of a system button on the host's pad (pf-client-core's
+     * A one-shot synthetic tap of a system button on the host's pad (ly-client-core's
      * `GamepadService::tap_button`), on the first forwarded slot's wire index — pad 0 when none
      * is open, which is best-effort (the host pad may not exist). [Gamepad.BTN_MISC1] is the
      * Quick Access action, pressed as that pad's host device reads it
@@ -859,7 +859,7 @@ class GamepadRouter(
     // unit test can reach; everything else needs an InputManager, a main Looper and live
     // InputDevices. Still invisible to :app, which is what private bought.
     internal companion object {
-        /** Mirror of `punktfunk-core::input::MAX_PADS` — wire pad indices 0..15. */
+        /** Mirror of `lilynk-core::input::MAX_PADS` — wire pad indices 0..15. */
         const val MAX_PADS = 16
 
         /** The C ABI's `PUNKTFUNK_SC2_GATE_*` bits, for [NativeBridge.nativeSetSc2Gate]. */
@@ -875,7 +875,7 @@ class GamepadRouter(
          * The ring slot the left stick points at, given the sector already engaged: past the dead
          * zone by MAGNITUDE (a diagonal counts) the angle falls into one of six 60° sectors centred
          * on the slots, slot `k` at `-90° + 60°·k`, 12 o'clock first, clockwise. The Kotlin half of
-         * `pf_client_core::menu_nav::ring_sector` — same 0.5 engage / 0.3 release thresholds, so
+         * `ly_client_core::menu_nav::ring_sector` — same 0.5 engage / 0.3 release thresholds, so
          * the dial feels identical on a phone and on a Steam Deck. [MotionEvent.AXIS_Y] is +down,
          * which is already the screen's own sense.
          */
@@ -896,7 +896,7 @@ class GamepadRouter(
         private val END_STREAM = Shortcuts.Action.Slot(SlotId.EndStream)
 
         /**
-         * A synthetic tap's wire events as (bit, down, after ms) — pf-client-core's
+         * A synthetic tap's wire events as (bit, down, after ms) — ly-client-core's
          * `tap_events`: each press [Shortcuts.TAP_PRESS_MS] after the one before, then every
          * release together, last pressed first. Apart, because core folds per-transition sends
          * into one state, and because a chord's first button has to be held before its second

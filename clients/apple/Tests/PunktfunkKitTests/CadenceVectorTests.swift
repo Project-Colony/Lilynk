@@ -1,5 +1,5 @@
 // `clients/shared/cadence-vectors.json` against the Swift `CadenceClock`: scripted runs that
-// punktfunk-core's `phase::vectors` wrote from the Rust loop this one is a hand-written port of.
+// lilynk-core's `phase::vectors` wrote from the Rust loop this one is a hand-written port of.
 // Every due time and the final health must match to the nanosecond; a constant or a rounding
 // rule that drifts on either side fails here, not on a user's screen.
 

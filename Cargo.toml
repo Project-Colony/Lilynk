@@ -3,61 +3,61 @@ resolver = "2"
 members = [
     # crates/<group>: core and codec serve both sides; client and host never depend on each
     # other; install sits on core and host. scripts/ci/check-crate-groups.py holds the rule.
-    "crates/core/punktfunk-core",
-    "crates/core/pf-dmabuf",
-    "crates/core/pf-update-check",
-    "crates/core/pf-fluent",
-    "crates/codec/pf-bitstream",
-    "crates/codec/pf-bitstream/vendor/cros-codecs",
-    "crates/codec/pf-vkdecode",
-    "crates/codec/pf-vaapi",
-    "crates/codec/pf-libva",
-    "crates/codec/pf-v4l2",
-    "crates/codec/pf-v4l2dec",
-    "crates/codec/pf-dxvadec",
+    "crates/core/lilynk-core",
+    "crates/core/ly-dmabuf",
+    "crates/core/ly-update-check",
+    "crates/core/ly-fluent",
+    "crates/codec/ly-bitstream",
+    "crates/codec/ly-bitstream/vendor/cros-codecs",
+    "crates/codec/ly-vkdecode",
+    "crates/codec/ly-vaapi",
+    "crates/codec/ly-libva",
+    "crates/codec/ly-v4l2",
+    "crates/codec/ly-v4l2dec",
+    "crates/codec/ly-dxvadec",
     "crates/codec/pyrowave-sys",
     "crates/codec/libvpl-sys",
-    "crates/client/punktfunk-ffi",
-    "crates/client/pf-client-core",
-    "crates/client/pf-client-video",
-    "crates/client/pf-presenter",
-    "crates/client/pf-console-ui",
-    "crates/host/punktfunk-host",
+    "crates/client/lilynk-ffi",
+    "crates/client/ly-client-core",
+    "crates/client/ly-client-video",
+    "crates/client/ly-presenter",
+    "crates/client/ly-console-ui",
+    "crates/host/lilynk-host",
     # The capability-carrying PyroWave encode worker. A SEPARATE binary by design — never a
-    # hardlink of, or a subcommand of, punktfunk-host (design/gpu-priority-capability-worker.md).
-    "crates/host/punktfunk-encode-worker",
+    # hardlink of, or a subcommand of, lilynk-host (design/gpu-priority-capability-worker.md).
+    "crates/host/lilynk-encode-worker",
     # The Windows capture worker: Windows Graphics Capture and the encoder, as the signed-in
     # user. A separate binary by design (design/windows-wgc-capture.md §4.2).
-    "crates/host/punktfunk-capture-worker",
-    "crates/host/pf-capture",
-    "crates/host/pf-encode",
-    "crates/host/pf-encode-core",
-    "crates/host/pf-encode-win",
-    "crates/host/pf-encode-session",
-    "crates/host/pf-vdisplay",
-    "crates/host/pf-inject",
-    "crates/host/pf-inject/vendor/usbip-sim",
-    "crates/host/pf-audio",
-    "crates/host/pf-clipboard",
-    "crates/host/pf-frame",
-    "crates/host/pf-gpu",
-    "crates/host/pf-zerocopy",
-    "crates/host/pf-portal",
-    "crates/host/pf-win-display",
-    "crates/host/pf-driver-proto",
-    "crates/host/pf-host-config",
-    "crates/host/pf-paths",
-    "crates/host/pf-paths-win",
-    "crates/host/pf-seats",
-    "crates/host/pf-seat-audio",
-    # The seat supervisor's binary, apart from its library: it links pf-inject for the pads it
+    "crates/host/lilynk-capture-worker",
+    "crates/host/ly-capture",
+    "crates/host/ly-encode",
+    "crates/host/ly-encode-core",
+    "crates/host/ly-encode-win",
+    "crates/host/ly-encode-session",
+    "crates/host/ly-vdisplay",
+    "crates/host/ly-inject",
+    "crates/host/ly-inject/vendor/usbip-sim",
+    "crates/host/ly-audio",
+    "crates/host/ly-clipboard",
+    "crates/host/ly-frame",
+    "crates/host/ly-gpu",
+    "crates/host/ly-zerocopy",
+    "crates/host/ly-portal",
+    "crates/host/ly-win-display",
+    "crates/host/ly-driver-proto",
+    "crates/host/ly-host-config",
+    "crates/host/ly-paths",
+    "crates/host/ly-paths-win",
+    "crates/host/ly-seats",
+    "crates/host/ly-seat-audio",
+    # The seat supervisor's binary, apart from its library: it links ly-inject for the pads it
     # builds, which the Windows seat keeper's own workspace cannot resolve beside IronRDP.
-    "crates/host/punktfunk-seats",
-    "crates/install/punktfunk-setup",
+    "crates/host/lilynk-seats",
+    "crates/install/lilynk-setup",
     # The Windows installer wizard (WinUI 3 over the same engine). Stub bin off-Windows.
-    "crates/install/punktfunk-setup-win",
-    "crates/install/punktfunk-tray",
-    "crates/install/pf-update",
+    "crates/install/lilynk-setup-win",
+    "crates/install/lilynk-tray",
+    "crates/install/ly-update",
     "clients/probe",
     "clients/cli",
     "clients/linux",
@@ -130,7 +130,7 @@ rustls = { version = "0.23", default-features = false, features = ["aws_lc_rs", 
 ureq = { version = "3", default-features = false, features = ["rustls-no-provider", "rustls-webpki-roots"] }
 
 # microsoft/windows-rs at verified commits: crates.io's windows-reactor (0.100.0) lacks the
-# ComponentCompletion and ComponentTimer the Windows client uses. Re-run punktfunk-setup-win's
+# ComponentCompletion and ComponentTimer the Windows client uses. Re-run lilynk-setup-win's
 # tests/wizard_flow.rs on every reactor bump. Host crates declare crates.io `windows = "0.62"`
 # inline: cargo can't rename a workspace entry per member.
 #
@@ -146,7 +146,7 @@ windows-sys = "0.61"
 # One generation owns every Vulkan handle, including the ones sdl3's `ash` feature types.
 ash = "0.38"
 # The vendored parser snapshot the decode crates share.
-cros-codecs = { path = "crates/codec/pf-bitstream/vendor/cros-codecs" }
+cros-codecs = { path = "crates/codec/ly-bitstream/vendor/cros-codecs" }
 
 # The `unsafe` discipline the `packaging/windows/drivers/*` crates also run, extended to the
 # workspace. `unsafe fn` marks a CONTRACT the caller must uphold; it is not a licence for the whole
@@ -157,8 +157,8 @@ cros-codecs = { path = "crates/codec/pf-bitstream/vendor/cros-codecs" }
 # `deny`, not `warn`: CI runs `cargo clippy … -D warnings`, which promotes a warning to a hard
 # error anyway, so the level states what CI does.
 #
-# THE EXEMPTIONS. Ten GPU/FFI backend files (eight under `pf-encode/src/enc/linux`, two under
-# `pf-encode-win/src/windows`) carry `#![allow(unsafe_op_in_unsafe_fn)]` with a short reason
+# THE EXEMPTIONS. Ten GPU/FFI backend files (eight under `ly-encode/src/enc/linux`, two under
+# `ly-encode-win/src/windows`) carry `#![allow(unsafe_op_in_unsafe_fn)]` with a short reason
 # each. They are where this lint stops paying: their bodies are ash/CUDA/NVENC/D3D11/pyrowave-sys
 # calls almost line for line. Narrowing them means one `unsafe {}` per line plus, since the lint
 # below is denied, one hand-written SAFETY comment per line that could only ever restate "an ash
@@ -177,9 +177,9 @@ unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_vendor, values("sie
 # The companion lint: every `unsafe {}` / `unsafe impl` carries a `// SAFETY:` proof. It lives here
 # so a NEW crate (or a new module in an old one) is covered on creation rather than on
 # remembering. NOTE: this table reaches only crates with `[lints] workspace = true`;
-# `packaging/windows/drivers` and `packaging/windows/pf-vkhdr-layer` are SEPARATE workspaces and
+# `packaging/windows/drivers` and `packaging/windows/ly-vkhdr-layer` are SEPARATE workspaces and
 # restate it (any "workspace-wide" claim must be made three times or it is false). Of the members,
-# only the two vendored snapshots (pf-bitstream/vendor/cros-codecs, pf-inject/vendor/usbip-sim)
+# only the two vendored snapshots (ly-bitstream/vendor/cros-codecs, ly-inject/vendor/usbip-sim)
 # stay out, deliberately — upstream code stays pristine.
 [workspace.lints.clippy]
 undocumented_unsafe_blocks = "deny"
@@ -201,13 +201,13 @@ cast_ptr_alignment = "warn"
 opt-level = 3
 lto = "thin"
 codegen-units = 1
-# NOTE: deliberately NOT `panic = "abort"`. punktfunk-ffi ships as a cdylib/staticlib into
+# NOTE: deliberately NOT `panic = "abort"`. lilynk-ffi ships as a cdylib/staticlib into
 # third-party apps (Swift/Kotlin/C) and its C ABI catches panics at the boundary
 # (`catch_unwind` → `PunktfunkStatus::Panic`). `panic = "abort"` would make that guard a
 # no-op and let a stray panic abort the embedding application. Unwinding keeps the
 # documented isolation guarantee real.
 
-# Canary CI raises codegen-units for workspace crates (scripts/ci/pf-version.sh). Dependencies
+# Canary CI raises codegen-units for workspace crates (scripts/ci/ly-version.sh). Dependencies
 # stay at 1, so their sccache entries are the ones a release tag build reuses.
 [profile.release.package."*"]
 codegen-units = 1

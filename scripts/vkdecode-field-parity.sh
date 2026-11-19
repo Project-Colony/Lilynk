@@ -5,7 +5,7 @@
 # Two halves:
 #   1) On the box with the GPU (Deck: prefix RADV_PERFTEST=video_decode):
 #        PF_VKD_FIELD_STREAM=/path/au-XXXX.h265 \
-#          cargo test -p pf-vkdecode --test gpu_parity --release -- \
+#          cargo test -p ly-vkdecode --test gpu_parity --release -- \
 #          --ignored field_h265 --nocapture
 #      This writes /path/au-XXXX.h265.pfhash (one SHA-256 per frame, display order).
 #   2) Anywhere with ffmpeg ≥ 6 (this script):
@@ -56,7 +56,7 @@ mismatches=$(paste -d' ' "$pfhash" "$ffhash" | awk '$1 != $2' | wc -l | tr -d ' 
 if [ -z "$first" ]; then
   echo "OK: every compared frame is bit-identical to ffmpeg's software decode."
   echo "    (If the smear reproduced during this capture, the defect is NOT in"
-  echo "     pf-vkdecode/the driver for these bytes — look upstream of the dump.)"
+  echo "     ly-vkdecode/the driver for these bytes — look upstream of the dump.)"
   exit 0
 fi
 echo "FIRST DIVERGENT FRAME = $first ($mismatches diverging in total)"

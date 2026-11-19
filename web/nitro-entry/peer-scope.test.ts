@@ -1,4 +1,4 @@
-// The same table as `knock_sources_classify_by_address` in punktfunk-core's provenance.rs, so
+// The same table as `knock_sources_classify_by_address` in lilynk-core's provenance.rs, so
 // the console and pairing never disagree about which peers are local.
 import { describe, expect, it } from "bun:test";
 import { isLocalPeer, isMeshInterface, routesOverMesh } from "./peer-scope.mjs";

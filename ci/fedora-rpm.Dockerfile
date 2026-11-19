@@ -4,9 +4,9 @@
 # (group "fedora-45"). The RPM's auto-generated library
 # Requires pin to exactly what the chosen base — and thus the target — ships. Used by .gitea/workflows/rpm.yml; built+pushed by .gitea/workflows/docker.yml.
 #
-#   docker build --build-arg FEDORA_VERSION=43 -f ci/fedora-rpm.Dockerfile -t punktfunk-fedora-rpm ci
-#   docker build --build-arg FEDORA_VERSION=44 -f ci/fedora-rpm.Dockerfile -t punktfunk-fedora44-rpm ci
-#   docker build --build-arg FEDORA_VERSION=45 -f ci/fedora-rpm.Dockerfile -t punktfunk-fedora45-rpm ci
+#   docker build --build-arg FEDORA_VERSION=43 -f ci/fedora-rpm.Dockerfile -t lilynk-fedora-rpm ci
+#   docker build --build-arg FEDORA_VERSION=44 -f ci/fedora-rpm.Dockerfile -t lilynk-fedora44-rpm ci
+#   docker build --build-arg FEDORA_VERSION=45 -f ci/fedora-rpm.Dockerfile -t lilynk-fedora45-rpm ci
 #
 # Mirrors ci/rust-ci.Dockerfile (the Ubuntu workspace builder) for the rpmbuild side.
 ARG FEDORA_VERSION=43
@@ -15,7 +15,7 @@ FROM fedora:${FEDORA_VERSION}
 # Stock Fedora only: the host links nothing from RPM Fusion any more.
 RUN dnf -y install \
       # rpmbuild + source-tarball tooling; nodejs runs the Gitea Actions JS (checkout/cache) only
-      # — the punktfunk-web console builds AND runs on bun (installed below); unzip extracts the
+      # — the lilynk-web console builds AND runs on bun (installed below); unzip extracts the
       # pinned bun zip.
       rpm-build rpmdevtools systemd-rpm-macros git tar gzip nodejs unzip \
       # build toolchain + bindgen
@@ -29,15 +29,15 @@ RUN dnf -y install \
       # capture/audio/display link deps
       pipewire-devel wayland-devel libxkbcommon-devel opus-devel \
       mesa-libGL-devel mesa-libgbm-devel \
-      # punktfunk-client link deps (GTK4 shell + SDL3 gamepads)
+      # lilynk-client link deps (GTK4 shell + SDL3 gamepads)
       gtk4-devel libadwaita-devel SDL3-devel \
       # No vulkan-headers: nothing in the workspace compiles against the system Vulkan headers
       # (pyrowave-sys bindgens its own vendored copy; host and client both reach Vulkan through
-      # ash, which dlopens the loader), and packaging/rpm/punktfunk.spec BuildRequires none.
+      # ash, which dlopens the loader), and packaging/rpm/lilynk.spec BuildRequires none.
       # rpm.yml's HDR gamescope leg needs them and pulls them with `dnf builddep gamescope`.
   && dnf clean all
 
-# bun — both the BUILD tool and the RUNTIME for the punktfunk-web console, which the RPM vendors.
+# bun — both the BUILD tool and the RUNTIME for the lilynk-web console, which the RPM vendors.
 # Not in Fedora repos; it goes to a system PATH dir so rpmbuild (run as any uid) finds it. The pin
 # lives in ci/bun.env.
 COPY bun.env install-bun.sh /tmp/

@@ -1,4 +1,4 @@
-// The quick action's controller types: the step order (pf-client-core's `PAD_TYPE_CYCLE`) and
+// The quick action's controller types: the step order (ly-client-core's `PAD_TYPE_CYCLE`) and
 // each type's mark. The marks are the console's pad outlines, generated into
 // Resources/PadMarks.xcassets by scripts/gen-pad-marks.py; template rendering tints them like an
 // SF Symbol.
@@ -21,7 +21,7 @@ extension PunktfunkConnection.GamepadType {
         Self.ringCycle.contains(self) ? padName : String(localized: L10n.ringPadTypeOther)
     }
 
-    /// Every type by name, the words pf-client-core's `pad_name` prints.
+    /// Every type by name, the words ly-client-core's `pad_name` prints.
     public var padName: String {
         switch self {
         case .auto: return String(localized: L10n.ringPadTypeAutomatic)

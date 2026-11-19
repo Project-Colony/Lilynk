@@ -4,7 +4,7 @@
 //! session-ended watchdog) instead of holding a blocking event thread — access news is a
 //! console edit or an expiry warning, a handful per session, and every gate the mask drives
 //! re-checks within a second anyway. The connector already folds each mid-session
-//! [`punktfunk_core::quic::AccessUpdate`] latest-wins into its live grants/deadline slots;
+//! [`lilynk_core::quic::AccessUpdate`] latest-wins into its live grants/deadline slots;
 //! the seq counter here only exists so the poller can tell a FRESH update arrived (the host's
 //! T−5 m / T−1 m warnings owe a toast) without diffing state that a warning doesn't change.
 

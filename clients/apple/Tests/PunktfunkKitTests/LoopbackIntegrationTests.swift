@@ -1,7 +1,7 @@
 // Integration: the Swift wrapper against a real punktfunk/1 host over QUIC + UDP on loopback —
-// the Swift twin of punktfunk-host's native/tests.rs::c_abi_connection_roundtrip, this time
+// the Swift twin of lilynk-host's native/tests.rs::c_abi_connection_roundtrip, this time
 // through the statically linked xcframework. Driven by clients/apple/test-loopback.sh, which
-// builds and starts `punktfunk-host punktfunk1-host --source synthetic` and sets
+// builds and starts `lilynk-host punktfunk1-host --source synthetic` and sets
 // PUNKTFUNK_LOOPBACK_PORT.
 
 import XCTest

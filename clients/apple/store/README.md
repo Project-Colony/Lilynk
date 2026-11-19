@@ -25,7 +25,7 @@ few lines diverge where the German idiom does not carry.
 ## Three things that contradicted the original brief
 
 1. **A Mac cannot be a host.** The brief suggested Mac copy could cover "running as a host/server
-   or client on Mac". There is no macOS host — `punktfunk-host` has no macOS capture, virtual
+   or client on Mac". There is no macOS host — `lilynk-host` has no macOS capture, virtual
    display, or encode backend. The macOS copy is client-only and says so explicitly.
 2. **The existing privacy policy is website-only.** It covers server logs, Plausible, and a
    language cookie, and never mentions the apps. Linking it unchanged from App Store Connect is
@@ -41,8 +41,8 @@ Everything asserted in the copy was checked against the source rather than the m
 - Hardware decode, HDR/4:4:4, controller and input support — the
   [support matrix](https://docs.punktfunk.unom.io/docs/support-matrix) and
   [client settings](https://docs.punktfunk.unom.io/docs/client-settings), which own those claims
-- Entitlements and their justifications — `Config/Punktfunk.entitlements`,
-  `Config/Punktfunk-macOS.entitlements` (both carry detailed rationale comments)
+- Entitlements and their justifications — `Config/Lilynk.entitlements`,
+  `Config/Lilynk-macOS.entitlements` (both carry detailed rationale comments)
 - Background audio mode and its 2.5.4 constraints — `Config/Info.plist`
 - "Collects no data" — verified by absence: no analytics SDK in `Package.swift`, no telemetry
   symbols in `Sources/`, `URLSession` used only against the paired host

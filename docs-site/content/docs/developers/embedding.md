@@ -1,29 +1,29 @@
 ---
 title: Embed the core (C ABI)
-description: Build a client for a platform without a Punktfunk app by linking the punktfunk-ffi C ABI.
+description: Build a client for a platform without a Punktfunk app by linking the lilynk-ffi C ABI.
 ---
 
-Link `punktfunk-ffi` into your own client and it speaks the whole protocol for you: the QUIC
+Link `lilynk-ffi` into your own client and it speaks the whole protocol for you: the QUIC
 handshake, pairing, the encrypted media path, FEC and loss recovery, clock sync. You decode
 video, present it, play audio and read input. The contract is
-[`include/punktfunk_core.h`](https://git.unom.io/unom/punktfunk/src/branch/main/include/punktfunk_core.h):
+[`include/lilynk_core.h`](https://git.unom.io/unom/punktfunk/src/branch/main/include/punktfunk_core.h):
 every symbol carries a doc comment, and this page is the map to it. A Rust client depends on
-`punktfunk-core` with `features = ["quic"]` instead, as the Android client does.
+`lilynk-core` with `features = ["quic"]` instead, as the Android client does.
 
 ## Build and link
 
 ```sh
-cargo build -p punktfunk-ffi --features quic --release
+cargo build -p lilynk-ffi --features quic --release
 ```
 
-One build writes both library kinds to `target/release/`: `libpunktfunk_ffi.a` (static),
-`libpunktfunk_ffi.so` / `.dylib` / `punktfunk_ffi.dll` (dynamic). `cargo run -p gen-headers`
+One build writes both library kinds to `target/release/`: `liblilynk_ffi.a` (static),
+`liblilynk_ffi.so` / `.dylib` / `lilynk_ffi.dll` (dynamic). `cargo run -p gen-headers`
 regenerates the header from
-[`punktfunk-ffi`](https://git.unom.io/unom/punktfunk/src/branch/main/crates/client/punktfunk-ffi/src/lib.rs)
+[`lilynk-ffi`](https://git.unom.io/unom/punktfunk/src/branch/main/crates/client/punktfunk-ffi/src/lib.rs)
 with cbindgen; the header is checked in, and CI fails when it is stale.
 
 Compile your code with `-DPUNKTFUNK_FEATURE_QUIC`. The whole client API (`punktfunk_connect*`,
-`punktfunk_connection_*`, `punktfunk_pair`, `punktfunk_probe`, `punktfunk_generate_identity`) sits
+`punktfunk_connection_*`, `punktfunk_pair`, `lilynk_probe`, `punktfunk_generate_identity`) sits
 behind that define. Without it the header declares only the version check, logging,
 `punktfunk_wake_on_lan`, the decode helpers and the in-process loopback pair the tests use
 (`punktfunk_test_loopback_pair`).
@@ -31,9 +31,9 @@ behind that define. Without it the header declares only the version check, loggi
 ```sh
 cc -std=c11 -DPUNKTFUNK_FEATURE_QUIC -I include -c myclient.c
 cc myclient.o -L target/release -lpunktfunk_ffi -o myclient          # dynamic
-NATIVE=$(cargo rustc -p punktfunk-ffi --features quic --release --lib --crate-type staticlib \
+NATIVE=$(cargo rustc -p lilynk-ffi --features quic --release --lib --crate-type staticlib \
   -- --print native-static-libs 2>&1 | sed -n 's/.*native-static-libs: //p' | tail -1)
-cc myclient.o target/release/libpunktfunk_ffi.a $NATIVE -o myclient     # static
+cc myclient.o target/release/liblilynk_ffi.a $NATIVE -o myclient     # static
 ```
 
 To cross-compile, `rustup target add <triple>`, set `CC_<triple>` and
@@ -72,7 +72,7 @@ host itself. ABI changes per release:
   `next_clipboard` hand back pointers into core memory that stay valid until your next pull on the
   same plane. Decode or copy before you pull again.
 - **Senders and setters** (`send_*`, `set_*`, `request_*`) enqueue and return, from any thread.
-  `punktfunk_connect*`, `punktfunk_pair`, `punktfunk_probe` and `punktfunk_wake_on_lan` block on
+  `punktfunk_connect*`, `punktfunk_pair`, `lilynk_probe` and `punktfunk_wake_on_lan` block on
   the network: keep them off your UI thread.
 
 ## Lifecycle
@@ -94,7 +94,7 @@ host itself. ABI changes per release:
    `punktfunk_connection_close`, which joins the core's threads and frees the handle.
 
 Discovery isn't part of the C ABI. Browse mDNS for `_punktfunk._udp` with the platform's API, or
-let the user type an address. `punktfunk_probe` checks a known address; compare its
+let the user type an address. `lilynk_probe` checks a known address; compare its
 `observed_sha256_out` with the stored fingerprint, since any machine on that address answers.
 `punktfunk_wake_on_lan` wakes a host from the MACs in its mDNS `mac` TXT record.
 
@@ -207,7 +207,7 @@ Connects, pulls 600 access units, and quits.
 
 ```c
 #include <stdio.h>
-#include "punktfunk_core.h"
+#include "lilynk_core.h"
 
 int main(int argc, char **argv) {
     if (argc < 2 || punktfunk_abi_version() != PUNKTFUNK_ABI_VERSION) return 1;
@@ -250,5 +250,5 @@ int main(int argc, char **argv) {
 A real client reports a refused AU and a stopped decoder too, persists the identity and
 `host_fp`, and runs audio and feedback on their own threads. For a complete client over the same
 API, read
-[`crates/client/pf-client-core/src/session.rs`](https://git.unom.io/unom/punktfunk/src/branch/main/crates/client/pf-client-core/src/session.rs).
-`bash crates/client/punktfunk-ffi/tests/c/run.sh` proves the static library links from C on your machine.
+[`crates/client/ly-client-core/src/session.rs`](https://git.unom.io/unom/punktfunk/src/branch/main/crates/client/pf-client-core/src/session.rs).
+`bash crates/client/lilynk-ffi/tests/c/run.sh` proves the static library links from C on your machine.

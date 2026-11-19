@@ -54,7 +54,7 @@ import kotlinx.coroutines.withContext
  * Whether the shelf on screen is an observation or a memory — and, if a memory, what is being done
  * about it. The cached states want different words: "waking" only while a magic packet is out,
  * "checking" while the host is merely asked, and "last known library" once it isn't going to
- * become current. The same copy as `pf_console_ui::Stale`.
+ * become current. The same copy as `ly_console_ui::Stale`.
  */
 internal enum class Stale(@StringRes val note: Int?) {
     No(null),

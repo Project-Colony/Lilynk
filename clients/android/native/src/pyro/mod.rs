@@ -8,7 +8,7 @@
 //! same `SurfaceView` ([`present`]) or, where the device can import `AHardwareBuffer`s, drawn
 //! into buffers the compositor takes as an `ASurfaceControl` layer ([`asc`]). The decoder
 //! itself is the SHARED one the Linux and Windows clients use
-//! (`pf_client_video::video_pyrowave`); only the device and the present path are ours.
+//! (`ly_client_video::video_pyrowave`); only the device and the present path are ours.
 //!
 //! **Intra-only, which removes most of a decode loop.** Every frame stands alone, so
 //! there is no reference chain to lose: no re-anchor freeze, no keyframe requests, no
@@ -30,12 +30,12 @@ mod present;
 mod imp {
     use super::{asc, device::PyroDevice, present::Present};
     use anyhow::{anyhow, Result};
+    use lilynk_core::au::AuMemory;
+    use lilynk_core::client::NativeClient;
+    use lilynk_core::error::PunktfunkError;
+    use ly_client_video::video_color::ColorDesc;
+    use ly_client_video::video_pyrowave::{DecodeTimeline, PyroWaveDecoder};
     use ndk::native_window::NativeWindow;
-    use pf_client_video::video_color::ColorDesc;
-    use pf_client_video::video_pyrowave::{DecodeTimeline, PyroWaveDecoder};
-    use punktfunk_core::au::AuMemory;
-    use punktfunk_core::client::NativeClient;
-    use punktfunk_core::error::PunktfunkError;
     use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
     use std::sync::{mpsc, Arc};
     use std::time::{Duration, Instant};
@@ -192,7 +192,7 @@ mod imp {
     fn open_decoder(
         client: &NativeClient,
         dev: &PyroDevice,
-        mode: punktfunk_core::config::Mode,
+        mode: lilynk_core::config::Mode,
     ) -> Result<PyroWaveDecoder> {
         // The wavelet bitstream carries no VUI, so the colour contract is the handshake's.
         let color = ColorDesc {
@@ -206,7 +206,7 @@ mod imp {
             mode.width,
             mode.height,
             client.shard_payload as usize,
-            client.chroma_format == punktfunk_core::quic::CHROMA_IDC_444,
+            client.chroma_format == lilynk_core::quic::CHROMA_IDC_444,
             color,
             client.bit_depth >= 10,
         )
@@ -256,7 +256,7 @@ mod imp {
     ) {
         let result = run_inner(&client, &window, &shutdown, &stats, &opts);
         // Back to heap memory: the next lane lends its own ring, and this one can go.
-        client.set_au_memory(Arc::new(punktfunk_core::au::HeapPool::default()));
+        client.set_au_memory(Arc::new(lilynk_core::au::HeapPool::default()));
         if let Err(e) = result {
             if shutdown.load(Ordering::Relaxed) {
                 // Teardown, not a fault: Kotlin sets the flag and releases the Surface in the
@@ -319,7 +319,7 @@ mod imp {
             mode.width,
             mode.height,
             depth,
-            if client.chroma_format == punktfunk_core::quic::CHROMA_IDC_444 {
+            if client.chroma_format == lilynk_core::quic::CHROMA_IDC_444 {
                 "4:4:4"
             } else {
                 "4:2:0"
@@ -397,7 +397,7 @@ mod imp {
             };
             let pulled_ns = if want_stamps { now_realtime_ns() } else { 0 };
 
-            let aligned = frame.flags & punktfunk_core::packet::USER_FLAG_CHUNK_ALIGNED != 0;
+            let aligned = frame.flags & lilynk_core::packet::USER_FLAG_CHUNK_ALIGNED != 0;
             let decoded = match decoder.decode_au(frame.data, aligned, frame.complete) {
                 Ok(d) => d,
                 Err(e) => {

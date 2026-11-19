@@ -198,7 +198,7 @@ public final class GamepadFeedback {
             }
             drainDone.signal()
         }
-        thread.name = "punktfunk-feedback"
+        thread.name = "lilynk-feedback"
         thread.qualityOfService = .userInteractive
         thread.start()
     }

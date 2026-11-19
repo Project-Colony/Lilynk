@@ -66,9 +66,9 @@ for (const id of [
 }
 
 for (const bin of [
-  "/usr/bin/punktfunk-client",
-  "/home/deck/.local/bin/punktfunk-client",
-  "/home/deck/.local/share/punktfunk/bin/punktfunk-gtk",
+  "/usr/bin/lilynk-client",
+  "/home/deck/.local/bin/lilynk-client",
+  "/home/deck/.local/share/punktfunk/bin/lilynk-gtk",
   "/run/media/mmcblk0p1/apps/c++/client-1.2.3",
   "/opt/punktfunk@1/bin/client",
 ]) {
@@ -114,17 +114,17 @@ const tail = `%command% "${runner}"`;
 const host = "11111111-2222-4333-8444-555555555555";
 assert.equal(launchOptions(host, runner, "", {}), `PF_REF=${host} ${tail}`, "plain stream");
 assert.equal(
-  launchOptions(host, runner, "/usr/bin/punktfunk-client", {}),
-  `PF_REF=${host} PF_CLIENT_BIN=/usr/bin/punktfunk-client ${tail}`,
+  launchOptions(host, runner, "/usr/bin/lilynk-client", {}),
+  `PF_REF=${host} PF_CLIENT_BIN=/usr/bin/lilynk-client ${tail}`,
   "native client",
 );
 assert.equal(
-  launchOptions(host, runner, "/usr/bin/punktfunk-client", {
+  launchOptions(host, runner, "/usr/bin/lilynk-client", {
     profileId: "0a1b2c3d4e5f",
     gameId: "steam:570",
     presetId: "f5e4d3c2b1a0",
   }),
-  `PF_REF=${host} PF_CLIENT_BIN=/usr/bin/punktfunk-client PF_PRESET=f5e4d3c2b1a0 ` +
+  `PF_REF=${host} PF_CLIENT_BIN=/usr/bin/lilynk-client PF_PRESET=f5e4d3c2b1a0 ` +
     `PF_GAME=steam:570 PF_AS=0a1b2c3d4e5f ${tail}`,
   "every extra, in the wrapper's order",
 );

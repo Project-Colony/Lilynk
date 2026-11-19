@@ -138,7 +138,7 @@ public final class ClipboardSync: NSObject {
         stateLock.unlock()
         pasteboard.startObserving(onActivate: { [checkNow] in checkNow.raise() })
         let thread = Thread { [weak self] in self?.drain() }
-        thread.name = "punktfunk-clipboard"
+        thread.name = "lilynk-clipboard"
         thread.qualityOfService = .utility
         thread.start()
     }

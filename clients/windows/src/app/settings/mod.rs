@@ -26,10 +26,10 @@ use super::saved;
 use super::style::*;
 use super::{AppCtx, AsyncSetState, Msg, Shell};
 use crate::trust::Settings;
-use pf_client_core::presets::{PresetsFile, SettingsOverlay, StreamPreset};
-use pf_client_core::settings::Label;
-use pf_fluent::{Palette, Token};
-use pf_l10n::{client, common, desktop};
+use ly_client_core::presets::{PresetsFile, SettingsOverlay, StreamPreset};
+use ly_client_core::settings::Label;
+use ly_fluent::{Palette, Token};
+use ly_l10n::{client, common, desktop};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use windows_reactor::*;
@@ -110,8 +110,8 @@ pub(crate) fn refresh_snapshot(ctx: &Arc<AppCtx>) {
     {
         let mgmt = k
             .mgmt_port
-            .unwrap_or(pf_client_core::library::DEFAULT_MGMT_PORT);
-        pf_client_core::display_targets::refresh(&k.addr, mgmt, k.port, &k.fp_hex);
+            .unwrap_or(ly_client_core::library::DEFAULT_MGMT_PORT);
+        ly_client_core::display_targets::refresh(&k.addr, mgmt, k.port, &k.fp_hex);
     }
     probe_devices(ctx);
 }
@@ -136,13 +136,13 @@ pub(crate) fn probe_devices(ctx: &Arc<AppCtx>) {
         .name("pf-device-probe".into())
         .spawn(move || {
             let _idle = Idle;
-            let (speakers, mics) = pf_client_core::audio::devices().unwrap_or_default();
+            let (speakers, mics) = ly_client_core::audio::devices().unwrap_or_default();
             *ctx.probes.lock().unwrap() = DeviceProbes {
                 gpus: crate::gpu::adapter_names(),
                 speakers,
                 mics,
                 native: primary_mode(),
-                link: punktfunk_core::transport::ifinfo::local_link_facts(None),
+                link: lilynk_core::transport::ifinfo::local_link_facts(None),
             };
             if let Some(set) = ctx.shared.set_devices.lock().unwrap().as_ref() {
                 set.call(());
@@ -155,7 +155,7 @@ pub(crate) fn probe_devices(ctx: &Arc<AppCtx>) {
 
 /// The primary display's current mode in real pixels: what a Native stream asks for here.
 /// `None` when Windows names none.
-fn primary_mode() -> Option<punktfunk_core::Mode> {
+fn primary_mode() -> Option<lilynk_core::Mode> {
     use windows::Win32::wingdi::DEVMODEW;
     use windows::Win32::winuser::{EnumDisplaySettingsW, ENUM_CURRENT_SETTINGS};
     // SAFETY: DEVMODEW is integers, arrays and unions of integers; all-zero is a valid value.
@@ -183,7 +183,7 @@ fn primary_mode() -> Option<punktfunk_core::Mode> {
     let mhz = primary_refresh_mhz()
         .filter(|m| m.abs_diff(whole.saturating_mul(1000)) < 1000)
         .unwrap_or(whole.saturating_mul(1000));
-    Some(punktfunk_core::Mode::exact(
+    Some(lilynk_core::Mode::exact(
         dm.dmPelsWidth,
         dm.dmPelsHeight,
         mhz,
@@ -259,10 +259,10 @@ fn primary_refresh_mhz() -> Option<u32> {
 #[derive(Default)]
 pub(crate) struct DeviceProbes {
     gpus: Vec<String>,
-    speakers: Vec<pf_client_core::audio::AudioDevice>,
-    mics: Vec<pf_client_core::audio::AudioDevice>,
-    native: Option<punktfunk_core::Mode>,
-    link: punktfunk_core::transport::LinkFacts,
+    speakers: Vec<ly_client_core::audio::AudioDevice>,
+    mics: Vec<ly_client_core::audio::AudioDevice>,
+    native: Option<lilynk_core::Mode>,
+    link: lilynk_core::transport::LinkFacts,
 }
 
 /// The layer the settings screen is editing, resolved for display: `None` = the defaults.
@@ -690,7 +690,7 @@ pub(crate) fn settings_page(shell: &Shell) -> View {
     // Saves are fire-and-forget, so a config store that refuses writes looks normal until a
     // restart loses everything. When it refuses, say so and name the path.
     let mut bars: Vec<View> = Vec::new();
-    if let Some(err) = pf_client_core::trust::store_health::last_error() {
+    if let Some(err) = ly_client_core::trust::store_health::last_error() {
         bars.push(
             Border::new()
                 .content(

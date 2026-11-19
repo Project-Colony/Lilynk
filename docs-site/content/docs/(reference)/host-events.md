@@ -64,11 +64,11 @@ it.
 
 ## The event stream
 
-For a shell script, [`punktfunk-host ctl watch`](/docs/host-cli#ctl) prints one JSON object per
+For a shell script, [`lilynk-host ctl watch`](/docs/host-cli#ctl) prints one JSON object per
 line, and resumes and reconnects by itself:
 
 ```sh
-punktfunk-host ctl watch --kinds pairing.pending,stream.'*'
+lilynk-host ctl watch --kinds pairing.pending,stream.'*'
 ```
 
 A `{"kind":"ctl.resync"}` line means events were missed: re-read the state you need.

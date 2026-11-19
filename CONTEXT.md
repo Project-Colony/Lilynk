@@ -28,4 +28,4 @@ desktop: its seat host trusts what its own token signed there, and only that wri
 hooks and own titles.
 
 **Device**: a paired client, proven by its certificate or a device token. It reaches the short
-list of routes in `punktfunk_core::mgmt_routes` and nothing else.
+list of routes in `lilynk_core::mgmt_routes` and nothing else.

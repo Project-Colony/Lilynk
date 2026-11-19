@@ -1,12 +1,12 @@
 //! Decode-latency bookkeeping: realtime clock + decoded-pts stat recording.
 
 use crate::codec_format::take_by_pts;
-use punktfunk_core::client::NativeClient;
-use punktfunk_core::session::Frame;
+use lilynk_core::client::NativeClient;
+use lilynk_core::session::Frame;
 use std::collections::VecDeque;
 use std::time::Duration;
 
-pub(crate) use punktfunk_core::client::now_realtime_ns;
+pub(crate) use lilynk_core::client::now_realtime_ns;
 
 /// HUD `decoded` point for one dequeued output frame, keyed by the echoed `presentationTimeUs`:
 /// hand the frame and its `decode` span (received→decoded, single-clock local, ≥ 0) to

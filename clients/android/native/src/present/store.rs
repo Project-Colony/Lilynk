@@ -11,7 +11,7 @@
 //! waiting ([`Store::take_sharer`]): a frame shown a slot late would keep every later frame a
 //! slot late. Under `smooth` each frame shows in its turn.
 
-use punktfunk_core::phase::{CadenceClock, CadenceHealth, CadenceTuning};
+use lilynk_core::phase::{CadenceClock, CadenceHealth, CadenceTuning};
 use std::collections::VecDeque;
 
 use super::{Counters, PresentPriority};

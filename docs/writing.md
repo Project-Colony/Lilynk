@@ -269,7 +269,7 @@ shows text: the web console, each client, the console kit, setup, the tray.
 Error messages stay §4. Writing for translation is §4d.
 
 A control is made clear by its options, not by a paragraph under it.
-`cargo run -p pf-l10n -- check` fails on a string over budget (`l10n/rules.json`).
+`cargo run -p ly-l10n -- check` fails on a string over budget (`l10n/rules.json`).
 
 | Kind | Budget | Rule |
 |---|---|---|
@@ -323,10 +323,10 @@ press its power button.` + `Docs ↗`
 - Headings are anchors. The console, setup and host logs link them — `check-docs-links.sh`
   fails a link to a heading that is gone. Rename one, fix its links in the same diff.
 - The settings table in `configuration.md` is generated: `UPDATE_SETTINGS_DOCS=1 cargo test
-  -p pf-host-config docs_table_is_current`.
+  -p ly-host-config docs_table_is_current`.
 
 Bad: `The repo is public and signed; this adds it and installs the host together with the
-console. They are named in the line rather than left to apt: punktfunk-host only recommends
+console. They are named in the line rather than left to apt: lilynk-host only recommends
 them, so a box with APT::Install-Recommends "0" would end up with a host you cannot pair with.`
 Good: `Add the repo and install the host, the console and the plugin runner:`
 
@@ -336,7 +336,7 @@ Good: `Add the repo and install the host, the console and the plugin runner:`
 
 A message is written once in `l10n/messages` and every surface reads it
 (`docs/l10n.md`). These rules decide whether it survives German, French or
-Polish. `pf-l10n check` catches some; review catches the rest.
+Polish. `ly-l10n check` catches some; review catches the rest.
 
 **One message, one whole sentence.** Never glue a sentence from parts or reuse a
 fragment in two frames. A placeholder holds a name, a number or a key chord,
@@ -423,7 +423,7 @@ Korean".
 - [ ] Text a person reads is a message in `l10n/messages`, not a new literal
 - [ ] Messages follow §4d: whole sentences, counts as plurals, no button, chord
       or device in prose, no translated word in a placeholder
-- [ ] `pf-l10n check` and the text census (`scripts/l10n-census.py`) are green
+- [ ] `ly-l10n check` and the text census (`scripts/l10n-census.py`) are green
 - [ ] `scripts/ci/check-writing.sh` is green
 
 ---

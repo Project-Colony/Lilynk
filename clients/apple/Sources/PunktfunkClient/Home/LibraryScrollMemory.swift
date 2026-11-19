@@ -19,7 +19,7 @@ import Foundation
 /// in-memory cache. One key per host, namespaced so nothing else can collide with it.
 enum LibraryScrollMemory {
     private static func key(forHost hostID: String) -> String {
-        "punktfunk.library.lastTitle.\(hostID)"
+        "lilynk.library.lastTitle.\(hostID)"
     }
 
     /// The title last opened from this host's library, if any is remembered.

@@ -23,8 +23,8 @@ cd "$(dirname "$0")/.." || exit 2
 
 # One constant per concern file. The table below names declarations without
 # their visibility, so a constant another module reads still matches.
-DIR=crates/core/punktfunk-core/src/abr
-TEST="cargo test -p punktfunk-core --features quic --lib abr::"
+DIR=crates/core/lilynk-core/src/abr
+TEST="cargo test -p lilynk-core --features quic --lib abr::"
 BACKUP=$(mktemp -d)
 cp -R "$DIR/." "$BACKUP/"
 restore() { cp -R "$BACKUP/." "$DIR/"; }

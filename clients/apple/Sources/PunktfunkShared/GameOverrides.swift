@@ -1,7 +1,7 @@
 // Game overrides: the stream settings a host sets for one game, the same for every device that
 // plays it. The host resolves them onto each library entry; the connect that launches the game
 // lays them over this device's settings, then `fit` clamps the mode to this device. Mirrors
-// punktfunk-core's `game_overrides`; `clients/shared/game-override-vectors.json` pins all three.
+// lilynk-core's `game_overrides`; `clients/shared/game-override-vectors.json` pins all three.
 
 import Foundation
 

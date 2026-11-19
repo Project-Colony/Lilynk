@@ -147,7 +147,7 @@ END { exit bad ? 1 : 0 }
 ' $(cat "$tmp/files") > "$tmp/gate_b" 2>&1
 if [ -s "$tmp/gate_b" ]; then
     echo "GATE B — panic across an extern boundary aborts the process since Rust 1.81. Route the"
-    echo "         body through catch_unwind (see punktfunk-ffi) or waive a deliberate"
+    echo "         body through catch_unwind (see lilynk-ffi) or waive a deliberate"
     echo "         abort with '// panic-in-extern-ok: <reason>' on the line above the fn:"
     cat "$tmp/gate_b"
     fail=1
@@ -163,24 +163,24 @@ cat > "$tmp/gate_c_baseline" <<'BASELINE'
 clients/linux/src/app/mod.rs:4
 clients/linux/src/app/spawn.rs:1
 clients/session/src/main.rs:3
-crates/client/pf-console-ui/src/screens/settings/tests.rs:1
-crates/host/pf-encode-win/src/windows/nvenc_tests.rs:4
-crates/host/pf-encode/src/enc/linux/nvenc_cuda_tests.rs:2
-crates/host/pf-encode/src/enc/linux/worker.rs:1
-crates/host/pf-inject/src/inject/linux/steam_gadget.rs:5
-crates/host/pf-vdisplay/src/lib.rs:1
-crates/host/pf-vdisplay/src/vdisplay/routing.rs:4
-crates/host/pf-vdisplay/src/vdisplay/session.rs:4
-crates/codec/pf-vkdecode/tests/common/mod.rs:1
-crates/codec/pf-vkdecode/tests/gpu_parity.rs:2
-crates/host/pf-win-display/src/win_display.rs:2
-crates/core/punktfunk-core/src/quic/endpoint.rs:2
-crates/host/punktfunk-host/src/hostsys/identity.rs:3
-crates/host/punktfunk-host/src/library/art.rs:2
-crates/host/punktfunk-host/src/main.rs:2
-crates/host/punktfunk-host/src/mgmt/tests/mod.rs:2
-crates/host/punktfunk-host/src/windows/service/host_env.rs:1
-packaging/windows/drivers/pf-vdisplay/src/encode/thread.rs:1
+crates/client/ly-console-ui/src/screens/settings/tests.rs:1
+crates/host/ly-encode-win/src/windows/nvenc_tests.rs:4
+crates/host/ly-encode/src/enc/linux/nvenc_cuda_tests.rs:2
+crates/host/ly-encode/src/enc/linux/worker.rs:1
+crates/host/ly-inject/src/inject/linux/steam_gadget.rs:5
+crates/host/ly-vdisplay/src/lib.rs:1
+crates/host/ly-vdisplay/src/vdisplay/routing.rs:4
+crates/host/ly-vdisplay/src/vdisplay/session.rs:4
+crates/codec/ly-vkdecode/tests/common/mod.rs:1
+crates/codec/ly-vkdecode/tests/gpu_parity.rs:2
+crates/host/ly-win-display/src/win_display.rs:2
+crates/core/lilynk-core/src/quic/endpoint.rs:2
+crates/host/lilynk-host/src/hostsys/identity.rs:3
+crates/host/lilynk-host/src/library/art.rs:2
+crates/host/lilynk-host/src/main.rs:2
+crates/host/lilynk-host/src/mgmt/tests/mod.rs:2
+crates/host/lilynk-host/src/windows/service/host_env.rs:1
+packaging/windows/drivers/ly-vdisplay/src/encode/thread.rs:1
 BASELINE
 
 : > "$tmp/gate_c"

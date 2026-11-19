@@ -1,12 +1,12 @@
 # yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.6.0.schema.json
 #
-# Installer manifest for the Windows host: punktfunk-setup-win, the self-contained engine exe
-# (crates/install/punktfunk-setup-win, packed by packaging/windows/pack-host-installer.ps1).
+# Installer manifest for the Windows host: lilynk-setup-win, the self-contained engine exe
+# (crates/install/lilynk-setup-win, packed by packaging/windows/pack-host-installer.ps1).
 # It speaks the Inno Setup silent dialect verbatim (design/installer-v2-windows.md D5) and keeps
 # Inno's ARP key + unins000.exe (D6), which is why the switches and ProductCode below are Inno's.
 #
 # The host is a machine-wide, elevated install: it registers a SYSTEM service, installs the
-# pf-vdisplay + gamepad drivers, and opens firewall ports. There is no per-user scope.
+# ly-vdisplay + gamepad drivers, and opens firewall ports. There is no per-user scope.
 PackageIdentifier: unom.PunktfunkHost
 PackageVersion: 0.19.2
 
@@ -16,9 +16,9 @@ InstallerType: exe
 Scope: machine
 # The exe's manifest asks for requireAdministrator -> it raises its own UAC prompt.
 ElevationRequirement: elevatesSelf
-# Windows 11 22H2 floor: pf-vdisplay is built against IddCx 1.10 with no runtime downgrade, so on
+# Windows 11 22H2 floor: ly-vdisplay is built against IddCx 1.10 with no runtime downgrade, so on
 # anything older the device fails to start with Code 10 (MIN_HOST_BUILD in
-# crates/install/punktfunk-setup/src/platform/windows/plan.rs is the installer's gate).
+# crates/install/lilynk-setup/src/platform/windows/plan.rs is the installer's gate).
 MinimumOSVersion: 10.0.22621.0
 
 InstallModes:
@@ -51,7 +51,7 @@ InstallerSwitches:
   Log: /LOG="<LOGPATH>"
 
 # The ARP entry stays under Inno's `<AppId>_is1` name forever (HOST_ARP_KEY in
-# crates/install/punktfunk-setup/src/platform/windows/mod.rs): this is what correlates an installed host
+# crates/install/lilynk-setup/src/platform/windows/mod.rs): this is what correlates an installed host
 # with the package for `winget list` / `winget upgrade`, across the Inno -> engine boundary too.
 ProductCode: '{7C9E6A52-1F4B-4E8D-A3C7-2B5D8F1E0A93}_is1'
 # The engine upgrades in place (it follows InstallLocation) — do not uninstall first, that would

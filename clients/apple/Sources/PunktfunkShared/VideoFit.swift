@@ -1,4 +1,4 @@
-// Where a decoded frame lands in a view — the twin of `punktfunk_core::video_fit` and Android's
+// Where a decoded frame lands in a view — the twin of `lilynk_core::video_fit` and Android's
 // `VideoFit.kt`. Every case in `clients/shared/video-fit-vectors.json` runs against all three
 // (`VideoFitTests` here); change the rule there first.
 //

@@ -1,12 +1,12 @@
 //! Safe-ish typed wrappers over the wdk-sys IddCx DDIs, dispatched through the `IddFunctions` table
 //! (indexed by `_IDDFUNCENUM::<Name>TableIndex`, with `IddDriverGlobals` as the implicit first arg) —
-//! the same model wdk-sys uses for WDF. Covers the whole DDI set the pf-vdisplay driver needs.
+//! the same model wdk-sys uses for WDF. Covers the whole DDI set the ly-vdisplay driver needs.
 //!
 //! Each DDI pins its `(_IDDFUNCENUM index, PFN_* type)` pair in exactly ONE place (the macro
 //! invocation) — a wrong pairing is the only way the table dispatch can be UB, so it must never
 //! be expressed twice. All wrappers but the void `IddCxAdapterSetRenderAdapter` return the raw
 //! `NTSTATUS`; the caller classifies it with [`nt_success`]. The HRESULT-shaped SwapChain DDIs
-//! are classified by hand at their call sites in pf-vdisplay's `swap_chain_processor`
+//! are classified by hand at their call sites in ly-vdisplay's `swap_chain_processor`
 //! (`E_PENDING` means wait).
 //!
 //! The `const _` items at the tail assert that the wdk-sys `iddcx` bindgen still emits and resolves
@@ -226,7 +226,7 @@ iddcx_ddi!(
     /// site: the DDI itself may decline (E_NOTIMPL on a WDDM 1.x device).
     ///
     /// Table-slot availability rests on the driver's `IddMinimumVersionRequired = 10` export
-    /// (pf-vdisplay lib.rs): the loader refuses to bind a framework older than IddCx 1.10, so
+    /// (ly-vdisplay lib.rs): the loader refuses to bind a framework older than IddCx 1.10, so
     /// every slot of our compiled 1.10 surface — this 1.9 one included — is populated wherever the
     /// driver runs at all.
     IddCxSetRealtimeGPUPriority(

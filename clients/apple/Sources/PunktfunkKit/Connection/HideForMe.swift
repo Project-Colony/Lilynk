@@ -1,5 +1,5 @@
 // "Hide for me": a player takes a title off the shelf of the locked profile this device is let
-// into, and brings it back. A port of `pf_client_core::hide`; both replay
+// into, and brings it back. A port of `ly_client_core::hide`; both replay
 // `clients/shared/hide-for-me-vectors.json`. A host that never marks a row `person` has no action.
 
 import Foundation

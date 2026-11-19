@@ -53,7 +53,7 @@ interrupt the stream.
 If you built the host yourself, install that part by hand, then reconnect the adapter:
 
 ```sh
-sudo install -m 755 packaging/linux/90-punktfunk-frame-adapter /etc/NetworkManager/dispatcher.d/
+sudo install -m 755 packaging/linux/90-lilynk-frame-adapter /etc/NetworkManager/dispatcher.d/
 ```
 
 ## Troubleshooting

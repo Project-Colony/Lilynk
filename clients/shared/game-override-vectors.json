@@ -1,5 +1,5 @@
 {
-  "$comment": "Game overrides → the mode a client requests, pinned by punktfunk-core game_overrides::fit, the Swift GameOverrides.fit and the Kotlin GameOverrides.fit. `mode` is what the device would ask on its own, `native` its panel, `max` the codec's per-axis wall (render_scale max_dimension). Only `lines`, `hz` and `beyond_screen` reach fit; `hdr` and `gamepad` replace the device's value before its own gates. Arrays are [width, height, hz].",
+  "$comment": "Game overrides → the mode a client requests, pinned by lilynk-core game_overrides::fit, the Swift GameOverrides.fit and the Kotlin GameOverrides.fit. `mode` is what the device would ask on its own, `native` its panel, `max` the codec's per-axis wall (render_scale max_dimension). Only `lines`, `hz` and `beyond_screen` reach fit; `hdr` and `gamepad` replace the device's value before its own gates. Arrays are [width, height, hz].",
   "fit": [
     {"mode": [3840, 2160, 120], "native": [3840, 2160, 120], "lines": 1080, "max": 8192, "expect": [1920, 1080, 120], "why": "the ask"},
     {"mode": [2560, 1600, 60], "native": [2560, 1600, 60], "lines": 1080, "max": 8192, "expect": [1728, 1080, 60], "why": "16:10 keeps its shape"},

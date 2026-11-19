@@ -51,7 +51,7 @@ final class GamepadWireTests: XCTestCase {
     }
 
     func testPadIndexRidesFlagsOnEveryPerPadEvent() {
-        // The wire pad index is the low byte of `flags` (punktfunk_core::input) on button + axis.
+        // The wire pad index is the low byte of `flags` (lilynk_core::input) on button + axis.
         let btn = PunktfunkInputEvent.gamepadButton(GamepadWire.a, down: true, pad: 3)
         XCTAssertEqual(btn.kind, UInt8(PUNKTFUNK_INPUT_KIND_GAMEPAD_BUTTON.rawValue))
         XCTAssertEqual(btn.code, GamepadWire.a)
@@ -83,7 +83,7 @@ final class GamepadWireTests: XCTestCase {
         let remove = PunktfunkInputEvent.gamepadRemove(pad: 7)
         XCTAssertEqual(remove.kind, UInt8(PUNKTFUNK_INPUT_KIND_GAMEPAD_REMOVE.rawValue))
         XCTAssertEqual(remove.flags, 7)
-        // 16 addressable pads (punktfunk_core::input::MAX_PADS).
+        // 16 addressable pads (lilynk_core::input::MAX_PADS).
         XCTAssertEqual(GamepadWire.maxPads, 16)
     }
 
@@ -91,7 +91,7 @@ final class GamepadWireTests: XCTestCase {
         // Every pad's arrival declares the explicit "Controller type", not the DETECTED kind: the
         // host honors an arrival's kind over the session default, so "emulate my DualSense as a
         // DualShock 4" would otherwise produce a DualSense.
-        // (pf-client-core's `declared_kind` test is the same table.)
+        // (ly-client-core's `declared_kind` test is the same table.)
         XCTAssertEqual(
             GamepadManager.declaredKind(setting: .dualShock4, detected: .dualSense), .dualShock4)
         // Every physical pad in a mixed session follows the one explicit choice.

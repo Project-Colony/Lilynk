@@ -364,7 +364,7 @@ internal fun StreamScene(verbosity: StatsVerbosity = StatsVerbosity.DETAILED, lo
             ),
     ) {
         hero?.let { Image(it, null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop) }
-        // The Standard view (the default) as `punktfunk_core::hud` formats this window: a 10-bit
+        // The Standard view (the default) as `lilynk_core::hud` formats this window: a 10-bit
         // HDR HEVC feed on the ranked low-latency decoder, light loss (2 of 240 lost, 1 skipped)
         // and a converged audio ring. OsdScaled as in StreamScreen, so the tv- shots carry the
         // TV overlay scale.

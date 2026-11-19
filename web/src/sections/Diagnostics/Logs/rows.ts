@@ -5,7 +5,7 @@ import type { LogEntry } from "@/api/gen/model/logEntry";
  * One row model for every producer, so the viewer has a single timeline instead of a stream plus a
  * table of attachments.
  *
- * The insight this rests on: a client bundle is not a foreign artifact. `pf_client_core::logring`'s
+ * The insight this rests on: a client bundle is not a foreign artifact. `ly_client_core::logring`'s
  * `RingLayer` formats each line as `<ISO8601-Z> <LEVEL> <target> <msg>` — the same four fields as
  * a host `LogEntry`, only serialized as text instead of JSON — and it stamps **wall clock** so a
  * bundle correlates with the host log beside it. Parsing it back into rows is therefore
@@ -65,7 +65,7 @@ export const hostRows = (entries: LogEntry[]): Row[] =>
 	});
 
 /**
- * `2026-08-15T12:03:47.123Z INFO  punktfunk_session::stream  frame late by 34ms`
+ * `2026-08-15T12:03:47.123Z INFO  lilynk_session::stream  frame late by 34ms`
  *
  * The level is written through `{:5}`, so it arrives padded and the gap before the target is one
  * or two spaces — matched loosely rather than pinned, since the padding is a formatting detail of

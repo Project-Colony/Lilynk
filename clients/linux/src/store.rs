@@ -7,7 +7,7 @@
 use crate::trust::{self, KnownHosts, Settings};
 use gtk::gio;
 use gtk::prelude::*;
-use pf_client_core::presets::PresetsFile;
+use ly_client_core::presets::PresetsFile;
 use std::cell::{Ref, RefCell};
 use std::rc::Rc;
 

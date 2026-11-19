@@ -36,24 +36,24 @@ pub enum Scope {
 }
 
 /// Startup device probes for the pickers, filled by the app shell in the background: GPUs via
-/// `punktfunk-session --list-adapters`, audio endpoints via the PipeWire registry. An empty
+/// `lilynk-session --list-adapters`, audio endpoints via the PipeWire registry. An empty
 /// list hides its picker.
 #[derive(Default)]
 pub struct DeviceProbes {
     pub adapters: Vec<String>,
-    pub speakers: Vec<pf_client_core::audio::AudioDevice>,
-    pub mics: Vec<pf_client_core::audio::AudioDevice>,
+    pub speakers: Vec<ly_client_core::audio::AudioDevice>,
+    pub mics: Vec<ly_client_core::audio::AudioDevice>,
 }
 
 /// The monitor `window` is on as a stream request, in real pixels: what a Native stream asks
 /// for. 1920×1080 at 60 Hz where GDK names no monitor, as the session assumes.
-fn native_mode(window: &gtk::Widget) -> punktfunk_core::Mode {
+fn native_mode(window: &gtk::Widget) -> lilynk_core::Mode {
     let monitor = window
         .native()
         .and_then(|n| n.surface())
         .and_then(|s| window.display().monitor_at_surface(&s));
     let Some(m) = monitor else {
-        return punktfunk_core::Mode {
+        return lilynk_core::Mode {
             width: 1920,
             height: 1080,
             refresh_hz: 60,
@@ -64,7 +64,7 @@ fn native_mode(window: &gtk::Widget) -> punktfunk_core::Mode {
     let px = |logical: i32| (f64::from(logical.max(0)) * m.scale()).round() as u32;
     // GDK states the rate in millihertz: 59 940 for a 59.94 Hz monitor.
     let mhz = m.refresh_rate().max(0) as u32;
-    punktfunk_core::Mode::exact(px(g.width()), px(g.height()), mhz)
+    lilynk_core::Mode::exact(px(g.width()), px(g.height()), mhz)
 }
 
 /// The dialog in a given [`Scope`]. `on_scope` asks the app to open it again in another one:
@@ -91,7 +91,7 @@ pub fn show_scoped(
     };
     shortcuts::show_scope(&seed);
     let dialog = adw::PreferencesDialog::new();
-    dialog.set_title(pf_l10n::desktop::desktop_preferences_title());
+    dialog.set_title(ly_l10n::desktop::desktop_preferences_title());
     dialog.set_search_enabled(true);
     // Wide enough that the page switcher sits in the header: libadwaita 1.8 moves it to a
     // bottom bar below 110 pt per page, ≈ 733 px for five.

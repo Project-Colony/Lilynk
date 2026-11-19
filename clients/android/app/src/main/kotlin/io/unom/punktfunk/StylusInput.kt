@@ -8,7 +8,7 @@ import androidx.compose.ui.input.pointer.PointerType
 import io.unom.punktfunk.kit.NativeBridge
 import kotlinx.coroutines.delay
 
-// Wire PEN_* state bits (punktfunk_core::quic::pen; mirrored, asserted by the Rust shim's docs).
+// Wire PEN_* state bits (lilynk_core::quic::pen; mirrored, asserted by the Rust shim's docs).
 private const val PEN_IN_RANGE = 1f
 private const val PEN_TOUCHING = 2f
 private const val PEN_BARREL1 = 4f

@@ -1,4 +1,4 @@
-// The managed script/plugin runner (RFC §8, M5) — what the `punktfunk-scripting` package runs:
+// The managed script/plugin runner (RFC §8, M5) — what the `lilynk-scripting` package runs:
 // discover the operator's units, supervise them as Effect fibers, shut down structurally.
 //
 // Units:
@@ -43,8 +43,8 @@ export interface RunnerOptions {
 	/** Where loose scripts live. Default `<config_dir>/scripts`. */
 	scriptsDir?: string;
 	/**
-	 * Where plugin packages are installed (`<pluginsDir>/node_modules/punktfunk-plugin-*`,
-	 * i.e. the operator runs `bun add punktfunk-plugin-x` there). Default `<config_dir>/plugins`.
+	 * Where plugin packages are installed (`<pluginsDir>/node_modules/lilynk-plugin-*`,
+	 * i.e. the operator runs `bun add lilynk-plugin-x` there). Default `<config_dir>/plugins`.
 	 */
 	pluginsDir?: string;
 	/** Connection overrides handed to every unit's client/layer. */
@@ -494,7 +494,7 @@ export const runner = (
 			});
 			if (units.length === 0) {
 				log(
-					"[runner] nothing to run — add scripts to the scripts dir or install punktfunk-plugin-* packages",
+					"[runner] nothing to run — add scripts to the scripts dir or install lilynk-plugin-* packages",
 				);
 			}
 

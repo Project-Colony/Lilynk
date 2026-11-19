@@ -36,10 +36,10 @@ To use your package manager instead, add the Punktfunk repo from your distro's g
 
 | Distro | Install |
 |--------|---------|
-| Ubuntu 26.04 or newer | `sudo apt install punktfunk-client` ([packaging/debian](https://git.unom.io/unom/punktfunk/src/branch/main/packaging/debian/README.md)) |
-| Fedora 43 or newer | `sudo dnf install punktfunk-client` ([Fedora](/docs/fedora)) |
-| Arch | `sudo pacman -Syu punktfunk-client` ([Arch Linux](/docs/arch)) |
-| Bazzite, Fedora Atomic | Use the Flatpak. Layering with `rpm-ostree install punktfunk-client` slows every OS update ([Bazzite](/docs/bazzite)). |
+| Ubuntu 26.04 or newer | `sudo apt install lilynk-client` ([packaging/debian](https://git.unom.io/unom/punktfunk/src/branch/main/packaging/debian/README.md)) |
+| Fedora 43 or newer | `sudo dnf install lilynk-client` ([Fedora](/docs/fedora)) |
+| Arch | `sudo pacman -Syu lilynk-client` ([Arch Linux](/docs/arch)) |
+| Bazzite, Fedora Atomic | Use the Flatpak. Layering with `rpm-ostree install lilynk-client` slows every OS update ([Bazzite](/docs/bazzite)). |
 
 On Ubuntu 24.04, Debian and older distros the client package can't install: use the Flatpak.
 
@@ -64,18 +64,18 @@ for scripts.
    (x64 only: the Arm64 build has no console yet).
 
 **Steam overlay and Big Picture.** In Steam, **Add a Non-Steam Game** and browse to
-`%LOCALAPPDATA%\Programs\Punktfunk\punktfunk-client.exe` (or `punktfunk-console.exe`).
+`%LOCALAPPDATA%\Programs\Punktfunk\lilynk-client.exe` (or `lilynk-console.exe`).
 
 **Portable zip and MSIX.** The same build ships as
-`…/latest/punktfunk-client-windows_x64-portable.zip` (unzip and run `punktfunk-client.exe`; no
-links, no PATH entry) and `…/latest/punktfunk-client-windows_x64.msix`
-(`Add-AppxPackage .\punktfunk-client-windows_x64.msix`). Both need the
+`…/latest/lilynk-client-windows_x64-portable.zip` (unzip and run `lilynk-client.exe`; no
+links, no PATH entry) and `…/latest/lilynk-client-windows_x64.msix`
+(`Add-AppxPackage .\lilynk-client-windows_x64.msix`). Both need the
 [Windows App Runtime 2.x](https://learn.microsoft.com/windows/apps/windows-app-sdk/downloads). The
 MSIX can't be added to Steam.
 
 ## macOS
 
-1. Download `Punktfunk-<version>.dmg` from the [releases page](https://git.unom.io/unom/punktfunk/releases).
+1. Download `Lilynk-<version>.dmg` from the [releases page](https://git.unom.io/unom/punktfunk/releases).
 2. Open it and drag **Punktfunk** to **Applications**.
 
 The Mac app is also in the [TestFlight beta](https://testflight.apple.com/join/Qr7uSemk).
@@ -88,7 +88,7 @@ iPhone, iPad, Apple TV and Apple Vision Pro.
 For beta builds, install Apple's [TestFlight](https://apps.apple.com/app/testflight/id899247664)
 app, then [join the Punktfunk beta](https://testflight.apple.com/join/Qr7uSemk).
 
-Each [release](https://git.unom.io/unom/punktfunk/releases) also carries `Punktfunk-<version>.ipa`
+Each [release](https://git.unom.io/unom/punktfunk/releases) also carries `Lilynk-<version>.ipa`
 for sideloading with AltStore, SideStore or Sideloadly. Wake-on-LAN and the widget's host list need
 the App Store build.
 
@@ -122,7 +122,7 @@ A client and a host don't need the same version. To update the host, see [Updati
 | Client | Update |
 |---|---|
 | Flatpak | `flatpak update`, without `sudo`: `sudo` skips this install |
-| apt, dnf, pacman | Your normal system upgrade, or [`punktfunk-client --apply-update`](#the-linux-client-can-update-itself) |
+| apt, dnf, pacman | Your normal system upgrade, or [`lilynk-client --apply-update`](#the-linux-client-can-update-itself) |
 | Fedora Atomic, layered | See below |
 | Windows installer | Run the newer installer. Hosts and pairing are kept. |
 | Windows MSIX or portable | Add the newer `.msix`, or unzip the newer build over the old one. An MSIX named `unom.Punktfunk` is the older package and doesn't upgrade: remove it as below first. |
@@ -137,7 +137,7 @@ the base image is unchanged. Run this, then reboot:
 
 ```sh
 sudo rpm-ostree refresh-md --force
-sudo rpm-ostree update --uninstall punktfunk-client --install punktfunk-client
+sudo rpm-ostree update --uninstall lilynk-client --install lilynk-client
 ```
 
 **Moving from the MSIX to the installer.** Remove the MSIX first, then run the installer. The MSIX
@@ -150,16 +150,16 @@ Get-AppxPackage *unom.punktfunk | Remove-AppxPackage
 ### The Linux client can update itself
 
 ```sh
-punktfunk-client --check-update    # installed vs available on this box's channel
-punktfunk-client --apply-update    # install it
+lilynk-client --check-update    # installed vs available on this box's channel
+lilynk-client --apply-update    # install it
 ```
 
 `--check-update` exits **0** when up to date, **10** when an update is available, and **1** when it
 couldn't tell. Add `--json` for machine-readable output. `--apply-update` needs you in the
-`punktfunk-update` group (no re-login needed):
+`lilynk-update` group (no re-login needed):
 
 ```sh
-sudo usermod -aG punktfunk-update $USER
+sudo usermod -aG lilynk-update $USER
 ```
 
 ## Removing a client

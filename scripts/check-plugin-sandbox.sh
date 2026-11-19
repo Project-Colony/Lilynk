@@ -21,7 +21,7 @@ bun build src/runner-cli.ts --target=bun --outfile /runner.js >/dev/null || { ec
 
 export HOME=/root
 CFG=$HOME/.config/punktfunk
-P=$CFG/plugins/node_modules/punktfunk-plugin-probe
+P=$CFG/plugins/node_modules/lilynk-plugin-probe
 mkdir -p "$P" "$CFG/plugin-run" "$HOME/.ssh" "$HOME/steamlike" "$HOME/granted" "$HOME/dynamic"
 echo "secret-admin-token"  > "$CFG/mgmt-token"
 echo "private key"         > "$HOME/.ssh/id_ed25519"
@@ -30,8 +30,8 @@ echo "granted-data"        > "$HOME/granted/marker"
 echo "dynamic-data"        > "$HOME/dynamic/marker"
 echo '{"probe":"testtoken"}' > "$CFG/plugin-run/plugin-tokens.json"
 printf '{"probe":["/root/granted"]}' > "$CFG/plugin-run/plugin-grants.json"
-printf '{"dependencies":{"punktfunk-plugin-probe":"*"}}' > "$CFG/plugins/package.json"
-printf '{"name":"punktfunk-plugin-probe","version":"1.0.0","main":"index.js","punktfunk":{"schema":1,"id":"probe","reads":["~/steamlike"]}}' > "$P/package.json"
+printf '{"dependencies":{"lilynk-plugin-probe":"*"}}' > "$CFG/plugins/package.json"
+printf '{"name":"lilynk-plugin-probe","version":"1.0.0","main":"index.js","punktfunk":{"schema":1,"id":"probe","reads":["~/steamlike"]}}' > "$P/package.json"
 
 cat > "$P/index.js" <<'JS'
 import fs from "node:fs";

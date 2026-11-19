@@ -68,7 +68,7 @@ object LibraryCollation {
     }
 
     /**
-     * `punktfunk_core::search::fold`, scalar for scalar: lowercase, full-width ASCII and the
+     * `lilynk_core::search::fold`, scalar for scalar: lowercase, full-width ASCII and the
      * ideographic space as ASCII, half-width kana at full width, a kana and a combining voiced
      * mark composed, conjoining jamo composed, then katakana as hiragana. The prolonged sound
      * mark keeps its code point.

@@ -28,7 +28,7 @@ internal data class RumbleCmd(val pad: Int, val low: Int, val high: Int, val bac
  *
  * Layout, mirroring `clients/android/native/src/feedback.rs::pack_rumble`:
  * bits 49..52 = wire pad index, 32..47 = backstop duration (ms), 16..31 = low, 0..15 = high.
- * The pad field is 4 bits because `punktfunk_core::input::MAX_PADS` is 16 — the Rust side has a
+ * The pad field is 4 bits because `lilynk_core::input::MAX_PADS` is 16 — the Rust side has a
  * compile-time assertion tying the two together, so this can't silently start truncating.
  *
  * These are EFFECTIVE commands from the core's shared rumble policy engine: it owns every

@@ -9,7 +9,7 @@ use std::rc::Rc;
 /// are xdg_popups, which gamescope up to 3.17 never shows — a ComboRow's dropdown flashes
 /// the row but no list ever appears. Selection UI must stay inside the toplevel.
 pub fn gamescope_session() -> bool {
-    pf_client_core::gamescope::under_gamescope()
+    ly_client_core::gamescope::under_gamescope()
 }
 
 type ChangedFn = Rc<RefCell<Vec<Rc<dyn Fn(u32)>>>>;
@@ -350,7 +350,7 @@ mod tests {
     /// mode: cell sync + change callback. Needs a display AND its own process: `--ignored` alone
     /// starts every display test in one process, and GTK refuses a second init from a second
     /// thread. Run it by name on a session box:
-    /// `cargo test -p punktfunk-client-linux -- --ignored choice_row_modes`.
+    /// `cargo test -p lilynk-client-linux -- --ignored choice_row_modes`.
     #[test]
     #[ignore = "needs a Wayland/X display"]
     fn choice_row_modes() {

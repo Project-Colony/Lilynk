@@ -14,7 +14,7 @@ final class LibraryFavorites: ObservableObject {
     @Published private var changed: [String: [String]] = [:]
 
     private static func key(_ hostID: String) -> String {
-        "punktfunk.library.favorites.\(hostID)"
+        "lilynk.library.favorites.\(hostID)"
     }
 
     /// Favorite title ids on `hostID`'s library, in the order they were marked.

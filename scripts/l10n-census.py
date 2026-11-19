@@ -32,16 +32,16 @@ import subprocess
 import sys
 
 SURFACES = {
-    "kit": ["crates/client/pf-console-ui/src"],
-    "core": ["crates/client/pf-client-core/src"],
+    "kit": ["crates/client/ly-console-ui/src"],
+    "core": ["crates/client/ly-client-core/src"],
     "apple": ["clients/apple/Sources", "clients/apple/PunktfunkWidgets"],
     "android": ["clients/android/app/src/main", "clients/android/kit/src/main"],
     "linux": ["clients/linux/src"],
     "windows": ["clients/windows/src"],
     "decky": ["clients/decky/src"],
-    "tray": ["crates/install/punktfunk-tray/src"],
-    "setup": ["crates/install/punktfunk-setup/src"],
-    "setup-win": ["crates/install/punktfunk-setup-win/src"],
+    "tray": ["crates/install/lilynk-tray/src"],
+    "setup": ["crates/install/lilynk-setup/src"],
+    "setup-win": ["crates/install/lilynk-setup-win/src"],
 }
 BASELINE_DIR = "scripts/ci/l10n-census"
 LANGS = {".rs": "rust", ".swift": "swift", ".kt": "kotlin", ".ts": "ts", ".tsx": "tsx"}

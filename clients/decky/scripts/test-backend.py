@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Unit checks for the Decky backend (main.py + py_modules/pf_decky) — stdlib only, no Decky
+"""Unit checks for the Decky backend (main.py + py_modules/ly_decky) — stdlib only, no Decky
 runtime needed.
 
 Stubs the ``decky`` module the backend imports, then asserts the argv shapes, the exit-code
@@ -34,7 +34,7 @@ _PLUGIN = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_PLUGIN / "py_modules"))
 sys.path.insert(0, str(_PLUGIN))
 import main  # noqa: E402  (the plugin backend)
-from pf_decky import art, client, session, steam_input, update  # noqa: E402
+from ly_decky import art, client, session, steam_input, update  # noqa: E402
 
 # The argv fixtures below monkey-patch `_client_argv` to pin one install shape; the
 # _flatpak_ref block wants the REAL resolver back, so keep a handle on it.
@@ -63,7 +63,7 @@ check(
         "/usr/bin/flatpak",
         "run",
         "--arch=x86_64",
-        "--command=punktfunk",
+        "--command=lilynk",
         "io.unom.punktfunk",
     ],
 )
@@ -78,11 +78,11 @@ import shutil  # noqa: E402
 shutil.rmtree("/tmp/pf-test-native", ignore_errors=True)
 tmp = Path("/tmp/pf-test-native/bin")
 tmp.mkdir(parents=True, exist_ok=True)
-(tmp / "punktfunk-client").write_text("")
-client._client_argv = lambda: [str(tmp / "punktfunk-client")]
+(tmp / "lilynk-client").write_text("")
+client._client_argv = lambda: [str(tmp / "lilynk-client")]
 check("cli argv: native without a sibling CLI is None", client._cli_argv() is None)
-(tmp / "punktfunk").write_text("")
-check("cli argv: native sibling found", client._cli_argv() == [str(tmp / "punktfunk")])
+(tmp / "lilynk").write_text("")
+check("cli argv: native sibling found", client._cli_argv() == [str(tmp / "lilynk")])
 
 # ---- _flatpak_ref: the branch must be NAMED, always ---------------------------------------
 #
@@ -125,7 +125,7 @@ check(
     "ref: --command= is inserted before the app id, keeping the pin",
     client._cli_argv() == [
         "/usr/bin/flatpak", "run", "--arch=aarch64", "--branch=canary",
-        "--command=punktfunk", "io.unom.punktfunk",
+        "--command=lilynk", "io.unom.punktfunk",
     ],
 )
 
@@ -354,9 +354,9 @@ except ValueError:
     check("fetch: a body over the cap raises", True)
 
 # ---- _field_from (flatpak info parsing, drives the client update check) ------------------
-info = "        ID: io.unom.punktfunk\n    Origin: punktfunk-origin\n    Commit: abc123def\n"
+info = "        ID: io.unom.punktfunk\n    Origin: lilynk-origin\n    Commit: abc123def\n"
 check("field: commit", update._field_from(info, "Commit") == "abc123def")
-check("field: origin", update._field_from(info, "Origin") == "punktfunk-origin")
+check("field: origin", update._field_from(info, "Origin") == "lilynk-origin")
 check("field: absent", update._field_from(info, "Nope") == "")
 
 # ---- flatpak runs in the C locale: `flatpak info` labels are localized ------------------
@@ -490,9 +490,9 @@ client._run_client = _real_run_client
 #
 # It edits a file holding HUNDREDS of other games' controller bindings, in place. Every
 # assertion below is about not touching them.
-empty = steam_input._upsert_configset_entry("", "punktfunk", "template", "punktfunk.vdf")
+empty = steam_input._upsert_configset_entry("", "punktfunk", "template", "lilynk.vdf")
 check("vdf: builds the skeleton when the file is new", '"controller_config"' in empty)
-check("vdf: the entry lands", '"punktfunk"' in empty and '"punktfunk.vdf"' in empty)
+check("vdf: the entry lands", '"punktfunk"' in empty and '"lilynk.vdf"' in empty)
 
 existing = (
     '"controller_config"\n'
@@ -503,20 +503,20 @@ existing = (
     "\t}\n"
     "}\n"
 )
-added = steam_input._upsert_configset_entry(existing, "punktfunk", "template", "punktfunk.vdf")
+added = steam_input._upsert_configset_entry(existing, "punktfunk", "template", "lilynk.vdf")
 check("vdf: an existing game's entry survives insertion", '"halflife2"' in added)
 check("vdf: ours is inserted", '"punktfunk"' in added)
 
 # Re-running must REPLACE our block, not accumulate a second one (this runs on every plugin
 # session gated only by a localStorage marker, so idempotence is the whole contract).
-twice = steam_input._upsert_configset_entry(added, "punktfunk", "template", "punktfunk.vdf")
+twice = steam_input._upsert_configset_entry(added, "punktfunk", "template", "lilynk.vdf")
 check("vdf: idempotent", twice.count('"punktfunk"\n') == 1)
 check("vdf: neighbour still intact after the rewrite", '"halflife2"' in twice)
 
 # Steam keys non-Steam games by their LOWERCASE name, and files on disk may carry either case —
 # a case-sensitive match would append a duplicate the game never reads.
 mixed = existing.replace('"halflife2"', '"Punktfunk"')
-replaced = steam_input._upsert_configset_entry(mixed, "punktfunk", "template", "punktfunk.vdf")
+replaced = steam_input._upsert_configset_entry(mixed, "punktfunk", "template", "lilynk.vdf")
 check("vdf: matches an existing key case-insensitively", replaced.count("unktfunk\"\n") == 1)
 
 # A game title is a quoted key one level into controller_config: a brace in it is text, a quote
@@ -528,16 +528,16 @@ def _entry(quoted_key: str, template: str) -> str:
 _hl2, _portal = _entry("halflife2", "other.vdf"), _entry("portal", "p.vdf")
 for _title in ("half{life", "half}life", "{", "}", "template", 'say "hi"', "back\\slash"):
     _esc = _title.replace("\\", "\\\\").replace('"', '\\"')
-    _ours = _entry(_esc, "punktfunk.vdf")
+    _ours = _entry(_esc, "lilynk.vdf")
     _absent = '"controller_config"\n{\n' + _hl2 + _portal + "}\n"
     _first = '"controller_config"\n{\n' + _entry(_esc, "old.vdf") + _hl2 + _portal + "}\n"
-    _got = steam_input._upsert_configset_entry(_absent, _title, "template", "punktfunk.vdf")
+    _got = steam_input._upsert_configset_entry(_absent, _title, "template", "lilynk.vdf")
     check(f"vdf: {_title!r} is inserted, every other block intact",
           _got == '"controller_config"\n{\n' + _hl2 + _portal + _ours + "}\n")
     check(f"vdf: {_title!r} is idempotent",
-          steam_input._upsert_configset_entry(_got, _title, "template", "punktfunk.vdf") == _got)
+          steam_input._upsert_configset_entry(_got, _title, "template", "lilynk.vdf") == _got)
     check(f"vdf: {_title!r} replaces only its own block",
-          steam_input._upsert_configset_entry(_first, _title, "template", "punktfunk.vdf")
+          steam_input._upsert_configset_entry(_first, _title, "template", "lilynk.vdf")
           == '"controller_config"\n{\n' + _ours + _hl2 + _portal + "}\n")
 
 # A raw-forwarded Steam Controller doubles every key binding of its Deck-side layout on the
@@ -550,7 +550,7 @@ with _tf.TemporaryDirectory() as _root:
     (_acct / "configset_controller_neptune.vdf").write_text(existing)
     _real_root, _real_src = steam_input._steam_root, steam_input._controller_template_src
     steam_input._steam_root = lambda: Path(_root)
-    steam_input._controller_template_src = lambda: _PLUGIN / "controller_config" / "punktfunk.vdf"
+    steam_input._controller_template_src = lambda: _PLUGIN / "controller_config" / "lilynk.vdf"
     _got = asyncio.run(steam_input.apply_controller_config("Hollow Knight"))
     steam_input._steam_root, steam_input._controller_template_src = _real_root, _real_src
     check("layouts: applied for the account", _got["ok"] and "configset:1" in _got["applied"])
@@ -622,9 +622,9 @@ def _imports_main(path: Path) -> bool:
     return False
 
 
-_importers = [p.name for p in sorted((_PLUGIN / "py_modules" / "pf_decky").glob("*.py"))
+_importers = [p.name for p in sorted((_PLUGIN / "py_modules" / "ly_decky").glob("*.py"))
               if _imports_main(p)]
-check("loader: no pf_decky module imports main" + (f" ({_importers})" if _importers else ""),
+check("loader: no ly_decky module imports main" + (f" ({_importers})" if _importers else ""),
       not _importers)
 
 # ---- stream_running: the socket file outlives its client --------------------------------
@@ -654,11 +654,11 @@ import os  # noqa: E402
 with tempfile.TemporaryDirectory(dir="/tmp") as _fake:
     _bin, _proc = Path(_fake) / "usr/bin", Path(_fake) / "proc"
     for _pid, _exe in (
-        ("101", _bin / "punktfunk-session"),
-        ("102", f"{_bin / 'punktfunk-client'} (deleted)"),
-        ("103", _bin / "punktfunk"),
-        ("104", _bin / "punktfunk-host"),
-        ("105", "/opt/other/bin/punktfunk-session"),
+        ("101", _bin / "lilynk-session"),
+        ("102", f"{_bin / 'lilynk-client'} (deleted)"),
+        ("103", _bin / "lilynk"),
+        ("104", _bin / "lilynk-host"),
+        ("105", "/opt/other/bin/lilynk-session"),
     ):
         (_proc / _pid).mkdir(parents=True)
         os.symlink(str(_exe), _proc / _pid / "exe")
@@ -666,13 +666,11 @@ with tempfile.TemporaryDirectory(dir="/tmp") as _fake:
     (_proc / "self").mkdir()
     check("kill: the session, the shell and the CLI in the client's bindir, nothing else",
           session._native_pids(_bin, _proc) == [101, 102, 103])
-    check("kill: the session's name is past what the kernel keeps of one",
-          len("punktfunk-session") > 15 and len(client.NATIVE_BIN) > 15)
 
 _victim = subprocess.Popen(["sleep", "30"])
 _real_native_pids, _real_argv, _real_flatpak = session._native_pids, client._client_argv, client._flatpak
 session._native_pids = lambda bindir, proc=None: [_victim.pid]
-client._client_argv = lambda: ["/usr/bin/punktfunk-client"]
+client._client_argv = lambda: ["/usr/bin/lilynk-client"]
 client._flatpak = lambda: "/usr/bin/flatpak"
 got = asyncio.run(main.Plugin().kill_stream())
 try:

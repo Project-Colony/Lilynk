@@ -1,14 +1,14 @@
 package io.unom.punktfunk.kit
 
 /**
- * The single JNI seam to `libpunktfunk_android.so` (the Rust-heavy client core).
+ * The single JNI seam to `liblilynk_android.so` (the Rust-heavy client core).
  *
  * Symbols are implemented in `clients/android/native`. This object is intentionally thin —
- * all protocol logic lives in Rust (`punktfunk-core` + the connector); Kotlin only marshals.
+ * all protocol logic lives in Rust (`lilynk-core` + the connector); Kotlin only marshals.
  */
 object NativeBridge {
     init {
-        System.loadLibrary("punktfunk_android")
+        System.loadLibrary("lilynk_android")
     }
 
     /**
@@ -149,7 +149,7 @@ object NativeBridge {
     ): String
 
     /**
-     * Ask for access with no PIN and wait (up to `pf_client_core::trust::REQUEST_ACCESS_TIMEOUT`)
+     * Ask for access with no PIN and wait (up to `ly_client_core::trust::REQUEST_ACCESS_TIMEOUT`)
      * for the host's operator to approve. [pinHex] is the host's advertised fingerprint; a host
      * that advertised none pairs by PIN, and `""` comes back for it at once. Otherwise returns the
      * host's fingerprint (64-hex) to persist as paired, or `""` with the cause in
@@ -742,7 +742,7 @@ object NativeBridge {
      * screen awake" setting) on, else only while the player's input is recent, so the device's
      * own timeout runs over a game left alone.
      *
-     * Answered natively, off `punktfunk_core::client::holds_screen_awake`: every input this
+     * Answered natively, off `lilynk_core::client::holds_screen_awake`: every input this
      * client forwards passes through the session, which is the one clock for "recent". Poll it
      * every few seconds. `true` when the session handle is dead.
      */
@@ -952,7 +952,7 @@ object NativeBridge {
      * by a host backend without a motion plane — the X-Box classes have no gyro in their HID
      * contract.
      *
-     * Answered natively, off `punktfunk_core::config::pad_motion_reaches`, rather than
+     * Answered natively, off `lilynk_core::config::pad_motion_reaches`, rather than
      * reconstructed here from the session's requested/resolved prefs. The rule is subtler than it
      * looks (the host builds each pad from its OWN declaration and folds what it cannot build, so
      * neither the declaration nor the session echo answers it alone) and every way of getting it
@@ -969,7 +969,7 @@ object NativeBridge {
      * everywhere else ([Gamepad.quickAccessPresses]). A negative [declaredPref] is a pad that
      * never declared: the session default answers for it.
      *
-     * Answered natively, off `punktfunk_core::config::pad_has_quick_access`, for the reason
+     * Answered natively, off `lilynk_core::config::pad_has_quick_access`, for the reason
      * [nativePadMotionReaches] is. `false` when the session handle is dead.
      */
     external fun nativePadHasQuickAccess(handle: Long, declaredPref: Int): Boolean
@@ -1066,12 +1066,12 @@ object NativeBridge {
      */
     external fun nativeNextHidout(handle: Long, buf: java.nio.ByteBuffer): Int
 
-    // ---- The Skia console UI (crates/client/pf-console-ui over EGL/GLES — clients/android/native/src/console) ----
+    // ---- The Skia console UI (crates/client/ly-console-ui over EGL/GLES — clients/android/native/src/console) ----
     //
     // The same console shell the Linux/Windows session binary shows, drawn by native onto a
     // SurfaceView. Kotlin keeps the services and feeds the console's models as JSON in the model
     // types' own serde shape (HostRow, LibraryGame, ConsoleCmd, OverlayAction, Settings — see
-    // `crates/client/pf-console-ui/src/model.rs` and `pf-client-core/src/trust.rs`); what the console
+    // `crates/client/ly-console-ui/src/model.rs` and `ly-client-core/src/trust.rs`); what the console
     // raises comes back through [nativeConsoleNextEvent]. Every call is main-thread-safe and cheap
     // except [nativeConsoleNextEvent], which blocks ~100 ms and belongs on its own thread, and
     // [nativeConsoleSurfaceDestroyed], which waits for the render thread.
@@ -1094,7 +1094,7 @@ object NativeBridge {
     /**
      * Build the console: [optionsJson] = `{device_name, gpu_cache_bytes, settings: <trust::Settings>,
      * presets: [{id, name, overrides}], known_hosts: <KnownHosts>, entry: {} | {"library":
-     * <HostRow>}, …}`; `CreateOptions` in `crates/client/pf-console-ui/src/bridge.rs` lists the
+     * <HostRow>}, …}`; `CreateOptions` in `crates/client/ly-console-ui/src/bridge.rs` lists the
      * rest. Returns a handle (its render thread parked until a surface arrives), or `0` on a bad
      * options document. EGL/Skia failures arrive later as a `{"dead": …}` event.
      */
@@ -1176,7 +1176,7 @@ object NativeBridge {
     external fun nativeConsoleNavigate(handle: Long, entryJson: String)
 
     /**
-     * The connected controllers, in the shape `PadsJson` takes (`crates/client/pf-console-ui/src/
+     * The connected controllers, in the shape `PadsJson` takes (`crates/client/ly-console-ui/src/
      * bridge.rs`): a legend `label`, the glyph `pref`, the `pads` and the `others` — the chip, the
      * settings rows and the controllers screen.
      */

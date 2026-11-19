@@ -5,7 +5,7 @@ import org.json.JSONObject
 
 /**
  * In-stream shortcuts: a press or hold of controller buttons or keys, bound to a quick action —
- * the `shortcuts` settings blob. The Kotlin twin of pf-client-core's `shortcuts` module;
+ * the `shortcuts` settings blob. The Kotlin twin of ly-client-core's `shortcuts` module;
  * `ShortcutVectorsTest` replays `clients/shared/shortcut-vectors.json` as the Rust `tests.rs`
  * does, so a rule changes there first.
  *
@@ -232,7 +232,7 @@ data class Shortcuts(val bindings: List<Binding> = emptyList()) {
     }
 
     /**
-     * One device's shortcuts, with the rules of pf-client-core's `shortcuts::Engine`. Feed every
+     * One device's shortcuts, with the rules of ly-client-core's `shortcuts::Engine`. Feed every
      * transition to [step], call [tick] by [nextDue] (late only delays), and [flush] when the
      * device goes away. Pass only the actions this session can perform. Ids are wire bits, or VKs
      * with left and right modifiers folded onto `keyVk("ctrl" | "alt" | "shift")`. Pure: the

@@ -8,10 +8,10 @@
 #![no_main]
 
 use libfuzzer_sys::fuzz_target;
-use pf_bitstream::av1::{self, conceal::Av1Concealer, tiles::plan_bitstream, Av1Planner};
-use pf_bitstream::h264::H264Planner;
-use pf_bitstream::h265::{conceal::H265Concealer, poc_widen::PocWidener, H265Planner};
-use pf_bitstream::testing::{split_h264_aus, split_h265_aus};
+use ly_bitstream::av1::{self, conceal::Av1Concealer, tiles::plan_bitstream, Av1Planner};
+use ly_bitstream::h264::H264Planner;
+use ly_bitstream::h265::{conceal::H265Concealer, poc_widen::PocWidener, H265Planner};
+use ly_bitstream::testing::{split_h264_aus, split_h265_aus};
 
 /// IVF frames: a 32-byte file header, then `size u32 ‖ pts u64 ‖ payload` each. A short last
 /// frame is read as far as it goes.

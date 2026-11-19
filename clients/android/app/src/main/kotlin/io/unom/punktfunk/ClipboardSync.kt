@@ -43,7 +43,7 @@ class ClipboardSync(
     fun start() {
         NativeBridge.nativeClipControl(handle, true)
         cm.addPrimaryClipChangedListener(clipListener)
-        thread = Thread({ pollLoop() }, "pf-clipboard").also { it.start() }
+        thread = Thread({ pollLoop() }, "ly-clipboard").also { it.start() }
         offerLocal() // whatever is already on the clipboard is pasteable host-side right away
     }
 

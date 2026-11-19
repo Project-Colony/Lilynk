@@ -1,4 +1,4 @@
-// Stream-mode presets grouped by aspect ratio — the twin of `punktfunk_core::resolutions` (and
+// Stream-mode presets grouped by aspect ratio — the twin of `lilynk_core::resolutions` (and
 // Android's `Resolutions` in Settings.kt). A picker shows one family at a time behind an aspect
 // switch, plus its own native rows. Picking a family moves to its size nearest the current height
 // (`nearest`), so the switch and the list always agree without picker-side state. Pure; tested in
@@ -62,7 +62,7 @@ public enum Resolutions {
     public static let minHeight = 200
 
     /// A typed `w`×`h` as a mode the host takes: each side at least `minWidth`×`minHeight`, at most
-    /// the codec's per-side ceiling, then floored even. Twin of `punktfunk_core::resolutions::custom`.
+    /// the codec's per-side ceiling, then floored even. Twin of `lilynk_core::resolutions::custom`.
     public static func custom(_ w: Int, _ h: Int, codec: String) -> (w: Int, h: Int) {
         let cap = RenderScale.maxDimension(codec: codec)
         return (min(max(w, minWidth), cap) / 2 * 2, min(max(h, minHeight), cap) / 2 * 2)
@@ -92,7 +92,7 @@ public enum Resolutions {
 
     /// The aspect switch on this device: "Screen", then "Safe area", then `aspects`. Each device
     /// entry appears only when no standard family has its shape, and the safe area only when it
-    /// differs from the screen. Twin of `punktfunk_core::resolutions::families`.
+    /// differs from the screen. Twin of `lilynk_core::resolutions::families`.
     public static func families(screen: (w: Int, h: Int)?, safe: (w: Int, h: Int)?) -> [Aspect] {
         var own: [Aspect] = []
         let entries = [

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Assert the file-capability matrix of a BUILT package, not of the source tree.
 #
-#   usr/bin/punktfunk-host           MUST carry no capability, ever.   -> hard fail
-#   usr/bin/punktfunk-encode-worker  MUST carry exactly cap_sys_nice=ep -> hard fail
+#   usr/bin/lilynk-host           MUST carry no capability, ever.   -> hard fail
+#   usr/bin/lilynk-encode-worker  MUST carry exactly cap_sys_nice=ep -> hard fail
 #
 # WHY THIS EXISTS. KWin identifies a Wayland client by resolving its /proc/<pid>/exe and matching
 # it against an installed .desktop's Exec=, and the kernel refuses that readlink to any reader
@@ -32,8 +32,8 @@
 # which is why the sysext path proves its own reader with a capability round-trip first.
 set -euo pipefail
 
-HOST_REL='usr/bin/punktfunk-host'
-WORKER_REL='usr/bin/punktfunk-encode-worker'
+HOST_REL='usr/bin/lilynk-host'
+WORKER_REL='usr/bin/lilynk-encode-worker'
 WANT_WORKER_CAPS='cap_sys_nice=ep'
 
 RC=0
@@ -107,7 +107,7 @@ scriptlet_strip_comments() { sed -e 's/#.*$//'; }
 scriptlet_host_grant() {
   scriptlet_strip_comments \
     | grep -E 'setcap' \
-    | grep -E 'punktfunk-host' \
+    | grep -E 'lilynk-host' \
     | grep -E 'cap_[a-z_]+[=+]' \
     | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' \
     | head -1 || true
@@ -117,7 +117,7 @@ scriptlet_host_grant() {
 scriptlet_worker_grant() {
   scriptlet_strip_comments \
     | grep -E 'setcap' \
-    | grep -E 'punktfunk-encode-worker' \
+    | grep -E 'lilynk-encode-worker' \
     | grep -oE 'cap_[a-z_]+[=+][a-z]+' \
     | head -1 || true
 }
@@ -327,16 +327,16 @@ self_test() {
     if [ "$ok" = 1 ]; then printf '  ok    %-42s\n' "$label"
     else printf '  FAIL  %-42s host_grant=%s worker=%s\n' "$label" "${gh:-<none>}" "${gw:-<none>}"; failures=$((failures + 1)); fi
   }
-  _sl='_grant() { setcap '"'"'cap_sys_nice=ep'"'"' usr/bin/punktfunk-encode-worker; }
-_revoke() { setcap -r usr/bin/punktfunk-host 2>/dev/null || true; }'
+  _sl='_grant() { setcap '"'"'cap_sys_nice=ep'"'"' usr/bin/lilynk-encode-worker; }
+_revoke() { setcap -r usr/bin/lilynk-host 2>/dev/null || true; }'
   _slcase "what this repo ships" "$_sl" no 'cap_sys_nice=ep'
-  _sl='# setcap '"'"'cap_sys_nice=ep'"'"' usr/bin/punktfunk-host   <- only a comment
-setcap '"'"'cap_sys_nice=ep'"'"' usr/bin/punktfunk-encode-worker'
+  _sl='# setcap '"'"'cap_sys_nice=ep'"'"' usr/bin/lilynk-host   <- only a comment
+setcap '"'"'cap_sys_nice=ep'"'"' usr/bin/lilynk-encode-worker'
   _slcase "a commented-out host grant is not a grant" "$_sl" no 'cap_sys_nice=ep'
-  _sl='setcap '"'"'cap_sys_nice=ep'"'"' usr/bin/punktfunk-host
-setcap '"'"'cap_sys_nice=ep'"'"' usr/bin/punktfunk-encode-worker'
+  _sl='setcap '"'"'cap_sys_nice=ep'"'"' usr/bin/lilynk-host
+setcap '"'"'cap_sys_nice=ep'"'"' usr/bin/lilynk-encode-worker'
   _slcase "0.26.0-1 scriptlet (must be caught)" "$_sl" yes 'cap_sys_nice=ep'
-  _sl='setcap -r usr/bin/punktfunk-host 2>/dev/null || true'
+  _sl='setcap -r usr/bin/lilynk-host 2>/dev/null || true'
   _slcase "removal only, no worker grant" "$_sl" no ''
 
   if [ "$failures" != 0 ]; then err "self-test: $failures case(s) wrong"; return 1; fi

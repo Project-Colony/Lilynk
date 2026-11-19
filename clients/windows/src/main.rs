@@ -1,17 +1,17 @@
-//! `punktfunk-client` — the native Windows punktfunk/1 client.
+//! `lilynk-client` — the native Windows punktfunk/1 client.
 //!
 //! Pure Rust: `NativeClient` linked as a crate (no C ABI, like the GTK Linux client) · SDL3
 //! gamepads · a **WinUI 3** shell (windows-reactor). Streaming (decode + present + audio) runs in
-//! the spawned `punktfunk-session` Vulkan binary; the shell owns host selection, trust and
+//! the spawned `lilynk-session` Vulkan binary; the shell owns host selection, trust and
 //! pairing. The trust surface mirrors the
 //! other native clients: persistent identity, trust-on-first-use, SPAKE2 PIN pairing — all in-app
-//! (host list, settings, pairing). Streaming runs in the spawned `punktfunk-session` binary;
+//! (host list, settings, pairing). Streaming runs in the spawned `lilynk-session` binary;
 //! `--headless --speed-test` keeps a decode-less CLI measurement path.
 //!
 //! Usage:
-//!   punktfunk-client                          (open the WinUI 3 window: host list, settings, pairing)
-//!   punktfunk-client --discover               (list punktfunk hosts on the LAN)
-//!   punktfunk-client --headless --speed-test --connect host[:port]
+//!   lilynk-client                          (open the WinUI 3 window: host list, settings, pairing)
+//!   lilynk-client --discover               (list punktfunk hosts on the LAN)
+//!   lilynk-client --headless --speed-test --connect host[:port]
 //!                    (measure the path: ceiling, clean-round loss and jitter, recommended bitrate)
 
 // Link as a GUI (windows) subsystem binary so the default windowed launch (MSIX / double-click)
@@ -21,7 +21,7 @@
 
 #[cfg(windows)]
 mod app;
-// The `--console` couch hand-off, shared verbatim with `punktfunk-console.exe`.
+// The `--console` couch hand-off, shared verbatim with `lilynk-console.exe`.
 #[cfg(windows)]
 mod couch;
 // `punktfunk://` activation: single instance, hand-off, and the positional URL parse
@@ -44,7 +44,7 @@ mod spawn;
 mod trust;
 
 #[cfg(windows)]
-use pf_client_core::wol;
+use ly_client_core::wol;
 
 #[cfg(windows)]
 fn main() {
@@ -60,18 +60,18 @@ fn main() {
         let _ = AttachConsole(ATTACH_PARENT_PROCESS);
     }
     set_app_user_model_id();
-    punktfunk_core::tls::install_default_provider();
+    lilynk_core::tls::install_default_provider();
 
     // Logs go to stderr, the client log file (a GUI launch has no console; ANSI off, users send
     // it) and the DEBUG+ ring "Send logs to host" uploads; the env filter scopes stderr and file
     // only. The session's stderr joins file and ring through `logring::forward_child_stderr`.
     logfile::init();
-    pf_client_core::logring::init_tracing(logfile::tee, false);
+    ly_client_core::logring::init_tracing(logfile::tee, false);
     if let Some(p) = logfile::path() {
         tracing::info!(path = %p.display(), "client log file (rotated at 10 MB, one .old kept)");
     }
     // SEH last-resort: a native crash in the shell otherwise ends the log mid-sentence.
-    punktfunk_core::crash::install();
+    lilynk_core::crash::install();
 
     let args: Vec<String> = std::env::args().collect();
     let flag = |name: &str| args.iter().any(|a| a == name);
@@ -118,13 +118,13 @@ fn main() {
     // Windowed (default): the WinUI 3 app owns host selection, settings, and pairing. The app
     // resolves the installed Windows App Runtime itself and offers its download when missing.
     // Its words follow the user's preferred UI languages, read once before any window exists.
-    pf_l10n::set_languages(&pf_l10n::os_languages());
+    ly_l10n::set_languages(&ly_l10n::os_languages());
 
-    // The shared SDL gamepad service (pf-client-core). The shell only enumerates pads (Settings
-    // list) and persists the pin; the spawned punktfunk-session runs the SAME service and does the
+    // The shared SDL gamepad service (ly-client-core). The shell only enumerates pads (Settings
+    // list) and persists the pin; the spawned lilynk-session runs the SAME service and does the
     // actual forwarding — so we never `attach()` here. Idle it stays hands-off the hardware
     // (id-getter metadata, no device open, the Deck HIDAPI driver off).
-    let gamepad = pf_client_core::gamepad::GamepadService::start();
+    let gamepad = ly_client_core::gamepad::GamepadService::start();
     // From here this process IS the shell: queue the link it was launched with (the router
     // picks it up once the window is live) and start listening for links from later instances.
     if let Some(url) = link {
@@ -145,7 +145,7 @@ fn main() {
     }
 }
 
-/// Tag unpackaged runs (dev, installer, portable) with the AppUserModelID that `pf-presenter`'s
+/// Tag unpackaged runs (dev, installer, portable) with the AppUserModelID that `ly-presenter`'s
 /// session window also adopts, so the shell and the stream window group as ONE taskbar
 /// app across the shell⇄session visibility handoff. MSIX runs already carry the package
 /// identity — overriding it would detach the window from the Start-menu pin, so packaged
@@ -158,14 +158,14 @@ fn set_app_user_model_id() {
     }
     // SAFETY: `SetCurrentProcessExplicitAppUserModelID` takes a static wide literal.
     unsafe {
-        // Must stay in sync with pf-presenter's win32.rs, or the windows stop grouping.
+        // Must stay in sync with ly-presenter's win32.rs, or the windows stop grouping.
         let _ =
             SetCurrentProcessExplicitAppUserModelID(windows::core::w!("io.unom.punktfunk.client"));
     }
 }
 
 /// `--headless --speed-test --connect host[:port]`: measure the path over the real data plane and
-/// print the outcome — the Windows analogue of `punktfunk-probe`. Real streaming is
+/// print the outcome — the Windows analogue of `lilynk-probe`. Real streaming is
 /// windowed-only.
 #[cfg(windows)]
 fn run_headless_cli(args: &[String], identity: (String, String)) {
@@ -183,8 +183,8 @@ fn run_headless_cli(args: &[String], identity: (String, String)) {
     };
     // Shared parser: this value is also handed to `find_by_addr`, so a mis-split IPv6
     // both probes the wrong address and misses its own saved record.
-    let (host, port) = pf_client_core::deeplink::parse_addr_port(&target)
-        .unwrap_or_else(|| (target.clone(), pf_client_core::deeplink::DEFAULT_PORT));
+    let (host, port) = ly_client_core::deeplink::parse_addr_port(&target)
+        .unwrap_or_else(|| (target.clone(), ly_client_core::deeplink::DEFAULT_PORT));
 
     // Speed test: measure the path over the real data plane, print the outcome, exit. The saved
     // fingerprint for this address (if any) pins the connect, like the GUI's per-host test.
@@ -192,11 +192,11 @@ fn run_headless_cli(args: &[String], identity: (String, String)) {
         let fp = trust::KnownHosts::load()
             .find_by_addr(&host, port)
             .map(|k| k.fp_hex.clone());
-        match pf_client_core::speed::run_speed_probe(&host, port, fp.as_deref(), identity) {
+        match ly_client_core::speed::run_speed_probe(&host, port, fp.as_deref(), identity) {
             Ok(r) => {
                 let mbps = f64::from(r.ceiling_kbps) / 1000.0;
                 let recommended =
-                    f64::from(pf_client_core::speed::recommended_kbps(r.ceiling_kbps)) / 1000.0;
+                    f64::from(ly_client_core::speed::recommended_kbps(r.ceiling_kbps)) / 1000.0;
                 let clean = match r.clean {
                     Some(c) => format!(
                         " · at {:.0} Mbit/s: {:.1} % loss, {:.1} ms jitter",
@@ -218,7 +218,7 @@ fn run_headless_cli(args: &[String], identity: (String, String)) {
         return;
     }
     // Only --speed-test is headless: real streaming runs in the windowed app's spawned
-    // punktfunk-session binary.
+    // lilynk-session binary.
     eprintln!("--headless supports only --speed-test now \u{2014} run the windowed app to stream");
     std::process::exit(2);
 }
@@ -228,12 +228,12 @@ fn run_headless_cli(args: &[String], identity: (String, String)) {
 fn discover_and_print() {
     use std::time::{Duration, Instant};
     println!("Browsing the LAN for Punktfunk hosts (~5 s)…");
-    let (rx, _rescan) = pf_client_core::discovery::browse();
+    let (rx, _rescan) = ly_client_core::discovery::browse();
     let deadline = Instant::now() + Duration::from_secs(5);
     let mut seen = std::collections::HashSet::new();
     while Instant::now() < deadline {
         while let Ok(event) = rx.try_recv() {
-            let pf_client_core::discovery::DiscoveryEvent::Resolved(h) = event else {
+            let ly_client_core::discovery::DiscoveryEvent::Resolved(h) = event else {
                 continue;
             };
             if seen.insert(h.key.clone()) {
@@ -263,7 +263,7 @@ fn discover_and_print() {
 #[cfg(not(windows))]
 fn main() {
     eprintln!(
-        "punktfunk-client-windows is Windows-only — the Linux client lives in \
+        "lilynk-client-windows is Windows-only — the Linux client lives in \
          clients/linux, the macOS client in clients/apple"
     );
     std::process::exit(2);

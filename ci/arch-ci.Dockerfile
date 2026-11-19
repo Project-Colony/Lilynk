@@ -3,7 +3,7 @@
 # (JS actions exec node INSIDE the job container — the same lesson as android-ci).
 # Content-keyed and rebuilt only when the ci/ tree changes (docker.yml `builders`).
 #
-#   docker build -f ci/arch-ci.Dockerfile -t punktfunk-arch-ci ci
+#   docker build -f ci/arch-ci.Dockerfile -t lilynk-arch-ci ci
 #
 # ROLLING-RELEASE TRADEOFF, on purpose: packages now build against the Arch snapshot
 # from the last image rebuild instead of a fresh -Syu per run. That is the same staleness
@@ -13,7 +13,7 @@
 #
 # ⚠ AND KNOW WHY THAT IS NOT ENOUGH ON ITS OWN: bumping this date only helps once docker.yml has
 # actually republished the image, and nothing sequences the two workflows. A release tagged four
-# minutes after a system-library major once published a punktfunk-host that no up-to-date Arch
+# minutes after a system-library major once published a lilynk-host that no up-to-date Arch
 # box could install — which blocks the user's ENTIRE `pacman -Syu`, not just our package. So
 # arch.yml refuses to publish anything a pristine-db `pacman -U --print` says is unsatisfiable.
 # This file staying current is still the CHEAP path — that gate is the backstop, not the plan.
@@ -43,7 +43,7 @@ RUN pacman -Syu --noconfirm --needed \
         mold \
     && pacman -Scc --noconfirm
 
-# bun builds the punktfunk-web console + the punktfunk-scripting runner AND is vendored as their
+# bun builds the lilynk-web console + the lilynk-scripting runner AND is vendored as their
 # runtime (PF_WITH_WEB=1 / PF_WITH_SCRIPTING=1), so these bytes end up in the package arch.yml
 # signs. The pinned asset from ci/bun.env, not [extra]'s rolling bun.
 COPY bun.env install-bun.sh /tmp/

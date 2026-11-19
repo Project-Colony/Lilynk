@@ -7,7 +7,7 @@ once in the COPR web UI (or with `copr-cli`):
 - Clone URL:      `https://git.unom.io/unom/punktfunk`
 - Committish:     `main` (or a release tag)
 - Subdirectory:   *(repo root)*
-- Spec File:      `packaging/rpm/punktfunk.spec`
+- Spec File:      `packaging/rpm/lilynk.spec`
 - Source build method: `rpkg` (or `make_srpm`)
 
 **Project settings**
@@ -27,24 +27,24 @@ copr-cli create punktfunk --chroot fedora-44-x86_64 \
   --repo 'https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$releasever.noarch.rpm'
 copr-cli buildscm punktfunk \
   --clone-url https://git.unom.io/unom/punktfunk \
-  --commit main --spec packaging/rpm/punktfunk.spec --method rpkg
+  --commit main --spec packaging/rpm/lilynk.spec --method rpkg
 ```
 
 Note: COPR caps build time/RAM; a full `cargo build --release` of the host (PipeWire
 sys-crates + aws-lc-rs) is heavy but within the default COPR limits. If a chroot OOMs, lower
 parallelism with `CARGO_BUILD_JOBS` in the spec's `%build`.
 
-## The web console subpackage (`punktfunk-web`)
+## The web console subpackage (`lilynk-web`)
 
-The spec can also build the management web console as a `punktfunk-web` subpackage, but it's
+The spec can also build the management web console as a `lilynk-web` subpackage, but it's
 gated behind `%bcond_with web` and **OFF by default** — building (and now *running*) the Nitro
 console needs `bun`, which COPR's mock chroot does not provide. The build env's bun is vendored into
-`punktfunk-bun`, which `punktfunk-web` and `punktfunk-scripting` both require (the console serves
+`lilynk-bun`, which `lilynk-web` and `lilynk-scripting` both require (the console serves
 HTTPS — HTTP/1.1 over TLS — via `Bun.serve`).
-A stock COPR build produces only `punktfunk` + `punktfunk-client`.
+A stock COPR build produces only `punktfunk` + `lilynk-client`.
 
 Two ways to get the console:
 - **Recommended:** build the RPMs `--with web` in an image that has `bun`
   ([`../rpm/README.md`](../rpm/README.md)) and install those files, as `bootc/Containerfile` does.
 - **In COPR:** add `bun` to the chroot (a custom mock config / external repo) and set the build
-  option `--with web` on the project, then `dnf install punktfunk-web`.
+  option `--with web` on the project, then `dnf install lilynk-web`.

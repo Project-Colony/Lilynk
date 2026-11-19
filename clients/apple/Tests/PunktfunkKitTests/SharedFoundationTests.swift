@@ -101,7 +101,7 @@ final class SharedFoundationTests: XCTestCase {
 
     // MARK: - OS-identity chain (mDNS `os` TXT → card icon walk)
 
-    /// Mirrors pf-client-core's `os.rs` tests — the two implementations must agree on the
+    /// Mirrors ly-client-core's `os.rs` tests — the two implementations must agree on the
     /// grammar (lowercase `[a-z0-9._-]` tokens, ≤ 32 chars each, ≤ 5 of them) and the walk
     /// order (most-specific-first, `macos`→`apple`, `steamos`→`steam`).
     func testOsChainSanitizeAndWalk() {
@@ -837,7 +837,7 @@ final class SharedFoundationTests: XCTestCase {
     // MARK: - The audio format a preset carries
 
     /// `AudioFormatChoice`'s raw values are a CROSS-CLIENT contract, not an implementation detail:
-    /// they are what a preset stores, and the desktop clients (`pf_client_core::session::
+    /// they are what a preset stores, and the desktop clients (`ly_client_core::session::
     /// AUDIO_FORMATS`) and Android (`Settings.kt`'s `AUDIO_FORMAT_*`) key the same table off the
     /// same strings, so one preset catalog has to round-trip through all four. Renaming one fails
     /// in the worst possible way: the key is carried through untouched, so the preset keeps
@@ -867,7 +867,7 @@ final class SharedFoundationTests: XCTestCase {
     /// stay exactly `48 000`/`16`, which is byte-for-byte a pre-lossless request and is what keeps
     /// the default session on the legacy connect path.
     ///
-    /// The five rates are `punktfunk_core::audio::pcm::rate_is_supported`.
+    /// The five rates are `lilynk_core::audio::pcm::rate_is_supported`.
     func testAudioFormatWireMappingCoversBothRateFamilies() {
         XCTAssertEqual(AudioFormatChoice.opus.wire.rateHz, 48_000)
         XCTAssertEqual(AudioFormatChoice.opus.wire.bits, 16)

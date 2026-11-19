@@ -52,13 +52,13 @@ under contention rather than a full-rate stream, and it is two granted runs agai
 run. The direction was consistent across all 25 measurement windows.
 
 NOTE 2 — WHERE THIS PATCH IS ACTUALLY LIVE. It is gated `if (!inherit_info)`, and only the WINDOWS
-path leaves `inherit_info` null: `crates/host/pf-encode-win/src/windows/pyrowave.rs` calls
+path leaves `inherit_info` null: `crates/host/ly-encode-win/src/windows/pyrowave.rs` calls
 `pyrowave_create_device_by_compat`, so Granite builds the device itself and this block runs.
-**On LINUX it has never done anything.** `crates/host/pf-encode/src/enc/linux/pyrowave.rs::open_inner`
+**On LINUX it has never done anything.** `crates/host/ly-encode/src/enc/linux/pyrowave.rs::open_inner`
 passes its own instance/device create-infos into `pyrowave_device_create_info`, Granite's
 `MyDeviceFactory::get_existing_create_info()` returns them, `create_device` takes the inherit
 branch, and the whole block above is skipped. The Linux request is therefore wired natively in
-**`crates/host/pf-encode/src/enc/linux/pyrowave.rs`** (search `queue_priority_candidates`), which
+**`crates/host/ly-encode/src/enc/linux/pyrowave.rs`** (search `queue_priority_candidates`), which
 implements the SAME env grammar and the SAME downgrade ladder so one knob means one thing on both
 platforms. If you change the grammar here, change it there in the same commit.
 

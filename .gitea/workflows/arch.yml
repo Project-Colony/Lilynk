@@ -1,4 +1,4 @@
-# Build the punktfunk-host / -client / -icons / -seats / -web / -scripting / -bun pacman packages
+# Build the lilynk-host / -client / -icons / -seats / -web / -scripting / -bun pacman packages
 # from packaging/arch/PKGBUILD and publish them to Gitea's Arch package registry, so Arch boxes
 # get new builds via `pacman -Syu`. Counterpart to deb.yml (apt) and rpm.yml (dnf/rpm-ostree).
 # Arch is rolling, so the packages build against the Arch snapshot baked into the arch-ci image
@@ -7,7 +7,7 @@
 # Registry (public, unom org) — box setup (once), see packaging/arch/README.md. The registry
 # SIGNS the DB + packages, so the box imports the registry key first (pacman-key --add +
 # --lsign-key), then no SigLevel line is needed (pacman's default Required verifies):
-#   [punktfunk]                         # or [punktfunk-canary] for main-push builds
+#   [punktfunk]                         # or [lilynk-canary] for main-push builds
 #   Server = https://git.unom.io/api/packages/unom/arch/$repo/$arch
 #
 # REGISTRY_TOKEN: repo Actions secret, a PAT with write:package scope (shared with docker.yml).
@@ -31,35 +31,35 @@ on:
     # tag runs are matched by `tags:` (proven by flatpak/windows-msix releases).
     paths:
       - 'crates/client/**'
-      - 'crates/codec/pf-bitstream/**'
-      - 'crates/codec/pf-libva/**'
-      - 'crates/codec/pf-v4l2/**'
-      - 'crates/codec/pf-v4l2dec/**'
-      - 'crates/codec/pf-vaapi/**'
-      - 'crates/codec/pf-vkdecode/**'
+      - 'crates/codec/ly-bitstream/**'
+      - 'crates/codec/ly-libva/**'
+      - 'crates/codec/ly-v4l2/**'
+      - 'crates/codec/ly-v4l2dec/**'
+      - 'crates/codec/ly-vaapi/**'
+      - 'crates/codec/ly-vkdecode/**'
       - 'crates/codec/pyrowave-sys/**'
       - 'crates/core/**'
-      - 'crates/host/pf-audio/**'
-      - 'crates/host/pf-capture/**'
-      - 'crates/host/pf-clipboard/**'
-      - 'crates/host/pf-driver-proto/**'
-      - 'crates/host/pf-encode/**'
-      - 'crates/host/pf-encode-core/**'
-      - 'crates/host/pf-frame/**'
-      - 'crates/host/pf-gpu/**'
-      - 'crates/host/pf-host-config/**'
-      - 'crates/host/pf-inject/**'
-      - 'crates/host/pf-paths/**'
-      - 'crates/host/pf-paths-win/**'
-      - 'crates/host/pf-portal/**'
-      - 'crates/host/pf-seats/**'
-      - 'crates/host/pf-vdisplay/**'
-      - 'crates/host/pf-win-display/**'
-      - 'crates/host/pf-zerocopy/**'
-      - 'crates/host/punktfunk-encode-worker/**'
-      - 'crates/host/punktfunk-host/**'
-      - 'crates/install/pf-update/**'
-      - 'crates/install/punktfunk-tray/**'
+      - 'crates/host/ly-audio/**'
+      - 'crates/host/ly-capture/**'
+      - 'crates/host/ly-clipboard/**'
+      - 'crates/host/ly-driver-proto/**'
+      - 'crates/host/ly-encode/**'
+      - 'crates/host/ly-encode-core/**'
+      - 'crates/host/ly-frame/**'
+      - 'crates/host/ly-gpu/**'
+      - 'crates/host/ly-host-config/**'
+      - 'crates/host/ly-inject/**'
+      - 'crates/host/ly-paths/**'
+      - 'crates/host/ly-paths-win/**'
+      - 'crates/host/ly-portal/**'
+      - 'crates/host/ly-seats/**'
+      - 'crates/host/ly-vdisplay/**'
+      - 'crates/host/ly-win-display/**'
+      - 'crates/host/ly-zerocopy/**'
+      - 'crates/host/lilynk-encode-worker/**'
+      - 'crates/host/lilynk-host/**'
+      - 'crates/install/ly-update/**'
+      - 'crates/install/lilynk-tray/**'
       - 'clients/linux/**'
       - 'clients/session/**'
       - 'clients/shared/**'
@@ -81,35 +81,35 @@ on:
       - 'Cargo.toml'
       - 'Cargo.lock'
       - 'rust-toolchain.toml'
-      - 'scripts/60-punktfunk.rules'
-      - 'scripts/60-punktfunk-dualsense.conf'
-      - 'scripts/70-punktfunk-client.rules'
-      - 'scripts/99-punktfunk-net.conf'
-      - 'scripts/99-punktfunk-client-net.conf'
+      - 'scripts/60-lilynk.rules'
+      - 'scripts/60-lilynk-dualsense.conf'
+      - 'scripts/70-lilynk-client.rules'
+      - 'scripts/99-lilynk-net.conf'
+      - 'scripts/99-lilynk-client-net.conf'
       - 'scripts/headless/**'
       - 'scripts/host.env.example'
       - 'scripts/io.unom.punktfunk.dm-helper.policy'
-      - 'scripts/pf-dm-helper'
-      - 'scripts/punktfunk-host-desktop-session.conf'
-      - 'scripts/punktfunk-host.service'
-      - 'scripts/punktfunk-kde-session.service'
-      - 'scripts/punktfunk-modules.conf'
-      - 'scripts/punktfunk-scripting.service'
-      - 'scripts/punktfunk-scripting-seat@.service'
-      - 'scripts/punktfunk-web-init.service'
-      - 'scripts/punktfunk-web.service'
+      - 'scripts/ly-dm-helper'
+      - 'scripts/lilynk-host-desktop-session.conf'
+      - 'scripts/lilynk-host.service'
+      - 'scripts/lilynk-kde-session.service'
+      - 'scripts/lilynk-modules.conf'
+      - 'scripts/lilynk-scripting.service'
+      - 'scripts/lilynk-scripting-seat@.service'
+      - 'scripts/lilynk-web-init.service'
+      - 'scripts/lilynk-web.service'
       - 'scripts/web-init.sh'
       - 'scripts/alsa-ucm2/**'
       - 'scripts/ci/assert-cap-matrix.sh'
       - 'scripts/ci/assert-payload-parity.sh'
       - 'scripts/ci/gitea-release.sh'
-      - 'scripts/ci/pf-version.sh'
+      - 'scripts/ci/ly-version.sh'
       - 'scripts/ci/retry.sh'
       - 'ci/bun.env'
       - 'ci/install-bun.sh'
       - '.gitea/workflows/arch.yml'
     # Single project version: a `vX.Y.Z` tag is THE release. main publishes to the
-    # `punktfunk-canary` pacman repo as X.Y.Z-0.<run#> (sorts below the eventual X.Y.Z-1),
+    # `lilynk-canary` pacman repo as X.Y.Z-0.<run#> (sorts below the eventual X.Y.Z-1),
     # tags to `punktfunk` — separate repos, so neither channel can shadow the other.
     tags: ['v*']
   # REBUILDING A PUBLISHED RELEASE, because on a rolling distro the ground moves under one.
@@ -161,7 +161,7 @@ jobs:
       # The build deps of the two pacman steps below, plus bun, sccache and node, are baked
       # in (ci/arch-ci.Dockerfile). The steps stay as --needed no-op guards for the one push
       # where :latest lags an image-content change.
-      image: 192.168.1.58:5010/punktfunk-arch-ci:latest
+      image: 192.168.1.58:5010/lilynk-arch-ci:latest
     timeout-minutes: 90
     env:
       CARGO_HOME: /usr/local/cargo
@@ -207,18 +207,18 @@ jobs:
 
       - name: Version + channel
         # vX.Y.Z tag -> X.Y.Z-1 in the `punktfunk` repo; main push -> <next-minor>-0.<run#> in
-        # `punktfunk-canary`. scripts/ci/pf-version.sh owns the rule, including why the run number
+        # `lilynk-canary`. scripts/ci/ly-version.sh owns the rule, including why the run number
         # is zero-padded; the leading `0.` sorts a canary BELOW the eventual `X.Y.Z-1` release.
         env:
           RELEASE_TAG: ${{ github.event.inputs.release_tag }}
           REBUILD_PKGREL: ${{ github.event.inputs.pkgrel }}
         run: |
-          eval "$(bash scripts/ci/pf-version.sh --format arch)"   # -> PF_VERSION, PF_RELEASE, PF_CHANNEL
+          eval "$(bash scripts/ci/ly-version.sh --format arch)"   # -> PF_VERSION, PF_RELEASE, PF_CHANNEL
           if [ -n "${RELEASE_TAG:-}" ]; then
             # Dispatched rebuild of a published release (see the workflow_dispatch note at the
             # top): same upstream version, higher pkgrel, straight into the stable repo.
             # ⚠ Keep that pkgrel SINGLE-DIGIT. Gitea's Arch registry picks the version its .db
-            # advertises by STRING order (the trap pf-version.sh zero-pads the canary run for),
+            # advertises by STRING order (the trap ly-version.sh zero-pads the canary run for),
             # so "0.25.0-10" sorts BELOW "0.25.0-2" and the rebuild would never be advertised.
             V="${RELEASE_TAG#v}"
             R="${REBUILD_PKGREL:-2}"
@@ -232,7 +232,7 @@ jobs:
             R="$PF_RELEASE"
             case "$PF_CHANNEL" in
               stable) REPO=punktfunk ;;
-              *)      REPO=punktfunk-canary ;;
+              *)      REPO=lilynk-canary ;;
             esac
           fi
           echo "PF_PKGVER=$V" >> "$GITHUB_ENV"
@@ -281,7 +281,7 @@ jobs:
           # libcuda link stub — same trick as packaging/rpm/build-rpm.sh: the zerocopy FFI
           # links -lcuda but the builder has no GPU; synthesize every cu* symbol the source
           # references so a newly-added call can't silently break the link.
-          CU_SYMS="$(grep -rhoE '\bcu[A-Z][A-Za-z0-9_]*' crates/host/punktfunk-host/src/ | sort -u || true)"
+          CU_SYMS="$(grep -rhoE '\bcu[A-Z][A-Za-z0-9_]*' crates/host/lilynk-host/src/ | sort -u || true)"
           if [ -n "$CU_SYMS" ] && [ ! -e /usr/lib/libcuda.so ]; then
             STUB_C="$(mktemp --suffix=.c)"
             for s in $CU_SYMS; do printf 'int %s(void){return 0;}\n' "$s" >> "$STUB_C"; done
@@ -333,18 +333,18 @@ jobs:
       - name: Assert the capability matrix (Arch package)
         run: |
           bash scripts/ci/assert-cap-matrix.sh --self-test
-          bash scripts/ci/assert-cap-matrix.sh "$GITHUB_WORKSPACE"/dist/punktfunk-host-*.pkg.tar.zst
+          bash scripts/ci/assert-cap-matrix.sh "$GITHUB_WORKSPACE"/dist/lilynk-host-*.pkg.tar.zst
 
       # Every path packaging/linux/payload.txt names, read out of the built packages
       # (usr/libexec/punktfunk/ reads usr/lib/punktfunk/ here, except in seats).
       - name: Assert the shared payload (Arch packages)
         run: |
           bash scripts/ci/assert-payload-parity.sh --self-test
-          bash scripts/ci/assert-payload-parity.sh "$GITHUB_WORKSPACE"/dist/punktfunk-host-*.pkg.tar.zst \
-            "$GITHUB_WORKSPACE"/dist/punktfunk-client-*.pkg.tar.zst \
-            "$GITHUB_WORKSPACE"/dist/punktfunk-seats-[0-9]*.pkg.tar.zst
+          bash scripts/ci/assert-payload-parity.sh "$GITHUB_WORKSPACE"/dist/lilynk-host-*.pkg.tar.zst \
+            "$GITHUB_WORKSPACE"/dist/lilynk-client-*.pkg.tar.zst \
+            "$GITHUB_WORKSPACE"/dist/lilynk-seats-[0-9]*.pkg.tar.zst
 
-      # The patched gamescope punktfunk-host depends on (packaging/gamescope) — a separate pkgbase
+      # The patched gamescope lilynk-host depends on (packaging/gamescope) — a separate pkgbase
       # with a completely different dependency set, published into the same repo.
       #
       # CACHED on `packaging/gamescope/**`: it depends on nothing else in this repo, so a normal
@@ -355,11 +355,11 @@ jobs:
         id: gamescope
         with:
           path: dist-gamescope
-          key: punktfunk-gamescope-arch-${{ hashFiles('packaging/gamescope/**') }}
+          key: lilynk-gamescope-arch-${{ hashFiles('packaging/gamescope/**') }}
 
-      - name: Build punktfunk-gamescope (makepkg)
+      - name: Build lilynk-gamescope (makepkg)
         if: steps.gamescope.outputs.cache-hit != 'true'
-        # Required: punktfunk-host depends on it, so a host published without it cannot install.
+        # Required: lilynk-host depends on it, so a host published without it cannot install.
         run: |
           set -x
           # Baked into arch-ci — a no-op guard, like the dep step above.
@@ -380,7 +380,7 @@ jobs:
 
       # The gate before publishing: would a real, up-to-date Arch box install this? A soname
       # bound the world has moved past makes pacman fail with "unable to satisfy dependency …
-      # required by punktfunk-host", and because pacman prepares one transaction, the user's
+      # required by lilynk-host", and because pacman prepares one transaction, the user's
       # whole system upgrade stops there.
       #
       # An empty --dbpath is what makes the answer honest. It means "nothing is installed", so
@@ -400,12 +400,12 @@ jobs:
             pacman -U --print --noconfirm --dbpath /tmp/pf-instcheck --logfile /dev/null "$@" 2>&1
           }
           ls dist/*.pkg.tar.zst >/dev/null 2>&1 || { echo "::error::nothing in dist/ to check"; exit 1; }
-          ls dist-gamescope/*.pkg.tar.zst >/dev/null 2>&1 || { echo "::error::no punktfunk-gamescope to check"; exit 1; }
+          ls dist-gamescope/*.pkg.tar.zst >/dev/null 2>&1 || { echo "::error::no lilynk-gamescope to check"; exit 1; }
           rc=0
           # ONE transaction for the whole built set — the shape reality takes (the published repo
-          # carries the siblings, so `pacman -S punktfunk-host` resolves punktfunk-icons from it)
+          # carries the siblings, so `pacman -S lilynk-host` resolves lilynk-icons from it)
           # and the only shape -U --print can verify: file targets resolve against the sync db
-          # PLUS each other, and a split-package dependency (punktfunk-icons) exists only as a
+          # PLUS each other, and a split-package dependency (lilynk-icons) exists only as a
           # sibling file here. Checking one file at a time reports a false "cannot be installed".
           # pacman's own error text names the offending package.
           if out="$(check dist/*.pkg.tar.zst dist-gamescope/*.pkg.tar.zst)"; then
@@ -420,7 +420,7 @@ jobs:
             echo "::error::rejected dependency blocks the user's ENTIRE upgrade, not just punktfunk."
             echo "::error::Usual cause: the arch-ci builder image lags Arch across a soname bump —"
             echo "::error::bump 'refreshed:' in ci/arch-ci.Dockerfile, let docker.yml republish it, re-run."
-            echo "::error::punktfunk-gamescope is cached on packaging/gamescope: bump its pkgrel to rebuild."
+            echo "::error::lilynk-gamescope is cached on packaging/gamescope: bump its pkgrel to rebuild."
             exit 1
           fi
 

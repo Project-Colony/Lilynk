@@ -6,7 +6,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * Where a decoded frame lands in a view — the twin of `punktfunk_core::video_fit`. Every case in
+ * Where a decoded frame lands in a view — the twin of `lilynk_core::video_fit`. Every case in
  * `clients/shared/video-fit-vectors.json` runs against both; change the rule there first.
  *
  * [VideoPlacement.dstX]…[VideoPlacement.dstH] is the whole-pixel rect inside the view the picture

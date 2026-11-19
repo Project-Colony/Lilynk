@@ -1,5 +1,5 @@
 // Launching a plugin out of process on Windows: a process of its own, or an AppContainer through
-// `punktfunk-host plugins spawn`. A container reaches the host over the pipe it serves for the
+// `lilynk-host plugins spawn`. A container reaches the host over the pipe it serves for the
 // plugin's id; a process of its own over the pinned TLS port.
 import { Effect } from "effect";
 import * as fs from "node:fs";
@@ -36,7 +36,7 @@ export const ownProcessEnv = (options: RunnerOptions): NodeJS.ProcessEnv => {
 };
 
 /**
- * Run one plugin in its own AppContainer: `punktfunk-host plugins spawn` creates the profile for
+ * Run one plugin in its own AppContainer: `lilynk-host plugins spawn` creates the profile for
  * this account and starts this runner's `--run-unit` child inside it, relaying its exit code
  * and ending the child with itself. The child holds no token: its own pipe is its credential.
  */
@@ -64,8 +64,8 @@ export const runInContainer = (
  */
 export const pipeName = (id: string, seat: string | undefined): string =>
 	seat && /^[0-9a-f]{32}$/.test(seat)
-		? `\\\\.\\pipe\\punktfunk-seat-${seat}-plugin-${id}`
-		: `\\\\.\\pipe\\punktfunk-plugin-${id}`;
+		? `\\\\.\\pipe\\lilynk-seat-${seat}-plugin-${id}`
+		: `\\\\.\\pipe\\lilynk-plugin-${id}`;
 
 /**
  * The environment of a plugin in its AppContainer: the pipe the host serves for its id, plain

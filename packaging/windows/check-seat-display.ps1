@@ -1,9 +1,9 @@
 <#
 .SYNOPSIS
-  Report whether a multi-seat host can actually give its seats a pf-vdisplay display.
+  Report whether a multi-seat host can actually give its seats a ly-vdisplay display.
 
 .DESCRIPTION
-  A seat needs `pf_vdisplay_seats.inf` to win the hardware id `RdpIdd_IndirectDisplay`,
+  A seat needs `ly_vdisplay_seats.inf` to win the hardware id `RdpIdd_IndirectDisplay`,
   and losing it is SILENT: the seat session still starts, on Microsoft's own remote display adapter,
   and only the missing stream says otherwise. So this asserts the thing that matters - WHICH driver
   bound each seat devnode - rather than that a session came up.
@@ -42,7 +42,7 @@ if ($os.ProductType -eq 1 -and (Split-Path -Leaf "$serviceDll") -eq 'termsrv.dll
 
 # --- 2. is the seats package even installed? ----------------------------------------------------
 $drivers = (& pnputil /enum-drivers) -join "`n"
-$haveSeats = $drivers -match 'pf_vdisplay_seats\.inf'
+$haveSeats = $drivers -match 'ly_vdisplay_seats\.inf'
 Say "seats INF : $(if ($haveSeats) { 'installed' } else { 'not installed by that name' }) (informational - the verdict below is from real bindings)"
 
 # --- 2b. the tie-break, checked BEFORE it costs anyone a seat -----------------------------------
@@ -63,7 +63,7 @@ function Show-Date($date) { if ($date) { $date.ToString('yyyy-MM-dd') } else { '
 
 $inboxInf = Join-Path $env:SystemRoot 'INF\rdpidd.inf'
 $store = Join-Path $env:SystemRoot 'System32\DriverStore\FileRepository'
-$ourInfs = @(Get-ChildItem (Join-Path $store 'pf_vdisplay_seats.inf_*\pf_vdisplay_seats.inf') -ErrorAction SilentlyContinue)
+$ourInfs = @(Get-ChildItem (Join-Path $store 'ly_vdisplay_seats.inf_*\ly_vdisplay_seats.inf') -ErrorAction SilentlyContinue)
 if (Test-Path $inboxInf) {
     $inboxDate = Get-DriverDate $inboxInf
     Say "inbox rdpidd DriverVer date : $(Show-Date $inboxDate)"
@@ -104,11 +104,11 @@ foreach ($d in $seats) {
 }
 
 if ($bad) {
-    Write-Output ("FAIL: $($bad.Count) of $($seats.Count) seat display(s) are not pf-vdisplay. " +
+    Write-Output ("FAIL: $($bad.Count) of $($seats.Count) seat display(s) are not ly-vdisplay. " +
         'The seats package lost `RdpIdd_IndirectDisplay` - check its DriverVer date against ' +
         "the inbox rdpidd.inf, which the tie is decided on.")
     exit 1
 }
 
-Write-Output "OK: $($seats.Count) seat display(s), all pf-vdisplay."
+Write-Output "OK: $($seats.Count) seat display(s), all ly-vdisplay."
 exit 0

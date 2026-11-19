@@ -37,8 +37,8 @@ pub(crate) use sink::asc_backend_selected;
 
 use crate::bring_up::ranked_for;
 use crate::input_stall::NoOutput;
+use lilynk_core::client::NativeClient;
 use ndk::native_window::NativeWindow;
-use punktfunk_core::client::NativeClient;
 use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
 use std::time::Instant;
@@ -67,7 +67,7 @@ pub(crate) const NO_VIDEO_PATIENCE: std::time::Duration = std::time::Duration::f
 /// matching its period (±10 %) to this value or to `FLUSH_COOLDOWN` (the jump-to-live rate limit)
 /// to decide WHICH client failure it is looking at. The two are opposites — "I have received
 /// nothing" versus "I am drowning in frames I cannot drain" — so the values must stay apart.
-const NO_VIDEO_RETRY: std::time::Duration = punktfunk_core::client::NO_VIDEO_RETRY;
+const NO_VIDEO_RETRY: std::time::Duration = lilynk_core::client::NO_VIDEO_RETRY;
 
 /// The backstops the decode loop runs once a pass: a decoder that owes output ([`NoOutput`])
 /// and a session that never received an AU ([`NO_VIDEO_PATIENCE`]). Each reports to core,
@@ -166,7 +166,7 @@ pub(crate) struct DecodeOptions {
     ///
     /// ⚠ Only a seed: `preferredDisplayModeId` is a REQUEST the system may refuse, so the mode
     /// named here is not necessarily the one the panel ends up in. The measured timeline spacing
-    /// corrects it in both directions ([`punktfunk_core::phase::PanelGrid`]).
+    /// corrects it in both directions ([`lilynk_core::phase::PanelGrid`]).
     pub panel_hz: i32,
     /// What the display states about its refresh, which aims a release where a vsync callback
     /// carries no frame timeline ([`crate::vsync_grid::GridFacts`]).
@@ -220,7 +220,7 @@ impl DecodeOptions {
 /// layer and the helpers re-exported above. A lane that ends by itself (no decoder starts, or
 /// every rebuild comes up barren) leaves the session without video, and a queue nobody pops
 /// makes core flush it and ask the host for a keyframe every
-/// [`FLUSH_COOLDOWN`](punktfunk_core::client::FLUSH_COOLDOWN).
+/// [`FLUSH_COOLDOWN`](lilynk_core::client::FLUSH_COOLDOWN).
 pub fn run(
     client: Arc<NativeClient>,
     window: NativeWindow,
@@ -228,7 +228,7 @@ pub fn run(
     stats: Arc<crate::stats::VideoStats>,
     opts: DecodeOptions,
 ) {
-    if client.codec == punktfunk_core::quic::CODEC_PYROWAVE {
+    if client.codec == lilynk_core::quic::CODEC_PYROWAVE {
         crate::pyro::run(client.clone(), window, shutdown.clone(), stats, opts);
     } else {
         run_async(client.clone(), window, shutdown.clone(), stats, opts);

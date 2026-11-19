@@ -9,9 +9,9 @@ convention instead.
 
 | Platform | Identifiers | Defined in |
 | --- | --- | --- |
-| Apple | Bundle `io.unom.punktfunk`, widgets `io.unom.punktfunk.widgets`, App Group `group.io.unom.punktfunk` | `clients/apple/Punktfunk.xcodeproj` |
+| Apple | Bundle `io.unom.punktfunk`, widgets `io.unom.punktfunk.widgets`, App Group `group.io.unom.punktfunk` | `clients/apple/Lilynk.xcodeproj` |
 | Android | Application id and package `io.unom.punktfunk` | `clients/android/app/build.gradle.kts` |
-| Linux client | Flatpak, AppStream, GTK and Wayland app id, icon `io.unom.punktfunk`; console window app id `io.unom.punktfunk.console`; launchers `io.unom.punktfunk.desktop` and `io.unom.punktfunk.console.desktop` | `packaging/flatpak/`, `packaging/linux/`, `crates/client/pf-presenter/` |
+| Linux client | Flatpak, AppStream, GTK and Wayland app id, icon `io.unom.punktfunk`; console window app id `io.unom.punktfunk.console`; launchers `io.unom.punktfunk.desktop` and `io.unom.punktfunk.console.desktop` | `packaging/flatpak/`, `packaging/linux/`, `crates/client/ly-presenter/` |
 | Linux host | KWin grant `io.unom.punktfunk.host.desktop`, launchers `io.unom.punktfunk.starthost.desktop` and `io.unom.punktfunk.webconsole.desktop`, tray autostart `io.unom.punktfunk.tray.desktop`, D-Bus `io.unom.punktfunk.shell`, polkit `io.unom.punktfunk.dm-helper` | `packaging/linux/`, `crates/host/` |
 | Windows | MSIX `io.unom.punktfunk`, AUMIDs `io.unom.punktfunk.client` and `io.unom.punktfunk.tray` | `clients/windows/`, `crates/install/` |
 
@@ -19,7 +19,7 @@ convention instead.
 
 | Kind | Form | Example |
 | --- | --- | --- |
-| Packages, binaries, systemd units, sysext images | Lowercase, hyphenated | `punktfunk-host`, `punktfunk-client.raw` |
+| Packages, binaries, systemd units, sysext images | Lowercase, hyphenated | `lilynk-host`, `lilynk-client.raw` |
 | Windows services, tasks, registry keys | CamelCase, no dots | `PunktfunkHost`, `HKLM\SOFTWARE\Punktfunk` |
 | winget | Publisher.Package | `unom.PunktfunkHost` |
 | URL scheme, DNS-SD service | Lowercase | `punktfunk://`, `_punktfunk._udp` |
@@ -32,7 +32,7 @@ convention instead.
 - **Android application id.** Play ties the listing to it.
 - **Windows Add/Remove Programs GUIDs and the winget `ProductCode`.** Upgrades find the install by
   them.
-- **Plugin AppContainers, `punktfunk.plugin.<id>`.** The name derives the SID that every folder
+- **Plugin AppContainers, `lilynk.plugin.<id>`.** The name derives the SID that every folder
   grant names.
 - **The host sysext image `punktfunk`.** systemd-sysext merges an image only when its
   `extension-release` name matches the file, and the feed's updater writes that file.

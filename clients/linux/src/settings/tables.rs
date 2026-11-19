@@ -2,12 +2,12 @@
 //! its list. Seeding a row and resetting one read the same [`index`] functions.
 
 use crate::trust::Settings;
-use pf_client_core::audio_format::surround_over_limit;
-pub use pf_client_core::session::AUDIO_FORMATS;
-use pf_client_core::settings::{MouseMode, TouchMode};
-use pf_client_core::trust::{HudCorner, StatsVerbosity};
-use pf_l10n::client;
-use punktfunk_core::hud::{stats_scale, STATS_SCALE_PCTS};
+use lilynk_core::hud::{stats_scale, STATS_SCALE_PCTS};
+use ly_client_core::audio_format::surround_over_limit;
+pub use ly_client_core::session::AUDIO_FORMATS;
+use ly_client_core::settings::{MouseMode, TouchMode};
+use ly_client_core::trust::{HudCorner, StatsVerbosity};
+use ly_l10n::client;
 
 /// A message, read when a row is built, so a table holds what to say and not the words.
 pub type Text = fn() -> &'static str;
@@ -19,11 +19,11 @@ pub fn texts(table: &[Text]) -> Vec<&'static str> {
 
 /// Sizes by family; the Resolution row lists one family at a time behind the Aspect row.
 /// `(0, 0)` = the native size of the monitor the window is on, resolved at connect.
-pub use punktfunk_core::resolutions::{aspect_of, nearest, ASPECTS};
+pub use lilynk_core::resolutions::{aspect_of, nearest, ASPECTS};
 /// `0` = the monitor's native refresh, resolved at connect.
 pub const REFRESH: &[u32] = &[0, 30, 60, 90, 120, 144, 165, 240];
 /// Render-scale multipliers. `1.0` = Native; applied at connect and each match-window resize.
-pub use punktfunk_core::render_scale::PRESETS as RENDER_SCALES;
+pub use lilynk_core::render_scale::PRESETS as RENDER_SCALES;
 
 /// Where each picker sits for a given settings snapshot. Factored out because two places need
 /// exactly this: seeding the dialog, and putting ONE row back to the inherited value when its
@@ -68,8 +68,7 @@ pub mod index {
 
     /// A stop's entry, or Custom for a typed scale.
     pub fn render_scale(s: &Settings) -> u32 {
-        punktfunk_core::render_scale::preset_index(s.render_scale)
-            .map_or(CUSTOM_SCALE, |i| i as u32)
+        lilynk_core::render_scale::preset_index(s.render_scale).map_or(CUSTOM_SCALE, |i| i as u32)
     }
 
     pub fn codec(s: &Settings) -> u32 {
@@ -230,7 +229,7 @@ pub const CODEC_LABELS: &[Text] = &[
     || "AV1",
     client::player_codec_pyrowave,
 ];
-// Stored decoder-preference values. `pf_client_core::video::migrate_decoder_pref` maps an
+// Stored decoder-preference values. `ly_client_core::video::migrate_decoder_pref` maps an
 // older bare "vulkan"/"vaapi" onto its `native-*` entry; `pages::display` applies it before
 // it looks a stored value up here.
 pub const DECODERS: &[&str] = &["auto", "native-vulkan", "native-vaapi", "software"];

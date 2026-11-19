@@ -7,7 +7,7 @@ Deck installer, the sysext builders). This reads each recipe and fails when a ch
 the matrix does not, or omits what it does. A grant it cannot attribute to a known binary fails
 too. scripts/ci/assert-cap-matrix.sh checks the host and worker rows on the built package.
 
-packaging/linux/punktfunk.sysusers is the group matrix. The deb, rpm, Arch and Steam Deck
+packaging/linux/lilynk.sysusers is the group matrix. The deb, rpm, Arch and Steam Deck
 recipes must install it, NixOS must declare the same groups, and no script or rule may create,
 join or name a group it lacks.
 
@@ -19,7 +19,7 @@ The plugin runner is on by default: the game library's scanners are plugins, so 
 is off has an empty library. Each Linux channel's recipe must turn it on at install.
 
 A SteamOS update rebuilds /etc and keeps only what its keep lists name, so every /etc path the
-Steam Deck scripts install must be on scripts/punktfunk-atomic-keep.conf or under a tree SteamOS
+Steam Deck scripts install must be on scripts/lilynk-atomic-keep.conf or under a tree SteamOS
 keeps itself.
 
 packaging/linux's units are system units. PID 1 reads each EnvironmentFile= as root and follows a
@@ -30,8 +30,8 @@ packaging/linux/restart-user-units.sh's two lists are the units an update restar
 Steam Deck updaters and the host's own restart them without it, so each names the same units. A
 deb, rpm or pacman scriptlet restarts none: the helper does, once the host is unpacked.
 
-The ports a firewall opener opens are the ports the host binds: the constants in pf-host-config's
-listen.rs, pf-seats' model.rs and the host's gamestream/mod.rs, and the console unit's PORT with
+The ports a firewall opener opens are the ports the host binds: the constants in ly-host-config's
+listen.rs, ly-seats' model.rs and the host's gamestream/mod.rs, and the console unit's PORT with
 the plugin origin one above it. Each firewalld service, ufw profile and NixOS list opens exactly
 those, and data/platforms.json, the docs' table, states no other.
 
@@ -54,18 +54,18 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 MATRIX = "packaging/linux/capabilities.txt"
 GATE = "scripts/ci/assert-cap-matrix.sh"
-SYSUSERS = "packaging/linux/punktfunk.sysusers"
+SYSUSERS = "packaging/linux/lilynk.sysusers"
 NIX_MODULE = "packaging/nix/nixos-module.nix"
 # Recipes that install the sysusers file, by the text they must hold.
 GROUP_RECIPES = ["packaging/debian/build-deb.sh", "packaging/debian/build-client-deb.sh",
-                 "packaging/rpm/punktfunk.spec", "packaging/arch/PKGBUILD",
+                 "packaging/rpm/lilynk.spec", "packaging/arch/PKGBUILD",
                  "scripts/steamdeck/lib.sh"]
 PAYLOAD = "packaging/linux/payload.txt"
 # The seats recipes CI can't build, and the payload files each may leave out. Neither has a
 # removal step to run door-remove from.
 SEATS_RECIPES = {
     # The module orders user@ after the supervisor itself.
-    "packaging/nix/packages.nix": {"50-punktfunk-seats.conf", "door-remove"},
+    "packaging/nix/packages.nix": {"50-lilynk-seats.conf", "door-remove"},
     "scripts/steamdeck/door.sh": {"door-remove"},
 }
 # Each channel that removes the seats as a package: the file holding its removal step, and the line
@@ -74,40 +74,40 @@ SEATS_RECIPES = {
 REMOVE_STEP = "door-remove"
 SEATS_REMOVAL = [
     ("packaging/debian/build-seats-deb.sh", '"$STAGE/DEBIAN/prerm"'),
-    ("packaging/rpm/punktfunk.spec", "%preun seats"),
-    ("packaging/arch/punktfunk-seats.install", "pre_remove()"),
-    ("packaging/bazzite/punktfunk-sysext.sh", "cmd_remove()"),
+    ("packaging/rpm/lilynk.spec", "%preun seats"),
+    ("packaging/arch/lilynk-seats.install", "pre_remove()"),
+    ("packaging/bazzite/lilynk-sysext.sh", "cmd_remove()"),
 ]
 # A command at the start of a line or after `;`, `&&`, `then`: not inside prose or a string.
 AT_COMMAND = r"(?:^|[;&|({]|\bthen|\bdo|\belse)\s*"
 GLOBAL_ENABLE = (
-    re.compile(AT_COMMAND + r"systemctl\s+--global\s+enable\s+punktfunk-scripting\.service", re.M),
-    "systemctl --global enable punktfunk-scripting.service")
+    re.compile(AT_COMMAND + r"systemctl\s+--global\s+enable\s+lilynk-scripting\.service", re.M),
+    "systemctl --global enable lilynk-scripting.service")
 # Each channel's way of turning the runner on at install: the pattern its command must match
 # outside a comment, and what the error names. `(?![\w@-])` ends a match at the unit's name, so
-# punktfunk-scripting-seat@.service is not the runner.
+# lilynk-scripting-seat@.service is not the runner.
 RUNNER_ON = {
     "packaging/debian/build-scripting-deb.sh": GLOBAL_ENABLE,
-    "packaging/rpm/punktfunk.spec": GLOBAL_ENABLE,
-    "packaging/arch/punktfunk-scripting.install": GLOBAL_ENABLE,
+    "packaging/rpm/lilynk.spec": GLOBAL_ENABLE,
+    "packaging/arch/lilynk-scripting.install": GLOBAL_ENABLE,
     "packaging/bazzite/build-sysext.sh": (
         re.compile(AT_COMMAND + r"ln\s+-\w+\s+\S+\s+\S*default\.target\.wants/"
-                                r"punktfunk-scripting\.service(?![\w@-])", re.M),
-        "a link at default.target.wants/punktfunk-scripting.service"),
+                                r"lilynk-scripting\.service(?![\w@-])", re.M),
+        "a link at default.target.wants/lilynk-scripting.service"),
     "scripts/steamdeck/install.sh": (
-        re.compile(AT_COMMAND + r"systemctl\s+--user\s+enable\s+--now\s+punktfunk-scripting"
+        re.compile(AT_COMMAND + r"systemctl\s+--user\s+enable\s+--now\s+lilynk-scripting"
                                 r"(?![\w@-])", re.M),
-        "systemctl --user enable --now punktfunk-scripting"),
+        "systemctl --user enable --now lilynk-scripting"),
     NIX_MODULE: (
         re.compile(r"\bautoStart\s*=\s*mkOption\s*\{[^}]*?\bdefault\s*=\s*cfg\.scripting\.enable\s*;"),
         "a scripting autoStart that defaults to cfg.scripting.enable"),
 }
 RESTART_TABLE = "packaging/linux/restart-user-units.sh"
-HOST_UPDATER = "crates/host/punktfunk-host/src/update/linux.rs"
+HOST_UPDATER = "crates/host/lilynk-host/src/update/linux.rs"
 # Each updater that restarts the services itself, and the helper's lists it covers. The Steam
 # Deck's system units are door.sh's.
 RESTART_SITES = {
-    "packaging/bazzite/punktfunk-sysext.sh": ("SYSTEM_UNITS", "USER_UNITS"),
+    "packaging/bazzite/lilynk-sysext.sh": ("SYSTEM_UNITS", "USER_UNITS"),
     "scripts/steamdeck/install.sh": ("USER_UNITS",),
     "scripts/steamdeck/update.sh": ("USER_UNITS",),
     HOST_UPDATER: ("USER_UNITS",),
@@ -116,46 +116,46 @@ RESTART_SITES = {
 RESTART_CALLERS = ["packaging/debian/*.sh", "packaging/rpm/*.spec", "packaging/arch/PKGBUILD",
                    "packaging/arch/*.install"]
 # Where each port is bound, and the constants read from it.
-LISTEN = "crates/host/pf-host-config/src/listen.rs"
-SEAT_MODEL = "crates/host/pf-seats/src/model.rs"
-GAMESTREAM = "crates/host/punktfunk-host/src/gamestream/mod.rs"
+LISTEN = "crates/host/ly-host-config/src/listen.rs"
+SEAT_MODEL = "crates/host/ly-seats/src/model.rs"
+GAMESTREAM = "crates/host/lilynk-host/src/gamestream/mod.rs"
 PORT_CONSTS = {
     LISTEN: ("NATIVE_PORT", "MGMT_PORT", "BROWSER_PORT"),
     SEAT_MODEL: ("DEFAULT_NATIVE_PORTS", "DEFAULT_BROWSER_PORTS"),
     GAMESTREAM: ("HTTPS_PORT", "HTTP_PORT", "RTSP_PORT", "VIDEO_PORT", "CONTROL_PORT", "AUDIO_PORT"),
 }
 # The packaged console's unit: PORT is the console's, PORT + 1 the plugin origin's.
-WEB_UNIT = "scripts/punktfunk-web.service"
+WEB_UNIT = "scripts/lilynk-web.service"
 MDNS = 5353
-FIREWALLD = {"native": "packaging/linux/punktfunk-native.xml",
-             "gamestream": "packaging/linux/punktfunk-gamestream.xml",
-             "web": "packaging/linux/punktfunk-web.xml"}
-UFW = "packaging/linux/punktfunk.ufw"
+FIREWALLD = {"native": "packaging/linux/lilynk-native.xml",
+             "gamestream": "packaging/linux/lilynk-gamestream.xml",
+             "web": "packaging/linux/lilynk-web.xml"}
+UFW = "packaging/linux/lilynk.ufw"
 # Tells an open firewall which port its stored rule lacks, by number.
 PORT_HINTS = ["packaging/linux/post-install.sh"]
 # The port table the docs and the website render.
 PLATFORMS = "data/platforms.json"
 # Scripts that tell a moved management port from the default, by the default's number.
-MGMT_DEFAULT = ["packaging/linux/omarchy/punktfunk-omarchy", "scripts/steamdeck/lib.sh"]
+MGMT_DEFAULT = ["packaging/linux/omarchy/lilynk-omarchy", "scripts/steamdeck/lib.sh"]
 LOCALE_GATE = ".gitea/workflows/windows-host.yml"
 # What the checks read outside packaging/ and scripts/: packaging-lint.yml runs on each.
 INPUTS = [HOST_UPDATER, LISTEN, SEAT_MODEL, GAMESTREAM, PLATFORMS]
 UNITS = "packaging/linux/*.service"
-# Directories only root writes (punktfunk-seats.tmpfiles; pf-seats' env files are root's with a
+# Directories only root writes (lilynk-seats.tmpfiles; ly-seats' env files are root's with a
 # read ACL). Their subdirectories hold seat accounts' files, so a unit's file sits directly in one.
-ROOT_DIRS = ("/var/lib/punktfunk-seats", "/run/punktfunk/seats")
-KEEP_LIST = "scripts/punktfunk-atomic-keep.conf"
+ROOT_DIRS = ("/var/lib/lilynk-seats", "/run/punktfunk/seats")
+KEEP_LIST = "scripts/lilynk-atomic-keep.conf"
 DECK_SCRIPTS = "scripts/steamdeck/*.sh"
 # The /etc trees SteamOS's own keep list holds, as KEEP_LIST's comments say.
 STOCK_KEPT = ("/etc/systemd/system/", "/etc/atomic-update.conf.d/")
 # Created on first use by door-helper and the seat supervisor, so no package ships them. The
 # NixOS module may declare one: a wrapper's group must exist at activation, before either runs.
-RUNTIME_GROUPS = {"punktfunk-games"}
+RUNTIME_GROUPS = {"lilynk-games"}
 # Groups the distribution provides.
 DISTRO_GROUPS = {"input", "root"}
-HOST = "punktfunk-host"
-WORKER = "punktfunk-encode-worker"
-GAMESCOPE = "punktfunk-gamescope"
+HOST = "lilynk-host"
+WORKER = "lilynk-encode-worker"
+GAMESCOPE = "lilynk-gamescope"
 
 
 def strip_comments(text):
@@ -223,7 +223,7 @@ CHANNELS = {
     "nix": (None, [(["packaging/nix/*.nix"], read_nix, {})]),
     "steamdeck": (None, [(["scripts/steamdeck/*.sh"], read_setcap,
                           {"BIN": HOST, "WORKER": WORKER, "GS_BIN": GAMESCOPE})]),
-    "source": ([GAMESCOPE], [(["packaging/gamescope/build-punktfunk-gamescope.sh"], read_setcap,
+    "source": ([GAMESCOPE], [(["packaging/gamescope/build-lilynk-gamescope.sh"], read_setcap,
                               {"DEST": GAMESCOPE})]),
     "sysext-arch": (None, [(["packaging/arch/build-sysext.sh"], read_seal, {})]),
     "sysext-bazzite": (None, [(["packaging/bazzite/build-sysext.sh"], read_seal, {})]),
@@ -401,12 +401,12 @@ def runner_errors(texts):
 
 
 UNIT_TABLE = re.compile(r'^(SYSTEM_UNITS|USER_UNITS)="([^"]*)"', re.M)
-UNIT = re.compile(r"\bpunktfunk-[\w@-]+\.service\b")
+UNIT = re.compile(r"\blilynk-[\w@-]+\.service\b")
 # What follows `systemctl … try-restart|restart|enable --now`, and the list a `for` walks.
 RESTARTS = re.compile(AT_COMMAND + r"(?:sudo\s+)?systemctl\b[^\n;&|]*?"
                                    r"\s(?:try-restart|restart|enable\s+--now)\s([^\n;&|]*)", re.M)
 LOOPS = re.compile(AT_COMMAND + r"for\s+\w+\s+in\s([^\n;&|]*)", re.M)
-# A row of the host updater's argument table: `["try-restart", "punktfunk-web.service"],`.
+# A row of the host updater's argument table: `["try-restart", "lilynk-web.service"],`.
 RUST_RESTART = re.compile(r'^\s*\["(?:try-)?restart",\s*"([^"]+)"\],?\s*$', re.M)
 
 
@@ -486,7 +486,7 @@ def read_ufw(text):
     """{profile: {(proto, port)}} of a ufw application file: `ports=a,b/tcp|c:d/udp` per section."""
     out = {}
     for section in re.split(r"^(?=\[)", strip_comments(text), flags=re.M):
-        name = re.match(r"\[punktfunk-([\w-]+)\]", section)
+        name = re.match(r"\[lilynk-([\w-]+)\]", section)
         ports = re.search(r"^ports=(.*)$", section, re.M)
         if name:
             out[name.group(1)] = {rule for spec, proto in
@@ -681,25 +681,25 @@ def self_test():
     expect("caps spellings", [caps_norm(c) for c in ("CAP_SYS_NICE+ep", ep, "(none)", "")],
            [ep, ep, "-", "-"])
     sh = """\
-# setcap 'cap_sys_nice=ep' /usr/bin/punktfunk-host   <- a comment
-setcap -r /usr/bin/punktfunk-host 2>/dev/null || true
-  setcap 'cap_sys_nice=ep' usr/bin/punktfunk-encode-worker 2>/dev/null || true
+# setcap 'cap_sys_nice=ep' /usr/bin/lilynk-host   <- a comment
+setcap -r /usr/bin/lilynk-host 2>/dev/null || true
+  setcap 'cap_sys_nice=ep' usr/bin/lilynk-encode-worker 2>/dev/null || true
 sudo setcap "CAP_SYS_NICE=eip" "$GS_BIN" || warn x
 sudo setcap cap_sys_nice=ep ${WORKER}
 """
     expect("setcap", read_setcap(sh, {"GS_BIN": GAMESCOPE, "WORKER": WORKER}),
            [(WORKER, ep), (GAMESCOPE, eip), (WORKER, ep)])
     spec = """\
-# %caps(cap_sys_nice=ep) %{_bindir}/punktfunk-host
+# %caps(cap_sys_nice=ep) %{_bindir}/lilynk-host
 # Declared with %%caps rather than a %%post setcap
-%{_bindir}/punktfunk-host
-%caps(cap_sys_nice=ep) %{_bindir}/punktfunk-encode-worker
+%{_bindir}/lilynk-host
+%caps(cap_sys_nice=ep) %{_bindir}/lilynk-encode-worker
 """
     expect("rpm", read_rpm(spec, {}), [(WORKER, ep)])
     nix = """\
-      # security.wrappers.punktfunk-host = { capabilities = "cap_sys_nice=ep"; };
-      security.wrappers.punktfunk-encode-worker = {
-        source = "${cfg.host.package}/bin/punktfunk-encode-worker";
+      # security.wrappers.lilynk-host = { capabilities = "cap_sys_nice=ep"; };
+      security.wrappers.lilynk-encode-worker = {
+        source = "${cfg.host.package}/bin/lilynk-encode-worker";
         capabilities = "cap_sys_nice=ep";
         owner = "root";
       };
@@ -719,38 +719,38 @@ sudo setcap cap_sys_nice=ep ${WORKER}
     expect("host granted", len(compare(matrix, "rpm", ok + [(HOST, ep)])), 1)
     expect("worker changed in one channel", len(compare(matrix, "deb", [(WORKER, eip)])), 1)
     expect("worker grant removed", len(compare(matrix, "nix", [])), 1)
-    expect("unknown binary", len(compare(matrix, "deb", ok + [("punktfunk-tray", ep)])), 1)
+    expect("unknown binary", len(compare(matrix, "deb", ok + [("lilynk-tray", ep)])), 1)
     expect("worker twice, two ways", len(compare(matrix, "deb", ok + [(WORKER, eip)])), 1)
 
-    const = {"HOST_REL": "usr/bin/punktfunk-host", "WORKER_REL": "usr/bin/punktfunk-encode-worker",
+    const = {"HOST_REL": "usr/bin/lilynk-host", "WORKER_REL": "usr/bin/lilynk-encode-worker",
              "WANT_WORKER_CAPS": ep}
     expect("gate agrees", gate_errors(matrix, const), [])
     expect("gate caps drift", len(gate_errors(matrix, {**const, "WANT_WORKER_CAPS": eip})), 1)
     expect("gate path drift", len(gate_errors(matrix, {**const, "HOST_REL": "usr/bin/x"})), 1)
     expect("matrix host capped", len(gate_errors(read_matrix(f"{HOST} {ep}\n{WORKER} {ep}\n"), const)), 1)
-    expect("gate reader", GATE_CONST.findall("HOST_REL='usr/bin/punktfunk-host'\nWANT_WORKER_CAPS='x'\n"),
-           [("HOST_REL", "usr/bin/punktfunk-host"), ("WANT_WORKER_CAPS", "x")])
+    expect("gate reader", GATE_CONST.findall("HOST_REL='usr/bin/lilynk-host'\nWANT_WORKER_CAPS='x'\n"),
+           [("HOST_REL", "usr/bin/lilynk-host"), ("WANT_WORKER_CAPS", "x")])
 
-    users = "# c\ng punktfunk -\ng punktfunk-update -\n"
-    expect("sysusers", SYSUSERS_GROUP.findall(users), ["punktfunk", "punktfunk-update"])
+    users = "# c\ng punktfunk -\ng lilynk-update -\n"
+    expect("sysusers", SYSUSERS_GROUP.findall(users), ["punktfunk", "lilynk-update"])
     expect("nix groups", NIX_GROUP.findall("users.groups.input = { };\nusers.groups.punktfunk = { };\n"),
            ["input", "punktfunk"])
-    nix_ok = {"input", "punktfunk", "punktfunk-update"}
+    nix_ok = {"input", "punktfunk", "lilynk-update"}
     texts = {"a.sh": "getent group x || groupadd --system punktfunk\n# groupadd old\n"
-                     "groupadd punktfunk-games\nif ensure_group punktfunk; then\n"
-                     'usermod -aG input "$USER"\nusermod -aG punktfunk-games u\n',
+                     "groupadd lilynk-games\nif ensure_group punktfunk; then\n"
+                     'usermod -aG input "$USER"\nusermod -aG lilynk-games u\n',
              "a.rules": 'GROUP="input"\nRUN+="chgrp punktfunk /x"\n# GROUP="old"\n'}
     expect("groups agree", group_errors(users, nix_ok, texts), [])
-    expect("nix lacks a group", len(group_errors(users, nix_ok - {"punktfunk-update"}, {})), 1)
+    expect("nix lacks a group", len(group_errors(users, nix_ok - {"lilynk-update"}, {})), 1)
     expect("nix adds a group", len(group_errors(users, nix_ok | {"extra"}, {})), 1)
     for name, text in (("groupadd", "groupadd --system x\n"), ("ensure_group", "ensure_group x\n"),
                        ("usermod", 'sudo usermod -aG x "$USER"\n'), ("udev GROUP", 'GROUP="plugdev"\n'),
                        ("chgrp", "chgrp x /sys/a\n"), ("polkit", 'subject.isInGroup("x")\n'),
-                       ("a rule needs the group to exist", 'GROUP="punktfunk-games"\n')):
+                       ("a rule needs the group to exist", 'GROUP="lilynk-games"\n')):
         expect(f"unlisted group: {name}", len(group_errors(users, nix_ok, {"b": text})), 1)
 
-    payload = "# c\nhost usr/bin/punktfunk-host\nseats usr/libexec/punktfunk/door-helper\n" \
-              "seats usr/lib/systemd/system/user@.service.d/50-punktfunk-seats.conf\n"
+    payload = "# c\nhost usr/bin/lilynk-host\nseats usr/libexec/punktfunk/door-helper\n" \
+              "seats usr/lib/systemd/system/user@.service.d/50-lilynk-seats.conf\n"
     nix = "packaging/nix/packages.nix"
     expect("seats named", seats_errors(payload, {nix: "install door-helper\n"}), [])
     expect("seats file missing", len(seats_errors(payload, {nix: "# door-helper\n"})), 1)
@@ -761,25 +761,25 @@ sudo setcap cap_sys_nice=ep ${WORKER}
         "packaging/debian/build-seats-deb.sh":
             "cat > \"$STAGE/DEBIAN/prerm\" <<'EOF'\nif [ \"$1\" = remove ]; then\n"
             "    /usr/libexec/punktfunk/door-remove || true\nfi\nEOF\n",
-        "packaging/rpm/punktfunk.spec":
+        "packaging/rpm/lilynk.spec":
             "%preun seats\nif [ \"$1\" -eq 0 ]; then\n    %{_libexecdir}/punktfunk/door-remove || :\nfi\n"
             "%endif\n",
-        "packaging/arch/punktfunk-seats.install": "pre_remove() {\n  /usr/libexec/punktfunk/door-remove\n}\n",
-        "packaging/bazzite/punktfunk-sysext.sh": "cmd_remove() {\n  need_root\n  door-remove\n}\n",
+        "packaging/arch/lilynk-seats.install": "pre_remove() {\n  /usr/libexec/punktfunk/door-remove\n}\n",
+        "packaging/bazzite/lilynk-sysext.sh": "cmd_remove() {\n  need_root\n  door-remove\n}\n",
     }
     expect("removal steps run door-remove", removal_errors(steps), [])
     for name, path, text in (
-            ("only a disable", "packaging/arch/punktfunk-seats.install",
-             "pre_remove() {\n  systemctl disable --now punktfunk-door.service\n}\n"),
-            ("only in a comment", "packaging/arch/punktfunk-seats.install",
+            ("only a disable", "packaging/arch/lilynk-seats.install",
+             "pre_remove() {\n  systemctl disable --now lilynk-door.service\n}\n"),
+            ("only in a comment", "packaging/arch/lilynk-seats.install",
              "pre_remove() {\n  # door-remove\n  true\n}\n"),
-            ("after the step", "packaging/rpm/punktfunk.spec",
-             "%preun seats\n%systemd_preun punktfunk-door.service\n%endif\n%{_libexecdir}/door-remove\n"),
-            ("no step", "packaging/bazzite/punktfunk-sysext.sh", "cmd_status() {\n  door-remove\n}\n")):
+            ("after the step", "packaging/rpm/lilynk.spec",
+             "%preun seats\n%systemd_preun lilynk-door.service\n%endif\n%{_libexecdir}/door-remove\n"),
+            ("no step", "packaging/bazzite/lilynk-sysext.sh", "cmd_status() {\n  door-remove\n}\n")):
         expect(f"removal: {name}", len(removal_errors({**steps, path: text})), 1)
 
-    keep = "# c\n/etc/udev/rules.d/60-punktfunk.rules\n/etc/pam.d/punktfunk-*\n/etc/a/**\n"
-    deck = ("sudo install -Dm 0644 x /etc/pam.d/punktfunk-seat\n"
+    keep = "# c\n/etc/udev/rules.d/60-lilynk.rules\n/etc/pam.d/lilynk-*\n/etc/a/**\n"
+    deck = ("sudo install -Dm 0644 x /etc/pam.d/lilynk-seat\n"
             "door_paths x \\\n    | sudo install -Dm 0644 /dev/stdin /etc/a/b/c.conf\n"
             'sudo tee "/etc/systemd/system/$unit" >/dev/null\n'
             'warn "sudo install -m644 x /etc/udev/rules.d/ &&"\n'
@@ -788,12 +788,12 @@ sudo setcap cap_sys_nice=ep ${WORKER}
             'install -D x "$PF_OPT/etc/y.conf"\n')
     expect("deck installs kept", keep_errors(keep, {"d.sh": deck}), [])
     for name, text in (("not kept", "sudo install x /etc/pam.d/other\n"),
-                       ("* stays in a segment", "sudo tee /etc/pam.d/punktfunk-x/y\n"),
+                       ("* stays in a segment", "sudo tee /etc/pam.d/lilynk-x/y\n"),
                        ("continued line", "sudo install x \\\n  /etc/b.conf\n")):
         expect(f"deck install: {name}", len(keep_errors(keep, {"d.sh": text})), 1)
 
     door = ("[Service]\nUser=punktfunk\nExecStartPre=+-/usr/libexec/punktfunk/door-helper ports\n"
-            "EnvironmentFile=-/var/lib/punktfunk-seats/host.env\n"
+            "EnvironmentFile=-/var/lib/lilynk-seats/host.env\n"
             "# EnvironmentFile=-/var/lib/punktfunk/host.env\nEnvironmentFile=\n")
     seat = "[Service]\nUser=%i\nEnvironmentFile=/run/punktfunk/seats/%i.env\nExecStopPost=-+/x %i\n"
     expect("env files root's", env_file_errors({"door": door, "seat": seat}), [])
@@ -801,102 +801,102 @@ sudo setcap cap_sys_nice=ep ${WORKER}
             ("the door's own host.env", door + "EnvironmentFile=-/var/lib/punktfunk/host.env\n"),
             ("the owner's host.env", seat + "EnvironmentFile=-%h/.config/punktfunk/host.env\n"),
             ("a console without + lines", "User=punktfunk\nEnvironmentFile=/var/lib/punktfunk/web-password\n"),
-            ("a seat's folder in root's", "EnvironmentFile=/var/lib/punktfunk-seats/hosts/%i/mgmt-token\n"),
-            ("a way out of root's", "EnvironmentFile=/var/lib/punktfunk-seats/../punktfunk/host.env\n"),
+            ("a seat's folder in root's", "EnvironmentFile=/var/lib/lilynk-seats/hosts/%i/mgmt-token\n"),
+            ("a way out of root's", "EnvironmentFile=/var/lib/lilynk-seats/../punktfunk/host.env\n"),
             ("spaced", "  EnvironmentFile = /var/lib/punktfunk/host.env \n")):
         expect(f"env file: {name}", len(env_file_errors({"u": text})), 1)
 
     on = {
         "packaging/debian/build-scripting-deb.sh":
-            'if [ -z "$2" ]; then\n    systemctl --global enable punktfunk-scripting.service || true\nfi\n',
-        "packaging/rpm/punktfunk.spec":
-            "if [ \"$1\" -eq 1 ]; then\n    systemctl --global enable punktfunk-scripting.service || :\nfi\n",
-        "packaging/arch/punktfunk-scripting.install":
-            "post_install() {\n  command -v systemctl && systemctl --global enable punktfunk-scripting.service\n}\n",
+            'if [ -z "$2" ]; then\n    systemctl --global enable lilynk-scripting.service || true\nfi\n',
+        "packaging/rpm/lilynk.spec":
+            "if [ \"$1\" -eq 1 ]; then\n    systemctl --global enable lilynk-scripting.service || :\nfi\n",
+        "packaging/arch/lilynk-scripting.install":
+            "post_install() {\n  command -v systemctl && systemctl --global enable lilynk-scripting.service\n}\n",
         "packaging/bazzite/build-sysext.sh":
-            "ln -sf ../punktfunk-scripting.service \\\n"
-            '  "$STAGE/usr/lib/systemd/user/default.target.wants/punktfunk-scripting.service"\n',
+            "ln -sf ../lilynk-scripting.service \\\n"
+            '  "$STAGE/usr/lib/systemd/user/default.target.wants/lilynk-scripting.service"\n',
         "scripts/steamdeck/install.sh":
-            "if [ \"$FRESH\" = 1 ]; then\n    systemctl --user enable --now punktfunk-scripting.service 2>/dev/null\nfi\n",
+            "if [ \"$FRESH\" = 1 ]; then\n    systemctl --user enable --now lilynk-scripting.service 2>/dev/null\nfi\n",
         NIX_MODULE:
             "scripting = {\n  autoStart = mkOption {\n    type = types.bool;\n"
             "    default = cfg.scripting.enable;\n    description = ''x'';\n  };\n};\n",
     }
     expect("runner on everywhere", runner_errors(on), [])
     expect("runner has a row per channel", sorted(on), sorted(RUNNER_ON))
-    gl, ln, now = ("packaging/rpm/punktfunk.spec", "packaging/bazzite/build-sysext.sh",
+    gl, ln, now = ("packaging/rpm/lilynk.spec", "packaging/bazzite/build-sysext.sh",
                    "scripts/steamdeck/install.sh")
     for name, path, text in (
-            ("global enable only in a comment", gl, "# systemctl --global enable punktfunk-scripting.service\n"),
-            ("global enable only in a string", gl, 'echo "run systemctl --global enable punktfunk-scripting.service"\n'),
-            ("global enable of another unit", gl, "systemctl --global enable punktfunk-web.service\n"),
-            ("global enable of the seat unit", gl, "systemctl --global enable punktfunk-scripting-seat@.service\n"),
-            ("global disable", gl, "systemctl --global disable punktfunk-scripting.service\n"),
+            ("global enable only in a comment", gl, "# systemctl --global enable lilynk-scripting.service\n"),
+            ("global enable only in a string", gl, 'echo "run systemctl --global enable lilynk-scripting.service"\n'),
+            ("global enable of another unit", gl, "systemctl --global enable lilynk-web.service\n"),
+            ("global enable of the seat unit", gl, "systemctl --global enable lilynk-scripting-seat@.service\n"),
+            ("global disable", gl, "systemctl --global disable lilynk-scripting.service\n"),
             ("no global enable", gl, "echo installed\n"),
-            ("wants link only in a comment", ln, "# ln -sf x default.target.wants/punktfunk-scripting.service\n"),
-            ("wants link removed", ln, "rm -f $STAGE/default.target.wants/punktfunk-scripting.service\n"),
-            ("wants link of another unit", ln, "ln -sf ../punktfunk-web.service $S/default.target.wants/punktfunk-web.service\n"),
+            ("wants link only in a comment", ln, "# ln -sf x default.target.wants/lilynk-scripting.service\n"),
+            ("wants link removed", ln, "rm -f $STAGE/default.target.wants/lilynk-scripting.service\n"),
+            ("wants link of another unit", ln, "ln -sf ../lilynk-web.service $S/default.target.wants/lilynk-web.service\n"),
             ("deck enable only in a message", now,
-             'warn "couldn\'t start it — systemctl --user enable --now punktfunk-scripting"\n'),
-            ("deck enable without --now", now, "systemctl --user enable punktfunk-scripting.service\n"),
-            ("deck enable of the seat unit", now, "systemctl --user enable --now punktfunk-scripting-seat@1.service\n"),
+             'warn "couldn\'t start it — systemctl --user enable --now lilynk-scripting"\n'),
+            ("deck enable without --now", now, "systemctl --user enable lilynk-scripting.service\n"),
+            ("deck enable of the seat unit", now, "systemctl --user enable --now lilynk-scripting-seat@1.service\n"),
             ("nix autoStart off", NIX_MODULE, "autoStart = mkOption {\n  default = false;\n};\n"),
             ("nix autoStart follows the host", NIX_MODULE, "autoStart = mkOption {\n  default = cfg.host.autoStart;\n};\n"),
             ("nix autoStart only in a comment", NIX_MODULE, "# autoStart = mkOption { default = cfg.scripting.enable; };\n")):
         expect(f"runner: {name}", len(runner_errors({**on, path: text})), 1)
 
-    table = ('SYSTEM_UNITS="punktfunk-seats.service punktfunk-door.service"\n'
-             'USER_UNITS="punktfunk-web.service punktfunk-host.service"\n'
+    table = ('SYSTEM_UNITS="lilynk-seats.service lilynk-door.service"\n'
+             'USER_UNITS="lilynk-web.service lilynk-host.service"\n'
              "systemctl --no-block try-restart $SYSTEM_UNITS 2>/dev/null\n"
-             "systemctl show -P ActiveState punktfunk-update.service\n"
+             "systemctl show -P ActiveState lilynk-update.service\n"
              'for unit in $USER_UNITS; do\n    systemctl --user try-restart "$unit"\ndone\n')
     bazzite, install, update = list(RESTART_SITES)[:3]
     # The boot branch starts what the first never names: a loop's list counts.
-    sysext = ("restart_user_units() {\n  systemctl --no-block try-restart punktfunk-seats.service \\\n"
-              "    punktfunk-door.service 2>/dev/null || :\n"
+    sysext = ("restart_user_units() {\n  systemctl --no-block try-restart lilynk-seats.service \\\n"
+              "    lilynk-door.service 2>/dev/null || :\n"
               '  if [ -n "$SUDO_USER" ] \\\n'
-              '     && systemctl --user -M "$SUDO_USER@" try-restart punktfunk-web.service; then\n'
+              '     && systemctl --user -M "$SUDO_USER@" try-restart lilynk-web.service; then\n'
               "    echo restarted\n  else\n"
-              "    for s in punktfunk-web.service punktfunk-host.service; do\n"
+              "    for s in lilynk-web.service lilynk-host.service; do\n"
               '      systemctl --user --no-block start "$s"\n    done\n'
-              '    echo "    systemctl --user restart punktfunk-web punktfunk-host"\n  fi\n}\n')
-    deck = ("systemctl --user enable punktfunk-rebuild-check.service 2>/dev/null || true\n"
-            "systemctl --user enable punktfunk-host.service 2>/dev/null\n"
-            "systemctl --user restart punktfunk-host.service\n"
-            'if [ "$WEB" = 1 ]; then systemctl --user restart --no-block punktfunk-web.service; fi\n'
+              '    echo "    systemctl --user restart lilynk-web lilynk-host"\n  fi\n}\n')
+    deck = ("systemctl --user enable lilynk-rebuild-check.service 2>/dev/null || true\n"
+            "systemctl --user enable lilynk-host.service 2>/dev/null\n"
+            "systemctl --user restart lilynk-host.service\n"
+            'if [ "$WEB" = 1 ]; then systemctl --user restart --no-block lilynk-web.service; fi\n'
             "systemctl --user restart xdg-permission-store 2>/dev/null || true\n")
-    rust = ('        .args(["start", "--no-ask-password", "punktfunk-update.service"])\n'
-            '    for args in [\n        ["restart", "punktfunk-web.service"],\n'
-            '        ["try-restart", "punktfunk-host.service"],\n    ] {\n')
+    rust = ('        .args(["start", "--no-ask-password", "lilynk-update.service"])\n'
+            '    for args in [\n        ["restart", "lilynk-web.service"],\n'
+            '        ["try-restart", "lilynk-host.service"],\n    ] {\n')
     sites = {bazzite: sysext, install: deck, update: deck, HOST_UPDATER: rust}
-    unpack = {"p.sh": "for f in punktfunk-seats.service punktfunk-door.service; do\n"
+    unpack = {"p.sh": "for f in lilynk-seats.service lilynk-door.service; do\n"
                       '  install -Dm0644 "packaging/linux/$f" "$STAGE/$f"\ndone\n'
                       "systemctl daemon-reload || true\n"}
     expect("restarts agree", restart_errors(table, sites, unpack), [])
     expect("restart has a row per updater", sorted(sites), sorted(RESTART_SITES))
-    host_row = '        ["try-restart", "punktfunk-host.service"],\n'
+    host_row = '        ["try-restart", "lilynk-host.service"],\n'
     for name, changed in (
             ("no user list", {"table": table.replace("USER_UNITS=", "OTHER=")}),
             ("helper restarts a unit by name",
-             {"table": table + "systemctl try-restart punktfunk-web.service\n"}),
-            ("sysext drops the door", {bazzite: sysext.replace("    punktfunk-door.service", "   ")}),
-            ("sysext drops the loop's unit", {bazzite: sysext.replace(" punktfunk-host.service;", ";")}),
+             {"table": table + "systemctl try-restart lilynk-web.service\n"}),
+            ("sysext drops the door", {bazzite: sysext.replace("    lilynk-door.service", "   ")}),
+            ("sysext drops the loop's unit", {bazzite: sysext.replace(" lilynk-host.service;", ";")}),
             ("deck restart only in a comment",
-             {update: deck.replace("systemctl --user restart punktfunk-host", "# systemctl restart x")}),
+             {update: deck.replace("systemctl --user restart lilynk-host", "# systemctl restart x")}),
             ("deck restart only in a message",
-             {update: deck.replace("systemctl --user restart punktfunk-host",
-                                   'warn "run systemctl --user restart punktfunk-host')}),
+             {update: deck.replace("systemctl --user restart lilynk-host",
+                                   'warn "run systemctl --user restart lilynk-host')}),
             ("deck enables without restarting",
-             {install: deck.replace("systemctl --user restart punktfunk-host.service\n", "")}),
+             {install: deck.replace("systemctl --user restart lilynk-host.service\n", "")}),
             ("deck restarts an unlisted unit",
-             {install: deck + "systemctl --user try-restart punktfunk-tray.service\n"}),
+             {install: deck + "systemctl --user try-restart lilynk-tray.service\n"}),
             ("deck restarts a seat's runner",
-             {install: deck + "systemctl --user try-restart punktfunk-scripting-seat@1.service\n"}),
+             {install: deck + "systemctl --user try-restart lilynk-scripting-seat@1.service\n"}),
             ("host updater drops a row", {HOST_UPDATER: rust.replace(host_row, "")}),
             ("host updater row only in a comment",
              {HOST_UPDATER: rust.replace(host_row, "        // " + host_row.strip() + "\n")}),
             ("a scriptlet restarts the supervisor itself",
-             {"callers": {"p.install": "post_upgrade() {\n  systemctl try-restart punktfunk-seats.service\n}\n"}})):
+             {"callers": {"p.install": "post_upgrade() {\n  systemctl try-restart lilynk-seats.service\n}\n"}})):
         got = restart_errors(changed.get("table", table), {**sites, **changed},
                              changed.get("callers", unpack))
         expect(f"restart: {name}", len(got), 1)
@@ -921,10 +921,10 @@ sudo setcap cap_sys_nice=ep ${WORKER}
            '  <port protocol="udp" port="9777"/>  <!-- QUIC (default 9777) -->\n'
            '  <port protocol="udp" port="9778-9782"/>\n  <port protocol="udp" port="5353"/>\n'
            '  <port protocol="tcp" port="47990"/>\n</service>\n')
-    ufw = ("# [punktfunk-old]\n# ports=1/tcp\n[punktfunk-native]\ntitle=host (9999)\n"
-           "ports=9777/udp|9778:9782/udp|5353/udp|47990/tcp\n\n[punktfunk-gamestream]\n"
+    ufw = ("# [lilynk-old]\n# ports=1/tcp\n[lilynk-native]\ntitle=host (9999)\n"
+           "ports=9777/udp|9778:9782/udp|5353/udp|47990/tcp\n\n[lilynk-gamestream]\n"
            "ports=47984,47989,48010/tcp|47998:48000/udp|5353/udp\n\n"
-           "[punktfunk-web]\nports=47992,47993/tcp\n")
+           "[lilynk-web]\nports=47992,47993/tcp\n")
     nix = ("  nativeTCP = [ 47990 ]; # mgmt\n  nativeUDP = [\n    9777\n    9778\n    5353\n  ]; # x\n"
            "  gamestreamTCP = [\n    47984\n    47989\n    48010\n  ];\n"
            "  gamestreamUDP = [ 47998 47999 48000 ];\n  allowedUDPPorts = [ 5353 ];\n"
@@ -941,7 +941,7 @@ sudo setcap cap_sys_nice=ep ${WORKER}
             ("mDNS closed", "native", read_ufw(ufw.replace("|5353/udp|47990", "|47990"))["native"], 1),
             ("idle range opened", "gamestream",
              read_ufw(ufw.replace("47998:48000", "47998:48002"))["gamestream"], 2),
-            ("profile removed", "web", read_ufw(ufw.replace("[punktfunk-web]", "")).get("web", set()), 2),
+            ("profile removed", "web", read_ufw(ufw.replace("[lilynk-web]", "")).get("web", set()), 2),
             ("nix lacks the plugin origin", "web", read_nix_ports(nix.replace("    47993\n", ""))["web"], 1),
             ("nix lacks the seats", "native", read_nix_ports(nix.replace("from = 9779", "x = 1"))["native"], 4),
             ("nix opens GameStream always", "native",

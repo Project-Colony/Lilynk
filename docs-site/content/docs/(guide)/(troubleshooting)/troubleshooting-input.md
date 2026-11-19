@@ -24,7 +24,7 @@ and the host's layout picks the character.
   sudo localectl set-x11-keymap de pc105 nodeadkeys   # your layout, model, variant
   ```
 
-  Game Mode on an older `punktfunk-gamescope` still types US, and the host log warns
+  Game Mode on an older `lilynk-gamescope` still types US, and the host log warns
   `this build ignores XKB_DEFAULT_*`. [Update](/docs/updating) it.
 
 ### The pointer is too fast or too slow
@@ -74,12 +74,12 @@ On an SELinux host, `steamos-manager` floods SELinux denials each time the virtu
 and `setroubleshootd` turns the flood into a CPU storm that outlasts the pad by minutes.
 
 ```sh
-sudo punktfunk-sysext reapply                 # Bazzite: installs the drop-in that silences it
+sudo lilynk-sysext reapply                 # Bazzite: installs the drop-in that silences it
 sudo systemctl mask --now setroubleshootd     # any host; nothing depends on it
 ```
 
 On a layered or bootc host, install the drop-in yourself:
-`sudo semodule -i /usr/share/punktfunk/selinux/punktfunk-ds-inhibit.cil`. Setting the client's
+`sudo semodule -i /usr/share/punktfunk/selinux/lilynk-ds-inhibit.cil`. Setting the client's
 **Controller type** to **Xbox 360** avoids it too, without adaptive triggers, lightbar and touchpad.
 
 ### A Steam Controller 2 is captured, but Steam's controller list stays empty
@@ -92,7 +92,7 @@ it.
 - Linux host: no `attached via usbip` in the host log means the pad never attached; fix
   [the Steam Deck pad](#the-pad-works-but-arrives-as-an-xbox-360-controller-instead-of-a-steam-deck)
   first. `attached via usbip` without a later `answering feature GET` means Steam can't open the
-  node: install the packaged udev rules (`60-punktfunk.rules`), run
+  node: install the packaged udev rules (`60-lilynk.rules`), run
   `sudo udevadm control --reload && sudo udevadm trigger`, and reconnect.
 
 The trackpads don't move the pointer while Steam is closed. That's normal while the pad is captured.
@@ -119,8 +119,8 @@ Check these in order:
 - A controller without a serial number is recognised by its USB port. Plug it back into the port
   it was in when you gave it.
 - Only USB controllers can be given. Bluetooth controllers paired to the PC aren't covered.
-- On Linux, on an older install, reinstall the `punktfunk-seats` package so its udev rule is
-  current. `sudo punktfunk-seats doctor` says when it isn't.
+- On Linux, on an older install, reinstall the `lilynk-seats` package so its udev rule is
+  current. `sudo lilynk-seats doctor` says when it isn't.
 
 ### A controller plugged into the PC shows up on a seat (Windows)
 

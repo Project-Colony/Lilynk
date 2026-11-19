@@ -2,7 +2,7 @@
 # Detached-GPG-sign the built dist/*.rpm so the Gitea RPM registry can be served with gpgcheck=1.
 #
 # The signing key comes from the RPM_GPG_PRIVATE_KEY secret. This fork has none yet, and its
-# public half (packaging/rpm/RPM-GPG-KEY-punktfunk) is not in the tree; README.md has the runbook
+# public half (packaging/rpm/RPM-GPG-KEY-lilynk) is not in the tree; README.md has the runbook
 # that makes both. A signed RPM carries an EdDSA header signature, which a gpgcheck=1 repo file
 # needs.
 #
@@ -19,7 +19,7 @@
 # Usage (in rpm.yml, after build-rpm.sh): RPM_GPG_PRIVATE_KEY=... bash packaging/rpm/sign-rpms.sh
 #
 # Takes the RPMs to sign as arguments, defaulting to `dist/*.rpm`. The argument form exists because
-# punktfunk-gamescope is built LATER in the job than the host RPMs, behind its own cache, so it
+# lilynk-gamescope is built LATER in the job than the host RPMs, behind its own cache, so it
 # misses the main signing pass and needs a second one just for itself (rpm.yml). An unsigned
 # package in a `gpgcheck=1` repo is in the channel and still uninstallable: `dnf install` fails
 # with "The package is not signed".

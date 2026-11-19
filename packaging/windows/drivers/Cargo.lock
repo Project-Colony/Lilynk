@@ -607,6 +607,158 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
 
 [[package]]
+name = "ly-dmabuf"
+version = "0.47.0"
+dependencies = [
+ "libc",
+ "rustix",
+]
+
+[[package]]
+name = "ly-driver-proto"
+version = "0.0.1"
+dependencies = [
+ "bytemuck",
+]
+
+[[package]]
+name = "ly-encode-core"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "ly-driver-proto",
+ "ly-frame",
+ "nvidia-video-codec-sdk",
+ "pyrowave-sys",
+ "tracing",
+]
+
+[[package]]
+name = "ly-encode-session"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "bytemuck",
+ "ly-driver-proto",
+ "ly-encode-win",
+ "ly-frame",
+ "tracing",
+ "windows 0.62.2",
+]
+
+[[package]]
+name = "ly-encode-win"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "libvpl-sys",
+ "ly-encode-core",
+ "ly-frame",
+ "nvidia-video-codec-sdk",
+ "pyrowave-sys",
+ "tracing",
+ "windows 0.62.2",
+ "windows-core 0.62.2",
+]
+
+[[package]]
+name = "ly-frame"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "bytemuck",
+ "libc",
+ "ly-zerocopy",
+ "tracing",
+ "windows 0.62.2",
+ "zbus",
+]
+
+[[package]]
+name = "ly-gamepad"
+version = "0.0.1"
+dependencies = [
+ "ly-driver-proto",
+ "ly-umdf-util",
+ "wdk-build",
+ "wdk-sys",
+]
+
+[[package]]
+name = "ly-mouse"
+version = "0.0.1"
+dependencies = [
+ "ly-driver-proto",
+ "ly-umdf-util",
+ "wdk-build",
+ "wdk-sys",
+]
+
+[[package]]
+name = "ly-touchpad"
+version = "0.0.1"
+dependencies = [
+ "ly-driver-proto",
+ "ly-umdf-util",
+ "wdk-build",
+ "wdk-sys",
+]
+
+[[package]]
+name = "ly-umdf-util"
+version = "0.0.1"
+dependencies = [
+ "ly-driver-proto",
+ "wdk-sys",
+]
+
+[[package]]
+name = "ly-vdisplay"
+version = "0.0.1"
+dependencies = [
+ "anyhow",
+ "bytemuck",
+ "ly-driver-proto",
+ "ly-encode-session",
+ "ly-encode-win",
+ "ly-frame",
+ "ly-umdf-util",
+ "tracing",
+ "wdk-build",
+ "wdk-iddcx",
+ "wdk-sys",
+ "windows 0.58.0",
+ "windows 0.62.2",
+]
+
+[[package]]
+name = "ly-xusb"
+version = "0.0.1"
+dependencies = [
+ "ly-driver-proto",
+ "ly-umdf-util",
+ "wdk-build",
+ "wdk-sys",
+]
+
+[[package]]
+name = "ly-zerocopy"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "ash",
+ "bytemuck",
+ "khronos-egl",
+ "libc",
+ "libloading 0.9.0",
+ "ly-dmabuf",
+ "rustix",
+ "serde",
+ "serde_json",
+ "tracing",
+]
+
+[[package]]
 name = "matchers"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -709,158 +861,6 @@ name = "paste"
 version = "1.0.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
-
-[[package]]
-name = "pf-dmabuf"
-version = "0.47.0"
-dependencies = [
- "libc",
- "rustix",
-]
-
-[[package]]
-name = "pf-driver-proto"
-version = "0.0.1"
-dependencies = [
- "bytemuck",
-]
-
-[[package]]
-name = "pf-encode-core"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "nvidia-video-codec-sdk",
- "pf-driver-proto",
- "pf-frame",
- "pyrowave-sys",
- "tracing",
-]
-
-[[package]]
-name = "pf-encode-session"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "bytemuck",
- "pf-driver-proto",
- "pf-encode-win",
- "pf-frame",
- "tracing",
- "windows 0.62.2",
-]
-
-[[package]]
-name = "pf-encode-win"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "libvpl-sys",
- "nvidia-video-codec-sdk",
- "pf-encode-core",
- "pf-frame",
- "pyrowave-sys",
- "tracing",
- "windows 0.62.2",
- "windows-core 0.62.2",
-]
-
-[[package]]
-name = "pf-frame"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "bytemuck",
- "libc",
- "pf-zerocopy",
- "tracing",
- "windows 0.62.2",
- "zbus",
-]
-
-[[package]]
-name = "pf-gamepad"
-version = "0.0.1"
-dependencies = [
- "pf-driver-proto",
- "pf-umdf-util",
- "wdk-build",
- "wdk-sys",
-]
-
-[[package]]
-name = "pf-mouse"
-version = "0.0.1"
-dependencies = [
- "pf-driver-proto",
- "pf-umdf-util",
- "wdk-build",
- "wdk-sys",
-]
-
-[[package]]
-name = "pf-touchpad"
-version = "0.0.1"
-dependencies = [
- "pf-driver-proto",
- "pf-umdf-util",
- "wdk-build",
- "wdk-sys",
-]
-
-[[package]]
-name = "pf-umdf-util"
-version = "0.0.1"
-dependencies = [
- "pf-driver-proto",
- "wdk-sys",
-]
-
-[[package]]
-name = "pf-vdisplay"
-version = "0.0.1"
-dependencies = [
- "anyhow",
- "bytemuck",
- "pf-driver-proto",
- "pf-encode-session",
- "pf-encode-win",
- "pf-frame",
- "pf-umdf-util",
- "tracing",
- "wdk-build",
- "wdk-iddcx",
- "wdk-sys",
- "windows 0.58.0",
- "windows 0.62.2",
-]
-
-[[package]]
-name = "pf-xusb"
-version = "0.0.1"
-dependencies = [
- "pf-driver-proto",
- "pf-umdf-util",
- "wdk-build",
- "wdk-sys",
-]
-
-[[package]]
-name = "pf-zerocopy"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "ash",
- "bytemuck",
- "khronos-egl",
- "libc",
- "libloading 0.9.0",
- "pf-dmabuf",
- "rustix",
- "serde",
- "serde_json",
- "tracing",
-]
 
 [[package]]
 name = "pin-project-lite"

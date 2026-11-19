@@ -6,8 +6,8 @@
 #   https://git.unom.io/api/packages/unom/generic/punktfunk-update/<channel>/manifest.json.sig
 #
 # The signature is a raw 64-byte Ed25519 over the EXACT manifest bytes, base64 in the .sig —
-# the same format the plugin index uses and `pf_update_check::sig::verify_signature` checks. The
-# public half is pinned in the shared checker (OFFICIAL_UPDATE_KEYS in crates/core/pf-update-check);
+# the same format the plugin index uses and `ly_update_check::sig::verify_signature` checks. The
+# public half is pinned in the shared checker (OFFICIAL_UPDATE_KEYS in crates/core/ly-update-check);
 # before signing, this script cross-checks the signing key against that constant and refuses
 # on mismatch — the most likely deploy mistake is signing with a key no host trusts.
 #
@@ -85,10 +85,10 @@ fi
 
 # Cross-check: the key we are about to sign with must be one the host binary pins.
 PUB="ed25519:$(openssl pkey -in "$KEY" -pubout -outform DER | tail -c 32 | base64)"
-# The pin list lives in the shared checker (crates/core/pf-update-check/src/lib.rs,
+# The pin list lives in the shared checker (crates/core/ly-update-check/src/lib.rs,
 # OFFICIAL_UPDATE_KEYS) — one list, so the host and the client can never disagree about who may
 # announce a release.
-KEYS_FILE="crates/core/pf-update-check/src/lib.rs"
+KEYS_FILE="crates/core/ly-update-check/src/lib.rs"
 # A MISSING file is fatal, not a warning. This check is the guard against signing with a key
 # no build trusts; a stale path that skipped it would publish an unverifiable manifest — the
 # exact failure it exists to prevent.

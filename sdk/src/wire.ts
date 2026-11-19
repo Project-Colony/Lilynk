@@ -4,7 +4,7 @@
 // Additive-only within `schema: 1`: decoding tolerates unknown keys, and an unknown `kind`
 // surfaces on the raw channel, never a throw.
 import { Schema as S } from "effect";
-import * as api from "./gen/punktfunk.js";
+import * as api from "./gen/lilynk.js";
 
 export {
 	ClientRef,
@@ -17,7 +17,7 @@ export {
 	SessionRef,
 	SessionSummary,
 	StreamRef,
-} from "./gen/punktfunk.js";
+} from "./gen/lilynk.js";
 
 /** Every known lifecycle event — discriminated on `kind`. */
 export const HostEvent = api.HostEvent;

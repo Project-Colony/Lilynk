@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-# Build the punktfunk-bun .deb — the one bun runtime punktfunk-web and punktfunk-scripting run on.
+# Build the lilynk-bun .deb — the one bun runtime lilynk-web and lilynk-scripting run on.
 #
-# Bun isn't in apt, so we vendor a pinned build. It lives at /usr/lib/punktfunk-bun/bun, never on
+# Bun isn't in apt, so we vendor a pinned build. It lives at /usr/lib/lilynk-bun/bun, never on
 # PATH, so it never collides with a system-wide bun. Both consumers depend on this exact version.
 #
 # Usage: VERSION=0.0.1~ci42.gdeadbee [DEB_ARCH=amd64] [BUN_BIN=/path/to/bun] bash packaging/debian/build-bun-deb.sh
-# Output: dist/punktfunk-bun_<version>_<arch>.deb
+# Output: dist/lilynk-bun_<version>_<arch>.deb
 set -euo pipefail
 
 VERSION="${VERSION:?set VERSION (e.g. 0.0.1 or 0.0.1~ci42.gdeadbee)}"
-PKG="punktfunk-bun"
+PKG="lilynk-bun"
 ROOTDIR="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOTDIR"
 
@@ -72,8 +72,8 @@ Section: net
 Priority: optional
 Homepage: https://git.unom.io/unom/punktfunk
 Description: bun runtime for the punktfunk web console and plugin runner
- The pinned bun build punktfunk-web and punktfunk-scripting run on, installed once at
- /usr/lib/punktfunk-bun/bun. It is not on PATH and does not replace a system-wide bun.
+ The pinned bun build lilynk-web and lilynk-scripting run on, installed once at
+ /usr/lib/lilynk-bun/bun. It is not on PATH and does not replace a system-wide bun.
 EOF
 
 mkdir -p dist

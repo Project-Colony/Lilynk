@@ -45,7 +45,7 @@ import javax.net.ssl.X509TrustManager
 // `GET /api/v1/library`) over **mTLS**: the paired client presents its persistent cert/key (the
 // same identity the host paired over QUIC), and the host's self-signed cert is pinned by
 // SHA-256(DER). Reads the library and what is running; writes go through [mgmtCall]. Mirrors the
-// GameEntry/Artwork schema in crates/host/punktfunk-host/src/library.rs.
+// GameEntry/Artwork schema in crates/host/lilynk-host/src/library.rs.
 
 /** The management API's default port — matches `mgmt::DEFAULT_PORT` on the host and the Apple client. */
 const val DEFAULT_MGMT_PORT = 47990
@@ -141,7 +141,7 @@ data class GameEntry(
          * The desktop tile's id — the synthetic entry every shelf leads with, so the library is
          * never a dead end for the desktop-only user and a host with no plugins is still one tap
          * from streaming. The NUL prefix is the Rust console's (`DESKTOP_ID` in
-         * `pf_client_core::library`): a host title id is a store reference, and none can start
+         * `ly_client_core::library`): a host title id is a store reference, and none can start
          * with a NUL.
          *
          * Presentation only. Never persisted, never fetched, never grouped.
@@ -171,7 +171,7 @@ data class GameEntry(
 
     /**
      * Display name for the store badge — the same table the other clients use
-     * (`pf-console-ui::library::store_label`). A store's own name is shown as it is.
+     * (`ly-console-ui::library::store_label`). A store's own name is shown as it is.
      */
     val storeLabel: Say get() = storeName ?: say(R.string.lib_store_other)
 
@@ -240,7 +240,7 @@ data class TitleInstall(
 
 /**
  * What a title menu offers for a title's files; at most one applies. The rules and words are the
- * Rust client's (`pf_client_core::library::InstallAction`).
+ * Rust client's (`ly_client_core::library::InstallAction`).
  */
 enum class InstallAction {
     Install, Pause, Resume, Remove;
@@ -355,7 +355,7 @@ sealed class InstallOutcome {
 
 /**
  * One title's download, from `GET /api/v1/status` `downloads[]`. Its words match the Rust console
- * shell's (`pf_client_core::library::DownloadProgress`), so a report quotes one line either way.
+ * shell's (`ly_client_core::library::DownloadProgress`), so a report quotes one line either way.
  */
 data class Download(
     val appId: String,

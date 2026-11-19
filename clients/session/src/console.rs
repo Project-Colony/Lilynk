@@ -6,7 +6,7 @@
 //! whole point of one process), the session's end returns to the console, B at the root
 //! quits to Gaming Mode.
 //!
-//! This file is the console's SERVICE side: the shell (pf-console-ui) renders and
+//! This file is the console's SERVICE side: the shell (ly-console-ui) renders and
 //! raises [`ConsoleCmd`]s; worker threads here run everything that blocks — mDNS
 //! discovery, reachability probes, the SPAKE2 pairing ceremony, wake-on-LAN loops,
 //! library fetches, known-hosts persistence — and write results into the shared
@@ -19,19 +19,19 @@
 use crate::session_main::{
     arg_flag, arg_value, fullscreen_mode, parse_host_port, session_params, stats_tier, window_pos,
 };
-use pf_client_core::gamepad::{is_steam_deck, PadReading};
-use pf_client_core::orchestrate::{
+use lilynk_core::input::gamepad as wire;
+use ly_client_core::gamepad::{is_steam_deck, PadReading};
+use ly_client_core::orchestrate::{
     self, emit, exit, SessionLine, WakeOutcome, WAKE_RESEND_SECS, WAKE_TIMEOUT_SECS,
 };
-use pf_client_core::{discovery, hide, library, profiles, start, trust, wol};
-use pf_console_ui::{
+use ly_client_core::{discovery, hide, library, profiles, start, trust, wol};
+use ly_console_ui::{
     ConsoleCmd, ConsoleEntry, ConsoleHandles, ConsoleOptions, ConsoleShared, HiddenAnswer,
     HideAnswer, HostRow, LibraryGame, LibraryPhase, LibraryShared, PadTestState, PairPhase,
     PairStatus, ProfilesAnswer, RequestKey, SkiaOverlay, SpeedPhase, WakeStatus,
 };
-use pf_presenter::overlay::OverlayAction;
-use pf_presenter::ActionOutcome;
-use punktfunk_core::input::gamepad as wire;
+use ly_presenter::overlay::OverlayAction;
+use ly_presenter::ActionOutcome;
 use std::collections::{HashMap, VecDeque};
 use std::net::Ipv4Addr;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
@@ -151,11 +151,11 @@ impl Launcher {
     fn act(
         &self,
         action: OverlayAction,
-        gamepad: &pf_client_core::gamepad::GamepadService,
-        native: punktfunk_core::config::Mode,
-        hdr: Option<punktfunk_core::quic::HdrMeta>,
+        gamepad: &ly_client_core::gamepad::GamepadService,
+        native: lilynk_core::config::Mode,
+        hdr: Option<lilynk_core::quic::HdrMeta>,
         force_software: Arc<AtomicBool>,
-        vulkan: Option<pf_client_core::video::VulkanDecodeDevice>,
+        vulkan: Option<ly_client_core::video::VulkanDecodeDevice>,
     ) -> ActionOutcome {
         match action {
             OverlayAction::Launch {
@@ -252,27 +252,27 @@ pub fn run(target: Option<&str>) -> u8 {
     // re-points, which a file monitor on the resolved path cannot follow. Off Omarchy the
     // one `present()` stat is the whole cost and no thread starts.
     #[cfg(target_os = "linux")]
-    if pf_client_core::omarchy::present() {
+    if ly_client_core::omarchy::present() {
         std::thread::spawn(|| loop {
-            let t = pf_client_core::omarchy::current().map(|t| pf_console_ui::os_theme::OsTheme {
+            let t = ly_client_core::omarchy::current().map(|t| ly_console_ui::os_theme::OsTheme {
                 light: !t.dark,
                 background: t.bg,
                 foreground: t.fg,
                 accent: t.accent,
             });
             // The revision only moves on a real change, so the idle case is one file read.
-            pf_console_ui::os_theme::set_os_theme(t);
+            ly_console_ui::os_theme::set_os_theme(t);
             std::thread::sleep(std::time::Duration::from_secs(2));
         });
     }
     // The desktop's reduce-motion switch, followed while it answers. A desktop that says
     // nothing starts no thread and keeps the console's own row.
-    let mut reduce_motion = pf_client_core::os_prefs::reduce_motion_reader();
+    let mut reduce_motion = ly_client_core::os_prefs::reduce_motion_reader();
     if let Some(reduce) = reduce_motion() {
-        pf_console_ui::os_theme::set_os_reduce_motion(Some(reduce));
+        ly_console_ui::os_theme::set_os_reduce_motion(Some(reduce));
         std::thread::spawn(move || loop {
             std::thread::sleep(std::time::Duration::from_secs(5));
-            pf_console_ui::os_theme::set_os_reduce_motion(reduce_motion());
+            ly_console_ui::os_theme::set_os_reduce_motion(reduce_motion());
         });
     }
     let identity = match trust::load_or_create_identity() {
@@ -328,7 +328,7 @@ pub fn run(target: Option<&str>) -> u8 {
     let pending_approval: Arc<Mutex<Option<PendingApproval>>> = Arc::new(Mutex::new(None));
     let pending_cb = pending_approval.clone();
 
-    let opts = pf_presenter::SessionOpts {
+    let opts = ly_presenter::SessionOpts {
         window_title: window_label.map_or_else(
             || "Punktfunk".to_string(),
             |label| format!("Punktfunk · {label}"),
@@ -355,8 +355,8 @@ pub fn run(target: Option<&str>) -> u8 {
         // it with nobody reading its stdout, so it persists the size itself.
         on_window_size: crate::session_main::on_window_size(true),
         render_scale: settings_at_start.render_scale,
-        render_scale_max_dim: punktfunk_core::render_scale::max_dimension(&settings_at_start.codec),
-        video_fit: punktfunk_core::video_fit::VideoFit::from_name(&settings_at_start.video_fit),
+        render_scale_max_dim: lilynk_core::render_scale::max_dimension(&settings_at_start.codec),
+        video_fit: lilynk_core::video_fit::VideoFit::from_name(&settings_at_start.video_fit),
         // Passed when a desktop shell opened this console because a controller connected.
         until_no_pads: arg_flag("--until-no-controller"),
     };
@@ -367,7 +367,7 @@ pub fn run(target: Option<&str>) -> u8 {
         pending_approval,
         console: console.clone(),
     };
-    let result = pf_presenter::run_browse(
+    let result = ly_presenter::run_browse(
         opts,
         |action, gamepad, native, hdr, force_software, vulkan| {
             launcher.act(action, gamepad, native, hdr, force_software, vulkan)
@@ -482,14 +482,14 @@ impl Service {
     fn start(
         console: ConsoleShared,
         library_model: LibraryShared,
-        bus: pf_console_ui::ConsoleBus,
+        bus: ly_console_ui::ConsoleBus,
         identity: (String, String),
         seed: Option<HostRow>,
     ) -> Service {
         let stop = Arc::new(AtomicBool::new(false));
         let stop_w = stop.clone();
         let thread = std::thread::Builder::new()
-            .name("punktfunk-console".into())
+            .name("lilynk-console".into())
             .spawn(move || {
                 ServiceState {
                     console,
@@ -528,7 +528,7 @@ type Worker = Option<std::thread::JoinHandle<()>>;
 struct ServiceState {
     console: ConsoleShared,
     library: LibraryShared,
-    bus: pf_console_ui::ConsoleBus,
+    bus: ly_console_ui::ConsoleBus,
     identity: (String, String),
     /// A `--browse` target that isn't in the store yet — kept on the list until the
     /// store or discovery covers it.
@@ -561,7 +561,7 @@ struct ServiceState {
 struct Stores {
     known: trust::KnownHosts,
     known_seen: trust::FileStamp,
-    catalog: pf_client_core::presets::PresetsFile,
+    catalog: ly_client_core::presets::PresetsFile,
     catalog_seen: trust::FileStamp,
 }
 
@@ -569,7 +569,7 @@ impl Stores {
     /// `true` when the saved hosts were read again.
     fn refresh(&mut self) -> bool {
         if let Some(c) =
-            pf_client_core::presets::PresetsFile::load_if_changed(&mut self.catalog_seen)
+            ly_client_core::presets::PresetsFile::load_if_changed(&mut self.catalog_seen)
         {
             self.catalog = c;
         }
@@ -712,7 +712,7 @@ impl ServiceState {
                 topology,
                 label,
             } => {
-                let pick = pf_client_core::display_targets::Pick { screen, topology };
+                let pick = ly_client_core::display_targets::Pick { screen, topology };
                 self.set_screen(addr, mgmt, fp_hex, pick, label)
             }
             ConsoleCmd::EndGame {
@@ -772,7 +772,7 @@ impl ServiceState {
                         Some(pin) => {
                             trust::request_access_to_host(a, p, id, pin, &device_name, None)
                         }
-                        None => Err(punktfunk_core::PunktfunkError::InvalidArg("fingerprint")),
+                        None => Err(lilynk_core::PunktfunkError::InvalidArg("fingerprint")),
                     },
                 )
             }
@@ -812,7 +812,7 @@ impl ServiceState {
             // While on, the menu pads feed the test instead of moving the menu.
             ConsoleCmd::PadTest { on } => {
                 let console = self.console.clone();
-                pf_client_core::gamepad::set_pad_test(on.then(|| {
+                ly_client_core::gamepad::set_pad_test(on.then(|| {
                     Box::new(move |r: PadReading| console.set_pad_test(pad_test_state(r))) as _
                 }));
             }
@@ -825,7 +825,7 @@ impl ServiceState {
                 overrides,
             } => save_preset(id, name, overrides),
             ConsoleCmd::DeletePreset { id } => {
-                let mut file = pf_client_core::presets::PresetsFile::load();
+                let mut file = ly_client_core::presets::PresetsFile::load();
                 file.presets.retain(|p| p.id != id);
                 if let Err(e) = file.save() {
                     tracing::warn!(error = %e, "preset did not delete");
@@ -839,8 +839,8 @@ impl ServiceState {
                 #[cfg(not(windows))]
                 const NOTICES: &str = include_str!("../../linux/THIRD-PARTY-NOTICES.txt");
                 self.console
-                    .set_licenses(vec![pf_console_ui::LicenseSection {
-                        heading: pf_l10n::client::about_third_party_heading().into(),
+                    .set_licenses(vec![ly_console_ui::LicenseSection {
+                        heading: ly_l10n::client::about_third_party_heading().into(),
                         text: NOTICES.into(),
                     }]);
             }
@@ -899,7 +899,7 @@ impl ServiceState {
         // this host's to badge.
         let epoch = shared.fetch_epoch();
         std::thread::Builder::new()
-            .name("punktfunk-running".into())
+            .name("lilynk-running".into())
             .spawn(move || {
                 let port = stream_port(&fp_hex);
                 let status = library::fetch_status(&addr, mgmt, port, &identity, pin);
@@ -917,7 +917,7 @@ impl ServiceState {
         let identity = self.identity.clone();
         let pin = trust::parse_hex32(&fp_hex);
         std::thread::Builder::new()
-            .name("punktfunk-profiles".into())
+            .name("lilynk-profiles".into())
             .spawn(move || {
                 let port = stream_port(&fp_hex);
                 let answer = match profiles::fetch_enumerate(&addr, mgmt, port, &identity, pin) {
@@ -939,7 +939,7 @@ impl ServiceState {
         let identity = self.identity.clone();
         let pin = trust::parse_hex32(&fp_hex);
         std::thread::Builder::new()
-            .name("punktfunk-avatar".into())
+            .name("lilynk-avatar".into())
             .spawn(move || {
                 let port = stream_port(&fp_hex);
                 let api = library::HostApi::new(&addr, mgmt, port, &identity, pin);
@@ -955,7 +955,7 @@ impl ServiceState {
         let identity = self.identity.clone();
         let pin = trust::parse_hex32(&fp_hex);
         std::thread::Builder::new()
-            .name("punktfunk-wake-seat".into())
+            .name("lilynk-wake-seat".into())
             .spawn(move || {
                 let port = stream_port(&fp_hex);
                 if let Err(e) = profiles::wake(&addr, mgmt, port, &identity, pin, &id) {
@@ -972,11 +972,11 @@ impl ServiceState {
         let identity = self.identity.clone();
         let console = self.console.clone();
         std::thread::Builder::new()
-            .name("punktfunk-sendlogs".into())
+            .name("lilynk-sendlogs".into())
             .spawn(move || {
                 console.set_notice(
-                    pf_client_core::logring::send_bundle(
-                        "punktfunk-session",
+                    ly_client_core::logring::send_bundle(
+                        "lilynk-session",
                         &host_name,
                         &addr,
                         (mgmt, stream_port(&fp_hex)),
@@ -996,13 +996,13 @@ impl ServiceState {
         let identity = self.identity.clone();
         let console = self.console.clone();
         std::thread::Builder::new()
-            .name("punktfunk-speedtest".into())
+            .name("lilynk-speedtest".into())
             .spawn(move || {
                 console.advance_speed(&key, SpeedPhase::Measuring);
                 let fp = (!fp_hex.is_empty()).then_some(fp_hex.as_str());
                 let progress = |kbps| console.advance_speed(&key, SpeedPhase::Progress { kbps });
                 // The whole check, not just the speed: the takeover lists what it found.
-                let run = pf_client_core::speed::run_network_check_with;
+                let run = ly_client_core::speed::run_network_check_with;
                 match run(&addr, port, fp, identity, progress) {
                     Ok(r) => {
                         tracing::info!(
@@ -1018,18 +1018,18 @@ impl ServiceState {
                             SpeedPhase::Done {
                                 throughput_kbps: r.speed.ceiling_kbps,
                                 wall: r.speed.wall,
-                                clean: r.speed.clean.map(|c| pf_console_ui::model::CleanRound {
+                                clean: r.speed.clean.map(|c| ly_console_ui::model::CleanRound {
                                     rate_kbps: c.rate_kbps,
                                     loss_pct: c.loss_pct,
                                     jitter_us: c.jitter_us,
                                 }),
-                                recommended_kbps: pf_client_core::speed::recommended_kbps(
+                                recommended_kbps: ly_client_core::speed::recommended_kbps(
                                     r.speed.ceiling_kbps,
                                 ),
                                 findings: r
                                     .findings
                                     .iter()
-                                    .map(|f| pf_console_ui::model::FindingRow {
+                                    .map(|f| ly_console_ui::model::FindingRow {
                                         id: f.id as u8,
                                         severity: f.severity as u8,
                                         numbers: f.numbers,
@@ -1061,11 +1061,11 @@ impl ServiceState {
         let identity = self.identity.clone();
         let console = self.console.clone();
         std::thread::Builder::new()
-            .name("punktfunk-hostaction".into())
+            .name("lilynk-hostaction".into())
             .spawn(move || {
                 let port = stream_port(&fp_hex);
                 console.set_notice(
-                    pf_client_core::host_actions::run(
+                    ly_client_core::host_actions::run(
                         &host_name, &addr, mgmt, port, &identity, &fp_hex, &action_id, &label,
                     )
                     .unwrap_or_else(|e| e),
@@ -1081,21 +1081,21 @@ impl ServiceState {
         addr: String,
         mgmt: u16,
         fp_hex: String,
-        pick: pf_client_core::display_targets::Pick,
+        pick: ly_client_core::display_targets::Pick,
         label: String,
     ) {
         let identity = self.identity.clone();
         let console = self.console.clone();
         std::thread::Builder::new()
-            .name("punktfunk-screen".into())
+            .name("lilynk-screen".into())
             .spawn(move || {
                 let port = stream_port(&fp_hex);
-                let set = pf_client_core::display_targets::set_pick(
+                let set = ly_client_core::display_targets::set_pick(
                     &addr, mgmt, port, &identity, &fp_hex, &pick,
                 );
                 if let Err(e) = set {
                     tracing::warn!(?pick, error = %e, "screen pick refused");
-                    console.set_notice(pf_l10n::client::hostcard_action_failed(&label, e));
+                    console.set_notice(ly_l10n::client::hostcard_action_failed(&label, e));
                 }
             })
             .ok();
@@ -1119,7 +1119,7 @@ impl ServiceState {
         // As in `refresh_running`: the player may be on another host's shelf by the answer.
         let epoch = shared.fetch_epoch();
         std::thread::Builder::new()
-            .name("punktfunk-endgame".into())
+            .name("lilynk-endgame".into())
             .spawn(move || {
                 let port = stream_port(&fp_hex);
                 let outcome = library::end_game(&addr, mgmt, port, &identity, pin, &app_id);
@@ -1148,7 +1148,7 @@ impl ServiceState {
         let console = self.console.clone();
         let epoch = shared.fetch_epoch();
         std::thread::Builder::new()
-            .name("punktfunk-install".into())
+            .name("lilynk-install".into())
             .spawn(move || {
                 let port = stream_port(&fp_hex);
                 let outcome =
@@ -1193,7 +1193,7 @@ impl ServiceState {
         );
         let pin = trust::parse_hex32(&fp_hex);
         std::thread::Builder::new()
-            .name("punktfunk-hide".into())
+            .name("lilynk-hide".into())
             .spawn(move || {
                 let api = library::HostApi::new(&addr, mgmt, stream_port(&fp_hex), &identity, pin);
                 let outcome = hide::set_hidden(&api, &profile, &app_id, hidden);
@@ -1202,7 +1202,7 @@ impl ServiceState {
                 if done {
                     let seen = seen.lock().unwrap_or_else(|e| e.into_inner());
                     let back = seen.iter().find(|g| g.id == app_id).filter(|_| !hidden);
-                    pf_client_core::library_cache::note_hidden(
+                    ly_client_core::library_cache::note_hidden(
                         &fp_hex,
                         Some(&profile),
                         &app_id,
@@ -1232,7 +1232,7 @@ impl ServiceState {
         let shared = self.library.clone();
         let pin = trust::parse_hex32(&fp_hex);
         std::thread::Builder::new()
-            .name("punktfunk-hidden".into())
+            .name("lilynk-hidden".into())
             .spawn(move || {
                 let api = library::HostApi::new(&addr, mgmt, stream_port(&fp_hex), &identity, pin);
                 let games = match hide::fetch_hidden_from(&api, &profile) {
@@ -1270,8 +1270,8 @@ impl ServiceState {
         addr: String,
         port: u16,
         req: RequestKey,
-        wording: fn(&punktfunk_core::PunktfunkError) -> String,
-        ask: impl FnOnce(&str, u16, &(String, String)) -> Result<[u8; 32], punktfunk_core::PunktfunkError>
+        wording: fn(&lilynk_core::PunktfunkError) -> String,
+        ask: impl FnOnce(&str, u16, &(String, String)) -> Result<[u8; 32], lilynk_core::PunktfunkError>
             + Send
             + 'static,
     ) {
@@ -1296,7 +1296,7 @@ impl ServiceState {
         let generation = self.pair_gen.fetch_add(1, Ordering::SeqCst) + 1;
         let pair_gen = self.pair_gen.clone();
         std::thread::Builder::new()
-            .name("punktfunk-pair".into())
+            .name("lilynk-pair".into())
             .spawn(move || {
                 let current = || pair_gen.load(Ordering::SeqCst) == generation;
                 match ask(&addr, port, &identity) {
@@ -1314,7 +1314,7 @@ impl ServiceState {
                         match paired.saved {
                             Ok(()) => say(PairPhase::Paired { key: paired.fp_hex }),
                             // Not "Paired": the pin is gone by the next launch.
-                            Err(e) => say(PairPhase::Failed(pf_l10n::client::pair_saved_failed(
+                            Err(e) => say(PairPhase::Failed(ly_l10n::client::pair_saved_failed(
                                 format!("{e:#}"),
                             ))),
                         }
@@ -1521,7 +1521,7 @@ impl ServiceState {
         }
         let idle = Idle(self.probe_inflight.clone());
         std::thread::Builder::new()
-            .name("punktfunk-probe".into())
+            .name("lilynk-probe".into())
             .spawn(move || {
                 let _idle = idle;
                 let results = trust::probe_known(&hosts, Duration::from_millis(900));
@@ -1563,18 +1563,18 @@ impl ServiceState {
     fn save_failed(&self, e: &impl std::fmt::Display) {
         tracing::warn!(error = %format!("{e:#}"), "saving known hosts");
         self.console
-            .set_notice(pf_l10n::client::error_save_failed(format!("{e:#}")));
+            .set_notice(ly_l10n::client::error_save_failed(format!("{e:#}")));
     }
 
     /// Keep every paired, reachable host's advertised actions, screens and running title fresh
-    /// (the shared TTL'd caches in `pf_client_core`). Idempotent and cheap — each only reaches
+    /// (the shared TTL'd caches in `ly_client_core`). Idempotent and cheap — each only reaches
     /// the network when its own entry has lapsed, and the running and screen ones lapse far
     /// sooner: what a host has UP is what changes between two visits to the carousel.
     fn refresh_host_state(&self, rows: &[HostRow]) {
         for r in rows {
             if r.paired && r.online && r.pin.is_none() {
-                pf_client_core::host_actions::refresh(&r.addr, r.mgmt_port, r.port, &r.fp_hex);
-                pf_client_core::display_targets::refresh(&r.addr, r.mgmt_port, r.port, &r.fp_hex);
+                ly_client_core::host_actions::refresh(&r.addr, r.mgmt_port, r.port, &r.fp_hex);
+                ly_client_core::display_targets::refresh(&r.addr, r.mgmt_port, r.port, &r.fp_hex);
                 library::refresh_running(&r.addr, r.mgmt_port, r.port, &r.fp_hex);
             }
         }
@@ -1616,12 +1616,12 @@ impl ServiceState {
 /// (`clients/shared/host-row-vectors.json`).
 fn build_rows(
     known: &trust::KnownHosts,
-    catalog: &pf_client_core::presets::PresetsFile,
+    catalog: &ly_client_core::presets::PresetsFile,
     discovered: &HashMap<String, discovery::DiscoveredHost>,
     probed: &HashMap<String, bool>,
     seed: Option<&HostRow>,
 ) -> Vec<HostRow> {
-    let chip = |p: &pf_client_core::presets::StreamPreset| pf_console_ui::PresetChip {
+    let chip = |p: &ly_client_core::presets::StreamPreset| ly_console_ui::PresetChip {
         id: p.id.clone(),
         name: p.name.clone(),
         accent: p.accent.clone(),
@@ -1670,9 +1670,9 @@ fn build_rows(
                 // until the first refresh answers, and empty forever for a host that has
                 // no such route or a device without the grant — the menu simply has no
                 // power rows then.
-                actions: pf_client_core::host_actions::cached(&h.fp_hex)
+                actions: ly_client_core::host_actions::cached(&h.fp_hex)
                     .into_iter()
-                    .map(|a| pf_console_ui::HostAction {
+                    .map(|a| ly_console_ui::HostAction {
                         label: a.label().to_string(),
                         id: a.id,
                         danger: a.danger,
@@ -1695,7 +1695,7 @@ fn build_rows(
                 game_presets: h.game_presets.clone(),
                 profile: h.profile.clone(),
                 // What this host last said this device may stream, from the same kind of cache.
-                screens: pf_client_core::display_targets::cached(&h.fp_hex),
+                screens: ly_client_core::display_targets::cached(&h.fp_hex),
             };
             // A pinned card shares the primary tile's live state; its own key lets
             // cursor-follow and the wake path address the card itself.
@@ -1703,7 +1703,7 @@ fn build_rows(
                 .resolved_pins(catalog)
                 .into_iter()
                 .map(|p| HostRow {
-                    key: pf_console_ui::model::pinned_key(&key, &p.id),
+                    key: ly_console_ui::model::pinned_key(&key, &p.id),
                     pin: Some(chip(p)),
                     bound_preset: None,
                     ..row.clone()
@@ -1780,7 +1780,7 @@ fn spawn_wake(
     cancel: Arc<AtomicBool>,
 ) {
     std::thread::Builder::new()
-        .name("punktfunk-wake".into())
+        .name("lilynk-wake".into())
         .spawn(move || {
             orchestrate::wake_by_probe(&row.addr, row.port, &row.fp_hex, &macs, |tick| {
                 // A cancelled thread stops; a tick already in flight lands on no card, as the
@@ -1810,7 +1810,7 @@ fn spawn_wake(
 const WAKE_RETRY_EVERY: Duration = Duration::from_secs(5);
 
 fn save_preset(id: String, name: String, overrides: serde_json::Value) {
-    let mut file = pf_client_core::presets::PresetsFile::load();
+    let mut file = ly_client_core::presets::PresetsFile::load();
     let overrides = serde_json::from_value(overrides).unwrap_or_default();
     match file.presets.iter_mut().find(|p| p.id == id) {
         Some(p) => {
@@ -1818,7 +1818,7 @@ fn save_preset(id: String, name: String, overrides: serde_json::Value) {
             p.overrides = overrides;
         }
         None => {
-            let mut p = pf_client_core::presets::StreamPreset::new(name);
+            let mut p = ly_client_core::presets::StreamPreset::new(name);
             p.id = id;
             p.overrides = overrides;
             file.presets.push(p);
@@ -1865,7 +1865,7 @@ fn spawn_fetch(
     shared.begin_fetch();
     let pin = trust::parse_hex32(&fp_hex);
     std::thread::Builder::new()
-        .name("punktfunk-library".into())
+        .name("lilynk-library".into())
         .spawn(move || {
             // This worker retries for up to `WAKE_TIMEOUT_SECS` and cannot be cancelled, so
             // the player can be two hosts further on by the time it answers. Every write below
@@ -1879,7 +1879,7 @@ fn spawn_fetch(
             // out. Keyed on the pinned fingerprint, so a box that came back on a new DHCP lease
             // is still recognised as the same host, and on the profile the shelf is for.
             let mut cached_games = None;
-            if let Some(cached) = pf_client_core::library_cache::load(&fp_hex, profile.as_deref()) {
+            if let Some(cached) = ly_client_core::library_cache::load(&fp_hex, profile.as_deref()) {
                 if !cached.games.is_empty() && mine() {
                     shared.set_games_cached(&req, to_model(&cached.games));
                     cached_games = Some(cached.games);
@@ -1892,7 +1892,7 @@ fn spawn_fetch(
             if waking {
                 wol::wake(&macs, last_ip);
                 if mine() {
-                    shared.set_stale(pf_console_ui::Stale::Waking);
+                    shared.set_stale(ly_console_ui::Stale::Waking);
                 }
             }
 
@@ -1941,12 +1941,12 @@ fn spawn_fetch(
                             // The shelf stays; only the words change. The player can still pick
                             // a title — the launch will wake and dial the host on its own.
                             tracing::info!(%addr, error = %e, "library fetch failed; keeping the cached shelf");
-                            shared.set_stale(pf_console_ui::Stale::Offline);
+                            shared.set_stale(ly_console_ui::Stale::Offline);
                             (cached, false)
                         }
                         None => {
                             shared.set_phase(&req, LibraryPhase::Error {
-                                title: pf_l10n::client::lib_load_failed().into(),
+                                title: ly_l10n::client::lib_load_failed().into(),
                                 body: e.to_string(),
                                 can_retry: true,
                             });
@@ -1968,7 +1968,7 @@ fn spawn_fetch(
             if live {
                 shared.set_games(&req, to_model(&games));
                 // Remembered AFTER it is on screen: the disk write is not on the path to a shelf.
-                pf_client_core::library_cache::store(&fp_hex, served, &games);
+                ly_client_core::library_cache::store(&fp_hex, served, &games);
                 // What the host has up right now, so a title the player can return to says so.
                 // Deliberately after the catalog — a slow `/status` must not hold the titles
                 // back — and never fatal: an older host answers nothing and every badge stays off.

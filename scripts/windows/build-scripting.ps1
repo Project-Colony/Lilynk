@@ -1,6 +1,6 @@
 <#
   Rebuild the plugin/script runner bundle from the CURRENT sdk/ source and lay it out next to the
-  host exe, so `punktfunk-host plugins ...` works and the PunktfunkScripting task runs new code.
+  host exe, so `lilynk-host plugins ...` works and the PunktfunkScripting task runs new code.
 
     powershell -ExecutionPolicy Bypass -File scripts\windows\build-scripting.ps1
     powershell -ExecutionPolicy Bypass -File scripts\windows\build-scripting.ps1 -EnableTask
@@ -8,7 +8,7 @@
   WHY the layout matters: the plugins CLI forwards package ops (add/remove/list) to the runner, and
   on Windows it resolves the runner RELATIVE TO THE RUNNING EXE - <exe-dir>\bun\bun.exe and
   <exe-dir>\scripting\runner-cli.js (runner_command in
-  crates\host\punktfunk-host\src\plugin_host\plugins\windows.rs). deploy-host.ps1 runs the
+  crates\host\lilynk-host\src\plugin_host\plugins\windows.rs). deploy-host.ps1 runs the
   service out of target\release, so a bundle sitting only in the installed {app} leaves the freshly
   built exe reporting "the plugin runner isn't installed". We therefore deploy next to EVERY host exe
   we can find: the built one, and whatever the PunktfunkHost service actually runs.
@@ -67,17 +67,17 @@ function Add-Target([string]$exe) {
 }
 
 # a) the binary deploy-host.ps1 just built - what you invoke by hand to test the new CLI.
-Add-Target (Join-Path $repo 'target\release\punktfunk-host.exe')
+Add-Target (Join-Path $repo 'target\release\lilynk-host.exe')
 
 # b) whatever the service actually runs (an installed {app} on a box set up via setup.exe). The
 #    binPath carries args and may be quoted, so pull the .exe out with a regex.
 $qc = & sc.exe qc 'PunktfunkHost' 2>$null
 if ($qc) {
     $line = $qc | Select-String 'BINARY_PATH_NAME' | Select-Object -First 1
-    if ($line -and "$line" -match '([A-Za-z]:\\[^"]*?punktfunk-host\.exe)') { Add-Target $Matches[1] }
+    if ($line -and "$line" -match '([A-Za-z]:\\[^"]*?lilynk-host\.exe)') { Add-Target $Matches[1] }
 }
 
-if ($targets.Count -eq 0) { throw "no punktfunk-host.exe found - run deploy-host.ps1 first." }
+if ($targets.Count -eq 0) { throw "no lilynk-host.exe found - run deploy-host.ps1 first." }
 
 # --- 3. lay out <exe-dir>\scripting\{runner-cli.js,scripting-run.cmd} + <exe-dir>\bun\bun.exe ---
 # Stop a LIVE runner first: it holds bun.exe (and the bundle) open, so copying over them fails with a
@@ -115,7 +115,7 @@ foreach ($dir in $targets) {
 # The runner task runs as NT AUTHORITY\LocalService (NOT SYSTEM - a plugin defect must cost a
 # throwaway account). Converge a task registered as SYSTEM by an older installer or by hand, and
 # grant LocalService read on the scoped plugin-token and the TLS-pin cert.pem. NEVER mgmt-token
-# (full admin). A subset of what `punktfunk-host plugins enable` grants
+# (full admin). A subset of what `lilynk-host plugins enable` grants
 # (plugin_host/plugins/windows.rs).
 if ($existing) {
     $principal = New-ScheduledTaskPrincipal -UserId 'LocalService' -LogonType ServiceAccount
@@ -181,7 +181,7 @@ elseif ($existing.State -eq 'Disabled') {
     Write-Host "note   : $task is DISABLED (opt-in, as shipped) - the new bundle is staged but no"
     Write-Host "         runner is supervising plugins. Enable it for on-glass validation with:"
     Write-Host "           powershell -File scripts\windows\build-scripting.ps1 -EnableTask"
-    Write-Host "         (or: punktfunk-host plugins enable)"
+    Write-Host "         (or: lilynk-host plugins enable)"
 }
 else {
     & schtasks /end /tn $task 2>$null | Out-Null

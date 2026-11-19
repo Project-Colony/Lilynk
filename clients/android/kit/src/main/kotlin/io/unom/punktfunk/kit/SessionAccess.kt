@@ -1,7 +1,7 @@
 package io.unom.punktfunk.kit
 
 /**
- * Per-client access grants — the Kotlin mirror of `punktfunk_core::quic::access` (bit-for-bit;
+ * Per-client access grants — the Kotlin mirror of `lilynk_core::quic::access` (bit-for-bit;
  * `design/per-client-access.md` §3), read per session via [NativeBridge.nativeAccessState].
  *
  * The host is the only enforcer: everything gated on these bits client-side is courtesy UX over

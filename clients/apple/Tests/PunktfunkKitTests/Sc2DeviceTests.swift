@@ -25,7 +25,7 @@ final class Sc2DeviceTests: XCTestCase {
     }
 
     /// `clients/shared/sc2-vectors.json`: the host's id-INCLUDED lengths, which
-    /// `pf_driver_proto::triton::out_report_len` and the Kotlin table replay too.
+    /// `ly_driver_proto::triton::out_report_len` and the Kotlin table replay too.
     func testStrippedLenPlusOneMatchesTheSharedVectors() throws {
         for row in try sharedRows("out_report_len") {
             let id = try UInt8(XCTUnwrap(row["id"] as? Int))
@@ -61,7 +61,7 @@ final class Sc2DeviceTests: XCTestCase {
 
     func testTheMatchedUsagePairIsTheVendorCollectionNotAKeyboardOrMouse() {
         // The SC2's controller collection is vendor-defined page 0xFF00 usage 0x01 — the THIRD
-        // top-level collection in `pf_driver_proto::triton::RDESC`, behind the lizard mouse
+        // top-level collection in `ly_driver_proto::triton::RDESC`, behind the lizard mouse
         // (Generic Desktop 01:02) and keyboard (01:06).
         XCTAssertEqual(Sc2Device.usagePageVendor, 0xFF00)
         XCTAssertEqual(Sc2Device.usageController, 0x01)

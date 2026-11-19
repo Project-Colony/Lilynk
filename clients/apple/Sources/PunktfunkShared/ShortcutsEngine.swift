@@ -1,5 +1,5 @@
 // The shortcut engine: one device's presses and releases in, what the host and the client get
-// out. Pure: the caller owns the clock and the wire. Twin of pf-client-core's `engine.rs`.
+// out. Pure: the caller owns the clock and the wire. Twin of ly-client-core's `engine.rs`.
 
 import Foundation
 

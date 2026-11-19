@@ -3,7 +3,7 @@ import XCTest
 @testable import PunktfunkKit
 
 /// `GET /display/targets` and the pick's write, in the host's JSON: the same shapes the Rust
-/// `pf-client-core::display_targets` tests pin.
+/// `ly-client-core::display_targets` tests pin.
 final class DisplayTargetsTests: XCTestCase {
     private let plan = """
         { "locked": false, "host_default": "own", "yours": {"monitor": "HDMI-A-1"},

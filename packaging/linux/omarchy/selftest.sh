@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Self-check for the pieces of `punktfunk-omarchy` that parse or generate a file the USER owns,
+# Self-check for the pieces of `lilynk-omarchy` that parse or generate a file the USER owns,
 # its option parsing, the `mode` verbs and the firewall source list — all without root or an
 # Omarchy box.
 #
@@ -11,7 +11,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-SCRIPT=./punktfunk-omarchy
+SCRIPT=./lilynk-omarchy
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 fails=0
@@ -37,7 +37,7 @@ cat > "$WORK/hypr/xdph.conf" <<'EOF'
 screencopy {
     allow_token_by_default = true
     # punktfunk: previous custom_picker_binary = hyprland-preview-share-picker
-    custom_picker_binary = /run/user/1000/punktfunk-xdph-picker.sh
+    custom_picker_binary = /run/user/1000/lilynk-xdph-picker.sh
 }
 EOF
 cat > "$WORK/expected" <<'EOF'
@@ -53,7 +53,7 @@ check "their picker comes back and their other keys survive" "$WORK/expected" "$
 cat > "$WORK/hypr/xdph.conf" <<'EOF'
 screencopy {
     # punktfunk: previous custom_picker_binary = (none)
-    custom_picker_binary = /run/user/1000/punktfunk-xdph-picker.sh
+    custom_picker_binary = /run/user/1000/lilynk-xdph-picker.sh
 }
 EOF
 printf 'screencopy {\n}\n' > "$WORK/expected"
@@ -127,15 +127,15 @@ if XDG_CONFIG_HOME="$WORK/menu" menu_is_valid "$f"; then
 else
   printf '  FAIL the merged menu does not parse\n'; cat "$f"; fails=$((fails + 1))
 fi
-if grep -q '"personal.notes"' "$f" && grep -q '"punktfunk-host.console"' "$f"; then
+if grep -q '"personal.notes"' "$f" && grep -q '"lilynk-host.console"' "$f"; then
   printf "  ok   the user's rows survived and ours were added\n"
 else
   printf "  FAIL rows lost in the merge\n"; fails=$((fails + 1))
 fi
 
 missing=
-for id in punktfunk-host.dedicated punktfunk-host.mirror punktfunk-host.pin \
-          punktfunk-host.unpair punktfunk-host.gamestream; do
+for id in lilynk-host.dedicated lilynk-host.mirror lilynk-host.pin \
+          lilynk-host.unpair lilynk-host.gamestream; do
   grep -q "\"$id\"" "$f" || missing="$missing $id"
 done
 if [[ -z "$missing" ]]; then
@@ -143,14 +143,14 @@ if [[ -z "$missing" ]]; then
 else
   printf '  FAIL menu missing ids:%s\n' "$missing"; fails=$((fails + 1))
 fi
-if grep -q 'punktfunk-omarchy mode --status | grep -qx dedicated' "$f" &&
-   grep -q 'punktfunk-omarchy mode --status | grep -qx mirror' "$f"; then
+if grep -q 'lilynk-omarchy mode --status | grep -qx dedicated' "$f" &&
+   grep -q 'lilynk-omarchy mode --status | grep -qx mirror' "$f"; then
   printf '  ok   dedicated and this-screen rows check mode --status\n'
 else
   printf '  FAIL dedicated/mirror rows do not check mode --status\n'; fails=$((fails + 1))
 fi
-if grep -q '"punktfunk-host.dedicated".*aliases' "$f" ||
-   grep -q '"punktfunk-host.mirror".*aliases' "$f"; then
+if grep -q '"lilynk-host.dedicated".*aliases' "$f" ||
+   grep -q '"lilynk-host.mirror".*aliases' "$f"; then
   printf '  FAIL new host rows must not add aliases\n'; fails=$((fails + 1))
 else
   printf '  ok   new host rows have no aliases\n'
@@ -158,7 +158,7 @@ fi
 
 # Idempotent: a second run must not stack a second copy.
 XDG_CONFIG_HOME="$WORK/menu" setup_menu >/dev/null 2>&1
-n=$(grep -c '"punktfunk-host.console"' "$f")
+n=$(grep -c '"lilynk-host.console"' "$f")
 if [[ "$n" == "1" ]]; then printf '  ok   re-running does not duplicate the block\n'
 else printf '  FAIL block appears %s times after two runs\n' "$n"; fails=$((fails + 1)); fi
 
@@ -185,11 +185,11 @@ chmod +x "$WORK/bin/omarchy-webapp-install" "$WORK/bin/omarchy-webapp-remove"
 
 # A CHILD bash, not a subshell: `set -e` is suppressed for everything inside an `if` condition,
 # subshells and called functions included, so an in-process call would pass even while the real
-# `punktfunk-omarchy setup` dies. The child re-sources the script, so its own `set -euo pipefail`
+# `lilynk-omarchy setup` dies. The child re-sources the script, so its own `set -euo pipefail`
 # is what governs — the same shell state an operator gets.
 if env HOME="$WORK/webapp" XDG_CONFIG_HOME="$WORK/webapp/config" PATH="$WORK/bin:$PATH" \
      bash -c "source $SCRIPT help >/dev/null 2>&1; setup_webapp" >/dev/null 2>&1 &&
-   grep -q '"punktfunk-host.console"' "$WORK/webapp/config/omarchy/extensions/omarchy-menu.jsonc"
+   grep -q '"lilynk-host.console"' "$WORK/webapp/config/omarchy/extensions/omarchy-menu.jsonc"
 then
   printf '  ok   setup_webapp completes with no prior entry and reaches the menu\n'
 else
@@ -255,16 +255,16 @@ check "lan_sources preinstalls the tailscale0 and wt0 rules" "$WORK/expected-lan
 
 # A CIDR takes a `from` rule and an interface an `in on` rule; `remove` must name each the same way.
 sudo() { printf '%s\n' "$*" >> "$WORK/actual-ufw"; }
-ufw_rule 10.0.0.0/8 app punktfunk-native
-ufw_rule wt0 app punktfunk-native
-ufw_unrule 10.0.0.0/8 app punktfunk-native
-ufw_unrule wt0 app punktfunk-native
+ufw_rule 10.0.0.0/8 app lilynk-native
+ufw_rule wt0 app lilynk-native
+ufw_unrule 10.0.0.0/8 app lilynk-native
+ufw_unrule wt0 app lilynk-native
 unset -f sudo
 {
-  printf '%s\n' "ufw allow from 10.0.0.0/8 to any app punktfunk-native comment $TAG"
-  printf '%s\n' "ufw allow in on wt0 to any app punktfunk-native comment $TAG"
-  printf '%s\n' "ufw --force delete allow from 10.0.0.0/8 to any app punktfunk-native"
-  printf '%s\n' "ufw --force delete allow in on wt0 to any app punktfunk-native"
+  printf '%s\n' "ufw allow from 10.0.0.0/8 to any app lilynk-native comment $TAG"
+  printf '%s\n' "ufw allow in on wt0 to any app lilynk-native comment $TAG"
+  printf '%s\n' "ufw --force delete allow from 10.0.0.0/8 to any app lilynk-native"
+  printf '%s\n' "ufw --force delete allow in on wt0 to any app lilynk-native"
 } > "$WORK/expected-ufw"
 check "a CIDR and an interface each get their own ufw rule" "$WORK/expected-ufw" "$WORK/actual-ufw"
 
@@ -352,7 +352,7 @@ cat > "$WORK/bin/systemctl" <<'EOF'
 echo "systemctl $*" >> "${SYSTEMCTL_LOG:-/dev/null}"
 exit 0
 EOF
-cat > "$WORK/bin/punktfunk-host" <<'EOF'
+cat > "$WORK/bin/lilynk-host" <<'EOF'
 #!/bin/sh
 if [ "$1" = "list-monitors" ]; then
   cat <<'MON'
@@ -364,7 +364,7 @@ MON
 fi
 exit 1
 EOF
-chmod +x "$WORK/bin/systemctl" "$WORK/bin/punktfunk-host"
+chmod +x "$WORK/bin/systemctl" "$WORK/bin/lilynk-host"
 
 SYSTEMCTL_LOG="$WORK/systemctl.log"
 : > "$SYSTEMCTL_LOG"
@@ -380,7 +380,7 @@ else
   printf '  FAIL mode mirror did not pin the primary\n'; fails=$((fails + 1))
   cat "$mod/punktfunk/display-settings.json" 2>/dev/null || true
 fi
-if grep -q 'try-restart punktfunk-host' "$SYSTEMCTL_LOG"; then
+if grep -q 'try-restart lilynk-host' "$SYSTEMCTL_LOG"; then
   printf '  ok   mode mirror reloads the host unit\n'
 else
   printf '  FAIL mode mirror did not try-restart the host\n'; fails=$((fails + 1))
@@ -405,7 +405,7 @@ fi
 
 gs="$WORK/gs/punktfunk"
 mkdir -p "$gs"
-punktfunk-host() { printf '%s\n' "$*" > "$WORK/gs/host-cmd"; }
+lilynk-host() { printf '%s\n' "$*" > "$WORK/gs/host-cmd"; }
 printf 'PUNKTFUNK_MGMT_BIND=127.0.0.1:47990\nPUNKTFUNK_GAMESTREAM=0\n' > "$gs/host.env"
 XDG_CONFIG_HOME="$WORK/gs" enable_gamestream
 if ! grep -q '^PUNKTFUNK_GAMESTREAM=' "$gs/host.env" &&
@@ -416,7 +416,7 @@ else
   printf '  FAIL GameStream opt-in left a host.env pin or skipped the store\n'; fails=$((fails + 1))
   cat "$gs/host.env"
 fi
-unset -f punktfunk-host
+unset -f lilynk-host
 
 pin_json='{"v":1,"data":{"pin_pending":true,"pending":[{"uniqueid":"u1","fingerprint":"abc123def456","peer_ip":"10.0.0.8"}]}}'
 if rows=$(ctl_json_rows "$pin_json" pin) && [[ "$rows" == $'u1\tabc123def456\t10.0.0.8' ]]; then
@@ -439,12 +439,12 @@ if grep -q 'autostart, ufw' <<<"$help_out"; then
 else
   printf '  FAIL help dropped the ufw setup mention\n'; fails=$((fails + 1))
 fi
-if grep -q 'punktfunk-omarchy mode' <<<"$help_out"; then
+if grep -q 'lilynk-omarchy mode' <<<"$help_out"; then
   printf '  ok   help names mode\n'
 else
   printf '  FAIL help dropped mode\n'; fails=$((fails + 1))
 fi
-if grep -qE 'punktfunk-omarchy (pin|unpair|gamestream)[[:space:]]' <<<"$help_out"; then
+if grep -qE 'lilynk-omarchy (pin|unpair|gamestream)[[:space:]]' <<<"$help_out"; then
   printf '  FAIL hidden menu verbs leaked into public help\n'; fails=$((fails + 1))
 else
   printf '  ok   pin, unpair and gamestream stay out of public help\n'

@@ -11,7 +11,7 @@
 #>
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path (Split-Path $PSScriptRoot)        # scripts\windows -> repo root
-$exe  = Join-Path $repo 'target\release\punktfunk-host.exe'
+$exe  = Join-Path $repo 'target\release\lilynk-host.exe'
 $bak  = "$exe.bak"
 $svc  = 'PunktfunkHost'
 
@@ -55,8 +55,8 @@ for ($i=0; $i -lt 30 -and (Svc-Running); $i++) { Start-Sleep 1 }
 if (Test-Path $exe) { Copy-Item $exe $bak -Force; Write-Host "backup : $bak" }
 
 # 3. build (release); build env is inherited from Machine scope (setup-build-env.ps1)
-Write-Host "building: cargo build --release -p punktfunk-host --features $features"
-& cmd.exe /c "call `"$vcvars`" >nul && cargo build --release -p punktfunk-host --features $features"
+Write-Host "building: cargo build --release -p lilynk-host --features $features"
+& cmd.exe /c "call `"$vcvars`" >nul && cargo build --release -p lilynk-host --features $features"
 $built = ($LASTEXITCODE -eq 0)
 
 if (-not $built) {

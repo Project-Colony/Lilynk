@@ -1,6 +1,6 @@
 [package]
-name = "punktfunk-client-android"
-description = "punktfunk Android client — JNI bridge ('nativecore') over punktfunk-core (Rust-heavy client model)"
+name = "lilynk-client-android"
+description = "punktfunk Android client — JNI bridge ('nativecore') over lilynk-core (Rust-heavy client model)"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -9,15 +9,15 @@ authors.workspace = true
 repository.workspace = true
 
 [lib]
-# `libpunktfunk_android.so` — loaded by Kotlin via `System.loadLibrary("punktfunk_android")`.
-name = "punktfunk_android"
+# `liblilynk_android.so` — loaded by Kotlin via `System.loadLibrary("lilynk_android")`.
+name = "lilynk_android"
 crate-type = ["cdylib"]
 
 [dependencies]
 # The whole protocol/transport/FEC/crypto + the embeddable NativeClient connector. `quic` pulls
-# the punktfunk/1 control plane, whose TLS runs on aws-lc-rs (see punktfunk-core/Cargo.toml) —
+# the punktfunk/1 control plane, whose TLS runs on aws-lc-rs (see lilynk-core/Cargo.toml) —
 # aws-lc-sys cross-compiles for all three ABIs with the NDK clang cargo-ndk already exports.
-punktfunk-core = { path = "../../../crates/core/punktfunk-core", features = ["quic"] }
+lilynk-core = { path = "../../../crates/core/lilynk-core", features = ["quic"] }
 # 0.22, to match `rustls-platform-verifier` (via quinn-proto, for Android cert verification),
 # which depends on jni 0.22: any other version here compiles a second jni copy into the one .so.
 #
@@ -28,17 +28,17 @@ punktfunk-core = { path = "../../../crates/core/punktfunk-core", features = ["qu
 # means rewriting the vendor rather than a version edit.
 jni = "0.22"
 log = "0.4"
-# LAN host discovery: `pf_client_core::discovery::try_browse`, the browse the Linux and Windows
+# LAN host discovery: `ly_client_core::discovery::try_browse`, the browse the Linux and Windows
 # clients run, in place of Android's per-OEM `NsdManager`. Shared, not in the Android table below,
 # so the JNI seam and its tests build on the Linux and Windows hosts too. Kotlin keeps only the
 # Wi-Fi `MulticastLock` + permission UX. `async-channel` names the browse's event receiver.
-pf-client-core = { path = "../../../crates/client/pf-client-core", default-features = false, features = [
+ly-client-core = { path = "../../../crates/client/ly-client-core", default-features = false, features = [
     "discovery",
 ] }
 async-channel = "2"
 # The stats overlay's warning lines and the PyroWave quality row read their text from the shared
 # messages.
-pf-l10n = { path = "../../../l10n", features = ["android", "client"] }
+ly-l10n = { path = "../../../l10n", features = ["android", "client"] }
 # Shared, NOT in the Android table below: `session::connect` parses the `ConnectRequest`
 # JSON Kotlin hands `nativeConnect`, and that module compiles on the host too — CI's
 # workspace clippy builds this crate as a host cdylib.
@@ -49,7 +49,7 @@ serde_json = "1"
 # (`session::connect::video_caps`). Add its faster native backend only to that ABI; arm64 keeps
 # its hardware-accelerated AES path and the emulator does not pay for an unused backend.
 [target.'cfg(all(target_os = "android", target_arch = "arm"))'.dependencies]
-punktfunk-core = { path = "../../../crates/core/punktfunk-core", features = ["chacha-aws-lc-rs"] }
+lilynk-core = { path = "../../../crates/core/lilynk-core", features = ["chacha-aws-lc-rs"] }
 
 # Android-only deps. Gated so `cargo build --workspace` on the Linux/macOS dev boxes + CI still
 # compiles this crate (as a host cdylib) — the Android-framework glue (logging, AMediaCodec + AAudio
@@ -62,11 +62,11 @@ punktfunk-core = { path = "../../../crates/core/punktfunk-core", features = ["ch
 # as any hard import of an above-floor symbol does (see the `ndk-sys` note below). Do not enable
 # it while minSdk is 28.
 android_logger = "0.15"
-# Feature bridge, no code here: punktfunk-core logs through `tracing`, but this client only
+# Feature bridge, no code here: lilynk-core logs through `tracing`, but this client only
 # installs `android_logger` (a `log` backend). Core transport warnings (e.g. "UDP socket buffer
 # capped well below target") reach logcat only via tracing's "log" feature, which forwards events
 # as `log` records when no tracing subscriber is set (always, here). The same feature is also
-# enabled by punktfunk-core's own `tracing` dep and the workspace's quinn `log` feature, but this
+# enabled by lilynk-core's own `tracing` dep and the workspace's quinn `log` feature, but this
 # client's logging should not hinge on another crate's feature set, so declare it explicitly.
 tracing = { version = "0.1", default-features = false, features = ["std", "log"] }
 # NDK bindings. "media" = AMediaCodec/ANativeWindow (video); "audio" = AAudio (audio playback).
@@ -99,11 +99,11 @@ libc = "0.2"
 uac-host = { git = "https://github.com/unom-io/usbfs-iso", rev = "cb838399ad63c4c34bf47d8f1a920d9042274831" }
 usbfs-iso = { git = "https://github.com/unom-io/usbfs-iso", rev = "cb838399ad63c4c34bf47d8f1a920d9042274831" }
 
-# The Skia console UI (design/android-skia-console-port.md): the SAME `pf-console-ui` shell the
+# The Skia console UI (design/android-skia-console-port.md): the SAME `ly-console-ui` shell the
 # Linux/Windows session binary shows, drawn here through Skia's GL backend on an EGL surface
 # (`src/console/`). `default-features = false` turns its Vulkan overlay off — this host owns the
-# surface. `pf-client-core` for the portable types the shell speaks (settings, menu events,
-# overlay actions). `pf-client-video` with `pyrowave` and without `desktop`: the shared Vulkan
+# surface. `ly-client-core` for the portable types the shell speaks (settings, menu events,
+# overlay actions). `ly-client-video` with `pyrowave` and without `desktop`: the shared Vulkan
 # wavelet decoder behind `src/pyro/` (design/pyrowave-codec-plan.md) and its colour, queue-lock
 # and SPIR-V modules, no decode ladder. It brings the vendored C++/Vulkan codec into the `.so`.
 #
@@ -115,11 +115,11 @@ usbfs-iso = { git = "https://github.com/unom-io/usbfs-iso", rev = "cb838399ad63c
 # silently builds Skia from source — so an armeabi-v7a build WITHOUT the mirror url is a
 # multi-minute source build, and every ABI's log must show `DOWNLOAD AND INSTALL SUCCEEDED`.
 # (Continues the `cfg(target_os = "android")` table above — TOML allows a table header once.)
-pf-console-ui = { path = "../../../crates/client/pf-console-ui", default-features = false }
-pf-client-core = { path = "../../../crates/client/pf-client-core", default-features = false }
+ly-console-ui = { path = "../../../crates/client/ly-console-ui", default-features = false }
+ly-client-core = { path = "../../../crates/client/ly-client-core", default-features = false }
 # AV1 render_size off each keyframe (`decode/async_loop.rs`): MediaCodec may show the coded rows.
-pf-bitstream = { path = "../../../crates/codec/pf-bitstream" }
-pf-client-video = { path = "../../../crates/client/pf-client-video", default-features = false, features = [
+ly-bitstream = { path = "../../../crates/codec/ly-bitstream" }
+ly-client-video = { path = "../../../crates/client/ly-client-video", default-features = false, features = [
     "pyrowave",
 ] }
 # The PyroWave lane's own Vulkan: device bring-up, swapchain on the `SurfaceView`, and the
@@ -128,13 +128,13 @@ pf-client-video = { path = "../../../crates/client/pf-client-video", default-fea
 # the probe simply answers no and the client never advertises the codec.
 ash = { workspace = true, features = ["loaded"] }
 # `gl` (implies `ganesh`) + `textlayout` = the key `ganesh-gl-jpegd-jpege-pdf-textlayout` (verify
-# `DOWNLOAD AND INSTALL SUCCEEDED` in the build log on every bump — see pf-console-ui/Cargo.toml).
+# `DOWNLOAD AND INSTALL SUCCEEDED` in the build log on every bump — see ly-console-ui/Cargo.toml).
 skia-safe = { version = "0.153", features = ["gl", "textlayout"] }
 anyhow = "1"
 
 [dev-dependencies]
 # `en-XA`, the pseudo-language the tests read the PyroWave row in.
-pf-l10n = { path = "../../../l10n", features = ["pseudo"] }
+ly-l10n = { path = "../../../l10n", features = ["pseudo"] }
 
 [lints]
 workspace = true

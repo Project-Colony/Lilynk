@@ -1,5 +1,5 @@
 {
-  "$comment": "CONSOLE-UI vectors, pinned by pf-console-ui's Rust tests: the Skia console draws these on every platform. Sibling of deeplink-vectors.json, same rules: this file is the contract, and a value absent here is a value no client may assume.",
+  "$comment": "CONSOLE-UI vectors, pinned by ly-console-ui's Rust tests: the Skia console draws these on every platform. Sibling of deeplink-vectors.json, same rules: this file is the contract, and a value absent here is a value no client may assume.",
   "version": 6,
   "shell_tabs": [
     {

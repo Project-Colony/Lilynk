@@ -2,7 +2,7 @@
 //! statically linked MIT dispatcher.
 //!
 //! Empty on targets other than Windows — see build.rs. The safe wrapper lives
-//! with its consumer (`pf-encode`'s `enc/windows/qsv.rs`); this crate is
+//! with its consumer (`ly-encode`'s `enc/windows/qsv.rs`); this crate is
 //! bindings only.
 
 #![allow(non_upper_case_globals)]
@@ -16,7 +16,7 @@
 // crate-wide; the hand-written link-sanity test below still carries its proof by convention.
 #![allow(clippy::undocumented_unsafe_blocks)]
 // Generated code — clippy findings in it (missing safety docs on generated unsafe fns, style
-// nits across 14k lines) are bindgen's shape, not ours; the safe wrapper in pf-encode is the
+// nits across 14k lines) are bindgen's shape, not ours; the safe wrapper in ly-encode is the
 // linted surface.
 #![allow(clippy::all)]
 

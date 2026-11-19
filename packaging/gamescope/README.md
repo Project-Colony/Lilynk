@@ -1,4 +1,4 @@
-# `punktfunk-gamescope` — gamescope with 10-bit HDR PipeWire capture
+# `lilynk-gamescope` — gamescope with 10-bit HDR PipeWire capture
 
 Upstream gamescope's built-in PipeWire node is SDR-only: `build_format_params()` offers `BGRx`
 and `NV12`, and `paint_pipewire()` hardcodes a Gamma-2.2 composite with the SDR screenshot LUT
@@ -15,8 +15,8 @@ The patches here add the missing half, and nothing else. See
 | `0002-pipewire-optionally-composite-the-cursor-into-the-ca.patch` | `--pipewire-composite-cursor` (off by default): paint the pointer into the capture stream, using the same `MouseCursor::paint` call the scanout composite uses | **Yes** — independently useful to any consumer with no cursor of its own |
 | `0003-headless-advertise-the-virtual-display-s-mode-and-re.patch` | Give `CHeadlessConnector` a real `GetModes()` + `GetValidDynamicRefreshRates()` from the resolved `-W`/`-H`/`-r`, report `GAMESCOPE_SCREEN_TYPE_EXTERNAL` so `update_mode_atoms` publishes the list, and add `--custom-refresh-rates` | **Yes** — a headless session that cannot report its own mode is a plain bug |
 | `0004-pipewire-optionally-composite-the-external-overlay-i.patch` | `--pipewire-composite-external-overlay` (off by default): paint the external overlay layer (mangoapp — the fps/stats readout) into the capture stream | **Yes** — same shape as the cursor patch, same argument |
-| `0005-punktfunk-stamp-the-version-banner-with-pfhdrN.patch` | Append `+pfhdr<N>` to the `--version` banner | **No** — ours only, retired when the functional patches above land upstream |
-| `0006-punktfunk-never-destroy-the-Vulkan-device-or-output-.patch` | Give `g_device` and `g_output` storage that is never destroyed, so their destructors cannot call a Vulkan driver glibc has already unloaded at `exit()` | **Yes** — a plain static-destruction-order bug, not punktfunk-specific |
+| `0005-lilynk-stamp-the-version-banner-with-pfhdrN.patch` | Append `+pfhdr<N>` to the `--version` banner | **No** — ours only, retired when the functional patches above land upstream |
+| `0006-lilynk-never-destroy-the-Vulkan-device-or-output-.patch` | Give `g_device` and `g_output` storage that is never destroyed, so their destructors cannot call a Vulkan driver glibc has already unloaded at `exit()` | **Yes** — a plain static-destruction-order bug, not lilynk-specific |
 | `0007-pipewire-never-leave-pw_buffer-user_data-pointing-at.patch` | Associate `pw_buffer->user_data` with its `pipewire_buffer` for every path out of `add_buffer`, clear it in `remove_buffer` (the last point both halves are known), and null-check the consumers — killing the use-after-free that aborted the session on every capture renegotiation | **Yes** — a plain use-after-free in the PipeWire buffer lifecycle |
 | `0008-steamcompmgr-honor-GAMESCOPE_NO_FOCUS-never-a-focus-.patch` | Honor `GAMESCOPE_NO_FOCUS` (set by hhd-ui and MangoHud, consumed by nobody): such windows are skipped by both focus-candidate collectors, so a mapped-but-unpainted overlay app can no longer win focus and turn the composite black. Compositing is untouched — only focus SELECTION is barred | **Yes** — the atom's setters already exist in the wild; some compositor has to keep the promise |
 | `0009-pipewire-destroy-capture-textures-on-the-compositor-.patch` | Move capture-buffer destruction off the PipeWire thread: `remove_buffer`/stale-push queue the corpse (`bury_buffer`), steamcompmgr reaps on every vblank — including while the stream is paused, which is exactly the linger window. Without it, dropping the last `CVulkanTexture` ref on the PW thread races `vulkan_screenshot` on the same device and SIGSEGVs (NVIDIA `insertBarrier`), so a lingered display is dead and reconnect loses the session. Reported + written by luxus (punktfunk-overlay#9) | **Yes** — the race is upstream's `paint_pipewire` vs `destroy_buffer`; our patches only make the paint path heavier |
@@ -48,11 +48,11 @@ The patches here add the missing half, and nothing else. See
 | `0035-pipewire-write-NVIDIA-s-planar-capture-into-a-buffer.patch` | On NVIDIA, a planar capture is an exportable storage buffer, not an image: luma rows, then chroma rows at the same pitch, exported as a two-plane LINEAR dmabuf. The NV12/P010 pass writes it word by word, so every byte sits where the export says. A pre-Turing card still striped `0035`'s LINEAR image for every importer. A driver that cannot export such a buffer keeps `0035`'s image. Also stamps `+pfhdr33` | **Yes** — upstream's planar export has the same fault |
 | `0036-pipewire-give-a-streaming-host-a-private-capture-node.patch` | Publish a second capture node, `gamescope-capture`, that the `gamescope_pipewire` protocol never names. It is reliable and always shows the whole session. The announced node goes back to upstream's recycling. Steam's Game Recording links to that node when a game starts and sets its focus appid; PipeWire 1.6 hands a reliable frame to one link only, so a host sharing the node froze. Also stamps `+pfhdr34` | No — upstream has one node and one reader |
 | `0037-pipewire-paint-the-focus-window-s-popups-and-subsurf.patch` | Paint the focus window's xdg popups and subsurfaces into the capture, at the capture's scale. `paint_window` draws them only for the base plane, which the capture does not paint, so a native Wayland app streamed without its menus, dropdowns and tooltips. The repaint test follows the tree: each popup and subsurface, its buffer and its position, so one that opens or closes over a still window pushes a frame. `vulkan_screenshot` waits on their acquire points | **Yes** — upstream's own capture loses them the same way |
-| `0038-punktfunk-stamp-pfhdr35-on-the-3.17.0-base.patch` | Stamp `+pfhdr35`, so a banner tells this base from 3.16.31 | **No** — ours only, as `0005` |
+| `0038-lilynk-stamp-pfhdr35-on-the-3.17.0-base.patch` | Stamp `+pfhdr35`, so a banner tells this base from 3.16.31 | **No** — ours only, as `0005` |
 | `0039-layer-report-the-window-as-an-X11-surface-s-extent-r.patch` | The WSI layer reports an X11 window's size as its surface's minimum, maximum and current extent, as an X11 driver does. It replaced only the current extent and left the Wayland surface's 1x1 minimum. Proton's fullscreen hack sizes its swapchain from the minimum and turns on for every DPI-scaled window, so a game in a prefix above 96 DPI drew into 1x1 and rebuilt its swapchain every frame | **Yes** — upstream's layer gives Proton the same 1x1 |
-| `0040-punktfunk-stamp-pfhdr36.patch` | Stamp `+pfhdr36`, so a banner shows whether the box has `0039` | **No** — ours only, as `0005` |
+| `0040-lilynk-stamp-pfhdr36.patch` | Stamp `+pfhdr36`, so a banner shows whether the box has `0039` | **No** — ours only, as `0005` |
 | `0041-steamcompmgr-run-a-refresh-that-has-a-fraction-to-th.patch` | `-r` reads a decimal, so 59.94 reaches the vblank timer as 59940 mHz. Under adaptive sync the frame limiter takes the refresh's own cycle for a target that divides it, where it built a whole-hertz cycle: 59.94 fps under a 59.94 Hz display | **Yes** — a client panel at 59.94 Hz drops a frame every 17 s against a 60 Hz session |
-| `0042-punktfunk-stamp-pfhdr37.patch` | Stamp `+pfhdr37`: an older gamescope refuses `-r 59.94` and does not start, so the host passes a fraction only from this level | **No** — ours only, as `0005` |
+| `0042-lilynk-stamp-pfhdr37.patch` | Stamp `+pfhdr37`: an older gamescope refuses `-r 59.94` and does not start, so the host passes a fraction only from this level | **No** — ours only, as `0005` |
 
 ### Why the headless patch matters
 
@@ -84,7 +84,7 @@ PipeWire stream, and the renegotiation is exactly what trips upstream's dangling
 `pw_buffer->user_data`. The signature to recognise:
 
 ```
-punktfunk-gamescope: ../src/pipewire.cpp:88: void destroy_buffer(pipewire_buffer*):
+lilynk-gamescope: ../src/pipewire.cpp:88: void destroy_buffer(pipewire_buffer*):
   Assertion `false' failed.
 #5  destroy_buffer(pipewire_buffer*).cold
 ```
@@ -123,7 +123,7 @@ handshake time (irrevocable — a PQ stream handed to an 8-bit encoder is a deli
 and whether the host must composite the cursor before the encoder is even opened. Both answers
 must therefore be static properties of the resolved binary, not optimistic negotiations. The host
 runs `<gamescope> --version` once per boot and reads the revision — see `gamescope_patch_level()`
-in `crates/host/pf-vdisplay/src/vdisplay/linux/gamescope/discovery.rs`.
+in `crates/host/ly-vdisplay/src/vdisplay/linux/gamescope/discovery.rs`.
 
 The number is a **monotonic patch-set revision**, so one probe answers every capability:
 
@@ -204,10 +204,10 @@ Resolution order, applied identically by the bare spawn, the `GAMESCOPE_BIN` wra
 (gamescope-session-plus) and the SteamOS PATH shim:
 
 1. `PUNKTFUNK_GAMESCOPE_BIN` — absolute path override
-2. `punktfunk-gamescope` on `PATH`
+2. `lilynk-gamescope` on `PATH`
 3. `gamescope`
 
-So installing this build under the name `punktfunk-gamescope` is enough; nothing replaces the
+So installing this build under the name `lilynk-gamescope` is enough; nothing replaces the
 distro's `gamescope`.
 
 ## Building
@@ -226,7 +226,7 @@ own. The WSI layer builds in a second pass that never bundles: it loads into eve
 game's own libwayland-client, and the script fails if the layer does not link the system one.
 The layer also needs Vulkan-Headers ≥ 1.4.335; below that (Debian 13 again) it compiles against a
 pinned copy of the headers, and links nothing from it.
-Every library compiled in ships its notice under `share/doc/punktfunk-gamescope/`. Bump the wraps
+Every library compiled in ships its notice under `share/doc/lilynk-gamescope/`. Bump the wraps
 with the pin; each names its release tag beside the commit.
 
 Build into a staging directory on Linux. The system gamescope and file capabilities stay untouched:
@@ -234,9 +234,9 @@ Build into a staging directory on Linux. The system gamescope and file capabilit
 ```sh
 PF=/absolute/path/to/punktfunk
 STAGE="$PWD/gamescope-stage"
-bash "$PF/packaging/gamescope/build-punktfunk-gamescope.sh" \
+bash "$PF/packaging/gamescope/build-lilynk-gamescope.sh" \
     --destdir "$STAGE" --prefix /usr --jobs "$(nproc)"
-"$STAGE/usr/bin/punktfunk-gamescope" --version
+"$STAGE/usr/bin/lilynk-gamescope" --version
 ```
 
 The script requires the exact current capability marker before staging the binary. To retain
@@ -272,7 +272,7 @@ one surfaces, meson names it — install and re-run with `--srcdir` so the clone
 
 ⚠️ `libstdc++-static` is a **punktfunk** requirement, not gamescope's, so no builddep will ever pull
 it: the build script links the C++ runtime statically on purpose (see the long comment beside
-`LDFLAGS` in `build-punktfunk-gamescope.sh`). Without it meson fails at configure with a message
+`LDFLAGS` in `build-lilynk-gamescope.sh`). Without it meson fails at configure with a message
 that names neither the flag nor the package (2026-08-10, Fedora 44):
 
 ```
@@ -287,34 +287,34 @@ so build with `--srcdir` when diagnosing, or the evidence is gone before you can
 own binary. Mirror it if you install ours system-wide:
 
 ```sh
-setcap 'CAP_SYS_NICE=eip' /usr/bin/punktfunk-gamescope
+setcap 'CAP_SYS_NICE=eip' /usr/bin/lilynk-gamescope
 ```
 
 ## How each channel ships it
 
-Four packaging paths, one build recipe — `build-punktfunk-gamescope.sh` — because the two things
+Four packaging paths, one build recipe — `build-lilynk-gamescope.sh` — because the two things
 that are easy to get wrong (which patches get applied, and whether wlroots is linked statically)
 must not be decided twice.
 
 | Channel | Built by | Notes |
 |---|---|---|
 | Bazzite / Fedora Atomic | `.gitea/workflows/rpm.yml` → `build-sysext.sh --gamescope` | Inside the matching Fedora container, per major — the binary is soname-coupled to its base exactly like the RPM |
-| Arch / SteamOS | `.gitea/workflows/arch.yml` → `makepkg` on `./PKGBUILD` | Its own pkgbase in the same pacman repo; `punktfunk-host` depends on it |
+| Arch / SteamOS | `.gitea/workflows/arch.yml` → `makepkg` on `./PKGBUILD` | Its own pkgbase in the same pacman repo; `lilynk-host` depends on it |
 | NixOS | `packaging/nix/gamescope.nix` (an `overrideAttrs` on nixpkgs' gamescope) | The one path that does NOT call the script — nixpkgs already solves the submodules, and a nix closure names every library it links |
 | Anything else | the script, by hand | See *Building* above |
 
 Both CI builds are **cached on `packaging/gamescope/**`**: this tree depends on nothing else in the
 repo, so a normal push restores a binary instead of spending ten minutes on someone else's C++. A
 failed build is never cached, so the next run retries. The Fedora build warns and lets the rest
-publish. The Arch build is required: `punktfunk-host` depends on it, so a failure stops the publish.
+publish. The Arch build is required: `lilynk-host` depends on it, so a failure stops the publish.
 
 Note what is NOT in that table: the `.deb`. Debian/Ubuntu boxes build it by hand for now.
 
 ## Verifying the patch on a box (P0 exit)
 
 ```sh
-punktfunk-gamescope --version                    # version token ends in +pfhdr10
-punktfunk-gamescope --backend headless -W 1920 -H 1080 -r 60 \
+lilynk-gamescope --version                    # version token ends in +pfhdr10
+lilynk-gamescope --backend headless -W 1920 -H 1080 -r 60 \
     --hdr-enabled --hdr-debug-force-support --pipewire-composite-cursor -- vkcube &
 pw-dump | grep -A40 '"gamescope"'                # node offers xRGB_210LE / xBGR_210LE
 ```
@@ -334,7 +334,7 @@ staged one goes on `PATH`.
 
 ```sh
 PATH="$STAGE/usr/lib/punktfunk/gamescope:$PATH" \
-python3 - "$STAGE/usr/bin/punktfunk-gamescope" <<'PY'
+python3 - "$STAGE/usr/bin/lilynk-gamescope" <<'PY'
 import os
 import subprocess
 import sys

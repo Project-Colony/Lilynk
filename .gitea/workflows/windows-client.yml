@@ -4,8 +4,8 @@
 # toolchain" step, a fast no-op once present, so any runner with that label works).
 #
 # Covers BOTH client binaries: the WinUI 3 shell (windows-reactor + WASAPI + SDL3) and the
-# punktfunk-session Vulkan client (pf-presenter/pf-client-core/pf-console-ui — every stream runs in
-# it, spawned by the shell), plus punktfunk-cli, whose `punktfunk.exe` alias the MSIX manifest
+# lilynk-session Vulkan client (ly-presenter/ly-client-core/ly-console-ui — every stream runs in
+# it, spawned by the shell), plus lilynk-cli, whose `lilynk.exe` alias the MSIX manifest
 # references.
 #
 # ⚠ ONE FILE, ONE RELEASE BUILD PER ARCH. Build and clippy share it. Tests build under the
@@ -29,7 +29,7 @@
 # flag can go once the console is wanted on ARM64.
 #
 # NO FFmpeg here (design/client-native-decode.md §6): the client decodes with
-# pf-vkdecode / pf-dxvadec / openh264+rav1d and links no libav* at all, so this workflow sets
+# ly-vkdecode / ly-dxvadec / openh264+rav1d and links no libav* at all, so this workflow sets
 # no FFMPEG_DIR and prepends nothing to PATH. Nor does the host, so nothing provisions an
 # FFmpeg tree.
 #
@@ -53,10 +53,10 @@
 #
 # Publishes THREE artifacts per arch (x64 + ARM64) to Gitea's generic package registry, all packed
 # from one assembled layout:
-#   punktfunk-client-setup_<arch>.exe   — per-user installer exe, the DEFAULT download
+#   lilynk-client-setup_<arch>.exe   — per-user installer exe, the DEFAULT download
 #                                         (stable path Steam can launch: overlay + Big Picture work)
-#   punktfunk-client-windows_<arch>-portable.zip — the same file set, no installer
-#   punktfunk-client-windows_<arch>.msix — kept for Microsoft Store compatibility
+#   lilynk-client-windows_<arch>-portable.zip — the same file set, no installer
+#   lilynk-client-windows_<arch>.msix — kept for Microsoft Store compatibility
 #
 # Registry (public, unom org): https://git.unom.io/unom/-/packages  (generic group)
 # Packaging internals: clients/windows/packaging/README.md.
@@ -66,7 +66,7 @@
 #                Published to the generic registry + the stable `latest/` alias + attached to the
 #                unified Gitea Release alongside every other platform's artifact.
 #   main push / dispatch -> <major>.<next-minor>.<run_number>.0  (canary; base is one minor ahead
-#                of the latest stable tag via scripts/ci/pf-version.ps1, run number climbs).
+#                of the latest stable tag via scripts/ci/ly-version.ps1, run number climbs).
 # Both arches share the version; artifacts are arch-suffixed (..._x64.msix / ..._arm64.msix).
 #
 # Signing (clients/windows/packaging/pack-msix.ps1), first match wins:
@@ -102,22 +102,22 @@ on:
       - 'clients/windows/**'
       - 'clients/session/**'
       - 'clients/cli/**'
-      - 'crates/client/pf-client-core/**'
-      - 'crates/client/pf-client-video/**'
-      - 'crates/client/pf-console-ui/**'
-      - 'crates/client/pf-presenter/**'
-      - 'crates/codec/pf-bitstream/**'
-      - 'crates/codec/pf-dxvadec/**'
-      - 'crates/codec/pf-vkdecode/**'
+      - 'crates/client/ly-client-core/**'
+      - 'crates/client/ly-client-video/**'
+      - 'crates/client/ly-console-ui/**'
+      - 'crates/client/ly-presenter/**'
+      - 'crates/codec/ly-bitstream/**'
+      - 'crates/codec/ly-dxvadec/**'
+      - 'crates/codec/ly-vkdecode/**'
       - 'crates/codec/pyrowave-sys/**'
-      - 'crates/core/pf-fluent/**'
-      - 'crates/core/pf-update-check/**'
-      - 'crates/core/punktfunk-core/**'
+      - 'crates/core/ly-fluent/**'
+      - 'crates/core/ly-update-check/**'
+      - 'crates/core/lilynk-core/**'
       - 'l10n/**'
       - 'Cargo.lock'
       - 'Cargo.toml'
-      - 'scripts/ci/pf-version.ps1'
-      - 'scripts/ci/pf-version.vectors'
+      - 'scripts/ci/ly-version.ps1'
+      - 'scripts/ci/ly-version.vectors'
       - '.gitea/workflows/windows-client.yml'
     tags: ['v*']
   pull_request:
@@ -125,22 +125,22 @@ on:
       - 'clients/windows/**'
       - 'clients/session/**'
       - 'clients/cli/**'
-      - 'crates/client/pf-client-core/**'
-      - 'crates/client/pf-client-video/**'
-      - 'crates/client/pf-console-ui/**'
-      - 'crates/client/pf-presenter/**'
-      - 'crates/codec/pf-bitstream/**'
-      - 'crates/codec/pf-dxvadec/**'
-      - 'crates/codec/pf-vkdecode/**'
+      - 'crates/client/ly-client-core/**'
+      - 'crates/client/ly-client-video/**'
+      - 'crates/client/ly-console-ui/**'
+      - 'crates/client/ly-presenter/**'
+      - 'crates/codec/ly-bitstream/**'
+      - 'crates/codec/ly-dxvadec/**'
+      - 'crates/codec/ly-vkdecode/**'
       - 'crates/codec/pyrowave-sys/**'
-      - 'crates/core/pf-fluent/**'
-      - 'crates/core/pf-update-check/**'
-      - 'crates/core/punktfunk-core/**'
+      - 'crates/core/ly-fluent/**'
+      - 'crates/core/ly-update-check/**'
+      - 'crates/core/lilynk-core/**'
       - 'l10n/**'
       - 'Cargo.lock'
       - 'Cargo.toml'
-      - 'scripts/ci/pf-version.ps1'
-      - 'scripts/ci/pf-version.vectors'
+      - 'scripts/ci/ly-version.ps1'
+      - 'scripts/ci/ly-version.vectors'
       - '.gitea/workflows/windows-client.yml'
   workflow_dispatch:
 
@@ -155,7 +155,7 @@ on:
 env:
   REGISTRY: git.unom.io
   OWNER: unom
-  PKG: punktfunk-client-windows
+  PKG: lilynk-client-windows
   RUSTC_WRAPPER: sccache
   SCCACHE_BUCKET: unom-ci-sccache
   SCCACHE_ENDPOINT: https://storage.unom.io
@@ -234,10 +234,10 @@ jobs:
         shell: pwsh
         run: ./scripts/ci/ensure-windows-toolchain.ps1
 
-      # The version rule's pwsh twin must agree with pf-version.sh (ci.yml checks that side).
-      - name: pf-version vectors
+      # The version rule's pwsh twin must agree with ly-version.sh (ci.yml checks that side).
+      - name: ly-version vectors
         shell: pwsh
-        run: ./scripts/ci/pf-version.ps1 -SelfTest
+        run: ./scripts/ci/ly-version.ps1 -SelfTest
 
       - name: Configure + version
         shell: pwsh
@@ -249,7 +249,7 @@ jobs:
           rustup target add ${{ matrix.target }}
           rustc --version
           cargo --version
-          $pf = & "$env:GITHUB_WORKSPACE/scripts/ci/pf-version.ps1"   # single source of truth: base is one minor ahead of the latest stable tag
+          $pf = & "$env:GITHUB_WORKSPACE/scripts/ci/ly-version.ps1"   # single source of truth: base is one minor ahead of the latest stable tag
           $parts = if ($env:GITHUB_REF -like 'refs/tags/v*') {
             # MSIX needs a purely-numeric 4-part version: drop any -rc/+meta pre-release suffix.
             (($env:GITHUB_REF_NAME -replace '^v', '') -replace '[-+].*$', '').Split('.')
@@ -296,24 +296,24 @@ jobs:
             Write-Warning "dropped a failed compiler probe cached in $info"
           }
 
-      # All three client packages, ONCE, in release. The shell spawns punktfunk-session.exe (a
-      # package sibling) for every stream, and punktfunk-cli builds the `punktfunk.exe` the manifest
+      # All three client packages, ONCE, in release. The shell spawns lilynk-session.exe (a
+      # package sibling) for every stream, and lilynk-cli builds the `lilynk.exe` the manifest
       # aliases and pack-msix.ps1 requires. --no-default-features on ARM64 is a no-op for the shell.
       #
       # Release, not debug, for the lint legs below too; tests build under `ci-test` (see the header).
       - name: Build (release)
         shell: pwsh
-        run: cargo build --release --locked -p punktfunk-client-windows -p punktfunk-client-session -p punktfunk-cli ${{ matrix.session_flags }} --target ${{ matrix.target }}
+        run: cargo build --release --locked -p lilynk-client-windows -p lilynk-client-session -p lilynk-cli ${{ matrix.session_flags }} --target ${{ matrix.target }}
 
       - name: Clippy (-D warnings)
         shell: pwsh
         run: |
           # `cargo clippy -p X` BUILDS a dependency but only LINTS the packages it is given. Of
-          # the `paths:` crates above, punktfunk-core, pf-fluent and pf-l10n are not named here.
+          # the `paths:` crates above, lilynk-core, ly-fluent and ly-l10n are not named here.
           # The arm64 build has no Skia console and no PyroWave, so those two are x64 only.
-          $pkgs = @('-p','punktfunk-client-windows','-p','punktfunk-client-session','-p','punktfunk-cli','-p','pf-client-core','-p','pf-client-video','-p','pf-presenter','-p','pf-bitstream','-p','pf-vkdecode','-p','pf-dxvadec','-p','pf-update-check')
+          $pkgs = @('-p','lilynk-client-windows','-p','lilynk-client-session','-p','lilynk-cli','-p','ly-client-core','-p','ly-client-video','-p','ly-presenter','-p','ly-bitstream','-p','ly-vkdecode','-p','ly-dxvadec','-p','ly-update-check')
           $sf = @()
-          if ('${{ matrix.target }}' -eq 'aarch64-pc-windows-msvc') { $sf = @('--no-default-features') } else { $pkgs += @('-p','pf-console-ui','-p','pyrowave-sys') }
+          if ('${{ matrix.target }}' -eq 'aarch64-pc-windows-msvc') { $sf = @('--no-default-features') } else { $pkgs += @('-p','ly-console-ui','-p','pyrowave-sys') }
           cargo clippy --release --locked @pkgs --all-targets @sf --target ${{ matrix.target }} -- -D warnings
           if ($LASTEXITCODE) { throw "clippy" }
 
@@ -321,7 +321,7 @@ jobs:
         if: matrix.arch == 'x64'
         shell: pwsh
         run: |
-          cargo fmt -p punktfunk-client-windows -p punktfunk-client-session -p punktfunk-cli -p pf-client-core -p pf-client-video -p pf-presenter -p pf-console-ui -p pf-dxvadec -- --check
+          cargo fmt -p lilynk-client-windows -p lilynk-client-session -p lilynk-cli -p ly-client-core -p ly-client-video -p ly-presenter -p ly-console-ui -p ly-dxvadec -- --check
           if ($LASTEXITCODE) { throw "rustfmt" }
 
       - name: Test
@@ -329,7 +329,7 @@ jobs:
         if: matrix.arch == 'x64'
         shell: pwsh
         run: |
-          cargo test --profile ci-test --locked -p punktfunk-client-windows -p punktfunk-client-session -p punktfunk-cli -p pf-client-core -p pf-client-video -p pf-presenter -p pf-console-ui -p pf-dxvadec --target ${{ matrix.target }}
+          cargo test --profile ci-test --locked -p lilynk-client-windows -p lilynk-client-session -p lilynk-cli -p ly-client-core -p ly-client-video -p ly-presenter -p ly-console-ui -p ly-dxvadec --target ${{ matrix.target }}
           if ($LASTEXITCODE) { throw "tests" }
 
       # d3d11va without desktop. The release build above enables desktop, so it never
@@ -340,7 +340,7 @@ jobs:
         if: matrix.arch == 'x64'
         shell: pwsh
         run: |
-          cargo clippy --release --locked -p pf-client-core -p pf-client-video --no-default-features --features d3d11va --target ${{ matrix.target }} -- -D warnings
+          cargo clippy --release --locked -p ly-client-core -p ly-client-video --no-default-features --features d3d11va --target ${{ matrix.target }} -- -D warnings
           if ($LASTEXITCODE) { throw "d3d11va clippy" }
 
       - name: sccache stats (visibility only)
@@ -361,7 +361,7 @@ jobs:
           AZURE_CODESIGNING_ENDPOINT: https://neu.codesigning.azure.net/
           AZURE_CODESIGNING_ACCOUNT: ${{ vars.AZURE_CODESIGNING_ACCOUNT }}
           AZURE_CODESIGNING_PROFILE: ${{ vars.AZURE_CODESIGNING_PROFILE }}
-          # Service principal 'punktfunk-ci-signing', holding ONLY the Artifact Signing Certificate
+          # Service principal 'lilynk-ci-signing', holding ONLY the Artifact Signing Certificate
           # Profile Signer role, scoped to that profile — it can sign and nothing else.
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
@@ -392,7 +392,7 @@ jobs:
           MSIX_CERT_PFX_B64: ${{ secrets.MSIX_CERT_PFX_B64 }}
           MSIX_CERT_PASSWORD: ${{ secrets.MSIX_CERT_PASSWORD }}
         run: |
-          # The engine exe (punktfunk-setup-client + payload): same name, signing and silent
+          # The engine exe (lilynk-setup-client + payload): same name, signing and silent
           # flags as the Inno installer it replaced, and the same per-user ARP key.
           & clients/windows/packaging/pack-client-installer.ps1 `
             -Version $env:MSIX_VERSION -Arch ${{ matrix.arch }} `
@@ -415,7 +415,7 @@ jobs:
               -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/SP-', "/LOG=$log", '--dry-run'
             if ($p.ExitCode -ne 0) { throw "silent dry-run exited $($p.ExitCode)" }
             $text = Get-Content $log -Raw
-            foreach ($line in @('client installer', 'would unpack the payload', 'Punktfunk.lnk', 'Done. Next:')) {
+            foreach ($line in @('client installer', 'would unpack the payload', 'Lilynk.lnk', 'Done. Next:')) {
               if (-not $text.Contains($line)) { throw "smoke transcript lacks: $line" }
             }
             Get-Content $log
@@ -439,7 +439,7 @@ jobs:
           $aliasNames = @{ "$($env:MSIX_PATH)" = "$($env:PKG)_${{ matrix.arch }}.msix" }
           if ($env:MSIX_CER_PATH) { $aliasNames[$env:MSIX_CER_PATH] = "$($env:PKG)_${{ matrix.arch }}.cer" }
           # The installer + portable zip (the default download; docs point at these alias URLs).
-          if ($env:CLIENT_SETUP_PATH) { $aliasNames[$env:CLIENT_SETUP_PATH] = "punktfunk-client-setup_${{ matrix.arch }}.exe" }
+          if ($env:CLIENT_SETUP_PATH) { $aliasNames[$env:CLIENT_SETUP_PATH] = "lilynk-client-setup_${{ matrix.arch }}.exe" }
           if ($env:CLIENT_ZIP_PATH) { $aliasNames[$env:CLIENT_ZIP_PATH] = "$($env:PKG)_${{ matrix.arch }}-portable.zip" }
           $files = @($env:MSIX_PATH, $env:MSIX_CER_PATH, $env:CLIENT_SETUP_PATH, $env:CLIENT_ZIP_PATH) | Where-Object { $_ -and (Test-Path $_) }
           if (-not $files) { throw "pack produced no artifacts to publish" }

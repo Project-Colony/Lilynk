@@ -17,14 +17,14 @@ use crate::audio_policy::{
     Sharing, Supervisor, XrunGrowth, REOPEN_ATTEMPTS,
 };
 use crate::sys::sysprop;
+use lilynk_core::audio::plane::{PlaneDecoder, PlaneFormat};
+use lilynk_core::audio::AudioPlayout;
+use lilynk_core::client::{AudioPacket, NativeClient};
+use lilynk_core::error::PunktfunkError;
 use ndk::audio::{
     AudioCallbackResult, AudioContentType, AudioDirection, AudioFormat, AudioPerformanceMode,
     AudioSharingMode, AudioStream, AudioStreamBuilder, AudioUsage,
 };
-use punktfunk_core::audio::plane::{PlaneDecoder, PlaneFormat};
-use punktfunk_core::audio::AudioPlayout;
-use punktfunk_core::client::{AudioPacket, NativeClient};
-use punktfunk_core::error::PunktfunkError;
 use std::collections::VecDeque;
 use std::ffi::c_void;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
@@ -119,7 +119,7 @@ const DEAD_STREAM_WARN_MS: u64 = 1_000;
 /// audio analogue of the video `fed`/`rendered` counters (we can't "screenshot" sound).
 ///
 /// The ring's DEPTH is not here: the A/V sync loop needs the same number in the same units, so it
-/// is published once through [`punktfunk_core::audio::AudioSyncCell`] and read from there by the
+/// is published once through [`lilynk_core::audio::AudioSyncCell`] and read from there by the
 /// log line below. One publisher, one reading — a second copy is a second thing to go stale.
 #[derive(Default)]
 struct Counters {
@@ -147,8 +147,8 @@ struct Counters {
 /// Two levers because Android has neither of the other clients' launch surfaces. `PUNKTFUNK_NO_AV_SYNC`
 /// keeps the contract the desktop clients document (and works when the client is driven from a
 /// shell), but an app started from the launcher inherits no such environment, so the one a field
-/// tester can actually reach is the sysprop — `adb shell setprop debug.punktfunk.no_av_sync 1`,
-/// no rebuild, exactly like `debug.punktfunk.presenter`. A loop that steers PLAYBACK has to be
+/// tester can actually reach is the sysprop — `adb shell setprop debug.lilynk.no_av_sync 1`,
+/// no rebuild, exactly like `debug.lilynk.presenter`. A loop that steers PLAYBACK has to be
 /// bisectable on the device that reports the regression, not only on the bench.
 fn av_sync_enabled() -> bool {
     if matches!(
@@ -158,7 +158,7 @@ fn av_sync_enabled() -> bool {
         return false;
     }
     !matches!(
-        sysprop(c"debug.punktfunk.no_av_sync").as_deref(),
+        sysprop(c"debug.lilynk.no_av_sync").as_deref(),
         Some("1") | Some("true")
     )
 }
@@ -199,7 +199,7 @@ impl AudioPlayback {
         let shutdown = Arc::new(AtomicBool::new(false));
         let sd = shutdown.clone();
         let join = std::thread::Builder::new()
-            .name("pf-audio".into())
+            .name("ly-audio".into())
             .spawn(move || supervise(client, game_audio, is_tv, fmt, &sd))
             .ok()?;
         Some(AudioPlayback {
@@ -249,7 +249,7 @@ fn with_layout(builder: AudioStreamBuilder, channels: u8) -> AudioStreamBuilder 
         unsafe {
             set_mask(
                 builder.as_ptr().cast(),
-                punktfunk_core::audio::wasapi_channel_mask(channels),
+                lilynk_core::audio::wasapi_channel_mask(channels),
             )
         };
     }
@@ -269,7 +269,7 @@ fn with_layout(builder: AudioStreamBuilder, channels: u8) -> AudioStreamBuilder 
 /// a 5.1 mask can route to another output than a bare count, at another rate.
 pub fn output_rate_is_openable(rate_hz: u32, channels: u8) -> bool {
     let built = AudioStreamBuilder::new().map(|b| {
-        let channels = punktfunk_core::audio::normalize_channels(channels);
+        let channels = lilynk_core::audio::normalize_channels(channels);
         with_layout(b.direction(AudioDirection::Output), channels)
             // The same f32 device format playback uses — see `try_open`. The wire depth is a wire
             // fact and never reaches AAudio, so probing at 24-bit would be probing the wrong thing.
@@ -322,7 +322,7 @@ struct OpenCtx<'a> {
     hard_cap_max: usize,
     game_audio: bool,
     counters: &'a Arc<Counters>,
-    sync: &'a Arc<punktfunk_core::audio::AudioSyncCell>,
+    sync: &'a Arc<lilynk_core::audio::AudioSyncCell>,
     /// Set by the AAudio error callback or a failed track write when the device goes — see
     /// [`supervise`].
     disconnected: &'a Arc<AtomicBool>,
@@ -546,23 +546,23 @@ fn supervise_format(
     is_tv: bool,
     fmt: PlaneFormat,
     shutdown: &AtomicBool,
-    first: Option<punktfunk_core::client::AudioPacket>,
-) -> Option<punktfunk_core::client::AudioPacket> {
+    first: Option<lilynk_core::client::AudioPacket>,
+) -> Option<lilynk_core::client::AudioPacket> {
     // A format with a first packet is one the host switched to.
     let mid_session = first.is_some();
-    let mut carry = first.map(|pkt| punktfunk_core::client::AudioPacket {
+    let mut carry = first.map(|pkt| lilynk_core::client::AudioPacket {
         new_format: None,
         ..pkt
     });
     let playout = AudioPlayout {
-        tuning: punktfunk_core::audio::JitterTuning::AAUDIO,
+        tuning: lilynk_core::audio::JitterTuning::AAUDIO,
         format: fmt,
     };
     let counters = Arc::new(Counters::default());
     // The A/V sync hand-off: the realtime callback owns the ring (so it publishes the depth and
     // consumes the target), the decode thread owns the timestamps (so it computes the target).
     // Atomics (`AudioSyncCell`), because the callback must not block on the thread that decodes.
-    let sync: Arc<punktfunk_core::audio::AudioSyncCell> = Arc::default();
+    let sync: Arc<lilynk_core::audio::AudioSyncCell> = Arc::default();
     // API 29–31 open surround as channel indices with no mask to fix it, so an `AudioTrack`
     // plays it. API 28 still derives the speakers from the count.
     let no_mask =
@@ -578,8 +578,8 @@ fn supervise_format(
         is_tv || is_tv_device(),
         fmt.rate_hz,
         track,
-        sysprop(c"debug.punktfunk.audio_sharing").as_deref(),
-        sysprop(c"debug.punktfunk.audio_perf").as_deref(),
+        sysprop(c"debug.lilynk.audio_sharing").as_deref(),
+        sysprop(c"debug.lilynk.audio_perf").as_deref(),
     );
     // The one line that says what this session actually resolved — the `Welcome`'s answer, not the
     // request. A report of "hi-res is on but it sounds the same" is triaged from here: `codec=0`
@@ -593,9 +593,9 @@ fn supervise_format(
         fmt.frame_us,
     );
     // An escape hatch for the reopen itself: if reopening fights a device (a HAL that disconnects
-    // in a loop), `debug.punktfunk.audio_reopen=0` pins give-up-on-disconnect without a rebuild.
+    // in a loop), `debug.lilynk.audio_reopen=0` pins give-up-on-disconnect without a rebuild.
     let reopen_allowed = !matches!(
-        sysprop(c"debug.punktfunk.audio_reopen").as_deref(),
+        sysprop(c"debug.lilynk.audio_reopen").as_deref(),
         Some("0") | Some("false")
     );
 
@@ -661,7 +661,7 @@ fn supervise_format(
                 nap(shutdown, REOPEN_SETTLE_MS);
             }
             Next::Stop => {
-                log::warn!("audio: device disconnected — not reopening (shutting down, or pinned by debug.punktfunk.audio_reopen)");
+                log::warn!("audio: device disconnected — not reopening (shutting down, or pinned by debug.lilynk.audio_reopen)");
                 break;
             }
             Next::End => break,
@@ -719,12 +719,12 @@ pub(crate) fn nap(shutdown: &AtomicBool, total_ms: u64) {
 /// from a single high-priority thread, and the decode thread only touches `tx`/`free_rx`.
 struct Render {
     counters: Arc<Counters>,
-    sync: Arc<punktfunk_core::audio::AudioSyncCell>,
+    sync: Arc<lilynk_core::audio::AudioSyncCell>,
     rx: Receiver<Vec<f32>>,
     free_tx: SyncSender<Vec<f32>>,
     channels: usize,
     ring: VecDeque<f32>,
-    policy: punktfunk_core::audio::JitterPolicy,
+    policy: lilynk_core::audio::JitterPolicy,
     xrun: XrunGrowth,
 }
 
@@ -811,14 +811,10 @@ impl Render {
         // reserve: the policy only inserts below its target.
         let step = self.policy.step(self.ring.len(), out.len());
         if step.drop_front > 0 {
-            punktfunk_core::audio::crossfade_drop(&mut self.ring, step.drop_front, step.crossfade);
+            lilynk_core::audio::crossfade_drop(&mut self.ring, step.drop_front, step.crossfade);
         }
         if step.insert_front > 0 {
-            punktfunk_core::audio::crossfade_insert(
-                &mut self.ring,
-                step.insert_front,
-                step.crossfade,
-            );
+            lilynk_core::audio::crossfade_insert(&mut self.ring, step.insert_front, step.crossfade);
             self.counters.inserts.fetch_add(1, Ordering::Relaxed);
         }
         let mut ran_short = false;
@@ -869,7 +865,7 @@ fn log_no_configuration(fmt: PlaneFormat) {
         "audio: no AAudio configuration on the ladder could be opened and started at {} Hz / {} ch — audio disabled for this session (video unaffected){}",
         fmt.rate_hz,
         fmt.channels,
-        if fmt.rate_hz == punktfunk_core::audio::SAMPLE_RATE_HZ {
+        if fmt.rate_hz == lilynk_core::audio::SAMPLE_RATE_HZ {
             ""
         } else {
             "; this device would not give us the rate the host resolved — turn hi-res audio off in Settings to run this session at 48 kHz"
@@ -992,8 +988,8 @@ fn decode_loop(
     disconnected: &AtomicBool,
     counters: &Counters,
     playout: AudioPlayout,
-    sync: &punktfunk_core::audio::AudioSyncCell,
-    carry: &mut Option<punktfunk_core::client::AudioPacket>,
+    sync: &lilynk_core::audio::AudioSyncCell,
+    carry: &mut Option<lilynk_core::client::AudioPacket>,
 ) -> DecodeExit {
     let fmt = playout.format;
     let mut plane = match Plane::new(client, live, counters, playout, sync) {
@@ -1038,7 +1034,7 @@ struct Plane<'a> {
     live: &'a LiveStream,
     counters: &'a Counters,
     fmt: PlaneFormat,
-    sync: &'a punktfunk_core::audio::AudioSyncCell,
+    sync: &'a lilynk_core::audio::AudioSyncCell,
     dec: PlaneDecoder,
     pcm: Vec<f32>,
     channels: usize,
@@ -1047,11 +1043,11 @@ struct Plane<'a> {
     frame_samples: usize,
     /// Loudest |sample| since the last log — tells a tone from silence.
     window_peak: f32,
-    gaps: punktfunk_core::audio::AudioGapTracker,
-    drought: punktfunk_core::audio::DroughtConceal,
+    gaps: lilynk_core::audio::AudioGapTracker,
+    drought: lilynk_core::audio::DroughtConceal,
     last_packet: std::time::Instant,
     av_sync_enabled: bool,
-    av: punktfunk_core::audio::AvSync,
+    av: lilynk_core::audio::AvSync,
     video_e2e: Arc<AtomicU64>,
     av_offset_out: Arc<std::sync::atomic::AtomicI64>,
     buffer_ms_out: Arc<std::sync::atomic::AtomicU32>,
@@ -1065,7 +1061,7 @@ impl<'a> Plane<'a> {
         live: &'a LiveStream,
         counters: &'a Counters,
         playout: AudioPlayout,
-        sync: &'a punktfunk_core::audio::AudioSyncCell,
+        sync: &'a lilynk_core::audio::AudioSyncCell,
     ) -> Result<Plane<'a>, DecodeExit> {
         let fmt = playout.format;
         let channels = usize::from(fmt.channels);
@@ -1085,9 +1081,7 @@ impl<'a> Plane<'a> {
         // end-to-end figure.
         let av_sync_enabled = av_sync_enabled();
         if !av_sync_enabled {
-            log::info!(
-                "audio: A/V sync disabled (PUNKTFUNK_NO_AV_SYNC / debug.punktfunk.no_av_sync)"
-            );
+            log::info!("audio: A/V sync disabled (PUNKTFUNK_NO_AV_SYNC / debug.lilynk.no_av_sync)");
         }
         Ok(Plane {
             client,
@@ -1165,9 +1159,9 @@ impl<'a> Plane<'a> {
             .store(self.fmt.samples_ms(depth), Ordering::Relaxed);
         if self.av_sync_enabled {
             let ve2e = self.video_e2e.load(Ordering::Relaxed);
-            self.av.observe(punktfunk_core::audio::AvSyncObservation {
+            self.av.observe(lilynk_core::audio::AvSyncObservation {
                 pts_ns: pkt.pts_ns,
-                now_local_ns: punktfunk_core::client::now_realtime_ns(),
+                now_local_ns: lilynk_core::client::now_realtime_ns(),
                 clock_offset_ns: self.client.clock_offset_now_ns(),
                 buffered_ahead: depth,
                 output_latency_ns: self.output_latency_ns(),

@@ -5,20 +5,20 @@
 # disable`. Works for either split package — on a Steam Deck you'd wrap the CLIENT. Needs
 # `bsdtar`/`tar`, `squashfs-tools` (mksquashfs).
 #
-# Usage:  bash build-sysext.sh [--gamescope <punktfunk-gamescope-*.pkg.tar.zst>] \
-#                              <punktfunk-{host,client}-*.pkg.tar.zst>
-# Output: punktfunk.raw for the host, the name the Bazzite image and the update check use, or
-#         punktfunk-client.raw for the client.
+# Usage:  bash build-sysext.sh [--gamescope <lilynk-gamescope-*.pkg.tar.zst>] \
+#                              <lilynk-{host,client}-*.pkg.tar.zst>
+# Output: lilynk.raw for the host, the name the Bazzite image and the update check use, or
+#         lilynk-client.raw for the client.
 #
 # --gamescope folds the HDR-capable gamescope companion package (packaging/gamescope) into a HOST
-# image as /usr/bin/punktfunk-gamescope — what lets the gamescope backend stream 10-bit BT.2020 PQ
+# image as /usr/bin/lilynk-gamescope — what lets the gamescope backend stream 10-bit BT.2020 PQ
 # instead of 8-bit SDR (the host prefers that name on PATH and attempts HDR by default). Mirrors
 # the Bazzite image's fold-in, including the honesty check: the binary is verified by executing
 # its `+pfhdr` banner, never trusted by filename. Omit it and the image carries no HDR gamescope —
 # the host then stays SDR on that backend, by design.
 #
-# Capabilities in the image: NEVER on usr/bin/punktfunk-host, `cap_sys_nice=ep` on
-# usr/bin/punktfunk-encode-worker (best-effort), and none on punktfunk-gamescope.
+# Capabilities in the image: NEVER on usr/bin/lilynk-host, `cap_sys_nice=ep` on
+# usr/bin/lilynk-encode-worker (best-effort), and none on lilynk-gamescope.
 #
 # ⚠ mksquashfs records security.capability, so a capability on the staging tree reaches the
 # image. The host is left uncapped on purpose. A capability on the HOST binary makes it
@@ -27,10 +27,10 @@
 # session.
 #
 # ⚠ Nothing else grants the worker its capability: pacman scriptlets never run for a sysext, so
-# the `setcap` in punktfunk-host.install cannot reach this image. The encode worker is
+# the `setcap` in lilynk-host.install cannot reach this image. The encode worker is
 # therefore capped on the staging tree below — this is the only place a sysext can acquire it — and
 # both halves of the matrix are asserted before mksquashfs by packaging/linux/sysext-lib.sh, which
-# the Bazzite image shares. `punktfunk-gamescope` is a compositor, not a KWin client,
+# the Bazzite image shares. `lilynk-gamescope` is a compositor, not a KWin client,
 # so it is unaffected by the host rule and simply runs without a capability here, pacing slightly
 # worse.
 set -euo pipefail
@@ -38,21 +38,21 @@ set -euo pipefail
 
 GAMESCOPE=""
 if [ "${1:-}" = "--gamescope" ]; then
-  GAMESCOPE="${2:?--gamescope needs a punktfunk-gamescope package}"; shift 2
+  GAMESCOPE="${2:?--gamescope needs a lilynk-gamescope package}"; shift 2
 fi
 # No braces in the message: a literal `}` inside ${1:?...} terminates the expansion early and
 # corrupts $PKG (the tail of the message gets appended to the value).
-PKG="${1:?usage: build-sysext.sh [--gamescope <pkg>] <punktfunk-host|client pkg.tar.zst>}"
+PKG="${1:?usage: build-sysext.sh [--gamescope <pkg>] <lilynk-host|client pkg.tar.zst>}"
 [ -f "$PKG" ] || { echo "no such package: $PKG" >&2; exit 1; }
 # Derive the package name from the file (pkgname is everything before the -<version>).
 NAME="$(basename "$PKG" | sed -E 's/-[0-9].*//')"
 [ -n "$NAME" ] || { echo "could not derive package name from $PKG" >&2; exit 1; }
-if [ -n "$GAMESCOPE" ] && [ "$NAME" != "punktfunk-host" ]; then
-  echo "--gamescope only makes sense for a punktfunk-host image (got: $NAME)" >&2; exit 1
+if [ -n "$GAMESCOPE" ] && [ "$NAME" != "lilynk-host" ]; then
+  echo "--gamescope only makes sense for a lilynk-host image (got: $NAME)" >&2; exit 1
 fi
 # The image name, which systemd-sysext requires extension-release.<name> to match.
 IMAGE="$NAME"
-[ "$NAME" = punktfunk-host ] && IMAGE=punktfunk
+[ "$NAME" = lilynk-host ] && IMAGE=punktfunk
 
 STAGE="$(mktemp -d)"
 trap 'rm -rf "$STAGE"' EXIT
@@ -76,7 +76,7 @@ if [ -n "$GAMESCOPE" ]; then
     tar -C "$STAGE" -xf "$GAMESCOPE" usr
   fi
   pf_verify_gamescope "$STAGE" "$GAMESCOPE"
-  echo "folded in $("$STAGE/usr/bin/punktfunk-gamescope" --version 2>&1 | head -1) + its WSI layer"
+  echo "folded in $("$STAGE/usr/bin/lilynk-gamescope" --version 2>&1 | head -1) + its WSI layer"
 fi
 
 pf_stage_sysctl_unit "$STAGE"
@@ -103,10 +103,10 @@ mksquashfs "$STAGE" "$OUT" -all-root -noappend -quiet
 echo "built $OUT"
 echo "  install:  sudo cp $OUT /var/lib/extensions/ && sudo systemctl enable --now systemd-sysext"
 if [ "$IMAGE" = punktfunk ]; then
-  echo "  replaces: /var/lib/extensions/punktfunk-host.raw from an older build; delete it first"
+  echo "  replaces: /var/lib/extensions/lilynk-host.raw from an older build; delete it first"
 fi
-if [ "$NAME" = "punktfunk-host" ]; then
-  echo "  then:     systemctl --user enable --now punktfunk-host"
+if [ "$NAME" = "lilynk-host" ]; then
+  echo "  then:     systemctl --user enable --now lilynk-host"
 else
-  echo "  then:     run 'punktfunk-client' (or let the Decky plugin launch it)"
+  echo "  then:     run 'lilynk-client' (or let the Decky plugin launch it)"
 fi

@@ -1,24 +1,24 @@
 <#
 .SYNOPSIS
-  Build + sign the punktfunk Windows host installer (the punktfunk-setup-win engine exe).
+  Build + sign the punktfunk Windows host installer (the lilynk-setup-win engine exe).
 
 .DESCRIPTION
-  From a release `cargo build -p punktfunk-host --features nvenc` output (the exe), this:
+  From a release `cargo build -p lilynk-host --features nvenc` output (the exe), this:
     1. resolves a signing backend - Azure Artifact Signing (formerly Trusted Signing) when the
        AZURE_CODESIGNING_* trio is set, else a supplied stable .pfx from CI secrets, else an
        ephemeral self-signed CN=Lilynk - same scheme as the client's pack-msix.ps1. The .pfx paths
        also export the public .cer; Azure does not (see below). The ephemeral fallback is for
        canary/CI/dev ONLY: on a v* tag build a missing cert (or -NoSign) is a hard failure, never
        a silent downgrade to a throwaway cert - see -RequireSignedCert,
-    2. stamps -Version into the inner punktfunk-host.exe (stamp-version.ps1), then signs it,
-    3. stages the pf-vdisplay virtual-display driver bundle (unless -NoDriver),
-    4. builds the wizard and packs it over the {app} tree as punktfunk-host-setup-<ver>.exe,
+    2. stamps -Version into the inner lilynk-host.exe (stamp-version.ps1), then signs it,
+    3. stages the ly-vdisplay virtual-display driver bundle (unless -NoDriver),
+    4. builds the wizard and packs it over the {app} tree as lilynk-host-setup-<ver>.exe,
     5. signs the setup.exe (timestamped - MANDATORY under Azure signing, see Sign-File),
     6. emits HOST_SETUP_PATH / HOST_CER_PATH to GITHUB_ENV for the publish step. Azure signing
        emits no .cer: the chain is publicly trusted, so there is nothing for a user to import.
        Every consumer of HOST_CER_PATH already guards on Test-Path, so it is simply absent.
 
-  NOTE the drivers are signed separately, by build-pf-vdisplay.ps1 / build-gamepad-drivers.ps1 with
+  NOTE the drivers are signed separately, by build-ly-vdisplay.ps1 / build-gamepad-drivers.ps1 with
   the DRIVER_CERT_* secret, and are NOT re-signed here (that would invalidate their catalogs). The
   installer's signature and the driver catalogs' signatures are independent by design - Windows
   verifies the first via SmartScreen/UAC and the second via PnP, and never requires a common signer.
@@ -31,7 +31,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)][string]$Version,                 # e.g. 0.2.137 or 1.4.0 (free-form)
-    [Parameter(Mandatory = $true)][string]$TargetDir,               # cargo --release dir (has punktfunk-host.exe)
+    [Parameter(Mandatory = $true)][string]$TargetDir,               # cargo --release dir (has lilynk-host.exe)
     [string]$OutDir = (Join-Path $TargetDir 'installer'),
     # Subject for the EPHEMERAL self-signed fallback only. Azure signing carries its own subject
     # (the profile's verified CN/O), and nothing downstream of setup.exe compares the two - unlike
@@ -50,7 +50,7 @@ param(
     [string]$WebDir = $env:WEB_OUTPUT_DIR,                          # built web .output tree -> bundle the mgmt console
     [string]$ScriptingBundle = $env:SCRIPTING_BUNDLE,              # built runner-cli.js -> bundle the plugin/script runner
     [string]$BunExe = $env:BUN_EXE,                                # portable bun.exe runtime for the console + runner
-    [switch]$NoDriver,                                              # build without the bundled pf-vdisplay driver
+    [switch]$NoDriver,                                              # build without the bundled ly-vdisplay driver
     [switch]$NoSign,                                                # skip signing (local debug)
     # 'auto' (default) = required iff this is a v* tag build; 'true'/'false' to force. See below.
     [ValidateSet('auto', 'true', 'false')][string]$RequireSignedCert = 'auto',
@@ -77,20 +77,20 @@ if (-not $env:RUSTFLAGS) {
 }
 $triple = if ($Arch -eq 'arm64') { 'aarch64-pc-windows-msvc' } else { 'x86_64-pc-windows-msvc' }
 $archSuffix = if ($Arch -eq 'arm64') { '_arm64' } else { '' }
-$exe = Join-Path $TargetDir 'punktfunk-host.exe'
-if (-not (Test-Path $exe)) { throw "missing build artifact 'punktfunk-host.exe' in $TargetDir (did 'cargo build --release -p punktfunk-host --features nvenc' run?)" }
-$trayExe = Join-Path $TargetDir 'punktfunk-tray.exe'
-if (-not (Test-Path $trayExe)) { throw "missing build artifact 'punktfunk-tray.exe' in $TargetDir (did 'cargo build --release -p punktfunk-tray' run?)" }
-# The seat keeper builds in its own workspace (crates/host/pf-seat-keeper) into the same target dir.
-$keeperExe = Join-Path $TargetDir 'punktfunk-seat-keeper.exe'
-if (-not (Test-Path $keeperExe)) { throw "missing build artifact 'punktfunk-seat-keeper.exe' in $TargetDir (did 'cargo build --release --manifest-path crates/host/pf-seat-keeper/Cargo.toml' run?)" }
+$exe = Join-Path $TargetDir 'lilynk-host.exe'
+if (-not (Test-Path $exe)) { throw "missing build artifact 'lilynk-host.exe' in $TargetDir (did 'cargo build --release -p lilynk-host --features nvenc' run?)" }
+$trayExe = Join-Path $TargetDir 'lilynk-tray.exe'
+if (-not (Test-Path $trayExe)) { throw "missing build artifact 'lilynk-tray.exe' in $TargetDir (did 'cargo build --release -p lilynk-tray' run?)" }
+# The seat keeper builds in its own workspace (crates/host/ly-seat-keeper) into the same target dir.
+$keeperExe = Join-Path $TargetDir 'lilynk-seat-keeper.exe'
+if (-not (Test-Path $keeperExe)) { throw "missing build artifact 'lilynk-seat-keeper.exe' in $TargetDir (did 'cargo build --release --manifest-path crates/host/ly-seat-keeper/Cargo.toml' run?)" }
 # The host starts this beside itself to capture a monitor it did not create (a pinned monitor, a
 # shared screen). Without it those sessions fail; everything else streams.
-$workerExe = Join-Path $TargetDir 'punktfunk-capture-worker.exe'
-if (-not (Test-Path $workerExe)) { throw "missing build artifact 'punktfunk-capture-worker.exe' in $TargetDir (did 'cargo build --release -p punktfunk-capture-worker' run?)" }
+$workerExe = Join-Path $TargetDir 'lilynk-capture-worker.exe'
+if (-not (Test-Path $workerExe)) { throw "missing build artifact 'lilynk-capture-worker.exe' in $TargetDir (did 'cargo build --release -p lilynk-capture-worker' run?)" }
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 # The version goes into a copy: cargo re-links its own output on the next build.
-$stampedExe = Join-Path $OutDir 'punktfunk-host.exe'
+$stampedExe = Join-Path $OutDir 'lilynk-host.exe'
 Copy-Item -LiteralPath $exe -Destination $stampedExe -Force
 & (Join-Path $here 'stamp-version.ps1') -Path $stampedExe -Version $Version
 $exe = $stampedExe
@@ -98,7 +98,7 @@ $exe = $stampedExe
 # --- signing backend (signing.ps1: Azure, then MSIX_CERT_PFX_B64, then ephemeral) ----------------
 # The .pfx modes export the .cer users import once (LocalMachine\TrustedPublisher) so SmartScreen
 # and UAC trust the setup.exe. Azure emits none, so HOST_CER_PATH stays unset.
-$cerPath = Join-Path $OutDir "punktfunk-host-windows_${Version}.cer"
+$cerPath = Join-Path $OutDir "lilynk-host-windows_${Version}.cer"
 $signing = Resolve-SigningMode -OutDir $OutDir -Publisher $Publisher -FriendlyName 'punktfunk host (self-signed)' `
     -PfxBase64 $PfxBase64 -PfxPassword $PfxPassword -AzureEndpoint $AzureEndpoint -AzureAccount $AzureAccount `
     -AzureProfile $AzureProfile -AzureDlib $AzureDlib -RequireSignedCert $RequireSignedCert `
@@ -114,7 +114,7 @@ Sign-File $signing $workerExe
 $repoRoot = (Resolve-Path (Join-Path $here '..\..')).Path
 $hostEnvSrc = Join-Path $repoRoot 'scripts\windows\host.env.example'
 $readmeSrc = Join-Path $here 'README.md'
-$brandIco = Join-Path $here 'branding\punktfunk.ico'
+$brandIco = Join-Path $here 'branding\lilynk.ico'
 foreach ($p in @($exe, $trayExe, $keeperExe, $workerExe, $hostEnvSrc, $readmeSrc, $brandIco)) {
     if (-not (Test-Path -LiteralPath $p)) { throw "installer source file missing: $p" }
 }
@@ -131,27 +131,27 @@ foreach ($n in @('LICENSE-MIT', 'LICENSE-APACHE', 'THIRD-PARTY-NOTICES.txt')) {
     else { Write-Warning "license payload missing (skipped): $p" }
 }
 
-# --- build (from source) + stage the pf-vdisplay virtual-display driver -----------------------
-# pf-vdisplay is our all-Rust IddCx driver (packaging/windows/drivers/), BUILT FROM SOURCE every
-# release (build-pf-vdisplay.ps1), so the .dll/.inf/.cat stay in lockstep with the source.
-# stage-pf-vdisplay.ps1 then adds the fetched nefcon device tool. (Needs the WDK build env;
+# --- build (from source) + stage the ly-vdisplay virtual-display driver -----------------------
+# ly-vdisplay is our all-Rust IddCx driver (packaging/windows/drivers/), BUILT FROM SOURCE every
+# release (build-ly-vdisplay.ps1), so the .dll/.inf/.cat stay in lockstep with the source.
+# stage-ly-vdisplay.ps1 then adds the fetched nefcon device tool. (Needs the WDK build env;
 # -NoDriver skips it for a WDK-less pack.)
 if (-not $NoDriver) {
     $built = Join-Path $OutDir 'pfvd-built'
-    & (Join-Path $here 'build-pf-vdisplay.ps1') -Out $built -Arch $Arch
+    & (Join-Path $here 'build-ly-vdisplay.ps1') -Out $built -Arch $Arch
     $stage = Join-Path $OutDir 'stage'
-    & (Join-Path $here 'stage-pf-vdisplay.ps1') -OutDir $stage -VendorDir $built -Arch $Arch
+    & (Join-Path $here 'stage-ly-vdisplay.ps1') -OutDir $stage -VendorDir $built -Arch $Arch
 }
-else { Write-Host "-NoDriver: building installer WITHOUT the bundled pf-vdisplay driver" }
+else { Write-Host "-NoDriver: building installer WITHOUT the bundled ly-vdisplay driver" }
 
 # --- build (from source) + stage the punktfunk virtual-gamepad UMDF drivers --------------------
-# pf-gamepad (DualSense / DS4 / Edge / Deck), pf-xusb (Xbox 360 / XInput), pf-mouse and
-# pf-touchpad are members of the same drivers workspace as pf-vdisplay, built from source per
+# ly-gamepad (DualSense / DS4 / Edge / Deck), ly-xusb (Xbox 360 / XInput), ly-mouse and
+# ly-touchpad are members of the same drivers workspace as ly-vdisplay, built from source per
 # release (build-gamepad-drivers.ps1). The installer adds each to the store via
-# `punktfunk-host.exe driver install --gamepad` (the host SwDeviceCreate's per-session devnodes).
+# `lilynk-host.exe driver install --gamepad` (the host SwDeviceCreate's per-session devnodes).
 if (-not $NoDriver) {
     $gpBuilt = Join-Path $OutDir 'gamepad-built'
-    # -SkipBuild: build-pf-vdisplay.ps1 above already `cargo build`s the WHOLE drivers workspace (incl.
+    # -SkipBuild: build-ly-vdisplay.ps1 above already `cargo build`s the WHOLE drivers workspace (incl.
     # the gamepad cdylibs), so just sign+stage them here - no redundant second full build.
     & (Join-Path $here 'build-gamepad-drivers.ps1') -Out $gpBuilt -SkipBuild -Arch $Arch
     $gpStage = Join-Path $OutDir 'gamepad'
@@ -164,7 +164,7 @@ if (-not $NoDriver) {
 # --- audio: no virtual cable is bundled -------------------------------------------------------
 # The host mints its own audio endpoints from Steam's streaming drivers ("Punktfunk Speakers/
 # Microphone"), so audio needs Steam installed on the target box - never running. A user-installed
-# VB-CABLE still serves as a fallback mic target (pf-audio wiring_plan.rs).
+# VB-CABLE still serves as a fallback mic target (ly-audio wiring_plan.rs).
 
 # --- stage the bun runtime + the two bun payloads (web console, plugin/script runner) --------------
 # Both the web console and the runner run on bun. bun is staged ONCE into $OutDir and shared by the
@@ -203,7 +203,7 @@ if ($wantScripting) {
 }
 else { Write-Host "no -ScriptingBundle/-BunExe -> installer built WITHOUT the plugin/script runner" }
 
-# --- build + stage the HDR Vulkan layer (pf-vkhdr-layer) --------------------------------------
+# --- build + stage the HDR Vulkan layer (ly-vkhdr-layer) --------------------------------------
 # A tiny always-on Vulkan implicit layer (cdylib) that advertises HDR10/scRGB surface formats on the
 # virtual display so Vulkan games (Doom: The Dark Ages, etc.) can enable HDR while streaming - the
 # NVIDIA ICD hides HDR formats on an indirect display even though it accepts+presents a forced HDR
@@ -211,10 +211,10 @@ else { Write-Host "no -ScriptingBundle/-BunExe -> installer built WITHOUT the pl
 # it's a no-op on SDR.
 # Standalone crate (own [workspace]); built here and registered by the installer. A failed build
 # produces the installer WITHOUT the layer (non-fatal).
-$layerSrc = Join-Path $here 'pf-vkhdr-layer'
+$layerSrc = Join-Path $here 'ly-vkhdr-layer'
 if (Test-Path (Join-Path $layerSrc 'Cargo.toml')) {
     $layerTarget = Join-Path $OutDir 'vklayer-target'
-    Write-Host "==> building pf-vkhdr-layer (cdylib)"
+    Write-Host "==> building ly-vkhdr-layer (cdylib)"
     $prevTarget = $env:CARGO_TARGET_DIR
     $env:CARGO_TARGET_DIR = $layerTarget
     Push-Location $layerSrc
@@ -222,20 +222,20 @@ if (Test-Path (Join-Path $layerSrc 'Cargo.toml')) {
     $layerExit = $LASTEXITCODE
     Pop-Location
     if ($prevTarget) { $env:CARGO_TARGET_DIR = $prevTarget } else { Remove-Item Env:\CARGO_TARGET_DIR -ErrorAction SilentlyContinue }
-    $layerDll = Join-Path $layerTarget "$triple\release\pf_vkhdr_layer.dll"
+    $layerDll = Join-Path $layerTarget "$triple\release\ly_vkhdr_layer.dll"
     if ($layerExit -eq 0 -and (Test-Path $layerDll)) {
         $layerStage = Join-Path $OutDir 'vklayer'
         New-Item -ItemType Directory -Force -Path $layerStage | Out-Null
-        Copy-Item $layerDll (Join-Path $layerStage 'pf_vkhdr_layer.dll') -Force
-        Copy-Item (Join-Path $layerSrc 'pf_vkhdr_layer.json') (Join-Path $layerStage 'pf_vkhdr_layer.json') -Force
-        Sign-File $signing (Join-Path $layerStage 'pf_vkhdr_layer.dll')
-        Write-Host "==> staged pf-vkhdr-layer -> $layerStage"
+        Copy-Item $layerDll (Join-Path $layerStage 'ly_vkhdr_layer.dll') -Force
+        Copy-Item (Join-Path $layerSrc 'ly_vkhdr_layer.json') (Join-Path $layerStage 'ly_vkhdr_layer.json') -Force
+        Sign-File $signing (Join-Path $layerStage 'ly_vkhdr_layer.dll')
+        Write-Host "==> staged ly-vkhdr-layer -> $layerStage"
     }
-    else { Write-Warning "pf-vkhdr-layer build failed ($layerExit) - installer built WITHOUT the HDR Vulkan layer" }
+    else { Write-Warning "ly-vkhdr-layer build failed ($layerExit) - installer built WITHOUT the HDR Vulkan layer" }
 }
-else { Write-Host "no pf-vkhdr-layer crate -> installer built WITHOUT the HDR Vulkan layer" }
+else { Write-Host "no ly-vkhdr-layer crate -> installer built WITHOUT the HDR Vulkan layer" }
 
-# --- pf_seat_audio.dll: the seat listener's audio endpoint enumerator (crates/host/pf-seat-audio).
+# --- ly_seat_audio.dll: the seat listener's audio endpoint enumerator (crates/host/ly-seat-audio).
 # Every process of a seat session that uses MMDevAPI loads it at its own bitness, so the x64
 # installer carries an x64 and an x86 build. ARM64 seats keep RDP-Tcp.
 $seatAudioStage = $null
@@ -247,13 +247,13 @@ if ($Arch -eq 'x64') {
     $env:CARGO_TARGET_DIR = $seatAudioTarget
     try {
         foreach ($build in @(@('x64', 'x86_64-pc-windows-msvc'), @('x86', 'i686-pc-windows-msvc'))) {
-            Write-Host "==> building pf_seat_audio.dll ($($build[1]))"
-            & cargo build --release --locked --manifest-path $manifest -p pf-seat-audio --target $build[1]
-            if ($LASTEXITCODE -ne 0) { throw "pf-seat-audio build failed for $($build[1]) ($LASTEXITCODE)" }
+            Write-Host "==> building ly_seat_audio.dll ($($build[1]))"
+            & cargo build --release --locked --manifest-path $manifest -p ly-seat-audio --target $build[1]
+            if ($LASTEXITCODE -ne 0) { throw "ly-seat-audio build failed for $($build[1]) ($LASTEXITCODE)" }
             $dir = Join-Path $seatAudioStage $build[0]
             New-Item -ItemType Directory -Force -Path $dir | Out-Null
-            Copy-Item (Join-Path $seatAudioTarget "$($build[1])\release\pf_seat_audio.dll") $dir -Force
-            Sign-File $signing (Join-Path $dir 'pf_seat_audio.dll')
+            Copy-Item (Join-Path $seatAudioTarget "$($build[1])\release\ly_seat_audio.dll") $dir -Force
+            Sign-File $signing (Join-Path $dir 'ly_seat_audio.dll')
         }
     }
     finally {
@@ -262,12 +262,12 @@ if ($Arch -eq 'x64') {
 }
 
 # --- build the wizard + pack the installer -----------------------------------------------------
-$setup = Join-Path $OutDir "punktfunk-host-setup-$Version$archSuffix.exe"
+$setup = Join-Path $OutDir "lilynk-host-setup-$Version$archSuffix.exe"
 # The wizard crate builds into a target dir of its own: windows-reactor-setup stages the
 # self-contained WinAppSDK runtime next to the exe, and the packer takes everything in that
 # dir that is not cargo's as the runtime set.
 $wizTarget = Join-Path $OutDir 'wizard-target'
-Write-Host "==> building punktfunk-setup-win (self-contained wizard + packer) -> $wizTarget"
+Write-Host "==> building lilynk-setup-win (self-contained wizard + packer) -> $wizTarget"
 $prevTarget = $env:CARGO_TARGET_DIR
 $env:CARGO_TARGET_DIR = $wizTarget
 Push-Location $repoRoot
@@ -276,20 +276,20 @@ Push-Location $repoRoot
 # without the separate cache below.
 $prevLocal = $env:LOCALAPPDATA
 if ($Arch -ne 'x64') { $env:LOCALAPPDATA = Join-Path $OutDir "reactor-cache-$Arch" }
-& cargo build --release -p punktfunk-setup-win --target $triple
+& cargo build --release -p lilynk-setup-win --target $triple
 $wizExit = $LASTEXITCODE
 $env:LOCALAPPDATA = $prevLocal
 # The pack tool rewrites bytes on the runner, so a cross build needs a host-arch copy of it.
 if ($wizExit -eq 0 -and $Arch -ne 'x64') {
-    & cargo build --release -p punktfunk-setup-win --bin punktfunk-setup-pack
+    & cargo build --release -p lilynk-setup-win --bin lilynk-setup-pack
     $wizExit = $LASTEXITCODE
 }
 Pop-Location
 if ($prevTarget) { $env:CARGO_TARGET_DIR = $prevTarget } else { Remove-Item Env:\CARGO_TARGET_DIR -ErrorAction SilentlyContinue }
-if ($wizExit -ne 0) { throw "punktfunk-setup-win build failed ($wizExit)" }
+if ($wizExit -ne 0) { throw "lilynk-setup-win build failed ($wizExit)" }
 $wizRel = Join-Path $wizTarget "$triple\release"
-$wizExe = Join-Path $wizRel 'punktfunk-setup-win.exe'
-$packer = if ($Arch -eq 'x64') { Join-Path $wizRel 'punktfunk-setup-pack.exe' } else { Join-Path $wizTarget 'release\punktfunk-setup-pack.exe' }
+$wizExe = Join-Path $wizRel 'lilynk-setup-win.exe'
+$packer = if ($Arch -eq 'x64') { Join-Path $wizRel 'lilynk-setup-pack.exe' } else { Join-Path $wizTarget 'release\lilynk-setup-pack.exe' }
 
 # The {app} tree. A missing input is simply absent - the plan's DeployFiles lays down whatever
 # this assembles, verbatim, and the host's own probes decide what a partial tree can do.
@@ -307,14 +307,14 @@ if ($wantWeb -or $wantScripting) {
 if ($wantWeb) { Copy-Item $webStage -Destination (Join-Path $appStage 'web\.output') -Recurse -Force }
 if ($wantScripting) { Copy-Item $scrStage -Destination (Join-Path $appStage 'scripting') -Recurse -Force }
 if ($layerStage -and (Test-Path $layerStage)) { Copy-Item $layerStage -Destination (Join-Path $appStage 'vklayer') -Recurse -Force }
-# Seats copy these into System32/SysWOW64 when they turn on (pf-seats seat_listener.rs).
+# Seats copy these into System32/SysWOW64 when they turn on (ly-seats seat_listener.rs).
 if ($seatAudioStage) { Copy-Item $seatAudioStage -Destination (Join-Path $appStage 'seat-audio') -Recurse -Force }
 # The seats display driver stays on disk beside the host, since the extracted staging tree below is
 # deleted after setup. Setup never installs it: the console does, when the operator turns seats on.
 if (-not $NoDriver) {
     $seatsDir = Join-Path $appStage 'staging\pfvdisplay'
     New-Item -ItemType Directory -Force -Path $seatsDir | Out-Null
-    foreach ($f in 'pf_vdisplay_seats.inf', 'pf_vdisplay_seats.cat', 'pf_vdisplay.dll') { Copy-Item (Join-Path $stage $f) -Destination $seatsDir -Force }
+    foreach ($f in 'ly_vdisplay_seats.inf', 'ly_vdisplay_seats.cat', 'ly_vdisplay.dll') { Copy-Item (Join-Path $stage $f) -Destination $seatsDir -Force }
 }
 # Driver payloads: extracted beside the wizard, handed to `driver install --dir <staging>\...`.
 $stagingRoot = Join-Path $OutDir 'staging'

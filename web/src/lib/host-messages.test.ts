@@ -72,12 +72,12 @@ test("the door's reason is an API error message", () => {
 				door_unavailable: "The system's own words.",
 				door_unavailable_code: "door_missing_package",
 				door_unavailable_params: {
-					command: "sudo apt install punktfunk-seats",
+					command: "sudo apt install lilynk-seats",
 				},
 			}),
 		),
 	).toBe(
-		"This install is missing the punktfunk-seats package. Install it: sudo apt install punktfunk-seats",
+		"This install is missing the lilynk-seats package. Install it: sudo apt install lilynk-seats",
 	);
 	expect(doorUnavailable(door({ door_unavailable: "Only words." }))).toBe(
 		"Only words.",

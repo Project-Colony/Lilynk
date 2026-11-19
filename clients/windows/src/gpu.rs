@@ -1,6 +1,6 @@
 //! DXGI adapter enumeration for the Settings "GPU" picker.
 //!
-//! Streaming (decode + present) runs in the spawned `punktfunk-session` binary; the shell only
+//! Streaming (decode + present) runs in the spawned `lilynk-session` binary; the shell only
 //! needs the list of real (hardware) adapters to offer on a multi-GPU box (a hybrid laptop or an
 //! eGPU). The picked adapter description is persisted (`crate::trust::Settings::adapter`); the
 //! session binary exports it as `PUNKTFUNK_VK_ADAPTER` at startup unless that is already set.

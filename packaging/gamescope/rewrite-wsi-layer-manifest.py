@@ -21,7 +21,7 @@ Three edits make that safe, and the loader is why:
 Everything else is passed through untouched, `functions` above all: it names the layer's entry
 points, and a manifest with the wrong ones is a layer that silently never loads.
 
-Used by build-punktfunk-gamescope.sh (FHS packaging) and packaging/nix/gamescope.nix (the Nix store),
+Used by build-lilynk-gamescope.sh (FHS packaging) and packaging/nix/gamescope.nix (the Nix store),
 which is the point of it being a file rather than a heredoc — the two must not drift.
 
 Usage: rewrite-wsi-layer-manifest.py <src.json> <dst.json> <installed-library-path>

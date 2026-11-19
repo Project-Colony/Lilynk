@@ -1,5 +1,5 @@
 // In-stream shortcuts: a press or hold of controller buttons or keys, bound to a quick action.
-// The Swift twin of pf-client-core's `shortcuts` module (design/client-shortcuts.md):
+// The Swift twin of ly-client-core's `shortcuts` module (design/client-shortcuts.md):
 // the model, the `shortcuts` blob, each client's defaults, the editor's validation and the rows
 // the Shortcuts page draws. `ShortcutsEngine.swift` holds the engine. `ShortcutVectorsTests`
 // replays `clients/shared/shortcut-vectors.json`, so a rule changes there first.
@@ -125,7 +125,7 @@ public struct Shortcuts: Equatable, Sendable {
     }
 
     /// Pad buttons by their stored name: `select` for Back, the wire's own names for the rest.
-    /// The bits are `punktfunk_core::input::gamepad`'s; `ShortcutVectorsTests` pins them to
+    /// The bits are `lilynk_core::input::gamepad`'s; `ShortcutVectorsTests` pins them to
     /// `GamepadWire`.
     public static let buttons: [(name: String, bit: UInt32)] = [
         ("a", 0x1000), ("b", 0x2000), ("x", 0x4000), ("y", 0x8000),

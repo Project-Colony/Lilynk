@@ -1,6 +1,6 @@
 //! Pad audio on Android (the 0xD1 plane) — tier A.
 //!
-//! The Android twin of [`pf_client_core::pad_audio`]: drain the host's per-pad DualSense streams,
+//! The Android twin of [`ly_client_core::pad_audio`]: drain the host's per-pad DualSense streams,
 //! Opus-decode haptics (kind 0) and speaker (kind 1), interleave them into the pad's own
 //! 4-channel layout, and render them on the physical pad.
 //!
@@ -19,14 +19,14 @@
 //! established. Haptics therefore own the coils only while haptics frames are actually arriving
 //! ([`haptics_owns_coils`]): a rumble-only title sends no 0xD1 frames and keeps its rumble.
 
-use punktfunk_core::audio::pad_mix::HapticsLiveness;
+use lilynk_core::audio::pad_mix::HapticsLiveness;
 #[cfg(target_os = "android")]
-use punktfunk_core::audio::pad_mix::{
+use lilynk_core::audio::pad_mix::{
     is_haptics_evidence, PadDecode, QuadMixer, MAX_FRAME_SAMPLES, PAD_CHANNELS,
 };
 
 #[cfg(target_os = "android")]
-use punktfunk_core::client::NativeClient;
+use lilynk_core::client::NativeClient;
 #[cfg(target_os = "android")]
 use std::sync::atomic::{AtomicBool, Ordering};
 #[cfg(target_os = "android")]
@@ -373,7 +373,7 @@ fn render(
     // A host that cannot send 0xD1 renders nothing here, so opening the stream would claim the
     // interface for no gain. Checked before `sink::open` so the iso interface is never claimed
     // pointlessly.
-    if client.host_caps() & punktfunk_core::quic::HOST_CAP_PAD_AUDIO == 0 {
+    if client.host_caps() & lilynk_core::quic::HOST_CAP_PAD_AUDIO == 0 {
         log::warn!("pad audio: host cannot send it (no HOST_CAP_PAD_AUDIO) — pad {pad} stays on wire rumble");
         drain_until_stop(client, stop);
         return;

@@ -171,13 +171,13 @@ export type PluginMain =
 	| Effect.Effect<unknown, unknown, PunktfunkHost>;
 
 export interface PluginDef {
-	/** Package-convention name (`punktfunk-plugin-*` drops the prefix): kebab-case. */
+	/** Package-convention name (`lilynk-plugin-*` drops the prefix): kebab-case. */
 	name: string;
 	main: PluginMain;
 }
 
 /**
- * Declare a plugin (the `punktfunk-plugin-*` convention, RFC §8). The managed runner
+ * Declare a plugin (the `lilynk-plugin-*` convention, RFC §8). The managed runner
  * (`runner.ts`) discovers this default export and supervises `main`.
  */
 export const definePlugin = (def: PluginDef): PluginDef => {

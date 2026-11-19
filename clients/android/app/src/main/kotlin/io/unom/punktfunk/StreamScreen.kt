@@ -1163,7 +1163,7 @@ private fun RemotePointerHint(modifier: Modifier = Modifier) {
 /**
  * The start-of-stream banner: the shortcuts this session actually has, in the same pill as every
  * other in-stream cue, shown once and then gone. The desktop console draws the identical thing
- * bottom-centre (`pf-console-ui/src/skia_overlay.rs` — six seconds with a 0.6 s fade), because a
+ * bottom-centre (`ly-console-ui/src/skia_overlay.rs` — six seconds with a 0.6 s fade), because a
  * stream owns the whole screen and answers to none of the device's usual gestures: without a line
  * saying how to get back out, the only discoverable exit is force-quitting the app.
  *

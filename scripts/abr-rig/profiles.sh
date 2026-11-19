@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Link profiles, named after the simulator's scenarios and carrying its numbers
-# (crates/core/punktfunk-core/src/abr/sim/scenarios.rs). Sourced by rig.sh.
+# (crates/core/lilynk-core/src/abr/sim/scenarios.rs). Sourced by rig.sh.
 #
 # Unmeasured in both tiers, and worth knowing before you read a row: a keyframe
 # here is IDR_PCT percent of an ordinary frame and the simulator's is `idr_pct`

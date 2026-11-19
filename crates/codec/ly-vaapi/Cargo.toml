@@ -1,0 +1,23 @@
+[package]
+name = "ly-vaapi"
+description = "Hand-declared libva buffer layouts, CPU-testable: H.264/HEVC/AV1 decode buffers and profile/format/surface decisions for the Linux clients, plus the encode and VideoProc buffers the host's VAAPI encoder fills; the libva plumbing lives in ly-client-video and ly-libva (design/client-native-decode.md §3.4)"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+# Direct dependency on the vendored parser crate, not just ly-bitstream: the conversion
+# consumes the parser's `Sps`/`Pps`/`SliceType` wholesale (ly-bitstream re-exports only a
+# subset).
+cros-codecs = { workspace = true }
+ly-bitstream = { path = "../ly-bitstream" }
+
+[dev-dependencies]
+# `ly_bitstream::testing`: the vendored vectors and access-unit splitters.
+ly-bitstream = { path = "../ly-bitstream", features = ["test-vectors"] }
+
+[lints]
+workspace = true

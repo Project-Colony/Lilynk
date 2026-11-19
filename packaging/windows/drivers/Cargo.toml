@@ -4,10 +4,10 @@
 #
 # Separate from the main cargo workspace (own [workspace] root) because driver crates are cdylibs built
 # with the WDK toolchain (cargo-wdk / wdk-build) on Windows only. Path-deps the shared ABI crate
-# crates/host/pf-driver-proto and the encoder crates below from the main tree.
+# crates/host/ly-driver-proto and the encoder crates below from the main tree.
 [workspace]
 resolver = "2"
-members = ["wdk-iddcx", "pf-umdf-util", "pf-vdisplay", "pf-gamepad", "pf-xusb", "pf-mouse", "pf-touchpad"]
+members = ["wdk-iddcx", "ly-umdf-util", "ly-vdisplay", "ly-gamepad", "ly-xusb", "ly-mouse", "ly-touchpad"]
 
 [workspace.package]
 edition = "2024"
@@ -32,22 +32,22 @@ cast_ptr_alignment = "warn"
 
 [workspace.dependencies]
 # NOTE: no driver depends on the high-level `wdk` crate. Every driver goes through `wdk_sys`,
-# including the WDF call macro, which wdk-sys re-exports (see pf-umdf-util, a full WDF crate).
+# including the WDF call macro, which wdk-sys re-exports (see ly-umdf-util, a full WDF crate).
 # `tracing-subscriber` is in the lock only as a wdk-sys BUILD dependency — build-script
 # machinery, not code in the shipped DLLs.
 wdk-sys = "0.5.1"
 wdk-build = "0.5.1"
 wdk-iddcx = { path = "wdk-iddcx" }
-pf-umdf-util = { path = "pf-umdf-util" }
-pf-driver-proto = { path = "../../../crates/host/pf-driver-proto" }
-# The Windows encoder backends, reached the same way: pf-vdisplay links them into the shipped
-# DLL. `pf-frame` is named alongside it because it owns the frame vocabulary those backends'
-# signatures take (`CapturedFrame`/`PixelFormat`); pf-encode-win does not re-export it.
-pf-encode-win = { path = "../../../crates/host/pf-encode-win" }
-pf-frame = { path = "../../../crates/host/pf-frame" }
+ly-umdf-util = { path = "ly-umdf-util" }
+ly-driver-proto = { path = "../../../crates/host/ly-driver-proto" }
+# The Windows encoder backends, reached the same way: ly-vdisplay links them into the shipped
+# DLL. `ly-frame` is named alongside it because it owns the frame vocabulary those backends'
+# signatures take (`CapturedFrame`/`PixelFormat`); ly-encode-win does not re-export it.
+ly-encode-win = { path = "../../../crates/host/ly-encode-win" }
+ly-frame = { path = "../../../crates/host/ly-frame" }
 # The encode session those backends run in: the loop, the AU writer and the slot targets, shared
 # with the capture worker so neither side has its own.
-pf-encode-session = { path = "../../../crates/host/pf-encode-session" }
+ly-encode-session = { path = "../../../crates/host/ly-encode-session" }
 
 # Vendored windows-drivers-rs 0.5.1 (the published, self-contained crates) + an added `iddcx`
 # ApiSubset (M1 — bindgens iddcx/1.10/IddCx.h reusing wdk_default for WDF type-identity). Redirect ALL
@@ -58,7 +58,7 @@ wdk-build = { path = "vendor/wdk-build" }
 wdk-sys = { path = "vendor/wdk-sys" }
 
 # wdk-sys's build script reads the WDK driver-model from the WORKSPACE metadata (a workspace build can't
-# know which member it's building for). All our drivers are UMDF 2.x (incl. pf-vdisplay's IddCx), so set
+# know which member it's building for). All our drivers are UMDF 2.x (incl. ly-vdisplay's IddCx), so set
 # it once here; a member needing a different model would get its own [package.metadata.wdk.driver-model].
 [workspace.metadata.wdk.driver-model]
 driver-type = "UMDF"

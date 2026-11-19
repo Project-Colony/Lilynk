@@ -25,7 +25,7 @@ import { collectElements, createRenderPatcher, describe } from "./patch";
 import { patchPlayGroup, resetPlayFrom } from "./play-from";
 
 const ROUTE = "/library/app/:appid";
-const STYLE_KEY = "punktfunk-style";
+const STYLE_KEY = "lilynk-style";
 
 // On by default. The one preference the plugin keeps for itself: it is about the plugin's own
 // footprint in Steam's UI, not about streaming, so it has no home in the client's settings.
@@ -80,9 +80,9 @@ function redirectShortcutPage(shortcutAppId: number, steamAppId: number): void {
 // because Steam styles the element through `:enabled` selectors. The lens mark's own violets
 // vanish on that fill, so those states swap it for the light pair. Rides the group as a 0×0 element.
 const STYLE = `
-  .punktfunk-play.gpfocus,
-  .punktfunk-play:focus,
-  .punktfunk-play:hover {
+  .lilynk-play.gpfocus,
+  .lilynk-play:focus,
+  .lilynk-play:hover {
     --pf-back: #ffffff;
     --pf-deep: #cec9fb;
     background: linear-gradient(to right, #8c7ef5 0%, #5b4ce0 60%) 0% center / 330% 100% !important;
@@ -236,7 +236,7 @@ function patchLibraryApp(): RoutePatch {
           return ret;
         }
       },
-      "punktfunk-stream",
+      "lilynk-stream",
     );
     afterPatch(routeProps, "renderFunc", handler);
 

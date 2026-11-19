@@ -7,8 +7,8 @@
 .DESCRIPTION
   Two legs, one log, no session and no display write:
 
-    1. HDR P010 converter. `punktfunk-host hdr-p010-selftest` at 1920x1080 and
-       2560x1440 drives pf_encode_win::convert::HdrP010Converter - the same type
+    1. HDR P010 converter. `lilynk-host hdr-p010-selftest` at 1920x1080 and
+       2560x1440 drives ly_encode_win::convert::HdrP010Converter - the same type
        the driver's P010 pool slot builds. The eight per-colour 10-bit codes are
        compared here against the pre-cutover table, so the log says MATCH or DIFF
        per colour instead of leaving a human to diff two screenfuls.
@@ -41,8 +41,8 @@ param(
 
 $ErrorActionPreference = 'Continue'
 $stage = $Stage
-$hostExe = Join-Path $stage 'punktfunk-host.exe'
-$testExe = Join-Path $stage 'pf_encode_win-tests.exe'
+$hostExe = Join-Path $stage 'lilynk-host.exe'
+$testExe = Join-Path $stage 'ly_encode_win-tests.exe'
 $outDir = 'C:\Users\Public\parity-post'
 $probeDir = 'C:\Users\Public'
 $log = Join-Path 'C:\Users\Public' "live-$Tag.log"
@@ -81,7 +81,7 @@ New-Item -ItemType Directory -Force -Path $outDir, (Join-Path $outDir 'pre'), (J
 $verdicts = [System.Collections.Generic.List[string]]::new()
 
 # ---------------------------------------------------------------- leg 1: HDR
-Head 'LEG 1 - HDR P010 converter (pf_encode_win::convert::HdrP010Converter)'
+Head 'LEG 1 - HDR P010 converter (ly_encode_win::convert::HdrP010Converter)'
 if (-not (Test-Path $hostExe)) {
     Say "SKIP - $hostExe is not staged"
     $verdicts.Add('hdr-p010: SKIP (no host exe)')

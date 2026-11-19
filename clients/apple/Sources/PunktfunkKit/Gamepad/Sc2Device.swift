@@ -39,7 +39,7 @@ enum Sc2Device {
     }
 
     /// The HID usage pair of the SC2's CONTROLLER collection (vendor-defined page 0xFF00,
-    /// usage 0x01) — declared in `pf_driver_proto::triton::RDESC` beside the lizard-mode mouse
+    /// usage 0x01) — declared in `ly_driver_proto::triton::RDESC` beside the lizard-mode mouse
     /// (Generic Desktop 01:02, report 0x40) and keyboard (01:06, report 0x41).
     ///
     /// ⚠ Load-bearing as a DEVICE-usage-pair match (`kIOHIDDeviceUsagePageKey`), never a
@@ -47,7 +47,7 @@ enum Sc2Device {
     /// all its collections with primary usage `0001:0002`, so a primary match finds nothing. The pair match selects the four controller
     /// slots and excludes the Puck's management interface, whose only pair is `ff00:02` —
     /// opening that one is actively wrong (feature-report-2 queries; see
-    /// `pf_driver_proto::triton`).
+    /// `ly_driver_proto::triton`).
     static let usagePageVendor = 0xFF00
     static let usageController = 0x01
 
@@ -80,7 +80,7 @@ enum Sc2Device {
 
     /// Declared STRIPPED payload length per output report id (wire length = stripped + 1). The
     /// hardware-verified table; its id-INCLUDED twin is the host's
-    /// `pf_driver_proto::triton::out_report_len`, and `clients/shared/sc2-vectors.json` holds
+    /// `ly_driver_proto::triton::out_report_len`, and `clients/shared/sc2-vectors.json` holds
     /// both (and Android's) to the same rows. `nil` for an id outside the output block, which
     /// `outputWrite` never writes.
     static func strippedOutputLen(id: UInt8) -> Int? {

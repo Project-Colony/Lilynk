@@ -17,7 +17,7 @@ runs one. Install the host first: [Bazzite](/docs/bazzite) or [SteamOS (Host)](/
   rate.
 - Controllers, including a virtual Steam Deck pad when you are in the
   [`punktfunk` group](#the-punktfunk-group).
-- With [`punktfunk-gamescope`](#hdr-on-gamescope): HDR, the real resolution and refresh rate in
+- With [`lilynk-gamescope`](#hdr-on-gamescope): HDR, the real resolution and refresh rate in
   Steam, the performance overlay, and your keyboard layout.
 
 ## The Game Mode tile
@@ -39,7 +39,7 @@ The [Bazzite](/docs/bazzite) and [SteamOS](/docs/steamos-host) guides enable the
 any other distro with a gamescope session:
 
 ```sh
-systemctl --user enable --now punktfunk-host
+systemctl --user enable --now lilynk-host
 ```
 
 Then open [the web console](/docs/web-console) to pair a client.
@@ -53,7 +53,7 @@ Gaming Mode with nobody at it, see
 ## How the host gets a gamescope
 
 The host picks one of three modes per session and logs it:
-`journalctl --user -u punktfunk-host | grep 'gamescope sub-mode'`.
+`journalctl --user -u lilynk-host | grep 'gamescope sub-mode'`.
 
 | Mode | When | What happens |
 |---|---|---|
@@ -83,13 +83,13 @@ sudo usermod -aG punktfunk "$USER"
 Without it the virtual Steam Deck pad arrives as an Xbox 360 controller, and the host can't restart
 a display manager that fails to come back. The package creates the group empty: it can attach
 emulated USB devices, so join it only on a machine you trust. The guided installer joins you by
-default; `--no-punktfunk-group` opts out.
+default; `--no-lilynk-group` opts out.
 
 ## Stream the screen the box is already driving
 
 To stream Gaming Mode exactly as the TV shows it, pick that screen under **Displays** →
 **Stream this monitor** in the console, or set `PUNKTFUNK_CAPTURE_MONITOR=HDMI-A-1` (names from
-`punktfunk-host list-monitors`). Nothing is stopped or relaunched and no mode is imposed. A headless
+`lilynk-host list-monitors`). Nothing is stopped or relaunched and no mode is imposed. A headless
 gamescope has no screen to list. See
 [Stream a real monitor instead](/docs/stream-a-monitor).
 
@@ -100,20 +100,20 @@ Attach streams that screen, so it stays on.
 ## HDR on gamescope
 
 A stock gamescope captures 8-bit SDR: it tone-maps HDR games down, correctly, before the host sees
-them. A 10-bit HDR stream needs `punktfunk-gamescope`, gamescope plus Punktfunk's capture
+them. A 10-bit HDR stream needs `lilynk-gamescope`, gamescope plus Punktfunk's capture
 patches. The host packages install it under its own name; your Gaming Mode keeps the system
 gamescope.
 
 | System | How to get it |
 |---|---|
-| Bazzite, Fedora Atomic | In the Punktfunk sysext: `punktfunk-sysext update`. |
-| Fedora, Nobara, other RPM systems | Installed with the host. If it's missing: `sudo dnf install punktfunk-gamescope`. |
-| Debian 13, Ubuntu 26.04 | Installed with the host. If it's missing: `sudo apt install punktfunk-gamescope`. |
+| Bazzite, Fedora Atomic | In the Punktfunk sysext: `lilynk-sysext update`. |
+| Fedora, Nobara, other RPM systems | Installed with the host. If it's missing: `sudo dnf install lilynk-gamescope`. |
+| Debian 13, Ubuntu 26.04 | Installed with the host. If it's missing: `sudo apt install lilynk-gamescope`. |
 | Ubuntu 24.04 | Not available: its wayland is too old. Build from source or upgrade. |
 | Arch | Installed with the host. |
 | SteamOS | Built by the Steam Deck installer (`scripts/steamdeck/install.sh`, `update.sh`). |
-| NixOS | `services.punktfunk.host.gamescopeHdr` (on by default). |
-| Anything else | `bash packaging/gamescope/build-punktfunk-gamescope.sh` in the source tree. |
+| NixOS | `services.lilynk.host.gamescopeHdr` (on by default). |
+| Anything else | `bash packaging/gamescope/build-lilynk-gamescope.sh` in the source tree. |
 
 **Restart the host after installing it:** the host checks the gamescope binary once, at startup.
 The log then says `using the punktfunk build (10-bit HDR capture available)` instead of
@@ -121,7 +121,7 @@ The log then says `using the punktfunk build (10-bit HDR capture available)` ins
 
 HDR is on by default once the build is present; **Game Mode HDR** in the console
 (`PUNKTFUNK_GAMESCOPE_HDR=0`) forces SDR. `PUNKTFUNK_GAMESCOPE_BIN` picks one binary; unset, the
-host prefers `punktfunk-gamescope` over `gamescope`.
+host prefers `lilynk-gamescope` over `gamescope`.
 
 The build only reaches sessions the host starts: managed and bare spawn. An attached session runs
 the distro's gamescope, so it streams SDR and the host draws the pointer. The rest of the HDR
@@ -133,15 +133,15 @@ chain, and what to check when a stream comes out SDR, is on [HDR](/docs/hdr#linu
   overlay (Quick Access Menu) needs **3.16.23**. The host logs the version it found.
 - **On a stock gamescope, Steam shows one refresh rate and no resolutions** — 60 Hz if the launch
   lost its flag — and games that pace to the display hold there, though the stream runs at the
-  client's rate. `punktfunk-gamescope` reports the real mode;
+  client's rate. `lilynk-gamescope` reports the real mode;
   `PUNKTFUNK_GAMESCOPE_REFRESH_RATES=60,90,120` adds rates to Steam's menu.
-- **The performance overlay** (mangoapp) reaches the stream only with `punktfunk-gamescope`.
+- **The performance overlay** (mangoapp) reaches the stream only with `lilynk-gamescope`.
   A gamescope the host starts runs it when mangoapp is installed, hidden at first. In Steam,
   the Quick Access Menu shows it; elsewhere, MangoHud's toggle key does (Right Shift+F12, or
   `toggle_hud` in your MangoHud.conf). MangoHud 0.8.4 and older miss a quick tap: hold the keys.
 - **The keyboard types US layout** on a stock gamescope, whatever the box uses.
 - **The pointer costs a full-frame pass** on a stock gamescope, because the host draws it.
-  `punktfunk-gamescope` paints it itself.
+  `lilynk-gamescope` paints it itself.
 - **Touch is a single-finger pointer**: taps and drags work, pinch doesn't. The trackpad and pointer
   [touch modes](/docs/input#touch-modes) are unaffected.
 - **Desktop [mouse mode](/docs/input#mouse-modes) is unavailable**; the mouse stays captured.
@@ -166,9 +166,9 @@ The hand-back failed. Join the [`punktfunk` group](#the-punktfunk-group), or set
 ### The stream is black on connect, or stuck at the box's resolution
 
 The session streamed the box's own screen at its own mode. Check
-`journalctl --user -u punktfunk-host | grep 'gamescope sub-mode'`.
+`journalctl --user -u lilynk-host | grep 'gamescope sub-mode'`.
 
 1. Under **Displays**, click **Stream this monitor** on the streamed screen again to clear it.
 2. If `~/.config/punktfunk/host.env` sets `PUNKTFUNK_GAMESCOPE_ATTACH`, delete that line, and any
-   `PUNKTFUNK_GAMESCOPE_NODE` line, then `systemctl --user restart punktfunk-host`.
+   `PUNKTFUNK_GAMESCOPE_NODE` line, then `systemctl --user restart lilynk-host`.
 3. If the log says `managed takeover unavailable`, the reason is on the same line.

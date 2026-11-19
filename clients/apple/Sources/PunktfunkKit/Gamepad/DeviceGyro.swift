@@ -95,7 +95,7 @@ public final class DeviceGyro {
     /// behind the last sample.
     private let queue: OperationQueue = {
         let q = OperationQueue()
-        q.name = "punktfunk.device-gyro"
+        q.name = "lilynk.device-gyro"
         q.maxConcurrentOperationCount = 1
         return q
     }()

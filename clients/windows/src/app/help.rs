@@ -1,14 +1,14 @@
 //! The Stream controls screen: a short note on the in-stream capture model plus this device's
 //! keyboard, touch and controller shortcuts — reached from the Keyboard shortcuts item in the
 //! navigation pane's footer, with Change into Settings → Shortcuts. The Windows counterpart of
-//! the GTK client's Keyboard Shortcuts window; both read `pf_client_core::shortcuts`.
+//! the GTK client's Keyboard Shortcuts window; both read `ly_client_core::shortcuts`.
 
 use super::style::*;
 use super::{AppCtx, AsyncSetState, Screen};
-use pf_client_core::overlay_actions::{OverlayConfig, RingPlatform};
-use pf_client_core::shortcuts::Client;
-use pf_fluent::{Palette, Token};
-use pf_l10n::{client, common, desktop};
+use ly_client_core::overlay_actions::{OverlayConfig, RingPlatform};
+use ly_client_core::shortcuts::Client;
+use ly_fluent::{Palette, Token};
+use ly_l10n::{client, common, desktop};
 use std::sync::Arc;
 use windows_reactor::*;
 

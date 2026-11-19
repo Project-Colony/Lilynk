@@ -1,5 +1,5 @@
 //! Command-line entry paths: argv helpers, the headless flows (library, host store, version
-//! and updates), the exec handoff to `punktfunk-session` for `--connect`/`--browse`.
+//! and updates), the exec handoff to `lilynk-session` for `--connect`/`--browse`.
 
 use crate::trust::{KnownHost, KnownHosts};
 use gtk::glib;
@@ -20,13 +20,13 @@ pub fn arg_flag(flag: &str) -> bool {
 
 /// A positional `punktfunk://` (or the `pf://` input alias) anywhere in argv — the deep-link
 /// door (design/client-deep-links.md §4.1). It is positional, not a flag, because that is what
-/// `Exec=punktfunk-client %u` hands us, what a `.desktop` shortcut embeds, and what a browser's
+/// `Exec=lilynk-client %u` hands us, what a `.desktop` shortcut embeds, and what a browser's
 /// "Open Punktfunk?" prompt ends up invoking. Validation happens later, in the shared parser —
 /// this only decides whether argv contains something addressed to us.
 pub fn deep_link_arg() -> Option<String> {
     std::env::args()
         .skip(1)
-        .find(|a| pf_client_core::deeplink::is_link_arg(a))
+        .find(|a| ly_client_core::deeplink::is_link_arg(a))
 }
 
 /// A bare launch under Gaming Mode opens the console, not the desktop shell. Gaming Mode
@@ -34,7 +34,7 @@ pub fn deep_link_arg() -> Option<String> {
 /// desktop mode too.
 pub fn couch_launch() -> bool {
     cfg!(feature = "console")
-        && pf_client_core::gamescope::under_gamescope()
+        && ly_client_core::gamescope::under_gamescope()
         && deep_link_arg().is_none()
         && crate::shots::shot_scene().is_none()
 }
@@ -45,7 +45,7 @@ pub fn couch_launch() -> bool {
 /// IPv6 goes through the shared parser — a plain `rsplit_once(':')` reads `::1` as host
 /// `:` port `1`.
 fn parse_host_port(target: &str) -> (String, Option<u16>) {
-    match pf_client_core::deeplink::parse_addr_port(target) {
+    match ly_client_core::deeplink::parse_addr_port(target) {
         Some((addr, port)) => (addr, Some(port)),
         // Keep the "colon, but no usable port" shape the callers branch on.
         None => (
@@ -59,7 +59,7 @@ fn parse_host_port(target: &str) -> (String, Option<u16>) {
 }
 
 /// `--connect` / `--browse`: streams and the console library live in the
-/// `punktfunk-session` Vulkan binary — replace this process with it, forwarding the
+/// `lilynk-session` Vulkan binary — replace this process with it, forwarding the
 /// relevant argv verbatim. With neither flag (a [`couch_launch`]) it opens the console home.
 /// The Decky wrapper launches the SHELL with `--browse` (`clients/decky/bin/punktfunkrun.sh`).
 pub fn exec_session() -> glib::ExitCode {
@@ -95,7 +95,7 @@ pub fn exec_session() -> glib::ExitCode {
         cmd.arg("--browse");
     }
     let err = cmd.exec(); // only returns on failure
-    eprintln!("exec punktfunk-session: {err}");
+    eprintln!("exec lilynk-session: {err}");
     glib::ExitCode::FAILURE
 }
 
@@ -125,7 +125,7 @@ pub fn headless_library(target: &str) -> glib::ExitCode {
     // `parse_addr_port` defaults a bare host to the STREAM port, but here a bare host means
     // "ask the saved record" — so a port counts only when the target spelled one out. A bare
     // `::1` carries colons and no port, which is why this is not a colon test.
-    let (addr, explicit_port) = match pf_client_core::deeplink::parse_addr_port(target) {
+    let (addr, explicit_port) = match ly_client_core::deeplink::parse_addr_port(target) {
         Some((a, p)) => {
             let spelled = target.len() > a.len() && target.ends_with(&format!(":{p}"));
             (a, spelled.then_some(p))
@@ -155,12 +155,12 @@ pub fn headless_library(target: &str) -> glib::ExitCode {
     // An explicit `host:port` names the mgmt port; otherwise the saved record's own.
     let port = explicit_port
         .or_else(|| saved.map(|h| h.effective_mgmt_port()))
-        .unwrap_or(pf_client_core::library::DEFAULT_MGMT_PORT);
+        .unwrap_or(ly_client_core::library::DEFAULT_MGMT_PORT);
     let stream_port = saved.map_or(0, |h| h.port);
     let profile = saved
         .and_then(|h| h.profile.as_ref())
         .map(|p| p.id.as_str());
-    match pf_client_core::library::fetch_games(
+    match ly_client_core::library::fetch_games(
         &addr,
         port,
         stream_port,
@@ -250,10 +250,10 @@ impl Selector {
 
 /// `--omarchy-menu on|off|sync` — Punktfunk's rows in the Omarchy menu (Super+Space): a root
 /// submenu, open/console rows, and one connect row per saved host, kept in sync by every
-/// binary that changes the store. `on` is the consent step (mirroring `punktfunk-omarchy
+/// binary that changes the store. `on` is the consent step (mirroring `lilynk-omarchy
 /// setup` on the host side); `off` removes exactly our block; `sync` rewrites it now.
 fn headless_omarchy_menu(verb: &str) -> glib::ExitCode {
-    use pf_client_core::omarchy_menu as menu;
+    use ly_client_core::omarchy_menu as menu;
     let done = |msg: &str| {
         println!("{msg}");
         glib::ExitCode::SUCCESS
@@ -273,7 +273,7 @@ fn headless_omarchy_menu(verb: &str) -> glib::ExitCode {
         },
         "sync" => {
             if !menu::enabled() {
-                return done("not enabled — run `punktfunk-client --omarchy-menu on` first");
+                return done("not enabled — run `lilynk-client --omarchy-menu on` first");
             }
             match menu::enable() {
                 Ok(()) => done("menu rows rewritten from the saved hosts"),
@@ -301,7 +301,7 @@ pub fn headless_set_host(selector: &str) -> glib::ExitCode {
             None => return fail(format!("invalid port {p:?}")),
         },
     };
-    let macs = match arg_value("--mac").map(|m| pf_client_core::wol::parse_mac_list(&m)) {
+    let macs = match arg_value("--mac").map(|m| ly_client_core::wol::parse_mac_list(&m)) {
         None => None,
         Some(Ok(macs)) => Some(macs),
         Some(Err(bad)) => return fail(format!("invalid MAC address {bad:?}")),
@@ -352,7 +352,7 @@ pub fn headless_forget_host(selector: &str) -> glib::ExitCode {
     let last_match = |now: &KnownHosts| now.hosts.iter().rposition(|h| sel.matches(h));
     let mut forgot = 0;
     loop {
-        match pf_client_core::orchestrate::forget_host(last_match) {
+        match ly_client_core::orchestrate::forget_host(last_match) {
             Ok(Some(_)) => forgot += 1,
             Ok(None) => break,
             Err(e) => {
@@ -374,19 +374,19 @@ pub fn version_string() -> &'static str {
 /// `--version` — one line, so a script can ask "what is installed here?" without a display
 /// or a config dir.
 fn headless_version() -> glib::ExitCode {
-    println!("punktfunk-client {}", version_string());
+    println!("lilynk-client {}", version_string());
     glib::ExitCode::SUCCESS
 }
 
 /// `--check-update [--json]` — is a newer client available for this box's channel, and can
 /// anything here install it? The answer comes from the same Ed25519-signed manifest the host
-/// checks (`pf_client_core::update`); this is only its presentation.
+/// checks (`ly_client_core::update`); this is only its presentation.
 ///
 /// Exit code carries the verdict for scripts: 0 = up to date, 10 = an update is available,
 /// 1 = the check could not be completed (offline, bad signature, disabled). The distinction
 /// matters — "could not tell" must never be scripted as "up to date".
 fn headless_check_update() -> glib::ExitCode {
-    let status = pf_client_core::update::check(version_string());
+    let status = ly_client_core::update::check(version_string());
     if arg_flag("--json") {
         match serde_json::to_string(&status) {
             Ok(s) => println!("{s}"),
@@ -439,10 +439,10 @@ fn headless_check_update() -> glib::ExitCode {
 }
 
 /// The human line describing how an update would be applied.
-fn update_apply_line(status: &pf_client_core::update::Status) -> String {
-    use pf_client_core::update::Applier;
+fn update_apply_line(status: &ly_client_core::update::Status) -> String {
+    use ly_client_core::update::Applier;
     match status.applier {
-        Applier::Helper => format!("punktfunk-client --apply-update   ({})", status.command),
+        Applier::Helper => format!("lilynk-client --apply-update   ({})", status.command),
         Applier::Flatpak => status.command.clone(),
         Applier::None => status.command.clone(),
     }
@@ -450,9 +450,9 @@ fn update_apply_line(status: &pf_client_core::update::Status) -> String {
 
 /// `--apply-update [--json]` — drive the packaged root helper for this install. Refuses (with
 /// the command to run instead) for every kind it does not own; see
-/// `pf_client_core::update::apply`.
+/// `ly_client_core::update::apply`.
 fn headless_apply_update() -> glib::ExitCode {
-    let outcome = pf_client_core::update::apply(version_string());
+    let outcome = ly_client_core::update::apply(version_string());
     if arg_flag("--json") {
         match serde_json::to_string(&outcome) {
             Ok(s) => println!("{s}"),

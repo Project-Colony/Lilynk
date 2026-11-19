@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # punktfunk hook: a stream ended → a low-urgency Omarchy toast.
-# Wired as a `stream.stopped` entry in ~/.config/punktfunk/hooks.json by `punktfunk-omarchy setup`.
+# Wired as a `stream.stopped` entry in ~/.config/punktfunk/hooks.json by `lilynk-omarchy setup`.
 
 set -euo pipefail
 

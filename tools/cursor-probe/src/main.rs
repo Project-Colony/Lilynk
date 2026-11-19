@@ -26,7 +26,7 @@ fn main() {
 #[cfg(target_os = "linux")]
 mod linux {
     use anyhow::{Context, Result};
-    use punktfunk_core::input::{InputEvent, InputKind};
+    use lilynk_core::input::{InputEvent, InputKind};
     use std::sync::atomic::{AtomicBool, Ordering};
     use std::sync::Arc;
     use std::time::{Duration, Instant};
@@ -52,9 +52,9 @@ mod linux {
         let embedded = args.iter().any(|a| a == "--embedded");
         let gpu = args.iter().any(|a| a == "--gpu");
 
-        let compositor = pf_vdisplay::detect()?;
+        let compositor = ly_vdisplay::detect()?;
         println!("cursor-probe: compositor = {compositor:?}");
-        let mut vd = pf_vdisplay::open(compositor)?;
+        let mut vd = ly_vdisplay::open(compositor)?;
         // The cursor-channel session's request: out-of-band cursor (the compositor stops
         // embedding the pointer).
         vd.set_hw_cursor(!embedded);
@@ -67,7 +67,7 @@ mod linux {
             }
         );
         let vout = vd
-            .create(pf_vdisplay::Mode {
+            .create(ly_vdisplay::Mode {
                 width: W,
                 height: H,
                 refresh_hz: 60,
@@ -78,22 +78,22 @@ mod linux {
 
         // Encode-backend facts don't matter to the metadata question; all-off = CPU-friendly.
         let producer = match compositor {
-            pf_vdisplay::Compositor::Kwin => pf_capture::Producer::Kwin,
-            pf_vdisplay::Compositor::Gamescope => pf_capture::Producer::Gamescope,
-            _ => pf_capture::Producer::Other,
+            ly_vdisplay::Compositor::Kwin => ly_capture::Producer::Kwin,
+            ly_vdisplay::Compositor::Gamescope => ly_capture::Producer::Gamescope,
+            _ => ly_capture::Producer::Other,
         };
-        let mut cap = pf_capture::open_virtual_output(
+        let mut cap = ly_capture::open_virtual_output(
             vout.remote_fd,
             vout.node_id,
             vout.preferred_mode,
             vout.keepalive,
-            pf_capture::VirtualOutputOpts {
+            ly_capture::VirtualOutputOpts {
                 allow_zerocopy: gpu,
                 expect_exact_dims: vout.expect_exact_dims,
                 producer,
                 ..Default::default()
             },
-            || pf_capture::ZeroCopyPolicy {
+            || ly_capture::ZeroCopyPolicy {
                 backend_is_gpu: gpu,
                 ..Default::default()
             },
@@ -111,13 +111,13 @@ mod linux {
         // Wiggle the pointer over the virtual output through the production injector (libei on
         // GNOME/KWin). The region ladder maps the absolute events onto the output by size match —
         // W×H is deliberately distinctive.
-        let backend = pf_inject::default_backend();
+        let backend = ly_inject::default_backend();
         println!("cursor-probe: input backend = {backend:?} (4 s device-resume wait)");
         let stop = Arc::new(AtomicBool::new(false));
         let stop_inj = stop.clone();
         // `dyn InputInjector` isn't Send — build it on the thread that drives it.
         let injector = std::thread::spawn(move || {
-            let mut inj = match pf_inject::open(backend) {
+            let mut inj = match ly_inject::open(backend) {
                 Ok(i) => i,
                 Err(e) => {
                     tracing::error!(error = %format!("{e:#}"), "cursor-probe: injector open failed");
@@ -185,10 +185,10 @@ mod linux {
         while Instant::now() < deadline {
             // Damage-driven source: timeouts (gaps) are normal, hence the missing error arm and
             // the provisional budget, whose expiry convicts no offer.
-            let budget = pf_capture::FirstFrame::Provisional(Duration::from_millis(500));
+            let budget = ly_capture::FirstFrame::Provisional(Duration::from_millis(500));
             if let Ok(f) = cap.next_frame(budget) {
                 frames += 1;
-                if let pf_frame::FramePayload::Cpu(data) = &f.payload {
+                if let ly_frame::FramePayload::Cpu(data) = &f.payload {
                     if !prev.is_empty()
                         && prev.len() == data.len()
                         && prev.as_slice() != data.as_slice()
@@ -270,14 +270,14 @@ mod linux {
         path: &str,
         w: u32,
         h: u32,
-        format: pf_frame::PixelFormat,
+        format: ly_frame::PixelFormat,
         data: &[u8],
     ) -> Result<()> {
         use std::io::Write;
         let mut out = std::io::BufWriter::new(std::fs::File::create(path)?);
         write!(out, "P6\n{w} {h}\n255\n")?;
         let (ri, gi, bi) = match format {
-            pf_frame::PixelFormat::Rgbx | pf_frame::PixelFormat::Rgba => (0usize, 1usize, 2usize),
+            ly_frame::PixelFormat::Rgbx | ly_frame::PixelFormat::Rgba => (0usize, 1usize, 2usize),
             _ => (2usize, 1usize, 0usize),
         };
         for px in data.chunks_exact(4).take((w as usize) * (h as usize)) {

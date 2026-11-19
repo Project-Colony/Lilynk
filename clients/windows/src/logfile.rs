@@ -1,6 +1,6 @@
 //! Persistent client log file: `%LOCALAPPDATA%\punktfunk\logs\client.log`.
 //!
-//! The shell is a `windows_subsystem` binary and spawns `punktfunk-session` with
+//! The shell is a `windows_subsystem` binary and spawns `lilynk-session` with
 //! `CREATE_NO_WINDOW` — a normal GUI/MSIX launch has NO console, so without a file every log
 //! line (the shell's and the session's whole receive/decode/present trail) would be lost.
 //!

@@ -13,13 +13,13 @@ PORT="${PUNKTFUNK_LOOPBACK_PORT:-19778}"
 PAIR_PORT="${PUNKTFUNK_PAIRING_PORT:-19779}"
 GUESS_PORT="${PUNKTFUNK_GUESS_PORT:-19780}"
 
-cargo build --release -p punktfunk-host
+cargo build --release -p lilynk-host
 
 # Each host gets a throwaway config home: the pairing hosts persist a trust store
 # (punktfunk1-paired.json, resolved from $HOME) and all mint an identity cert on first
 # run — none of that belongs in the user's real ~/.config/punktfunk, and separate homes
 # also keep the first runs from racing on the same cert.pem.
-CFG="$(mktemp -d "${TMPDIR:-/tmp}/punktfunk-loopback.XXXXXX")"
+CFG="$(mktemp -d "${TMPDIR:-/tmp}/lilynk-loopback.XXXXXX")"
 PAIR_LOG="$CFG/pairing-host.log"
 GUESS_LOG="$CFG/guess-host.log"
 mkdir -p "$CFG/open" "$CFG/paired" "$CFG/guess"
@@ -30,15 +30,15 @@ trap 'kill "${HOST_PID:-}" "${PAIR_PID:-}" "${GUESS_PID:-}" 2>/dev/null || true'
 # spends tens of seconds moving the system's output device around, long after the 300 frames the
 # round-trip test needs.
 HOME="$CFG/open" XDG_CONFIG_HOME="$CFG/open/.config" PUNKTFUNK_TEST_FEEDBACK=1 \
-    target/release/punktfunk-host punktfunk1-host --port "$PORT" --source synthetic --frames 12000 \
+    target/release/lilynk-host punktfunk1-host --port "$PORT" --source synthetic --frames 12000 \
     --allow-tofu &
 HOST_PID=$!
 HOME="$CFG/paired" XDG_CONFIG_HOME="$CFG/paired/.config" \
-    target/release/punktfunk-host punktfunk1-host --port "$PAIR_PORT" --source synthetic --frames 300 \
+    target/release/lilynk-host punktfunk1-host --port "$PAIR_PORT" --source synthetic --frames 300 \
     --require-pairing >"$PAIR_LOG" 2>&1 &
 PAIR_PID=$!
 HOME="$CFG/guess" XDG_CONFIG_HOME="$CFG/guess/.config" \
-    target/release/punktfunk-host punktfunk1-host --port "$GUESS_PORT" --source synthetic --frames 300 \
+    target/release/lilynk-host punktfunk1-host --port "$GUESS_PORT" --source synthetic --frames 300 \
     --require-pairing >"$GUESS_LOG" 2>&1 &
 GUESS_PID=$!
 sleep 1

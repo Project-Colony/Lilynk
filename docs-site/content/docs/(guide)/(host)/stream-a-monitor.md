@@ -28,7 +28,7 @@ a monitor another device is streaming gets its own screen for that session.
   the prompt. A device that connects while the PC is locked or signed out gets a virtual screen
   instead, so you can sign in; the monitor is streamed again from the next connection.
 
-On Linux, monitors are named by connector (`HDMI-A-1`, `DP-2`); `punktfunk-host list-monitors`
+On Linux, monitors are named by connector (`HDMI-A-1`, `DP-2`); `lilynk-host list-monitors`
 lists them ([Host CLI](/docs/host-cli#list-monitors)). On Windows they carry the Windows display
 name (`\\.\DISPLAY1`), which the console shows.
 
@@ -44,5 +44,5 @@ To pin it from the host instead, set `PUNKTFUNK_CAPTURE_MONITOR=HDMI-A-1` in
 ### A device streams its own screen instead of the monitor I picked
 
 The monitor isn't connected, was renamed or switched off, another device is streaming it, or the
-host runs in another session. The host log names the reason. Run `punktfunk-host list-monitors` and
+host runs in another session. The host log names the reason. Run `lilynk-host list-monitors` and
 pick a listed one, or wait for the other device to finish.

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build the punktfunk-seats .deb: the root supervisor that runs a user, a logind session and a
+# Build the lilynk-seats .deb: the root supervisor that runs a user, a logind session and a
 # host per profile seat, and the door's units and root helper (reachable without logging in).
 # The host .deb depends on it. Installed, never enabled: the console turns seats and the door on.
 #
@@ -7,19 +7,19 @@
 # so one package serves 24.04 through 26.04. Without a prebuilt binary the script builds it.
 #
 # Usage: VERSION=0.0.1~ci42.gdeadbee [ARCH=amd64] bash packaging/debian/build-seats-deb.sh
-# Output: dist/punktfunk-seats_<version>_<arch>.deb
+# Output: dist/lilynk-seats_<version>_<arch>.deb
 set -euo pipefail
 
 VERSION="${VERSION:?set VERSION (e.g. 0.0.1 or 0.0.1~ci42.gdeadbee)}"
 ARCH="${ARCH:-amd64}"
-PKG="punktfunk-seats"
+PKG="lilynk-seats"
 ROOTDIR="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOTDIR"
 
 BIN="target/release/$PKG"
 if [ ! -x "$BIN" ]; then
   echo "==> building $PKG (release)"
-  cargo build --release --locked -p punktfunk-seats
+  cargo build --release --locked -p lilynk-seats
 fi
 
 STAGE="$(mktemp -d)"
@@ -32,19 +32,19 @@ install -Dm0755 "$BIN" "$LIBEXEC/$PKG"
 for f in seat-session seat-reap; do
   install -Dm0755 "packaging/linux/$f" "$LIBEXEC/$f"
 done
-for f in punktfunk-seats.service punktfunk-seat@.service; do
+for f in lilynk-seats.service lilynk-seat@.service; do
   install -Dm0644 "packaging/linux/$f" "$STAGE/usr/lib/systemd/system/$f"
 done
-install -Dm0644 packaging/linux/punktfunk-seats-user.conf "$STAGE/usr/lib/systemd/system/user@.service.d/50-punktfunk-seats.conf"
-install -Dm0644 packaging/linux/punktfunk-seat.pam "$STAGE/usr/lib/pam.d/punktfunk-seat"
-install -Dm0644 packaging/linux/punktfunk-seats.tmpfiles "$STAGE/usr/lib/tmpfiles.d/punktfunk-seats.conf"
-install -Dm0644 packaging/linux/65-punktfunk-seats.rules "$STAGE/usr/lib/udev/rules.d/65-punktfunk-seats.rules"
+install -Dm0644 packaging/linux/lilynk-seats-user.conf "$STAGE/usr/lib/systemd/system/user@.service.d/50-lilynk-seats.conf"
+install -Dm0644 packaging/linux/lilynk-seat.pam "$STAGE/usr/lib/pam.d/lilynk-seat"
+install -Dm0644 packaging/linux/lilynk-seats.tmpfiles "$STAGE/usr/lib/tmpfiles.d/lilynk-seats.conf"
+install -Dm0644 packaging/linux/65-lilynk-seats.rules "$STAGE/usr/lib/udev/rules.d/65-lilynk-seats.rules"
 install -Dm0755 packaging/linux/door-helper "$LIBEXEC/door-helper"
 install -Dm0755 packaging/linux/door-remove.sh "$LIBEXEC/door-remove"
-for f in punktfunk-door.service punktfunk-web-door.service punktfunk-door-on@.service punktfunk-door-off@.service; do
+for f in lilynk-door.service lilynk-web-door.service lilynk-door-on@.service lilynk-door-off@.service; do
   install -Dm0644 "packaging/linux/$f" "$STAGE/usr/lib/systemd/system/$f"
 done
-install -Dm0644 packaging/linux/49-punktfunk-door.rules "$STAGE/usr/share/polkit-1/rules.d/49-punktfunk-door.rules"
+install -Dm0644 packaging/linux/49-lilynk-door.rules "$STAGE/usr/share/polkit-1/rules.d/49-lilynk-door.rules"
 install -Dm0644 LICENSE-MIT    "$DOCDIR/LICENSE-MIT"
 install -Dm0644 LICENSE-APACHE "$DOCDIR/LICENSE-APACHE"
 

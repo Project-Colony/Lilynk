@@ -50,7 +50,7 @@ export function loopbackTls(base: string): { tls: object } | undefined {
 		if (!warnedUnpinned) {
 			warnedUnpinned = true;
 			console.warn(
-				"[punktfunk-web] PUNKTFUNK_UI_TLS_CERT names no readable host cert — the loopback hop to the management API is not pinned",
+				"[lilynk-web] PUNKTFUNK_UI_TLS_CERT names no readable host cert — the loopback hop to the management API is not pinned",
 			);
 		}
 		return { tls: { rejectUnauthorized: false } };

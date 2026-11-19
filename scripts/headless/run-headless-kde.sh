@@ -14,7 +14,7 @@
 #
 # Then in another shell:
 #   WAYLAND_DISPLAY=wayland-kde XDG_CURRENT_DESKTOP=KDE \
-#     punktfunk-host punktfunk1-host --source virtual --seconds 14400   # zero-copy is on by default
+#     lilynk-host punktfunk1-host --source virtual --seconds 14400   # zero-copy is on by default
 set -euo pipefail
 
 RES="${1:-1920x1080}"
@@ -36,14 +36,14 @@ export KWIN_WAYLAND_NO_PERMISSION_CHECKS=1
 # (the RPM/.deb put it at /usr/bin, where there is no $ROOT/target or Cargo.toml), then
 # `cargo run` as a last resort.
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-if [[ -x "$ROOT/target/release/punktfunk-host" ]]; then
-    PROBE=("$ROOT/target/release/punktfunk-host" probe-compositor)
-elif [[ -x "$ROOT/target/debug/punktfunk-host" ]]; then
-    PROBE=("$ROOT/target/debug/punktfunk-host" probe-compositor)
-elif command -v punktfunk-host >/dev/null 2>&1; then
-    PROBE=(punktfunk-host probe-compositor)
+if [[ -x "$ROOT/target/release/lilynk-host" ]]; then
+    PROBE=("$ROOT/target/release/lilynk-host" probe-compositor)
+elif [[ -x "$ROOT/target/debug/lilynk-host" ]]; then
+    PROBE=("$ROOT/target/debug/lilynk-host" probe-compositor)
+elif command -v lilynk-host >/dev/null 2>&1; then
+    PROBE=(lilynk-host probe-compositor)
 else
-    PROBE=(cargo run -q --manifest-path "$ROOT/Cargo.toml" -p punktfunk-host -- probe-compositor)
+    PROBE=(cargo run -q --manifest-path "$ROOT/Cargo.toml" -p lilynk-host -- probe-compositor)
 fi
 
 # kwin to its own log (so its EGL/GPU-init errors are captured, not lost to the terminal).
@@ -55,14 +55,14 @@ fi
 # /tmp. This file is not just a log: the DISPLAY detection below GREPS it for "Using public X11
 # display :N" and exports the result, so at a predictable path in a shared directory any local user
 # could pre-create it (or symlink it) and steer the DISPLAY of a shipped systemd service.
-# `pf-vdisplay` already resolves XDG_RUNTIME_DIR for its own paths; this matches. Without a
+# `ly-vdisplay` already resolves XDG_RUNTIME_DIR for its own paths; this matches. Without a
 # runtime dir, fall back to a private mktemp rather than a guessable name.
 if [[ -n "${XDG_RUNTIME_DIR:-}" && -d "${XDG_RUNTIME_DIR}" ]]; then
-    KWIN_LOG="${XDG_RUNTIME_DIR}/punktfunk-kwin.log"
+    KWIN_LOG="${XDG_RUNTIME_DIR}/lilynk-kwin.log"
     : >"$KWIN_LOG"
     chmod 600 "$KWIN_LOG"
 else
-    KWIN_LOG="$(mktemp -t punktfunk-kwin.XXXXXXXX.log)"
+    KWIN_LOG="$(mktemp -t lilynk-kwin.XXXXXXXX.log)"
 fi
 kwin_wayland --virtual --xwayland --width "$W" --height "$H" --no-lockscreen \
     --socket "$WAYLAND_DISPLAY" >"$KWIN_LOG" 2>&1 &
@@ -147,9 +147,9 @@ fi
 # pipewire reads its own config at start, so on FIRST install (config not yet present) restart it
 # once to load the sink; later boots already have it. (Also disable AirPlay discovery out of band:
 # `sudo dnf remove pipewire-config-raop`.)
-PWSINK="$HOME/.config/pipewire/pipewire.conf.d/50-punktfunk-sink.conf"
-if [[ ! -s "$PWSINK" && -s "$SELF_DIR/punktfunk-sink.conf" ]]; then
-    mkdir -p "$(dirname "$PWSINK")" && cp "$SELF_DIR/punktfunk-sink.conf" "$PWSINK"
+PWSINK="$HOME/.config/pipewire/pipewire.conf.d/50-lilynk-sink.conf"
+if [[ ! -s "$PWSINK" && -s "$SELF_DIR/lilynk-sink.conf" ]]; then
+    mkdir -p "$(dirname "$PWSINK")" && cp "$SELF_DIR/lilynk-sink.conf" "$PWSINK"
     echo "installed Punktfunk virtual speaker → restarting pipewire to load it"
     systemctl --user restart pipewire 2>/dev/null || true
 fi
@@ -158,9 +158,9 @@ fi
 # job without it) can come up — a headless linger session never gets there on its own, and Fedora's
 # target carries RefuseManualStart=yes, so drop that in once. Without the portal, libei input fails.
 GST_DROPIN="$HOME/.config/systemd/user/graphical-session.target.d"
-if [[ ! -f "$GST_DROPIN/10-punktfunk-headless.conf" ]]; then
+if [[ ! -f "$GST_DROPIN/10-lilynk-headless.conf" ]]; then
     mkdir -p "$GST_DROPIN"
-    printf '[Unit]\nRefuseManualStart=no\n' > "$GST_DROPIN/10-punktfunk-headless.conf"
+    printf '[Unit]\nRefuseManualStart=no\n' > "$GST_DROPIN/10-lilynk-headless.conf"
     systemctl --user daemon-reload 2>/dev/null || true
 fi
 systemctl --user start graphical-session.target 2>/dev/null || true
@@ -179,7 +179,7 @@ systemctl --user --no-block start xdg-desktop-portal.service 2>/dev/null || true
 POLKIT_AGENT=/usr/lib/x86_64-linux-gnu/libexec/polkit-kde-authentication-agent-1
 if [[ -x "$POLKIT_AGENT" ]] && ! pgrep -x polkit-kde-auth >/dev/null; then
     QT_QPA_PLATFORM=wayland setsid "$POLKIT_AGENT" \
-        >"${TMPDIR:-/tmp}/punktfunk-polkit-agent.log" 2>&1 &
+        >"${TMPDIR:-/tmp}/lilynk-polkit-agent.log" 2>&1 &
 fi
 
 kbuildsycoca6 >/dev/null 2>&1 || true # rebuild the menu cache under the correct env

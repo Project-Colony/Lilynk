@@ -2,8 +2,8 @@
 //! rest behind a Cargo feature of the same name) and one function per message, named as its key:
 //!
 //! ```
-//! pf_l10n::set_languages(&["de-AT", "en"]);
-//! let label: &'static str = pf_l10n::common::common_cancel();
+//! ly_l10n::set_languages(&["de-AT", "en"]);
+//! let label: &'static str = ly_l10n::common::common_cancel();
 //! ```
 //!
 //! A message without placeholders returns `&'static str`; one with placeholders takes them in

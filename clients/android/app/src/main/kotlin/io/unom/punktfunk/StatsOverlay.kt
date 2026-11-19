@@ -24,7 +24,7 @@ internal fun decodeHudLines(encoded: String?): List<HudLine> =
     }.toList()
 
 /**
- * The live stats overlay: the lines `punktfunk_core::hud` built for this window, painted by role.
+ * The live stats overlay: the lines `lilynk_core::hud` built for this window, painted by role.
  * The tier, the vocabulary and every label are decided natively, the same as on every other
  * client; this only draws them. [scale] is the player's Statistics size on top of the density.
  */

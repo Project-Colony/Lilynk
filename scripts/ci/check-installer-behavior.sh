@@ -1,7 +1,7 @@
 #!/bin/sh
 # Behavioural gates for the guided installer, driven against the BINARY.
 #
-# scripts/install.sh is a stub that downloads punktfunk-setup (design/installer-v2.md D1), so the
+# scripts/install.sh is a stub that downloads lilynk-setup (design/installer-v2.md D1), so the
 # behaviour lives in the binary. These gates are not in check-docs-drift.sh because that gate
 # runs in a bun container with no cargo, and this needs a built installer.
 #
@@ -15,8 +15,8 @@ cd "$(dirname "$0")/../.." || exit 2
 # CI passes a built binary; a developer running this by hand gets a debug build.
 PF=${PUNKTFUNK_SETUP_BIN:-}
 if [ -z "$PF" ]; then
-    cargo build -q -p punktfunk-setup || exit 2
-    PF=target/debug/punktfunk-setup
+    cargo build -q -p lilynk-setup || exit 2
+    PF=target/debug/lilynk-setup
 fi
 [ -x "$PF" ] || { echo "::error::$PF is not executable"; exit 2; }
 
@@ -39,12 +39,12 @@ installer_case() {   # name os-release-body expected-substring [extra args...]
     out=$(PATH="${pfpath:+$pfpath:}$PATH" PUNKTFUNK_INSTALL_OS_RELEASE="$osr/$name" \
           "$PF" --dry-run --yes --no-start "$@" 2>&1)
     case "$out" in *"$want"*) ;; *)
-        echo "::error::punktfunk-setup --dry-run $* on a fake $name os-release did not print '$want':"
+        echo "::error::lilynk-setup --dry-run $* on a fake $name os-release did not print '$want':"
         printf '%s\n' "$out" | sed 's/^/    /'
         fail=1 ;;
     esac
     if upstream_feed "$out"; then
-        echo "::error::punktfunk-setup --dry-run $* on a fake $name os-release names an upstream feed:"
+        echo "::error::lilynk-setup --dry-run $* on a fake $name os-release names an upstream feed:"
         printf '%s\n' "$out" | grep -E 'git\.unom\.io|flatpak\.unom\.io' | sed 's/^/    /'
         fail=1
     fi
@@ -76,11 +76,11 @@ installer_case gentoo   'ID=gentoo\n'                                  'build-fr
 # A client install would add the flatpak remote, or the family's repo, so it stops too.
 installer_case gentoo-client 'ID=gentoo\n'                             "$NOREPO 'gentoo' yet" --client
 installer_case arch-client   'ID=arch\n'                               "$NOREPO 'arch' yet" --client
-installer_case debian-rm 'ID=debian\nVERSION_ID=13\n'                   'sources.list.d/punktfunk.list' --uninstall
-installer_case fedora-rm 'ID=fedora\nVERSION_ID=44\n'                   'yum.repos.d/punktfunk.repo' --uninstall
+installer_case debian-rm 'ID=debian\nVERSION_ID=13\n'                   'sources.list.d/lilynk.list' --uninstall
+installer_case fedora-rm 'ID=fedora\nVERSION_ID=44\n'                   'yum.repos.d/lilynk.repo' --uninstall
 installer_case arch-rm   'ID=arch\n'                                   '/etc/pacman.conf' --uninstall
-installer_case omarchy-rm 'ID=omarchy\nID_LIKE=arch\n'                  'punktfunk-omarchy remove' --uninstall
-installer_case bazzite-rm 'ID=bazzite\nID_LIKE="fedora"\nVERSION_ID=43\n' 'punktfunk-sysext remove' --uninstall
+installer_case omarchy-rm 'ID=omarchy\nID_LIKE=arch\n'                  'lilynk-omarchy remove' --uninstall
+installer_case bazzite-rm 'ID=bazzite\nID_LIKE="fedora"\nVERSION_ID=43\n' 'lilynk-sysext remove' --uninstall
 # Nothing on SteamOS is a package, so --uninstall must say so instead of claiming a removal.
 installer_case steamos-rm 'ID=steamos\nID_LIKE=arch\n'                  'no uninstall script' --uninstall
 
@@ -92,16 +92,16 @@ PUNKTFUNK_SETUP_BIN="$PF" sh scripts/ci/check-install-defaults.sh || fail=1
 # channel switch rewrites a repo. Two fakes make this reachable under --dry-run: stub binaries on
 # PATH, and PUNKTFUNK_INSTALL_ETC pointing at the repo config the box is supposedly on.
 mkdir -p "$sw/bin"
-for b in punktfunk-host punktfunk-web-server punktfunk-scripting; do
+for b in lilynk-host lilynk-web-server lilynk-scripting; do
     printf '#!/bin/sh\necho 0.0.0-test\n' > "$sw/bin/$b"; chmod +x "$sw/bin/$b"
 done
 pfpath="$sw/bin"
 WIRED="skipping the install"
 installer_case debian-wired 'ID=debian\nVERSION_ID=13\n'                 "$WIRED"
 installer_case arch-wired   'ID=arch\n'                                "$WIRED"
-# Omarchy: the run hands off to `punktfunk-omarchy setup` rather than do a second, weaker version
+# Omarchy: the run hands off to `lilynk-omarchy setup` rather than do a second, weaker version
 # of the same wiring.
-installer_case omarchy-wired 'ID=omarchy\nID_LIKE=arch\nVERSION_ID=4.0.1\n' 'punktfunk-omarchy setup'
+installer_case omarchy-wired 'ID=omarchy\nID_LIKE=arch\nVERSION_ID=4.0.1\n' 'lilynk-omarchy setup'
 pfpath=
 switch_case() {   # name os-release-body config-path config-body expected-substring [extra args...]
     name=$1; printf '%b' "$2" > "$osr/$name"
@@ -109,24 +109,24 @@ switch_case() {   # name os-release-body config-path config-body expected-substr
     out=$(PATH="$sw/bin:$PATH" PUNKTFUNK_INSTALL_OS_RELEASE="$osr/$name" PUNKTFUNK_INSTALL_ETC="$sw/$name" \
           "$PF" --dry-run --yes --no-start "$@" 2>&1)
     case "$out" in *"$want"*) ;; *)
-        echo "::error::punktfunk-setup --dry-run $* on an installed $name box did not print '$want':"
+        echo "::error::lilynk-setup --dry-run $* on an installed $name box did not print '$want':"
         printf '%s\n' "$out" | sed 's/^/    /'
         fail=1 ;;
     esac
     if upstream_feed "$out"; then
-        echo "::error::punktfunk-setup --dry-run $* on an installed $name box names an upstream feed:"
+        echo "::error::lilynk-setup --dry-run $* on an installed $name box names an upstream feed:"
         printf '%s\n' "$out" | grep -E 'git\.unom\.io|flatpak\.unom\.io' | sed 's/^/    /'
         fail=1
     fi
 }
 DEB13='ID=debian\nVERSION_ID=13\n'
-switch_case apt-repo "$DEB13" etc/apt/sources.list.d/punktfunk.list \
+switch_case apt-repo "$DEB13" etc/apt/sources.list.d/lilynk.list \
     'deb [x] https://git.unom.io/api/packages/unom/debian stable main\n' "$NOREPO 'debian' yet" --channel canary
-switch_case dnf-repo 'ID=fedora\nVERSION_ID=44\n' etc/yum.repos.d/punktfunk.repo \
+switch_case dnf-repo 'ID=fedora\nVERSION_ID=44\n' etc/yum.repos.d/lilynk.repo \
     'baseurl=https://git.unom.io/api/packages/unom/rpm/fedora-44\n' "$NOREPO 'fedora' yet" --channel canary
-switch_case pac-repo 'ID=arch\n' etc/pacman.conf '[punktfunk-canary]\nServer = x\n' "$NOREPO 'arch' yet" --channel stable
+switch_case pac-repo 'ID=arch\n' etc/pacman.conf '[lilynk-canary]\nServer = x\n' "$NOREPO 'arch' yet" --channel stable
 # A sysext has no repo file: an installed one, even from a feed's channel, is wiring only.
-switch_case sys-wired 'ID=bazzite\nID_LIKE="fedora"\nVERSION_ID=43\n' etc/punktfunk-sysext.conf 'CHANNEL=canary\n' \
+switch_case sys-wired 'ID=bazzite\nID_LIKE="fedora"\nVERSION_ID=43\n' etc/lilynk-sysext.conf 'CHANNEL=canary\n' \
     "$WIRED" --channel stable
 
 exit $fail

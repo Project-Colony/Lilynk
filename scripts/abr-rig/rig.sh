@@ -50,8 +50,8 @@ trap cleanup EXIT
 # ---- build ------------------------------------------------------------------
 cd /w
 say "building"
-cargo build --release -p punktfunk-host --bin punktfunk-host
-cargo build --release -p punktfunk-probe --bin punktfunk-probe
+cargo build --release -p lilynk-host --bin lilynk-host
+cargo build --release -p lilynk-probe --bin lilynk-probe
 
 # ---- the shaped link --------------------------------------------------------
 # A veth pair is lossless and unqueued; netem with an explicit rate is what
@@ -120,7 +120,7 @@ if [ "$NO_RAMP" = 1 ]; then NO_RAMP_ARG="--no-ramp"; fi
 TOFU_ARG=""
 if [ "$PROBES" != 1 ]; then TOFU_ARG="--allow-tofu"; fi
 say "host: --content $CONTENT --fill $FILL --recovery-ms $RECOVERY_MS --keyframe-answer $KEYFRAME_ANSWER --idr-pct $IDR_PCT --bringup-ms $BRINGUP_MS $NO_RAMP_ARG"
-ip netns exec h "$BIN/punktfunk-host" punktfunk1-host \
+ip netns exec h "$BIN/lilynk-host" punktfunk1-host \
   --port $PORT --source synthetic-abr --content "$CONTENT" --fill "$FILL" \
   --recovery-ms "$RECOVERY_MS" --keyframe-answer "$KEYFRAME_ANSWER" \
   --idr-pct "$IDR_PCT" \
@@ -137,7 +137,7 @@ done
 for n in $(seq "$PROBES"); do mkdir -p "$PROBE_HOME/$n"; done
 if [ "$PROBES" = 1 ]; then
   say "pairing"
-  FP=$(echo "$PIN" | HOME="$PROBE_HOME/1" ip netns exec c "$BIN/punktfunk-probe" \
+  FP=$(echo "$PIN" | HOME="$PROBE_HOME/1" ip netns exec c "$BIN/lilynk-probe" \
         --connect $HOST_IP:$PORT --pair - --name abr-rig 2>&1 \
         | grep -o 'connect with --pin [0-9a-f]\{64\}' | awk '{print $4}')
   [ -n "$FP" ] || { echo "[rig] pairing did not return a fingerprint"; tail -20 "$OUT/$PROFILE-host.log"; exit 1; }
@@ -208,7 +208,7 @@ run_probe() {
   # what the row is read on is its delivered rate.
   rate_arg=""
   if [ "$rate" != 0 ]; then rate_arg="--bitrate $rate"; fi
-  HOME="$PROBE_HOME/$n" ip netns exec c "$BIN/punktfunk-probe" \
+  HOME="$PROBE_HOME/$n" ip netns exec c "$BIN/lilynk-probe" \
     --connect $HOST_IP:$PORT --pin "$FP" --name "abr-rig-$n" \
     --mode "$MODE" --seconds "$secs" $HOLD_ARG $rate_arg \
     --trajectory "$OUT/$PROFILE-$n.jsonl" \
@@ -241,8 +241,8 @@ echo
 echo "== $PROFILE: ${SECONDS_RUN}s on a ${RATE_KBIT}kbit/${DELAY_MS}ms/${BUFFER_MS}ms path =="
 # The host's columns sum its whole-minute `link health` lines for that probe's session.
 printf '%s\tunrec_10min\trfi_10min\tidr_10min\tkf_req_10min\n' \
-  "$(head -1 /w/crates/core/punktfunk-core/src/abr/sim/baseline.tsv)"
-grep -h "^$PROFILE	" /w/crates/core/punktfunk-core/src/abr/sim/baseline.tsv \
+  "$(head -1 /w/crates/core/lilynk-core/src/abr/sim/baseline.tsv)"
+grep -h "^$PROFILE	" /w/crates/core/lilynk-core/src/abr/sim/baseline.tsv \
   | sed 's/^/sim  /' || true
 clean() { sed 's/\x1b\[[0-9;]*m//g' "$@"; }
 # Host session ids rise in open order, so the k-th probe to open owns the k-th id.

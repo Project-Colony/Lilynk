@@ -1,5 +1,5 @@
 // Who may reach the console: the same address table as `classify_with`
-// (crates/core/punktfunk-core/src/provenance.rs), which the host reads for a pairing knock.
+// (crates/core/lilynk-core/src/provenance.rs), which the host reads for a pairing knock.
 import { createSocket } from "node:dgram";
 import { isIPv4, isIPv6 } from "node:net";
 import { networkInterfaces } from "node:os";

@@ -8,7 +8,7 @@
 // needs nothing: VideoToolbox recreates its session on the keyframe-derived format-description
 // change (the first new-mode AU is an IDR with fresh parameter sets).
 //
-// The trigger discipline is the shared cross-client one (mirrors pf-presenter's
+// The trigger discipline is the shared cross-client one (mirrors ly-presenter's
 // `resize_decision`): debounce to resize-end; ≥ 1 s between requests; skip a size and view equal to
 // the live ones; and skip an ask equal to the last one sent — which both stops re-asking a rejected
 // size and keeps a host-side rollback (accepted, rebuild failed, corrective ack restored the old

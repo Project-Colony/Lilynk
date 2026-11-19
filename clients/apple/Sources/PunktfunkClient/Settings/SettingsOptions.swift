@@ -58,7 +58,7 @@ enum SettingsOptions {
 
     /// Virtual-pad types — the `tag` is the wire value (`PunktfunkConnection.GamepadType` raw).
     /// This picks the pad the HOST presents to the game, so it does not depend on what this
-    /// device can capture. Keep in step with pf-console-ui's `PAD_TYPES` and the Linux shell's
+    /// device can capture. Keep in step with ly-console-ui's `PAD_TYPES` and the Linux shell's
     /// `GAMEPADS`: a preset written on one client opens on another.
     static let padTypes: [(label: String, tag: Int)] = [
         (String(localized: L10n.playerGamepadAuto), 0),
@@ -145,7 +145,7 @@ enum SettingsOptions {
     /// AV1 appears only on devices with an AV1 hardware decoder (the same
     /// `AV1.hardwareDecodeSupported` gate SessionModel advertises by) — elsewhere it would be a
     /// dead setting the host could never honor. Ordered by the host's resolve precedence
-    /// (`resolve_codec` in punktfunk-core's `quic/caps.rs`).
+    /// (`resolve_codec` in lilynk-core's `quic/caps.rs`).
     ///
     /// [current] is the stored value, kept listed even when this device can't decode it — a
     /// preset made on another device carries one here — and then labelled with the reason.

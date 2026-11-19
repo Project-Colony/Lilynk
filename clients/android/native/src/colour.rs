@@ -2,7 +2,7 @@
 //! maps to, and the HDR static metadata for a codec and for a layer. Plain values in and out; the
 //! NDK `DataSpace`, `MediaFormat` and transaction are built in `decode/`.
 
-use punktfunk_core::quic::{ColorInfo, HdrMeta};
+use lilynk_core::quic::{ColorInfo, HdrMeta};
 
 /// The `ADataSpace` tags a surface takes, named as the NDK's `DataSpace` names them. The `Itu`
 /// variants are studio range.

@@ -61,7 +61,7 @@ Steam Input, which exposes its own X-Box 360 pad — exactly a real Deck's behav
 ## Host backend (shipped — default on for SteamOS)
 
 The C PoC's transport is ported to a Rust host gamepad backend:
-`crates/host/punktfunk-host/src/inject/linux/steam_gadget.rs` (`SteamDeckGadget`), driven by the same
+`crates/host/lilynk-host/src/inject/linux/steam_gadget.rs` (`SteamDeckGadget`), driven by the same
 `steam_proto` serializer as the UHID `SteamDeckPad`. The Steam-Deck manager
 (`inject/linux/steam_controller.rs`) selects per-pad between **UHID** (universal) and the **USB
 gadget**: the gadget is the **default on SteamOS hosts** (`gadget_preferred()` → `ID=steamos`;
@@ -99,4 +99,4 @@ hid-steam — so the input transport is proven end-to-end.
 - **Glass confirmation of the XInput mapping** — Steam Input only maps the gadget's raw input onto its
   X-Box pad while a game using Steam Input is focused; confirm a button reaches a real game, then
   default the gadget on for SteamOS hosts (it's strictly better than the non-promoted UHID path).
-- A `punktfunk-host` build for SteamOS to exercise the integrated path end-to-end with a live client.
+- A `lilynk-host` build for SteamOS to exercise the integrated path end-to-end with a live client.

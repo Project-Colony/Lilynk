@@ -31,9 +31,9 @@
 # One App Store listing for all platforms (universal purchase): every target shares the
 # bundle ID io.unom.punktfunk.
 #
-# The macOS app is App-SANDBOXED for both channels (Config/Punktfunk-macOS.entitlements —
+# The macOS app is App-SANDBOXED for both channels (Config/Lilynk-macOS.entitlements —
 # app-sandbox + network client/server + audio-input + bluetooth/usb device access; the
-# shared Config/Punktfunk.entitlements stays iOS/tvOS-only, where app-sandbox is invalid).
+# shared Config/Lilynk.entitlements stays iOS/tvOS-only, where app-sandbox is invalid).
 # The Developer ID DMG is codesigned with the SAME macOS entitlements as the App Store build,
 # BUT it must ALSO embed a Developer ID provisioning profile: keychain-access-groups is a
 # MANAGED entitlement that AMFI only honors when an embedded profile authorizes it. A DMG
@@ -94,11 +94,11 @@ on:
     # see the per-step gates). Heavy on the shared mac-mini runner, hence the tight paths filter.
     branches: [main]
     paths:
-      - 'crates/client/pf-client-core/**'
-      - 'crates/client/pf-console-ui/**'
-      - 'crates/client/punktfunk-ffi/**'
-      - 'crates/codec/pf-bitstream/**'
-      - 'crates/core/punktfunk-core/**'
+      - 'crates/client/ly-client-core/**'
+      - 'crates/client/ly-console-ui/**'
+      - 'crates/client/lilynk-ffi/**'
+      - 'crates/codec/ly-bitstream/**'
+      - 'crates/core/lilynk-core/**'
       - 'clients/apple/**'
       - 'clients/shared/**'
       - 'scripts/build-xcframework.sh'
@@ -106,7 +106,7 @@ on:
       - 'scripts/ci/ensure-sccache.sh'
       - 'scripts/ci/ensure-metal-toolchain.sh'
       - 'scripts/ci/gitea-release.sh'
-      - 'scripts/ci/pf-version.sh'
+      - 'scripts/ci/ly-version.sh'
       - 'Cargo.toml'
       - 'Cargo.lock'
       - 'l10n/**'
@@ -118,11 +118,11 @@ on:
     tags: ['v*']
   pull_request:
     paths:
-      - 'crates/client/pf-client-core/**'
-      - 'crates/client/pf-console-ui/**'
-      - 'crates/client/punktfunk-ffi/**'
-      - 'crates/codec/pf-bitstream/**'
-      - 'crates/core/punktfunk-core/**'
+      - 'crates/client/ly-client-core/**'
+      - 'crates/client/ly-console-ui/**'
+      - 'crates/client/lilynk-ffi/**'
+      - 'crates/codec/ly-bitstream/**'
+      - 'crates/core/lilynk-core/**'
       - 'clients/apple/**'
       - 'clients/shared/**'
       - 'scripts/build-xcframework.sh'
@@ -130,7 +130,7 @@ on:
       - 'scripts/ci/ensure-sccache.sh'
       - 'scripts/ci/ensure-metal-toolchain.sh'
       - 'scripts/ci/gitea-release.sh'
-      - 'scripts/ci/pf-version.sh'
+      - 'scripts/ci/ly-version.sh'
       - 'Cargo.toml'
       - 'Cargo.lock'
       - 'l10n/**'
@@ -237,7 +237,7 @@ jobs:
       - name: sccache (self-healing install)
         run: sh scripts/ci/ensure-sccache.sh
 
-      # `punktfunk-core` decodes Opus in-core for the Apple client (surround), pulling `opusic-sys`,
+      # `lilynk-core` decodes Opus in-core for the Apple client (surround), pulling `opusic-sys`,
       # which always builds a static libopus via CMake — so the xcframework is self-contained (no
       # runtime libopus.dylib on end-user Macs). CMake must be on PATH; install it self-healing.
       - name: CMake (for the vendored libopus builds)
@@ -279,7 +279,7 @@ jobs:
       - name: Build the iOS app (type-check the os(iOS) regions)
         working-directory: clients/apple
         run: |
-          xcodebuild -project Punktfunk.xcodeproj -scheme Punktfunk-iOS \
+          xcodebuild -project Lilynk.xcodeproj -scheme Lilynk-iOS \
             -destination 'generic/platform=iOS Simulator' \
             CODE_SIGNING_ALLOWED=NO build
 
@@ -289,7 +289,7 @@ jobs:
       - name: Build the tvOS app (type-check the os(tvOS) regions)
         working-directory: clients/apple
         run: |
-          xcodebuild -project Punktfunk.xcodeproj -scheme Punktfunk-tvOS \
+          xcodebuild -project Lilynk.xcodeproj -scheme Lilynk-tvOS \
             -destination 'generic/platform=tvOS Simulator' \
             -skipMacroValidation -skipPackagePluginValidation \
             CODE_SIGNING_ALLOWED=NO build
@@ -312,7 +312,7 @@ jobs:
       - name: Build the visionOS app (type-check the os(visionOS) regions)
         working-directory: clients/apple
         run: |
-          xcodebuild -project Punktfunk.xcodeproj -scheme Punktfunk-iOS \
+          xcodebuild -project Lilynk.xcodeproj -scheme Lilynk-iOS \
             -destination 'generic/platform=visionOS Simulator' \
             CODE_SIGNING_ALLOWED=NO build
 
@@ -331,7 +331,7 @@ jobs:
     timeout-minutes: 120
     env:
       TEAM_ID: ${{ vars.APPLE_TEAM_ID }}
-      PROJECT: clients/apple/Punktfunk.xcodeproj
+      PROJECT: clients/apple/Lilynk.xcodeproj
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -360,7 +360,7 @@ jobs:
           # Data, never interpolated into the script: a dispatch input is free text.
           INPUT_VERSION: ${{ inputs.version }}
         run: |
-          eval "$(bash scripts/ci/pf-version.sh)"   # -> PF_BASE, PF_CHANNEL, PF_STABLE_TAG (single source of truth)
+          eval "$(bash scripts/ci/ly-version.sh)"   # -> PF_BASE, PF_CHANNEL, PF_STABLE_TAG (single source of truth)
           case "$GITHUB_REF" in
             refs/tags/v*) V="${GITHUB_REF_NAME#v}"; V="${V%%-*}" ;;  # App Store marketing version is numeric X.Y.Z (drop -rc)
             *)            V="${INPUT_VERSION:-$PF_BASE}" ;;           # canary marketing version = one minor ahead of the latest stable tag; the build number disambiguates
@@ -454,17 +454,17 @@ jobs:
           DEVELOPER_DIR="$XCODE_DEV_DIR" xcodebuild archive \
             -project "$PROJECT" -scheme Punktfunk \
             -destination 'generic/platform=macOS' \
-            -archivePath "$RUNNER_TEMP/Punktfunk-macos.xcarchive" \
+            -archivePath "$RUNNER_TEMP/Lilynk-macos.xcarchive" \
             -derivedDataPath "$DERIVED_DATA" \
             -skipMacroValidation -skipPackagePluginValidation \
             MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION="$BUILD_NUM" \
             CODE_SIGNING_ALLOWED=NO
-          APP="$RUNNER_TEMP/Punktfunk-macos.xcarchive/Products/Applications/Punktfunk.app"
+          APP="$RUNNER_TEMP/Lilynk-macos.xcarchive/Products/Applications/Punktfunk.app"
           # Sandboxed Developer ID: sign with the SAME macOS entitlements the App Store build
           # uses. codesign won't expand $(AppIdentifierPrefix) — resolve it to the team prefix.
           RESOLVED="$RUNNER_TEMP/macos.entitlements"
           sed "s/\$(AppIdentifierPrefix)/${TEAM_ID}./g" \
-            clients/apple/Config/Punktfunk-macOS.entitlements > "$RESOLVED"
+            clients/apple/Config/Lilynk-macOS.entitlements > "$RESOLVED"
 
           # keychain-access-groups is a MANAGED (restricted) entitlement: App Sandbox and the
           # network/device keys are self-asserted for Developer ID, but a keychain access group
@@ -503,7 +503,7 @@ jobs:
           mkdir -p "$STAGE"
           cp -R "$APP" "$STAGE/"
           ln -s /Applications "$STAGE/Applications"
-          DMG="$RUNNER_TEMP/Punktfunk-$VERSION.dmg"
+          DMG="$RUNNER_TEMP/Lilynk-$VERSION.dmg"
           hdiutil create -volname "Punktfunk" -srcfolder "$STAGE" -ov -format UDZO "$DMG"
           DEVELOPER_DIR="$XCODE_DEV_DIR" xcrun notarytool submit "$DMG" --wait \
             --key "$RUNNER_TEMP/asc.p8" \
@@ -519,7 +519,7 @@ jobs:
         run: |
           . scripts/ci/gitea-release.sh
           RID=$(ensure_release "$GITHUB_REF_NAME" "$GITHUB_REF_NAME" auto)
-          upsert_asset "$RID" "$DMG" "Punktfunk-$VERSION.dmg"
+          upsert_asset "$RID" "$DMG" "Lilynk-$VERSION.dmg"
 
       - name: Publish the DMG to the generic registry
         # The download page hands out one fixed URL per file; a release attachment has none.
@@ -538,19 +538,19 @@ jobs:
             esac
           }
           case "$GITHUB_REF" in
-            refs/tags/v*) put "$DMG" "$BASE/$VERSION/Punktfunk-$VERSION.dmg"; ALIAS=latest ;;
+            refs/tags/v*) put "$DMG" "$BASE/$VERSION/Lilynk-$VERSION.dmg"; ALIAS=latest ;;
             # A branch build carries the NEXT minor as its version — that path is the release's.
             *) ALIAS=canary ;;
           esac
-          curl -sS -o /dev/null --user "enricobuehler:$REGISTRY_TOKEN" -X DELETE "$BASE/$ALIAS/Punktfunk.dmg" || true
-          put "$DMG" "$BASE/$ALIAS/Punktfunk.dmg"
+          curl -sS -o /dev/null --user "enricobuehler:$REGISTRY_TOKEN" -X DELETE "$BASE/$ALIAS/Lilynk.dmg" || true
+          put "$DMG" "$BASE/$ALIAS/Lilynk.dmg"
 
       - name: macOS App Store — archive + upload to TestFlight
         if: gitea.event_name != 'workflow_dispatch' || inputs.testflight == 'true'
         # Best-effort until the App Store Connect record has the macOS platform + the
         # "Punktfunk macOS App Store Distribution" profile and the "3rd Party Mac Developer
         # Installer" cert are on the runner (see the header). The macOS app is sandboxed
-        # (Config/Punktfunk-macOS.entitlements) — mandatory for the Mac App Store.
+        # (Config/Lilynk-macOS.entitlements) — mandatory for the Mac App Store.
         continue-on-error: true
         run: |
           # Separate archive from the Developer ID one above: App Store needs a signed, entitled
@@ -563,7 +563,7 @@ jobs:
           # the resource bundle (and the macOS-host macro plugins) alone, and bakes the sandbox
           # entitlements in. -allowProvisioningUpdates lets Xcode sync the App ID capabilities and
           # regenerate the managed *development* profile (the App Groups capability,
-          # group.io.unom.punktfunk in Config/Punktfunk-macOS.entitlements, changes what it must
+          # group.io.unom.punktfunk in Config/Lilynk-macOS.entitlements, changes what it must
           # carry). This is DEVELOPMENT signing against the Apple Development cert already in the
           # keychain, so the App-Manager ASC key suffices. DISTRIBUTION signing happens in the export
           # step below (manual, via the plist). Quit Xcode so it can't prune the manually-installed
@@ -574,7 +574,7 @@ jobs:
           DEVELOPER_DIR="$XCODE_DEV_DIR" xcodebuild archive \
             -project "$PROJECT" -scheme Punktfunk \
             -destination 'generic/platform=macOS' \
-            -archivePath "$RUNNER_TEMP/Punktfunk-macos-appstore.xcarchive" \
+            -archivePath "$RUNNER_TEMP/Lilynk-macos-appstore.xcarchive" \
             -derivedDataPath "$DERIVED_DATA" \
             -skipMacroValidation -skipPackagePluginValidation \
             -allowProvisioningUpdates \
@@ -585,7 +585,7 @@ jobs:
             CODE_SIGN_STYLE=Automatic \
             DEVELOPMENT_TEAM="$TEAM_ID"
           # App Review rejects an Accessibility event tap (guideline 2.4.5); never upload one.
-          MAS_BIN="$RUNNER_TEMP/Punktfunk-macos-appstore.xcarchive/Products/Applications/Punktfunk.app/Contents/MacOS/Punktfunk"
+          MAS_BIN="$RUNNER_TEMP/Lilynk-macos-appstore.xcarchive/Products/Applications/Punktfunk.app/Contents/MacOS/Punktfunk"
           if nm -u "$MAS_BIN" | grep -qE '_AXIsProcessTrusted|_CGEventTapCreate'; then
             echo "::error::App Store build links an Accessibility trust check or event tap (guideline 2.4.5)"
             exit 1
@@ -607,7 +607,7 @@ jobs:
           </plist>
           EOF
           DEVELOPER_DIR="$XCODE_DEV_DIR" xcodebuild -exportArchive \
-            -archivePath "$RUNNER_TEMP/Punktfunk-macos-appstore.xcarchive" \
+            -archivePath "$RUNNER_TEMP/Lilynk-macos-appstore.xcarchive" \
             -exportOptionsPlist "$RUNNER_TEMP/export-macos-appstore.plist" \
             -exportPath "$RUNNER_TEMP/export-macos-appstore" \
             -authenticationKeyPath "$RUNNER_TEMP/asc.p8" \
@@ -643,9 +643,9 @@ jobs:
           # App Store profile too — else exportArchive fails ("no profile for io.unom.punktfunk.widgets").
           WIDGET_PROFILE="Punktfunk iOS Widgets App Store Distribution"
           DEVELOPER_DIR="$XCODE_DEV_DIR" xcodebuild archive \
-            -project "$PROJECT" -scheme Punktfunk-iOS \
+            -project "$PROJECT" -scheme Lilynk-iOS \
             -destination 'generic/platform=iOS' \
-            -archivePath "$RUNNER_TEMP/Punktfunk-ios.xcarchive" \
+            -archivePath "$RUNNER_TEMP/Lilynk-ios.xcarchive" \
             -derivedDataPath "$DERIVED_DATA" \
             -skipMacroValidation -skipPackagePluginValidation \
             -allowProvisioningUpdates \
@@ -674,7 +674,7 @@ jobs:
           </plist>
           EOF
           DEVELOPER_DIR="$XCODE_DEV_DIR" xcodebuild -exportArchive \
-            -archivePath "$RUNNER_TEMP/Punktfunk-ios.xcarchive" \
+            -archivePath "$RUNNER_TEMP/Lilynk-ios.xcarchive" \
             -exportOptionsPlist "$RUNNER_TEMP/export-appstore.plist" \
             -exportPath "$RUNNER_TEMP/export-appstore" \
             -authenticationKeyPath "$RUNNER_TEMP/asc.p8" \
@@ -689,7 +689,7 @@ jobs:
         if: gitea.event_name != 'workflow_dispatch' || inputs.testflight == 'true'
         id: ios_ipa
         run: |
-          ARCHIVE="$RUNNER_TEMP/Punktfunk-ios.xcarchive"
+          ARCHIVE="$RUNNER_TEMP/Lilynk-ios.xcarchive"
           if [ ! -d "$ARCHIVE" ]; then
             echo "::warning::iOS archive not found — skipping .ipa export"
             exit 0
@@ -732,11 +732,11 @@ jobs:
             rm -rf "$b/_CodeSignature" "$b/embedded.mobileprovision"
           done
           mkdir -p "$GITHUB_WORKSPACE/dist"
-          IPA="$GITHUB_WORKSPACE/dist/Punktfunk-$VERSION.ipa"
+          IPA="$GITHUB_WORKSPACE/dist/Lilynk-$VERSION.ipa"
           rm -f "$IPA"
           (cd "$SIDE" && zip -qry "$IPA" Payload)
           echo "IPA=$IPA" >> "$GITHUB_ENV"
-          echo "ipa=dist/Punktfunk-$VERSION.ipa" >> "$GITHUB_OUTPUT"
+          echo "ipa=dist/Lilynk-$VERSION.ipa" >> "$GITHUB_OUTPUT"
           echo "exported $IPA"
 
       - name: Attach .ipa to the workflow run
@@ -745,7 +745,7 @@ jobs:
         # (same reason as android.yml / the screenshots job below). Download is a zip of the .ipa.
         uses: actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5 # v3
         with:
-          name: punktfunk-ios-ipa
+          name: lilynk-ios-ipa
           path: ${{ steps.ios_ipa.outputs.ipa }}
           if-no-files-found: warn
           retention-days: 30
@@ -757,7 +757,7 @@ jobs:
         run: |
           . scripts/ci/gitea-release.sh
           RID=$(ensure_release "$GITHUB_REF_NAME" "$GITHUB_REF_NAME" auto)
-          upsert_asset "$RID" "$IPA" "Punktfunk-$VERSION.ipa"
+          upsert_asset "$RID" "$IPA" "Lilynk-$VERSION.ipa"
 
       - name: tvOS — archive + upload to TestFlight
         # Canary + stable, the same track as iOS/macOS — the tvOS xcframework slice is built
@@ -781,9 +781,9 @@ jobs:
           pkill -x Xcode 2>/dev/null || true
           PROFILE="Punktfunk tvOS App Store Distribution"
           DEVELOPER_DIR="$XCODE_DEV_DIR" xcodebuild archive \
-            -project "$PROJECT" -scheme Punktfunk-tvOS \
+            -project "$PROJECT" -scheme Lilynk-tvOS \
             -destination 'generic/platform=tvOS' \
-            -archivePath "$RUNNER_TEMP/Punktfunk-tvos.xcarchive" \
+            -archivePath "$RUNNER_TEMP/Lilynk-tvos.xcarchive" \
             -derivedDataPath "$DERIVED_DATA" \
             -skipMacroValidation -skipPackagePluginValidation \
             -allowProvisioningUpdates \
@@ -809,7 +809,7 @@ jobs:
           </plist>
           EOF
           DEVELOPER_DIR="$XCODE_DEV_DIR" xcodebuild -exportArchive \
-            -archivePath "$RUNNER_TEMP/Punktfunk-tvos.xcarchive" \
+            -archivePath "$RUNNER_TEMP/Lilynk-tvos.xcarchive" \
             -exportOptionsPlist "$RUNNER_TEMP/export-tvos.plist" \
             -exportPath "$RUNNER_TEMP/export-tvos" \
             -authenticationKeyPath "$RUNNER_TEMP/asc.p8" \
@@ -828,9 +828,9 @@ jobs:
           pkill -x Xcode 2>/dev/null || true
           PROFILE="Punktfunk iOS App Store Distribution"
           DEVELOPER_DIR="$XCODE_DEV_DIR" xcodebuild archive \
-            -project "$PROJECT" -scheme Punktfunk-iOS \
+            -project "$PROJECT" -scheme Lilynk-iOS \
             -destination 'generic/platform=visionOS' \
-            -archivePath "$RUNNER_TEMP/Punktfunk-visionos.xcarchive" \
+            -archivePath "$RUNNER_TEMP/Lilynk-visionos.xcarchive" \
             -derivedDataPath "$DERIVED_DATA" \
             -skipMacroValidation -skipPackagePluginValidation \
             -allowProvisioningUpdates \
@@ -856,7 +856,7 @@ jobs:
           </plist>
           EOF
           DEVELOPER_DIR="$XCODE_DEV_DIR" xcodebuild -exportArchive \
-            -archivePath "$RUNNER_TEMP/Punktfunk-visionos.xcarchive" \
+            -archivePath "$RUNNER_TEMP/Lilynk-visionos.xcarchive" \
             -exportOptionsPlist "$RUNNER_TEMP/export-visionos.plist" \
             -exportPath "$RUNNER_TEMP/export-visionos" \
             -authenticationKeyPath "$RUNNER_TEMP/asc.p8" \
@@ -966,7 +966,7 @@ jobs:
         # (upload-artifact@v4) refuses. v3 uses the older API Gitea supports; download is still a zip.
         uses: actions/upload-artifact@ff15f0306b3f739f7b6fd43fb5d26cd321bd4de5 # v3
         with:
-          name: punktfunk-appstore-screenshots
+          name: lilynk-appstore-screenshots
           path: clients/apple/screenshots
           if-no-files-found: warn
           retention-days: 30

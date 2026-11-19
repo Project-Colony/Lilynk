@@ -7,9 +7,9 @@ use super::tables::{
     resolution_caption, MOUSE_MODE_CAPTIONS, PRESENT_PRIORITY_CAPTIONS, SCREENS_CAPTIONS,
     TOUCH_MODE_CAPTIONS, VIDEO_FIT_CAPTIONS,
 };
-use pf_client_core::overlay_actions::SlotId;
-use pf_client_core::shortcuts::{Action, Device};
-use pf_l10n::{client, desktop};
+use ly_client_core::overlay_actions::SlotId;
+use ly_client_core::shortcuts::{Action, Device};
+use ly_l10n::{client, desktop};
 use std::borrow::Cow;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -105,7 +105,7 @@ fn and_keys(base: &str, slot: SlotId, sentence: fn(&str) -> String) -> String {
 }
 
 /// A row's title and caption are read each time the row is built, so a message such as
-/// `client::player_stats_scale_pct()` reads in the language `pf_l10n` settled on. A caption
+/// `client::player_stats_scale_pct()` reads in the language `ly_l10n` settled on. A caption
 /// may be a message or a few joined, so it is a `Cow`.
 macro_rules! specs {
     ($($name:ident: $key:literal, $title:expr, $caption:expr, $page:ident, $advanced:literal, $layer:ident;)*) => {
@@ -283,8 +283,8 @@ mod tests {
 
     /// The stored value of each entry of a row's list, in the order the dialog offers them.
     fn options(key: &str) -> Option<Vec<String>> {
-        use pf_client_core::start::StartIn;
-        use pf_client_core::trust::{HudCorner, StatsVerbosity};
+        use ly_client_core::start::StartIn;
+        use ly_client_core::trust::{HudCorner, StatsVerbosity};
         fn strs(table: &[&str]) -> Vec<String> {
             table.iter().map(|s| s.to_string()).collect()
         }
@@ -294,7 +294,7 @@ mod tests {
                 .map(|v| format!("{v:?}").to_lowercase())
                 .collect(),
             "hud_placement" => HudCorner::ALL.iter().map(|c| c.as_name().into()).collect(),
-            "stats_scale_pct" => (punktfunk_core::hud::STATS_SCALE_PCTS.iter())
+            "stats_scale_pct" => (lilynk_core::hud::STATS_SCALE_PCTS.iter())
                 .map(|p| p.to_string())
                 .collect(),
             "refresh_hz" => REFRESH.iter().map(|hz| hz.to_string()).collect(),
@@ -321,7 +321,7 @@ mod tests {
         use serde_json::Value;
         match key {
             "start_in" => Some(
-                pf_client_core::start::StartIn::parse(&s.start_in)
+                ly_client_core::start::StartIn::parse(&s.start_in)
                     .as_str()
                     .into(),
             ),
@@ -366,7 +366,7 @@ mod tests {
                 continue;
             };
             let key = spec.key;
-            match pf_l10n::get(&format!("player_{key}")) {
+            match ly_l10n::get(&format!("player_{key}")) {
                 Some(m) => assert_eq!(spec.title(), m.text(), "{key}"),
                 None => assert_eq!((key, spec.title()), ("vsync", "V-Sync")),
             }
@@ -436,7 +436,7 @@ mod tests {
     fn presetable_rows_are_ones_a_preset_can_pin() {
         let from = crate::trust::Settings::default();
         for spec in SPECS {
-            let mut o = pf_client_core::presets::SettingsOverlay::default();
+            let mut o = ly_client_core::presets::SettingsOverlay::default();
             assert_eq!(
                 spec.layer.presetable(),
                 o.pin(spec.key, &from),

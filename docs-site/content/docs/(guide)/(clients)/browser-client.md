@@ -20,7 +20,7 @@ Samsung TV the same page installs as an app: [Samsung TV](/docs/samsung-tv).
    on your network can reach the host. The list is a rule for browser pages: the Samsung TV app
    sends no origin and is admitted either way, and pairing is what lets it stream.
 3. Click **Restart Punktfunk**.
-4. Open UDP 9778 on the host. On Linux it is in the `punktfunk-native` firewall profile; on
+4. Open UDP 9778 on the host. On Linux it is in the `lilynk-native` firewall profile; on
    Windows the host adds its **Punktfunk Browser** rule at the restart ([Ports](/docs/ports)).
    The video goes from the host to the browser directly.
 

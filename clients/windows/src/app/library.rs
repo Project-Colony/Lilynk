@@ -2,7 +2,7 @@
 //! pinned presets — laid out in the sections this device keeps (`library_rows`). Picking a
 //! title starts a stream carrying `--launch id`; the host launches it during the connect.
 //!
-//! The catalog comes from the disk first, then the host, over `pf-client-core::library` (mTLS
+//! The catalog comes from the disk first, then the host, over `ly-client-core::library` (mTLS
 //! against the host's management API, pre-classified errors, the `ART_WORKERS` art pipeline).
 //! Poster bytes land in the shared `art_cache`, which the `Image` loads them from; a poster the
 //! cache could not keep shows from the fetched bytes. The fetch and the art stream complete on
@@ -16,15 +16,15 @@ use super::hosts::{self, CardPreset, MenuRows};
 use super::lucide;
 use super::style::*;
 use super::{AppCtx, AsyncSetState, Dest, Msg, Screen, Shell, Svc, Target};
-use pf_client_core::collate::{GroupBy, SortKey};
-use pf_client_core::hide;
-use pf_client_core::library::{self, initials, store_label, GameEntry, LibraryError, DESKTOP_ID};
-use pf_client_core::library_layout as layout;
-use pf_client_core::library_rows::{self as rows, Caption, Row, Tile};
-use pf_client_core::orchestrate::HostTarget;
-use pf_client_core::trust::{KnownHosts, Settings};
-use pf_fluent::{Palette, Token};
-use pf_l10n::{client, common, desktop};
+use ly_client_core::collate::{GroupBy, SortKey};
+use ly_client_core::hide;
+use ly_client_core::library::{self, initials, store_label, GameEntry, LibraryError, DESKTOP_ID};
+use ly_client_core::library_layout as layout;
+use ly_client_core::library_rows::{self as rows, Caption, Row, Tile};
+use ly_client_core::orchestrate::HostTarget;
+use ly_client_core::trust::{KnownHosts, Settings};
+use ly_fluent::{Palette, Token};
+use ly_l10n::{client, common, desktop};
 use std::collections::{HashMap, VecDeque};
 use std::hash::{Hash, Hasher};
 use std::rc::Rc;
@@ -125,10 +125,10 @@ pub(crate) fn resting<'a>(
     let settings = Settings::load();
     let remembered = settings
         .extra
-        .get(pf_client_core::settings::LIBRARY_SHELF_KEY)
+        .get(ly_client_core::settings::LIBRARY_SHELF_KEY)
         .and_then(|v| v.as_str())
         .unwrap_or_default();
-    let default = pf_client_core::start::default_host(&settings, known)
+    let default = ly_client_core::start::default_host(&settings, known)
         .map(|i| shelf_key(&HostTarget::from(&known.hosts[i]), None))
         .unwrap_or_default();
     pick(shelves, &[picked, remembered, &default])
@@ -300,7 +300,7 @@ pub(crate) type Art = Arc<HashMap<String, Poster>>;
 fn cached_art(candidates: &[String]) -> Option<Poster> {
     let path = candidates
         .iter()
-        .find_map(|u| pf_client_core::art_cache::path_of(u))?;
+        .find_map(|u| ly_client_core::art_cache::path_of(u))?;
     Some(Poster::File(file_uri(&path)))
 }
 
@@ -402,7 +402,7 @@ pub(crate) fn start_fetch(
             // The remembered shelf shows while the host answers.
             if state.games.is_empty() {
                 let cached = fp
-                    .and_then(|fp| pf_client_core::library_cache::load(fp, pick))
+                    .and_then(|fp| ly_client_core::library_cache::load(fp, pick))
                     .filter(|c| !c.games.is_empty());
                 if let Some(cached) = cached {
                     seed_art(&cached.games, &base, Arc::make_mut(&mut state.art));
@@ -439,7 +439,7 @@ pub(crate) fn start_fetch(
             // The connect that launches a title reads its game overrides from here, under the
             // profile the catalog was fetched as.
             if let Some(fp) = fp {
-                pf_client_core::library_cache::store(fp, served, &games);
+                ly_client_core::library_cache::store(fp, served, &games);
             }
             let jobs = seed_art(&games, &base, Arc::make_mut(&mut state.art));
             state.games = Arc::new(games);
@@ -456,7 +456,7 @@ pub(crate) fn start_fetch(
             }
             // The pick's own enumerate row says whether this device may hide its titles.
             state.hides = pick.and_then(|pick| {
-                let listed = pf_client_core::profiles::fetch_enumerate(
+                let listed = ly_client_core::profiles::fetch_enumerate(
                     &host.addr, mgmt, host.port, &identity, pin,
                 );
                 let listed = listed.ok().flatten();
@@ -506,7 +506,7 @@ fn set_hidden(cx: &Rc<RowCx>, game: GameEntry, hidden: bool) {
     let generation = cx.svc.ctx.shared.library_gen.load(Ordering::SeqCst);
     let (svc, set_hide) = (cx.svc.clone(), cx.set_hide.clone());
     let _ = std::thread::Builder::new()
-        .name("punktfunk-hide".into())
+        .name("lilynk-hide".into())
         .spawn(move || {
             let outcome = hide::set_hidden(&api, &hides.profile, &game.id, hidden);
             let notice = outcome.notice(hidden, &game.title, &hides.name);
@@ -517,7 +517,7 @@ fn set_hidden(cx: &Rc<RowCx>, game: GameEntry, hidden: bool) {
                 // A title shown again goes back into the cached catalog as it was.
                 let back = (!hidden).then_some(&game);
                 let profile = Some(hides.profile.as_str());
-                pf_client_core::library_cache::note_hidden(&fp, profile, &game.id, back);
+                ly_client_core::library_cache::note_hidden(&fp, profile, &game.id, back);
             }
             if svc.ctx.shared.library_gen.load(Ordering::SeqCst) == generation {
                 set_hide.call(Box::new(move |h: &mut HideUi| h.took(game, hidden)));
@@ -540,7 +540,7 @@ fn open_hidden(svc: &Svc, set_hide: &AsyncSetState<HideEdit>, shelf: &Shelf, hid
     );
     let (ctx, set_hide, profile) = (svc.ctx.clone(), set_hide.clone(), hides.profile.clone());
     let _ = std::thread::Builder::new()
-        .name("punktfunk-hidden".into())
+        .name("lilynk-hidden".into())
         .spawn(move || {
             let view = match hide::fetch_hidden_from(&api, &profile) {
                 Ok(entries) => {
@@ -639,7 +639,7 @@ impl RowCx {
     /// the shelf's preset. `None` when the host has left the store while the page was open.
     fn link(&self, id: &str) -> Option<String> {
         let t = &self.shelf.target;
-        pf_client_core::deeplink::saved_host_link(
+        ly_client_core::deeplink::saved_host_link(
             &KnownHosts::load(),
             t.host.fp_hex.as_deref(),
             &t.host.addr,
@@ -671,7 +671,7 @@ impl RowCx {
             TitleAct::Details => self.set_details.call(Some(g.id.clone())),
             TitleAct::CopyLink => match self.link(&g.id) {
                 Some(url) => {
-                    pf_client_core::clipboard::set_text(&url);
+                    ly_client_core::clipboard::set_text(&url);
                     svc.note(client::hostcard_link_copied().to_string());
                 }
                 None => svc
@@ -1723,7 +1723,7 @@ fn end_game_dialog(
             let (se, ctx, target, reload) =
                 (se.clone(), ctx.clone(), target.clone(), reload.clone());
             let _ = std::thread::Builder::new()
-                .name("punktfunk-endgame".into())
+                .name("lilynk-endgame".into())
                 .spawn(move || {
                     let host = &target.host;
                     let pin = host.fp_hex.as_deref().and_then(crate::trust::parse_hex32);
@@ -1743,7 +1743,7 @@ fn end_game_dialog(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use pf_client_core::trust::KnownHost;
+    use ly_client_core::trust::KnownHost;
 
     #[test]
     fn file_uri_keeps_non_ascii_raw() {

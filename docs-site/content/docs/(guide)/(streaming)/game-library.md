@@ -19,7 +19,7 @@ Each plugin reads its launcher's own files on the host, with no account or API k
 [Plugins](/docs/plugins) lists them all and what each one covers.
 
 Every title gets a stable id, such as `steam:570`. To see what the host found without a client, run
-`punktfunk-host library` on the host; it prints the library as JSON.
+`lilynk-host library` on the host; it prints the library as JSON.
 
 If a source reads **… can't read N of its folders**, click that line and **Allow** the folders.
 A source marked **Stopped** has a plugin that isn't running: see
@@ -78,7 +78,7 @@ right away; a path previews after you save.
 - **A path:** it must be inside a folder the host may read art from. `PUNKTFUNK_LIBRARY_ART_ROOTS`
   in [Configuration](/docs/configuration) sets those folders. Network (UNC) paths are refused.
 
-`punktfunk-host library art --clear` empties the host's cover store. Plugin titles bring their own
+`lilynk-host library art --clear` empties the host's cover store. Plugin titles bring their own
 art; a source below fills what they lack.
 
 ### Filling missing art and details

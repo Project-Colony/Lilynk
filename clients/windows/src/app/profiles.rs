@@ -1,6 +1,6 @@
 //! The profile picker (`design/profiles-and-seats.md` §10): who plays on a paired host, asked
 //! before a connect and from a host card's "Switch profile…". The rule is
-//! `pf_client_core::profiles::picker_decision`; this file runs the fetch and draws the sheet.
+//! `ly_client_core::profiles::picker_decision`; this file runs the fetch and draws the sheet.
 //!
 //! The sheet is a [`sheet`] overlay like the Add host sheet, at root, so a worker thread can
 //! raise it over any screen. A profile whose seat is starting gets a second sheet of the same
@@ -9,12 +9,12 @@
 use super::style::*;
 use super::{unlock, AppCtx, AsyncSetState, Screen, Target};
 use crate::trust::KnownHosts;
-use pf_client_core::library::HostApi;
-use pf_client_core::orchestrate::HostTarget;
-use pf_client_core::profiles::{self, Decision, ListedProfile, ProfilePick, SeatGate};
-use pf_fluent::Palette;
-use pf_l10n::{client, common};
-use punktfunk_core::quic::v2::msg::ProfileUnlock;
+use lilynk_core::quic::v2::msg::ProfileUnlock;
+use ly_client_core::library::HostApi;
+use ly_client_core::orchestrate::HostTarget;
+use ly_client_core::profiles::{self, Decision, ListedProfile, ProfilePick, SeatGate};
+use ly_fluent::Palette;
+use ly_l10n::{client, common};
 use std::collections::{HashMap, HashSet};
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
@@ -49,7 +49,7 @@ fn read_picture(ctx: &AppCtx, api: &HostApi, url: &str) -> Option<u64> {
 /// thread, then runs `redraw` with a count that grows with each picture held.
 pub(crate) fn card_picture(
     ctx: &Arc<AppCtx>,
-    k: &pf_client_core::trust::KnownHost,
+    k: &ly_client_core::trust::KnownHost,
     redraw: impl FnOnce(u64) + Send + 'static,
 ) -> Option<EncodedImage> {
     let url = k.profile.as_ref()?.avatar.clone()?;
@@ -199,7 +199,7 @@ fn fetch(
     let mgmt = target
         .host
         .mgmt_port
-        .unwrap_or(pf_client_core::library::DEFAULT_MGMT_PORT);
+        .unwrap_or(ly_client_core::library::DEFAULT_MGMT_PORT);
     let (addr, port) = (&target.host.addr, target.host.port);
     profiles::fetch_within(addr, mgmt, port, &ctx.identity, pin, FETCH_CUTOFF)
 }
@@ -282,7 +282,7 @@ pub(crate) fn seat_then(
             let mgmt = target
                 .host
                 .mgmt_port
-                .unwrap_or(pf_client_core::library::DEFAULT_MGMT_PORT);
+                .unwrap_or(ly_client_core::library::DEFAULT_MGMT_PORT);
             show(None);
             let mut go = Some(go);
             let mut dial = |row: ListedProfile| {

@@ -11,11 +11,11 @@ use crate::store::{Changed, Store};
 use crate::trust::{HostEdit, KnownHost};
 use adw::prelude::*;
 use gtk::glib;
-use pf_client_core::display_targets::{ScreenRow, Targets};
-use pf_client_core::host_actions::ActionInfo;
-use pf_client_core::orchestrate::HostTarget;
-use pf_client_core::start::StartIn;
-use pf_l10n::{client, common, desktop};
+use ly_client_core::display_targets::{ScreenRow, Targets};
+use ly_client_core::host_actions::ActionInfo;
+use ly_client_core::orchestrate::HostTarget;
+use ly_client_core::start::StartIn;
+use ly_l10n::{client, common, desktop};
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 
@@ -475,7 +475,7 @@ impl DetailPage {
         self.mgmt_row.set_subtitle(&match k.mgmt_port {
             Some(p) => p.to_string(),
             None => desktop::desktop_hostcard_mgmt_port_default(
-                pf_client_core::library::DEFAULT_MGMT_PORT,
+                ly_client_core::library::DEFAULT_MGMT_PORT,
             ),
         });
         self.clipboard_row.set_active(k.clipboard_sync);
@@ -905,7 +905,7 @@ fn forget_identity(ctx: &Ctx, anchor: &adw::ActionRow) {
         client::hostcard_forget_identity_confirm(),
         move || {
             let host = ctx.host.borrow().clone();
-            let unpaired = pf_client_core::orchestrate::unpair_host(|known| host.index(known));
+            let unpaired = ly_client_core::orchestrate::unpair_host(|known| host.index(known));
             ctx.stored(unpaired, desktop::desktop_hostcard_save_failed);
         },
     );
@@ -922,7 +922,7 @@ fn remove_host(ctx: &Ctx, nav: &adw::NavigationView, anchor: &adw::ButtonRow) {
         common::common_remove(),
         move || {
             let host = ctx.host.borrow().clone();
-            let gone = pf_client_core::orchestrate::forget_host(|known| host.index(known));
+            let gone = ly_client_core::orchestrate::forget_host(|known| host.index(known));
             if ctx.stored(gone, desktop::desktop_hostcard_remove_failed) {
                 nav.pop_to_tag("main");
             }

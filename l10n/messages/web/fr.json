@@ -1598,7 +1598,7 @@
 	"seat_open_profiles": "Ouvrir Profils",
 	"profiles_door": "Accessible sans connexion",
 	"profiles_door_hint": "Un appareil associé peut démarrer votre session pendant que l’écran de verrouillage reste sur votre moniteur.",
-	"profiles_door_games": "Les postes voient vos bibliothèques Steam et installent les nouveaux jeux dans /var/lib/punktfunk-seats/games.",
+	"profiles_door_games": "Les postes voient vos bibliothèques Steam et installent les nouveaux jeux dans /var/lib/lilynk-seats/games.",
 	"profiles_door_off_hint": "Votre propre session reprend la diffusion de la machine, et les fichiers de la machine lui reviennent.",
 	"profiles_door_on": "Activer",
 	"profiles_door_off": "Désactiver",

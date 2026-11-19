@@ -5,9 +5,9 @@
 use super::{LibraryMsg, Shelf, View};
 use crate::store::Store;
 use adw::prelude::*;
-use pf_client_core::library::{host_line, store_label};
-use pf_client_core::library_layout::stats_line;
-use pf_l10n::{client, common, desktop};
+use ly_client_core::library::{host_line, store_label};
+use ly_client_core::library_layout::stats_line;
+use ly_l10n::{client, common, desktop};
 use std::rc::Rc;
 
 pub fn show(

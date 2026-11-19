@@ -2,7 +2,7 @@
 
 Three arms, same box, same session, ~15 minutes apart, all with `win-input-matrix --watch`.
 Box: `.173`, Win11 26200. Pad stood up with
-`punktfunk-host.exe dualsense-windows-test --xboxhid` (the shipping `SwDeviceCreate` path, so a real
+`lilynk-host.exe dualsense-windows-test --xboxhid` (the shipping `SwDeviceCreate` path, so a real
 `045E:0B13` identity — **not** a `devgen` node, which has no PID token).
 
 Devnodes involved:
@@ -70,7 +70,7 @@ a HID report into XUSB and expects the real Xbox layout. Ours differs in exactly
 does not), we carry two Simulation-page trigger axes (the real pad carries one combined `Z`), and we
 put 15 buttons *after* the hat (the real pad puts 16 *before* it).
 
-**Next experiment:** rebuild `pf-gamepad` with the captured layout and re-run arm C. That is the
+**Next experiment:** rebuild `ly-gamepad` with the captured layout and re-run arm C. That is the
 one change that would confirm or kill the descriptor theory, and it is gated on the
 descriptor-vs-sealed-channel decision in `design/xbox-pad-windows-handoff.md` §3.3 — the real pad
 declares no Feature report, and `0x85` is our channel-proof transport.
@@ -81,7 +81,7 @@ declares no Feature report, and `0x85` is our channel-proof transport.
 # baseline FIRST, with no virtual pad — a real Xbox pad owns XInput slot 0 and will fake a pass
 win-input-matrix --watch 8
 
-Start-Process punktfunk-host.exe -ArgumentList 'dualsense-windows-test','--xboxhid','--seconds','90'
+Start-Process lilynk-host.exe -ArgumentList 'dualsense-windows-test','--xboxhid','--seconds','90'
 # arm C:
 New-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Enum\SWD\PUNKTFUNK\PF_XBOX_0' `
   -Name UpperFilters -PropertyType MultiString -Value @('xinputhid') -Force
@@ -94,9 +94,9 @@ New-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Class\{745a17a0-7
 from the parent's `Driver` value, do not hardcode it.
 
 ⚠️ Everything above was applied **by hand to a live devnode**. Shipping it means an `AddReg` in
-`pf_gamepad.inx` (`[pfGamepad.NT.hw]` for `UpperFilters`, `[pfGamepad.NT]` for
+`ly_gamepad.inx` (`[pfGamepad.NT.hw]` for `UpperFilters`, `[pfGamepad.NT]` for
 `DevicePropertyFlags`) — and that INF today contains no `AddReg` of any kind.
 
 All changes on `.173` were reverted: registry values removed, devnodes removed, `oem100.inf`
-deleted, both certs delstored, the 6 pre-existing `pf_gamepad` packages and the production service
+deleted, both certs delstored, the 6 pre-existing `ly_gamepad` packages and the production service
 left untouched.

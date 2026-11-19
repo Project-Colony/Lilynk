@@ -30,9 +30,9 @@ An older build could leave one behind. While the host is still installed, run fr
 prompt:
 
 ```powershell
-punktfunk-host driver uninstall
-punktfunk-host driver uninstall --gamepad
-punktfunk-host driver uninstall --audio
+lilynk-host driver uninstall
+lilynk-host driver uninstall --gamepad
+lilynk-host driver uninstall --audio
 ```
 
 Already uninstalled? Install the current version and uninstall it again; its uninstaller runs all

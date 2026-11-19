@@ -5,7 +5,7 @@ import org.json.JSONObject
 
 /**
  * Profiles on a box: what `GET /api/v1/profiles/enumerate` lists, when a client shows the picker,
- * and which id its hello carries. A port of `pf-client-core`'s `profiles.rs`;
+ * and which id its hello carries. A port of `ly-client-core`'s `profiles.rs`;
  * `clients/shared/profile-picker-vectors.json` pins [pickerDecision] in both, and
  * `profile-unlock-vectors.json` pins [UnlockNeed.of].
  */
@@ -21,7 +21,7 @@ data class ProfilePick(
     val remember: Boolean = false,
     val avatar: String? = null,
 ) {
-    /** `{id, display_name, avatar, remember}` as `pf-client-core` spells it; the last two when set. */
+    /** `{id, display_name, avatar, remember}` as `ly-client-core` spells it; the last two when set. */
     fun toJson(): JSONObject = JSONObject().put("id", id).put("display_name", displayName)
         .also {
             if (avatar != null) it.put("avatar", avatar)

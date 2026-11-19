@@ -481,7 +481,7 @@ internal val TRITON_HELD_BACK = setOf(0x81, 0x85, 0x8E)
 
 /**
  * Why a host write must not reach the pad, or null to write it. [kind] 1 is a feature report; a
- * Steam Controller 2's command is its first byte from `0x80`, else its second. pf-client-core
+ * Steam Controller 2's command is its first byte from `0x80`, else its second. ly-client-core
  * `sc2_capture.rs` refuses the same (`clients/shared/pad-write-vectors.json`).
  */
 internal fun hostWriteRefused(classic: Boolean, kind: Int, data: ByteArray): String? {

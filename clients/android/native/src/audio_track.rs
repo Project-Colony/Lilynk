@@ -112,7 +112,7 @@ impl Track {
         };
         let (wvm, wtrack) = (vm.clone(), track.clone());
         let spawned = std::thread::Builder::new()
-            .name("pf-audio-track".into())
+            .name("ly-audio-track".into())
             .spawn(move || {
                 crate::audio::boost_audio_thread("audio-track");
                 let ran = wvm.attach_current_thread(|env| writer.run(env, &wtrack));

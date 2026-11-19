@@ -2,7 +2,7 @@
 # mode; label windows-amd64). Part of the Windows-host rewrite (design/windows-host-rewrite.md).
 #
 # probe-and-proto PROBES the runner's driver toolchain (WDK / EWDK / cargo-make / LLVM / the
-# inf2cat/stampinf/devgen/signtool tools) and builds+tests the owned ABI crate (pf-driver-proto)
+# inf2cat/stampinf/devgen/signtool tools) and builds+tests the owned ABI crate (ly-driver-proto)
 # on MSVC. driver-build builds, lints and tests the UMDF driver workspace. The runner has no RTX
 # GPU — that's fine: builds, the IddCx bindgen/link and the /INTEGRITYCHECK self-sign-load do not
 # need one; only live NVENC encode does, which defers to the RTX box.
@@ -25,20 +25,20 @@ on:
     branches: [main]
     paths:
       - '.gitea/workflows/windows-drivers.yml'
-      - 'crates/host/pf-driver-proto/**'
+      - 'crates/host/ly-driver-proto/**'
       # The driver hosts the encoder backends, so a change to them is a driver change.
-      - 'crates/host/pf-encode-core/**'
-      - 'crates/host/pf-encode-session/**'
-      - 'crates/host/pf-encode-win/**'
-      # …and the crates those backends compile against: pf-frame owns the frame vocabulary
-      # their signatures take, pf-zerocopy and pf-dmabuf sit under it, and the two -sys crates are the
+      - 'crates/host/ly-encode-core/**'
+      - 'crates/host/ly-encode-session/**'
+      - 'crates/host/ly-encode-win/**'
+      # …and the crates those backends compile against: ly-frame owns the frame vocabulary
+      # their signatures take, ly-zerocopy and ly-dmabuf sit under it, and the two -sys crates are the
       # QSV and PyroWave features. Unlisted, a change to any of them runs no driver build;
       # scripts/ci/check-workflow-paths.py fails CI on that gap.
       - 'crates/codec/libvpl-sys/**'
       - 'crates/codec/pyrowave-sys/**'
-      - 'crates/core/pf-dmabuf/**'
-      - 'crates/host/pf-frame/**'
-      - 'crates/host/pf-zerocopy/**'
+      - 'crates/core/ly-dmabuf/**'
+      - 'crates/host/ly-frame/**'
+      - 'crates/host/ly-zerocopy/**'
       - 'packaging/windows/drivers/**'
       # The driver-build job below runs these. They sit beside the driver tree, not in it.
       - 'packaging/windows/drivers-cargo.ps1'
@@ -47,20 +47,20 @@ on:
   pull_request:
     paths:
       - '.gitea/workflows/windows-drivers.yml'
-      - 'crates/host/pf-driver-proto/**'
+      - 'crates/host/ly-driver-proto/**'
       # The driver hosts the encoder backends, so a change to them is a driver change.
-      - 'crates/host/pf-encode-core/**'
-      - 'crates/host/pf-encode-session/**'
-      - 'crates/host/pf-encode-win/**'
-      # …and the crates those backends compile against: pf-frame owns the frame vocabulary
-      # their signatures take, pf-zerocopy and pf-dmabuf sit under it, and the two -sys crates are the
+      - 'crates/host/ly-encode-core/**'
+      - 'crates/host/ly-encode-session/**'
+      - 'crates/host/ly-encode-win/**'
+      # …and the crates those backends compile against: ly-frame owns the frame vocabulary
+      # their signatures take, ly-zerocopy and ly-dmabuf sit under it, and the two -sys crates are the
       # QSV and PyroWave features. Unlisted, a change to any of them runs no driver build;
       # scripts/ci/check-workflow-paths.py fails CI on that gap.
       - 'crates/codec/libvpl-sys/**'
       - 'crates/codec/pyrowave-sys/**'
-      - 'crates/core/pf-dmabuf/**'
-      - 'crates/host/pf-frame/**'
-      - 'crates/host/pf-zerocopy/**'
+      - 'crates/core/ly-dmabuf/**'
+      - 'crates/host/ly-frame/**'
+      - 'crates/host/ly-zerocopy/**'
       - 'packaging/windows/drivers/**'
       # The driver-build job below runs these. They sit beside the driver tree, not in it.
       - 'packaging/windows/drivers-cargo.ps1'
@@ -174,17 +174,17 @@ jobs:
           Write-Host ("CARGO_HOME     = " + ($env:CARGO_HOME ?? '<unset>'))
           Write-Host ("CARGO_TARGET_DIR (daemon) = " + ($env:CARGO_TARGET_DIR ?? '<unset>'))
 
-      - name: Build + test pf-driver-proto (MSVC)
+      - name: Build + test ly-driver-proto (MSVC)
         run: |
           # Short target dir to dodge MAX_PATH inside the deep act host workdir (see windows-client.yml).
           $env:CARGO_TARGET_DIR = "C:\t\drv"
-          cargo build --locked -p pf-driver-proto
-          cargo test  --locked -p pf-driver-proto
-          cargo clippy --locked -p pf-driver-proto --all-targets -- -D warnings
-          cargo fmt -p pf-driver-proto -- --check
+          cargo build --locked -p ly-driver-proto
+          cargo test  --locked -p ly-driver-proto
+          cargo clippy --locked -p ly-driver-proto --all-targets -- -D warnings
+          cargo fmt -p ly-driver-proto -- --check
 
   # Build the UMDF driver workspace on windows-drivers-rs: proves wdk-sys bindgen/link works on the
-  # runner's WDK + LLVM, that pf-driver-proto path-deps into a driver, and exposes the produced DLL's
+  # runner's WDK + LLVM, that ly-driver-proto path-deps into a driver, and exposes the produced DLL's
   # FORCE_INTEGRITY (/INTEGRITYCHECK) bit — the M0 self-signed-load question.
   driver-build:
     runs-on: windows-amd64
@@ -229,65 +229,65 @@ jobs:
           Set-Location $env:GITHUB_WORKSPACE
           rustc -O scripts/ci/src-mtimes.rs -o "$env:RUNNER_TEMP\src-mtimes.exe"; if ($LASTEXITCODE) { throw "src-mtimes build" }
           & "$env:RUNNER_TEMP\src-mtimes.exe" 'C:\t\drivers'; if ($LASTEXITCODE) { throw "src-mtimes" }
-      - name: cargo build the driver workspace (wdk-iddcx + pf-vdisplay + gamepad drivers)
-        # Whole workspace: wdk-iddcx (DDI wrappers + the iddcx bindgen surface asserts) + pf-vdisplay
-        # (the real IddCx driver) + pf-umdf-util (the safe UMDF primitive layer) + the four input
-        # drivers (pf-gamepad, pf-xusb, pf-mouse, pf-touchpad). pf-vdisplay linking proves the IddCx
-        # call sites resolve against IddCxStub end-to-end; the input drivers prove pf-umdf-util's
+      - name: cargo build the driver workspace (wdk-iddcx + ly-vdisplay + gamepad drivers)
+        # Whole workspace: wdk-iddcx (DDI wrappers + the iddcx bindgen surface asserts) + ly-vdisplay
+        # (the real IddCx driver) + ly-umdf-util (the safe UMDF primitive layer) + the four input
+        # drivers (ly-gamepad, ly-xusb, ly-mouse, ly-touchpad). ly-vdisplay linking proves the IddCx
+        # call sites resolve against IddCxStub end-to-end; the input drivers prove ly-umdf-util's
         # WDF dispatch links.
         run: ../drivers-cargo.ps1 'build --locked -v'
       - name: cargo clippy the shipped drivers (-D warnings — enforces the unsafe-audit gates)
-        # The gamepad drivers' business logic is 100% safe (the unsafe surface is pf-umdf-util, the
-        # audited layer); pf-vdisplay + wdk-iddcx are inherently FFI-bound but every `unsafe {}`
+        # The gamepad drivers' business logic is 100% safe (the unsafe surface is ly-umdf-util, the
+        # audited layer); ly-vdisplay + wdk-iddcx are inherently FFI-bound but every `unsafe {}`
         # carries a `// SAFETY:` proof. Both invariants are lint-gated (`unsafe_op_in_unsafe_fn` +
         # `undocumented_unsafe_blocks`); this step keeps them from regressing.
-        run: ../drivers-cargo.ps1 'clippy --locked -p pf-umdf-util -p pf-xusb -p pf-gamepad -p pf-mouse -p pf-touchpad -p wdk-iddcx -p pf-vdisplay --all-targets -- -D warnings'
-      - name: cargo test pf-umdf-util (the safe helpers the drivers share)
+        run: ../drivers-cargo.ps1 'clippy --locked -p ly-umdf-util -p ly-xusb -p ly-gamepad -p ly-mouse -p ly-touchpad -p wdk-iddcx -p ly-vdisplay --all-targets -- -D warnings'
+      - name: cargo test ly-umdf-util (the safe helpers the drivers share)
         # A plain lib links no WDF import libs, so its tests run where the cdylib drivers' cannot:
         # the HID IOCTL table, descriptor lengths, string replies and the log helpers.
-        run: ../drivers-cargo.ps1 'test --locked -p pf-umdf-util'
-      - name: cargo test pf-vdisplay --lib (the display driver's own models)
+        run: ../drivers-cargo.ps1 'test --locked -p ly-umdf-util'
+      - name: cargo test ly-vdisplay --lib (the display driver's own models)
         # `--lib` builds the cdylib's unit tests as an ordinary test binary, so the pure models
-        # inside the driver (the cursor cell among them) run here. The host lane's `-p pf-vdisplay`
-        # is the host crate of that name (crates/host/pf-vdisplay), not this driver.
-        run: ../drivers-cargo.ps1 'test --locked -p pf-vdisplay --lib'
+        # inside the driver (the cursor cell among them) run here. The host lane's `-p ly-vdisplay`
+        # is the host crate of that name (crates/host/ly-vdisplay), not this driver.
+        run: ../drivers-cargo.ps1 'test --locked -p ly-vdisplay --lib'
       - name: cargo fmt --check the driver workspace
-        run: cargo fmt -p pf-umdf-util -p pf-xusb -p pf-gamepad -p pf-mouse -p pf-touchpad -p wdk-iddcx -p pf-vdisplay --check
+        run: cargo fmt -p ly-umdf-util -p ly-xusb -p ly-gamepad -p ly-mouse -p ly-touchpad -p wdk-iddcx -p ly-vdisplay --check
       - name: Inspect /INTEGRITYCHECK (before) — expect FORCE_INTEGRITY set by wdk-build
         run: |
           # explicit --target (.cargo/config.toml) -> output under the triple subdir.
-          $dll = "target\x86_64-pc-windows-msvc\debug\pf_vdisplay.dll"
-          if (-not (Test-Path $dll)) { throw "pf_vdisplay.dll not produced at $dll" }
+          $dll = "target\x86_64-pc-windows-msvc\debug\ly_vdisplay.dll"
+          if (-not (Test-Path $dll)) { throw "ly_vdisplay.dll not produced at $dll" }
           $b = [IO.File]::ReadAllBytes($dll)
           $pe = [BitConverter]::ToInt32($b, 0x3c)
           $dllchar = [BitConverter]::ToUInt16($b, $pe + 0x5e)   # OptionalHeader.DllCharacteristics
-          Write-Host ("pf_vdisplay.dll built OK ({0:N0} bytes)" -f (Get-Item $dll).Length)
+          Write-Host ("ly_vdisplay.dll built OK ({0:N0} bytes)" -f (Get-Item $dll).Length)
           Write-Host ("BEFORE: DllCharacteristics = 0x{0:X4}; FORCE_INTEGRITY = {1}" -f $dllchar, (($dllchar -band 0x0080) -ne 0))
       - name: Clear FORCE_INTEGRITY (self-signed-load fix) + verify
         # wdk-build sets /INTEGRITYCHECK unconditionally -> a self-signed driver won't load. Clear the PE
         # bit deterministically (the reusable packaging step; signing/.cat happen later for real drivers).
-        run: ../clear-force-integrity.ps1 -Path target\x86_64-pc-windows-msvc\debug\pf_vdisplay.dll
-      - name: cargo build pf-vdisplay --features encode-probe (S5 probe gate)
+        run: ../clear-force-integrity.ps1 -Path target\x86_64-pc-windows-msvc\debug\ly_vdisplay.dll
+      - name: cargo build ly-vdisplay --features encode-probe (S5 probe gate)
         # The shipped build already links NVENC/AMF/QSV/PyroWave; this proves the S5 probe on top
         # of them still compiles under the WDK toolchain and the static CRT.
-        # Last x64 build on purpose: same profile and target dir, so it overwrites pf_vdisplay.dll
+        # Last x64 build on purpose: same profile and target dir, so it overwrites ly_vdisplay.dll
         # and would otherwise hand the PE-inspection steps above the probe DLL instead of the
         # shipped one.
-        run: ../drivers-cargo.ps1 'build --locked -p pf-vdisplay --features encode-probe -v'
+        run: ../drivers-cargo.ps1 'build --locked -p ly-vdisplay --features encode-probe -v'
       - name: cargo build + clippy the driver workspace for aarch64-pc-windows-msvc
         # The ARM64 host leg (#298). Same x64 runner: the MSVC ARM64 cross compiler and the WDK's
         # um\arm64 libs are provisioned above. Build + lint only, the DLLs cannot run here. Debug
         # profile like the x64 steps; the encoder features drop out via the driver's target table.
         # A failed build must stop here: the warm target still holds the last run's DLL.
         run: |
-          ../drivers-cargo.ps1 'build --locked --target aarch64-pc-windows-msvc -p pf-vdisplay -p pf-gamepad -p pf-mouse -p pf-touchpad -p pf-xusb -v'
+          ../drivers-cargo.ps1 'build --locked --target aarch64-pc-windows-msvc -p ly-vdisplay -p ly-gamepad -p ly-mouse -p ly-touchpad -p ly-xusb -v'
           if ($LASTEXITCODE) { throw "ARM64 driver build" }
-          ../drivers-cargo.ps1 'clippy --locked --target aarch64-pc-windows-msvc -p pf-umdf-util -p pf-xusb -p pf-gamepad -p pf-mouse -p pf-touchpad -p wdk-iddcx -p pf-vdisplay --all-targets -- -D warnings'
+          ../drivers-cargo.ps1 'clippy --locked --target aarch64-pc-windows-msvc -p ly-umdf-util -p ly-xusb -p ly-gamepad -p ly-mouse -p ly-touchpad -p wdk-iddcx -p ly-vdisplay --all-targets -- -D warnings'
           if ($LASTEXITCODE) { throw "ARM64 driver clippy" }
-          $dll = "target\aarch64-pc-windows-msvc\debug\pf_vdisplay.dll"
-          if (-not (Test-Path $dll)) { throw "ARM64 pf_vdisplay.dll not produced at $dll" }
+          $dll = "target\aarch64-pc-windows-msvc\debug\ly_vdisplay.dll"
+          if (-not (Test-Path $dll)) { throw "ARM64 ly_vdisplay.dll not produced at $dll" }
           $b = [IO.File]::ReadAllBytes($dll)
           $pe = [BitConverter]::ToInt32($b, 0x3c)
           $machine = [BitConverter]::ToUInt16($b, $pe + 4)   # FileHeader.Machine: 0xAA64 = ARM64
-          if ($machine -ne 0xAA64) { throw ("ARM64 pf_vdisplay.dll has Machine 0x{0:X4}, expected 0xAA64" -f $machine) }
-          Write-Host ("ARM64 pf_vdisplay.dll built OK ({0:N0} bytes, Machine 0xAA64)" -f (Get-Item $dll).Length)
+          if ($machine -ne 0xAA64) { throw ("ARM64 ly_vdisplay.dll has Machine 0x{0:X4}, expected 0xAA64" -f $machine) }
+          Write-Host ("ARM64 ly_vdisplay.dll built OK ({0:N0} bytes, Machine 0xAA64)" -f (Get-Item $dll).Length)

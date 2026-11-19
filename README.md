@@ -5,7 +5,7 @@ rest of this README is still punktfunk's text and has not been rewritten for Lil
 [License](#license) for how the two licenses apply.
 
 <p align="center">
-  <img src="assets/punktfunk-logo.svg" alt="Punktfunk" width="320" />
+  <img src="assets/lilynk-logo.svg" alt="Punktfunk" width="320" />
 </p>
 
 <p align="center"><b>Low-latency desktop and game streaming with first-class Linux and Windows hosts.</b></p>
@@ -34,7 +34,7 @@ monitors.
   monitors; turn several devices into monitors of one desktop. Presets in the console —
   [Virtual displays](https://docs.punktfunk.unom.io/docs/virtual-displays).
 - **A real virtual display on Windows, too.** Linux uses per-compositor virtual outputs; Windows
-  gets the same on-the-fly display from Punktfunk's own signed IddCx driver (`pf-vdisplay`) — no
+  gets the same on-the-fly display from Punktfunk's own signed IddCx driver (`ly-vdisplay`) — no
   dummy HDMI plug, no Desktop Duplication or WGC screen-scraping, and it survives the secure desktop
   (UAC, lock screen).
 - **GPU end to end.** Frames reach the encoder with no CPU copies (dmabuf → CUDA/Vulkan → NVENC on
@@ -81,10 +81,10 @@ uninstalling are [/docs/updating](https://docs.punktfunk.unom.io/docs/updating) 
 |---|---|
 | Mac | The **Apple app** — notarized DMG, or TestFlight |
 | iPhone, iPad, Apple TV | The **Apple app** on the [App Store](https://apps.apple.com/app/id6779991756) |
-| Linux desktop / laptop | **`punktfunk-client`** — Flatpak (any distro), or apt / rpm / pacman |
+| Linux desktop / laptop | **`lilynk-client`** — Flatpak (any distro), or apt / rpm / pacman |
 | Steam Deck | The **Decky plugin** in Gaming Mode; the Flatpak in Desktop Mode |
 | Android phone or TV | The **Android app** on Google Play |
-| Windows | Native **`punktfunk-client`** — signed installer (portable zip and MSIX too) |
+| Windows | Native **`lilynk-client`** — signed installer (portable zip and MSIX too) |
 | LG webOS TV | **`client-webos`**, in its own repo |
 | Scripts and launchers | **`punktfunk`**, the headless CLI in the Linux client packages |
 | Anything else | **Moonlight** over GameStream |

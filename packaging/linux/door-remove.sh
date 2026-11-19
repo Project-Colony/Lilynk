@@ -6,9 +6,9 @@
 # are only disabled and the record stays for the next `off`. Always exits 0: a removal never fails
 # here.
 helper=/usr/libexec/punktfunk/door-helper
-owner=$(cat /var/lib/punktfunk-seats/owner 2>/dev/null)
+owner=$(cat /var/lib/lilynk-seats/owner 2>/dev/null)
 if [ -n "$owner" ] && [ -x "$helper" ] && "$helper" off "$owner"; then
     exit 0
 fi
-systemctl disable --now punktfunk-web-door.service punktfunk-door.service punktfunk-seats.service 2>/dev/null
+systemctl disable --now lilynk-web-door.service lilynk-door.service lilynk-seats.service 2>/dev/null
 exit 0

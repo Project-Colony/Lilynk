@@ -2,7 +2,7 @@
 # runtime set the manifest declares. Content-keyed and rebuilt only when the ci/ tree
 # changes (docker.yml `builders`).
 #
-#   docker build -f ci/flatpak-ci.Dockerfile -t punktfunk-flatpak-ci ci
+#   docker build -f ci/flatpak-ci.Dockerfile -t lilynk-flatpak-ci ci
 #
 # MEASURED on run 18855 (2026-08-17), a green 21m23s build, this image removes:
 #   63 s  `dnf -y install nodejs`      (act_runner execs JS actions with the CONTAINER's node)

@@ -28,7 +28,7 @@ for bad in "pacman -Syu" "pacman --sync --sysupgrade" "pacman -Syuu foo"; do
         echo "::error::the vendored guard allowed '$bad' — it is disarmed"; exit 1
     fi
 done
-for good in "pacman -Sy" "pacman -S punktfunk-host" "pacman -Rns punktfunk-host"; do
+for good in "pacman -Sy" "pacman -S lilynk-host" "pacman -Rns lilynk-host"; do
     if ! OMARCHY_PACMAN_CMDLINE="$good" "$GUARD" >/dev/null 2>&1; then
         echo "::error::the vendored guard blocked '$good', which Omarchy allows"; exit 1
     fi
@@ -49,35 +49,35 @@ grep -q 'Woah partner' /tmp/canary || {
 }
 
 # Omarchy's install line takes the host AND the client. On both channels they depend on
-# punktfunk-icons, the one owner of io.unom.punktfunk.svg, so pacman sees no conflicting files.
+# lilynk-icons, the one owner of io.unom.punktfunk.svg, so pacman sees no conflicting files.
 echo "==> The installer succeeds anyway, under the armed guard"
 $PF --yes --no-start --no-omarchy-setup --channel canary
-test -x /usr/bin/punktfunk-host
-command -v punktfunk-omarchy >/dev/null || {
-    echo "::error::punktfunk-omarchy is not on PATH — the host package should ship it"; exit 1
+test -x /usr/bin/lilynk-host
+command -v lilynk-omarchy >/dev/null || {
+    echo "::error::lilynk-omarchy is not on PATH — the host package should ship it"; exit 1
 }
 
 echo "==> --no-omarchy-setup declines the hand-off"
 $PF --yes --no-start --no-omarchy-setup --channel canary > /tmp/decline 2>&1
-if grep -q '+ punktfunk-omarchy setup' /tmp/decline; then
+if grep -q '+ lilynk-omarchy setup' /tmp/decline; then
     echo "::error::the hand-off ran despite --no-omarchy-setup"; exit 1
 fi
 
-# `punktfunk-omarchy setup` puts wiring OUTSIDE the packages, and its `remove` ships IN the host
+# `lilynk-omarchy setup` puts wiring OUTSIDE the packages, and its `remove` ships IN the host
 # package — so it has to run before pacman takes the binary that provides it away.
 #
 # Asserted from a dry run, which is where the claim lives: this is an ORDERING property of the
-# plan. Executing it here is not possible and would not add anything — `punktfunk-omarchy`
+# plan. Executing it here is not possible and would not add anything — `lilynk-omarchy`
 # refuses to run as root (it edits the user's own config), and every smoke container is root.
 # On a real box the installer refuses to run under sudo at all, so it is never root there.
 echo "==> Uninstall removes the wiring before the binary that removes it"
 $PF --yes --uninstall --dry-run > /tmp/rm 2>&1 || { tail -20 /tmp/rm; exit 1; }
-rm_at=$(grep -n 'punktfunk-omarchy remove' /tmp/rm | head -1 | cut -d: -f1)
+rm_at=$(grep -n 'lilynk-omarchy remove' /tmp/rm | head -1 | cut -d: -f1)
 rns_at=$(grep -n 'pacman -Rns' /tmp/rm | head -1 | cut -d: -f1)
-[ -n "$rm_at" ]  || { echo "::error::punktfunk-omarchy remove never ran"; exit 1; }
+[ -n "$rm_at" ]  || { echo "::error::lilynk-omarchy remove never ran"; exit 1; }
 [ -n "$rns_at" ] || { echo "::error::pacman -Rns never ran"; exit 1; }
 [ "$rm_at" -lt "$rns_at" ] || {
-    echo "::error::punktfunk-omarchy remove is planned AFTER pacman -Rns (line $rm_at vs $rns_at)"
+    echo "::error::lilynk-omarchy remove is planned AFTER pacman -Rns (line $rm_at vs $rns_at)"
     exit 1
 }
 

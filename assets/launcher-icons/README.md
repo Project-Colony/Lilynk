@@ -7,14 +7,14 @@ field and every client resolves against the set it ships.
 
 | token | mark | emitted by | source |
 |---|---|---|---|
-| `steam` | Steam | punktfunk-plugin-steam (Big Picture + desktop) | Font Awesome Free brands (CC BY 4.0) |
-| `lutris` | Lutris | punktfunk-plugin-lutris | Simple Icons (CC0 1.0) |
-| `heroic` | Heroic Games Launcher | punktfunk-plugin-heroic | Simple Icons (CC0 1.0, slug `heroicgameslauncher`) |
-| `playnite` | Playnite | punktfunk-plugin-playnite | JosefNemec/Playnite (MIT) |
-| `epic` | Epic Games | punktfunk-plugin-epic | Simple Icons (CC0 1.0, slug `epicgames`) |
-| `gog` | GOG.com | punktfunk-plugin-gog | Simple Icons (CC0 1.0, slug `gogdotcom`) |
-| `xbox` | Xbox | punktfunk-plugin-xbox | Font Awesome Free brands (CC BY 4.0) |
-| `hydra` | Hydra Launcher | punktfunk-plugin-hydra | hydralauncher/hydra (MIT) |
+| `steam` | Steam | lilynk-plugin-steam (Big Picture + desktop) | Font Awesome Free brands (CC BY 4.0) |
+| `lutris` | Lutris | lilynk-plugin-lutris | Simple Icons (CC0 1.0) |
+| `heroic` | Heroic Games Launcher | lilynk-plugin-heroic | Simple Icons (CC0 1.0, slug `heroicgameslauncher`) |
+| `playnite` | Playnite | lilynk-plugin-playnite | JosefNemec/Playnite (MIT) |
+| `epic` | Epic Games | lilynk-plugin-epic | Simple Icons (CC0 1.0, slug `epicgames`) |
+| `gog` | GOG.com | lilynk-plugin-gog | Simple Icons (CC0 1.0, slug `gogdotcom`) |
+| `xbox` | Xbox | lilynk-plugin-xbox | Font Awesome Free brands (CC BY 4.0) |
+| `hydra` | Hydra Launcher | lilynk-plugin-hydra | hydralauncher/hydra (MIT) |
 
 The Epic, GOG and Xbox tiles, and Hydra Big Picture outside a deb, rpm or AUR install, need a
 host that knows their `launcher_ui` values; an older host drops the tile and still syncs the games.
@@ -28,7 +28,7 @@ A plugin sends the **name** of a mark, never its bytes, and never a URL.
 
 The obvious alternative — a plugin ships its own `icon.svg` and the host's art proxy serves it —
 is closed by construction, and deliberately: `local_art_bytes` serves what the bytes *are*
-(`sniff_image_type`, `crates/host/punktfunk-host/src/library/art.rs`), and SVG is not on that list
+(`sniff_image_type`, `crates/host/lilynk-host/src/library/art.rs`), and SVG is not on that list
 because it is script-capable XML and the web console renders library art in a browser. Widening
 that sniff to admit SVG would trade a rendering nicety for a stored-XSS surface.
 

@@ -1,5 +1,5 @@
 {
-  "$comment": "A sentence the host sends by the id of its message (an API error code as apierr_<code>, a seat line, a launch verdict, a close code as reject_<token>) with its placeholder values by name, and the English every client words it as. `english` is the host's own sentence, which only an id this build does not know shows. Pinned by pf-client-core host_text, the Kotlin HostTextTest and the Swift HostTextTests: a placeholder order or a plural a client gets wrong shows here.",
+  "$comment": "A sentence the host sends by the id of its message (an API error code as apierr_<code>, a seat line, a launch verdict, a close code as reject_<token>) with its placeholder values by name, and the English every client words it as. `english` is the host's own sentence, which only an id this build does not know shows. Pinned by ly-client-core host_text, the Kotlin HostTextTest and the Swift HostTextTests: a placeholder order or a plural a client gets wrong shows here.",
   "cases": [
     {"id": "reject_access_expired", "params": {}, "english": "The host's own English.", "sentence": "Your access to this host has expired — ask the host's owner to grant it again."},
     {"id": "reject_approval_timeout", "params": {}, "english": "The host's own English.", "sentence": "Nobody approved the request on the host in time — approve this device in the host's web console, then request access again."},
@@ -39,10 +39,10 @@
     {"id": "apierr_credential_wrong", "params": {"account": "jdoe"}, "english": "The host's own English.", "sentence": "That isn't jdoe's password."},
     {"id": "apierr_credential_wrong_windows", "params": {"account": "jdoe"}, "english": "The host's own English.", "sentence": "That isn't jdoe's Windows password."},
     {"id": "apierr_device_display_not_saved", "params": {}, "english": "The host's own English.", "sentence": "Couldn't save the display settings for this device"},
-    {"id": "apierr_door_missing_package", "params": {"command": "sudo apt install punktfunk-seats"}, "english": "The host's own English.", "sentence": "This install is missing the punktfunk-seats package. Install it: sudo apt install punktfunk-seats"},
-    {"id": "apierr_door_not_in_update_group", "params": {"user": "kid"}, "english": "The host's own English.", "sentence": "Add kid to the punktfunk-update group first: sudo usermod -aG punktfunk-update kid"},
+    {"id": "apierr_door_missing_package", "params": {"command": "sudo apt install lilynk-seats"}, "english": "The host's own English.", "sentence": "This install is missing the lilynk-seats package. Install it: sudo apt install lilynk-seats"},
+    {"id": "apierr_door_not_in_update_group", "params": {"user": "kid"}, "english": "The host's own English.", "sentence": "Add kid to the lilynk-update group first: sudo usermod -aG lilynk-update kid"},
     {"id": "apierr_door_on_for_other", "params": {"owner": "kid"}, "english": "The host's own English.", "sentence": "Reachable without logging in is on for kid. Turn it off from that account first."},
-    {"id": "apierr_door_update_group_restart", "params": {"user": "kid"}, "english": "The host's own English.", "sentence": "Restart the host to finish adding kid to the punktfunk-update group. Punktfunk started before it."},
+    {"id": "apierr_door_update_group_restart", "params": {"user": "kid"}, "english": "The host's own English.", "sentence": "Restart the host to finish adding kid to the lilynk-update group. Punktfunk started before it."},
     {"id": "apierr_plugin_needs_newer_host", "params": {"version": "0.47.0"}, "english": "The host's own English.", "sentence": "This plugin can't run on this host — needs Punktfunk 0.47.0 or newer"},
     {"id": "apierr_plugin_needs_platform", "params": {"platforms": "Linux"}, "english": "The host's own English.", "sentence": "This plugin can't run on this host — requires Linux"},
     {"id": "apierr_profile_limit", "params": {"count": "1"}, "english": "The host's own English.", "sentence": "A host holds at most 1 profile"},
@@ -82,7 +82,7 @@
     {"id": "apierr_from_a_newer_host", "params": {"account": "jdoe"}, "english": "A newer host said this.", "sentence": "A newer host said this."},
     {"id": "player_stats_scale_pct", "params": {}, "english": "Not a host message.", "sentence": "Not a host message."}
   ],
-  "$screen_wish": "The stream-start line for a screen the session did not get as asked: `wish` is the preset's host_screen as sent (null for none), `reason` the ServerHello echo's reason as serde spells it, `id` the client message it words with ({role} is the wished role's name or the monitor's connector), and `sentence` what the player reads, null for nothing. Pinned by pf-client-core host_text::screen_wish_line.",
+  "$screen_wish": "The stream-start line for a screen the session did not get as asked: `wish` is the preset's host_screen as sent (null for none), `reason` the ServerHello echo's reason as serde spells it, `id` the client message it words with ({role} is the wished role's name or the monitor's connector), and `sentence` what the player reads, null for nothing. Pinned by ly-client-core host_text::screen_wish_line.",
   "screen_wish": [
     {"wish": "second", "reason": "not_allowed", "id": "screen_wish_not_allowed", "sentence": "Second screen wasn't applied: this host decides the screen for this device."},
     {"wish": "monitor:HDMI-A-1", "reason": "not_allowed", "id": "screen_wish_not_allowed", "sentence": "HDMI-A-1 wasn't applied: this host decides the screen for this device."},

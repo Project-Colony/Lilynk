@@ -86,8 +86,8 @@ that source. Plugins from it are never **Verified**.
 <Tab value="Linux">
 
 ```sh
-punktfunk-host plugins add rom-manager
-punktfunk-host plugins enable           # only if the runner is off
+lilynk-host plugins add rom-manager
+lilynk-host plugins enable           # only if the runner is off
 ```
 
 </Tab>
@@ -96,12 +96,12 @@ punktfunk-host plugins enable           # only if the runner is off
 Run from an elevated PowerShell; the plugins directory is admin-owned.
 
 ```powershell
-punktfunk-host plugins add playnite
-punktfunk-host plugins enable           # only if the runner is off
+lilynk-host plugins add playnite
+lilynk-host plugins enable           # only if the runner is off
 ```
 
-If `punktfunk-host` isn't found, open a new terminal, or use
-`& "$env:ProgramFiles\punktfunk\punktfunk-host.exe"`.
+If `lilynk-host` isn't found, open a new terminal, or use
+`& "$env:ProgramFiles\punktfunk\lilynk-host.exe"`.
 
 </Tab>
 </Tabs>
@@ -159,7 +159,7 @@ reaches the server at `127.0.0.1:<port>`.
 
 A plugin that doesn't ask yet can be given the port by hand: under **Plugins** → **Installed**,
 type the port into **Allow a port on this computer** on the plugin's row and choose **Allow**, or
-run `punktfunk-host plugins grant <plugin> 127.0.0.1:<port>`. Then point the plugin at
+run `lilynk-host plugins grant <plugin> 127.0.0.1:<port>`. Then point the plugin at
 `http://127.0.0.1:<port>`.
 
 **Plugins** → **Installed** lists the ports a plugin was allowed or refused; remove one there, or
@@ -168,13 +168,13 @@ choose **Ask again**. A plugin is never given a port of Punktfunk's own, 47980 t
 ## Update and remove
 
 - **Update:** **Update to &lt;version&gt;** or **Update all** on **Installed** installs the
-  catalog's version and restarts the runner. `punktfunk-host plugins add <name>` installs the
+  catalog's version and restarts the runner. `lilynk-host plugins add <name>` installs the
   newest version in the registry instead. An update the host refuses, because the package isn't
   the one the catalog checked, leaves the version you had installed and running.
-- **Remove:** **Uninstall**, or `punktfunk-host plugins remove <name>`. Both drop the plugin's
+- **Remove:** **Uninstall**, or `lilynk-host plugins remove <name>`. Both drop the plugin's
   titles from the library and restart the runner. Its settings stay in
   `plugin-state/<plugin>/` in the config directory, so a reinstall picks them up.
-- **Stop every plugin:** **Disable runner** on **Installed**, or `punktfunk-host plugins disable`.
+- **Stop every plugin:** **Disable runner** on **Installed**, or `lilynk-host plugins disable`.
   The host keeps streaming; you lose plugin game sources and automation.
 
 ## Troubleshooting
@@ -185,19 +185,19 @@ The runner is its own package. Install it, then press **Enable runner**:
 
 | Host | Install |
 |---|---|
-| Ubuntu | `sudo apt install punktfunk-scripting` |
-| Fedora | `sudo dnf install punktfunk-scripting` |
-| Arch | `sudo pacman -Syu punktfunk-scripting` |
+| Ubuntu | `sudo apt install lilynk-scripting` |
+| Fedora | `sudo dnf install lilynk-scripting` |
+| Arch | `sudo pacman -Syu lilynk-scripting` |
 | Steam Deck on-device build | Re-run `scripts/steamdeck/install.sh` |
-| NixOS | `services.punktfunk.scripting.enable` (on whenever the host is) |
+| NixOS | `services.lilynk.scripting.enable` (on whenever the host is) |
 | Windows | Re-run the host setup |
 
-Installed but still reported missing? The host service can't find the `punktfunk-scripting`
+Installed but still reported missing? The host service can't find the `lilynk-scripting`
 executable on its `PATH`. Point `PUNKTFUNK_SCRIPTING` at it ([Configuration](/docs/configuration)).
 
 ### The plugin runner keeps failing to start
 
-Read its log: `journalctl --user -u punktfunk-scripting -f` on Linux,
+Read its log: `journalctl --user -u lilynk-scripting -f` on Linux,
 `%ProgramData%\punktfunk\plugin-state\runner.log` on Windows. The console's **Troubleshooting**
 page shows plugin output too, under the `plugin:<name>` sources (`plugin:runner` for the runner).
 A log that ends with `plugins can't be sandboxed here` is the [next entry](#plugins-cant-be-sandboxed-here).
@@ -213,11 +213,11 @@ Repair the sandbox, then start the runner. It stays stopped until you do.
 
 | Host | Repair | Start the runner |
 |---|---|---|
-| Linux | Install `bubblewrap` 0.8 or newer, or allow unprivileged user namespaces. | `systemctl --user restart punktfunk-scripting` |
+| Linux | Install `bubblewrap` 0.8 or newer, or allow unprivileged user namespaces. | `systemctl --user restart lilynk-scripting` |
 | Windows | Re-run the host setup. | `Start-ScheduledTask -TaskName PunktfunkScripting`, from an elevated PowerShell |
 
 As a last resort on Linux, `Environment=PUNKTFUNK_PLUGIN_SANDBOX=off` in
-`systemctl --user edit punktfunk-scripting` runs plugins with your whole account's access; the
+`systemctl --user edit lilynk-scripting` runs plugins with your whole account's access; the
 console warns while it is set.
 
 ### A plugin can't read one of its folders
@@ -237,7 +237,7 @@ Your browser hasn't accepted the host's certificate for the plugin port, or the 
 
 ### No plugin output yet
 
-The runner isn't running. Check with `punktfunk-host plugins status`.
+The runner isn't running. Check with `lilynk-host plugins status`.
 
 ## Writing a plugin
 

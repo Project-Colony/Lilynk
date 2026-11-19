@@ -1,12 +1,12 @@
-//! The stream status page: streams run in the spawned `punktfunk-session` child's own window,
+//! The stream status page: streams run in the spawned `lilynk-session` child's own window,
 //! so the shell shows a status card in the app's card language — host header, the child's live
 //! stats window as a chip row + stage lines, the in-window shortcuts, and a Disconnect.
 
 use super::style::{edges, hstack, icon_button, text, uniform, vstack};
-use pf_client_core::overlay_actions::SlotId;
-use pf_client_core::shortcuts::{Action, Device};
-use pf_fluent::{Palette, Token};
-use pf_l10n::{common, desktop};
+use ly_client_core::overlay_actions::SlotId;
+use ly_client_core::shortcuts::{Action, Device};
+use ly_fluent::{Palette, Token};
+use ly_l10n::{common, desktop};
 use std::sync::Arc;
 use windows_reactor::*;
 
@@ -15,10 +15,10 @@ use windows_reactor::*;
 #[derive(Clone, Default, PartialEq)]
 pub(crate) struct HudSample {
     /// `None` before the child's first stats window.
-    pub(crate) stats: Option<punktfunk_core::hud::StatsSnapshot>,
+    pub(crate) stats: Option<lilynk_core::hud::StatsSnapshot>,
 }
 
-/// The Stream screen: the stream runs in the punktfunk-session child's own
+/// The Stream screen: the stream runs in the lilynk-session child's own
 /// window, so the shell shows a status card in the app's card language — monogram +
 /// host header, the child's live stats window as a chip row + stage lines, the
 /// in-window shortcuts, and a Disconnect that kills the child (its exit event routes
@@ -28,7 +28,7 @@ pub(crate) fn session_page(pal: &Palette, ctx: &Arc<super::AppCtx>, hud: &HudSam
     let target = ctx.shared.target.lock().unwrap().clone();
     let host = target.host.name.clone();
     // The settings this launch resolved, so a preset's own shortcuts are the ones named.
-    let (launched, _) = pf_client_core::settings::effective_settings(
+    let (launched, _) = ly_client_core::settings::effective_settings(
         target.host.fp_hex.as_deref(),
         &target.host.addr,
         target.host.port,
@@ -93,7 +93,7 @@ pub(crate) fn session_page(pal: &Palette, ctx: &Arc<super::AppCtx>, hud: &HudSam
             }
         }
         Some(snap) => {
-            use punktfunk_core::hud::{format, StatsVerbosity};
+            use lilynk_core::hud::{format, StatsVerbosity};
             let advanced = ctx.settings.lock().unwrap().advanced_stats;
             let mut lines = format(snap, StatsVerbosity::Detailed, advanced).into_iter();
             if let Some(first) = lines.next() {

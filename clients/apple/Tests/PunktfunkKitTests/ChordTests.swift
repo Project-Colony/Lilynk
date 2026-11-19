@@ -1,4 +1,4 @@
-// `Chord`: the shortcut editors' modifier toggles and key, the Swift twin of pf-client-core's
+// `Chord`: the shortcut editors' modifier toggles and key, the Swift twin of ly-client-core's
 // `Chord` (its test `a_chord_folds_aliases_and_sends_modifiers_first`).
 
 import XCTest

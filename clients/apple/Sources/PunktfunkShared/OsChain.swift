@@ -1,6 +1,6 @@
 // The client half of the host's OS-identity advertisement (mDNS `os` TXT — producer:
-// punktfunk-host's osinfo.rs): sanitize the untrusted chain once, and turn it into the
-// icon-lookup order every surface walks. Mirrors pf-client-core's `os.rs` (and the Kotlin
+// lilynk-host's osinfo.rs): sanitize the untrusted chain once, and turn it into the
+// icon-lookup order every surface walks. Mirrors ly-client-core's `os.rs` (and the Kotlin
 // port) so all platforms resolve identically; in the dependency-free shared module so the
 // widget could use it too. The Image lookup itself lives in PunktfunkKit (OsIcon.swift).
 

@@ -1598,7 +1598,7 @@
 	"seat_open_profiles": "Apri Profili",
 	"profiles_door": "Raggiungibile senza accedere",
 	"profiles_door_hint": "Un dispositivo associato può avviare la tua sessione mentre la schermata di blocco resta sul tuo monitor.",
-	"profiles_door_games": "Le postazioni vedono le tue librerie Steam e installano i nuovi giochi in /var/lib/punktfunk-seats/games.",
+	"profiles_door_games": "Le postazioni vedono le tue librerie Steam e installano i nuovi giochi in /var/lib/lilynk-seats/games.",
 	"profiles_door_off_hint": "La tua sessione torna a servire il computer e i suoi file le vengono restituiti.",
 	"profiles_door_on": "Attiva",
 	"profiles_door_off": "Disattiva",

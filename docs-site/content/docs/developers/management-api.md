@@ -3,7 +3,7 @@ title: Management API
 description: Drive a Punktfunk host over its HTTPS management API — credentials, a first call, the event stream, the TypeScript SDK and the OpenAPI spec.
 ---
 
-Every host serves a REST API that the web console, `punktfunk-host ctl`, the tray and plugins all
+Every host serves a REST API that the web console, `lilynk-host ctl`, the tray and plugins all
 use. This page gets you a first authenticated call and shows where the full reference lives.
 
 ## Where it listens
@@ -40,8 +40,8 @@ own, see `PUNKTFUNK_MGMT_TOKEN` in [Configuration](/docs/configuration).
 `GET /api/v1/health`, `GET /api/v1/webtransport`, the device-key exchange
 (`POST /api/v1/auth/device/challenge` and `/token`), the spec and the reference UI need no
 credential. The open and paired-device routes are listed in
-`crates/core/punktfunk-core/src/mgmt_routes.rs`, the plugin allowlist in `plugin_may_access`
-(`crates/host/punktfunk-host/src/mgmt/auth.rs`).
+`crates/core/lilynk-core/src/mgmt_routes.rs`, the plugin allowlist in `plugin_may_access`
+(`crates/host/lilynk-host/src/mgmt/auth.rs`).
 
 Errors come back as `{"error": "<message>"}` with the HTTP status. A message written for a person
 also carries `code`, naming the host message `apierr_<code>`, and the `params` it is worded with.
@@ -65,7 +65,7 @@ curl.exe -k -H "Authorization: Bearer $t" https://127.0.0.1:47990/api/v1/status
 
 `-k` is needed because the certificate is self-signed and names no host. The SDK pins it instead.
 
-For shell scripts, [`punktfunk-host ctl`](/docs/host-cli#ctl) wraps the common calls and handles
+For shell scripts, [`lilynk-host ctl`](/docs/host-cli#ctl) wraps the common calls and handles
 the token and certificate for you.
 
 ## Events
@@ -133,16 +133,16 @@ own systemd unit or scheduled task.
 - [`/api`](/api) on this site: the interactive reference, built from
   [`api/openapi.json`](https://git.unom.io/unom/punktfunk/src/branch/main/api/openapi.json).
 - On a running host: `/api/docs` (the same reference) and `/api/v1/openapi.json` (the spec).
-- `punktfunk-host openapi` prints the spec of that binary.
+- `lilynk-host openapi` prints the spec of that binary.
 
 ## Changing the API
 
-Handlers live in `crates/host/punktfunk-host/src/mgmt/`. Annotate a new handler with
-`#[utoipa::path]` and add it to `api_router_parts` in `crates/host/punktfunk-host/src/mgmt.rs`.
+Handlers live in `crates/host/lilynk-host/src/mgmt/`. Annotate a new handler with
+`#[utoipa::path]` and add it to `api_router_parts` in `crates/host/lilynk-host/src/mgmt.rs`.
 
 1. Classify the route for the plugin and paired-device lanes: add a row to `EXPECTED` in
    `every_route_is_classified_for_the_plugin_and_cert_lanes` (`mgmt/tests/routes.rs`), and to
-   `plugin_may_access` in `mgmt/auth.rs` or `paired_may_access` in `punktfunk-core`'s
+   `plugin_may_access` in `mgmt/auth.rs` or `paired_may_access` in `lilynk-core`'s
    `mgmt_routes.rs` if that lane may call it. The browser client's page server relays by the
    second. Then give it a side on a [door](/docs/developers/multi-seat-contract#the-owners-row-and-the-door):
    a row in `every_route_has_a_side_on_the_door` in the same file, and an entry in `DOOR`
@@ -150,12 +150,12 @@ Handlers live in `crates/host/punktfunk-host/src/mgmt/`. Annotate a new handler 
 2. Regenerate the spec and every copy of it:
 
    ```sh
-   cargo run -p punktfunk-host -- openapi > api/openapi.json
+   cargo run -p lilynk-host -- openapi > api/openapi.json
    cp api/openapi.json docs-site/public/openapi.json
    (cd sdk && bun install && bun run gen)
-   cargo test -p punktfunk-host mgmt::
+   cargo test -p lilynk-host mgmt::
    ```
 
 3. Commit all three generated files. CI fails when `api/openapi.json` differs from what the binary
-   serves, when the docs-site copy differs, or when `sdk/src/gen/punktfunk.ts` is stale. The web
+   serves, when the docs-site copy differs, or when `sdk/src/gen/lilynk.ts` is stale. The web
    console regenerates its client on `bun run dev` and `bun run build`.

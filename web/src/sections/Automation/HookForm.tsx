@@ -438,7 +438,7 @@ export const HookForm: FC<{
 								<>
 									{m.automation_field_elevated_off()}{" "}
 									<code className="font-mono">
-										punktfunk-host hooks elevated on
+										lilynk-host hooks elevated on
 									</code>
 								</>
 							) : (

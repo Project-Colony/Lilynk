@@ -1,5 +1,5 @@
 //! The shell's icons: [Lucide](https://lucide.dev), the same marks the console (gamepad UI)
-//! draws, from the same table — [`pf_client_core::lucide`], generated from
+//! draws, from the same table — [`ly_client_core::lucide`], generated from
 //! `assets/lucide/*.svg` by `scripts/gen-lucide-assets.sh`.
 //!
 //! GTK parses the path with `gsk::Path` and cairo strokes it at Lucide's native width 2 with
@@ -32,7 +32,7 @@ pub fn icon(name: &str, size: i32) -> gtk::DrawingArea {
         // Decoration: a click belongs to the row or button this sits in, never to the mark.
         .can_target(false)
         .build();
-    let data = pf_client_core::lucide::path(name);
+    let data = ly_client_core::lucide::path(name);
     area.set_draw_func(move |area, cr, w, h| {
         let Some(data) = data else { return };
         let Ok(path) = gtk::gsk::Path::parse(data) else {
@@ -89,10 +89,10 @@ mod tests {
             "gamepad-2",
             "plus",
             "ellipsis",
-            pf_client_core::library::DESKTOP_ICON,
+            ly_client_core::library::DESKTOP_ICON,
         ] {
             assert!(
-                pf_client_core::lucide::path(name).is_some(),
+                ly_client_core::lucide::path(name).is_some(),
                 "the icon set does not ship '{name}'"
             );
         }

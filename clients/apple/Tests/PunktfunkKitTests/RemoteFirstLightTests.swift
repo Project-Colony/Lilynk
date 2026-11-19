@@ -5,7 +5,7 @@
 //
 // Run (host side, on the Linux box):
 //   PUNKTFUNK_COMPOSITOR=gamescope PUNKTFUNK_GAMESCOPE_APP=vkcube PUNKTFUNK_ZEROCOPY=1 \
-//   punktfunk-host punktfunk1-host --source virtual --seconds 120
+//   lilynk-host punktfunk1-host --source virtual --seconds 120
 // Then here:
 //   PUNKTFUNK_REMOTE_HOST=192.168.1.70 swift test --filter RemoteFirstLightTests
 

@@ -1,5 +1,5 @@
 //! JNI seam for Wake-on-LAN: parse the stored MAC strings and hand them to the shared core sender
-//! (`punktfunk_core::wol`). Like [`crate::discovery`], this takes no session handle — a sleeping
+//! (`lilynk_core::wol`). Like [`crate::discovery`], this takes no session handle — a sleeping
 //! host has no ARP entry, so the broadcast the core sends is what wakes it, and Kotlin calls this
 //! to wake an offline saved host.
 
@@ -25,13 +25,13 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeWakeOnLan<'
         let last_ip: String = last_ip.try_to_string(env).unwrap_or_default();
         let macs: Vec<[u8; 6]> = macs_csv
             .split(',')
-            .filter_map(|s| punktfunk_core::wol::parse_mac(s.trim()))
+            .filter_map(|s| lilynk_core::wol::parse_mac(s.trim()))
             .collect();
         if macs.is_empty() {
             return Ok(false);
         }
         let ip = last_ip.trim().parse::<std::net::Ipv4Addr>().ok();
-        Ok(punktfunk_core::wol::send_magic_packet(&macs, ip).is_ok())
+        Ok(lilynk_core::wol::send_magic_packet(&macs, ip).is_ok())
     })
     .resolve::<LogErrorAndDefault>()
 }

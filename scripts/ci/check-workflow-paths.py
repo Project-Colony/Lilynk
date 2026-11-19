@@ -32,34 +32,34 @@ from cargo_graph import closure  # noqa: E402
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 LINUX_HOST_AND_CLIENT = [
-    "punktfunk-host", "punktfunk-encode-worker", "punktfunk-tray",
-    "punktfunk-client-linux", "punktfunk-client-session", "punktfunk-cli", "pf-update",
+    "lilynk-host", "lilynk-encode-worker", "lilynk-tray",
+    "lilynk-client-linux", "lilynk-client-session", "lilynk-cli", "ly-update",
 ]
-LINUX_HOST_FEATURES = "punktfunk-host/nvenc,punktfunk-host/vulkan-encode"
+LINUX_HOST_FEATURES = "lilynk-host/nvenc,lilynk-host/vulkan-encode"
 
 # (workflow, manifest, target triple, packages, --features). Packages None = every member.
 # One row per workflow and workspace: the arch with the widest feature set.
 BUILDS = [
     ("windows-host", "Cargo.toml", "x86_64-pc-windows-msvc",
-     ["punktfunk-host", "punktfunk-tray", "display-disturb"],
-     "punktfunk-host/nvenc,punktfunk-host/qsv"),
+     ["lilynk-host", "lilynk-tray", "display-disturb"],
+     "lilynk-host/nvenc,lilynk-host/qsv"),
     ("windows-client", "Cargo.toml", "x86_64-pc-windows-msvc",
-     ["punktfunk-client-windows", "punktfunk-client-session", "punktfunk-cli"], None),
+     ["lilynk-client-windows", "lilynk-client-session", "lilynk-cli"], None),
     ("windows-drivers", "packaging/windows/drivers/Cargo.toml", "x86_64-pc-windows-msvc",
      None, None),
-    ("windows-host", "crates/host/pf-seat-keeper/Cargo.toml", "x86_64-pc-windows-msvc", None, None),
+    ("windows-host", "crates/host/ly-seat-keeper/Cargo.toml", "x86_64-pc-windows-msvc", None, None),
     ("setup-windows", "Cargo.toml", "x86_64-pc-windows-msvc",
-     ["punktfunk-setup", "punktfunk-setup-win"], None),
+     ["lilynk-setup", "lilynk-setup-win"], None),
     ("macos-host", "Cargo.toml", "aarch64-apple-darwin",
-     ["punktfunk-host", "punktfunk-setup"], None),
-    ("apple", "Cargo.toml", "aarch64-apple-ios", ["punktfunk-client-apple"], None),
+     ["lilynk-host", "lilynk-setup"], None),
+    ("apple", "Cargo.toml", "aarch64-apple-ios", ["lilynk-client-apple"], None),
     ("deb", "Cargo.toml", "x86_64-unknown-linux-gnu", LINUX_HOST_AND_CLIENT, LINUX_HOST_FEATURES),
     ("rpm", "Cargo.toml", "x86_64-unknown-linux-gnu", LINUX_HOST_AND_CLIENT, LINUX_HOST_FEATURES),
     ("arch", "Cargo.toml", "x86_64-unknown-linux-gnu", LINUX_HOST_AND_CLIENT, LINUX_HOST_FEATURES),
     ("flatpak", "Cargo.toml", "x86_64-unknown-linux-gnu",
-     ["punktfunk-client-linux", "punktfunk-client-session", "punktfunk-cli"], None),
-    ("setup-binary", "Cargo.toml", "x86_64-unknown-linux-musl", ["punktfunk-setup"], None),
-    ("installer-smoke", "Cargo.toml", "x86_64-unknown-linux-musl", ["punktfunk-setup"], None),
+     ["lilynk-client-linux", "lilynk-client-session", "lilynk-cli"], None),
+    ("setup-binary", "Cargo.toml", "x86_64-unknown-linux-musl", ["lilynk-setup"], None),
+    ("installer-smoke", "Cargo.toml", "x86_64-unknown-linux-musl", ["lilynk-setup"], None),
 ]
 
 LEGS = ("push", "pull_request")
@@ -316,9 +316,9 @@ jobs:
     expect("no paths leg runs always", uncovered(dirs, ["**"]), [])
     expect("prefix is not a match", uncovered({"crates/ab"}, ["crates/a/**"]), ["crates/ab"])
     expect("one line per tree", uncovered(dirs, []), ["clients/cli", "crates/a", "crates/b"])
-    files = ["packaging/arch/PKGBUILD", "scripts/ci/x.sh", "scripts/pf-dm-helper"]
+    files = ["packaging/arch/PKGBUILD", "scripts/ci/x.sh", "scripts/ly-dm-helper"]
     expect("lane misses a script", unmatched(files, ["packaging/**", "scripts/*.sh"]),
-           ["scripts/ci/x.sh", "scripts/pf-dm-helper"])
+           ["scripts/ci/x.sh", "scripts/ly-dm-helper"])
     expect("lane covers a tree", unmatched(files, ["packaging/**", "scripts/**"]), [])
     files = ["scripts/60-x.rules", "scripts/headless/run.sh", "scripts/headless/env.sh",
              "packaging/linux/a.desktop", "packaging/linux/b.service", "web/x.ts",

@@ -3,7 +3,7 @@
 // WHY THIS EXISTS: plugins are not host child processes. A plugin runs in the runner (a separate
 // bun process) or in a child process of it, so its output is that process's stdout and the host's
 // `tracing` ring — the thing `GET /api/v1/logs` and the console's Logs page serve — never sees a
-// byte of it. Reading it otherwise means `journalctl --user -u punktfunk-scripting` on Linux or
+// byte of it. Reading it otherwise means `journalctl --user -u lilynk-scripting` on Linux or
 // `%ProgramData%\punktfunk\plugin-state\runner.log` on Windows (`scripting-run.cmd` tees there,
 // because THIS door needs the very connection whose failure you'd be reading about). Both need
 // shell access on the host box, which is the exact thing the console exists to avoid.
@@ -109,7 +109,7 @@ const toLines = (method: Method, args: unknown[]): Line[] => {
 /**
  * Patch the console to tee into the host's log ring, and start the flush timer.
  *
- * Install this ONLY in the managed runner (`runner-cli.ts`). A plugin's own CLI (`punktfunk-plugin-x
+ * Install this ONLY in the managed runner (`runner-cli.ts`). A plugin's own CLI (`lilynk-plugin-x
  * doctor`) must keep its output local — an operator running a diagnostic in their terminal is not
  * asking to write to the host's log.
  */

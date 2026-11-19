@@ -22,7 +22,7 @@ hour or more.
 A typical host block:
 
 ```nix
-services.punktfunk.host = {
+services.lilynk.host = {
   enable = true;
   users = [ "alice" ];     # joins the input and punktfunk groups
   openFirewall = true;
@@ -43,7 +43,7 @@ a headless or gamescope box.
 From your desktop session:
 
 ```sh
-systemctl --user enable --now punktfunk-host punktfunk-web
+systemctl --user enable --now lilynk-host lilynk-web
 ```
 
 On a box nobody logs into, set `autoStart = true` and enable lingering for the host user instead.

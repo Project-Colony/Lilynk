@@ -62,7 +62,7 @@ fun parseHostRecord(record: String): DiscoveredHost? {
 }
 
 /**
- * Reduce a raw `os` TXT value to the trusted grammar (pf-client-core's `sanitize_os`, mirrored):
+ * Reduce a raw `os` TXT value to the trusted grammar (ly-client-core's `sanitize_os`, mirrored):
  * lowercase slash-separated tokens of `[a-z0-9._-]`, each ≤ 32 chars, at most 5. mDNS is
  * unauthenticated input; a value that sanitizes to nothing becomes "" (no icon, like an older host).
  */
@@ -76,7 +76,7 @@ fun sanitizeOsChain(raw: String): String =
 
 /**
  * The icon-lookup order for a chain: sanitized tokens most-specific-first, brand aliases applied
- * (`macos` → `apple` art, `steamos` → `steam` art) — pf-client-core's `os_icon_tokens`, mirrored.
+ * (`macos` → `apple` art, `steamos` → `steam` art) — ly-client-core's `os_icon_tokens`, mirrored.
  * The UI takes the first token it has art for; empty means "no OS icon" (older host / garbage).
  */
 fun osIconTokens(chain: String): List<String> =
@@ -361,7 +361,7 @@ class HostDiscovery private constructor(context: Context) {
     private fun acquireMulticastLock() {
         // Wi-Fi only: an Ethernet-only box has no WifiManager, and needs no lock to receive.
         val wifi = appCtx.getSystemService(Context.WIFI_SERVICE) as? WifiManager ?: return
-        multicastLock = wifi.createMulticastLock("punktfunk-mdns").apply {
+        multicastLock = wifi.createMulticastLock("lilynk-mdns").apply {
             setReferenceCounted(true)
             runCatching { acquire() }
         }

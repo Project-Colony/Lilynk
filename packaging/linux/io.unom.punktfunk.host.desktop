@@ -1,10 +1,10 @@
 [Desktop Entry]
 Type=Application
 Name=Punktfunk Host service
-Name[de]=Punktfunk-Host-Dienst
+Name[de]=Lilynk-Host-Dienst
 Comment=Punktfunk streaming host — KWin virtual-output / input authorization
-Comment[de]=Punktfunk-Streaming-Host — Freigabe für virtuelle Ausgabe und Eingabe in KWin
-Exec=/usr/bin/punktfunk-host
+Comment[de]=Lilynk-Streaming-Host — Freigabe für virtuelle Ausgabe und Eingabe in KWin
+Exec=/usr/bin/lilynk-host
 Terminal=false
 NoDisplay=true
 # This file is NOT a launcher — it exists so KWin authorizes the host to bind its restricted

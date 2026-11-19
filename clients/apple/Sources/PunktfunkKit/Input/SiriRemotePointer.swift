@@ -54,7 +54,7 @@ public final class SiriRemotePointer {
     /// ONLY route to the numbers (⌃⌥⇧S wants a keyboard, the three-finger tap a touchscreen).
     /// Shorter than `disconnectHold`: nothing destructive rides on it.
     private static let statsHold: TimeInterval = 0.5
-    /// pf-client-core's `TAP_PRESS`, borrowed for the deferred right-click: its release trails
+    /// ly-client-core's `TAP_PRESS`, borrowed for the deferred right-click: its release trails
     /// the press by this much, so the two transitions can't fold into nothing downstream.
     private static let tapPress: TimeInterval = 0.05
     /// A full edge-to-edge swipe moves the host cursor about this many pixels. The surface is

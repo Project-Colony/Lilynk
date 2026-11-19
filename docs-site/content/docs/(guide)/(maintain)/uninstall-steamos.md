@@ -14,8 +14,8 @@ hand, in this order.
 1. Stop and remove the user services:
 
    ```sh
-   systemctl --user disable --now punktfunk-host punktfunk-web \
-     punktfunk-scripting punktfunk-rebuild-check
+   systemctl --user disable --now lilynk-host lilynk-web \
+     lilynk-scripting lilynk-rebuild-check
    rm -f ~/.config/systemd/user/punktfunk-*.service
    rm -rf ~/.config/systemd/user/punktfunk-*.service.d
    systemctl --user daemon-reload
@@ -26,13 +26,13 @@ hand, in this order.
 
    ```sh
    distrobox rm -f pf2                       # the build container (~1 GB)
-   rm -f  ~/.local/bin/punktfunk-scripting ~/.local/bin/punktfunk-gamescope
-   rm -rf ~/.local/lib/punktfunk-scripting ~/.local/share/punktfunk-scripting
+   rm -f  ~/.local/bin/lilynk-scripting ~/.local/bin/lilynk-gamescope
+   rm -rf ~/.local/lib/lilynk-scripting ~/.local/share/lilynk-scripting
    rm -f  ~/.local/share/punktfunk/gamescope.stamp
    rm -f  ~/.local/share/applications/io.unom.punktfunk.host.desktop
-   rm -f  ~/.local/bin/punktfunk-tray ~/.config/autostart/io.unom.punktfunk.tray.desktop
+   rm -f  ~/.local/bin/lilynk-tray ~/.config/autostart/io.unom.punktfunk.tray.desktop
    rm -f  ~/.local/share/applications/io.unom.punktfunk.starthost.desktop
-   rm -f  ~/.local/share/icons/hicolor/*/apps/punktfunk-tray*.png
+   rm -f  ~/.local/share/icons/hicolor/*/apps/lilynk-tray*.png
    rm -rf ~/punktfunk                        # the source checkout and its build
    ```
 
@@ -44,32 +44,32 @@ hand, in this order.
    games folder:
 
    ```sh
-   sudo systemctl disable --now punktfunk-web-door punktfunk-door punktfunk-seats \
-     var-lib-punktfunk.mount 'var-lib-punktfunk\x2dseats.mount'
-   sudo rm -rf /opt/punktfunk /etc/systemd/system/punktfunk-seat@.service.d
-   sudo rm -f /etc/systemd/system/punktfunk-{seats,seat@,door,web-door,door-on@,door-off@}.service \
-     /etc/systemd/system/var-lib-punktfunk*.mount \
-     /etc/systemd/system/user@.service.d/50-punktfunk-seats.conf \
-     /etc/systemd/user/punktfunk-scripting.service /etc/pam.d/punktfunk-seat \
-     /etc/polkit-1/rules.d/49-punktfunk-door.rules \
-     /etc/udev/rules.d/65-punktfunk-seats.rules /etc/tmpfiles.d/punktfunk-seats.conf
-   sudo rm -rf /home/.steamos/offload/var/lib/punktfunk /home/.steamos/offload/var/lib/punktfunk-seats
+   sudo systemctl disable --now lilynk-web-door lilynk-door lilynk-seats \
+     var-lib-lilynk.mount 'var-lib-lilynk\x2dseats.mount'
+   sudo rm -rf /opt/punktfunk /etc/systemd/system/lilynk-seat@.service.d
+   sudo rm -f /etc/systemd/system/lilynk-{seats,seat@,door,web-door,door-on@,door-off@}.service \
+     /etc/systemd/system/var-lib-lilynk*.mount \
+     /etc/systemd/system/user@.service.d/50-lilynk-seats.conf \
+     /etc/systemd/user/lilynk-scripting.service /etc/pam.d/lilynk-seat \
+     /etc/polkit-1/rules.d/49-lilynk-door.rules \
+     /etc/udev/rules.d/65-lilynk-seats.rules /etc/tmpfiles.d/lilynk-seats.conf
+   sudo rm -rf /home/.steamos/offload/var/lib/punktfunk /home/.steamos/offload/var/lib/lilynk-seats
    ```
 
-   Each seat's account stays: `getent passwd | grep punktfunk-seat=` lists them for
+   Each seat's account stays: `getent passwd | grep lilynk-seat=` lists them for
    `sudo userdel`, and `sudo userdel punktfunk` removes the door's. Then drop the groups it used:
-   `sudo groupdel punktfunk-door; sudo groupdel punktfunk-update; sudo groupdel punktfunk-games`.
+   `sudo groupdel lilynk-door; sudo groupdel lilynk-update; sudo groupdel lilynk-games`.
 
 4. Remove the root-owned tuning. Don't skip it: the keep-list entry carries these files through
    every SteamOS update.
 
    ```sh
-   sudo rm -f /etc/atomic-update.conf.d/punktfunk.conf \
-              /etc/udev/rules.d/60-punktfunk.rules \
-              /etc/modules-load.d/punktfunk.conf \
-              /etc/sysctl.d/99-punktfunk-net.conf \
-              /etc/NetworkManager/dispatcher.d/90-punktfunk-frame-adapter \
-              /etc/systemd/system/user@.service.d/50-punktfunk-nice.conf
+   sudo rm -f /etc/atomic-update.conf.d/lilynk.conf \
+              /etc/udev/rules.d/60-lilynk.rules \
+              /etc/modules-load.d/lilynk.conf \
+              /etc/sysctl.d/99-lilynk-net.conf \
+              /etc/NetworkManager/dispatcher.d/90-lilynk-frame-adapter \
+              /etc/systemd/system/user@.service.d/50-lilynk-nice.conf
    sudo udevadm control --reload-rules
    sudo systemctl daemon-reload
    ```

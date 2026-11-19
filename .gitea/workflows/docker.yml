@@ -15,7 +15,7 @@
 #     not by the host:port the client used — so an image pushed to :5011 is the same
 #     image every consumer pulls from :5010.
 #
-#   APP images (punktfunk-web, punktfunk-docs) are deployables: they keep going to the
+#   APP images (lilynk-web, lilynk-docs) are deployables: they keep going to the
 #     Gitea registry (git.unom.io) with :latest + :sha-<8> (+ :vX.Y.Z on tags), because
 #     unom-1 deploys pull from there and releases pin them.
 #
@@ -40,7 +40,7 @@
 # and repairs it, loudly, when they are not (.gitea/scripts/reconcile-latest.sh). Revisit inline
 # digest pins if the push credential ever leaves the maintainer trust set.
 #
-# Bootstrap note: consuming workflows pull <LAN>/punktfunk-rust-ci:latest, so the LAN registry
+# Bootstrap note: consuming workflows pull <LAN>/lilynk-rust-ci:latest, so the LAN registry
 # must hold a :latest for them to pull; after that, this workflow keeps :latest current whenever
 # ci/ changes.
 name: docker
@@ -85,46 +85,46 @@ jobs:
     strategy:
       matrix:
         include:
-          - image: punktfunk-rust-ci
+          - image: lilynk-rust-ci
             dockerfile: ci/rust-ci.Dockerfile
           # Ubuntu 24.04 LTS host builder: lowers the host .deb's glibc floor to 2.39, so the
           # package installs on 24.04 LTS (a build in rust-ci's 26.04 image is uninstallable
           # there). Consumed by deb.yml's build-publish-host job.
-          - image: punktfunk-rust-ci-noble
+          - image: lilynk-rust-ci-noble
             dockerfile: ci/rust-ci-noble.Dockerfile
           # Debian 13 gamescope builder: trixie is the oldest apt distro the tree configures on.
           # Consumed by deb.yml's build-publish-gamescope.
-          - image: punktfunk-gamescope-trixie
+          - image: lilynk-gamescope-trixie
             dockerfile: ci/gamescope-trixie.Dockerfile
-          - image: punktfunk-fedora-rpm
+          - image: lilynk-fedora-rpm
             dockerfile: ci/fedora-rpm.Dockerfile
           # Fedora 44 builder (Fedora KDE spin): same Dockerfile, newer base.
-          - image: punktfunk-fedora44-rpm
+          - image: lilynk-fedora44-rpm
             dockerfile: ci/fedora-rpm.Dockerfile
             buildargs: --build-arg FEDORA_VERSION=44
             keysuffix: -f44
           # Fedora 45 builder (Bazzite 45, Fedora 45): same Dockerfile, newer base.
-          - image: punktfunk-fedora45-rpm
+          - image: lilynk-fedora45-rpm
             dockerfile: ci/fedora-rpm.Dockerfile
             buildargs: --build-arg FEDORA_VERSION=45
             keysuffix: -f45
           # Android builder (JDK + SDK/NDK + cargo-ndk + sccache) — android.yml and
           # android-screenshots.yml run in it.
-          - image: punktfunk-android-ci
+          - image: lilynk-android-ci
             dockerfile: ci/android-ci.Dockerfile
           # Arch builder (base-devel + both makepkg legs' deps + bun + sccache) —
           # arch.yml runs in it.
-          - image: punktfunk-arch-ci
+          - image: lilynk-arch-ci
             dockerfile: ci/arch-ci.Dockerfile
           # Flatpak builder (flatpak + flatpak-builder + ostree + the GNOME 50 runtime/SDK
           # and the rust-stable/llvm20 extensions) — flatpak.yml runs in it. The ci/ tree is
           # also where the runtime pins live, so a GNOME bump in the manifest means bumping
           # this Dockerfile's ARGs in the same commit.
-          - image: punktfunk-flatpak-ci
+          - image: lilynk-flatpak-ci
             dockerfile: ci/flatpak-ci.Dockerfile
           # The same builder for flatpak.yml's aarch64 leg, built natively on the arm64 runner:
           # flatpak-builder runs its sandbox in the target arch.
-          - image: punktfunk-flatpak-ci-arm64
+          - image: lilynk-flatpak-ci-arm64
             dockerfile: ci/flatpak-ci.Dockerfile
             runner: linux-arm64
     steps:
@@ -214,7 +214,7 @@ jobs:
         if: always()
         run: docker logout "$CI_REGISTRY_PUSH" || true
 
-  # The aarch64 CROSS builder — a SEPARATE job because it is `FROM punktfunk-rust-ci:latest`
+  # The aarch64 CROSS builder — a SEPARATE job because it is `FROM lilynk-rust-ci:latest`
   # (the LAN copy) and so must not race the matrix entry that publishes that base. Consumed
   # by the arm64 client legs in ci.yml/deb.yml. Its key also folds in rust-toolchain.toml:
   # the Dockerfile installs the aarch64 target against the toolchain the workspace pins.
@@ -223,7 +223,7 @@ jobs:
     needs: builders
     timeout-minutes: 60
     env:
-      IMAGE: punktfunk-rust-ci-arm64cross
+      IMAGE: lilynk-rust-ci-arm64cross
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -299,10 +299,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - image: punktfunk-web
+          - image: lilynk-web
             dockerfile: web/Dockerfile
             context: .
-          - image: punktfunk-docs
+          - image: lilynk-docs
             dockerfile: docs-site/Dockerfile
             context: docs-site
     steps:
@@ -354,7 +354,7 @@ jobs:
           port: ${{ secrets.DEPLOY_PORT }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           source: "compose.production.yml"
-          target: "~/punktfunk-docs"
+          target: "~/lilynk-docs"
           overwrite: true
 
       - name: Pull and start docs
@@ -377,6 +377,6 @@ jobs:
             # The LAN jobs above `docker logout` too.
             trap 'docker logout git.unom.io || true' EXIT
             printf '%s' "$REGISTRY_TOKEN" | docker login git.unom.io -u enricobuehler --password-stdin
-            cd ~/punktfunk-docs
+            cd ~/lilynk-docs
             docker compose -f compose.production.yml pull docs
             docker compose -f compose.production.yml up -d --no-build docs

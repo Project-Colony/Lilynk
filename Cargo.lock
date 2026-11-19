@@ -1141,11 +1141,11 @@ name = "cursor-probe"
 version = "0.47.0"
 dependencies = [
  "anyhow",
- "pf-capture",
- "pf-frame",
- "pf-inject",
- "pf-vdisplay",
- "punktfunk-core",
+ "lilynk-core",
+ "ly-capture",
+ "ly-frame",
+ "ly-inject",
+ "ly-vdisplay",
  "tracing",
  "tracing-subscriber",
 ]
@@ -1272,7 +1272,7 @@ dependencies = [
 name = "display-disturb"
 version = "0.47.0"
 dependencies = [
- "pf-win-display",
+ "ly-win-display",
  "windows 0.62.2",
 ]
 
@@ -1757,7 +1757,7 @@ name = "gen-headers"
 version = "0.47.0"
 dependencies = [
  "cbindgen",
- "punktfunk-core",
+ "lilynk-core",
 ]
 
 [[package]]
@@ -2665,6 +2665,349 @@ dependencies = [
 ]
 
 [[package]]
+name = "lilynk-capture-worker"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "bytemuck",
+ "ly-driver-proto",
+ "ly-encode-session",
+ "ly-encode-win",
+ "ly-frame",
+ "tracing",
+ "tracing-subscriber",
+ "windows 0.62.2",
+]
+
+[[package]]
+name = "lilynk-cli"
+version = "0.47.0"
+dependencies = [
+ "base64 0.23.1",
+ "lilynk-core",
+ "ly-client-core",
+ "serde_json",
+ "tracing-subscriber",
+ "winresource",
+]
+
+[[package]]
+name = "lilynk-client-android"
+version = "0.47.0"
+dependencies = [
+ "android_logger",
+ "anyhow",
+ "ash",
+ "async-channel",
+ "jni",
+ "libc",
+ "lilynk-core",
+ "log",
+ "ly-bitstream",
+ "ly-client-core",
+ "ly-client-video",
+ "ly-console-ui",
+ "ly-l10n",
+ "ndk",
+ "ndk-sys",
+ "serde",
+ "serde_json",
+ "skia-safe",
+ "tracing",
+ "uac-host",
+ "usbfs-iso",
+]
+
+[[package]]
+name = "lilynk-client-apple"
+version = "0.47.0"
+dependencies = [
+ "lilynk-core",
+ "lilynk-ffi",
+ "ly-client-core",
+ "ly-console-ui",
+ "ly-l10n",
+ "serde",
+ "serde_json",
+ "skia-safe",
+ "tracing",
+]
+
+[[package]]
+name = "lilynk-client-linux"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "async-channel",
+ "glib-build-tools",
+ "gtk4",
+ "libadwaita",
+ "libc",
+ "lilynk-core",
+ "ly-client-core",
+ "ly-l10n",
+ "relm4",
+ "serde",
+ "serde_json",
+ "tracing",
+]
+
+[[package]]
+name = "lilynk-client-session"
+version = "0.47.0"
+dependencies = [
+ "lilynk-core",
+ "ly-client-core",
+ "ly-console-ui",
+ "ly-l10n",
+ "ly-presenter",
+ "serde_json",
+ "tracing",
+ "winresource",
+]
+
+[[package]]
+name = "lilynk-client-windows"
+version = "0.47.0"
+dependencies = [
+ "lilynk-core",
+ "ly-client-core",
+ "ly-fluent",
+ "ly-l10n",
+ "serde_json",
+ "tracing",
+ "windows 0.100.0",
+ "windows-reactor",
+ "winresource",
+]
+
+[[package]]
+name = "lilynk-core"
+version = "0.47.0"
+dependencies = [
+ "aes-gcm",
+ "aws-lc-rs",
+ "chacha20poly1305",
+ "crc32fast",
+ "criterion",
+ "fec-rs",
+ "hmac 0.13.0",
+ "if-addrs",
+ "libc",
+ "ly-l10n",
+ "opus",
+ "proptest",
+ "quinn",
+ "quinn-udp",
+ "rcgen",
+ "reed-solomon-simd",
+ "rustls",
+ "rustls-webpki",
+ "serde",
+ "serde_json",
+ "sha2 0.11.0",
+ "socket2",
+ "spake2",
+ "thiserror 2.0.21",
+ "tokio",
+ "tracing",
+ "ureq",
+ "windows-sys 0.61.2",
+ "zeroize",
+]
+
+[[package]]
+name = "lilynk-encode-worker"
+version = "0.47.0"
+dependencies = [
+ "ly-encode",
+ "ly-frame",
+ "ly-zerocopy",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "lilynk-ffi"
+version = "0.47.0"
+dependencies = [
+ "lilynk-core",
+ "log",
+ "ly-bitstream",
+ "ly-l10n",
+ "opus",
+ "quinn",
+ "rand 0.10.3",
+ "rcgen",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "lilynk-host"
+version = "0.47.0"
+dependencies = [
+ "aes",
+ "aes-gcm",
+ "anyhow",
+ "ashpd",
+ "aws-lc-rs",
+ "axum",
+ "base64 0.23.1",
+ "cbc",
+ "futures-util",
+ "h2",
+ "hermir",
+ "hex",
+ "hmac 0.13.0",
+ "http-body-util",
+ "hyper",
+ "hyper-util",
+ "if-addrs",
+ "jiff",
+ "libc",
+ "libloading 0.9.0",
+ "lilynk-core",
+ "lilynk-ffi",
+ "log",
+ "ly-audio",
+ "ly-capture",
+ "ly-clipboard",
+ "ly-driver-proto",
+ "ly-encode",
+ "ly-frame",
+ "ly-gpu",
+ "ly-host-config",
+ "ly-inject",
+ "ly-paths",
+ "ly-paths-win",
+ "ly-portal",
+ "ly-seats",
+ "ly-update-check",
+ "ly-vdisplay",
+ "ly-win-display",
+ "ly-zerocopy",
+ "mac_address",
+ "mdns-sd",
+ "omur",
+ "opus",
+ "quinn",
+ "rand 0.10.3",
+ "rcgen",
+ "rsa",
+ "rustix",
+ "rustls",
+ "rusty_enet",
+ "semver",
+ "serde",
+ "serde_json",
+ "sha2 0.11.0",
+ "socket2",
+ "tempfile",
+ "tokio",
+ "tokio-rustls",
+ "tower",
+ "tracing",
+ "tracing-log",
+ "tracing-subscriber",
+ "ureq",
+ "utoipa",
+ "utoipa-axum",
+ "utoipa-scalar",
+ "wasapi",
+ "windows 0.62.2",
+ "windows-service",
+ "winreg 0.56.0",
+ "winresource",
+ "wtransport",
+ "x509-parser",
+ "zbus",
+]
+
+[[package]]
+name = "lilynk-probe"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "lilynk-core",
+ "ly-client-core",
+ "mdns-sd",
+ "opus",
+ "quinn",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "lilynk-seats"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "ly-inject",
+ "ly-paths",
+ "ly-seats",
+ "rustix",
+ "tracing",
+]
+
+[[package]]
+name = "lilynk-setup"
+version = "0.47.0"
+dependencies = [
+ "console",
+ "getrandom 0.4.3",
+ "ly-host-config",
+ "ly-l10n",
+ "ly-paths",
+ "portable-pty",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "windows 0.62.2",
+]
+
+[[package]]
+name = "lilynk-setup-win"
+version = "0.47.0"
+dependencies = [
+ "lilynk-setup",
+ "ly-fluent",
+ "ly-l10n",
+ "ly-paths",
+ "ly-paths-win",
+ "serde",
+ "serde_json",
+ "sha2 0.11.0",
+ "tar",
+ "tempfile",
+ "windows 0.100.0",
+ "windows-reactor",
+ "windows-reactor-setup",
+ "winresource",
+ "xz2",
+]
+
+[[package]]
+name = "lilynk-tray"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "ksni",
+ "lilynk-core",
+ "ly-l10n",
+ "ly-paths",
+ "rustls",
+ "serde",
+ "serde_json",
+ "ureq",
+ "windows 0.62.2",
+ "windows-service",
+ "winreg 0.56.0",
+ "winresource",
+]
+
+[[package]]
 name = "linux-raw-sys"
 version = "0.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2695,7 +3038,7 @@ checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
 name = "loss-harness"
 version = "0.47.0"
 dependencies = [
- "punktfunk-core",
+ "lilynk-core",
 ]
 
 [[package]]
@@ -2703,6 +3046,575 @@ name = "lru-slab"
 version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4050469837a6ff301cd14c1f8f24f88549e6d548f24f64e2148eb0f72cebc51f"
+
+[[package]]
+name = "ly-audio"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "lilynk-core",
+ "ly-driver-proto",
+ "ly-frame",
+ "ly-host-config",
+ "ly-inject",
+ "ly-paths",
+ "ly-paths-win",
+ "ly-win-display",
+ "opus",
+ "pipewire",
+ "sha2 0.11.0",
+ "tracing",
+ "wasapi",
+ "windows 0.62.2",
+ "windows-service",
+ "winreg 0.56.0",
+]
+
+[[package]]
+name = "ly-bitstream"
+version = "0.47.0"
+dependencies = [
+ "cros-codecs",
+ "tracing",
+]
+
+[[package]]
+name = "ly-capture"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "ashpd",
+ "bitflags 2.13.2",
+ "bytemuck",
+ "libc",
+ "ly-dmabuf",
+ "ly-driver-proto",
+ "ly-encode-core",
+ "ly-frame",
+ "ly-gpu",
+ "ly-host-config",
+ "ly-paths-win",
+ "ly-portal",
+ "ly-win-display",
+ "ly-zerocopy",
+ "pipewire",
+ "tokio",
+ "tracing",
+ "wayland-backend",
+ "wayland-client",
+ "wayland-scanner",
+ "windows 0.62.2",
+ "x11rb",
+]
+
+[[package]]
+name = "ly-client-core"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "async-channel",
+ "cfg_aliases 0.2.2",
+ "libc",
+ "lilynk-core",
+ "log",
+ "ly-client-video",
+ "ly-dmabuf",
+ "ly-l10n",
+ "ly-update-check",
+ "mdns-sd",
+ "opus",
+ "pipewire",
+ "rand 0.10.3",
+ "rustls",
+ "sdl3",
+ "serde",
+ "serde_json",
+ "sha2 0.11.0",
+ "socket2",
+ "tracing",
+ "tracing-log",
+ "tracing-subscriber",
+ "ureq",
+ "wasapi",
+ "windows 0.100.0",
+ "winreg 0.56.0",
+ "x11rb",
+ "zbus",
+]
+
+[[package]]
+name = "ly-client-video"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "ash",
+ "cfg_aliases 0.2.2",
+ "libc",
+ "libloading 0.9.0",
+ "lilynk-core",
+ "ly-bitstream",
+ "ly-dmabuf",
+ "ly-dxvadec",
+ "ly-l10n",
+ "ly-libva",
+ "ly-v4l2",
+ "ly-v4l2dec",
+ "ly-vaapi",
+ "ly-vkdecode",
+ "openh264",
+ "pyrowave-sys",
+ "rav1d",
+ "sha2 0.11.0",
+ "tracing",
+ "windows 0.100.0",
+]
+
+[[package]]
+name = "ly-clipboard"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "ashpd",
+ "futures-util",
+ "image",
+ "libc",
+ "lilynk-core",
+ "ly-host-config",
+ "ly-portal",
+ "quinn",
+ "tokio",
+ "tracing",
+ "wayland-client",
+ "wayland-protocols",
+ "windows 0.62.2",
+ "x11rb",
+]
+
+[[package]]
+name = "ly-console-ui"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "ash",
+ "lilynk-core",
+ "ly-client-core",
+ "ly-l10n",
+ "ly-presenter",
+ "metal",
+ "sdl3",
+ "serde",
+ "serde_json",
+ "skia-safe",
+ "taffy",
+ "tracing",
+]
+
+[[package]]
+name = "ly-dmabuf"
+version = "0.47.0"
+dependencies = [
+ "libc",
+ "rustix",
+]
+
+[[package]]
+name = "ly-driver-proto"
+version = "0.0.1"
+dependencies = [
+ "bytemuck",
+ "serde_json",
+]
+
+[[package]]
+name = "ly-dxvadec"
+version = "0.47.0"
+dependencies = [
+ "bytemuck",
+ "cros-codecs",
+ "ly-bitstream",
+ "tracing",
+]
+
+[[package]]
+name = "ly-encode"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "ash",
+ "libc",
+ "libloading 0.9.0",
+ "lilynk-core",
+ "ly-encode-core",
+ "ly-encode-win",
+ "ly-frame",
+ "ly-gpu",
+ "ly-host-config",
+ "ly-libva",
+ "ly-vaapi",
+ "ly-zerocopy",
+ "nvidia-video-codec-sdk",
+ "openh264",
+ "pyrowave-sys",
+ "rustix",
+ "serde",
+ "serde_json",
+ "tracing",
+ "tracing-subscriber",
+ "windows 0.62.2",
+]
+
+[[package]]
+name = "ly-encode-core"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "ly-driver-proto",
+ "ly-frame",
+ "nvidia-video-codec-sdk",
+ "pyrowave-sys",
+ "serde_json",
+ "tracing",
+]
+
+[[package]]
+name = "ly-encode-session"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "bytemuck",
+ "ly-driver-proto",
+ "ly-encode-core",
+ "ly-encode-win",
+ "ly-frame",
+ "tracing",
+ "windows 0.62.2",
+]
+
+[[package]]
+name = "ly-encode-win"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "libvpl-sys",
+ "ly-bitstream",
+ "ly-encode-core",
+ "ly-frame",
+ "nvidia-video-codec-sdk",
+ "pyrowave-sys",
+ "tracing",
+ "tracing-subscriber",
+ "windows 0.62.2",
+ "windows-core 0.62.2",
+]
+
+[[package]]
+name = "ly-fluent"
+version = "0.47.0"
+dependencies = [
+ "windows 0.100.0",
+ "windows-reactor",
+]
+
+[[package]]
+name = "ly-frame"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "bytemuck",
+ "libc",
+ "ly-zerocopy",
+ "tracing",
+ "windows 0.62.2",
+ "zbus",
+]
+
+[[package]]
+name = "ly-gpu"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "ly-host-config",
+ "ly-paths",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tracing",
+ "windows 0.62.2",
+]
+
+[[package]]
+name = "ly-host-config"
+version = "0.47.0"
+dependencies = [
+ "ly-paths",
+ "serde_json",
+]
+
+[[package]]
+name = "ly-inject"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "ashpd",
+ "futures-util",
+ "hidreport",
+ "libc",
+ "lilynk-core",
+ "ly-driver-proto",
+ "ly-host-config",
+ "ly-paths",
+ "ly-paths-win",
+ "ly-portal",
+ "ly-win-display",
+ "parking_lot",
+ "reis",
+ "rustix",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "usbip-sim",
+ "wayland-backend",
+ "wayland-client",
+ "wayland-protocols",
+ "wayland-protocols-misc",
+ "wayland-protocols-wlr",
+ "wayland-scanner",
+ "windows 0.62.2",
+ "xkbcommon",
+ "zbus",
+]
+
+[[package]]
+name = "ly-l10n"
+version = "0.47.0"
+dependencies = [
+ "sys-locale",
+]
+
+[[package]]
+name = "ly-libva"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "cros-codecs",
+ "libloading 0.9.0",
+ "ly-bitstream",
+ "ly-vaapi",
+ "rustix",
+ "tracing",
+]
+
+[[package]]
+name = "ly-paths"
+version = "0.47.0"
+dependencies = [
+ "ly-paths-win",
+ "tracing",
+]
+
+[[package]]
+name = "ly-paths-win"
+version = "0.47.0"
+dependencies = [
+ "tracing",
+ "windows 0.62.2",
+]
+
+[[package]]
+name = "ly-portal"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "ashpd",
+ "ly-host-config",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "ly-presenter"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "ash",
+ "async-channel",
+ "lilynk-core",
+ "ly-client-core",
+ "ly-dmabuf",
+ "ly-l10n",
+ "ly-vkdecode",
+ "rustix",
+ "sdl3",
+ "tracing",
+ "wayland-backend",
+ "wayland-client",
+ "wayland-protocols",
+ "wayland-sys",
+ "windows 0.100.0",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "ly-seat-audio"
+version = "0.0.1"
+dependencies = [
+ "ly-driver-proto",
+ "windows 0.62.2",
+ "windows-core 0.62.2",
+]
+
+[[package]]
+name = "ly-seats"
+version = "0.47.0"
+dependencies = [
+ "aws-lc-rs",
+ "hex",
+ "libc",
+ "libloading 0.9.0",
+ "ly-driver-proto",
+ "ly-host-config",
+ "ly-paths",
+ "ly-paths-win",
+ "rand 0.10.3",
+ "rcgen",
+ "rustix",
+ "rustls",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.21",
+ "tracing",
+ "tracing-subscriber",
+ "windows 0.62.2",
+ "windows-service",
+ "winreg 0.56.0",
+ "x509-parser",
+ "zeroize",
+]
+
+[[package]]
+name = "ly-update"
+version = "0.47.0"
+dependencies = [
+ "ly-update-check",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "ly-update-check"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "aws-lc-rs",
+ "base64 0.23.1",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "ureq",
+]
+
+[[package]]
+name = "ly-v4l2"
+version = "0.47.0"
+dependencies = [
+ "libc",
+ "ly-bitstream",
+ "ly-v4l2dec",
+]
+
+[[package]]
+name = "ly-v4l2dec"
+version = "0.47.0"
+dependencies = [
+ "cros-codecs",
+ "ly-bitstream",
+]
+
+[[package]]
+name = "ly-vaapi"
+version = "0.47.0"
+dependencies = [
+ "cros-codecs",
+ "ly-bitstream",
+]
+
+[[package]]
+name = "ly-vdisplay"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "ashpd",
+ "bitflags 2.13.2",
+ "bytemuck",
+ "futures-util",
+ "hex",
+ "libc",
+ "lilynk-core",
+ "ly-driver-proto",
+ "ly-frame",
+ "ly-gpu",
+ "ly-host-config",
+ "ly-paths",
+ "ly-paths-win",
+ "ly-portal",
+ "ly-win-display",
+ "serde",
+ "serde_json",
+ "sha2 0.11.0",
+ "socket2",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+ "utoipa",
+ "wayland-backend",
+ "wayland-client",
+ "wayland-protocols-wlr",
+ "wayland-scanner",
+ "windows 0.62.2",
+ "x11rb",
+]
+
+[[package]]
+name = "ly-vkdecode"
+version = "0.47.0"
+dependencies = [
+ "ash",
+ "cros-codecs",
+ "ly-bitstream",
+ "sha2 0.11.0",
+ "tracing",
+]
+
+[[package]]
+name = "ly-win-display"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "lilynk-core",
+ "ly-paths",
+ "serde_json",
+ "tracing",
+ "windows 0.62.2",
+]
+
+[[package]]
+name = "ly-zerocopy"
+version = "0.47.0"
+dependencies = [
+ "anyhow",
+ "ash",
+ "bytemuck",
+ "khronos-egl",
+ "libc",
+ "libloading 0.9.0",
+ "ly-dmabuf",
+ "rustix",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tracing",
+]
 
 [[package]]
 name = "lzma-rust2"
@@ -3268,575 +4180,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
 
 [[package]]
-name = "pf-audio"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "opus",
- "pf-driver-proto",
- "pf-frame",
- "pf-host-config",
- "pf-inject",
- "pf-paths",
- "pf-paths-win",
- "pf-win-display",
- "pipewire",
- "punktfunk-core",
- "sha2 0.11.0",
- "tracing",
- "wasapi",
- "windows 0.62.2",
- "windows-service",
- "winreg 0.56.0",
-]
-
-[[package]]
-name = "pf-bitstream"
-version = "0.47.0"
-dependencies = [
- "cros-codecs",
- "tracing",
-]
-
-[[package]]
-name = "pf-capture"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "ashpd",
- "bitflags 2.13.2",
- "bytemuck",
- "libc",
- "pf-dmabuf",
- "pf-driver-proto",
- "pf-encode-core",
- "pf-frame",
- "pf-gpu",
- "pf-host-config",
- "pf-paths-win",
- "pf-portal",
- "pf-win-display",
- "pf-zerocopy",
- "pipewire",
- "tokio",
- "tracing",
- "wayland-backend",
- "wayland-client",
- "wayland-scanner",
- "windows 0.62.2",
- "x11rb",
-]
-
-[[package]]
-name = "pf-client-core"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "async-channel",
- "cfg_aliases 0.2.2",
- "libc",
- "log",
- "mdns-sd",
- "opus",
- "pf-client-video",
- "pf-dmabuf",
- "pf-l10n",
- "pf-update-check",
- "pipewire",
- "punktfunk-core",
- "rand 0.10.3",
- "rustls",
- "sdl3",
- "serde",
- "serde_json",
- "sha2 0.11.0",
- "socket2",
- "tracing",
- "tracing-log",
- "tracing-subscriber",
- "ureq",
- "wasapi",
- "windows 0.100.0",
- "winreg 0.56.0",
- "x11rb",
- "zbus",
-]
-
-[[package]]
-name = "pf-client-video"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "ash",
- "cfg_aliases 0.2.2",
- "libc",
- "libloading 0.9.0",
- "openh264",
- "pf-bitstream",
- "pf-dmabuf",
- "pf-dxvadec",
- "pf-l10n",
- "pf-libva",
- "pf-v4l2",
- "pf-v4l2dec",
- "pf-vaapi",
- "pf-vkdecode",
- "punktfunk-core",
- "pyrowave-sys",
- "rav1d",
- "sha2 0.11.0",
- "tracing",
- "windows 0.100.0",
-]
-
-[[package]]
-name = "pf-clipboard"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "ashpd",
- "futures-util",
- "image",
- "libc",
- "pf-host-config",
- "pf-portal",
- "punktfunk-core",
- "quinn",
- "tokio",
- "tracing",
- "wayland-client",
- "wayland-protocols",
- "windows 0.62.2",
- "x11rb",
-]
-
-[[package]]
-name = "pf-console-ui"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "ash",
- "metal",
- "pf-client-core",
- "pf-l10n",
- "pf-presenter",
- "punktfunk-core",
- "sdl3",
- "serde",
- "serde_json",
- "skia-safe",
- "taffy",
- "tracing",
-]
-
-[[package]]
-name = "pf-dmabuf"
-version = "0.47.0"
-dependencies = [
- "libc",
- "rustix",
-]
-
-[[package]]
-name = "pf-driver-proto"
-version = "0.0.1"
-dependencies = [
- "bytemuck",
- "serde_json",
-]
-
-[[package]]
-name = "pf-dxvadec"
-version = "0.47.0"
-dependencies = [
- "bytemuck",
- "cros-codecs",
- "pf-bitstream",
- "tracing",
-]
-
-[[package]]
-name = "pf-encode"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "ash",
- "libc",
- "libloading 0.9.0",
- "nvidia-video-codec-sdk",
- "openh264",
- "pf-encode-core",
- "pf-encode-win",
- "pf-frame",
- "pf-gpu",
- "pf-host-config",
- "pf-libva",
- "pf-vaapi",
- "pf-zerocopy",
- "punktfunk-core",
- "pyrowave-sys",
- "rustix",
- "serde",
- "serde_json",
- "tracing",
- "tracing-subscriber",
- "windows 0.62.2",
-]
-
-[[package]]
-name = "pf-encode-core"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "nvidia-video-codec-sdk",
- "pf-driver-proto",
- "pf-frame",
- "pyrowave-sys",
- "serde_json",
- "tracing",
-]
-
-[[package]]
-name = "pf-encode-session"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "bytemuck",
- "pf-driver-proto",
- "pf-encode-core",
- "pf-encode-win",
- "pf-frame",
- "tracing",
- "windows 0.62.2",
-]
-
-[[package]]
-name = "pf-encode-win"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "libvpl-sys",
- "nvidia-video-codec-sdk",
- "pf-bitstream",
- "pf-encode-core",
- "pf-frame",
- "pyrowave-sys",
- "tracing",
- "tracing-subscriber",
- "windows 0.62.2",
- "windows-core 0.62.2",
-]
-
-[[package]]
-name = "pf-fluent"
-version = "0.47.0"
-dependencies = [
- "windows 0.100.0",
- "windows-reactor",
-]
-
-[[package]]
-name = "pf-frame"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "bytemuck",
- "libc",
- "pf-zerocopy",
- "tracing",
- "windows 0.62.2",
- "zbus",
-]
-
-[[package]]
-name = "pf-gpu"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "pf-host-config",
- "pf-paths",
- "serde",
- "serde_json",
- "tempfile",
- "tracing",
- "windows 0.62.2",
-]
-
-[[package]]
-name = "pf-host-config"
-version = "0.47.0"
-dependencies = [
- "pf-paths",
- "serde_json",
-]
-
-[[package]]
-name = "pf-inject"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "ashpd",
- "futures-util",
- "hidreport",
- "libc",
- "parking_lot",
- "pf-driver-proto",
- "pf-host-config",
- "pf-paths",
- "pf-paths-win",
- "pf-portal",
- "pf-win-display",
- "punktfunk-core",
- "reis",
- "rustix",
- "serde_json",
- "tokio",
- "tracing",
- "usbip-sim",
- "wayland-backend",
- "wayland-client",
- "wayland-protocols",
- "wayland-protocols-misc",
- "wayland-protocols-wlr",
- "wayland-scanner",
- "windows 0.62.2",
- "xkbcommon",
- "zbus",
-]
-
-[[package]]
-name = "pf-l10n"
-version = "0.47.0"
-dependencies = [
- "sys-locale",
-]
-
-[[package]]
-name = "pf-libva"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "cros-codecs",
- "libloading 0.9.0",
- "pf-bitstream",
- "pf-vaapi",
- "rustix",
- "tracing",
-]
-
-[[package]]
-name = "pf-paths"
-version = "0.47.0"
-dependencies = [
- "pf-paths-win",
- "tracing",
-]
-
-[[package]]
-name = "pf-paths-win"
-version = "0.47.0"
-dependencies = [
- "tracing",
- "windows 0.62.2",
-]
-
-[[package]]
-name = "pf-portal"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "ashpd",
- "pf-host-config",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "pf-presenter"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "ash",
- "async-channel",
- "pf-client-core",
- "pf-dmabuf",
- "pf-l10n",
- "pf-vkdecode",
- "punktfunk-core",
- "rustix",
- "sdl3",
- "tracing",
- "wayland-backend",
- "wayland-client",
- "wayland-protocols",
- "wayland-sys",
- "windows 0.100.0",
- "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "pf-seat-audio"
-version = "0.0.1"
-dependencies = [
- "pf-driver-proto",
- "windows 0.62.2",
- "windows-core 0.62.2",
-]
-
-[[package]]
-name = "pf-seats"
-version = "0.47.0"
-dependencies = [
- "aws-lc-rs",
- "hex",
- "libc",
- "libloading 0.9.0",
- "pf-driver-proto",
- "pf-host-config",
- "pf-paths",
- "pf-paths-win",
- "rand 0.10.3",
- "rcgen",
- "rustix",
- "rustls",
- "serde",
- "serde_json",
- "tempfile",
- "thiserror 2.0.21",
- "tracing",
- "tracing-subscriber",
- "windows 0.62.2",
- "windows-service",
- "winreg 0.56.0",
- "x509-parser",
- "zeroize",
-]
-
-[[package]]
-name = "pf-update"
-version = "0.47.0"
-dependencies = [
- "pf-update-check",
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "pf-update-check"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "aws-lc-rs",
- "base64 0.23.1",
- "serde",
- "serde_json",
- "tempfile",
- "ureq",
-]
-
-[[package]]
-name = "pf-v4l2"
-version = "0.47.0"
-dependencies = [
- "libc",
- "pf-bitstream",
- "pf-v4l2dec",
-]
-
-[[package]]
-name = "pf-v4l2dec"
-version = "0.47.0"
-dependencies = [
- "cros-codecs",
- "pf-bitstream",
-]
-
-[[package]]
-name = "pf-vaapi"
-version = "0.47.0"
-dependencies = [
- "cros-codecs",
- "pf-bitstream",
-]
-
-[[package]]
-name = "pf-vdisplay"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "ashpd",
- "bitflags 2.13.2",
- "bytemuck",
- "futures-util",
- "hex",
- "libc",
- "pf-driver-proto",
- "pf-frame",
- "pf-gpu",
- "pf-host-config",
- "pf-paths",
- "pf-paths-win",
- "pf-portal",
- "pf-win-display",
- "punktfunk-core",
- "serde",
- "serde_json",
- "sha2 0.11.0",
- "socket2",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "utoipa",
- "wayland-backend",
- "wayland-client",
- "wayland-protocols-wlr",
- "wayland-scanner",
- "windows 0.62.2",
- "x11rb",
-]
-
-[[package]]
-name = "pf-vkdecode"
-version = "0.47.0"
-dependencies = [
- "ash",
- "cros-codecs",
- "pf-bitstream",
- "sha2 0.11.0",
- "tracing",
-]
-
-[[package]]
-name = "pf-win-display"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "pf-paths",
- "punktfunk-core",
- "serde_json",
- "tracing",
- "windows 0.62.2",
-]
-
-[[package]]
-name = "pf-zerocopy"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "ash",
- "bytemuck",
- "khronos-egl",
- "libc",
- "libloading 0.9.0",
- "pf-dmabuf",
- "rustix",
- "serde",
- "serde_json",
- "tempfile",
- "tracing",
-]
-
-[[package]]
 name = "pin-project-lite"
 version = "0.2.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4063,349 +4406,6 @@ dependencies = [
  "rusty-fork",
  "tempfile",
  "unarray",
-]
-
-[[package]]
-name = "punktfunk-capture-worker"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "bytemuck",
- "pf-driver-proto",
- "pf-encode-session",
- "pf-encode-win",
- "pf-frame",
- "tracing",
- "tracing-subscriber",
- "windows 0.62.2",
-]
-
-[[package]]
-name = "punktfunk-cli"
-version = "0.47.0"
-dependencies = [
- "base64 0.23.1",
- "pf-client-core",
- "punktfunk-core",
- "serde_json",
- "tracing-subscriber",
- "winresource",
-]
-
-[[package]]
-name = "punktfunk-client-android"
-version = "0.47.0"
-dependencies = [
- "android_logger",
- "anyhow",
- "ash",
- "async-channel",
- "jni",
- "libc",
- "log",
- "ndk",
- "ndk-sys",
- "pf-bitstream",
- "pf-client-core",
- "pf-client-video",
- "pf-console-ui",
- "pf-l10n",
- "punktfunk-core",
- "serde",
- "serde_json",
- "skia-safe",
- "tracing",
- "uac-host",
- "usbfs-iso",
-]
-
-[[package]]
-name = "punktfunk-client-apple"
-version = "0.47.0"
-dependencies = [
- "pf-client-core",
- "pf-console-ui",
- "pf-l10n",
- "punktfunk-core",
- "punktfunk-ffi",
- "serde",
- "serde_json",
- "skia-safe",
- "tracing",
-]
-
-[[package]]
-name = "punktfunk-client-linux"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "async-channel",
- "glib-build-tools",
- "gtk4",
- "libadwaita",
- "libc",
- "pf-client-core",
- "pf-l10n",
- "punktfunk-core",
- "relm4",
- "serde",
- "serde_json",
- "tracing",
-]
-
-[[package]]
-name = "punktfunk-client-session"
-version = "0.47.0"
-dependencies = [
- "pf-client-core",
- "pf-console-ui",
- "pf-l10n",
- "pf-presenter",
- "punktfunk-core",
- "serde_json",
- "tracing",
- "winresource",
-]
-
-[[package]]
-name = "punktfunk-client-windows"
-version = "0.47.0"
-dependencies = [
- "pf-client-core",
- "pf-fluent",
- "pf-l10n",
- "punktfunk-core",
- "serde_json",
- "tracing",
- "windows 0.100.0",
- "windows-reactor",
- "winresource",
-]
-
-[[package]]
-name = "punktfunk-core"
-version = "0.47.0"
-dependencies = [
- "aes-gcm",
- "aws-lc-rs",
- "chacha20poly1305",
- "crc32fast",
- "criterion",
- "fec-rs",
- "hmac 0.13.0",
- "if-addrs",
- "libc",
- "opus",
- "pf-l10n",
- "proptest",
- "quinn",
- "quinn-udp",
- "rcgen",
- "reed-solomon-simd",
- "rustls",
- "rustls-webpki",
- "serde",
- "serde_json",
- "sha2 0.11.0",
- "socket2",
- "spake2",
- "thiserror 2.0.21",
- "tokio",
- "tracing",
- "ureq",
- "windows-sys 0.61.2",
- "zeroize",
-]
-
-[[package]]
-name = "punktfunk-encode-worker"
-version = "0.47.0"
-dependencies = [
- "pf-encode",
- "pf-frame",
- "pf-zerocopy",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
-name = "punktfunk-ffi"
-version = "0.47.0"
-dependencies = [
- "log",
- "opus",
- "pf-bitstream",
- "pf-l10n",
- "punktfunk-core",
- "quinn",
- "rand 0.10.3",
- "rcgen",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "punktfunk-host"
-version = "0.47.0"
-dependencies = [
- "aes",
- "aes-gcm",
- "anyhow",
- "ashpd",
- "aws-lc-rs",
- "axum",
- "base64 0.23.1",
- "cbc",
- "futures-util",
- "h2",
- "hermir",
- "hex",
- "hmac 0.13.0",
- "http-body-util",
- "hyper",
- "hyper-util",
- "if-addrs",
- "jiff",
- "libc",
- "libloading 0.9.0",
- "log",
- "mac_address",
- "mdns-sd",
- "omur",
- "opus",
- "pf-audio",
- "pf-capture",
- "pf-clipboard",
- "pf-driver-proto",
- "pf-encode",
- "pf-frame",
- "pf-gpu",
- "pf-host-config",
- "pf-inject",
- "pf-paths",
- "pf-paths-win",
- "pf-portal",
- "pf-seats",
- "pf-update-check",
- "pf-vdisplay",
- "pf-win-display",
- "pf-zerocopy",
- "punktfunk-core",
- "punktfunk-ffi",
- "quinn",
- "rand 0.10.3",
- "rcgen",
- "rsa",
- "rustix",
- "rustls",
- "rusty_enet",
- "semver",
- "serde",
- "serde_json",
- "sha2 0.11.0",
- "socket2",
- "tempfile",
- "tokio",
- "tokio-rustls",
- "tower",
- "tracing",
- "tracing-log",
- "tracing-subscriber",
- "ureq",
- "utoipa",
- "utoipa-axum",
- "utoipa-scalar",
- "wasapi",
- "windows 0.62.2",
- "windows-service",
- "winreg 0.56.0",
- "winresource",
- "wtransport",
- "x509-parser",
- "zbus",
-]
-
-[[package]]
-name = "punktfunk-probe"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "mdns-sd",
- "opus",
- "pf-client-core",
- "punktfunk-core",
- "quinn",
- "tokio",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
-name = "punktfunk-seats"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "pf-inject",
- "pf-paths",
- "pf-seats",
- "rustix",
- "tracing",
-]
-
-[[package]]
-name = "punktfunk-setup"
-version = "0.47.0"
-dependencies = [
- "console",
- "getrandom 0.4.3",
- "pf-host-config",
- "pf-l10n",
- "pf-paths",
- "portable-pty",
- "serde",
- "serde_json",
- "tempfile",
- "windows 0.62.2",
-]
-
-[[package]]
-name = "punktfunk-setup-win"
-version = "0.47.0"
-dependencies = [
- "pf-fluent",
- "pf-l10n",
- "pf-paths",
- "pf-paths-win",
- "punktfunk-setup",
- "serde",
- "serde_json",
- "sha2 0.11.0",
- "tar",
- "tempfile",
- "windows 0.100.0",
- "windows-reactor",
- "windows-reactor-setup",
- "winresource",
- "xz2",
-]
-
-[[package]]
-name = "punktfunk-tray"
-version = "0.47.0"
-dependencies = [
- "anyhow",
- "ksni",
- "pf-l10n",
- "pf-paths",
- "punktfunk-core",
- "rustls",
- "serde",
- "serde_json",
- "ureq",
- "windows 0.62.2",
- "windows-service",
- "winreg 0.56.0",
- "winresource",
 ]
 
 [[package]]
@@ -5041,8 +5041,8 @@ name = "scroll-probe"
 version = "0.47.0"
 dependencies = [
  "anyhow",
- "pf-inject",
- "punktfunk-core",
+ "lilynk-core",
+ "ly-inject",
  "rustix",
  "tracing-subscriber",
  "wayland-client",
@@ -6501,7 +6501,7 @@ checksum = "a28ac98ddc8b9274cb41bb4d9d4d5c425b6020c50c46f25559911905610b4a88"
 name = "wgc-probe"
 version = "0.47.0"
 dependencies = [
- "pf-win-display",
+ "ly-win-display",
  "windows 0.62.2",
 ]
 

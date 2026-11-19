@@ -68,13 +68,13 @@ yours included.
    keeps the groups it started with, so logging out is not enough:
 
    ```sh
-   sudo usermod -aG punktfunk-update $USER
+   sudo usermod -aG lilynk-update $USER
    ```
 
    On SteamOS, run `bash ~/punktfunk/scripts/steamdeck/update.sh` in Konsole instead and enter
    your password: it sets the switch up and joins the group. Restart once after. On NixOS, set
-   `services.punktfunk.seats.enable = true`, rebuild and restart: the users in
-   `services.punktfunk.host.users` join the group.
+   `services.lilynk.seats.enable = true`, rebuild and restart: the users in
+   `services.lilynk.host.users` join the group.
 
 2. Open **Profiles** and tick **Reachable without logging in**. Confirm with the console
    password. The page reloads while the host restarts, and the console asks you to sign in again.
@@ -92,7 +92,7 @@ What turning it on does:
 - **Seats see your games.** Every seat shows your Steam libraries: its Steam plays, updates and
   runs Proton from them while the files stay yours. A library on a filesystem other than btrfs,
   ext4, xfs or f2fs stays hidden from seats. New games a seat installs go to
-  `/var/lib/punktfunk-seats/games`.
+  `/var/lib/lilynk-seats/games`.
 - **Your library is the box's.** Every profile's apps list the games your own host found. A
   profile with a desktop of its own plays your Steam games with its own Steam, and ROM Manager
   games with the box's emulators and its own saves. RPCS3, shadPS4, Supermodel, Vita3K and Xenia
@@ -110,7 +110,7 @@ their own stay on the box, stopped, and come back with the switch.
 
 | Check | Fix |
 |---|---|
-| The switch says `Add … to the punktfunk-update group first` | Run the command in step 1, restart, then try again. |
+| The switch says `Add … to the lilynk-update group first` | Run the command in step 1, restart, then try again. |
 | The switch is greyed out, with a line under it | The line names what this box is missing and the command that adds it. Reload the page after. |
 | A profile shows **Unavailable** | Its seat didn't start. **Doctor** names the failing check. |
 

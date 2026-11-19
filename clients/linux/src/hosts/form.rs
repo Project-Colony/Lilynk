@@ -2,7 +2,7 @@
 
 use super::*;
 use crate::trust::HostField;
-use pf_l10n::{client, desktop};
+use ly_l10n::{client, desktop};
 
 /// Address, port and Wake-on-LAN MAC rows, checked as they are typed. A row the store would
 /// refuse wears the `error` style, and `problem` says why under the list.

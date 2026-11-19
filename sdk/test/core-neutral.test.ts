@@ -59,7 +59,7 @@ describe("@punktfunk/host/core", () => {
 	it("still reaches the generated client, the service and the credential kinds", () => {
 		const { files } = walk(path.join(SRC, "core.ts"));
 		const names = [...files].map((f) => path.basename(f));
-		for (const wanted of ["punktfunk.ts", "client.ts", "credential.ts", "api.ts", "http.ts", "sse.ts", "wire.ts"]) {
+		for (const wanted of ["lilynk.ts", "client.ts", "credential.ts", "api.ts", "http.ts", "sse.ts", "wire.ts"]) {
 			expect(names).toContain(wanted);
 		}
 	});

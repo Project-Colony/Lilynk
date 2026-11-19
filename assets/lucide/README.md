@@ -14,10 +14,10 @@ joins — Lucide's own drawing contract, and what every derivative below reprodu
 
 | client | form | where |
 |---|---|---|
-| Skia console (gamepad UI) | folded path string, stroked by Skia | `crates/client/pf-client-core/src/lucide.rs` → `crates/client/pf-console-ui/src/icons.rs` |
-| GTK shell | the same path string, stroked by `gsk::Path` | `crates/client/pf-client-core/src/lucide.rs` |
+| Skia console (gamepad UI) | folded path string, stroked by Skia | `crates/client/ly-client-core/src/lucide.rs` → `crates/client/ly-console-ui/src/icons.rs` |
+| GTK shell | the same path string, stroked by `gsk::Path` | `crates/client/ly-client-core/src/lucide.rs` |
 | WinUI shell | the same table's font codepoint, drawn from `font/lucide.ttf` | `clients/windows/packaging/assets/lucide.ttf` |
-| webOS pointer UI | the console's `icons` module, stroked by Skia | `crates/client/pf-console-ui/src/icons.rs` |
+| webOS pointer UI | the console's `icons` module, stroked by Skia | `crates/client/ly-console-ui/src/icons.rs` |
 
 Every consumer reads **one** table, so a mark cannot differ between shells. The WinUI shell draws
 the icon font because windows-reactor has no vector element; a `FontIcon` is sized by the control
@@ -32,4 +32,4 @@ and tinted by the theme, which a baked bitmap could not be.
    test lists the names it asks for, so add a new one there when that shell uses it.
 
 The console's `icons.rs` and the GTK shell need no list of their own: both read
-`pf_client_core::lucide`, which the script regenerates whole.
+`ly_client_core::lucide`, which the script regenerates whole.

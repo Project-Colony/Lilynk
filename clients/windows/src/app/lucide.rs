@@ -2,7 +2,7 @@
 //! the GTK shell draw, from the same masters in `assets/lucide`.
 //!
 //! Inside a control a mark is a glyph of Lucide's own icon FONT, from the codepoints in
-//! [`pf_client_core::lucide`]: a text block in that font takes the control's foreground, so a
+//! [`ly_client_core::lucide`]: a text block in that font takes the control's foreground, so a
 //! mark on an accent button comes out white and one on a plain button in the theme's text
 //! colour, a vector at any DPI. Where WinUI wants an `Icon` (a navigation item), the mark is the
 //! master's path stroked as SVG in the theme's text colour: reactor's icon font is fixed, and
@@ -14,8 +14,8 @@
 //! `clients/windows/packaging/assets/`, which `pack-msix.ps1` copies into the layout's
 //! `Assets\`, and the installer and the portable zip pack that same layout.
 
-use pf_client_core::lucide as set;
-use pf_fluent::Palette;
+use ly_client_core::lucide as set;
+use ly_fluent::Palette;
 use windows_reactor::{ColorScheme, EncodedImage, FontWeight, Icon, TextBlock};
 
 /// The font as XAML names it: the file, then `#` and the family inside it. Both halves matter —
@@ -75,7 +75,7 @@ mod tests {
             "gamepad-2",
             "keyboard",
             "maximize",
-            pf_client_core::library::DESKTOP_ICON,
+            ly_client_core::library::DESKTOP_ICON,
             "plus",
             "refresh-cw",
             "rotate-cw",
@@ -100,7 +100,7 @@ mod tests {
     /// cannot fall back to a word, because the word is what the mark replaced.
     #[test]
     fn every_ring_slot_has_a_glyph() {
-        use pf_client_core::overlay_actions::{catalogue, slot_icon, OverlayConfig, RingPlatform};
+        use ly_client_core::overlay_actions::{catalogue, slot_icon, OverlayConfig, RingPlatform};
         let cfg = OverlayConfig::platform_default(RingPlatform::Desktop);
         for group in catalogue(&cfg, RingPlatform::Desktop) {
             for entry in group.entries {

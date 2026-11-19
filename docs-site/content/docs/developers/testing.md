@@ -24,26 +24,26 @@ compositor or a display skip themselves or are `#[ignore]`d.
 
 Two traps:
 
-- `punktfunk-core` and `punktfunk-ffi` alone build without their `quic` feature, which drops the
-  connection tests. Use `cargo test -p punktfunk-core -p punktfunk-ffi --features quic`.
-- `punktfunk-host` has no library target: pass test filters after `--`, never `--lib`.
+- `lilynk-core` and `lilynk-ffi` alone build without their `quic` feature, which drops the
+  connection tests. Use `cargo test -p lilynk-core -p lilynk-ffi --features quic`.
+- `lilynk-host` has no library target: pass test filters after `--`, never `--lib`.
 
 ## Per-area checks
 
 | Area | Command |
 |---|---|
 | FEC under loss, no network | `cargo run -p loss-harness` |
-| C ABI links from C | `bash crates/client/punktfunk-ffi/tests/c/run.sh` |
-| Scroll, wire and compatibility | `cargo test -p punktfunk-core --features quic scroll` |
-| Scroll, host mapping (any OS) | `cargo test -p pf-inject --lib scroll` |
-| Touch and scroll in the presenter (macOS too) | `cargo test -p pf-presenter --no-default-features` |
-| Console UI, CPU raster (macOS too) | `cargo test -p pf-console-ui` |
-| Message files in `l10n/` | `cargo run -p pf-l10n --locked -- check` |
-| Linux GPU encode backends | `cargo test -p pf-encode -p pf-encode-core --locked --features nvenc,vulkan-encode,pyrowave` |
+| C ABI links from C | `bash crates/client/lilynk-ffi/tests/c/run.sh` |
+| Scroll, wire and compatibility | `cargo test -p lilynk-core --features quic scroll` |
+| Scroll, host mapping (any OS) | `cargo test -p ly-inject --lib scroll` |
+| Touch and scroll in the presenter (macOS too) | `cargo test -p ly-presenter --no-default-features` |
+| Console UI, CPU raster (macOS too) | `cargo test -p ly-console-ui` |
+| Message files in `l10n/` | `cargo run -p ly-l10n --locked -- check` |
+| Linux GPU encode backends | `cargo test -p ly-encode -p ly-encode-core --locked --features nvenc,vulkan-encode,pyrowave` |
 | Ignored GPU tests under the Vulkan validation layer (a box with a device and the layer) | `sh scripts/vk-validation-tests.sh` |
-| Host without GameStream | `cargo clippy -p punktfunk-host --no-default-features --features pyrowave --all-targets -- -D warnings` |
-| Guided installer | `cargo test -p punktfunk-setup` and `sh scripts/ci/check-installer-behavior.sh` |
-| Settings table in the docs | `cargo test -p pf-host-config docs_table_is_current` |
+| Host without GameStream | `cargo clippy -p lilynk-host --no-default-features --features pyrowave --all-targets -- -D warnings` |
+| Guided installer | `cargo test -p lilynk-setup` and `sh scripts/ci/check-installer-behavior.sh` |
+| Settings table in the docs | `cargo test -p ly-host-config docs_table_is_current` |
 | Windows code from another OS | `scripts/xcheck.sh` |
 
 `scripts/xcheck.sh` type-checks and lints the Windows code of the capture, display and frame crates.
@@ -76,12 +76,12 @@ Build `PunktfunkCore.xcframework` first
 swift test                  # macOS units; tests that need a host skip without one
 bash test-loopback.sh       # synthetic hosts on 127.0.0.1, then the integration tests
 swift test --filter ScrollCaptureTests
-xcodebuild -project Punktfunk.xcodeproj -scheme Punktfunk-iOS \
+xcodebuild -project Lilynk.xcodeproj -scheme Lilynk-iOS \
   -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
 ```
 
 The iOS and tvOS builds need those slices in the xcframework (`BUILD_IOS=1`, `BUILD_TVOS=1`). The
-tvOS scheme is the same with `-scheme Punktfunk-tvOS`, `'generic/platform=tvOS Simulator'` and
+tvOS scheme is the same with `-scheme Lilynk-tvOS`, `'generic/platform=tvOS Simulator'` and
 `-skipMacroValidation -skipPackagePluginValidation`. `ScrollCaptureTests` needs an xcframework built
 from the same tree, whose header defines `PUNKTFUNK_FEATURE_QUIC`; `build-xcframework.sh` produces
 that.
@@ -102,9 +102,9 @@ From `packaging/windows/drivers`, as in
 [Build from source](/docs/developers/build-from-source#windows-drivers):
 
 ```powershell
-..\drivers-cargo.ps1 'test --locked -p pf-umdf-util'
-..\drivers-cargo.ps1 'test --locked -p pf-vdisplay --lib'
-..\drivers-cargo.ps1 'clippy --locked -p pf-umdf-util -p pf-xusb -p pf-gamepad -p pf-mouse -p pf-touchpad -p wdk-iddcx -p pf-vdisplay --all-targets -- -D warnings'
+..\drivers-cargo.ps1 'test --locked -p ly-umdf-util'
+..\drivers-cargo.ps1 'test --locked -p ly-vdisplay --lib'
+..\drivers-cargo.ps1 'clippy --locked -p ly-umdf-util -p ly-xusb -p ly-gamepad -p ly-mouse -p ly-touchpad -p wdk-iddcx -p ly-vdisplay --all-targets -- -D warnings'
 ```
 
 ## Run a host from source against a client
@@ -114,8 +114,8 @@ anywhere the host compiles, macOS included. In two terminals, start it and conne
 which byte-checks the frames:
 
 ```sh
-cargo run -rp punktfunk-host -- punktfunk1-host --source synthetic --allow-tofu
-cargo run -rp punktfunk-probe -- --connect 127.0.0.1:9777
+cargo run -rp lilynk-host -- punktfunk1-host --source synthetic --allow-tofu
+cargo run -rp lilynk-probe -- --connect 127.0.0.1:9777
 ```
 
 `--allow-tofu` lets an unpaired client connect; leave it out to test pairing.
@@ -124,19 +124,19 @@ cargo run -rp punktfunk-probe -- --connect 127.0.0.1:9777
 pairing window:
 
 ```sh
-cargo run -rp punktfunk-host -- serve
-cargo run -rp punktfunk-host -- ctl pair arm       # prints the PIN
+cargo run -rp lilynk-host -- serve
+cargo run -rp lilynk-host -- ctl pair arm       # prints the PIN
 ```
 
-On the client box, pair and stream with the CLI (it starts `punktfunk-session` from beside itself):
+On the client box, pair and stream with the CLI (it starts `lilynk-session` from beside itself):
 
 ```sh
-cargo build --release -p punktfunk-cli -p punktfunk-client-session
-target/release/punktfunk pair <host-ip>            # asks for the PIN
-target/release/punktfunk launch <host-ip>
+cargo build --release -p lilynk-cli -p lilynk-client-session
+target/release/lilynk pair <host-ip>            # asks for the PIN
+target/release/lilynk launch <host-ip>
 ```
 
-Any installed client pairs the same way. `punktfunk-probe` exercises single planes against a live
+Any installed client pairs the same way. `lilynk-probe` exercises single planes against a live
 host: `--input-test`, `--mic-test`, `--touch-test`, `--rich-input-test`. Its flags are in
 [clients/probe](https://git.unom.io/unom/punktfunk/src/branch/main/clients/probe/README.md). For
 the web console against this host, run `bun run dev` in `web/`.

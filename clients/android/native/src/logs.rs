@@ -14,7 +14,7 @@ use jni::errors::LogErrorAndDefault;
 use jni::objects::{JByteArray, JObject, JString};
 use jni::sys::jint;
 use jni::EnvUnowned;
-use pf_client_core::logring::{self, MAX_BYTES};
+use ly_client_core::logring::{self, MAX_BYTES};
 
 const CURRENT: &str = "client.log";
 const PREVIOUS: &str = "client.log.1";

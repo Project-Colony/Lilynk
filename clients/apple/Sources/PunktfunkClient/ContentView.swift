@@ -926,7 +926,7 @@ struct ContentView: View {
         #endif
     }
 
-    /// The shared console (`pf-console-ui`): home, library, settings,
+    /// The shared console (`ly-console-ui`): home, library, settings,
     /// pairing and the host menu are all drawn by it, so this branch mounts nothing else. A
     /// shelf written while it is up is a navigation inside it, not a presentation over it.
     private var console: some View {

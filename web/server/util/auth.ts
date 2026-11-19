@@ -150,7 +150,7 @@ async function hashMatches(password: string, hash: string): Promise<boolean> {
 		if (!warnedHash) {
 			warnedHash = true;
 			console.warn(
-				"[punktfunk-web] PUNKTFUNK_UI_PASSWORD_HASH is not a hash this server can verify — no password is accepted until it is reset",
+				"[lilynk-web] PUNKTFUNK_UI_PASSWORD_HASH is not a hash this server can verify — no password is accepted until it is reset",
 			);
 		}
 		return false;
@@ -210,7 +210,7 @@ async function migratePasswordFile(
 			hash = await Bun.password.hash(plain, { algorithm: "argon2id" });
 		} catch (e) {
 			console.warn(
-				`[punktfunk-web] couldn't hash the console password — it stays in clear in ${passwordFile()}: ${e}`,
+				`[lilynk-web] couldn't hash the console password — it stays in clear in ${passwordFile()}: ${e}`,
 			);
 			return;
 		}
@@ -220,7 +220,7 @@ async function migratePasswordFile(
 	// The login route stamps the session AFTER this, so whoever just typed the password stays in.
 	if (!same) revokeAllSessions();
 	console.warn(
-		`[punktfunk-web] console password stored as a salted hash in ${file} — PUNKTFUNK_UI_PASSWORD is deprecated; reset it by writing a new one back to that file and restarting`,
+		`[lilynk-web] console password stored as a salted hash in ${file} — PUNKTFUNK_UI_PASSWORD is deprecated; reset it by writing a new one back to that file and restarting`,
 	);
 }
 
@@ -256,7 +256,7 @@ function rewritePasswordFile(file: string, hash: string): boolean {
 			// nothing landed
 		}
 		console.warn(
-			`[punktfunk-web] couldn't rewrite ${file} — the console password stays in clear: ${e}`,
+			`[lilynk-web] couldn't rewrite ${file} — the console password stays in clear: ${e}`,
 		);
 		return false;
 	}

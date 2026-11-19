@@ -7,7 +7,7 @@
 # ever runs for it, and neither a pacman payload nor `rpm2cpio | cpio` carries a capability. So
 # a setcap on the staging tree is the only way the image gets one, and mksquashfs records it.
 # The host must never carry one: KWin cannot identify a capability-carrying client, and every
-# Desktop-mode session on the merged image dies (packaging/arch/punktfunk-host.install).
+# Desktop-mode session on the merged image dies (packaging/arch/lilynk-host.install).
 . "$(dirname "${BASH_SOURCE[0]}")/../../scripts/ci/assert-cap-matrix.sh"
 
 # Canonical capability string on a staged file, "" for none or no such file.
@@ -46,15 +46,15 @@ pf_seal_caps() {
     "$(pf_caps_of "$stage/$WORKER_REL")" "$present" uncapped-ok
 }
 
-# pf_verify_gamescope <root> <what>: <root> holds usr/bin/punktfunk-gamescope and its WSI layer.
+# pf_verify_gamescope <root> <what>: <root> holds usr/bin/lilynk-gamescope and its WSI layer.
 # The binary must print the +pfhdr banner: an unpatched gamescope under this name makes the host
 # promise HDR it cannot deliver. Without the layer, the stream is HDR while every game renders SDR.
 pf_verify_gamescope() {
   local root="$1" what="$2" f
-  [ -x "$root/usr/bin/punktfunk-gamescope" ] || {
-    err "$what has no executable usr/bin/punktfunk-gamescope"; return 1; }
-  "$root/usr/bin/punktfunk-gamescope" --version 2>&1 | grep -q '+pfhdr' || {
-    err "$what: punktfunk-gamescope has no +pfhdr marker — it is not a punktfunk HDR build"
+  [ -x "$root/usr/bin/lilynk-gamescope" ] || {
+    err "$what has no executable usr/bin/lilynk-gamescope"; return 1; }
+  "$root/usr/bin/lilynk-gamescope" --version 2>&1 | grep -q '+pfhdr' || {
+    err "$what: lilynk-gamescope has no +pfhdr marker — it is not a punktfunk HDR build"
     return 1
   }
   for f in usr/lib/punktfunk/libVkLayer_PUNKTFUNK_gamescope_wsi.so \
@@ -68,12 +68,12 @@ pf_verify_gamescope() {
 # Upholds it because a Wants= that arrives with the post-merge reload never starts anything.
 pf_stage_sysctl_unit() {
   local units="$1/usr/lib/systemd/system" files="" f
-  for f in "$1"/usr/lib/sysctl.d/99-punktfunk*.conf; do
+  for f in "$1"/usr/lib/sysctl.d/99-lilynk*.conf; do
     [ -f "$f" ] && files="$files ${f##*/}"
   done
   [ -n "$files" ] || return 0
   install -d "$units/sysinit.target.d"
-  cat > "$units/punktfunk-sysctl.service" <<UNIT
+  cat > "$units/lilynk-sysctl.service" <<UNIT
 [Unit]
 Description=punktfunk UDP socket buffer limits
 DefaultDependencies=no
@@ -87,8 +87,8 @@ Type=oneshot
 RemainAfterExit=yes
 ExecStart=/usr/lib/systemd/systemd-sysctl$files
 UNIT
-  printf '[Unit]\nUpholds=punktfunk-sysctl.service\n' \
-    > "$units/sysinit.target.d/50-punktfunk-sysctl.conf"
+  printf '[Unit]\nUpholds=lilynk-sysctl.service\n' \
+    > "$units/sysinit.target.d/50-lilynk-sysctl.conf"
 }
 
 # pf_stage_start_unit <stage>: boot plans multi-user.target before the merge, so an enabled unit
@@ -101,7 +101,7 @@ pf_stage_start_unit() {
   done
   [ -n "$wanted" ] || return 0
   install -d "$units/sysinit.target.d"
-  cat > "$units/punktfunk-start-enabled.service" <<UNIT
+  cat > "$units/lilynk-start-enabled.service" <<UNIT
 [Unit]
 Description=punktfunk services the extension merge brought
 After=systemd-sysext.service
@@ -111,6 +111,6 @@ Type=oneshot
 RemainAfterExit=yes
 ExecStart=/bin/sh -c 'for u in$wanted; do systemctl -q is-enabled "\$\$u" && systemctl --no-block start "\$\$u"; done; exit 0'
 UNIT
-  printf '[Unit]\nUpholds=punktfunk-start-enabled.service\n' \
-    > "$units/sysinit.target.d/50-punktfunk-start-enabled.conf"
+  printf '[Unit]\nUpholds=lilynk-start-enabled.service\n' \
+    > "$units/sysinit.target.d/50-lilynk-start-enabled.conf"
 }

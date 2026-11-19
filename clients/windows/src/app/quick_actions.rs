@@ -8,21 +8,21 @@
 //! modifiers as toggles, the key on a keyboard-shaped grid or pressed on the real keyboard, Save
 //! and Remove. Every edit commits at once through the settings page's own
 //! [`super::settings::commit`], so a preset owns the whole ring the moment it touches it (D10).
-//! The model — catalogue, geometry, chords, icons — is `pf_client_core`'s.
+//! The model — catalogue, geometry, chords, icons — is `ly_client_core`'s.
 
 use super::lucide;
 use super::settings::{active_preset, commit};
 use super::style::*;
 use super::{AppCtx, AsyncSetState};
 use crate::trust::Settings;
-use pf_client_core::overlay_actions::{
+use lilynk_core::input::key_vk;
+use ly_client_core::overlay_actions::{
     catalogue, chord_chip, key_legend, slot_icon, CatalogueGroup, Chord, GroupId, OverlayConfig,
     RingPlatform, Shortcut, SlotId, CHORD_MODIFIERS, KEY_GRID, RING_SLOTS,
 };
-use pf_client_core::ring::{slot_offset, CENTRE_DIAMETER, RING_RADIUS, SLOT_DIAMETER};
-use pf_fluent::Palette;
-use pf_l10n::{client, common, desktop};
-use punktfunk_core::input::key_vk;
+use ly_client_core::ring::{slot_offset, CENTRE_DIAMETER, RING_RADIUS, SLOT_DIAMETER};
+use ly_fluent::Palette;
+use ly_l10n::{client, common, desktop};
 use std::rc::Rc;
 use std::sync::Arc;
 use windows_reactor::*;

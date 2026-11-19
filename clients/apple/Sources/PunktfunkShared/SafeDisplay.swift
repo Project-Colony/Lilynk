@@ -26,7 +26,7 @@ import CoreGraphics
 import Foundation
 
 public enum SafeDisplay {
-    /// The host rejects odd dimensions (`validate_dimensions` in `pf-encode-core`), so the
+    /// The host rejects odd dimensions (`validate_dimensions` in `ly-encode-core`), so the
     /// computed mode is even-floored and clamped to at least 320×200 like `RenderScale`.
     public static let minWidth = 320
     public static let minHeight = 200

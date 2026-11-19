@@ -9,14 +9,14 @@
 //! network and decode jitter. Below API 33 the target is a refresh on the callback grid, placed
 //! by the display's own vsync offset and reached by its presentation deadline.
 //!
-//! `adb shell setprop debug.punktfunk.presenter arrival` selects the arrival path instead: the
+//! `adb shell setprop debug.lilynk.presenter arrival` selects the arrival path instead: the
 //! newest ready buffer releases at once, unbudgeted — the on-device A/B needs no rebuild. The
 //! user-facing escape hatch stays the "Low-latency mode" toggle.
 
+use lilynk_core::quic::ColorInfo;
 use ndk::data_space::DataSpace;
 use ndk::media::media_codec::MediaCodec;
 use ndk::native_window::NativeWindow;
-use punktfunk_core::quic::ColorInfo;
 use std::sync::atomic::{AtomicBool, AtomicI32, Ordering};
 use std::sync::Mutex;
 use std::time::{Duration, Instant};
@@ -36,11 +36,11 @@ use crate::present::{
 };
 use crate::sys::{now_monotonic_ns, sysprop};
 
-/// `debug.punktfunk.latch_margin_us` (0..=40000 µs): PIN the submit margin for a sweep —
+/// `debug.lilynk.latch_margin_us` (0..=40000 µs): PIN the submit margin for a sweep —
 /// setprop + stream restart, no rebuild. Unset/invalid = `None` = the default. 40 ms is two
 /// refreshes at 50 Hz, the longest latch lead a display's stated one is taken for.
 fn latch_margin_ns() -> Option<i64> {
-    let us = sysprop(c"debug.punktfunk.latch_margin_us")?
+    let us = sysprop(c"debug.lilynk.latch_margin_us")?
         .parse::<i64>()
         .ok()?;
     (0..=40_000).contains(&us).then_some(us * 1_000)
@@ -236,7 +236,7 @@ impl Timeline {
             if !budget.margin_pinned() {
                 "adaptive — widens on latch misses"
             } else if pin.is_some() {
-                "debug.punktfunk.latch_margin_us pin"
+                "debug.lilynk.latch_margin_us pin"
             } else {
                 "the display's presentation deadline"
             }

@@ -15,13 +15,13 @@ use crate::hosts::{ConnectRequest, HostRef};
 use crate::store::Store;
 use adw::prelude::*;
 use gtk::{gdk, gio, glib};
-use pf_client_core::collate::{GroupBy, SortKey};
-use pf_client_core::hide;
-use pf_client_core::library::{self, GameEntry, LibraryError, RunningGame};
-use pf_client_core::library_layout as layout;
-use pf_client_core::library_rows::{self as rows, Row};
-use pf_client_core::orchestrate::HostTarget;
-use pf_l10n::{client, common, desktop};
+use ly_client_core::collate::{GroupBy, SortKey};
+use ly_client_core::hide;
+use ly_client_core::library::{self, GameEntry, LibraryError, RunningGame};
+use ly_client_core::library_layout as layout;
+use ly_client_core::library_rows::{self as rows, Row};
+use ly_client_core::orchestrate::HostTarget;
+use ly_l10n::{client, common, desktop};
 use relm4::prelude::*;
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
@@ -31,7 +31,7 @@ use std::rc::Rc;
 const MAX_WIDTH: i32 = 2400;
 
 /// The `Settings::extra` key the chosen shelf is kept under, on this device only.
-const SHELF_KEY: &str = pf_client_core::settings::LIBRARY_SHELF_KEY;
+const SHELF_KEY: &str = ly_client_core::settings::LIBRARY_SHELF_KEY;
 
 /// One shelf: a paired host's library, streamed with its binding or a pinned preset.
 #[derive(Clone, Debug, PartialEq)]
@@ -782,7 +782,7 @@ impl LibraryPage {
             .map(str::to_string);
         let fallback = {
             let known = self.store.hosts();
-            pf_client_core::start::default_host(&settings, &known)
+            ly_client_core::start::default_host(&settings, &known)
                 .and_then(|i| known.hosts[i].id.clone())
         };
         let current = self.view.selected.borrow().clone();
@@ -923,14 +923,14 @@ impl LibraryPage {
         let (addr, port, fp) = (shelf.req.host.addr, shelf.mgmt_port, shelf.req.host.fp_hex);
         let (stream_port, profile) = (shelf.req.host.port, shelf.profile);
         std::thread::Builder::new()
-            .name("punktfunk-library".into())
+            .name("lilynk-library".into())
             .spawn(move || {
                 let send = |l| sender.send(LibraryMsg::Loaded(generation, l)).is_ok();
                 // Keyed on the pin, so a box on a new DHCP lease is the same library, and on
                 // the profile, so a shelf never shows another profile's titles.
                 if let Some(cached) = fp
                     .as_deref()
-                    .and_then(|fp| pf_client_core::library_cache::load(fp, profile.as_deref()))
+                    .and_then(|fp| ly_client_core::library_cache::load(fp, profile.as_deref()))
                     .filter(|c| !c.games.is_empty())
                 {
                     if !send(Loaded::Cached(cached.games)) {
@@ -947,7 +947,7 @@ impl LibraryPage {
                 );
                 if let (Some(fp), Ok((games, served))) = (&fp, &fetched) {
                     // `store` keeps the last real catalog over an empty answer.
-                    pf_client_core::library_cache::store(fp, *served, games);
+                    ly_client_core::library_cache::store(fp, *served, games);
                 }
                 if !send(Loaded::Fetched(fetched.map(|(games, _)| games))) {
                     return;
@@ -958,7 +958,7 @@ impl LibraryPage {
                 }
                 // The profile's own enumerate row says whether this device may hide its titles.
                 if let Some(pick) = profile.as_deref() {
-                    let listed = pf_client_core::profiles::fetch_enumerate(
+                    let listed = ly_client_core::profiles::fetch_enumerate(
                         &addr,
                         port,
                         stream_port,
@@ -1129,7 +1129,7 @@ impl LibraryPage {
         };
         let (sender, generation) = (self.view.sender.clone(), self.generation);
         std::thread::Builder::new()
-            .name("punktfunk-hide".into())
+            .name("lilynk-hide".into())
             .spawn(move || {
                 let outcome = hide::set_hidden(&api, &profile, &id, hidden);
                 let _ = sender.send(LibraryMsg::HiddenSet(generation, id, hidden, outcome));
@@ -1160,7 +1160,7 @@ impl LibraryPage {
         if let Some(shelf) = self.shelf() {
             if let Some(fp) = &shelf.req.host.fp_hex {
                 let profile = shelf.profile.as_deref();
-                pf_client_core::library_cache::note_hidden(fp, profile, id, back.as_ref());
+                ly_client_core::library_cache::note_hidden(fp, profile, id, back.as_ref());
             }
         }
         if self
@@ -1213,7 +1213,7 @@ impl LibraryPage {
         self.widgets.stack.set_visible_child_name("loading");
         let (sender, generation) = (self.view.sender.clone(), self.generation);
         std::thread::Builder::new()
-            .name("punktfunk-hidden".into())
+            .name("lilynk-hidden".into())
             .spawn(move || {
                 let listed = hide::fetch_hidden_from(&api, &profile);
                 let _ = sender.send(LibraryMsg::HiddenListed(generation, listed));
@@ -1248,7 +1248,7 @@ impl LibraryPage {
     /// the link: copying off that shelf is pressing its card and picking the title.
     fn link(&self, id: &str) -> Option<(String, String)> {
         let shelf = self.shelf()?;
-        let url = pf_client_core::deeplink::saved_host_link(
+        let url = ly_client_core::deeplink::saved_host_link(
             &self.store.hosts(),
             shelf.req.host.fp_hex.as_deref(),
             &shelf.req.host.addr,
@@ -1294,7 +1294,7 @@ impl LibraryPage {
                 .as_deref()
                 .and_then(crate::trust::parse_hex32);
             std::thread::Builder::new()
-                .name("punktfunk-endgame".into())
+                .name("lilynk-endgame".into())
                 .spawn(move || {
                     let outcome = library::end_game(&addr, port, stream_port, &identity, pin, &id);
                     let running = library::fetch_running(&addr, port, stream_port, &identity, pin);

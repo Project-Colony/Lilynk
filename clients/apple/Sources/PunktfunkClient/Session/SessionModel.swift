@@ -137,7 +137,7 @@ final class SessionModel: ObservableObject {
     #endif
     /// The launched title whose game is not up yet: its cover flies out of the shelf tile at the
     /// tap and holds the screen — through the dial, and then over the stream — until the host's
-    /// `/status` says the game left `launching` (`punktfunk-host::game::gamelease`), or the
+    /// `/status` says the game left `launching` (`lilynk-host::game::gamelease`), or the
     /// player asks to see. nil for a desktop connect, a launcher tile, and once revealed.
     ///
     /// Raised at `connect`, not at first frame: the shelf is still on screen at the tap, which is

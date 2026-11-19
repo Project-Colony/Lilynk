@@ -1,5 +1,5 @@
 // A key combination as the shortcut editors hold it: the modifier toggles and at most one key
-// from the keyboard they draw. The Swift twin of pf-client-core's `Chord` (`overlay_actions.rs`);
+// from the keyboard they draw. The Swift twin of ly-client-core's `Chord` (`overlay_actions.rs`);
 // `ChordTests` pins it. A modifier alone is a combination: Win opens the host's Start menu.
 
 import Foundation

@@ -1,7 +1,7 @@
 //! The connect flow: the trust gate, the session child's life, deep links and the console.
 
 use super::*;
-use pf_l10n::{client, common, desktop};
+use ly_l10n::{client, common, desktop};
 use std::collections::BTreeMap;
 use std::time::Duration;
 
@@ -157,7 +157,7 @@ impl AppModel {
         match route {
             TrustRoute::Pinned(fp_hex) => self.ask_profile(req, fp_hex, false, sender),
             TrustRoute::FingerprintChanged => {
-                self.toast(pf_l10n::client::dial_fingerprint_changed());
+                self.toast(ly_l10n::client::dial_fingerprint_changed());
                 crate::app::gate::pin_dialog(
                     &self.window,
                     sender,
@@ -266,7 +266,7 @@ impl AppModel {
         &mut self,
         req: ConnectRequest,
         code: i32,
-        error: Option<pf_client_core::orchestrate::SessionError>,
+        error: Option<ly_client_core::orchestrate::SessionError>,
         ended: Option<String>,
         sender: &ComponentSender<Self>,
     ) {
@@ -314,7 +314,7 @@ impl AppModel {
                     .hosts
                     .emit(HostsMsg::ShowError(error.unwrap_or_else(|| {
                         trust::connect_reject_message(
-                            punktfunk_core::reject::RejectReason::ProfileLocked,
+                            lilynk_core::reject::RejectReason::ProfileLocked,
                         )
                     }))),
             },
@@ -345,8 +345,8 @@ impl AppModel {
     /// it: turn the outcome into the same messages a card click raises, so a link gets the
     /// identical wake, trust and error surfaces and NOT a second connect path of its own.
     pub(super) fn open_deep_link(&mut self, url: &str, sender: &ComponentSender<AppModel>) {
-        use pf_client_core::deeplink;
-        use pf_client_core::orchestrate::{plan_from_link, PlanOutcome};
+        use ly_client_core::deeplink;
+        use ly_client_core::orchestrate::{plan_from_link, PlanOutcome};
 
         tracing::debug!(%url, "deep link");
         let link = match deeplink::parse(url) {
@@ -422,7 +422,7 @@ impl AppModel {
                 if let Some(line) = plan
                     .overrides
                     .as_ref()
-                    .and_then(pf_client_core::library::host_line)
+                    .and_then(ly_client_core::library::host_line)
                 {
                     body.push_str("\n\n");
                     body.push_str(&line);

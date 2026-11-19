@@ -134,7 +134,7 @@ that renders a live desktop, encodes it and streams it through the same connect,
 and input path a real PC uses. Like a demo login, it is reached with an address we give you:
 
 1. Launch Punktfunk and choose Add Host.
-2. Enter the address:  demo.punktfunk   (leave name and port as they are), then Add Host.
+2. Enter the address:  demo.lilynk   (leave name and port as they are), then Add Host.
 3. A "Demo Host" card appears. Select it: the stream starts in the window. Pinch and drag to
    move the pointer, pinch to click, type on a keyboard or press controller buttons -- the host
    draws each input back and chimes.

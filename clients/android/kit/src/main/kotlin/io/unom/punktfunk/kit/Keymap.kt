@@ -6,14 +6,14 @@ import android.view.KeyEvent
  * Hardware key → Windows Virtual-Key code (the punktfunk wire contract: **US-positional** — we
  * forward the physical key, not the typed character; the host maps VK → evdev via
  * `vk_to_evdev`). The Android analogue of the Linux client's evdev→VK table
- * (`punktfunk_core::input::evdev_to_vk`) and the Apple client's `hidToVK`.
+ * (`lilynk_core::input::evdev_to_vk`) and the Apple client's `hidToVK`.
  *
  * Prefer [toVk] with the full [KeyEvent]: it reads the raw evdev scancode first, because
  * `KeyEvent.keyCode` is only positional under the stock US key layout — a user-selected physical
  * keyboard layout (Settings → Physical keyboard) remaps keycodes semantically (AOSP's German .kcm
  * carries `map key 21 Z` / `map key 44 Y`), which would apply the layout twice: once here, once on
  * the host (the y↔z / ü-on-ö scramble). Unmapped keys → 0 (the Rust side drops them). Extend this
- * alongside `pf-inject/src/inject/keymap.rs::vk_to_evdev` (emit only VKs the host knows).
+ * alongside `ly-inject/src/inject/keymap.rs::vk_to_evdev` (emit only VKs the host knows).
  */
 object Keymap {
     /**
@@ -29,7 +29,7 @@ object Keymap {
 
     /**
      * Linux evdev keycode (`KeyEvent.scanCode`) → US-positional VK for the layout-**variant**
-     * typing area: the 48 keys of `punktfunk_core::input::evdev_to_vk` that move with the layout,
+     * typing area: the 48 keys of `lilynk_core::input::evdev_to_vk` that move with the layout,
      * held to it by `evdev-vk-vectors.json`. Everything else → 0 (the keycode path is already
      * positional for those).
      */

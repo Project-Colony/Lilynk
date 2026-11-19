@@ -7,7 +7,7 @@ package io.unom.punktfunk.kit
  * button word for the typed mirror + exit chord, and sticks/triggers for the degrade path.
  *
  * Protocol ground truth: SDL's `SDL_hidapi_steam_triton.c` + `steam/controller_structs.h`
- * (Valve-maintained), mirrored host-side in `pf-inject`'s `triton_proto.rs`.
+ * (Valve-maintained), mirrored host-side in `ly-inject`'s `triton_proto.rs`.
  */
 object Sc2Device {
     const val VID_VALVE = 0x28DE
@@ -51,7 +51,7 @@ object Sc2Device {
      * Declared STRIPPED payload length per output report id (wire length = stripped + 1), or null
      * for an id outside the output block, which [outputWrite] never writes.
      *
-     * The host's `pf_driver_proto::triton::out_report_len` holds the same table id-INCLUDED;
+     * The host's `ly_driver_proto::triton::out_report_len` holds the same table id-INCLUDED;
      * `clients/shared/sc2-vectors.json` holds it, the Apple table and this one to the same rows.
      */
     fun strippedOutputLen(id: Int): Int? = when (id) {

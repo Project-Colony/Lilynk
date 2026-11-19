@@ -17,7 +17,7 @@ repo=$PWD
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 src=$tmp/src
-host=$src/target-steamos/release/punktfunk-host
+host=$src/target-steamos/release/lilynk-host
 mkdir -p "$src/scripts/steamdeck" "$(dirname "$host")" "$tmp/home/.config/punktfunk"
 : > "$tmp/home/.config/punktfunk/host.env" # install.sh always writes one
 
@@ -54,7 +54,7 @@ case $out in *"not retrying"*) ;; *) fail "the second boot retried the rebuild: 
 # The real update.sh on a box whose door is on, without sudo. Its steps past the gate are stubs:
 # heal-box.sh stops the run, so reaching it means a build would have started.
 stubs=$tmp/stubs
-mkdir -p "$stubs" "$src/.git" "$src/crates/host/punktfunk-host"
+mkdir -p "$stubs" "$src/.git" "$src/crates/host/lilynk-host"
 printf '#!/bin/sh\nexit 1\n' > "$stubs/sudo"
 printf '#!/bin/sh\necho "git $*" >> "%s/steps"\n' "$tmp" > "$stubs/git"
 printf '#!/bin/sh\n[ -e "%s/door-on" ]\n' "$tmp" > "$stubs/systemctl"

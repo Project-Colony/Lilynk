@@ -6,12 +6,12 @@ Punktfunk is the client half of a two-part system: it streams from a host on the
 Guideline 2.1(a) asks for a way to exercise every feature, and a reviewer has no such PC. Build
 0.37.0 was rejected on exactly that (September 14, 2026), with no notes attached.
 
-The app answers it with a **built-in demo host** (`Home/DemoMode.swift`, `punktfunk-ffi`'s `demo_host.rs`): a
+The app answers it with a **built-in demo host** (`Home/DemoMode.swift`, `lilynk-ffi`'s `demo_host.rs`): a
 real `punktfunk/1` host on `127.0.0.1` inside the app. It renders a live desktop that reacts to
 every input, encodes it with VideoToolbox and streams it through the same connect, decode, audio,
 HUD and input path a real PC uses.
 
-No screen offers it, so users never see it. Adding a host at the address **`demo.punktfunk`**
+No screen offers it, so users never see it. Adding a host at the address **`demo.lilynk`**
 saves a "Demo Host" card whose library holds four sample titles. The notes give that address the
 way they would give a demo login. No external host, PIN or video is needed. Paste the notes below.
 
@@ -39,7 +39,7 @@ and input path a real PC uses. Like a demo login, it is reached with an address 
 
 1. Launch Punktfunk and choose Add Host (Apple TV: "Add Host" on the Hosts tab; with a game
    controller: the "Add Host" tile).
-2. Enter the address:  demo.punktfunk   (leave name and port as they are), then Add Host.
+2. Enter the address:  demo.lilynk   (leave name and port as they are), then Add Host.
 3. A "Demo Host" card appears. Select it: the stream starts. Move the pointer with the Siri
    Remote touch surface, a mouse or touch; click, type or press controller buttons -- the host
    draws each input back and chimes.
@@ -83,7 +83,7 @@ Privacy policy: https://unom.io/en/legal/privacy#punktfunk-apps
 
 ## Before you submit — checklist
 
-- [ ] On a fresh install of each platform, add `demo.punktfunk` and stream. On Apple TV use the
+- [ ] On a fresh install of each platform, add `demo.lilynk` and stream. On Apple TV use the
       **Siri Remote alone**: "requires an accessory to navigate" is a tvOS rejection.
 - [ ] From the Demo Host card, open the library and launch a title; the stream names it.
 - [ ] Confirm the privacy policy URL still resolves.

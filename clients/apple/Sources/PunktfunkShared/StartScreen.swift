@@ -1,14 +1,14 @@
 // Where a bare launch opens: the host list, the default host's library, or its stream.
 //
 // The Swift half of the cross-client start-screen policy. The others are
-// `crates/client/pf-client-core/src/start.rs` and Android's `StartScreen.kt`;
+// `crates/client/ly-client-core/src/start.rs` and Android's `StartScreen.kt`;
 // `clients/shared/start-screen-vectors.json` holds all three to the same answers.
 // Lives in the dependency-free shared module because a widget or an App Intent that wants to
 // act on "your host" needs the same resolution the app boots with.
 
 import Foundation
 
-/// The `punktfunk.startIn` setting. Unknown reads as `.hosts`, the `libraryView` convention:
+/// The `lilynk.startIn` setting. Unknown reads as `.hosts`, the `libraryView` convention:
 /// a value a newer client wrote degrades, it never ends a launch.
 public enum StartIn: String, CaseIterable, Sendable {
     case hosts

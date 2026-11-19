@@ -9,7 +9,7 @@
 // Apple Pencil has no hardware eraser end or barrel buttons, so these mappings are how
 // host-side apps get their stylus button/eraser affordances).
 //
-// HEARTBEAT (wire contract — see `PUNKTFUNK_PEN_TOUCH_TIMEOUT_MS` in punktfunk_core.h): while
+// HEARTBEAT (wire contract — see `PUNKTFUNK_PEN_TOUCH_TIMEOUT_MS` in lilynk_core.h): while
 // the pen is in range or touching, the last sample repeats every ≤100 ms even when nothing
 // changed. UIKit is silent for a stationary Pencil, and the host force-releases the stroke after
 // `PUNKTFUNK_PEN_TOUCH_TIMEOUT_MS` without samples (its dead-client failsafe) — the timer keeps a

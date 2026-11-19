@@ -1,13 +1,13 @@
 #!/bin/bash
 # punktfunk door helper (root): turns "Reachable without logging in" on or off for one user.
 #
-#   door-helper on|off <user>   punktfunk-door-on@<user>.service, punktfunk-door-off@<user>.service
-#   door-helper ports           punktfunk-door.service's ExecStartPre: the owner's ports
+#   door-helper on|off <user>   lilynk-door-on@<user>.service, lilynk-door-off@<user>.service
+#   door-helper ports           lilynk-door.service's ExecStartPre: the owner's ports
 #
-# The switch is punktfunk-seats' `door` verb (pf-seats `linux/door.rs`). This file keeps the path
+# The switch is lilynk-seats' `door` verb (ly-seats `linux/door.rs`). This file keeps the path
 # the units, the polkit rule and the packages name, and the environment the verb's programs see.
 export LC_ALL=C
 # Root runs this: the system directories come first. NixOS keeps its tools in the unit's PATH.
 export PATH="/usr/sbin:/usr/bin:/sbin:/bin${PATH:+:$PATH}"
-SEATS=/usr/libexec/punktfunk/punktfunk-seats
+SEATS=/usr/libexec/punktfunk/lilynk-seats
 exec "$SEATS" door "$@"

@@ -14,8 +14,8 @@
 //
 // Usage, per plugin, on a box with that launcher installed:
 //
-//   punktfunk-plugin-steam parity --snapshot before.json   # host still on its built-in scanner
-//   punktfunk-plugin-steam parity --compare before.json    # runs THIS plugin's scan
+//   lilynk-plugin-steam parity --snapshot before.json   # host still on its built-in scanner
+//   lilynk-plugin-steam parity --compare before.json    # runs THIS plugin's scan
 //
 // `--compare` runs the plugin's own scan directly rather than installing it first, so a mismatch is
 // visible before anything is published — and the run is repeatable while you fix it.

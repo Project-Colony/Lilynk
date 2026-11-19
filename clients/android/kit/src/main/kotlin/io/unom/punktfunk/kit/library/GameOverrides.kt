@@ -10,7 +10,7 @@ import org.json.JSONObject
 /**
  * The stream settings a host sets for one game (the entry's `overrides`). A null field means the
  * device decides; [name] is the shared override the values came from. Applied at the connect that
- * launches the game. The twin of `punktfunk_core::game_overrides`; [fit] runs
+ * launches the game. The twin of `lilynk_core::game_overrides`; [fit] runs
  * `clients/shared/game-override-vectors.json`.
  */
 data class GameOverrides(

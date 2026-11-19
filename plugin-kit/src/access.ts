@@ -40,7 +40,7 @@ const why = (status: number | undefined, message: string): string => {
 	if (status === 404)
 		return "the host is too old for folder access requests — update it to let plugins ask for launcher folders";
 	if (status === 403)
-		return "this plugin has no identity of its own on this host, so it can't ask for folders — allow one with `punktfunk-host plugins grant`";
+		return "this plugin has no identity of its own on this host, so it can't ask for folders — allow one with `lilynk-host plugins grant`";
 	return `folder access request failed — ${message}`;
 };
 

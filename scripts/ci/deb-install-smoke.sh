@@ -8,7 +8,7 @@
 #
 # Usage:  bash scripts/ci/deb-install-smoke.sh
 #   PF_APT_DISTRIBUTION   stable | canary   (default: stable)
-#   PF_EXPECT_VERSION     if set, `punktfunk-host --version` must contain it — proves the run is
+#   PF_EXPECT_VERSION     if set, `lilynk-host --version` must contain it — proves the run is
 #                         testing the artifact THIS run published and not a leftover from an
 #                         earlier one (the failure mode that makes a green check meaningless).
 #   PF_SMOKE_IMAGES       override the image list, space-separated (local runs / bisecting).
@@ -30,9 +30,9 @@ REPO_URL="https://git.unom.io/api/packages/unom/debian"
 # Debian 12 (bookworm) is absent: glibc 2.36 is below the host's 2.39 floor; only web and
 # scripting install there.
 MATRIX=(
-  "ubuntu:24.04|punktfunk-host punktfunk-web punktfunk-scripting punktfunk-seats"
-  "ubuntu:26.04|punktfunk-host punktfunk-web punktfunk-scripting punktfunk-seats punktfunk-client punktfunk-gamescope"
-  "debian:trixie|punktfunk-host punktfunk-web punktfunk-scripting punktfunk-seats punktfunk-gamescope"
+  "ubuntu:24.04|lilynk-host lilynk-web lilynk-scripting lilynk-seats"
+  "ubuntu:26.04|lilynk-host lilynk-web lilynk-scripting lilynk-seats lilynk-client lilynk-gamescope"
+  "debian:trixie|lilynk-host lilynk-web lilynk-scripting lilynk-seats lilynk-gamescope"
 )
 
 if [ -n "${PF_SMOKE_IMAGES:-}" ]; then
@@ -64,9 +64,9 @@ for row in "${MATRIX[@]}"; do
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends curl ca-certificates
           install -d -m 0755 /etc/apt/keyrings
-          curl -fsSL --max-time 60 "$REPO_URL/repository.key" -o /etc/apt/keyrings/punktfunk.asc
-          echo "deb [signed-by=/etc/apt/keyrings/punktfunk.asc] $REPO_URL $DIST main" \
-            > /etc/apt/sources.list.d/punktfunk.list
+          curl -fsSL --max-time 60 "$REPO_URL/repository.key" -o /etc/apt/keyrings/lilynk.asc
+          echo "deb [signed-by=/etc/apt/keyrings/lilynk.asc] $REPO_URL $DIST main" \
+            > /etc/apt/sources.list.d/lilynk.list
           apt-get update -qq
 
           # Wait for the index to actually carry the version this run published. Gitea regenerates
@@ -75,14 +75,14 @@ for row in "${MATRIX[@]}"; do
           # if it never appears, that is a real publishing failure and the job should say so.
           if [ -n "$EXPECT" ]; then
             for i in $(seq 1 10); do
-              apt-cache policy punktfunk-host | grep -qF "$EXPECT" && break
+              apt-cache policy lilynk-host | grep -qF "$EXPECT" && break
               echo "index does not carry $EXPECT yet (attempt $i) — waiting"
               sleep 15
               apt-get update -qq
             done
-            apt-cache policy punktfunk-host | grep -qF "$EXPECT" || {
+            apt-cache policy lilynk-host | grep -qF "$EXPECT" || {
               echo "the apt index never served $EXPECT — publish did not land"
-              apt-cache policy punktfunk-host
+              apt-cache policy lilynk-host
               exit 1
             }
           fi
@@ -106,16 +106,16 @@ for row in "${MATRIX[@]}"; do
           done
           # --version is the cheapest proof of "actually runs". Only for binaries that answer it
           # without a session/GPU: the client opens GTK, the console is a bun bundle.
-          if echo "$PACKAGES" | grep -q punktfunk-host; then
-            punktfunk-host --version
-            [ -z "$EXPECT" ] || punktfunk-host --version | grep -F "$EXPECT"
+          if echo "$PACKAGES" | grep -q lilynk-host; then
+            lilynk-host --version
+            [ -z "$EXPECT" ] || lilynk-host --version | grep -F "$EXPECT"
           fi
-          if echo "$PACKAGES" | grep -q punktfunk-gamescope; then
-            punktfunk-gamescope --version
+          if echo "$PACKAGES" | grep -q lilynk-gamescope; then
+            lilynk-gamescope --version
           fi
           # The console and the runner both exec this one private bun.
-          if echo "$PACKAGES" | grep -qE "punktfunk-(web|scripting)"; then
-            /usr/lib/punktfunk-bun/bun --version
+          if echo "$PACKAGES" | grep -qE "lilynk-(web|scripting)"; then
+            /usr/lib/lilynk-bun/bun --version
           fi
         '; then
     echo "PASS: $IMAGE"

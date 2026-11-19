@@ -18,7 +18,7 @@ import os
 /// decoded)` traces: a proportional time constant of tens of frames, an integral an order
 /// slower, a cushion of a few mean-absolute-deviations.
 ///
-/// ⚠ A hand-written port of `punktfunk_core::phase::CadenceTuning`, exactly as `AudioRing` is a
+/// ⚠ A hand-written port of `lilynk_core::phase::CadenceTuning`, exactly as `AudioRing` is a
 /// port of `JitterPolicy`: this pipeline is Swift and does not link that Rust type. **Every
 /// constant and rule here must stay in lockstep with it** — `CadenceClockTests` and the Rust
 /// `phase::tests` assert the two against the same synthetic input, and `CadenceVectorTests`
@@ -64,7 +64,7 @@ struct CadenceTuning: Equatable {
 }
 
 /// Loop health for the pf-present line — the numbers that say whether the cushion is doing its
-/// job. Mirrors `punktfunk_core::phase::CadenceHealth`, less its `tail_ns`.
+/// job. Mirrors `lilynk_core::phase::CadenceHealth`, less its `tail_ns`.
 ///
 /// Residual PERCENTILES are deliberately absent: this type holds no histogram, and the client
 /// stat paths (the latency meters) are where distributions belong.
@@ -99,7 +99,7 @@ struct CadenceHealth: Equatable {
 /// A late frame's due time comes back in the PAST, unclamped: clamping to `readyNs` would turn
 /// every late frame into a fresh anchor, which is the arrival-driven presentation this replaces.
 ///
-/// ⚠ A hand-written port of `punktfunk_core::phase::CadenceClock` — see `CadenceTuning` for the
+/// ⚠ A hand-written port of `lilynk_core::phase::CadenceClock` — see `CadenceTuning` for the
 /// lockstep contract. Sendable; lock-guarded — the decode-completion thread folds frames while the
 /// render thread reads health.
 final class CadenceClock: @unchecked Sendable {

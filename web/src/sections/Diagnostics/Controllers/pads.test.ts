@@ -28,12 +28,12 @@ const frame = (over: Partial<PadFrame> = {}): PadFrame => ({
 	...over,
 });
 
-// Hand-written beside core's gamepad consts; core and pf-inject test the same rows.
+// Hand-written beside core's gamepad consts; core and ly-inject test the same rows.
 const vectors = JSON.parse(
 	readFileSync(
 		join(
 			import.meta.dir,
-			"../../../../../crates/core/punktfunk-core/testdata/gamepad-button-vectors.json",
+			"../../../../../crates/core/lilynk-core/testdata/gamepad-button-vectors.json",
 		),
 		"utf8",
 	),

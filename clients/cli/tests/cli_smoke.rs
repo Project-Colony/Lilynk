@@ -11,7 +11,7 @@
 use std::process::Command;
 
 fn punktfunk(args: &[&str]) -> std::process::Output {
-    Command::new(env!("CARGO_BIN_EXE_punktfunk"))
+    Command::new(env!("CARGO_BIN_EXE_lilynk"))
         .args(args)
         .output()
         .expect("run punktfunk")
@@ -72,7 +72,7 @@ fn default_host_is_set_read_and_cleared() {
     .expect("seed the store");
 
     let run = |args: &[&str]| {
-        Command::new(env!("CARGO_BIN_EXE_punktfunk"))
+        Command::new(env!("CARGO_BIN_EXE_lilynk"))
             .args(args)
             .env(if cfg!(windows) { "APPDATA" } else { "HOME" }, &home)
             .env("PUNKTFUNK_CONFIG_DIR", &store)
@@ -138,7 +138,7 @@ fn forgetting_a_host_clears_its_default_and_cached_catalog() {
     let cached = catalog.join(format!("{fp}.json"));
     std::fs::write(&cached, r#"{"games":[],"fetched_at":0}"#).expect("seed the catalog");
 
-    let out = Command::new(env!("CARGO_BIN_EXE_punktfunk"))
+    let out = Command::new(env!("CARGO_BIN_EXE_lilynk"))
         .args(["hosts", "forget", "Desk"])
         .env("PUNKTFUNK_CONFIG_DIR", &store)
         .env("XDG_CACHE_HOME", &home)
@@ -165,7 +165,7 @@ fn hosts_added_by_eight_processes_at_once_all_land() {
     std::fs::create_dir_all(&store).expect("scratch config dir");
     let adds: Vec<_> = (1..=8)
         .map(|n| {
-            Command::new(env!("CARGO_BIN_EXE_punktfunk"))
+            Command::new(env!("CARGO_BIN_EXE_lilynk"))
                 .args(["hosts", "add", &format!("10.0.0.{n}")])
                 .env("PUNKTFUNK_CONFIG_DIR", &store)
                 .spawn()
@@ -243,7 +243,7 @@ fn scratch_store(tag: &str, known_hosts: &str) -> std::path::PathBuf {
 
 /// `punktfunk` against `store`, with every cache dir inside it too.
 fn punktfunk_in(store: &std::path::Path, args: &[&str]) -> std::process::Output {
-    Command::new(env!("CARGO_BIN_EXE_punktfunk"))
+    Command::new(env!("CARGO_BIN_EXE_lilynk"))
         .args(args)
         .env("PUNKTFUNK_CONFIG_DIR", store)
         .env("XDG_CACHE_HOME", store)
@@ -482,7 +482,7 @@ fn the_probe_verbs_refuse_before_they_dial() {
 /// and says so with the connect-failed code rather than "already saved".
 #[test]
 fn hosts_add_without_a_config_dir_fails_to_save() {
-    let out = Command::new(env!("CARGO_BIN_EXE_punktfunk"))
+    let out = Command::new(env!("CARGO_BIN_EXE_lilynk"))
         .args(["hosts", "add", "10.0.0.5"])
         .env_remove("PUNKTFUNK_CONFIG_DIR")
         .env_remove("XDG_CONFIG_HOME")

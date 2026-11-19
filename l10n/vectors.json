@@ -1,5 +1,5 @@
 {
-  "about": "What a reader of the message format must produce. format: message, language and arguments to text; a message a language lacks reads English. pick: the OS's languages and the shipped list to the language used. pf-l10n's tests replay this file.",
+  "about": "What a reader of the message format must produce. format: message, language and arguments to text; a message a language lacks reads English. pick: the OS's languages and the shipped list to the language used. ly-l10n's tests replay this file.",
   "messages": {
     "en": {
       "vec_plain": "Statistics size",

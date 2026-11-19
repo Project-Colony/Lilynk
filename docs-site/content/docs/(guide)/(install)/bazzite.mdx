@@ -19,9 +19,9 @@ and it survives OS updates.
 
 <Install platform="bazzite" />
 
-This installs the host, the console, the tray, the plugin runner and the HDR `punktfunk-gamescope`
-build. `sudo punktfunk-sysext update` updates it and restarts the services, or use the
-[console](/docs/updating); `sudo punktfunk-sysext status` shows the installed build.
+This installs the host, the console, the tray, the plugin runner and the HDR `lilynk-gamescope`
+build. `sudo lilynk-sysext update` updates it and restarts the services, or use the
+[console](/docs/updating); `sudo lilynk-sysext status` shows the installed build.
 
 ## 2. Let it use your controllers
 
@@ -39,7 +39,7 @@ Enable the services and linger from a terminal in the desktop session. Without l
 waits for a login that a headless box never gets:
 
 ```sh
-systemctl --user enable --now punktfunk-host punktfunk-web
+systemctl --user enable --now lilynk-host lilynk-web
 sudo loginctl enable-linger "$USER"
 ```
 
@@ -57,11 +57,11 @@ the console for other devices:
 
 ```sh
 sudo firewall-cmd --reload   # load the service definitions the image installed
-sudo firewall-cmd --permanent --add-service=punktfunk-native --add-service=punktfunk-web
+sudo firewall-cmd --permanent --add-service=lilynk-native --add-service=lilynk-web
 sudo firewall-cmd --reload
 ```
 
-For [Moonlight](/docs/moonlight), also add `punktfunk-gamestream` ([Ports & firewall](/docs/ports)).
+For [Moonlight](/docs/moonlight), also add `lilynk-gamestream` ([Ports & firewall](/docs/ports)).
 
 **Next:** [Quick Start, step 3](/docs/quickstart#3-open-the-web-console): open the console and pair
 a device.
@@ -76,4 +76,4 @@ a device.
   [Updating](/docs/updating#bazzite-sysext-channels-rollback-and-rebases). Remove:
   [Uninstall](/docs/uninstall#bazzite--fedora-atomic-systemd-sysext).
 - Already layered with `rpm-ostree`? Install the sysext, which takes over at once, then
-  `sudo rpm-ostree uninstall punktfunk punktfunk-web && systemctl reboot`.
+  `sudo rpm-ostree uninstall lilynk lilynk-web && systemctl reboot`.

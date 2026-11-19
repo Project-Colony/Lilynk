@@ -1,17 +1,17 @@
-//! `punktfunk-client` — the native Linux punktfunk/1 desktop shell (relm4/libadwaita).
+//! `lilynk-client` — the native Linux punktfunk/1 desktop shell (relm4/libadwaita).
 //!
 //! Hosts, pairing/trust, settings, and the desktop library page; every stream (and the
-//! console game library) runs in the spawned `punktfunk-session` Vulkan binary — the
+//! console game library) runs in the spawned `lilynk-session` Vulkan binary — the
 //! shell never touches video.
 // `deny`, not `forbid`: clearing Steam's SDL device filter and the spawn test's config-dir write
 // mutate the process env, and the password prompt reads its entry through GTK's C API. Each
 // carries a named `#[allow(unsafe_code)]` with the proof at the site.
 #![deny(unsafe_code)]
 
-// The UI-agnostic plumbing lives in `pf-client-core`, shared with the session binary.
+// The UI-agnostic plumbing lives in `ly-client-core`, shared with the session binary.
 // Root re-exports keep every `crate::trust`-style path resolving unchanged.
 #[cfg(target_os = "linux")]
-pub use pf_client_core::{discovery, gamepad, os, trust, video, wol};
+pub use ly_client_core::{discovery, gamepad, os, trust, video, wol};
 
 // The window, its messages and the connect flow.
 #[cfg(target_os = "linux")]
@@ -39,7 +39,7 @@ mod widgets;
 
 #[cfg(target_os = "linux")]
 fn main() -> gtk::glib::ExitCode {
-    punktfunk_core::tls::install_default_provider();
+    lilynk_core::tls::install_default_provider();
     app::run()
 }
 
@@ -47,6 +47,6 @@ fn main() -> gtk::glib::ExitCode {
 /// (the Mac client lives in clients/apple).
 #[cfg(not(target_os = "linux"))]
 fn main() {
-    eprintln!("punktfunk-client is Linux-only — the macOS client lives in clients/apple");
+    eprintln!("lilynk-client is Linux-only — the macOS client lives in clients/apple");
     std::process::exit(2);
 }

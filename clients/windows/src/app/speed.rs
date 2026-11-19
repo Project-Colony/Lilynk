@@ -6,9 +6,9 @@
 use super::style::*;
 use super::{saved, Screen, Svc};
 use crate::trust::KnownHosts;
-use pf_client_core::presets::PresetsFile;
-use pf_fluent::Token;
-use pf_l10n::{client, common, desktop};
+use ly_client_core::presets::PresetsFile;
+use ly_fluent::Token;
+use ly_l10n::{client, common, desktop};
 use windows_reactor::*;
 
 /// Speed-test lifecycle, root state: the probe worker completes it via `Svc::set_speed`, and
@@ -76,7 +76,7 @@ fn start_probe(svc: &Svc) {
     std::thread::Builder::new()
         .name("pf-speedtest".into())
         .spawn(move || {
-            let outcome = pf_client_core::speed::run_network_check_with(
+            let outcome = ly_client_core::speed::run_network_check_with(
                 &target.host.addr,
                 target.host.port,
                 target.host.fp_hex.as_deref(),
@@ -96,7 +96,7 @@ fn start_probe(svc: &Svc) {
                             f64::from(c.jitter_us) / 1000.0,
                         )
                     }),
-                    recommended_kbps: pf_client_core::speed::recommended_kbps(r.speed.ceiling_kbps),
+                    recommended_kbps: ly_client_core::speed::recommended_kbps(r.speed.ceiling_kbps),
                     findings: r.findings.iter().map(|f| (f.id as u8, f.numbers)).collect(),
                 },
                 Err(msg) => SpeedState::Failed(msg),
@@ -242,7 +242,7 @@ fn speed_page(props: &SpeedProps) -> View {
             let finding_lines: Vec<View> = findings
                 .iter()
                 .map(|(id, numbers)| {
-                    text(pf_client_core::findings::text(*id, *numbers))
+                    text(ly_client_core::findings::text(*id, *numbers))
                         .font_size(12.0)
                         .foreground(pal.get(Token::SecondaryText))
                         .horizontal_alignment(HorizontalAlignment::Center)

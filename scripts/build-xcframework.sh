@@ -5,7 +5,7 @@
 #   bash scripts/build-xcframework.sh
 #
 # Output: clients/apple/PunktfunkCore.xcframework (consumed by clients/apple/Package.swift).
-# The library is clients/apple/native: the C ABI (punktfunk-ffi) WITH the `quic` feature (the
+# The library is clients/apple/native: the C ABI (lilynk-ffi) WITH the `quic` feature (the
 # punktfunk/1 connection API), so the bundled header gets PUNKTFUNK_FEATURE_QUIC pre-defined, plus
 # the Skia console (`punktfunk_console.h`).
 set -euo pipefail
@@ -127,25 +127,25 @@ fi
 # "object file was built for newer macOS version" warnings.
 skia_fetch "${TARGETS_MAC[@]}"
 for t in "${TARGETS_MAC[@]}"; do
-    MACOSX_DEPLOYMENT_TARGET=14.0 cargo build --release -p punktfunk-client-apple --target "$t"
+    MACOSX_DEPLOYMENT_TARGET=14.0 cargo build --release -p lilynk-client-apple --target "$t"
 done
 if [[ "$BUILD_IOS" == "1" ]]; then
     skia_fetch aarch64-apple-ios aarch64-apple-ios-sim
-    IPHONEOS_DEPLOYMENT_TARGET=17.0 cargo build --release -p punktfunk-client-apple --target aarch64-apple-ios
-    IPHONEOS_DEPLOYMENT_TARGET=17.0 cargo build --release -p punktfunk-client-apple --target aarch64-apple-ios-sim
+    IPHONEOS_DEPLOYMENT_TARGET=17.0 cargo build --release -p lilynk-client-apple --target aarch64-apple-ios
+    IPHONEOS_DEPLOYMENT_TARGET=17.0 cargo build --release -p lilynk-client-apple --target aarch64-apple-ios-sim
 fi
 if [[ "$BUILD_TVOS" == "1" ]]; then
     skia_fetch aarch64-apple-tvos aarch64-apple-tvos-sim
-    TVOS_DEPLOYMENT_TARGET=17.0 cargo "+$NIGHTLY" build --release -p punktfunk-client-apple \
+    TVOS_DEPLOYMENT_TARGET=17.0 cargo "+$NIGHTLY" build --release -p lilynk-client-apple \
         -Z build-std=std,panic_abort --target aarch64-apple-tvos
-    TVOS_DEPLOYMENT_TARGET=17.0 cargo "+$NIGHTLY" build --release -p punktfunk-client-apple \
+    TVOS_DEPLOYMENT_TARGET=17.0 cargo "+$NIGHTLY" build --release -p lilynk-client-apple \
         -Z build-std=std,panic_abort --target aarch64-apple-tvos-sim
 fi
 if [[ "$BUILD_VISIONOS" == "1" ]]; then
     skia_fetch aarch64-apple-visionos aarch64-apple-visionos-sim
-    XROS_DEPLOYMENT_TARGET=26.0 cargo "+$NIGHTLY" build --release -p punktfunk-client-apple \
+    XROS_DEPLOYMENT_TARGET=26.0 cargo "+$NIGHTLY" build --release -p lilynk-client-apple \
         -Z build-std=std,panic_abort --target aarch64-apple-visionos
-    XROS_DEPLOYMENT_TARGET=26.0 cargo "+$NIGHTLY" build --release -p punktfunk-client-apple \
+    XROS_DEPLOYMENT_TARGET=26.0 cargo "+$NIGHTLY" build --release -p lilynk-client-apple \
         -Z build-std=std,panic_abort --target aarch64-apple-visionos-sim
 fi
 
@@ -154,9 +154,9 @@ trap 'rm -rf "$STAGE"' EXIT
 
 mkdir -p "$STAGE/macos"
 lipo -create \
-    "$TARGET_DIR"/aarch64-apple-darwin/release/libpunktfunk_apple.a \
-    "$TARGET_DIR"/x86_64-apple-darwin/release/libpunktfunk_apple.a \
-    -output "$STAGE/macos/libpunktfunk_apple.a"
+    "$TARGET_DIR"/aarch64-apple-darwin/release/liblilynk_apple.a \
+    "$TARGET_DIR"/x86_64-apple-darwin/release/liblilynk_apple.a \
+    -output "$STAGE/macos/liblilynk_apple.a"
 
 # Headers dir: the generated C headers (core's with the quic API force-enabled) + a modulemap
 # so Swift can `import PunktfunkCore`. Regenerated first: no build step writes include/.
@@ -166,35 +166,35 @@ bash scripts/gen-l10n-apple.sh
 mkdir -p "$STAGE/include"
 {
     echo "#define PUNKTFUNK_FEATURE_QUIC 1"
-    cat include/punktfunk_core.h
-} > "$STAGE/include/punktfunk_core.h"
+    cat include/lilynk_core.h
+} > "$STAGE/include/lilynk_core.h"
 cp include/punktfunk_console.h "$STAGE/include/"
 cat > "$STAGE/include/module.modulemap" <<'EOF'
 module PunktfunkCore {
-    header "punktfunk_core.h"
+    header "lilynk_core.h"
     header "punktfunk_console.h"
     export *
 }
 EOF
 
-ARGS=(-library "$STAGE/macos/libpunktfunk_apple.a" -headers "$STAGE/include")
+ARGS=(-library "$STAGE/macos/liblilynk_apple.a" -headers "$STAGE/include")
 if [[ "$BUILD_IOS" == "1" ]]; then
-    ARGS+=(-library "$TARGET_DIR"/aarch64-apple-ios/release/libpunktfunk_apple.a -headers "$STAGE/include")
-    ARGS+=(-library "$TARGET_DIR"/aarch64-apple-ios-sim/release/libpunktfunk_apple.a -headers "$STAGE/include")
+    ARGS+=(-library "$TARGET_DIR"/aarch64-apple-ios/release/liblilynk_apple.a -headers "$STAGE/include")
+    ARGS+=(-library "$TARGET_DIR"/aarch64-apple-ios-sim/release/liblilynk_apple.a -headers "$STAGE/include")
 fi
 if [[ "$BUILD_TVOS" == "1" ]]; then
-    ARGS+=(-library "$TARGET_DIR"/aarch64-apple-tvos/release/libpunktfunk_apple.a -headers "$STAGE/include")
-    ARGS+=(-library "$TARGET_DIR"/aarch64-apple-tvos-sim/release/libpunktfunk_apple.a -headers "$STAGE/include")
+    ARGS+=(-library "$TARGET_DIR"/aarch64-apple-tvos/release/liblilynk_apple.a -headers "$STAGE/include")
+    ARGS+=(-library "$TARGET_DIR"/aarch64-apple-tvos-sim/release/liblilynk_apple.a -headers "$STAGE/include")
 fi
 if [[ "$BUILD_VISIONOS" == "1" ]]; then
-    ARGS+=(-library "$TARGET_DIR"/aarch64-apple-visionos/release/libpunktfunk_apple.a -headers "$STAGE/include")
-    ARGS+=(-library "$TARGET_DIR"/aarch64-apple-visionos-sim/release/libpunktfunk_apple.a -headers "$STAGE/include")
+    ARGS+=(-library "$TARGET_DIR"/aarch64-apple-visionos/release/liblilynk_apple.a -headers "$STAGE/include")
+    ARGS+=(-library "$TARGET_DIR"/aarch64-apple-visionos-sim/release/liblilynk_apple.a -headers "$STAGE/include")
 fi
 
 # Cargo does NOT fingerprint MACOSX_DEPLOYMENT_TARGET — units cached from a build without
 # it keep their old minos forever. Refuse to ship anything newer than the package floor
 # (objects BELOW it, e.g. rustup's precompiled std at 11.0, are fine and unavoidable).
-obj="$STAGE/macos/libpunktfunk_apple.a"
+obj="$STAGE/macos/liblilynk_apple.a"
 bad=$(otool -l "$obj" 2>/dev/null | awk '/minos/ {print $2}' | sort -uV | awk -F. '$1 > 14' | head -1)
 if [[ -n "$bad" ]]; then
     echo "ERROR: $obj contains objects built for macOS $bad (> 14.0)." >&2
@@ -219,7 +219,7 @@ rm -rf clients/apple/PunktfunkCore.xcframework
 "${XCODEBUILD[@]}" -create-xcframework "${ARGS[@]}" -output clients/apple/PunktfunkCore.xcframework
 
 # Xcode (unlike `swift build`) refuses to EMBED an unsigned xcframework: the app targets in
-# Punktfunk.xcodeproj fail with "The framework 'PunktfunkCore.xcframework' is unsigned". So
+# Lilynk.xcodeproj fail with "The framework 'PunktfunkCore.xcframework' is unsigned". So
 # sign the bundle here. Identity: $CODESIGN_IDENTITY if set, else the first "Apple Development"
 # identity in the keychain, else ad-hoc ("-") — ad-hoc satisfies `swift build` and most local
 # Xcode runs; a real identity is needed for device/distribution. --timestamp=none keeps it

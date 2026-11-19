@@ -1,13 +1,13 @@
 # punktfunk — Linux client
 
-`punktfunk-client` is the relm4/GTK4/libadwaita **shell**: hosts, pairing and trust, settings, the
+`lilynk-client` is the relm4/GTK4/libadwaita **shell**: hosts, pairing and trust, settings, the
 desktop library page. It does not stream. Every session runs in the sibling
-[`punktfunk-session`](../session/) Vulkan binary, which the shell spawns — `--connect` and
+[`lilynk-session`](../session/) Vulkan binary, which the shell spawns — `--connect` and
 `--browse` exec it directly, so the Decky wrapper keeps working unchanged.
 
 Rust end to end, no C ABI. The UI-agnostic plumbing — session pump, the native decode ladder,
 PipeWire audio, SDL3 gamepads and keymap, trust store, mDNS discovery, library client,
-Wake-on-LAN — is `crates/client/pf-client-core`, shared with the session binary.
+Wake-on-LAN — is `crates/client/ly-client-core`, shared with the session binary.
 
 Installing it is [the docs site](https://docs.punktfunk.unom.io/docs/install-client)'s job;
 building the packages is [`packaging/`](../../packaging/)'s.
@@ -20,9 +20,9 @@ needed: libva and the Vulkan loader are opened at runtime, so hardware decode is
 box you run on, not the one you build on.
 
 ```sh
-cargo run -p punktfunk-client-linux                             # the app
-cargo run -p punktfunk-client-linux -- --connect HOST[:PORT]    # straight to a stream
-cargo run -p punktfunk-client-linux -- --browse HOST            # the gamepad library launcher
+cargo run -p lilynk-client-linux                             # the app
+cargo run -p lilynk-client-linux -- --connect HOST[:PORT]    # straight to a stream
+cargo run -p lilynk-client-linux -- --browse HOST            # the gamepad library launcher
 ```
 
 Headless paths stay in the shell: `--pair - --connect host[:port]` (PIN on stdin), `--wake`, and

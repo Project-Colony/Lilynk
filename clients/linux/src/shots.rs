@@ -4,7 +4,7 @@ use crate::app::AppModel;
 use crate::hosts::{ConnectRequest, HostsMsg};
 use gtk::glib;
 use gtk::prelude::*;
-use pf_client_core::orchestrate::HostTarget;
+use ly_client_core::orchestrate::HostTarget;
 use relm4::prelude::*;
 use std::rc::Rc;
 
@@ -128,7 +128,7 @@ pub fn run_shot(ctx: &ShotCtx, scene: &str) {
         }
         "settings" | "03-settings" => {
             // Mock devices so the shot shows the probe-dependent pickers populated.
-            let dev = |name: &str, description: &str| pf_client_core::audio::AudioDevice {
+            let dev = |name: &str, description: &str| ly_client_core::audio::AudioDevice {
                 name: name.to_string(),
                 description: description.to_string(),
             };
@@ -258,24 +258,24 @@ fn mock_online(ctx: &ShotCtx) -> std::collections::HashMap<String, bool> {
 /// The mock game set for the `library` scene: mixed stores exercising the badge set,
 /// plus one solid-colour poster texture.
 fn mock_library() -> (
-    Vec<pf_client_core::library::GameEntry>,
+    Vec<ly_client_core::library::GameEntry>,
     Vec<(String, gtk::gdk::Texture)>,
 ) {
     let game =
-        |id: &str, store: &str, title: &str, played: u64| pf_client_core::library::GameEntry {
+        |id: &str, store: &str, title: &str, played: u64| ly_client_core::library::GameEntry {
             install: None,
             overrides: None,
             id: id.to_string(),
             store: store.to_string(),
             title: title.to_string(),
-            art: pf_client_core::library::Artwork::default(),
+            art: ly_client_core::library::Artwork::default(),
             platform: None,
             developer: None,
             release_year: None,
             genres: Vec::new(),
             role: None,
             icon: None,
-            stats: (played > 0).then_some(pf_client_core::library::GameStats {
+            stats: (played > 0).then_some(ly_client_core::library::GameStats {
                 last_played_unix_ms: 1_700_000_000_000 + played * 3_600_000,
                 play_time_ms: played * 3_600_000,
                 last_run_ms: 0,
@@ -283,7 +283,7 @@ fn mock_library() -> (
             }),
         };
     let games = vec![
-        pf_client_core::library::GameEntry {
+        ly_client_core::library::GameEntry {
             install: None,
             overrides: None,
             role: Some("launcher".into()),
@@ -307,14 +307,14 @@ fn mock_library() -> (
 }
 
 /// `n` titles across the stores, a few played, five of them launchers.
-fn bench_library(n: usize) -> Vec<pf_client_core::library::GameEntry> {
+fn bench_library(n: usize) -> Vec<ly_client_core::library::GameEntry> {
     const WORDS: &[&str] = &[
         "Crimson", "Hollow", "Star", "Iron", "Silent", "Neon", "Ancient", "Frozen", "Wild", "Last",
         "Broken", "Golden", "Shadow", "Echo", "Solar", "Rogue", "Arcane", "Quiet",
     ];
     const STORES: &[&str] = &["steam", "gog", "epic", "heroic", "lutris", "custom"];
     (0..n)
-        .map(|i| pf_client_core::library::GameEntry {
+        .map(|i| ly_client_core::library::GameEntry {
             install: None,
             overrides: None,
             id: format!("bench:{i}"),
@@ -324,14 +324,14 @@ fn bench_library(n: usize) -> Vec<pf_client_core::library::GameEntry> {
                 WORDS[i % WORDS.len()],
                 WORDS[(i / 7) % WORDS.len()]
             ),
-            art: pf_client_core::library::Artwork::default(),
+            art: ly_client_core::library::Artwork::default(),
             platform: Some(["PC", "SNES", "PS2", "Switch"][i % 4].to_string()),
             developer: None,
             release_year: None,
             genres: Vec::new(),
             role: (i < 5).then(|| "launcher".to_string()),
             icon: None,
-            stats: (i % 50 == 0).then(|| pf_client_core::library::GameStats {
+            stats: (i % 50 == 0).then(|| ly_client_core::library::GameStats {
                 last_played_unix_ms: 1_700_000_000_000 + i as u64,
                 play_time_ms: i as u64 * 1000,
                 last_run_ms: 0,

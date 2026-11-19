@@ -1,4 +1,4 @@
-// The Match-window skip discipline as a pure function — the same rules pf-presenter's
+// The Match-window skip discipline as a pure function — the same rules ly-presenter's
 // `resize_decision` unit-tests: skip a size equal to the live mode, and skip an ask equal to
 // the last one sent (so a rejected size / a host rollback can't loop). The size itself is
 // `RenderScale.apply`, held by the shared vectors.

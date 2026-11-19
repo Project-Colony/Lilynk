@@ -160,7 +160,7 @@
 	"desktop_licenses_rust_crates": "Rust-Crates",
 	"desktop_licenses_section_bundled": "Mitgeliefert",
 	"desktop_licenses_section_open_source": "Open Source",
-	"desktop_notice_steam_touch_mouse": "Steam Input sendet den Touchscreen als Maus – wähle für Touch das Punktfunk-Controllerlayout",
+	"desktop_notice_steam_touch_mouse": "Steam Input sendet den Touchscreen als Maus – wähle für Touch das Lilynk-Controllerlayout",
 	"desktop_capture_release": "{keys} gibt frei",
 	"desktop_capture_mouse_mode": "{keys} Mausmodus",
 	"desktop_capture_disconnect": "{keys} trennt",

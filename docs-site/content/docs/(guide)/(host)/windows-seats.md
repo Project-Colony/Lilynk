@@ -92,7 +92,7 @@ Steam on a seat at that copy:
 - **Run Steam when my computer starts** in the seat's Steam,
 - games started from Punktfunk's library.
 
-While seats are on, the shared Steam icons start `punktfunk-tray.exe --steam`, which opens the
+While seats are on, the shared Steam icons start `lilynk-tray.exe --steam`, which opens the
 seat's copy on a seat and the PC's own Steam for everyone else. Turning seats off puts them back.
 The copy is made the first time a seat starts; until it lands, Steam games don't start on that
 seat.

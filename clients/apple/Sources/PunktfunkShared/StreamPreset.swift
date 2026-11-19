@@ -1,6 +1,6 @@
 // Client settings presets — named bundles of setting overrides applied on top of the global
 // defaults (design/client-settings-profiles.md §4). The Swift half of the model whose Rust
-// original is `crates/client/pf-client-core/src/presets.rs`; the two are mirrored field for field,
+// original is `crates/client/ly-client-core/src/presets.rs`; the two are mirrored field for field,
 // bar `modifier_layout`, so a future export/import has one shape to speak.
 //
 // A preset overrides only the fields the user touched; everything else keeps following the
@@ -116,7 +116,7 @@ public struct SettingsOverlay: Codable, Equatable, Sendable {
     /// Presetable because it is about how a HOST is streamed (a wired desktop can afford
     /// lossless; a phone on cellular cannot), not about this device's hardware.
     ///
-    /// The Rust overlay (`pf-client-core::presets`) carries the same `audio_format` key with the
+    /// The Rust overlay (`ly-client-core::presets`) carries the same `audio_format` key with the
     /// same spellings (`AUDIO_FORMATS`); a value it does not recognise plays as Opus rather than
     /// failing the connect.
     public var audioFormat: String?

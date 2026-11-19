@@ -12,15 +12,15 @@ use super::speed::SpeedState;
 use super::style::*;
 use super::{lucide, saved, Screen, Svc, Target};
 use crate::trust::{HostEdit, KnownHosts, Settings};
-use pf_client_core::discovery::DiscoveredHost;
-use pf_client_core::display_targets::{self, ScreenRow};
-use pf_client_core::host_actions::ActionInfo;
-use pf_client_core::host_status::Status;
-use pf_client_core::orchestrate::{self, HostTarget};
-use pf_client_core::start::{self, StartIn};
-use pf_client_core::trust::KnownHost;
-use pf_fluent::Palette;
-use pf_l10n::{client, common, desktop, host};
+use ly_client_core::discovery::DiscoveredHost;
+use ly_client_core::display_targets::{self, ScreenRow};
+use ly_client_core::host_actions::ActionInfo;
+use ly_client_core::host_status::Status;
+use ly_client_core::orchestrate::{self, HostTarget};
+use ly_client_core::start::{self, StartIn};
+use ly_client_core::trust::KnownHost;
+use ly_fluent::Palette;
+use ly_l10n::{client, common, desktop, host};
 use std::collections::HashMap;
 use std::rc::Rc;
 use windows_reactor::*;
@@ -612,7 +612,7 @@ fn connection_group(
     let mgmt = match k.mgmt_port {
         Some(port) => port.to_string(),
         None => {
-            desktop::desktop_hostcard_mgmt_port_default(pf_client_core::library::DEFAULT_MGMT_PORT)
+            desktop::desktop_hostcard_mgmt_port_default(ly_client_core::library::DEFAULT_MGMT_PORT)
         }
     };
     let clipboard = switch(pal, client::hostcard_share_clipboard(), k.clipboard_sync, {
@@ -628,7 +628,7 @@ fn connection_group(
         }
     });
     let has_pin = !k.fp_hex.is_empty();
-    let link = pf_client_core::deeplink::DeepLink::for_host(k, None, None).to_url();
+    let link = ly_client_core::deeplink::DeepLink::for_host(k, None, None).to_url();
     let rows = vec![
         row(
             pal,
@@ -702,7 +702,7 @@ fn connection_group(
             {
                 let (svc, link) = (svc.clone(), link.clone());
                 move || {
-                    pf_client_core::clipboard::set_text(&link);
+                    ly_client_core::clipboard::set_text(&link);
                     svc.note(client::hostcard_link_copied().to_string());
                 }
             },
@@ -869,7 +869,7 @@ fn power_group(
             move || crate::wol::wake(&target.host.mac, target.host.addr.parse().ok())
         },
     )];
-    for a in pf_client_core::host_actions::cached(&k.fp_hex) {
+    for a in ly_client_core::host_actions::cached(&k.fp_hex) {
         let why = match online {
             false => Some(desktop::desktop_hostcard_offline_hint().to_string()),
             true => a.unavailable_reason.clone().filter(|_| !a.available),
@@ -972,15 +972,15 @@ fn run_host_action(svc: &Svc, target: &Target, a: &ActionInfo) {
     let (svc, target) = (svc.clone(), target.clone());
     svc.note(client::hostcard_action_asking(&label, &target.host.name));
     let _ = std::thread::Builder::new()
-        .name("punktfunk-hostaction".into())
+        .name("lilynk-hostaction".into())
         .spawn(move || {
-            svc.report(pf_client_core::host_actions::run(
+            svc.report(ly_client_core::host_actions::run(
                 &target.host.name,
                 &target.host.addr,
                 target
                     .host
                     .mgmt_port
-                    .unwrap_or(pf_client_core::library::DEFAULT_MGMT_PORT),
+                    .unwrap_or(ly_client_core::library::DEFAULT_MGMT_PORT),
                 target.host.port,
                 &identity,
                 target.host.fp_hex.as_deref().unwrap_or_default(),
@@ -991,23 +991,23 @@ fn run_host_action(svc: &Svc, target: &Target, a: &ActionInfo) {
 }
 
 /// Uploads this device's log ring to the host. Blocking network (bounded by the timeouts of
-/// `pf_client_core::library::agent`), so on a worker thread, the outcome on the status line.
+/// `ly_client_core::library::agent`), so on a worker thread, the outcome on the status line.
 fn send_logs(svc: &Svc, target: &Target) {
     let identity = svc.ctx.identity.clone();
     let (svc, target) = (svc.clone(), target.clone());
     svc.note(client::hostcard_sending_logs(&target.host.name));
     let _ = std::thread::Builder::new()
-        .name("punktfunk-sendlogs".into())
+        .name("lilynk-sendlogs".into())
         .spawn(move || {
-            svc.report(pf_client_core::logring::send_bundle(
-                "punktfunk-client",
+            svc.report(ly_client_core::logring::send_bundle(
+                "lilynk-client",
                 &target.host.name,
                 &target.host.addr,
                 (
                     target
                         .host
                         .mgmt_port
-                        .unwrap_or(pf_client_core::library::DEFAULT_MGMT_PORT),
+                        .unwrap_or(ly_client_core::library::DEFAULT_MGMT_PORT),
                     target.host.port,
                 ),
                 &identity,

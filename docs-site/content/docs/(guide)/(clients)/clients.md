@@ -45,7 +45,7 @@ One app for macOS, iOS, iPadOS, tvOS and visionOS. It adds:
 
 ## Linux desktop client (GTK4)
 
-`punktfunk-client` is a GTK4 app with hardware decode (Vulkan Video or VAAPI, or V4L2
+`lilynk-client` is a GTK4 app with hardware decode (Vulkan Video or VAAPI, or V4L2
 [on ARM](/docs/linux-arm)), PipeWire audio and SDL3 controllers. It adds:
 
 - **Hosts** and **Library** tabs, at the bottom of a narrow window. The Library has a chip for each
@@ -59,7 +59,7 @@ One app for macOS, iOS, iPadOS, tvOS and visionOS. It adds:
 - Keys for the window: **Keyboard shortcuts** in the menu lists them.
 
 For the couch, open **Punktfunk Console**, the gamepad button in the header bar, or run
-`punktfunk-client --browse --fullscreen`. **Controller interface** opens it when a controller
+`lilynk-client --browse --fullscreen`. **Controller interface** opens it when a controller
 connects.
 
 ## Windows desktop client
@@ -103,12 +103,12 @@ Content Store: [install it from the Homebrew Channel](/docs/install-client#lg-we
 
 Any [Moonlight](https://moonlight-stream.org/) client connects over GameStream once the host turns
 it on: see [Connect with Moonlight](/docs/moonlight). The stream is encrypted and adapts to a lossy
-link; the native speed test and jumbo frames are Punktfunk-app only.
+link; the native speed test and jumbo frames are Lilynk-app only.
 
 ## Scripting: the `punktfunk` CLI
 
 `punktfunk` is the client without a window. It ships with every Linux package and the Windows
-installer. Under the Flatpak, run it as `flatpak run --command=punktfunk io.unom.punktfunk`.
+installer. Under the Flatpak, run it as `flatpak run --command=lilynk io.unom.punktfunk`.
 
 ```sh
 punktfunk discover                            # hosts advertising on this network
@@ -135,5 +135,5 @@ A `<host-ref>` is a saved host's id, its name or its address. Also: `hosts add`,
 - Exit codes: **0** ok, **2** connect failed, **3** trust rejected (pair again), **4** the renderer
   didn't start, **5** nothing matched, **6** needs a person (pairing or an unknown host).
 
-Older scripts can keep `punktfunk-client --connect <host>:9777`; on Windows, `--discover` and
+Older scripts can keep `lilynk-client --connect <host>:9777`; on Windows, `--discover` and
 `--headless --speed-test` too. They don't wake a sleeping host.

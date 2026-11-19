@@ -1,14 +1,14 @@
 <#
 .SYNOPSIS
-  Write a version into a built punktfunk-host binary's version slot.
+  Write a version into a built lilynk-host binary's version slot.
 
 .DESCRIPTION
-  The slot is crates/host/punktfunk-host/src/version.rs: a marker, then 64 NUL-padded bytes. CI
+  The slot is crates/host/lilynk-host/src/version.rs: a marker, then 64 NUL-padded bytes. CI
   stamps the finished binary instead of handing cargo a per-run version, which would recompile
   the host on every run. Run it before signing: it rewrites bytes inside the image.
 
 .EXAMPLE
-  pwsh -File stamp-version.ps1 -Path C:\t\x86_64-pc-windows-msvc\release\punktfunk-host.exe -Version 0.40.35051
+  pwsh -File stamp-version.ps1 -Path C:\t\x86_64-pc-windows-msvc\release\lilynk-host.exe -Version 0.40.35051
 #>
 param(
     [Parameter(Mandatory = $true)][string]$Path,
@@ -16,7 +16,7 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 
-$marker = "pf-version-slot`0"
+$marker = "ly-version-slot`0"
 $cap = 64
 $payload = [Text.Encoding]::UTF8.GetBytes($Version)
 if ($payload.Length -ge $cap) { throw "version '$Version' does not fit the $cap-byte slot" }

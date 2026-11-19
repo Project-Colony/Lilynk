@@ -19,16 +19,8 @@ set -euo pipefail
 
 GRANT_SRC="${PUNKTFUNK_GRANT_SRC:-/usr/share/punktfunk/headless/kde-authorized}"
 GRANT_DST="$HOME/.local/share/flatpak/db/kde-authorized"
-# Older versions of this script wrote a session-wide KWIN_WAYLAND_NO_PERMISSION_CHECKS=1 env file to
-# unlock screencast. The shipped .desktop replaces it; remove the stale, over-broad override.
-STALE_ENVD="$HOME/.config/environment.d/10-punktfunk-kwin.conf"
 
 echo "punktfunk: KDE Desktop-mode input setup"
-
-if [[ -f "$STALE_ENVD" ]] && grep -q KWIN_WAYLAND_NO_PERMISSION_CHECKS "$STALE_ENVD" 2>/dev/null; then
-    rm -f "$STALE_ENVD"
-    echo "  removed stale $STALE_ENVD (screencast is now granted via the shipped .desktop)"
-fi
 
 # RemoteDesktop portal grant for headless libei input (never clobber an existing one).
 if [[ -s "$GRANT_DST" ]]; then

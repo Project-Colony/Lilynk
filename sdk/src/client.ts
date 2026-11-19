@@ -1,6 +1,6 @@
 // The Effect-native surface (RFC §7): the `PunktfunkHost` service — a typed management-API
 // client plus the lifecycle-event `Stream` — provided by [`PunktfunkHostLive`]. Wire shapes
-// are the generated Effect Schemas in ./gen/punktfunk.ts, events included; `get` validates a
+// are the generated Effect Schemas in ./gen/lilynk.ts, events included; `get` validates a
 // response against its schema, so host/SDK version skew surfaces as a typed [`VersionSkew`]
 // instead of an `undefined` three frames later.
 import {

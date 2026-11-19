@@ -4,7 +4,7 @@ use jni::errors::LogErrorAndDefault;
 use jni::objects::{JObject, JString};
 use jni::sys::jlong;
 use jni::EnvUnowned;
-use punktfunk_core::quic::{LaunchOutcome, LaunchOutcomeKind};
+use lilynk_core::quic::{LaunchOutcome, LaunchOutcomeKind};
 
 use super::SESSIONS;
 
@@ -50,7 +50,7 @@ fn refusal_json(o: &LaunchOutcome) -> Option<String> {
 #[cfg(test)]
 mod tests {
     use super::refusal_json;
-    use punktfunk_core::quic::{LaunchOutcome, LaunchOutcomeKind as Kind};
+    use lilynk_core::quic::{LaunchOutcome, LaunchOutcomeKind as Kind};
 
     fn parsed(o: &LaunchOutcome) -> serde_json::Value {
         serde_json::from_str(&refusal_json(o).expect("a refusal")).unwrap()

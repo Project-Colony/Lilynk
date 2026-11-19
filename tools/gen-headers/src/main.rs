@@ -1,4 +1,4 @@
-//! `cargo run -p gen-headers`: regenerate `include/punktfunk_core.h` and
+//! `cargo run -p gen-headers`: regenerate `include/lilynk_core.h` and
 //! `include/punktfunk_console.h` from each crate's `cbindgen.toml`. A parse failure
 //! exits non-zero and leaves the checked-in header as it was.
 
@@ -9,7 +9,7 @@ use std::process::ExitCode;
 
 /// (crate dir, header) pairs, relative to the workspace root.
 const HEADERS: [(&str, &str); 2] = [
-    ("crates/client/punktfunk-ffi", "include/punktfunk_core.h"),
+    ("crates/client/lilynk-ffi", "include/lilynk_core.h"),
     ("clients/apple/native", "include/punktfunk_console.h"),
 ];
 
@@ -79,10 +79,10 @@ mod tests {
         let got = code_hash(&String::from_utf8(header).expect("header is utf-8"));
         assert_eq!(
             got,
-            punktfunk_core::ABI_HEADER_HASH,
-            "the C header changed (hash {got:#018x}). In punktfunk-core/src/lib.rs bump \
+            lilynk_core::ABI_HEADER_HASH,
+            "the C header changed (hash {got:#018x}). In lilynk-core/src/lib.rs bump \
              ABI_VERSION and set ABI_HEADER_HASH to this value, then update abi_version_is_pinned \
-             in punktfunk-ffi: one change"
+             in lilynk-ffi: one change"
         );
     }
 }

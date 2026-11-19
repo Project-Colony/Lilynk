@@ -1,5 +1,5 @@
 //! Shared-clipboard plane (text-only v1): Kotlin drives the Android `ClipboardManager`, these
-//! shims drive [`punktfunk_core::client::NativeClient`]'s clipboard surface.
+//! shims drive [`lilynk_core::client::NativeClient`]'s clipboard surface.
 //!
 //! Model (mirrors the desktop clients): opt-in via `nativeClipControl(true)`; local copies are
 //! announced lazily as format-list offers (`nativeClipOfferText`) and the bytes cross only when
@@ -20,9 +20,9 @@ use jni::errors::LogErrorAndDefault;
 use jni::objects::{JObject, JString};
 use jni::sys::{jboolean, jint, jlong};
 use jni::EnvUnowned;
-use punktfunk_core::clipboard::ClipEventCore;
-use punktfunk_core::error::PunktfunkError;
-use punktfunk_core::quic::{ClipKind, CLIP_FILE_INDEX_NONE, HOST_CAP_CLIPBOARD};
+use lilynk_core::clipboard::ClipEventCore;
+use lilynk_core::error::PunktfunkError;
+use lilynk_core::quic::{ClipKind, CLIP_FILE_INDEX_NONE, HOST_CAP_CLIPBOARD};
 
 use super::{jni_guard, SessionHandle, SESSIONS};
 
@@ -243,7 +243,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeNextClip<'l
 #[cfg(test)]
 mod tests {
     use super::*;
-    use punktfunk_core::clipboard::INBOUND_REQ_FLAG;
+    use lilynk_core::clipboard::INBOUND_REQ_FLAG;
     use ClipPoll::{CancelFetch, Line, Nothing};
 
     type Pulled = Result<ClipEventCore, PunktfunkError>;

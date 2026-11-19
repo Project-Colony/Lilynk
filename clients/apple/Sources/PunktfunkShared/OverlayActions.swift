@@ -1,5 +1,5 @@
 // The in-stream quick-action ring's configuration — the `overlay_actions` setting, one JSON blob
-// (schema v2, design/touch-client-overlay.md §3.2). The Swift twin of pf-client-core's
+// (schema v2, design/touch-client-overlay.md §3.2). The Swift twin of ly-client-core's
 // `overlay_actions.rs`; `OverlayActionsTests` replays the shared contract,
 // `clients/shared/overlay-actions-vectors.json`.
 //
@@ -108,7 +108,7 @@ public struct OverlayShortcut: Equatable, Sendable {
 
 /// The Windows virtual-key code a shortcut key name stands for (the wire speaks VKs); `nil` for
 /// a name this build does not know. Twin of the Rust `key_vk`: `OverlayActionsTests` replays
-/// `crates/core/punktfunk-core/testdata/key-vk-vectors.json`, so a new name lands there first.
+/// `crates/core/lilynk-core/testdata/key-vk-vectors.json`, so a new name lands there first.
 public func keyVk(_ name: String) -> UInt32? {
     let n = name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
     switch n {

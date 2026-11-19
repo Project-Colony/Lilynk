@@ -1,5 +1,5 @@
 # Capture a real HID device's report descriptor and decode it into something diffable against the
-# blobs in `crates/host/pf-driver-proto/src/`. A descriptor we ship should be CAPTURED, not
+# blobs in `crates/host/ly-driver-proto/src/`. A descriptor we ship should be CAPTURED, not
 # constructed — this is the tool that captures them.
 #
 # Deliberately NOT a workspace member (see the root `Cargo.toml` `exclude` list): it pulls `hidapi`,

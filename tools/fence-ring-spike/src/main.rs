@@ -19,7 +19,7 @@
 //!         [--secs 20] [--reader-stall-ms 0] [--kill-after 0] [--chaos]`
 //!
 //! Run it once per adapter. The host's driver channel duplicates its sections into WUDFHost
-//! through a handle broker (pf-capture `windows/idd/channel.rs`); this spike inherits handles
+//! through a handle broker (ly-capture `windows/idd/channel.rs`); this spike inherits handles
 //! instead.
 
 #[cfg(not(target_os = "windows"))]

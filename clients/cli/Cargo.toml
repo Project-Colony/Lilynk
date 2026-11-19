@@ -1,5 +1,5 @@
 [package]
-name = "punktfunk-cli"
+name = "lilynk-cli"
 description = "punktfunk — the headless client CLI: pair, list and edit hosts, wake, enumerate a library, start a stream, open a punktfunk:// URL"
 version.workspace = true
 edition.workspace = true
@@ -8,19 +8,19 @@ license.workspace = true
 authors.workspace = true
 repository.workspace = true
 
-# The binary is `punktfunk` — the command users and plugins type. The package follows the
-# workspace's `punktfunk-<role>` naming.
+# The binary is `lilynk` — the command users and plugins type. The package follows the
+# workspace's `lilynk-<role>` naming.
 [[bin]]
-name = "punktfunk"
+name = "lilynk"
 path = "src/main.rs"
 
-# Console subsystem, no GUI toolkit: this links `pf-client-core` (the brain) and nothing else
+# Console subsystem, no GUI toolkit: this links `ly-client-core` (the brain) and nothing else
 # UI-shaped, which is what lets it ship in every client package without dragging GTK, WinUI or
 # Skia along (design/client-architecture-split.md §4).
 [target.'cfg(any(target_os = "linux", windows))'.dependencies]
 base64 = { version = "0.23", default-features = false, features = ["std"] }
-pf-client-core = { path = "../../crates/client/pf-client-core", default-features = false, features = ["desktop"] }
-punktfunk-core = { path = "../../crates/core/punktfunk-core", features = ["quic"] }
+ly-client-core = { path = "../../crates/client/ly-client-core", default-features = false, features = ["desktop"] }
+lilynk-core = { path = "../../crates/core/lilynk-core", features = ["quic"] }
 serde_json = "1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 

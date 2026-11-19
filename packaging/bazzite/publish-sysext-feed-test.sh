@@ -19,8 +19,8 @@ PRIV="$(gpg --batch --pinentry-mode loopback --passphrase '' --armor --export-se
 # The key before a rotation: still listed in FEED_KEY, after the signing key.
 K0="$(gen retired)"
 cp "$SRC/publish-sysext-feed.sh" "$T/pkg/"
-printf "FEED_KEY='%s'\n" "$(gpg --batch --armor --export)" > "$T/pkg/punktfunk-sysext.sh"
-printf 'image' > "$T/punktfunk-2.0.0-x86-64.raw"
+printf "FEED_KEY='%s'\n" "$(gpg --batch --armor --export)" > "$T/pkg/lilynk-sysext.sh"
+printf 'image' > "$T/lilynk-2.0.0-x86-64.raw"
 
 # GET serves $REG/<name>, 404 when absent; DELETE and uploads are logged to $REG/calls.
 cat > "$T/bin/curl" <<'EOF'
@@ -47,8 +47,8 @@ if [ -n "$fmt" ]; then printf '%s' "$code"; fi
 EOF
 chmod +x "$T/bin/curl"
 
-OLD="$(printf '%064d' 1)  punktfunk-1.0.0-x86-64.raw"
-EVIL="$(printf '%064d' 9)  punktfunk-99.0.0-x86-64.raw"
+OLD="$(printf '%064d' 1)  lilynk-1.0.0-x86-64.raw"
+EVIL="$(printf '%064d' 9)  lilynk-99.0.0-x86-64.raw"
 serve() { # serve <feed> <lines…>: a live manifest bound to <feed>, signed by the key in $BY
   rm -f "$REG"/*
   local feed="$1"; shift
@@ -67,38 +67,38 @@ refused() { if [ "$rc" = 0 ] || [ -e "$REG/calls" ]; then fail "$1 was not refus
 # over <case>: the publish went ahead with a manifest holding only its own image.
 over() {
   if [ "$rc" != 0 ] || [ "$(grep -vc '^#' "$REG/put-SHA256SUMS")" != 1 ] \
-    || ! grep -q ' punktfunk-2.0.0-x86-64.raw$' "$REG/put-SHA256SUMS"; then
+    || ! grep -q ' lilynk-2.0.0-x86-64.raw$' "$REG/put-SHA256SUMS"; then
     fail "$1 did not start the feed over"
   fi
 }
 
 rm -f "$REG"/*
-run f43 "$T/punktfunk-2.0.0-x86-64.raw"
+run f43 "$T/lilynk-2.0.0-x86-64.raw"
 if [ "$rc" != 0 ] || ! grep -qx '# FEED f43' "$REG/put-SHA256SUMS" || [ ! -s "$REG/put-SHA256SUMS.asc" ]; then
   fail "a new feed"
 fi
 
 serve f43 "$OLD"
-run f43 "$T/punktfunk-2.0.0-x86-64.raw"
+run f43 "$T/lilynk-2.0.0-x86-64.raw"
 if [ "$rc" != 0 ] || ! grep -qxF "$OLD" "$REG/put-SHA256SUMS"; then fail "a verified line is carried"; fi
 serial="$(sed -n 's/^# SERIAL //p' "$REG/put-SHA256SUMS")"
 [ "$serial" -gt 5 ] || fail "the serial rises above the verified one"
 
 serve f43 "$OLD"
 echo "$EVIL" >> "$REG/SHA256SUMS"
-run f43 "$T/punktfunk-2.0.0-x86-64.raw"; over "a line added after signing"
+run f43 "$T/lilynk-2.0.0-x86-64.raw"; over "a line added after signing"
 serve f43 "$OLD"
 echo "$EVIL" >> "$REG/SHA256SUMS"
 run --seal f43; refused "a seal over a line added after signing"
 
 serve f43-canary "$OLD"
-run f43 "$T/punktfunk-2.0.0-x86-64.raw"; over "a manifest bound to another feed"
+run f43 "$T/lilynk-2.0.0-x86-64.raw"; over "a manifest bound to another feed"
 
 # A run cut between its manifest and its signature.
 serve f43 "$OLD"
 rm "$REG/SHA256SUMS.asc"
 run --seal f43; refused "a manifest with no signature"
-run f43 "$T/punktfunk-2.0.0-x86-64.raw"; over "a manifest with no signature"
+run f43 "$T/lilynk-2.0.0-x86-64.raw"; over "a manifest with no signature"
 
 serve f43 "$OLD"
 run --seal f43

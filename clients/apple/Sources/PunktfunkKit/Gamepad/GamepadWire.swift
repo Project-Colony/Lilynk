@@ -4,7 +4,7 @@
 import Foundation
 import PunktfunkCore
 
-/// The gamepad wire contract: `punktfunk_core::input::gamepad`, read from the C header.
+/// The gamepad wire contract: `lilynk_core::input::gamepad`, read from the C header.
 public enum GamepadWire {
     /// Gamepads addressable on the wire — the pad index rides the low byte of `flags` on every
     /// per-pad event, 0...15.
@@ -33,7 +33,7 @@ public enum GamepadWire {
     public static let misc1 = UInt32(PUNKTFUNK_BTN_MISC1)
     /// What a synthetic Quick Access tap presses, in order. A pad with the button takes
     /// `misc1`. Every other pad takes the chord Steam reads there: Guide held, then A.
-    /// Mirrors punktfunk-core's `quick_access_presses`.
+    /// Mirrors lilynk-core's `quick_access_presses`.
     public static func quickAccessPresses(hasButton: Bool) -> [UInt32] {
         hasButton ? [misc1] : [guide, a]
     }

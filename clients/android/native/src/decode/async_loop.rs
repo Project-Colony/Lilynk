@@ -1,14 +1,14 @@
 //! The event-driven async MediaCodec decode loop (default) + its feeder/dispatch/present helpers.
 
+use lilynk_core::client::{Decoded, NativeClient};
+use lilynk_core::error::PunktfunkError;
+use lilynk_core::reanchor::{self, AnchorEvidence, DecoderClass, LocalRecovery};
+use lilynk_core::session::Frame;
+use ly_bitstream::av1::conceal::Av1Concealer;
+use ly_bitstream::h265::conceal::{Concealment, H265Concealer};
+use ly_bitstream::h265::poc_widen::PocWidener;
 use ndk::media::media_codec::{AsyncNotifyCallback, MediaCodec, MediaCodecDirection};
 use ndk::native_window::NativeWindow;
-use pf_bitstream::av1::conceal::Av1Concealer;
-use pf_bitstream::h265::conceal::{Concealment, H265Concealer};
-use pf_bitstream::h265::poc_widen::PocWidener;
-use punktfunk_core::client::{Decoded, NativeClient};
-use punktfunk_core::error::PunktfunkError;
-use punktfunk_core::reanchor::{self, AnchorEvidence, DecoderClass, LocalRecovery};
-use punktfunk_core::session::Frame;
 use std::collections::VecDeque;
 use std::sync::atomic::{AtomicBool, AtomicI64, AtomicU64, AtomicU8, AtomicUsize, Ordering};
 use std::sync::{mpsc, Arc, Mutex};
@@ -41,7 +41,7 @@ use crate::present::verdict::Verdict;
 use crate::run_end::{after_failure, ending, Ending, Retry};
 use crate::rung_memory::{Key, Memory};
 use crate::sys::{now_monotonic_ns, sysprop};
-use punktfunk_core::quic::ColorInfo;
+use lilynk_core::quic::ColorInfo;
 
 /// One decoded output buffer ready to release: its codec buffer index + the pts the codec echoed
 /// (from the output callback's `BufferInfo`), used to pair the `decode` HUD stat, and the
@@ -139,7 +139,7 @@ fn install_async_callbacks(codec: &mut MediaCodec, ev_tx: &mpsc::Sender<DecodeEv
                 // Its monotonic twin, from the same instant. The stats are REALTIME (they
                 // fold the host's clock offset in), while the cadence loop and
                 // `releaseOutputBufferAtTime` are both CLOCK_MONOTONIC — and the loop is fed
-                // and read in one domain, never converted (`punktfunk_core::phase`: a
+                // and read in one domain, never converted (`lilynk_core::phase`: a
                 // constant offset between domains is what its offset estimator absorbs).
                 decoded_mono_ns: now_monotonic_ns(),
             });
@@ -1172,13 +1172,13 @@ impl DecodeTally {
 
 /// The receiver rule's decoder class for this session ([`Intake`]): AV1 only, strict on
 /// `c2.google.av1.decoder` (every Tensor) and Realtek's, lenient on the rest. Realtek's hangs on
-/// the first wave frame after a loss. `debug.punktfunk.au_admission` = `strict` / `lenient` /
+/// the first wave frame after a loss. `debug.lilynk.au_admission` = `strict` / `lenient` /
 /// `off` overrides the pick.
 fn admission(codec: u8, decoder: &str) -> Option<DecoderClass> {
-    if codec != punktfunk_core::quic::CODEC_AV1 {
+    if codec != lilynk_core::quic::CODEC_AV1 {
         return None;
     }
-    let class = match sysprop(c"debug.punktfunk.au_admission").as_deref() {
+    let class = match sysprop(c"debug.lilynk.au_admission").as_deref() {
         Some("off") => return None,
         Some("strict") => DecoderClass::Strict,
         Some("lenient") => DecoderClass::Lenient,
@@ -1198,12 +1198,12 @@ fn admission(codec: u8, decoder: &str) -> Option<DecoderClass> {
 /// Tails a decoder hung or failed under in this process ([`Tail::bit`]).
 static TAILS_BLOCKED: AtomicU8 = AtomicU8::new(0);
 
-/// The tail for this run. `debug.punktfunk.au_tail` = `off` / `fill` / `aud` names it; `trial`
+/// The tail for this run. `debug.lilynk.au_tail` = `off` / `fill` / `aud` names it; `trial`
 /// reads the delimiter on any decoder. Unset, a Realtek decoder gets the delimiter on H.264 and
 /// HEVC, read once against none: it returns each picture when the next AU is fed. The
 /// `pf.decode` line's `held` counts the outputs that waited either way.
 fn hold_trial(codec: u8, decoder: &str) -> Trial {
-    let prop = sysprop(c"debug.punktfunk.au_tail");
+    let prop = sysprop(c"debug.lilynk.au_tail");
     if let Some(tail) = prop.as_deref().and_then(Tail::named) {
         log::info!("decode: each AU is fed with tail {}", tail.label());
         return Trial::fixed(tail);
@@ -1218,9 +1218,9 @@ fn hold_trial(codec: u8, decoder: &str) -> Trial {
 
 /// The POC widener for this session: HEVC on an Amlogic decoder, which loses a long-term
 /// reference behind a POC lsb wrap and then shows nothing until the next IDR.
-/// `debug.punktfunk.poc_widen` = `on` / `off` overrides the pick.
+/// `debug.lilynk.poc_widen` = `on` / `off` overrides the pick.
 fn poc_widener(codec: u8, decoder: &str) -> Option<PocWidener> {
-    let forced = match sysprop(c"debug.punktfunk.poc_widen").as_deref() {
+    let forced = match sysprop(c"debug.lilynk.poc_widen").as_deref() {
         Some("on") => Some(true),
         Some("off") => Some(false),
         _ => None,
@@ -1255,9 +1255,9 @@ impl Concealer {
 }
 
 /// The concealer for this session ([`crate::codec_format::conceals`]); `strict` is the AV1
-/// receiver rule's class. `debug.punktfunk.conceal` = `on` / `off` overrides the pick.
+/// receiver rule's class. `debug.lilynk.conceal` = `on` / `off` overrides the pick.
 fn concealer(codec: u8, decoder: &str, strict: bool) -> Option<Concealer> {
-    let forced = match sysprop(c"debug.punktfunk.conceal").as_deref() {
+    let forced = match sysprop(c"debug.lilynk.conceal").as_deref() {
         Some("on") => Some(true),
         Some("off") => Some(false),
         _ => None,
@@ -1266,7 +1266,7 @@ fn concealer(codec: u8, decoder: &str, strict: bool) -> Option<Concealer> {
         return None;
     }
     log::info!("decode: lost references concealed in the bitstream for {decoder}");
-    Some(if codec == punktfunk_core::quic::CODEC_AV1 {
+    Some(if codec == lilynk_core::quic::CODEC_AV1 {
         Concealer::Av1(Box::default())
     } else {
         Concealer::H265(Box::new(H265Concealer::new()))
@@ -1280,7 +1280,7 @@ fn conceal_verdict(conceal: &Option<Concealer>, f: &Frame) -> Option<reanchor::C
     let Some(Concealer::Av1(c)) = conceal else {
         return None;
     };
-    let wave_start = f.flags & punktfunk_core::packet::USER_FLAG_RECOVERY_POINT != 0;
+    let wave_start = f.flags & lilynk_core::packet::USER_FLAG_RECOVERY_POINT != 0;
     (f.part.is_none() && wave_start && c.error_resilient(&f.data))
         .then_some(reanchor::Concealment::Decodable)
 }
@@ -1657,12 +1657,12 @@ impl State {
         // A keyframe needs no reference. Anything else fed after a loss may name the lost AU.
         if piece.keyframe {
             self.loss_open = false;
-            let av1 = ctx.client.video_format().codec == punktfunk_core::quic::CODEC_AV1;
+            let av1 = ctx.client.video_format().codec == lilynk_core::quic::CODEC_AV1;
             self.av1_render = render_after(self.av1_render, av1, || {
-                pf_bitstream::av1::render_size(&frame.data)
+                ly_bitstream::av1::render_size(&frame.data)
             });
             let colour = colour_after(self.stream_colour, av1, || {
-                pf_bitstream::av1::sequence_info(&frame.data).map(|s| ColorInfo {
+                ly_bitstream::av1::sequence_info(&frame.data).map(|s| ColorInfo {
                     primaries: s.color_primaries,
                     transfer: s.transfer_characteristics,
                     matrix: s.matrix_coefficients,

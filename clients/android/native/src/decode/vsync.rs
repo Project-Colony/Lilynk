@@ -42,7 +42,7 @@ pub(super) struct VsyncShared {
     period_ns: AtomicI64,
     /// The panel's own refresh period — the grid SurfaceFlinger actually latches on (0 = unknown).
     /// Seeded from the display mode Kotlin resolved at stream start and then corrected by
-    /// measurement; the learner itself is [`punktfunk_core::phase::PanelGrid`], owned by the
+    /// measurement; the learner itself is [`lilynk_core::phase::PanelGrid`], owned by the
     /// choreographer thread (see [`CallbackCtx::panel`]) and published here for the decode loop.
     panel_period_ns: AtomicI64,
     /// Callback count, for the one-shot cadence diagnostic log.
@@ -204,7 +204,7 @@ struct CallbackCtx {
     /// one thread — callbacks only ever fire inside this thread's looper poll (see the struct
     /// doc) — and its streak state is nobody else's business; only the settled period is
     /// published, to `shared.panel_period_ns`.
-    panel: std::cell::Cell<punktfunk_core::phase::PanelGrid>,
+    panel: std::cell::Cell<lilynk_core::phase::PanelGrid>,
 }
 
 impl CallbackCtx {
@@ -352,7 +352,7 @@ impl VsyncClock {
             last_vsync_ns: AtomicI64::new(0),
             period_ns: AtomicI64::new(0),
             panel_period_ns: AtomicI64::new(
-                punktfunk_core::phase::PanelGrid::seeded(panel_hz).period_ns(),
+                lilynk_core::phase::PanelGrid::seeded(panel_hz).period_ns(),
             ),
             ticks: std::sync::atomic::AtomicU32::new(0),
             timelines: Mutex::new(Vec::new()),
@@ -375,7 +375,7 @@ impl VsyncClock {
                     choreographer,
                     shared: thread_shared,
                     on_tick,
-                    panel: std::cell::Cell::new(punktfunk_core::phase::PanelGrid::seeded(panel_hz)),
+                    panel: std::cell::Cell::new(lilynk_core::phase::PanelGrid::seeded(panel_hz)),
                 };
                 ctx.repost();
                 // The bounded poll doubles as the stop check: no cross-thread wake needed, worst

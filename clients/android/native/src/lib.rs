@@ -1,8 +1,8 @@
-//! punktfunk Android client — the JNI bridge ("nativecore") over `punktfunk-core`.
+//! punktfunk Android client — the JNI bridge ("nativecore") over `lilynk-core`.
 //!
-//! Architecture: the **Rust-heavy** client model (like `punktfunk-client-linux`, *not* the
-//! thin-native-over-C-ABI Apple model). This `cdylib` links `punktfunk-core` directly and drives
-//! the whole `punktfunk/1` protocol through [`punktfunk_core::client::NativeClient`]; Kotlin owns
+//! Architecture: the **Rust-heavy** client model (like `lilynk-client-linux`, *not* the
+//! thin-native-over-C-ABI Apple model). This `cdylib` links `lilynk-core` directly and drives
+//! the whole `punktfunk/1` protocol through [`lilynk_core::client::NativeClient`]; Kotlin owns
 //! only the Android-framework surface (Compose UI, `SurfaceView` lifecycle, input capture, the
 //! Wi-Fi `MulticastLock` + permission UX, Keystore). The JNI seam below is the one place the two
 //! languages meet.
@@ -39,7 +39,7 @@ mod codec_format;
 // `decode`'s colour tags, `test`-gated like `au_intake` so their tables run off-device.
 #[cfg(any(target_os = "android", test))]
 mod colour;
-// The Skia console UI host (design/android-skia-console-port.md): the shared `pf-console-ui`
+// The Skia console UI host (design/android-skia-console-port.md): the shared `ly-console-ui`
 // shell over EGL/GLES, on every ABI (the armv7 Skia archive is self-hosted — see Cargo.toml).
 #[cfg(target_os = "android")]
 mod console;
@@ -65,7 +65,7 @@ mod audio_policy;
 mod bring_up;
 #[cfg(target_os = "android")]
 mod decode;
-// Gated like `pf_client_core::discovery`, the browse it folds: the Linux and Windows host builds
+// Gated like `ly_client_core::discovery`, the browse it folds: the Linux and Windows host builds
 // link the JNI seam and run its tests. Kotlin only ever calls it on device.
 #[cfg(any(target_os = "linux", windows, target_os = "android"))]
 mod discovery;
@@ -110,19 +110,19 @@ mod sys;
 // `decode`'s vsync clock arithmetic, `test`-gated like `au_intake` so its table runs off-device.
 #[cfg(any(target_os = "android", test))]
 mod vsync_grid;
-// Ungated: pure `jni` + `punktfunk_core::wol` (no Android framework), so it links
+// Ungated: pure `jni` + `lilynk_core::wol` (no Android framework), so it links
 // into the host workspace build too. Kotlin only ever calls it on device.
 mod wol;
-// Ungated like `wol`: pure `jni` + `punktfunk_core::client::mgmt`.
+// Ungated like `wol`: pure `jni` + `lilynk_core::client::mgmt`.
 mod mgmt;
-// Ungated like `wol`: pure `jni` + `punktfunk_core::client` (the reachability probe). Kotlin calls
+// Ungated like `wol`: pure `jni` + `lilynk_core::client` (the reachability probe). Kotlin calls
 // it off the main thread to light saved-host "online" pips independently of mDNS.
 mod probe;
-// Ungated like `wol`: pure `jni` + `punktfunk_core::pyrowave`, so its test runs on the host.
+// Ungated like `wol`: pure `jni` + `lilynk_core::pyrowave`, so its test runs on the host.
 mod pyrowave_quality;
 
 /// Every `log` record, teed: to logcat (via [`android_logger::AndroidLogger`]), into
-/// `pf_client_core::logring` and into the log file ([`logs::append`]) — the sources for "Send
+/// `ly_client_core::logring` and into the log file ([`logs::append`]) — the sources for "Send
 /// logs to host" ([`logs`]). The line mirrors the desktop `logring::RingLayer`'s shape (wallclock,
 /// level, target, message) so a bundle reads the same on the host's Logs page whichever client
 /// sent it. All three sinks share the crate's Info ceiling — the bundle gets exactly what
@@ -140,13 +140,13 @@ impl log::Log for RingTee {
         self.0.log(record);
         let line = format!(
             "{} {:5} {} {}",
-            pf_client_core::logring::wallclock(),
+            ly_client_core::logring::wallclock(),
             record.level().as_str(),
             record.target(),
             record.args()
         );
         logs::append(&line);
-        pf_client_core::logring::note(line);
+        ly_client_core::logring::note(line);
     }
 
     fn flush(&self) {
@@ -193,8 +193,8 @@ pub extern "system" fn JNI_OnLoad(
         default_panic(info);
     }));
     log::info!(
-        "punktfunk_android loaded (core ABI v{})",
-        punktfunk_core::ABI_VERSION
+        "lilynk_android loaded (core ABI v{})",
+        lilynk_core::ABI_VERSION
     );
     jni::sys::JNI_VERSION_1_6
 }
@@ -225,7 +225,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSetLanguage
         let tags = tags.try_to_string(env)?;
         match serde_json::from_str::<Vec<String>>(&tags) {
             Ok(tags) => {
-                pf_l10n::set_languages(&tags);
+                ly_l10n::set_languages(&tags);
             }
             Err(e) => log::warn!("nativeSetLanguages: not a JSON array of tags: {e}"),
         }

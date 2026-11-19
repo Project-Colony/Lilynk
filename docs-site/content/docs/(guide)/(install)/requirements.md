@@ -19,7 +19,7 @@ feature, is in the [Support matrix](/docs/support-matrix).
 | [NixOS](/docs/nixos) | 24.11 or newer, `x86_64-linux` |
 | [Windows](/docs/windows-host) | Windows 11 22H2 (build 22621) or newer, x64. Windows 10 isn't supported |
 
-On Linux the desktop sets the floor, not the package. **Ubuntu 24.04** installs `punktfunk-host`
+On Linux the desktop sets the floor, not the package. **Ubuntu 24.04** installs `lilynk-host`
 but can't stream: its KWin 5.27 and GNOME 46 are below the [desktop floors](#desktop), and there is
 no gamescope for it. **Debian 12** is below the package's glibc (2.39).
 
@@ -51,7 +51,7 @@ starts per client. On a box that boots to no session, set `PUNKTFUNK_COMPOSITOR=
 | [niri](/docs/niri) | The [biri](/docs/niri#get-biri) fork, built 2026-09-04 or later; stock niri can't host |
 | [Umbriel](/docs/umbriel) | Built 2026-09-28 or later; streams need a GPU encoder |
 | [Omarchy](/docs/omarchy) | Omarchy 4.0 |
-| [gamescope](/docs/gamescope) | 3.16.22; 3.16.23 for the Steam overlay; HDR needs `punktfunk-gamescope` |
+| [gamescope](/docs/gamescope) | 3.16.22; 3.16.23 for the Steam overlay; HDR needs `lilynk-gamescope` |
 | Cinnamon | Can't host ([above](#cinnamon-linux-mint-and-lmde)) |
 
 On Hyprland with `ecosystem.enforce_permissions` turned on, grant the host screencopy and virtual
@@ -70,7 +70,7 @@ newer, including Arc, encoding needs the HuC firmware loaded: check `dmesg | gre
 fails. GeForce cards cap how many NVENC sessions run at once, which matters only when many devices
 stream together.
 
-HDR on Linux needs gamescope with `punktfunk-gamescope`, Hyprland, or GNOME 50 mirroring a real HDR
+HDR on Linux needs gamescope with `lilynk-gamescope`, Hyprland, or GNOME 50 mirroring a real HDR
 monitor: [HDR](/docs/hdr).
 
 ## Network

@@ -14,12 +14,12 @@ can hold: how the packages are built, and the traps.
 
 | Output | Contents |
 | --- | --- |
-| `packages.…punktfunk-host` | `punktfunk-host` + `punktfunk-tray`, built with `nvenc` + `vulkan-encode` like CI |
-| `packages.…punktfunk-client` | `punktfunk-client` (GTK4 shell) + `punktfunk-session` (without the Skia OSD — see below) |
-| `packages.…punktfunk-web` | the management console (bun-built Nitro SSR bundle) |
-| `packages.…punktfunk-scripting` | the plugin/script runner (bun-bundled Effect SDK) |
-| `packages.…punktfunk-seats` | the seat supervisor, the door's helper, their units, tmpfiles rules and polkit rule, rewritten to the store path. The module points the door's host and console units at its own packages |
-| `nixosModules.default` | `services.punktfunk.host` / `.client` / `.web` / `.scripting` / `.seats` |
+| `packages.…lilynk-host` | `lilynk-host` + `lilynk-tray`, built with `nvenc` + `vulkan-encode` like CI |
+| `packages.…lilynk-client` | `lilynk-client` (GTK4 shell) + `lilynk-session` (without the Skia OSD — see below) |
+| `packages.…lilynk-web` | the management console (bun-built Nitro SSR bundle) |
+| `packages.…lilynk-scripting` | the plugin/script runner (bun-bundled Effect SDK) |
+| `packages.…lilynk-seats` | the seat supervisor, the door's helper, their units, tmpfiles rules and polkit rule, rewritten to the store path. The module points the door's host and console units at its own packages |
+| `nixosModules.default` | `services.lilynk.host` / `.client` / `.web` / `.scripting` / `.seats` |
 | `devShells.…default` | pinned Rust from `rust-toolchain.toml` + every system library |
 | `checks.…nixos-module` | evaluates the module against real nixpkgs and asserts on the rendered units |
 | `checks.…nixos-vm` | boots the module with the real packages in a VM: the user units run, the runner keeps its sandbox. Builds the host; CI runs it under the `ci:nix-rust` label |
@@ -63,7 +63,7 @@ it built; a release carries the lock it was tagged with. Overlays or config that
 PipeWire or another dependency still miss. The web console and runner load no driver and come from
 the cache either way. `packages.…` stay pinned for `nix build` and `nix run`.
 
-**`punktfunk.inputs.nixpkgs.follows` turns the rest of the cache off.** Every store path is keyed by
+**`lilynk.inputs.nixpkgs.follows` turns the rest of the cache off.** Every store path is keyed by
 the exact inputs it was built from, so pointing punktfunk's nixpkgs at yours makes every path miss.
 It buys one shared nixpkgs in the closure instead of two.
 
@@ -75,8 +75,8 @@ protocol, so any nix client works with it.
 
 ```sh
 nix develop        # pinned toolchain + all system libs
-cargo build --release -p punktfunk-host -p punktfunk-client-linux -p punktfunk-client-session
-cargo build --release -p punktfunk-tray     # its OWN invocation — see below
+cargo build --release -p lilynk-host -p lilynk-client-linux -p lilynk-client-session
+cargo build --release -p lilynk-tray     # its OWN invocation — see below
 ```
 
 The shell exports an `LD_LIBRARY_PATH` including `/run/opengl-driver/lib` so `cargo run` finds the
@@ -84,11 +84,11 @@ GPU driver. `nix fmt` formats the `.nix` files.
 
 ## Traps
 
-- **The tray builds in its own derivation, on purpose.** `punktfunk-tray` uses `ksni`'s `async-io`
+- **The tray builds in its own derivation, on purpose.** `lilynk-tray` uses `ksni`'s `async-io`
   zbus executor with no tokio runtime. Cargo unifies features across one `cargo build`, so
   co-building it with the host pulls the host's `ashpd → zbus/tokio` onto the tray's shared `zbus`,
   and the tray then panics at startup: *there is no reactor running*. A separate
-  `-p punktfunk-tray` invocation keeps its `zbus` on async-io; the host package copies the binary
+  `-p lilynk-tray` invocation keeps its `zbus` on async-io; the host package copies the binary
   into its `$out`. The rpm and Arch builds split it the same way — and the `.deb` did **not**,
   despite comments claiming otherwise, so this shipped as a real crash-at-launch on Debian/Ubuntu
   until 2026-07-27.
@@ -111,7 +111,7 @@ GPU driver. `nix fmt` formats the `.nix` files.
   install), and never on a **merge or rebase**, where git carries someone else's `bun.lock` change
   past a `bun.nix` generated before it and reports no conflict. That is how `web/bun.nix` shipped on
   main holding `brace-expansion@5.0.7` against a lockfile saying `5.0.8` for **553 commits**, with
-  `nix build .#punktfunk-web` broken the whole time, until an unrelated bump happened to close it by
+  `nix build .#lilynk-web` broken the whole time, until an unrelated bump happened to close it by
   accident.
 
   The enforcement point is **`scripts/ci/check-bun-nix.sh`** (the `bun-nix` job in `ci.yml`,
@@ -147,7 +147,7 @@ GPU driver. `nix fmt` formats the `.nix` files.
 
 CI runs three tiers (`nix.yml`): `nix flake check --no-build` evaluates every output including the
 module check; the two bun packages are built for real on every PR; and a `v*` tag, the nightly or a
-dispatch on `main` builds the Rust packages and `punktfunk-gamescope` and publishes them to the
+dispatch on `main` builds the Rust packages and `lilynk-gamescope` and publishes them to the
 cache. A `flake.lock` bump that breaks the gamescope patches therefore goes red within a day rather
 than in an operator's rebuild.
 

@@ -39,7 +39,7 @@ import kotlinx.coroutines.withContext
  * The start-of-stream banner's two moments: [up] composes the pill at all, [alpha] runs it down
  * over the last 600 ms. A stream takes the whole screen and answers to none of the device's usual
  * gestures, so the banner says once how to get back out. The desktop console draws the same pill
- * for the same reason (`pf-console-ui/src/skia_overlay.rs`, `BANNER_S` with a `BANNER_FADE_S`
+ * for the same reason (`ly-console-ui/src/skia_overlay.rs`, `BANNER_S` with a `BANNER_FADE_S`
  * tail).
  */
 internal class StartBanner(up: State<Boolean>, alpha: State<Float>) {

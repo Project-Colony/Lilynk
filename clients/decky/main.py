@@ -1,6 +1,6 @@
 """Punktfunk Decky plugin: the backend bridge the Gaming-Mode panel calls (``src/backend.ts``).
 
-Each method delegates to ``py_modules/pf_decky``. The method names, their parameters and
+Each method delegates to ``py_modules/ly_decky``. The method names, their parameters and
 defaults, and the result shapes are the frontend's contract. Decky appends ``py_modules`` to
 ``sys.path`` and loads this file as module ``_``, so the package is importable and this file is
 not: nothing may import ``main``.
@@ -12,11 +12,11 @@ live in the client's own console home.
 """
 
 import decky
-from pf_decky import art, client, session, steam_input, update
+from ly_decky import art, client, session, steam_input, update
 
 
 class Plugin:
-    # The headless CLI: build argv, run, map the exit code (pf_decky.client).
+    # The headless CLI: build argv, run, map the exit code (ly_decky.client).
 
     async def discover(self) -> dict:
         return await client.discover()

@@ -112,7 +112,7 @@ enum IntentError: Error, CustomLocalizedStringResourceConvertible {
 /// embed a second arbitrary `AppEntity`, so the preset is picked in the Shortcuts editor. Both
 /// limits checked on Xcode 27.1.
 ///
-/// A phrase must be a string literal. `AppShortcuts.xcstrings`, which `pf-l10n` writes from the
+/// A phrase must be a string literal. `AppShortcuts.xcstrings`, which `ly-l10n` writes from the
 /// `apple_shortcut_*_phrase` messages, is keyed by these exact English phrases.
 struct PunktfunkShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {

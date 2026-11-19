@@ -134,7 +134,7 @@ record id, `host=` and, once pinned, `fp=`, so it survives an address change or 
 
 - **Linux**: a desktop entry in `~/.local/share/applications/`, from the host page or a game's
   details. Under Flatpak the app shows the URL for you to place yourself.
-- **Windows**: a `.lnk` on your Desktop that runs `punktfunk-client.exe` with the URL.
+- **Windows**: a `.lnk` on your Desktop that runs `lilynk-client.exe` with the URL.
 - **Android**: a home-screen shortcut with the game's cover, from a game's **Details…** (long-press
   the game in the library, or open its card in the controller interface). Android TV launchers
   don't take shortcuts.

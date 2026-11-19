@@ -89,7 +89,7 @@ signed-in user's full administrator rights, without a UAC prompt. Turn it on onc
 an administrator PowerShell:
 
 ```powershell
-punktfunk-host hooks elevated on
+lilynk-host hooks elevated on
 ```
 
 Until then the console can't save an elevated hook, and the host skips one written by hand: the
@@ -140,7 +140,7 @@ Plugins hold the same stage: see [Writing plugins](/docs/developers/writing-plug
 
 One invalid entry disables every hook: the log says `hooks.json invalid — hooks disabled until
 fixed` and names the entry. Read it on the console's **Troubleshooting** page or with
-`journalctl --user -u punktfunk-host`. Log lines name a hook by its program or the webhook's
+`journalctl --user -u lilynk-host`. Log lines name a hook by its program or the webhook's
 `scheme://host`, never its arguments or URL path. A `client` filter that never matches is logged
 with the name the event carried.
 

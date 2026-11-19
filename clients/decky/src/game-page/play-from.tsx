@@ -197,7 +197,7 @@ export function openPlayFromMenu(overview: Overview, anchor?: EventTarget): void
 
 // ---- The Play button ------------------------------------------------------------------------
 
-const DROPDOWN_KEY = "punktfunk-play-from";
+const DROPDOWN_KEY = "lilynk-play-from";
 
 /** Steam's ▾ where Steam left it out: the main button's own component in Steam's selector
  *  classes, in Steam's place after the button and before the explainer. False when the output
@@ -282,7 +282,7 @@ const playButtonPatcher = createRenderPatcher((out, self) => {
     return out;
   }
   const streaming = isGameStreaming(game.appId);
-  main.props.className = `${main.props.className ?? ""} punktfunk-play`;
+  main.props.className = `${main.props.className ?? ""} lilynk-play`;
   main.props.onClick = () => (streaming ? stopGameStream(game.appId) : streamFrom(host, game));
   const kids = main.props.children as any[];
   const iconIdx = kids.findIndex((k) => k && typeof k === "object" && k.type && typeof k.type !== "string");

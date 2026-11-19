@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-// Verifies the console handoff ticket `punktfunk-host ctl console-url` mints, keyed by the
+// Verifies the console handoff ticket `lilynk-host ctl console-url` mints, keyed by the
 // management token both sides already hold. The ticket never enters browser argv, where
 // /proc/<pid>/cmdline would expose it to other local users: the host writes it into a 0600 page
 // under $XDG_RUNTIME_DIR and the browser is launched at that file.

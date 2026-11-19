@@ -544,7 +544,7 @@ final class MgmtConnection: @unchecked Sendable {
         // An IPv6 literal is bracketed in the Host header (RFC 9110 §7.2); a name or IPv4 is not.
         let authority = host.contains(":") ? "[\(host)]:\(port)" : "\(host):\(port)"
         var head = "\(method) \(path) HTTP/1.1\r\nHost: \(authority)\r\n"
-            + "User-Agent: punktfunk-apple\r\nAccept: */*\r\n"
+            + "User-Agent: lilynk-apple\r\nAccept: */*\r\n"
         if let body {
             // Always framed by length — a request body has no EOF to end it on a kept-alive
             // connection, and the host's axum would otherwise wait for one.

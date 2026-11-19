@@ -108,7 +108,7 @@ fun App(forceGamepadUi: Boolean = false) {
     val tv = remember { isTvDevice(context) }
     val controllerConnected by rememberControllerConnected()
     // …AND the native console host is in this build (every shipping ABI today; the sysprop
-    // `debug.punktfunk.console_backend=none` forces the touch UI for on-glass triage). Without a
+    // `debug.lilynk.console_backend=none` forces the touch UI for on-glass triage). Without a
     // console to draw, a controller drives the touch UI through Compose's own focus.
     val skiaConsole = remember { SkiaConsole.wanted() }
     // …AND it actually came up: a console whose native create failed or whose render thread died

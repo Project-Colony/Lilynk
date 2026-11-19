@@ -5,7 +5,7 @@
 //! Hello signs with RSA PKCS#1 v1.5 over SHA-256 of the data, and its `Pkcs1RsaPublicKey`
 //! blob is the DER `RSAPublicKey` the host verifies with.
 
-use pf_client_core::unlock::DeviceKeys;
+use ly_client_core::unlock::DeviceKeys;
 use windows::core::HSTRING;
 use windows::Security::Credentials::{
     KeyCredential, KeyCredentialCreationOption, KeyCredentialManager, KeyCredentialStatus,

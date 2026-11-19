@@ -1,5 +1,5 @@
 // The host's sentences worded by id, replayed from `clients/shared/host-text-vectors.json` (the
-// vectors `crates/client/pf-client-core/src/host_text.rs` and the Kotlin `HostTextTest` run too).
+// vectors `crates/client/ly-client-core/src/host_text.rs` and the Kotlin `HostTextTest` run too).
 
 import PunktfunkCore
 import PunktfunkKit

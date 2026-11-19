@@ -58,7 +58,7 @@ function pluginUiDevProxy(): Plugin {
 		});
 
 	return {
-		name: "punktfunk-plugin-ui-dev-proxy",
+		name: "lilynk-plugin-ui-dev-proxy",
 		configureServer(server) {
 			server.middlewares.use("/plugin-ui", async (req, res) => {
 				// Through Vite rather than a config import: server code imports without extensions.
@@ -168,7 +168,7 @@ function dropUnomSoundSprites(): Plugin {
 	const SPRITE_URL =
 		/new URL\(\s*(["'])[^"']*\.(?:wav|mp3)\1\s*,\s*import\.meta\.url\s*\)\.href/g;
 	return {
-		name: "punktfunk-drop-unom-sound-sprites",
+		name: "lilynk-drop-unom-sound-sprites",
 		enforce: "pre",
 		transform(code, id) {
 			if (!DEFAULTS.test(id)) return null;
@@ -228,7 +228,7 @@ export default defineConfig({
 			// `Bun.serve({ tls })` so the console is served over HTTPS (HTTP/1.1 over TLS) with the
 			// host's own identity cert. (No HTTP/2 — Bun.serve has no h2 server — and no HTTP/3, which a
 			// browser won't speak against a self-signed host cert.) Bun is the runtime
-			// everywhere — the Windows installer bundles it, and the punktfunk-web .deb
+			// everywhere — the Windows installer bundles it, and the lilynk-web .deb
 			// vendors it (it can't be `node`: `Bun.serve` is a bun API). (dev `vite dev` is unaffected.)
 			preset: "bun",
 			entry: fileURLToPath(

@@ -42,9 +42,9 @@
 
   "firewall": {
     "$comment": "Service/profile names the Linux packages install for firewalld and ufw — the packages never open a port themselves.",
-    "native": "punktfunk-native",
-    "gamestream": "punktfunk-gamestream",
-    "web": "punktfunk-web"
+    "native": "lilynk-native",
+    "gamestream": "lilynk-gamestream",
+    "web": "lilynk-web"
   },
 
   "installer": {
@@ -64,7 +64,7 @@
 
   "conflicts": {
     "hosts": ["Sunshine", "Apollo", "Vibeshine"],
-    "detect": "punktfunk-host detect-conflicts",
+    "detect": "lilynk-host detect-conflicts",
     "detectExit": "1 only when a conflicting host runs or will start on its own; dormant leftovers print but exit 0",
     "docs": "/docs/switching-from-sunshine"
   },
@@ -80,10 +80,10 @@
       "repo": "https://git.unom.io/api/packages/unom/debian",
       "install": [
         "sudo install -d -m 0755 /etc/apt/keyrings",
-        "curl -fsSL https://git.unom.io/api/packages/unom/debian/repository.key | sudo tee /etc/apt/keyrings/punktfunk.asc >/dev/null",
-        "echo \"deb [signed-by=/etc/apt/keyrings/punktfunk.asc] https://git.unom.io/api/packages/unom/debian stable main\" | sudo tee /etc/apt/sources.list.d/punktfunk.list",
+        "curl -fsSL https://git.unom.io/api/packages/unom/debian/repository.key | sudo tee /etc/apt/keyrings/lilynk.asc >/dev/null",
+        "echo \"deb [signed-by=/etc/apt/keyrings/lilynk.asc] https://git.unom.io/api/packages/unom/debian stable main\" | sudo tee /etc/apt/sources.list.d/lilynk.list",
         "sudo apt update",
-        "sudo apt install punktfunk-host punktfunk-web punktfunk-scripting"
+        "sudo apt install lilynk-host lilynk-web lilynk-scripting"
       ]
     },
     {
@@ -98,7 +98,7 @@
         "curl -fsS https://git.unom.io/api/packages/unom/arch/repository.key | sudo pacman-key --add -",
         "sudo pacman-key --lsign-key E0CA04465C99C936E0B0C6510A317015A34DDD69",
         "grep -q '^\\[punktfunk\\]' /etc/pacman.conf || printf '\\n[punktfunk]\\nServer = https://git.unom.io/api/packages/unom/arch/$repo/$arch\\n' | sudo tee -a /etc/pacman.conf >/dev/null",
-        "sudo pacman -Syu punktfunk-host punktfunk-web punktfunk-scripting"
+        "sudo pacman -Syu lilynk-host lilynk-web lilynk-scripting"
       ]
     },
     {
@@ -115,8 +115,8 @@
         "sudo pacman-key --lsign-key E0CA04465C99C936E0B0C6510A317015A34DDD69",
         "grep -q '^\\[punktfunk\\]' /etc/pacman.conf || printf '\\n[punktfunk]\\nServer = https://git.unom.io/api/packages/unom/arch/$repo/$arch\\n' | sudo tee -a /etc/pacman.conf >/dev/null",
         "sudo pacman -Sy",
-        "sudo pacman -S punktfunk-host punktfunk-web punktfunk-scripting punktfunk-client",
-        "punktfunk-omarchy setup"
+        "sudo pacman -S lilynk-host lilynk-web lilynk-scripting lilynk-client",
+        "lilynk-omarchy setup"
       ]
     },
     {
@@ -128,7 +128,7 @@
       "floor": "Fedora 43 or newer",
       "repo": "https://git.unom.io/api/packages/unom/rpm/fedora-44",
       "install": [
-        "sudo tee /etc/yum.repos.d/punktfunk.repo >/dev/null <<'REPO'",
+        "sudo tee /etc/yum.repos.d/lilynk.repo >/dev/null <<'REPO'",
         "[punktfunk]",
         "name=punktfunk",
         "# fedora-44 on Fedora 44; bazzite on Fedora 43 (a plain Fedora 43 build of the same package)",
@@ -139,7 +139,7 @@
         "gpgkey=https://git.unom.io/api/packages/unom/rpm/repository.key",
         "       https://git.unom.io/api/packages/unom/generic/punktfunk-keys/1/RPM-GPG-KEY-punktfunk",
         "REPO",
-        "sudo dnf install punktfunk punktfunk-web punktfunk-scripting"
+        "sudo dnf install lilynk lilynk-web lilynk-scripting"
       ]
     },
     {
@@ -162,8 +162,8 @@
       "docs": "/docs/nixos",
       "floor": "NixOS with flakes",
       "install": [
-        "# flake input: inputs.punktfunk.url = \"git+https://git.unom.io/unom/punktfunk?ref=nix-stable\";",
-        "# then: imports = [ punktfunk.nixosModules.default ]; services.punktfunk.host.enable = true;"
+        "# flake input: inputs.lilynk.url = \"git+https://git.unom.io/unom/punktfunk?ref=nix-stable\";",
+        "# then: imports = [ lilynk.nixosModules.default ]; services.lilynk.host.enable = true;"
       ]
     },
     {

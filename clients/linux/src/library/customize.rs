@@ -6,8 +6,8 @@
 use crate::store::Store;
 use adw::prelude::*;
 use gtk::glib;
-use pf_client_core::library_layout::{sections, stored_sections, Section};
-use pf_l10n::client;
+use ly_client_core::library_layout::{sections, stored_sections, Section};
+use ly_l10n::client;
 use std::rc::Rc;
 
 fn drawn(s: Section) -> bool {

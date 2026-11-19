@@ -12,13 +12,13 @@ Google TV, budget Amlogic boxes) that reject a 64-bit-only build as "not compati
 ## Why it is Rust-heavy
 
 Kotlin cannot `import` the cbindgen C header the way Swift can, so a native bridge is unavoidable.
-Writing it in Rust and linking `punktfunk-core` directly means the Android client reuses the Linux
+Writing it in Rust and linking `lilynk-core` directly means the Android client reuses the Linux
 client's orchestration — audio jitter ring, VK keymap inverse, latency/skew math, capture state
 machine, trust logic — instead of re-porting all of it into Kotlin.
 
 | Side | Owns |
 |------|------|
-| **Rust** (`native/` → `libpunktfunk_android.so`) | the JNI seam, `NativeClient` (QUIC control + UDP data plane), AnnexB → `AMediaCodec` decode incl. HDR10 and PyroWave over Vulkan compute, Opus + AAudio audio and mic, controller feedback, latency math, trust/pairing, `mdns-sd` discovery |
+| **Rust** (`native/` → `liblilynk_android.so`) | the JNI seam, `NativeClient` (QUIC control + UDP data plane), AnnexB → `AMediaCodec` decode incl. HDR10 and PyroWave over Vulkan compute, Opus + AAudio audio and mic, controller feedback, latency math, trust/pairing, `mdns-sd` discovery |
 | **Kotlin** (`app/`, `kit/`) | Compose UI, `SurfaceView` lifecycle, input capture, the Wi-Fi `MulticastLock` and permission UX, Keystore identity |
 
 The single seam is `io.unom.punktfunk.kit.NativeBridge` ⇄
@@ -39,7 +39,7 @@ newer:
 ```sh
 export JAVA_HOME="$(/usr/libexec/java_home -v 21)"
 cd clients/android
-./gradlew :app:assembleDebug     # cargo-ndk cross-compiles libpunktfunk_android.so first
+./gradlew :app:assembleDebug     # cargo-ndk cross-compiles liblilynk_android.so first
 ./gradlew :app:installDebug
 ```
 

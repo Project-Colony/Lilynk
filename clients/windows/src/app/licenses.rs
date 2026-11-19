@@ -2,8 +2,8 @@
 //! Settings).
 
 use super::style::*;
-use pf_fluent::{Palette, Token};
-use pf_l10n::{client, desktop};
+use ly_fluent::{Palette, Token};
+use ly_l10n::{client, desktop};
 use windows_reactor::*;
 
 /// punktfunk's own license (MIT OR Apache-2.0).

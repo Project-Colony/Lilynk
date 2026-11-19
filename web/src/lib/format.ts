@@ -90,7 +90,7 @@ export function fmtLinkRate(kbps: number): string {
 }
 
 /** A device's code: the first 16 hex digits of its fingerprint, upper case, in fours. The
- *  waiting device shows the same one (`punktfunk_core::fp::device_code`). */
+ *  waiting device shows the same one (`lilynk_core::fp::device_code`). */
 export function deviceCode(fingerprint: string): string {
 	const digits = fingerprint.slice(0, 16).toUpperCase();
 	return (digits.match(/.{1,4}/g) ?? []).join(" ");

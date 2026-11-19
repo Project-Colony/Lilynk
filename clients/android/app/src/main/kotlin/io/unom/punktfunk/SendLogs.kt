@@ -13,7 +13,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 
 /**
  * "Send logs to host" — this device's log file, earlier runs included
- * ([NativeBridge.nativeRenderLogs]; the `pf_client_core::logring` ring when no file is open),
+ * ([NativeBridge.nativeRenderLogs]; the `ly_client_core::logring` ring when no file is open),
  * posted to a paired host's `POST /api/v1/client-logs` over the same mTLS identity the library
  * fetch uses. The bundle is then listed in that host's web console, on its Logs page, beside the
  * host's own log.
@@ -26,12 +26,12 @@ import okhttp3.RequestBody.Companion.toRequestBody
  * Blocking — call it off the main thread.
  */
 object SendLogs {
-    /** `punktfunk-android <ver> (android <rel>; <abi>) — client log bundle`, the desktop's shape. */
+    /** `lilynk-android <ver> (android <rel>; <abi>) — client log bundle`, the desktop's shape. */
     fun header(context: Context): String {
         val version = runCatching {
             context.packageManager.getPackageInfo(context.packageName, 0).versionName
         }.getOrNull() ?: "?"
-        return "punktfunk-android $version (android ${android.os.Build.VERSION.RELEASE}; " +
+        return "lilynk-android $version (android ${android.os.Build.VERSION.RELEASE}; " +
             "${android.os.Build.SUPPORTED_ABIS.firstOrNull() ?: "?"}) — client log bundle"
     }
 

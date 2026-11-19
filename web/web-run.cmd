@@ -23,10 +23,10 @@ set /a PFWAITS=0
 :pfwait
 if exist "%TOKENFILE%" if exist "%CERTFILE%" goto pfready
 if %PFWAITS% GEQ 150 (
-  echo [punktfunk-web] gave up waiting for "%TOKENFILE%" + "%CERTFILE%" - is the punktfunk host running?
+  echo [lilynk-web] gave up waiting for "%TOKENFILE%" + "%CERTFILE%" - is the punktfunk host running?
   exit /b 1
 )
-if %PFWAITS%==0 echo [punktfunk-web] waiting for the host to write the mgmt token + identity cert...
+if %PFWAITS%==0 echo [lilynk-web] waiting for the host to write the mgmt token + identity cert...
 set /a PFWAITS+=1
 ping -n 3 127.0.0.1 >nul 2>&1
 goto pfwait
@@ -40,7 +40,7 @@ for /f "usebackq tokens=1* delims==" %%A in ("%TOKENFILE%") do set "%%A=%%B"
 if exist "%PWFILE%" for /f "usebackq tokens=1* delims==" %%A in ("%PWFILE%") do set "%%A=%%B"
 set "PUNKTFUNK_UI_PASSWORD_FILE=%PWFILE%"
 
-rem Fixed deployment wiring (the Windows analogue of scripts/punktfunk-web.service).
+rem Fixed deployment wiring (the Windows analogue of scripts/lilynk-web.service).
 set "PORT=47992"
 rem No HOST line: the server listens on the local network unless PUNKTFUNK_UI_BIND says otherwise
 rem (host.env on an installed box). Set it here to keep this dev console to this machine.
@@ -67,7 +67,7 @@ rem Bun runtime (override BUN if yours lives elsewhere / is on PATH as just `bun
 if not defined BUN set "BUN=bun.exe"
 set "SERVER=%~dp0.output\server\index.mjs"
 if not exist "%SERVER%" (
-  echo [punktfunk-web] built server missing at "%SERVER%" - build it: cd web ^&^& bun run build
+  echo [lilynk-web] built server missing at "%SERVER%" - build it: cd web ^&^& bun run build
   exit /b 1
 )
 "%BUN%" "%SERVER%"

@@ -681,7 +681,7 @@ const RUNTIME: RuntimeView = {
 	installed: true,
 	enabled: true,
 	running: true,
-	unit: "punktfunk-scripting.service",
+	unit: "lilynk-scripting.service",
 };
 
 const plugin = (

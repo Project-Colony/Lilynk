@@ -17,7 +17,7 @@ import org.json.JSONObject
 /**
  * Which host screen this device streams, and how: the host's answer
  * (`GET /api/v1/display/targets`), the Screen section drawn from it ([Targets.rows]) and the
- * write of this device's pick ([setPick]). The Kotlin port of `pf_client_core::display_targets`,
+ * write of this device's pick ([setPick]). The Kotlin port of `ly_client_core::display_targets`,
  * on the same mTLS lane as [HostActions]; `clients/shared/screen-rows-vectors.json` pins both.
  *
  * The host names the monitors; this app words the roles. The pick is this device's row on the

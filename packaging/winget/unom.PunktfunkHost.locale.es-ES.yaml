@@ -19,7 +19,7 @@ Description: |-
   transmite por su protocolo QUIC nativo a clientes Punktfunk en Windows, macOS, iOS, tvOS, Android y
   Linux — o por GameStream a clientes Moonlight estándar.
 
-  El instalador incluye el controlador de pantalla virtual pf-vdisplay (transmisión en resolución nativa
+  El instalador incluye el controlador de pantalla virtual ly-vdisplay (transmisión en resolución nativa
   y con HDR sin una pantalla física), mandos virtuales DualSense / DualShock 4 / Xbox 360 y una consola
   de administración web que se sirve en el puerto 47992.
 Tags:
@@ -33,16 +33,16 @@ ReleaseNotesUrl: https://git.unom.io/unom/punktfunk/src/branch/main/docs/release
 InstallationNotes: |-
   Consola de administración web:  https://<este-PC>:47992
     Esta instalación generó una contraseña de acceso y no la mostró. Imprímela desde un
-    PowerShell con privilegios ELEVADOS, ANTES de tu primer inicio de sesión:   punktfunk-host web password
+    PowerShell con privilegios ELEVADOS, ANTES de tu primer inicio de sesión:   lilynk-host web password
     Después la consola solo conserva un hash con sal en %ProgramData%\punktfunk\web-password, así que una
     contraseña olvidada se restablece: vuelve a poner una línea PUNKTFUNK_UI_PASSWORD=<tu-contraseña> en ese
-    archivo y ejecuta  punktfunk-host service restart
+    archivo y ejecuta  lilynk-host service restart
 
   Configuración:  %ProgramData%\punktfunk\host.env
   Registros:      %ProgramData%\punktfunk\logs\
 
-  El servicio del host se inicia automáticamente al arrancar. `punktfunk-host` está en el PATH del equipo — ejecuta
-  `punktfunk-host service status` desde un símbolo del sistema con privilegios elevados para comprobarlo.
+  El servicio del host se inicia automáticamente al arrancar. `lilynk-host` está en el PATH del equipo — ejecuta
+  `lilynk-host service status` desde un símbolo del sistema con privilegios elevados para comprobarlo.
 Documentations:
   - DocumentLabel: Windows Host Setup
     DocumentUrl: https://docs.punktfunk.unom.io/docs/windows-host

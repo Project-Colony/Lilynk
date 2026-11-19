@@ -1,5 +1,5 @@
 {
-  "$comment": "\"Hide for me\" (design: phase 4.1). Every client's test replays these: pf-client-core hide.rs, and the Swift and Kotlin ports. A client offers the action only for the profile it plays as on a host (its saved pick), and only when that profile's enumerate row says person: true. A host that never sends person has no action: no probing.",
+  "$comment": "\"Hide for me\" (design: phase 4.1). Every client's test replays these: ly-client-core hide.rs, and the Swift and Kotlin ports. A client offers the action only for the profile it plays as on a host (its saved pick), and only when that profile's enumerate row says person: true. A host that never sends person has no action: no probing.",
   "offer": [
     {
       "name": "the saved pick's row says person: offered, named after the profile",

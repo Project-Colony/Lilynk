@@ -1,0 +1,9 @@
+==> Detected arch → pacman (guide: https://docs.punktfunk.unom.io/docs/arch)
+==> Uninstalling the host (https://docs.punktfunk.unom.io/docs/uninstall)
+  + systemctl --user disable --now lilynk-host lilynk-web lilynk-scripting 2>/dev/null || true
+  + sudo pacman -Rns --noconfirm lilynk-host lilynk-web lilynk-scripting
+  + sudo sed -i '/^\[\(punktfunk\|lilynk-canary\)\]$/,/^Server = /d' /etc/pacman.conf
+
+  Removed. Kept for a reinstall: ~/.config/punktfunk, the punktfunk, lilynk-door and lilynk-update
+  groups, and your firewall rules.
+  The one-command cleanups for each are on https://docs.punktfunk.unom.io/docs/uninstall#linux-hosts

@@ -5,14 +5,14 @@ import XCTest
 
 final class ClientLogTests: XCTestCase {
     /// The ring is process-global, so this single test owns the whole lifecycle (parallel tests
-    /// over one global would interleave) — the same shape as `pf_client_core::logring`'s test.
+    /// over one global would interleave) — the same shape as `ly_client_core::logring`'s test.
     func testRingBoundsAndRendersWithEvictionNote() {
         let marker = "ringtest-\(ProcessInfo.processInfo.processIdentifier)"
         for i in 0..<(ClientLogRing.maxLines + 10) {
             ClientLogRing.note("\(marker) line \(i)")
         }
-        let text = ClientLogRing.render(header: "punktfunk-apple test")
-        XCTAssertTrue(text.hasPrefix("punktfunk-apple test\n"))
+        let text = ClientLogRing.render(header: "lilynk-apple test")
+        XCTAssertTrue(text.hasPrefix("lilynk-apple test\n"))
         XCTAssertTrue(text.contains("older lines evicted from the ring"))
         XCTAssertFalse(text.contains("\n\(marker) line 0\n"), "oldest line survived eviction")
         XCTAssertTrue(text.hasSuffix("\(marker) line \(ClientLogRing.maxLines + 9)\n"))
@@ -69,7 +69,7 @@ final class ClientLogTests: XCTestCase {
 
     func testHeaderNamesTheAppAndPlatform() {
         let header = ClientLogRing.header()
-        XCTAssertTrue(header.hasPrefix("punktfunk-apple "))
+        XCTAssertTrue(header.hasPrefix("lilynk-apple "))
         XCTAssertTrue(header.hasSuffix(" — client log bundle"))
         #if os(macOS)
         XCTAssertTrue(header.contains("macOS"))

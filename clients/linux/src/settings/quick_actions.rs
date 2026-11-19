@@ -8,17 +8,17 @@
 //! modifiers, the key on a keyboard-shaped grid or pressed on the real keyboard — as subpages
 //! of the preferences dialog. The blob lives in the dialog's state and the binder writes it on
 //! every edit, like any other row; the model (catalogue, geometry, chords, icons) is
-//! `pf_client_core`'s.
+//! `ly_client_core`'s.
 
 use adw::prelude::*;
 use gtk::gdk;
 use gtk::glib;
-use pf_client_core::overlay_actions::{
+use ly_client_core::overlay_actions::{
     catalogue, chord_chip, key_legend, slot_icon, CatalogueGroup, Chord, OverlayConfig,
     RingPlatform, Shortcut, SlotId, CHORD_MODIFIERS, KEY_GRID, RING_SLOTS,
 };
-use pf_client_core::ring::{slot_offset, CENTRE_DIAMETER, RING_RADIUS, SLOT_DIAMETER};
-use pf_l10n::{client, common, desktop};
+use ly_client_core::ring::{slot_offset, CENTRE_DIAMETER, RING_RADIUS, SLOT_DIAMETER};
+use ly_l10n::{client, common, desktop};
 use std::cell::RefCell;
 use std::rc::Rc;
 

@@ -258,7 +258,7 @@ public enum LibraryStaleness: Equatable, Sendable {
 }
 
 public extension LibraryGroupBy {
-    /// The touch grid's stored grouping (`punktfunk.libraryGroupBy`): `platform`, `store`, or
+    /// The touch grid's stored grouping (`lilynk.libraryGroupBy`): `platform`, `store`, or
     /// none for anything else.
     init?(stored: String) {
         switch stored {

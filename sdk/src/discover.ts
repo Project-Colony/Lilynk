@@ -95,8 +95,8 @@ export const discoverUnits = (
 	};
 	try {
 		for (const pkg of fs.readdirSync(modules).sort()) {
-			// Unscoped convention: `punktfunk-plugin-*`.
-			if (pkg.startsWith("punktfunk-plugin-")) {
+			// Unscoped convention: `lilynk-plugin-*`.
+			if (pkg.startsWith("lilynk-plugin-")) {
 				addPlugin(path.join(modules, pkg), pkg);
 				continue;
 			}

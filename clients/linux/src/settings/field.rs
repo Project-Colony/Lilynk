@@ -8,7 +8,7 @@ use crate::store::Store;
 use crate::trust::Settings;
 use adw::prelude::*;
 use gtk::glib;
-use pf_client_core::presets::SettingsOverlay;
+use ly_client_core::presets::SettingsOverlay;
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 
@@ -217,14 +217,14 @@ impl Binder {
 
     /// A settings write never fails loudly, so its latch is read after each one too.
     fn report(&self, result: anyhow::Result<()>) {
-        let failed = result.is_err() || pf_client_core::trust::store_health::last_error().is_some();
+        let failed = result.is_err() || ly_client_core::trust::store_health::last_error().is_some();
         if let Err(e) = &result {
             tracing::warn!(error = %format!("{e:#}"), "preset catalog not saved");
         }
         if failed && !self.warned.replace(true) {
             if let Some(d) = self.dialog.upgrade() {
                 d.add_toast(adw::Toast::new(
-                    pf_l10n::desktop::desktop_prefs_not_saved_toast(),
+                    ly_l10n::desktop::desktop_prefs_not_saved_toast(),
                 ));
             }
         }
@@ -251,7 +251,7 @@ impl Binder {
                 .build();
             let reset = gtk::Button::builder()
                 .child(&crate::widgets::lucide::row_icon("undo-2"))
-                .tooltip_text(pf_l10n::client::prefs_override_reset_full())
+                .tooltip_text(ly_l10n::client::prefs_override_reset_full())
                 .valign(gtk::Align::Center)
                 .css_classes(["flat"])
                 .build();
@@ -310,7 +310,7 @@ pub fn keep_alive(dialog: &adw::PreferencesDialog, binder: Rc<Binder>, fields: V
 mod tests {
     use super::*;
     use crate::settings::spec;
-    use pf_client_core::presets::{PresetsFile, StreamPreset};
+    use ly_client_core::presets::{PresetsFile, StreamPreset};
 
     fn hdr() -> (Rc<Field>, adw::SwitchRow) {
         let (field, row) = Field::switch(&spec::HDR, |s| s.hdr_enabled, |s, v| s.hdr_enabled = v);

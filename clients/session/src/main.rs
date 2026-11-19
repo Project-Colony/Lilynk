@@ -1,9 +1,9 @@
-//! `punktfunk-session` — the Vulkan session binary: the power-user / gamescope stream client.
+//! `lilynk-session` — the Vulkan session binary: the power-user / gamescope stream client.
 //!
 //! One stream session per invocation: `--connect host[:port]` (+ `--fp HEX`,
 //! `--launch id`, `--as profile`, `--fullscreen`), exits when the session ends. Reads the same identity
 //! / known-hosts / settings stores as the desktop shell on each OS — the GTK client
-//! (`punktfunk-client`) on Linux, the WinUI client on Windows — so pairing on either side
+//! (`lilynk-client`) on Linux, the WinUI client on Windows — so pairing on either side
 //! makes the other connect silently. `--pair - --connect host` runs the ceremony here,
 //! with no window and no toolkit, for machines that have only a shell.
 //!
@@ -27,13 +27,13 @@ mod console;
 /// host" buttons; see `GamepadService::tap_guide`). Plain text, no JSON: `<verb>\n` in,
 /// `ok\n` / `err\n` back.
 ///
-/// The path is `$XDG_RUNTIME_DIR/punktfunk-session-ctl.sock` — inside the flatpak app
+/// The path is `$XDG_RUNTIME_DIR/lilynk-session-ctl.sock` — inside the flatpak app
 /// runtime dir (`…/app/$FLATPAK_ID/`) when sandboxed, the ONE runtime path a flatpak and
 /// the host see identically, which is what lets the Decky backend (outside the sandbox)
 /// reach a flatpak-run session.
 #[cfg(all(unix, any(target_os = "linux", windows)))]
 mod ctl_socket {
-    use pf_client_core::gamepad::GamepadService;
+    use ly_client_core::gamepad::GamepadService;
     use std::io::{BufRead, BufReader, Write};
     use std::os::unix::net::{UnixListener, UnixStream};
     use std::path::PathBuf;
@@ -44,7 +44,7 @@ mod ctl_socket {
             p.push("app");
             p.push(id);
         }
-        Some(p.join("punktfunk-session-ctl.sock"))
+        Some(p.join("lilynk-session-ctl.sock"))
     }
 
     /// Bind + serve on a background thread, once per process (later calls no-op). Any
@@ -124,11 +124,11 @@ fn resolve_hdr_enabled(
 
 #[cfg(any(target_os = "linux", windows))]
 mod session_main {
-    use pf_client_core::gamepad::GamepadService;
-    use pf_client_core::orchestrate::{self, emit, exit, ResolvedSpec, SessionLine};
-    use pf_client_core::session::{Dial, Probes, SessionParams};
-    use pf_client_core::trust;
-    use punktfunk_core::config::{GamepadPref, Mode};
+    use lilynk_core::config::{GamepadPref, Mode};
+    use ly_client_core::gamepad::GamepadService;
+    use ly_client_core::orchestrate::{self, emit, exit, ResolvedSpec, SessionLine};
+    use ly_client_core::session::{Dial, Probes, SessionParams};
+    use ly_client_core::trust;
     use std::sync::atomic::AtomicBool;
     use std::sync::Arc;
     use std::time::Duration;
@@ -170,15 +170,15 @@ mod session_main {
     /// Running under Gaming Mode (a Deck, or any gamescope session): the environment
     /// where the local Steam UI owns the physical Steam/QAM buttons — the system-button
     /// "auto" policy keys off this. Gaming Mode means gamescope is really there, which is
-    /// not what the bare env vars say — see [`pf_client_core::gamescope`].
+    /// not what the bare env vars say — see [`ly_client_core::gamescope`].
     pub(crate) fn gaming_mode() -> bool {
-        pf_client_core::gamescope::under_gamescope()
+        ly_client_core::gamescope::under_gamescope()
     }
 
     /// The shortcuts these settings stream with, as a blob: the player's, or this desktop's
     /// defaults, where the old *Hold Select for guide* value decides the Hold Select row.
     pub(crate) fn shortcuts_blob(settings: &trust::Settings) -> String {
-        use pf_client_core::shortcuts::{resolve, Client};
+        use ly_client_core::shortcuts::{resolve, Client};
         let legacy = settings.guide_gesture.as_str();
         resolve(&settings.shortcuts, Client::Desktop, gaming_mode(), legacy).to_json()
     }
@@ -246,9 +246,9 @@ mod session_main {
     /// `rsplit_once(':')` reads the bare IPv6 `::1` as host `:` port `1`, which then both
     /// dials the wrong address and misses the saved record keyed by the right one.
     pub(crate) fn parse_host_port(target: &str) -> (String, u16) {
-        pf_client_core::deeplink::parse_addr_port(target).unwrap_or_else(|| {
+        ly_client_core::deeplink::parse_addr_port(target).unwrap_or_else(|| {
             eprintln!("unparsable port in '{target}', using default 9777");
-            (target.to_string(), pf_client_core::deeplink::DEFAULT_PORT)
+            (target.to_string(), ly_client_core::deeplink::DEFAULT_PORT)
         })
     }
 
@@ -264,13 +264,13 @@ mod session_main {
         if wanted.len() == 12 && wanted.bytes().all(|b| b.is_ascii_hexdigit()) {
             return wanted;
         }
-        let mgmt = host.map_or(pf_client_core::library::DEFAULT_MGMT_PORT, |h| {
+        let mgmt = host.map_or(ly_client_core::library::DEFAULT_MGMT_PORT, |h| {
             h.effective_mgmt_port()
         });
         let port = host.map_or(0, |h| h.port);
-        match pf_client_core::profiles::fetch_enumerate(addr, mgmt, port, identity, Some(pin)) {
+        match ly_client_core::profiles::fetch_enumerate(addr, mgmt, port, identity, Some(pin)) {
             Ok(Some(listed)) => {
-                pf_client_core::profiles::find(&listed, &wanted).map_or(wanted, |p| p.id.clone())
+                ly_client_core::profiles::find(&listed, &wanted).map_or(wanted, |p| p.id.clone())
             }
             _ => wanted,
         }
@@ -294,7 +294,7 @@ mod session_main {
         Duration::from_secs(
             arg_value("--connect-timeout")
                 .and_then(|v| v.parse().ok())
-                .unwrap_or(pf_client_core::orchestrate::DEFAULT_CONNECT_TIMEOUT_SECS),
+                .unwrap_or(ly_client_core::orchestrate::DEFAULT_CONNECT_TIMEOUT_SECS),
         )
     }
 
@@ -317,9 +317,9 @@ mod session_main {
         (launch, profile): (Option<String>, Option<&str>),
         gamepad: &GamepadService,
         native: Mode,
-        display_hdr: Option<punktfunk_core::quic::HdrMeta>,
+        display_hdr: Option<lilynk_core::quic::HdrMeta>,
         force_software: Arc<AtomicBool>,
-        vulkan: Option<pf_client_core::video::VulkanDecodeDevice>,
+        vulkan: Option<ly_client_core::video::VulkanDecodeDevice>,
     ) -> SessionParams {
         let clipboard = clipboard_override.unwrap_or_else(|| {
             trust::KnownHosts::load()
@@ -327,7 +327,7 @@ mod session_main {
                 .is_some_and(|h| h.clipboard_sync)
         });
         let overrides = launch.as_deref().and_then(|game| {
-            pf_client_core::library_cache::overrides(&trust::hex(&pin), profile, game)
+            ly_client_core::library_cache::overrides(&trust::hex(&pin), profile, game)
         });
         let spec = ResolvedSpec::new(settings.clone(), clipboard, preset, preset_id, overrides);
         params_from_spec(
@@ -360,9 +360,9 @@ mod session_main {
         launch: Option<String>,
         gamepad: &GamepadService,
         native: Mode,
-        display_hdr: Option<punktfunk_core::quic::HdrMeta>,
+        display_hdr: Option<lilynk_core::quic::HdrMeta>,
         force_software: Arc<AtomicBool>,
-        vulkan: Option<pf_client_core::video::VulkanDecodeDevice>,
+        vulkan: Option<ly_client_core::video::VulkanDecodeDevice>,
     ) -> SessionParams {
         let settings = &spec.settings;
         // Unconditional on every launch. Browse mode reuses one service, so a
@@ -377,7 +377,7 @@ mod session_main {
         crate::ctl_socket::spawn(gamepad.clone());
         gamepad.set_pad_audio_prefs(
             settings.pad_haptics,
-            pf_client_core::pad_audio::speaker_active(&settings.pad_speaker),
+            ly_client_core::pad_audio::speaker_active(&settings.pad_speaker),
         );
         gamepad.set_pad_speaker_volumes(
             settings
@@ -390,7 +390,7 @@ mod session_main {
         // Short-circuit: Full chroma off must not build an HEVC decoder.
         // The probe constructs one to ask about 4:4:4 profiles.
         let hevc_444_hardware = settings.enable_444
-            && pf_client_core::video::hevc_444_hardware_decodable(vulkan.as_ref());
+            && ly_client_core::video::hevc_444_hardware_decodable(vulkan.as_ref());
         if settings.enable_444 && !hevc_444_hardware {
             tracing::warn!(
                 "Full chroma (4:4:4) requested but this device has no 4:4:4 HEVC decode — \
@@ -401,13 +401,13 @@ mod session_main {
         // Windows: HDR only when the selected output is presenting HDR.
         // `PUNKTFUNK_CLIENT_PEAK_NITS` is the headless bypass.
         #[cfg(windows)]
-        let display_hdr = punktfunk_core::client::display_hdr_env_override().or(display_hdr);
+        let display_hdr = lilynk_core::client::display_hdr_env_override().or(display_hdr);
         #[cfg(windows)]
         let output_hdr = display_hdr.is_some();
         #[cfg(not(windows))]
         let output_hdr = true;
         let hdr_enabled = super::resolve_hdr_enabled(settings.hdr_enabled, output_hdr, || {
-            pf_client_core::video::hdr_presentable(vulkan.as_ref())
+            ly_client_core::video::hdr_presentable(vulkan.as_ref())
         });
         if settings.hdr_enabled && !hdr_enabled {
             tracing::warn!(
@@ -465,7 +465,7 @@ mod session_main {
         Box::new(move |w: u32, h: u32| {
             emit(SessionLine::Window { w, h });
             if persist_locally {
-                pf_client_core::orchestrate::persist_window_size(w, h);
+                ly_client_core::orchestrate::persist_window_size(w, h);
             }
         })
     }
@@ -475,7 +475,7 @@ mod session_main {
     /// enumeration the GTK shell probes.
     #[cfg(target_os = "linux")]
     fn list_audio() -> u8 {
-        match pf_client_core::audio::devices() {
+        match ly_client_core::audio::devices() {
             Ok((sinks, sources)) => {
                 for d in sinks {
                     println!("sink\t{}\t{}", d.name, d.description);
@@ -512,7 +512,7 @@ mod session_main {
         // the capability is never advertised when the toggle is off.
         {
             let s = trust::Settings::load();
-            if speaker && !pf_client_core::pad_audio::speaker_active(&s.pad_speaker) {
+            if speaker && !ly_client_core::pad_audio::speaker_active(&s.pad_speaker) {
                 println!(
                     "note: \"Controller speaker\" is OFF in your settings (pad_speaker = \
                      {:?}), so a streaming session will NOT render the pad's speaker even if \
@@ -527,7 +527,7 @@ mod session_main {
                 );
             }
         }
-        match pf_client_core::pad_audio::pad_audio_test(seconds, coils, speaker) {
+        match ly_client_core::pad_audio::pad_audio_test(seconds, coils, speaker) {
             Ok(()) => 0,
             Err(e) => {
                 eprintln!("pad-audio-test: {e:#}");
@@ -541,9 +541,9 @@ mod session_main {
     /// line-by-line by the desktop shells' GPU picker and must keep printing bare names.
     /// It opens with the presenter backend a session would pick, and why.
     fn probe_decode_report() -> u8 {
-        let (backend, why) = pf_presenter::probe_backend();
+        let (backend, why) = ly_presenter::probe_backend();
         println!("presenter backend: {backend} ({why})");
-        match pf_presenter::vk::probe_decode() {
+        match ly_presenter::vk::probe_decode() {
             Ok(adapters) => {
                 if adapters.is_empty() {
                     println!("no Vulkan physical devices");
@@ -624,7 +624,7 @@ mod session_main {
     #[cfg(target_os = "linux")]
     fn restart_on_gamescope() {
         use std::os::unix::process::CommandExt as _;
-        let Some(name) = pf_client_core::gamescope::foreign() else {
+        let Some(name) = ly_client_core::gamescope::foreign() else {
             return;
         };
         tracing::info!(wayland_display = ?name, "restarting on gamescope's socket");
@@ -723,12 +723,12 @@ mod session_main {
     /// The driver's own answers about video images, printed with nothing in front of
     /// them (`--probe-decode`).
     ///
-    /// The `vulkan video decode` line (pf-presenter's `video_decode_gate`, five conjuncts)
+    /// The `vulkan video decode` line (ly-presenter's `video_decode_gate`, five conjuncts)
     /// only says Vulkan Video EXISTS on a device; this says whether the zero-copy pipeline
     /// can be BUILT on it — a different question. Verbatim on purpose: a diagnosis rests on
     /// what the driver said, not on punktfunk's wording of it.
-    fn print_video_formats(a: &pf_presenter::vk::AdapterDecode) {
-        use pf_presenter::vk::probe::{describe_create_flags, describe_usage};
+    fn print_video_formats(a: &ly_presenter::vk::AdapterDecode) {
+        use ly_presenter::vk::probe::{describe_create_flags, describe_usage};
         for p in &a.formats {
             println!("     {} (wants {:?}):", p.profile, p.wanted);
             for u in &p.usages {
@@ -778,13 +778,13 @@ mod session_main {
         // Logs to STDERR — stdout is the machine interface (ready/stats/error lines) — plus
         // the ring "Send logs to host" uploads. A shell pipes stderr into its log file, so
         // colour only on a terminal.
-        pf_client_core::logring::init_tracing(
+        ly_client_core::logring::init_tracing(
             std::io::stderr,
             std::io::IsTerminal::is_terminal(&std::io::stderr()),
         );
         // SEH last-resort: a driver AV otherwise leaves only an exit code in the shell's log.
         #[cfg(windows)]
-        punktfunk_core::crash::install();
+        lilynk_core::crash::install();
         // Before any Vulkan instance: gamescope's WSI layer reads WAYLAND_DISPLAY once.
         #[cfg(target_os = "linux")]
         restart_on_gamescope();
@@ -810,12 +810,12 @@ mod session_main {
         enable_mesa_video_decode();
 
         // Before any text is built: the console's words follow the OS's languages.
-        pf_l10n::set_languages(&pf_l10n::os_languages());
+        ly_l10n::set_languages(&ly_l10n::os_languages());
 
         // `--list-adapters`: print the Vulkan physical devices' marketing names (one per
         // line, discrete first) for the desktop shells' GPU picker, then exit.
         if arg_flag("--list-adapters") {
-            return match pf_presenter::vk::list_adapters() {
+            return match ly_presenter::vk::list_adapters() {
                 Ok(names) => {
                     for n in names {
                         println!("{n}");
@@ -854,7 +854,7 @@ mod session_main {
         if let Some(pin_arg) = arg_value("--pair") {
             if pin_arg != "-" {
                 eprintln!(
-                    "punktfunk-session pairing accepts only `--pair -`; prefer `punktfunk pair`"
+                    "lilynk-session pairing accepts only `--pair -`; prefer `punktfunk pair`"
                 );
                 return exit::CONNECT_FAILED;
             }
@@ -874,7 +874,7 @@ mod session_main {
         {
             let s = arg_value("--resolved-spec")
                 .and_then(|p| {
-                    pf_client_core::orchestrate::ResolvedSpec::read(std::path::Path::new(&p)).ok()
+                    ly_client_core::orchestrate::ResolvedSpec::read(std::path::Path::new(&p)).ok()
                 })
                 .map_or_else(trust::Settings::load, |spec| spec.settings);
             for (var, value) in [
@@ -912,9 +912,9 @@ mod session_main {
         }
         let Some(target) = arg_value("--connect") else {
             eprintln!(
-                "usage: punktfunk-session --connect host[:port] [--fp HEX] [--launch id] [--preset REF] [--as PROFILE] [--fullscreen] [--all-screens]\n\
-                 \x20      punktfunk-session --browse [host[:port]] [--mgmt PORT] [--fullscreen] [--all-screens] [--json-status] [--until-no-controller]\n\
-                 \x20      punktfunk-session --pair - --connect host[:port] [--name LABEL]\n\
+                "usage: lilynk-session --connect host[:port] [--fp HEX] [--launch id] [--preset REF] [--as PROFILE] [--fullscreen] [--all-screens]\n\
+                 \x20      lilynk-session --browse [host[:port]] [--mgmt PORT] [--fullscreen] [--all-screens] [--json-status] [--until-no-controller]\n\
+                 \x20      lilynk-session --pair - --connect host[:port] [--name LABEL]\n\
                  \n\
                  Streams from a paired punktfunk host in a Vulkan window. --browse opens the\n\
                  gamepad console instead: bare --browse is the host list (discovery, PIN\n\
@@ -1017,7 +1017,7 @@ mod session_main {
         // stream fullscreen no matter what the setting said.
         let fullscreen = arg_flag("--fullscreen") || gaming_mode();
 
-        let opts = pf_presenter::SessionOpts {
+        let opts = ly_presenter::SessionOpts {
             window_title: format!("Punktfunk · {title}"),
             fullscreen,
             window_pos: window_pos(),
@@ -1045,7 +1045,7 @@ mod session_main {
             // The Skia console UI (stats OSD, capture HUD) — compiled out of the
             // power-user build (`--no-default-features` drops the `ui` feature).
             #[cfg(feature = "ui")]
-            overlay: Some(Box::new(pf_console_ui::SkiaOverlay::new())),
+            overlay: Some(Box::new(ly_console_ui::SkiaOverlay::new())),
             #[cfg(not(feature = "ui"))]
             overlay: None,
             window_size: window_size(&settings),
@@ -1053,8 +1053,8 @@ mod session_main {
             // A spawned session (spec mode) reports its window; a hand-run one persists it.
             on_window_size: on_window_size(spec.is_none()),
             render_scale: settings.render_scale,
-            render_scale_max_dim: punktfunk_core::render_scale::max_dimension(&settings.codec),
-            video_fit: punktfunk_core::video_fit::VideoFit::from_name(&settings.video_fit),
+            render_scale_max_dim: lilynk_core::render_scale::max_dimension(&settings.codec),
+            video_fit: lilynk_core::video_fit::VideoFit::from_name(&settings.video_fit),
             until_no_pads: false,
         };
 
@@ -1079,7 +1079,7 @@ mod session_main {
             },
         };
         let outcome =
-            pf_presenter::run_session(opts, move |gamepad, native, hdr, force_software, vulkan| {
+            ly_presenter::run_session(opts, move |gamepad, native, hdr, force_software, vulkan| {
                 let mut params = match resolved {
                     Some(spec) => params_from_spec(
                         spec,
@@ -1119,14 +1119,14 @@ mod session_main {
             });
 
         match outcome {
-            Ok(pf_presenter::Outcome::Ended(None)) => 0,
-            Ok(pf_presenter::Outcome::Ended(Some(reason))) => {
+            Ok(ly_presenter::Outcome::Ended(None)) => 0,
+            Ok(ly_presenter::Outcome::Ended(Some(reason))) => {
                 // The host ending the session (game quit, host shutdown) is a normal end
                 // for a one-shot stream binary — report the reason, exit clean.
                 emit(SessionLine::Ended(&reason));
                 0
             }
-            Ok(pf_presenter::Outcome::ConnectFailed {
+            Ok(ly_presenter::Outcome::ConnectFailed {
                 msg,
                 trust_rejected,
                 refused,
@@ -1213,9 +1213,7 @@ fn main() -> std::process::ExitCode {
 /// clients/apple).
 #[cfg(not(any(target_os = "linux", windows)))]
 fn main() {
-    eprintln!(
-        "punktfunk-session runs on Linux and Windows — the macOS client lives in clients/apple"
-    );
+    eprintln!("lilynk-session runs on Linux and Windows — the macOS client lives in clients/apple");
     std::process::exit(2);
 }
 

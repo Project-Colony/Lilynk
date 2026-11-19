@@ -74,7 +74,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 /**
- * The Skia console (`crates/client/pf-console-ui`, drawn by native over EGL — design
+ * The Skia console (`crates/client/ly-console-ui`, drawn by native over EGL — design
  * `android-skia-console-port.md`) as this app holds it: ONE instance for the process, created
  * lazily and never torn down while the app lives, so the console's screen stack survives a trip
  * through the stream exactly as the desktop's does (the shelf is where you left it when the game
@@ -92,11 +92,11 @@ object SkiaConsole {
     private const val TAG = "pf.console"
 
     /**
-     * On-glass triage switch: `adb shell setprop debug.punktfunk.console_backend none` makes the
+     * On-glass triage switch: `adb shell setprop debug.lilynk.console_backend none` makes the
      * app behave as if the native console host were absent (the touch UI fronts everything, a
      * controller drives it through Compose focus). Anything else = the console.
      */
-    private const val BACKEND_PROP = "debug.punktfunk.console_backend"
+    private const val BACKEND_PROP = "debug.lilynk.console_backend"
 
     /** Where the console-owned settings keys (`library_view`, `reduce_motion`, …) persist. */
     internal const val PREFS = "punktfunk_console_settings"
@@ -1335,18 +1335,18 @@ object SkiaConsole {
     }
 
     /** How long a host's advertised actions stay fresh before we ask again — the desktop's
-     *  `pf_client_core::host_actions::TTL`. Long on purpose: what it governs changes when an
+     *  `ly_client_core::host_actions::TTL`. Long on purpose: what it governs changes when an
      *  operator edits access, not minute to minute. */
     private const val HOST_ACTIONS_TTL_MS = 300_000L
 
     /** The presence cadence; the desktop runs its own (`probe_due` in `ServiceState::run`). */
     private const val SWEEP_MS = 12_000L
 
-    /** How long a host's running title stays fresh — `pf_client_core::library::RUNNING_TTL`.
+    /** How long a host's running title stays fresh — `ly_client_core::library::RUNNING_TTL`.
      *  Short: this is the one host fact that changes while somebody is looking at the tile. */
     private const val NOW_PLAYING_TTL_MS = 20_000L
 
-    /** How long a host's screens stay fresh — `pf_client_core::display_targets::TTL`. Another
+    /** How long a host's screens stay fresh — `ly_client_core::display_targets::TTL`. Another
      *  device starting a stream moves `in_use_by`. */
     private const val SCREENS_TTL_MS = 20_000L
 }

@@ -23,7 +23,7 @@
 #             that check runs them, so `--no-build` is enough. Keep them pure: a shell script in
 #             the derivation body would only run under a full `nix flake check`, which builds the
 #             hour-long Rust packages.
-#   * bun   — actually BUILDS punktfunk-web + punktfunk-scripting. These are the two derivations
+#   * bun   — actually BUILDS lilynk-web + lilynk-scripting. These are the two derivations
 #             whose inputs churn constantly (every dependency bump moves a lockfile) and they cost
 #             minutes, not hours, because neither compiles Rust. This is the end-to-end proof that
 #             the generated bun.nix really does materialise a working node_modules offline — it
@@ -49,12 +49,12 @@
 #             Only OUR paths are published — see the step for why that is both correct and the
 #             difference between ~300 MB and several GB per publish.
 #
-# On a PR only the vm tier builds a Rust package (the host); the client and punktfunk-gamescope are
+# On a PR only the vm tier builds a Rust package (the host); the client and lilynk-gamescope are
 # the expensive ones and their inputs are already gated by the `rust` job in ci.yml. Build them on a
 # PR by hand on a Nix box, or with the `build-rust` / `build-gamescope` dispatch inputs below.
 #
-# ⚠ punktfunk-gamescope matters more than it looks: `host.gamescopeHdr` DEFAULTS TRUE, so it is on
-# the critical path of every `services.punktfunk.host.enable = true` build. It patches whatever
+# ⚠ lilynk-gamescope matters more than it looks: `host.gamescopeHdr` DEFAULTS TRUE, so it is on
+# the critical path of every `services.lilynk.host.enable = true` build. It patches whatever
 # gamescope the pinned nixpkgs carries, so a nixpkgs bump — not a change of ours — is what breaks
 # it, and the first person to find out would be an operator whose system rebuild fails. The nightly
 # `cache` run compiles it, so a flake.lock bump that breaks it goes red here within a day; the
@@ -85,26 +85,26 @@ on:
       - "packaging/nix/**"
       - "packaging/bazzite/host.env"
       - "packaging/kde/host.env"
-      - "packaging/gamescope/build-punktfunk-gamescope.sh"
+      - "packaging/gamescope/build-lilynk-gamescope.sh"
       - "packaging/linux/restart-user-units.sh"
-      - "packaging/linux/punktfunk-seat*"
+      - "packaging/linux/lilynk-seat*"
       - "packaging/linux/seat-*"
       - "packaging/linux/*door*"
-      - "packaging/linux/65-punktfunk-seats.rules"
-      - "packaging/linux/90-punktfunk-frame-adapter"
+      - "packaging/linux/65-lilynk-seats.rules"
+      - "packaging/linux/90-lilynk-frame-adapter"
       - "packaging/linux/io.unom.punktfunk*.desktop"
       - "packaging/linux/icons/**"
-      - "scripts/60-punktfunk*"
-      - "scripts/70-punktfunk-client.rules"
+      - "scripts/60-lilynk*"
+      - "scripts/70-lilynk-client.rules"
       - "scripts/headless/**"
       - "scripts/host.env.example"
-      - "scripts/punktfunk-host-desktop-session.conf"
-      - "scripts/punktfunk-host.service"
+      - "scripts/lilynk-host-desktop-session.conf"
+      - "scripts/lilynk-host.service"
       - "scripts/web-init.sh"
-      - "scripts/punktfunk-web.service"
-      - "scripts/punktfunk-web-init.service"
-      - "scripts/punktfunk-scripting.service"
-      - "scripts/punktfunk-scripting-seat@.service"
+      - "scripts/lilynk-web.service"
+      - "scripts/lilynk-web-init.service"
+      - "scripts/lilynk-scripting.service"
+      - "scripts/lilynk-scripting-seat@.service"
       - "web/web.env.example"
       - "web/.npmrc"
       - "api/openapi.json"
@@ -123,26 +123,26 @@ on:
       - "packaging/nix/**"
       - "packaging/bazzite/host.env"
       - "packaging/kde/host.env"
-      - "packaging/gamescope/build-punktfunk-gamescope.sh"
+      - "packaging/gamescope/build-lilynk-gamescope.sh"
       - "packaging/linux/restart-user-units.sh"
-      - "packaging/linux/punktfunk-seat*"
+      - "packaging/linux/lilynk-seat*"
       - "packaging/linux/seat-*"
       - "packaging/linux/*door*"
-      - "packaging/linux/65-punktfunk-seats.rules"
-      - "packaging/linux/90-punktfunk-frame-adapter"
+      - "packaging/linux/65-lilynk-seats.rules"
+      - "packaging/linux/90-lilynk-frame-adapter"
       - "packaging/linux/io.unom.punktfunk*.desktop"
       - "packaging/linux/icons/**"
-      - "scripts/60-punktfunk*"
-      - "scripts/70-punktfunk-client.rules"
+      - "scripts/60-lilynk*"
+      - "scripts/70-lilynk-client.rules"
       - "scripts/headless/**"
       - "scripts/host.env.example"
-      - "scripts/punktfunk-host-desktop-session.conf"
-      - "scripts/punktfunk-host.service"
+      - "scripts/lilynk-host-desktop-session.conf"
+      - "scripts/lilynk-host.service"
       - "scripts/web-init.sh"
-      - "scripts/punktfunk-web.service"
-      - "scripts/punktfunk-web-init.service"
-      - "scripts/punktfunk-scripting.service"
-      - "scripts/punktfunk-scripting-seat@.service"
+      - "scripts/lilynk-web.service"
+      - "scripts/lilynk-web-init.service"
+      - "scripts/lilynk-scripting.service"
+      - "scripts/lilynk-scripting-seat@.service"
       - "web/web.env.example"
       - "web/.npmrc"
       - "api/openapi.json"
@@ -157,11 +157,11 @@ on:
   workflow_dispatch:
     inputs:
       build-rust:
-        description: "Also build punktfunk-host + punktfunk-client (slow: full Rust workspace)"
+        description: "Also build lilynk-host + lilynk-client (slow: full Rust workspace)"
         type: boolean
         default: false
       build-gamescope:
-        description: "Also build punktfunk-gamescope (patched gamescope from source; run after a flake.lock bump)"
+        description: "Also build lilynk-gamescope (patched gamescope from source; run after a flake.lock bump)"
         type: boolean
         default: false
 
@@ -291,20 +291,20 @@ jobs:
           # The ~2k bun tarball fetch derivations exceed the container's default 1024-fd
           # soft limit ("error: creating pipe: Too many open files").
           ulimit -n 65536 2>/dev/null || ulimit -n "$(ulimit -Hn)" || true
-          "$NIX" build --print-build-logs .#punktfunk-web .#punktfunk-scripting
+          "$NIX" build --print-build-logs .#lilynk-web .#lilynk-scripting
 
       # Both launchers exec pkgs.bun from the store; confirm they were produced and are real entry
       # points rather than dangling wrappers.
       - name: Smoke the built launchers
         run: |
           set -eu
-          web=$("$NIX" path-info .#punktfunk-web)
-          scripting=$("$NIX" path-info .#punktfunk-scripting)
-          test -x "$web/bin/punktfunk-web-server" || { echo "no punktfunk-web-server in $web" >&2; exit 1; }
-          test -x "$scripting/bin/punktfunk-scripting" || { echo "no punktfunk-scripting in $scripting" >&2; exit 1; }
+          web=$("$NIX" path-info .#lilynk-web)
+          scripting=$("$NIX" path-info .#lilynk-scripting)
+          test -x "$web/bin/lilynk-web-server" || { echo "no lilynk-web-server in $web" >&2; exit 1; }
+          test -x "$scripting/bin/lilynk-scripting" || { echo "no lilynk-scripting in $scripting" >&2; exit 1; }
           # The console must be the bun bundle, not a node one — the same assertion packages.nix
           # makes at build time, re-checked on the installed output.
-          grep -q 'Bun\.serve' "$web/share/punktfunk-web/.output/server/index.mjs" \
+          grep -q 'Bun\.serve' "$web/share/lilynk-web/.output/server/index.mjs" \
             || { echo "installed console is not a bun bundle" >&2; exit 1; }
           echo "bun packages OK: $web  $scripting"
 
@@ -379,15 +379,15 @@ jobs:
         if: ${{ steps.cachecfg.outputs.go == 'true' }}
         env:
           CANARY: ${{ steps.cachecfg.outputs.canary }}
-        # Everything a user can install. punktfunk-gamescope earns its place here more than any
+        # Everything a user can install. lilynk-gamescope earns its place here more than any
         # other: host.gamescopeHdr DEFAULTS TRUE, so without it in the cache every
-        # `services.punktfunk.host.enable = true` still compiles a compositor from source.
+        # `services.lilynk.host.enable = true` still compiles a compositor from source.
         run: |
           set -eu
           build() {
             "$NIX" build --print-build-logs \
-              .#punktfunk-host .#punktfunk-client .#punktfunk-tray \
-              .#punktfunk-web .#punktfunk-scripting .#punktfunk-seats .#punktfunk-gamescope
+              .#lilynk-host .#lilynk-client .#lilynk-tray \
+              .#lilynk-web .#lilynk-scripting .#lilynk-seats .#lilynk-gamescope
           }
           # A bump that does not build (nixpkgs' gamescope moving past our patches) still publishes
           # main on the current lock, unless nix-canary already holds it; the last step then fails.
@@ -419,7 +419,7 @@ jobs:
           # "Illegal option". The two places below where a pipeline's LEFT side must be able to fail
           # the step are written as redirects instead, so nothing depends on pipefail.
           set -eu
-          PKGS=".#punktfunk-host .#punktfunk-client .#punktfunk-tray .#punktfunk-web .#punktfunk-scripting .#punktfunk-seats .#punktfunk-gamescope"
+          PKGS=".#lilynk-host .#lilynk-client .#lilynk-tray .#lilynk-web .#lilynk-scripting .#lilynk-seats .#lilynk-gamescope"
 
           # 1) Pick what to publish. PUBLISH ONLY OUR OWN PATHS — this is the difference between
           #    ~300 MB and several GB per run, and it is not a corner cut: a runtime closure here
@@ -427,7 +427,7 @@ jobs:
           #    already on cache.nixos.org, served by a real CDN. Mirroring them onto unom-1 would
           #    cost disk and home-to-cloud bandwidth to serve a WORSE copy of what users already
           #    have. Nothing in nixpkgs is named punktfunk, so the name filter is exact.
-          paths="$("$NIX" path-info -r $PKGS | grep -- '-punktfunk' || true)"
+          paths="$("$NIX" path-info -r $PKGS | grep -- '-lilynk' || true)"
           [ -n "$paths" ] || { echo "::error::no punktfunk store paths in the closure — the name filter is broken"; exit 1; }
           echo "$paths"
           # The filter is a string match, so it would fail SILENTLY if a pname ever changed — and
@@ -435,7 +435,7 @@ jobs:
           # every built output is actually covered rather than discovering it as a user rebuild.
           for out in $("$NIX" build --print-out-paths $PKGS); do
             printf '%s\n' "$paths" | grep -qxF "$out" \
-              || { echo "::error::$out is not matched by the '-punktfunk' filter — publish would silently omit it"; exit 1; }
+              || { echo "::error::$out is not matched by the '-lilynk' filter — publish would silently omit it"; exit 1; }
           done
 
           # 2) Sign into a local binary cache. The secret is the whole `name:base64` line from
@@ -542,7 +542,7 @@ jobs:
       - name: Build the Rust packages (dispatch opt-in)
         if: ${{ github.event.inputs.build-rust == 'true' || github.event.inputs.build-rust == true }}
         run: |
-          "$NIX" build --print-build-logs .#punktfunk-host .#punktfunk-client .#punktfunk-seats
+          "$NIX" build --print-build-logs .#lilynk-host .#lilynk-client .#lilynk-seats
 
       # The patched compositor. Separate from build-rust because its failure mode is different: it
       # tracks nixpkgs' gamescope, not our Rust, so it wants a run after a flake.lock bump rather
@@ -552,4 +552,4 @@ jobs:
       - name: Build the patched gamescope (dispatch opt-in)
         if: ${{ github.event.inputs.build-gamescope == 'true' || github.event.inputs.build-gamescope == true }}
         run: |
-          "$NIX" build --print-build-logs .#punktfunk-gamescope
+          "$NIX" build --print-build-logs .#lilynk-gamescope

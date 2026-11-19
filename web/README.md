@@ -1,6 +1,6 @@
 # punktfunk web — management console
 
-The browser UI for the punktfunk host's **management REST API** (`crates/host/punktfunk-host/src/mgmt.rs`,
+The browser UI for the punktfunk host's **management REST API** (`crates/host/lilynk-host/src/mgmt.rs`,
 OpenAPI at `api/openapi.json`). It shows live status, host capabilities, paired
 clients, the pairing-PIN flow, and session controls.
 
@@ -31,7 +31,7 @@ Start a host with the management API up:
 # from the repo root — `serve` brings up the native punktfunk/2 plane + the mgmt API (the console
 # only needs the mgmt API; add --gamestream too if you also want the Moonlight surface):
 WAYLAND_DISPLAY=wayland-kde XDG_CURRENT_DESKTOP=KDE \
-  cargo run -rp punktfunk-host -- serve
+  cargo run -rp lilynk-host -- serve
 # loopback :47990, no token (a token is mandatory for non-loopback binds).
 ```
 
@@ -89,7 +89,7 @@ Single-user, login-gated. Config via env (see `.env.example`):
   console.)
 
 So: `browser ──password──▶ web server (session cookie) ──mgmt token, server-side──▶ mgmt API`.
-Run the host with a matching token: `cargo run -rp punktfunk-host -- serve` +
+Run the host with a matching token: `cargo run -rp lilynk-host -- serve` +
 `PUNKTFUNK_MGMT_TOKEN=…` (or `--mgmt-token …`). `vite dev` has no gate (localhost-only) and
 proxies straight to the loopback mgmt API.
 
@@ -109,7 +109,7 @@ Generated code is **not committed** (gitignored) — reproduced from sources:
   `bun install` (`prepare`) and before `dev`/`build` (`pre*` for orval; the Vite plugin
   compiles paraglide on dev/build).
 - After a management-API change, regenerate the spec on the Rust side first:
-  `cargo run -p punktfunk-host -- openapi > api/openapi.json`, then `bun run api:gen`.
+  `cargo run -p lilynk-host -- openapi > api/openapi.json`, then `bun run api:gen`.
 
 ## Layout
 
@@ -130,5 +130,5 @@ project.inlang/      reads ../l10n/messages/{web,common,host}/{locale}.json
 ```
 
 The console's text is `l10n/messages/web/`; the button verbs it shares with every client are in
-`common`, the host's ids in `host`. A key lives in one part only. `cargo run -p pf-l10n -- check`
+`common`, the host's ids in `host`. A key lives in one part only. `cargo run -p ly-l10n -- check`
 holds them to the copy budget in `l10n/rules.json` (`l10n/README.md`).

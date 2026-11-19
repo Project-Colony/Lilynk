@@ -68,7 +68,7 @@ final class RumbleTuningTests: XCTestCase {
         renderer.stop()
     }
 
-    /// A zero command must silence promptly — the engine (punktfunk-core) emits explicit zeros at
+    /// A zero command must silence promptly — the engine (lilynk-core) emits explicit zeros at
     /// every policy stop (lease expiry, legacy staleness, session close), and the renderer's only
     /// job is to apply them. Drive the real queue/ticker (no physical pad) and confirm no wedge.
     func testZeroCommandSilencesAndTeardownDoesNotDeadlock() {

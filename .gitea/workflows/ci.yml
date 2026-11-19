@@ -77,7 +77,7 @@ jobs:
         run: |
           set -eu
           sh scripts/ci/changed.sh --self-test
-          bash scripts/ci/pf-version.sh --self-test
+          bash scripts/ci/ly-version.sh --self-test
           if [ -n "${BASE_SHA:-}" ]; then
             git cat-file -e "$BASE_SHA^{commit}" 2>/dev/null || git fetch origin "$BASE_SHA"
             git diff --no-renames --name-only "$BASE_SHA...HEAD" > /tmp/changed-paths
@@ -118,7 +118,7 @@ jobs:
     if: ${{ needs.changes.outputs.rust == 'true' && needs.changes.outputs.heavy == 'true' }}
     runs-on: ubuntu-24.04
     container:
-      image: 192.168.1.58:5010/punktfunk-rust-ci:latest
+      image: 192.168.1.58:5010/lilynk-rust-ci:latest
     timeout-minutes: 90
     env:
       # cc-rs recognises `sccache` as a compiler wrapper when it leads CC/CXX, and cmake-rs then
@@ -138,7 +138,7 @@ jobs:
       - name: sccache (no-op once the image bakes it)
         run: sh scripts/ci/ensure-sccache.sh
 
-      # punktfunk-client-linux link deps. Also baked into rust-ci.Dockerfile — but ci.yml
+      # lilynk-client-linux link deps. Also baked into rust-ci.Dockerfile — but ci.yml
       # runs against the image from the PREVIOUS push (docker.yml bootstrap note), so this
       # keeps the job green across image-content changes; a no-op once the image has them.
       - name: GTK4/libadwaita/SDL3 dev packages
@@ -153,25 +153,25 @@ jobs:
       # and constant must match.
       #
       # Only shaders whose rebuild command is plain `glslangValidator -V` belong here. The
-      # pf-client-video blobs are compiled by their build.sh with `glslc -O`, so gating them would
+      # ly-client-video blobs are compiled by their build.sh with `glslc -O`, so gating them would
       # pin this diff to CI's spirv-opt version and go red on a toolchain bump, not on drift.
       #
       # Disassemble to FILES rather than `diff <(…) <(…)`: Gitea's runner executes a step's `run:`
       # under `sh -e`, and dash has no process substitution — it rejects the script at PARSE time,
       # taking the whole `rust` job with it. A gate that cannot run looks exactly like one that
       # passes, which is the failure it exists to prevent.
-      - name: Shader SPIR-V drift gate (pf-zerocopy, pf-encode)
+      - name: Shader SPIR-V drift gate (ly-zerocopy, ly-encode)
         run: |
           apt-get install -y --no-install-recommends glslang-tools spirv-tools
-          for p in crates/host/pf-zerocopy/src/imp/rgb2nv12_buf \
-                   crates/host/pf-zerocopy/src/imp/cursor_blend \
-                   crates/host/pf-zerocopy/src/imp/convert_img \
-                   crates/host/pf-zerocopy/src/imp/reframe_buf \
-                   crates/host/pf-encode/src/enc/linux/reframe \
-                   crates/host/pf-encode/src/enc/linux/rgb2yuv \
-                   crates/host/pf-encode/src/enc/linux/rgb2yuv10 \
-                   crates/host/pf-encode/src/enc/linux/rgb2yuv10_709 \
-                   crates/host/pf-encode/src/enc/linux/rgb2yuv444; do
+          for p in crates/host/ly-zerocopy/src/imp/rgb2nv12_buf \
+                   crates/host/ly-zerocopy/src/imp/cursor_blend \
+                   crates/host/ly-zerocopy/src/imp/convert_img \
+                   crates/host/ly-zerocopy/src/imp/reframe_buf \
+                   crates/host/ly-encode/src/enc/linux/reframe \
+                   crates/host/ly-encode/src/enc/linux/rgb2yuv \
+                   crates/host/ly-encode/src/enc/linux/rgb2yuv10 \
+                   crates/host/ly-encode/src/enc/linux/rgb2yuv10_709 \
+                   crates/host/ly-encode/src/enc/linux/rgb2yuv444; do
             s=${p##*/}
             glslangValidator -V "$p.comp" -o "/tmp/$s.spv" >/dev/null
             spirv-dis --no-header "$p.spv"      | grep -v OpSourceExtension > "/tmp/$s.committed"
@@ -285,12 +285,12 @@ jobs:
       # crate in the native-only graph (it exits non-zero with "nothing depends on" — inverted).
       - name: Clippy + tree (native-only host, no gamestream feature)
         run: |
-          cargo clippy -p punktfunk-host --no-default-features --features pyrowave \
+          cargo clippy -p lilynk-host --no-default-features --features pyrowave \
             --all-targets --locked -- -D warnings
-          if cargo tree -p punktfunk-host --no-default-features --features pyrowave \
+          if cargo tree -p lilynk-host --no-default-features --features pyrowave \
             --locked -i rusty_enet 2>/dev/null | grep -q rusty_enet; then
             echo "native-only build still depends on rusty_enet"; exit 1; fi
-          if cargo tree -p punktfunk-host --no-default-features --features pyrowave \
+          if cargo tree -p lilynk-host --no-default-features --features pyrowave \
             --locked -i rsa 2>/dev/null | grep -q "^rsa"; then
             echo "native-only build still depends on rsa"; exit 1; fi
 
@@ -304,22 +304,22 @@ jobs:
       # The message files in l10n/: one line per problem (a key in two parts, a lost
       # placeholder, a missing plural category, over budget, a retired term).
       - name: Message check
-        run: cargo run -p pf-l10n --locked -- check
+        run: cargo run -p ly-l10n --locked -- check
 
       # Discovery without the desktop bundle. The workspace test above enables `desktop`,
       # which includes this feature, so it never compiles the feature on its own.
       # Clippy with warnings denied: `cargo check` would stay green on a warning.
       - name: Clippy discovery without desktop
-        run: cargo clippy -p pf-client-core --locked --no-default-features --features discovery -- -D warnings
+        run: cargo clippy -p ly-client-core --locked --no-default-features --features discovery -- -D warnings
 
       # The browser client (punktfunk/client-web) builds these three for wasm; nothing else here
       # compiles that target, so this is where a native-only import into them fails.
       - name: Clippy the browser client's crates on wasm
         run: |
           rustup target add wasm32-unknown-emscripten
-          cargo clippy -p punktfunk-core -p pf-console-ui -p pf-client-core --locked \
+          cargo clippy -p lilynk-core -p ly-console-ui -p ly-client-core --locked \
             --target wasm32-unknown-emscripten --no-default-features \
-            --features punktfunk-core/pake -- -D warnings
+            --features lilynk-core/pake -- -D warnings
 
       # The installer's behavioural gates — detection per family, the derived defaults, channel
       # switching both ways — driven against the binary. They live here, not in the docs-drift
@@ -329,23 +329,23 @@ jobs:
 
       # The deep half of the docs-drift gates (the `docs-drift` job checks the docs-site copy
       # and the textual rest): the committed spec must match what the binary actually serves.
-      # Build already compiled punktfunk-host with default features, so this re-links at worst.
+      # Build already compiled lilynk-host with default features, so this re-links at worst.
       # Byte diff on purpose — the generator is deterministic, and if that ever stops being
       # true it deserves to surface here.
       - name: OpenAPI spec drift gate
         run: |
-          cargo run -p punktfunk-host --locked -- openapi > /tmp/openapi.regen.json
+          cargo run -p lilynk-host --locked -- openapi > /tmp/openapi.regen.json
           diff -u api/openapi.json /tmp/openapi.regen.json >/dev/null || {
-            echo "::error::api/openapi.json is stale — regenerate: cargo run -p punktfunk-host -- openapi > api/openapi.json && cp api/openapi.json docs-site/public/openapi.json"
+            echo "::error::api/openapi.json is stale — regenerate: cargo run -p lilynk-host -- openapi > api/openapi.json && cp api/openapi.json docs-site/public/openapi.json"
             exit 1
           }
 
       # The GPU encode backends are OFF by default, so every step above compiles ~none of them:
-      # `nvenc` gates enc/linux/nvenc_cuda.rs (+ pf-encode-core's nvenc_*) and `vulkan-encode` gates
+      # `nvenc` gates enc/linux/nvenc_cuda.rs (+ ly-encode-core's nvenc_*) and `vulkan-encode` gates
       # enc/linux/vulkan_video.rs (+ vk_av1_encode/vk_valve_rgb), both carrying `unsafe` blocks.
       # deb.yml's `cargo build` also compiles them, but warnings are not errors there, so the
-      # `undocumented_unsafe_blocks` deny ([workspace.lints]) — pf-encode's stated unsafe-proof
-      # gate — is only enforced on them here. (`pyrowave` needs no extra step: punktfunk-host has
+      # `undocumented_unsafe_blocks` deny ([workspace.lints]) — ly-encode's stated unsafe-proof
+      # gate — is only enforced on them here. (`pyrowave` needs no extra step: lilynk-host has
       # `default = ["pyrowave", ...]`, so the steps above already cover it.)
       #
       # `--all-targets` is load-bearing, not decoration: without it the feature-gated
@@ -357,30 +357,30 @@ jobs:
       # (On MSVC the same crate link-imports those symbols instead, which is why windows-host.yml
       # can only type-check these tests via clippy — see the note there.)
       #
-      # Scoped to `-p pf-encode` with ITS OWN feature names: punktfunk-host has no code gated on
+      # Scoped to `-p ly-encode` with ITS OWN feature names: lilynk-host has no code gated on
       # `nvenc`/`vulkan-encode` (its only `pyrowave` site is the one in capture.rs, and pyrowave
       # is default-on, so the steps above already cover it). Going
-      # through `--features punktfunk-host/...` would force punktfunk-host into the selection and
+      # through `--features lilynk-host/...` would force lilynk-host into the selection and
       # re-run its entire test suite a second time for no extra coverage.
       #
-      # `pyrowave` (the host's default) is listed explicitly: selecting only `-p pf-encode` takes
-      # the host out of the resolution, and pf-encode's own default is empty. Naming it keeps this
+      # `pyrowave` (the host's default) is listed explicitly: selecting only `-p ly-encode` takes
+      # the host out of the resolution, and ly-encode's own default is empty. Naming it keeps this
       # the SHIPPED Linux feature set — deb.yml builds
-      # `--features punktfunk-host/nvenc,punktfunk-host/vulkan-encode` WITHOUT
+      # `--features lilynk-host/nvenc,lilynk-host/vulkan-encode` WITHOUT
       # `--no-default-features`, so the .deb carries nvenc + vulkan-encode + pyrowave together, and
       # that combination is what deserves the lint. The bare crate lints on its own.
       #
-      # pf-encode-core rides along under the same feature names: its NVENC session and Vulkan
+      # ly-encode-core rides along under the same feature names: its NVENC session and Vulkan
       # Video tests compile under no other feature set.
       - name: Clippy + test the feature-gated Linux encode backends
         run: |
-          cargo clippy -p pf-encode -p pf-encode-core --all-targets --locked \
+          cargo clippy -p ly-encode -p ly-encode-core --all-targets --locked \
             --features nvenc,vulkan-encode,pyrowave -- -D warnings
-          cargo clippy -p pf-encode --all-targets --locked -- -D warnings
-          cargo test -p pf-encode -p pf-encode-core --locked --features nvenc,vulkan-encode,pyrowave
+          cargo clippy -p ly-encode --all-targets --locked -- -D warnings
+          cargo test -p ly-encode -p ly-encode-core --locked --features nvenc,vulkan-encode,pyrowave
 
       - name: C ABI harness (standalone link proof)
-        run: bash crates/client/punktfunk-ffi/tests/c/run.sh
+        run: bash crates/client/lilynk-ffi/tests/c/run.sh
 
       - name: sccache stats (visibility only)
         run: sccache --show-stats
@@ -456,7 +456,7 @@ jobs:
     if: ${{ needs.changes.outputs.rust_arm64 == 'true' && needs.changes.outputs.heavy == 'true' }}
     runs-on: ubuntu-24.04
     container:
-      image: 192.168.1.58:5010/punktfunk-rust-ci-arm64cross:latest
+      image: 192.168.1.58:5010/lilynk-rust-ci-arm64cross:latest
     timeout-minutes: 60
     env:
       SKIA_BINARIES_URL: file:///opt/skia-binaries/skia-binaries-{key}.tar.gz
@@ -514,17 +514,17 @@ jobs:
       - name: Clippy for aarch64 (deny warnings)
         run: |
           cargo clippy --target aarch64-unknown-linux-gnu --all-targets --locked \
-            -p punktfunk-core -p punktfunk-ffi -p pf-client-core -p pf-client-video -p pf-presenter \
-            -p pf-console-ui \
-            -p punktfunk-client-session -p punktfunk-client-linux \
-            --features punktfunk-ffi/quic -- -D warnings
+            -p lilynk-core -p lilynk-ffi -p ly-client-core -p ly-client-video -p ly-presenter \
+            -p ly-console-ui \
+            -p lilynk-client-session -p lilynk-client-linux \
+            --features lilynk-ffi/quic -- -D warnings
 
       # The minimal embedded build — no Skia, no PyroWave — is what a small image installs, so
       # it has to keep compiling on its own, not just as a subset of the default features.
       - name: Build the session binary, minimal features
         run: |
           cargo build --release --target aarch64-unknown-linux-gnu --locked \
-            -p punktfunk-client-session --no-default-features
+            -p lilynk-client-session --no-default-features
 
       # Main writes the caches; see the save steps at the end of the `rust` job.
       - name: Save cargo home
@@ -651,7 +651,7 @@ jobs:
         run: |
           bun run gen
           git diff --exit-code -- src/gen/ || {
-            echo "::error::sdk/src/gen/punktfunk.ts is stale — run 'bun run gen' in sdk/ and commit"
+            echo "::error::sdk/src/gen/lilynk.ts is stale — run 'bun run gen' in sdk/ and commit"
             exit 1
           }
       - name: Typecheck + test plugin kit
@@ -690,7 +690,7 @@ jobs:
           corepack prepare pnpm@9 --activate
           pnpm install --frozen-lockfile
           pnpm run test
-      # The backend (main.py + py_modules/pf_decky) against a stubbed `decky` module: argv shapes,
+      # The backend (main.py + py_modules/ly_decky) against a stubbed `decky` module: argv shapes,
       # exit codes, the Steam VDF editor, the loader's import shape. Stdlib only, Python 3.10 or
       # newer; this image carries 3.11.
       - name: Backend helpers
@@ -700,7 +700,7 @@ jobs:
   # build fetches node_modules from nothing else. They regenerate only on a local `bun install` that
   # runs lifecycle scripts — never under CI's `--ignore-scripts`, and never on a merge or rebase,
   # which happily carries a lockfile change past a bun.nix generated before it, leaving
-  # `nix build .#punktfunk-web` broken.
+  # `nix build .#lilynk-web` broken.
   #
   # Deliberately UNFILTERED and in ci.yml rather than nix.yml: it needs no Nix, takes well under a
   # minute, and the whole point is that the drift arrives through commits that look unrelated to

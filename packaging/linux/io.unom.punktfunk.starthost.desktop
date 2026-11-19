@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=Punktfunk Host
-Name[de]=Punktfunk-Host
+Name[de]=Lilynk-Host
 Name[es]=Host de Punktfunk
 Name[fr]=Hôte Punktfunk
 GenericName=Streaming host
@@ -17,8 +17,8 @@ Comment[fr]=Démarre l’hôte de streaming, sa console web et son exécuteur de
 Comment[it]=Avvia l’host di streaming, la sua console web e il plugin runner e mostra il loro stato nell’area di notifica
 Comment[pt_BR]=Inicie o host de streaming, o console web e o executor de plugins, e veja o status deles na bandeja do sistema
 # The Windows "Punktfunk Host" Start-menu link runs the same command.
-Exec=/usr/bin/punktfunk-tray --start-host
-Icon=punktfunk-tray
+Exec=/usr/bin/lilynk-tray --start-host
+Icon=lilynk-tray
 Terminal=false
 StartupNotify=false
 Categories=Network;RemoteAccess;
@@ -37,4 +37,4 @@ Name[es]=Mostrar solo el estado
 Name[fr]=Afficher l’état uniquement
 Name[it]=Mostra solo lo stato
 Name[pt_BR]=Mostrar somente o status
-Exec=/usr/bin/punktfunk-tray
+Exec=/usr/bin/lilynk-tray

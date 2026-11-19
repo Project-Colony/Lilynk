@@ -2,15 +2,15 @@
 //!
 //! Drives access units through the in-process loopback at increasing loss rates, for
 //! both FEC schemes, and prints how many frames survive. A pure-software stand-in for
-//! `tc netem` that needs no network and runs anywhere `punktfunk_core` builds. The real harness
+//! `tc netem` that needs no network and runs anywhere `lilynk_core` builds. The real harness
 //! adds `tc netem` jitter/reorder on the UDP path.
 #![forbid(unsafe_code)]
 
-use punktfunk_core::config::{Config, FecConfig, FecScheme, Role};
-use punktfunk_core::error::PunktfunkError;
-use punktfunk_core::packet::{FLAG_PIC, FLAG_SOF, USER_FLAG_CHUNK_ALIGNED};
-use punktfunk_core::session::{MediaV2, Session};
-use punktfunk_core::transport::loopback_pair;
+use lilynk_core::config::{Config, FecConfig, FecScheme, Role};
+use lilynk_core::error::PunktfunkError;
+use lilynk_core::packet::{FLAG_PIC, FLAG_SOF, USER_FLAG_CHUNK_ALIGNED};
+use lilynk_core::session::{MediaV2, Session};
+use lilynk_core::transport::loopback_pair;
 
 /// Unsealed: loss recovery does not depend on the AEAD. Capture times count from 0.
 fn media() -> MediaV2 {

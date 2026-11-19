@@ -9,13 +9,13 @@
   decision. §2.5 row 1 promises that a blocked encoder leaves the drain worker unaffected, and G3
   requires a hard-blocked encoder to cost one IDR and never a compose hitch. The bypass holds the
   next acquire on the encoder, bounded at 100 ms, so a blocked encoder does hitch this head.
-  AMF, QSV and NVENC take the bypass by default (zero_copy in pf-driver-proto) because the copy
+  AMF, QSV and NVENC take the bypass by default (zero_copy in ly-driver-proto) because the copy
   runs on the 3D engine a game renders on; where it is not the default, a cadence PASS here is
   one input, next to that fault model.
 
   ONE driver binary, deployed before this runs. The legs differ only by the machine knob
   PFVD_POOL_BYPASS, which the driver reads at every encoder open - each leg still cycles the
-  adapter (reset-pf-vdisplay.ps1), so both start on a fresh WUDFHost. The knob goes in the
+  adapter (reset-ly-vdisplay.ps1), so both start on a fresh WUDFHost. The knob goes in the
   machine Environment key, which the driver's `knob()` reads live; host.env cannot reach it,
   because WUDFHost is not the host process.
 
@@ -59,7 +59,7 @@ param(
     [switch]$NoLoad,
     [int]$GpuIndex = 0,
     [string]$Repo = 'C:\Users\Public\pf-phase0',
-    [string]$Client = 'C:\Users\Public\punktfunk-native\target\release\punktfunk-session.exe',
+    [string]$Client = 'C:\Users\Public\lilynk-native\target\release\lilynk-session.exe',
     [string]$FurMark = 'C:\Program Files\Geeks3D\FurMark2_x64\furmark.exe',
     [string]$Service = 'PunktfunkHost',
     [string]$OutDir = 'C:\Users\Public'
@@ -79,11 +79,11 @@ function Say([string]$m) {
 
 "=== S6 pool vs bypass $(Get-Date -Format o) ===" | Set-Content $Log
 $Reset = @(
-    (Join-Path $Repo 'packaging\windows\reset-pf-vdisplay.ps1')
-    (Join-Path $OutDir 'reset-pf-vdisplay.ps1')
+    (Join-Path $Repo 'packaging\windows\reset-ly-vdisplay.ps1')
+    (Join-Path $OutDir 'reset-ly-vdisplay.ps1')
 ) | Where-Object { Test-Path $_ } | Select-Object -First 1
 if (-not (Test-Path $Client)) { Say "FATAL no client at $Client"; exit 1 }
-if (-not $Reset) { Say "FATAL no reset-pf-vdisplay.ps1 under $Repo or $OutDir"; exit 1 }
+if (-not $Reset) { Say "FATAL no reset-ly-vdisplay.ps1 under $Repo or $OutDir"; exit 1 }
 Say "reset script: $Reset"
 if (-not $Fp) {
     $cert = Join-Path $env:ProgramData 'punktfunk\cert.pem'

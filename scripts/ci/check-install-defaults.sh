@@ -1,5 +1,5 @@
 #!/bin/sh
-# Derived defaults for the guided installer (crates/install/punktfunk-setup, issue #431).
+# Derived defaults for the guided installer (crates/install/lilynk-setup, issue #431).
 # Faked os-release + --dry-run --yes --no-start: each family must print the summary that
 # --yes would actually take, and that summary must appear before the first sudo.
 # Stub host binaries on PATH put every case on the wiring-only path: this build has no package
@@ -12,8 +12,8 @@ cd "$(dirname "$0")/../.." || exit 2
 # CI passes a built binary; a developer running this by hand gets a debug build.
 PF=${PUNKTFUNK_SETUP_BIN:-}
 if [ -z "$PF" ]; then
-    cargo build -q -p punktfunk-setup || exit 2
-    PF=target/debug/punktfunk-setup
+    cargo build -q -p lilynk-setup || exit 2
+    PF=target/debug/lilynk-setup
 fi
 [ -x "$PF" ] || { echo "::error::$PF is not executable"; exit 2; }
 
@@ -23,7 +23,7 @@ gsbin=$(mktemp -d)
 ujbin=$(mktemp -d)
 pfbin=$(mktemp -d)
 trap 'rm -rf "$osr" "$gsbin" "$ujbin" "$pfbin"' EXIT
-for b in punktfunk-host punktfunk-web-server punktfunk-scripting; do
+for b in lilynk-host lilynk-web-server lilynk-scripting; do
     printf '#!/bin/sh\necho 0.0.0-test\n' > "$pfbin/$b"; chmod +x "$pfbin/$b"
 done
 
@@ -42,11 +42,11 @@ defaults_case() {
         *) echo "::error::defaults_case $name: seat must be desktop or headless, got '$seat'"; fail=1; return ;;
     esac
     # $_env is expanded on purpose: the seat pins must override a graphical session on the
-    # machine running the gate. Quoted "$@" are extra installer flags (e.g. --no-punktfunk-group).
+    # machine running the gate. Quoted "$@" are extra installer flags (e.g. --no-lilynk-group).
     out=$(env $_env PATH="${extra:+$extra:}$pfbin:$PATH" \
           PUNKTFUNK_INSTALL_OS_RELEASE="$osr/$name" \
           "$PF" --dry-run --yes --no-start "$@" 2>&1) || {
-        echo "::error::punktfunk-setup --dry-run --yes --no-start on fake $name ($seat) exited $?"
+        echo "::error::lilynk-setup --dry-run --yes --no-start on fake $name ($seat) exited $?"
         printf '%s\n' "$out" | sed 's/^/    /'
         fail=1
         return
@@ -54,7 +54,7 @@ defaults_case() {
     case "$out" in
         *"$want"*) ;;
         *)
-            echo "::error::punktfunk-setup --dry-run on fake $name ($seat) did not print '$want':"
+            echo "::error::lilynk-setup --dry-run on fake $name ($seat) did not print '$want':"
             printf '%s\n' "$out" | sed 's/^/    /'
             fail=1
             return ;;
@@ -67,7 +67,7 @@ defaults_case() {
         index($0, "  + sudo") && !s { s=NR }
         END { if (!c) exit 1; if (s && c > s) exit 1 }
     '; then
-        echo "::error::punktfunk-setup --dry-run on fake $name ($seat): Choices must print before the first '+ sudo':"
+        echo "::error::lilynk-setup --dry-run on fake $name ($seat): Choices must print before the first '+ sudo':"
         printf '%s\n' "$out" | sed 's/^/    /'
         fail=1
     fi
@@ -84,7 +84,7 @@ SIL='ID=fedora\nVARIANT_ID=silverblue\nVERSION_ID=44\nPRETTY_NAME="Fedora Linux 
 # Desktop seat: the punktfunk group and the shared clipboard default to yes on every family;
 # linger only on the couch/HTPC distros. Each client opts in per host, so a shared clipboard on
 # the host grants nothing on its own. The couch cases carry their own why-text, and the opt-out
-# case proves --no-punktfunk-group still wins. The grant is named in the label on purpose: under
+# case proves --no-lilynk-group still wins. The grant is named in the label on purpose: under
 # --yes this summary is the only place it is stated.
 defaults_case debian-desk  "$DEB"  desktop '' 'Full controller (joins the punktfunk group — grants usbip attach): yes'
 defaults_case debian-desk2 "$DEB"  desktop '' 'Third-party clients (Moonlight, Artemis): no'
@@ -113,7 +113,7 @@ defaults_case bazzite-desk4 "$BAZ" desktop '' 'Shared clipboard: yes'
 defaults_case nobara-desk  "$NOB" desktop '' 'Full controller (joins the punktfunk group — grants usbip attach): yes  (Nobara — virtual Steam Deck controller)'
 defaults_case nobara-desk2 "$NOB" desktop '' 'Start at boot with nobody logged in: yes  (Nobara hosts are usually headless)'
 # Flags/env still win over the distro default.
-defaults_case bazzite-flag "$BAZ" desktop '' 'Full controller (joins the punktfunk group — grants usbip attach): no' --no-punktfunk-group
+defaults_case bazzite-flag "$BAZ" desktop '' 'Full controller (joins the punktfunk group — grants usbip attach): no' --no-lilynk-group
 
 # No graphical seat (SSH, CI, a pipe) → linger even on a generic distro.
 defaults_case debian-ssh  "$DEB" headless '' 'Start at boot with nobody logged in: yes  (no graphical session)'
@@ -123,7 +123,7 @@ defaults_case debian-ssh3 "$DEB" headless '' 'would set PUNKTFUNK_COMPOSITOR=gam
 
 # Active Sunshine-family host (detect-conflicts exit 1) → Moonlight compat stays off: both
 # hosts bind the Moonlight ports.
-cat > "$gsbin/punktfunk-host" <<'EOF'
+cat > "$gsbin/lilynk-host" <<'EOF'
 #!/bin/sh
 if [ "${1:-}" = detect-conflicts ]; then
     echo "Sunshine is running"
@@ -131,7 +131,7 @@ if [ "${1:-}" = detect-conflicts ]; then
 fi
 echo 0.0.0-test
 EOF
-chmod +x "$gsbin/punktfunk-host"
+chmod +x "$gsbin/lilynk-host"
 defaults_case debian-gs "$DEB" desktop "$gsbin" 'Third-party clients (Moonlight, Artemis): no'
 defaults_case debian-gs2 "$DEB" desktop "$gsbin" 'Full controller (joins the punktfunk group — grants usbip attach): yes'
 

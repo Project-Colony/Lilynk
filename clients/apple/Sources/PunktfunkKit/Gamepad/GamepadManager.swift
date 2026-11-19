@@ -2,9 +2,9 @@
 // GCController connect/disconnect from launch, so the Settings page shows live controller
 // state without a session, and the session components (GamepadCapture / GamepadFeedback)
 // follow `forwarded` — every forwarded controller is streamed to the host, each on its own
-// wire pad index (pf-client-core parity; up to `GamepadWire.maxPads`).
+// wire pad index (ly-client-core parity; up to `GamepadWire.maxPads`).
 //
-// Selection (mirrors pf-client-core's `forwarded_ids` + slot model): with no pin, EVERY
+// Selection (mirrors ly-client-core's `forwarded_ids` + slot model): with no pin, EVERY
 // extended controller is forwarded — each assigned a stable lowest-free pad index held for
 // its forwarded lifetime, so a disconnect frees only its own index and never renumbers the
 // others. A pin (Settings, persisted under DefaultsKey.gamepadID) forwards ONLY that one pad
@@ -78,14 +78,14 @@ public final class GamepadManager: ObservableObject {
     @Published public private(set) var active: DiscoveredController?
 
     /// The controllers forwarded to the host this session, in wire-pad-index preference order
-    /// (pf-client-core's `forwarded_ids`): a pin forwards ONLY the pinned pad; Automatic forwards
+    /// (ly-client-core's `forwarded_ids`): a pin forwards ONLY the pinned pad; Automatic forwards
     /// every extended controller. GamepadCapture opens a slot per entry and GamepadFeedback routes
     /// feedback back to it, each on the index from `padIndex(for:)`.
     @Published public private(set) var forwarded: [DiscoveredController] = []
 
     /// Stable wire pad index (0..<`GamepadWire.maxPads`) per forwarded controller, keyed by
     /// GCController identity. Lowest-free, held while the controller stays forwarded — a
-    /// disconnect frees only its own index so the others never renumber (pf-client-core's
+    /// disconnect frees only its own index so the others never renumber (ly-client-core's
     /// `lowest_free_index`). Recomputed by `assignPadIndices` whenever `forwarded` changes.
     private var padIndexByController: [ObjectIdentifier: UInt8] = [:]
 
@@ -194,7 +194,7 @@ public final class GamepadManager: ObservableObject {
 
     /// The kind to DECLARE to the host for one forwarded controller (its `GamepadArrival`).
     /// An explicit setting wins for every pad — the handshake's session default alone does NOT
-    /// stick, because a current host honors the per-pad arrival over it (punktfunk-host's
+    /// stick, because a current host honors the per-pad arrival over it (lilynk-host's
     /// `Pads::set_kind`), so a client that declared only the detected kind here would silently
     /// undo the user's choice. `.auto` keeps per-pad detection, which is what makes a mixed
     /// session (pad 0 a DualSense, pad 1 an Xbox pad) honest.
@@ -204,7 +204,7 @@ public final class GamepadManager: ObservableObject {
         Self.declaredKind(setting: typeSetting, detected: controller.kind)
     }
 
-    /// The pure fold behind `declaredKind(for:)` (pf-client-core's `declared_kind`).
+    /// The pure fold behind `declaredKind(for:)` (ly-client-core's `declared_kind`).
     nonisolated static func declaredKind(
         setting: PunktfunkConnection.GamepadType,
         detected: PunktfunkConnection.GamepadType
@@ -346,7 +346,7 @@ public final class GamepadManager: ObservableObject {
             lastKnownKind = active.kind
             UserDefaults.standard.set(Int(active.kind.rawValue), forKey: Self.lastKindKey)
         }
-        // Forwarded set (pf-client-core's `forwarded_ids`): a pin forwards ONLY the pinned pad
+        // Forwarded set (ly-client-core's `forwarded_ids`): a pin forwards ONLY the pinned pad
         // (explicit single-player); Automatic forwards every extended controller in connect order
         // (oldest→newest), so a game's player numbers are stable across hot-plug churn.
         let next = pinned.map { [$0] } ?? candidates
@@ -358,7 +358,7 @@ public final class GamepadManager: ObservableObject {
     }
 
     /// Assign each forwarded controller a stable wire pad index (lowest-free, held while it stays
-    /// forwarded) — mirrors pf-client-core's slot model, where a disconnect frees only its own
+    /// forwarded) — mirrors ly-client-core's slot model, where a disconnect frees only its own
     /// index and the others keep theirs. A controller already holding an index keeps it across the
     /// churn; a slot beyond `GamepadWire.maxPads` goes unassigned (that pad is not forwarded).
     private func assignPadIndices(for next: [DiscoveredController]) {
@@ -461,7 +461,7 @@ public final class GamepadManager: ObservableObject {
     #endif
 
     /// The lowest wire pad index not already taken, or nil when all `GamepadWire.maxPads` are in
-    /// use (pf-client-core's `lowest_free_index`).
+    /// use (ly-client-core's `lowest_free_index`).
     private static func lowestFreeIndex(_ taken: Set<UInt8>) -> UInt8? {
         (0..<UInt8(GamepadWire.maxPads)).first { !taken.contains($0) }
     }
@@ -473,7 +473,7 @@ public final class GamepadManager: ObservableObject {
 
     /// Drop every pad-index assignment and recompute from the current forwarded set — called when
     /// a streaming session begins so the assignment starts fresh (a controller pinned before the
-    /// session forwards as pad 0, not whatever index it held for the Settings list). pf-client-core
+    /// session forwards as pad 0, not whatever index it held for the Settings list). ly-client-core
     /// assigns indices at slot-open time; this reproduces that session-scoped start.
     public func resetForwardingAssignment() {
         padIndexByController.removeAll()

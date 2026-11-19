@@ -1,15 +1,15 @@
 #!/usr/bin/env bun
-// `punktfunk-scripting` — the plugin/script runner AND the `punktfunk-host plugins …` package ops.
+// `lilynk-scripting` — the plugin/script runner AND the `lilynk-host plugins …` package ops.
 //
 // With NO subcommand it RUNS the runner: discover the operator's scripts + installed plugin
 // packages and supervise them (see ./runner.ts). SIGINT/SIGTERM interrupt the whole tree
 // structurally, so every plugin's finalizers run before exit (the systemd-stop story). This bare
 // form is what the systemd unit / Windows scheduled task launch — do not change its behavior.
 //
-// With a subcommand it manages plugin packages (the host CLI forwards `punktfunk-host plugins …`
+// With a subcommand it manages plugin packages (the host CLI forwards `lilynk-host plugins …`
 // here):
 //   add <name…>      install first-party plugins (playnite, rom-manager); anything resolving on
-//                    the PUBLIC npm registry (punktfunk-plugin-*, foreign scopes) additionally
+//                    the PUBLIC npm registry (lilynk-plugin-*, foreign scopes) additionally
 //                    needs --allow-public-registry
 //   remove <name…>   uninstall
 //   list             list installed plugin packages
@@ -19,7 +19,7 @@
 //
 // Package-op flags: --exact pins the resolved version instead of a caret range, and
 // --registry @scope=https://… maps a scope to its registry in bunfig.toml. Both exist for the
-// plugin store (crates/host/punktfunk-host/src/plugin_host/store), which installs one reviewed version
+// plugin store (crates/host/lilynk-host/src/plugin_host/store), which installs one reviewed version
 // of a package that may live on somebody else's registry — but they are ordinary CLI flags too.
 import { Effect, Fiber } from "effect";
 import { publishedMgmtUrl } from "./config.js";
@@ -116,7 +116,7 @@ const runPkgOp = (
 	const names = positionals();
 	if (names.length === 0) {
 		console.error(
-			`usage: punktfunk-host plugins ${verb} <name…>  (e.g. playnite, rom-manager)`,
+			`usage: lilynk-host plugins ${verb} <name…>  (e.g. playnite, rom-manager)`,
 		);
 		process.exit(2);
 	}
@@ -209,7 +209,7 @@ if (!process.env.PUNKTFUNK_MGMT_URL) {
 
 // Tee this process's output to the host so the console's Logs page can show it. Installed HERE and
 // not in `runner.ts`, so it covers the supervised run only: a plugin's own CLI builds the same
-// layer graph, and an operator running `punktfunk-plugin-x doctor` in their terminal is not asking
+// layer graph, and an operator running `lilynk-plugin-x doctor` in their terminal is not asking
 // to write into the host's log. Must be installed before the runner starts — the lines that explain
 // a plugin failing to load are the first ones out.
 const shipper = installLogShipper();

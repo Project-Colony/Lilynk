@@ -1,41 +1,41 @@
-# punktfunk-host — Debian/Ubuntu package (apt)
+# lilynk-host — Debian/Ubuntu package (apt)
 
 > **Which distros the published packages install on** — measured by installing them, not inferred
 > from the build image (`scripts/ci/deb-install-smoke.sh` asserts this on every run):
 >
 > | | Ubuntu 24.04 | Ubuntu 26.04 | Debian 13 | Debian 12 |
 > |---|---|---|---|---|
-> | `punktfunk-host` / `punktfunk-seats` | ✅ | ✅ | ✅ | ❌ glibc 2.36 < 2.39 |
-> | `punktfunk-web` / `punktfunk-scripting` | ✅ | ✅ | ✅ | ✅ |
-> | `punktfunk-gamescope` | ❌ wayland 1.22 | ✅ | ✅ | ❌ |
-> | `punktfunk-client` | ❌ `libc6 >= 2.43` | ✅ | ❌ `libc6 >= 2.43` | ❌ |
+> | `lilynk-host` / `lilynk-seats` | ✅ | ✅ | ✅ | ❌ glibc 2.36 < 2.39 |
+> | `lilynk-web` / `lilynk-scripting` | ✅ | ✅ | ✅ | ✅ |
+> | `lilynk-gamescope` | ❌ wayland 1.22 | ✅ | ✅ | ❌ |
+> | `lilynk-client` | ❌ `libc6 >= 2.43` | ✅ | ❌ `libc6 >= 2.43` | ❌ |
 >
 > Debian 13 is a supported host target ([docs](https://docs.punktfunk.unom.io/docs/debian)); the
 > client is the one gap, since it is built on 26.04 and floors at that release's glibc.
 
-`punktfunk-host` is published as a `.deb` to **Gitea's Debian package registry** in the public
+`lilynk-host` is published as a `.deb` to **Gitea's Debian package registry** in the public
 `unom` org, so the Ubuntu hosts update with plain `apt`. CI (`.gitea/workflows/deb.yml`) builds
 and publishes on every push to `main` (a rolling `<next-minor>~ciN.g<sha>` build — the base is
-derived from the latest stable tag by `scripts/ci/pf-version.sh` — to the **`canary`** apt
+derived from the latest stable tag by `scripts/ci/ly-version.sh` — to the **`canary`** apt
 distribution) and on `vX.Y.Z` tags (a clean `X.Y.Z` to the **`stable`** distribution, plus attached
 to the unified Gitea Release). The two are separate apt distributions, so a stable box never jumps
 to a canary build — see [Release Channels](https://punktfunk.unom.io/docs/channels). The repo line
 below subscribes to `stable`; swap `stable` → `canary` for the latest main builds.
 
-The same workflow also publishes **`punktfunk-web`** (the browser management console — pairing +
-status) and **`punktfunk-client`** (the native GTK4/libadwaita Linux client). `punktfunk-host` **Recommends**
-`punktfunk-web`, so a default `apt install punktfunk-host` pulls the console too (alongside the
-udev/sysctl bits) unless you've disabled weak deps; `punktfunk-client` is independent — install it
-on the box you stream *to*. (`punktfunk-probe` is the headless reference/test tool, not packaged
-here.) `punktfunk-web` and `punktfunk-scripting` both depend on **`punktfunk-bun`**, the one pinned
-bun they run on, at `/usr/lib/punktfunk-bun/bun`, never on PATH.
+The same workflow also publishes **`lilynk-web`** (the browser management console — pairing +
+status) and **`lilynk-client`** (the native GTK4/libadwaita Linux client). `lilynk-host` **Recommends**
+`lilynk-web`, so a default `apt install lilynk-host` pulls the console too (alongside the
+udev/sysctl bits) unless you've disabled weak deps; `lilynk-client` is independent — install it
+on the box you stream *to*. (`lilynk-probe` is the headless reference/test tool, not packaged
+here.) `lilynk-web` and `lilynk-scripting` both depend on **`lilynk-bun`**, the one pinned
+bun they run on, at `/usr/lib/lilynk-bun/bun`, never on PATH.
 
-**`punktfunk-seats`** (`build-seats-deb.sh`) is the root supervisor behind profile seats. The host
-job builds it beside the host, and `punktfunk-host` depends on it at its own version. It ships
+**`lilynk-seats`** (`build-seats-deb.sh`) is the root supervisor behind profile seats. The host
+job builds it beside the host, and `lilynk-host` depends on it at its own version. It ships
 disabled: the console turns seats on. It also carries the door's units, its root helper and its
 polkit rule (Reachable without logging in), disabled the same way.
 
-Package layout mirrors the Fedora RPM (`../rpm/punktfunk.spec`): the host binary, the `/dev/uinput`
+Package layout mirrors the Fedora RPM (`../rpm/lilynk.spec`): the host binary, the `/dev/uinput`
 udev rule, the systemd **user** unit, headless session helpers, the example config, and the OpenAPI
 doc. Runtime `Depends` are computed by `dpkg-shlibdeps` from the binary itself. The NVIDIA driver
 (`libnvidia-encode` / `libEGL_nvidia` / `libcuda`) is **not** a dependency — it's installed out of
@@ -51,7 +51,7 @@ result is **one** host `.deb` that installs on **Ubuntu 24.04 LTS through 26.04*
 on 26.04 (the native client needs SDL3 / GTK4 ≥ 4.20, absent on 24.04) — install the client on the box
 you stream *to*, which is independent of the host's distro.
 
-## `punktfunk-gamescope` is built on Debian 13, not Ubuntu
+## `lilynk-gamescope` is built on Debian 13, not Ubuntu
 
 The patched gamescope has its own job (`build-publish-gamescope`) in a **Debian 13** image
 (`ci/gamescope-trixie.Dockerfile`), and that is not a preference — it is the only apt distro the
@@ -71,7 +71,7 @@ the oldest apt base that works.
 
 Two things make the one package serve both Debian 13 and Ubuntu 26.04:
 
-- **`--extra-fallback libdisplay-info`** (see `packaging/gamescope/build-punktfunk-gamescope.sh`).
+- **`--extra-fallback libdisplay-info`** (see `packaging/gamescope/build-lilynk-gamescope.sh`).
   Linked against the distro copy, the package picks up `Depends: libdisplay-info2 (>= 0.2.0)` on
   trixie — and Ubuntu 26.04 carries libdisplay-info **3** (0.3.0), so apt refuses it there.
   gamescope vendors the library as a submodule, so the vendored build drops the dependency. Same
@@ -94,7 +94,7 @@ firewall and Ubuntu's `ufw` is installed-but-inactive, so out of the box there i
 ## Build a `.deb` locally
 
 ```sh
-VERSION=0.0.1 bash packaging/debian/build-deb.sh   # -> dist/punktfunk-host_0.0.1_amd64.deb
+VERSION=0.0.1 bash packaging/debian/build-deb.sh   # -> dist/lilynk-host_0.0.1_amd64.deb
 ```
 
 Needs `dpkg-dev` (`dpkg-shlibdeps`, `dpkg-deb`). It builds the release binary first if missing.
@@ -111,7 +111,7 @@ docker run --rm -v "$PWD:/src" -w /src pf-noble \
 
 ### The arm64 client `.deb`
 
-The **client** also ships for arm64 (`punktfunk-client_<version>_arm64.deb`, published to the same
+The **client** also ships for arm64 (`lilynk-client_<version>_arm64.deb`, published to the same
 apt distribution — the registry keys pool entries by architecture, so an arm64 box needs no extra
 configuration). There is no arm64 **host** package: the Linux host encodes with NVENC/QSV/AMF, all
 x86.

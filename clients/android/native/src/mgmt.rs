@@ -1,4 +1,4 @@
-//! JNI seam for the management API over the stream port (`punktfunk_core::client::mgmt`), so a
+//! JNI seam for the management API over the stream port (`lilynk_core::client::mgmt`), so a
 //! paired device reaches a host whose TCP 47990 is closed. Like [`crate::wol`] it takes no
 //! session handle and links into the host workspace build.
 
@@ -6,7 +6,7 @@ use jni::errors::LogErrorAndDefault;
 use jni::objects::{JByteArray, JObject, JString};
 use jni::sys::jint;
 use jni::EnvUnowned;
-use punktfunk_core::client::mgmt;
+use lilynk_core::client::mgmt;
 use std::time::Duration;
 
 /// `NativeBridge.nativeMgmtRequest(host, port, certPem, keyPem, pinHex, method, path,
@@ -39,7 +39,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeMgmtRequest
         let path: String = path.try_to_string(env)?;
         let content_type: String = content_type.try_to_string(env)?;
         let body = env.convert_byte_array(&body)?;
-        let Some(pin) = punktfunk_core::fp::parse_hex32(&pin_hex) else {
+        let Some(pin) = lilynk_core::fp::parse_hex32(&pin_hex) else {
             return Ok(JByteArray::default());
         };
         let port = port.clamp(0, u16::MAX as jint) as u16;

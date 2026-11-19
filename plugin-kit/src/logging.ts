@@ -1,6 +1,6 @@
 // Runner-journal logging: one stamped line per log call, `<ISO> [<plugin>] <message>`,
 // matching the format the scripting runner journals, so kit-based plugins read consistently
-// in `journalctl --user -u punktfunk-scripting`.
+// in `journalctl --user -u lilynk-scripting`.
 import { Cause, type Layer, Logger } from "effect";
 
 const render = (message: unknown): string => {

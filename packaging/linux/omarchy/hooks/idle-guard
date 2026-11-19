@@ -29,7 +29,7 @@
 
 set -euo pipefail
 
-STATE="${XDG_RUNTIME_DIR:-/tmp}/punktfunk-omarchy-idle-prior"
+STATE="${XDG_RUNTIME_DIR:-/tmp}/lilynk-omarchy-idle-prior"
 
 command -v omarchy-toggle-idle >/dev/null || exit 0
 

@@ -6,7 +6,7 @@ use super::host_page::{HostPage, HostPageProps};
 use super::hosts::{self, HostsPage, HostsProps};
 use super::style::*;
 use super::{library, lucide, rules, Dest, Msg, Shell};
-use pf_l10n::{client, desktop};
+use ly_l10n::{client, desktop};
 use windows_reactor::*;
 
 /// The pane's width open with its labels, and as the icon rail.

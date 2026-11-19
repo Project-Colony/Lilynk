@@ -12,7 +12,7 @@ layout like hyprmoncfg.
   - *Pair* — incoming request banner with Accept / Reject, the pairing PIN to verify, Moonlight PIN
     field, and the pairing-window toggle.
   - *Devices* — both planes; Unpair asks Confirm / Cancel (`y` / `c`).
-  - *Display* — Dedicated / This screen as layout cards (`punktfunk-omarchy mode`), policy, presets.
+  - *Display* — Dedicated / This screen as layout cards (`lilynk-omarchy mode`), policy, presets.
   - *Stats* — the same pillars, encoder detail, and capture charts.
 - **service** — one long-lived event stream that drives both of the above. The pairing toast is
   the `pairing-pending` hook's (it carries Approve / Deny); the panel only updates its badge.
@@ -23,20 +23,20 @@ closes, Tab switches panels. A waiting pair opens the Pair tab.
 ## Install
 
 The host package ships these files at `/usr/share/punktfunk/omarchy/plugin/`, and
-[`punktfunk-omarchy setup`](https://punktfunk.com/docs/omarchy) offers to install them into
-`~/.config/omarchy/plugins/punktfunk` and enable the widget; `punktfunk-omarchy remove` reverses
-both. Requires a Punktfunk host on the same machine — `punktfunk-host` on `PATH`. Omarchy 4.0 or
+[`lilynk-omarchy setup`](https://punktfunk.com/docs/omarchy) offers to install them into
+`~/.config/omarchy/plugins/punktfunk` and enable the widget; `lilynk-omarchy remove` reverses
+both. Requires a Punktfunk host on the same machine — `lilynk-host` on `PATH`. Omarchy 4.0 or
 newer.
 
 ## How it talks to the host
 
-Every call is `punktfunk-host ctl <verb> --json`, spawned as a process. **The QML never speaks
+Every call is `lilynk-host ctl <verb> --json`, spawned as a process. **The QML never speaks
 HTTPS, never holds the operator token, and never sees the host's certificate.**
 
 That is a deliberate boundary, not an implementation detail. A shell plugin runs *unsandboxed
 inside `omarchy-shell`*, and the management API's admin surface — the pending queue, the PIN,
 unpair, session control — is exactly the surface worth protecting. So the credential stays where it
-already lives: `punktfunk-host ctl` reads the operator token and the host's certificate from the
+already lives: `lilynk-host ctl` reads the operator token and the host's certificate from the
 0700 config directory in its own process, pins the certificate **before** sending the token, and
 prints JSON on stdout. If something that is not your host answers on the management port, `ctl`
 exits 4 with no credential transmitted, and this plugin shows that state instead of a plausible
@@ -74,9 +74,9 @@ Every one of these cost a debugging session, and none of them logs anything usef
 
 ### Displays: Dedicated, This screen, then presets
 
-Dedicated and This screen call `punktfunk-omarchy mode`. The rows below pick the virtual-display
+Dedicated and This screen call `lilynk-omarchy mode`. The rows below pick the virtual-display
 preset and show the policy it puts in force. The section deliberately does **not** list live or
-lingered heads; `punktfunk-host ctl display` is the diagnostic and release surface for those.
+lingered heads; `lilynk-host ctl display` is the diagnostic and release surface for those.
 
 Hyprland gives each virtual display a name. With named-head keep-alive support, a disconnect closes
 the portal capture but leaves that head for the keep-alive window, and a matching reconnect recasts
@@ -102,7 +102,7 @@ ever matters.
 ## Reversing it
 
 ```sh
-omarchy plugin remove punktfunk
+omarchy plugin remove lilynk
 ```
 
 The plugin owns no state — it stores nothing, and removing it changes nothing about your host, your

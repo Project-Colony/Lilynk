@@ -19,7 +19,7 @@
 #
 # A stale pair breaks the Nix build: it fetches node_modules strictly from `bun.nix`, so the
 # offline `bun install` inside the derivation is asked for a tarball the store cache does not
-# contain and `punktfunk-web` fails to build — with a "package not found" that names npm, not the
+# contain and `lilynk-web` fails to build — with a "package not found" that names npm, not the
 # lockfile that actually drifted.
 #
 # The gate also enforces the version pin the flake and README only *state*: `bun.nix` has no schema

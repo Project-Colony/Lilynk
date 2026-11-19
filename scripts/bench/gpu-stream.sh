@@ -35,18 +35,18 @@ if [[ ! -S "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY" ]]; then
 fi
 
 echo "==> building host + client (release)"
-cargo build -rq -p punktfunk-host -p punktfunk-probe
+cargo build -rq -p lilynk-host -p lilynk-probe
 
 HOST_LOG="$(mktemp)"; CLI_LOG="$(mktemp)"
 trap 'kill "$HOST_PID" 2>/dev/null; [[ -n "$OWN_KWIN" ]] && pkill -f "kwin_wayland --virtual" 2>/dev/null; rm -f "$HOST_LOG" "$CLI_LOG"' EXIT
 
 echo "==> host: punktfunk1-host --source virtual ($MODE, ${SECS}s)"
-target/release/punktfunk-host punktfunk1-host --source virtual --seconds "$SECS" --max-sessions 1 \
+target/release/lilynk-host punktfunk1-host --source virtual --seconds "$SECS" --max-sessions 1 \
   >"$HOST_LOG" 2>&1 &
 HOST_PID=$!
 sleep 3
 echo "==> client: streaming + measuring latency"
-target/release/punktfunk-probe --connect 127.0.0.1:9777 --mode "$MODE" --out /dev/null \
+target/release/lilynk-probe --connect 127.0.0.1:9777 --mode "$MODE" --out /dev/null \
   >"$CLI_LOG" 2>&1 || true
 wait "$HOST_PID" 2>/dev/null || true
 

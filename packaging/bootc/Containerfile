@@ -6,15 +6,15 @@
 # then `bootc switch` (or rebase) a Bazzite host onto it for an image-based, atomic install —
 # no per-host `rpm-ostree install` drift.
 #
-# There is no punktfunk RPM repo for this build. Copy the punktfunk, punktfunk-web and
-# punktfunk-bun RPMs that `PF_WITH_WEB=1 packaging/rpm/build-rpm.sh` writes to dist/ (built in
+# There is no punktfunk RPM repo for this build. Copy the punktfunk, lilynk-web and
+# lilynk-bun RPMs that `PF_WITH_WEB=1 packaging/rpm/build-rpm.sh` writes to dist/ (built in
 # the Fedora 43 builder for the bazzite base) into packaging/bootc/rpms/, then build with
 # packaging/bootc as the context (the repo root's .dockerignore keeps packaging/ out):
 #
-#   podman build -t ghcr.io/<you>/bazzite-punktfunk packaging/bootc
-#   podman push  ghcr.io/<you>/bazzite-punktfunk
+#   podman build -t ghcr.io/<you>/bazzite-lilynk packaging/bootc
+#   podman push  ghcr.io/<you>/bazzite-lilynk
 #   # on the target Bazzite host:
-#   sudo bootc switch ghcr.io/<you>/bazzite-punktfunk   # then reboot
+#   sudo bootc switch ghcr.io/<you>/bazzite-lilynk   # then reboot
 #
 # Pick the base tag that matches your hardware (NVIDIA shown). See ublue-os/bazzite tags.
 ARG BASE_IMAGE=ghcr.io/ublue-os/bazzite-nvidia:stable
@@ -29,24 +29,24 @@ RUN dnf5 -y install \
 
 # Install the host + the web console from the build context. Their dependencies come from the
 # base image's own repos; no punktfunk repo is added.
-COPY rpms/ /tmp/punktfunk-rpms/
-RUN dnf5 -y install /tmp/punktfunk-rpms/*.rpm \
- && rm -rf /tmp/punktfunk-rpms \
+COPY rpms/ /tmp/lilynk-rpms/
+RUN dnf5 -y install /tmp/lilynk-rpms/*.rpm \
+ && rm -rf /tmp/lilynk-rpms \
  && dnf5 clean all
 
 # The udev rule + systemd *user* units ship in the RPMs; nothing else to enable at image build
 # time (host + console run per-user in the graphical session, enabled after first boot with
-# `systemctl --user enable --now punktfunk-host punktfunk-web`).
+# `systemctl --user enable --now lilynk-host lilynk-web`).
 
 # NO `setcap` here — deliberately, in BOTH directions, and this file must stay that way.
 #
-#   /usr/bin/punktfunk-host          must carry NO capability. A capability-carrying process
+#   /usr/bin/lilynk-host          must carry NO capability. A capability-carrying process
 #                                    cannot have its /proc/<pid>/exe read, so KWin cannot identify
 #                                    it, never advertises zkde_screencast_unstable_v1, and every
 #                                    KDE desktop session dies. That is the 0.26.0-1 incident; a
 #                                    layered/bootc image is as unrepairable in place as a sysext.
-#   /usr/bin/punktfunk-encode-worker carries cap_sys_nice=ep, declared with %caps in
-#                                    packaging/rpm/punktfunk.spec. rpm applies file capabilities
+#   /usr/bin/lilynk-encode-worker carries cap_sys_nice=ep, declared with %caps in
+#                                    packaging/rpm/lilynk.spec. rpm applies file capabilities
 #                                    from package metadata during the dnf5 install above and the
 #                                    ostree commit preserves the security.capability xattr — so it
 #                                    arrives correctly without anything to do here, and the

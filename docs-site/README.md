@@ -1,4 +1,4 @@
-# punktfunk-docs
+# lilynk-docs
 
 The Punktfunk documentation site: [Fumadocs](https://fumadocs.dev) on
 [TanStack Start](https://tanstack.com/start) (Vite + Nitro/bun preset).
@@ -24,7 +24,7 @@ sidebar, and the landing page). It reads [`public/openapi.json`](public/openapi.
 
 ```sh
 # from the repo root — regenerate the spec, then copy the snapshot in:
-cargo run -p punktfunk-host -- openapi > api/openapi.json
+cargo run -p lilynk-host -- openapi > api/openapi.json
 cp api/openapi.json docs-site/public/openapi.json
 ```
 

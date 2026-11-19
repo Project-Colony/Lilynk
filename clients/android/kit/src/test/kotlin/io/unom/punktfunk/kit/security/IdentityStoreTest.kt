@@ -8,7 +8,7 @@ import org.junit.Test
 class IdentityStoreTest {
     private val identity = ClientIdentity("cert", "key")
 
-    /** The vector `punktfunk_core::fp::device_code` is tested against. */
+    /** The vector `lilynk_core::fp::device_code` is tested against. */
     @Test
     fun deviceCodeSpellsTheCoresVector() {
         val fingerprint = ByteArray(32)

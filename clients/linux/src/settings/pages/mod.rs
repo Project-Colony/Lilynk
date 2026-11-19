@@ -21,8 +21,8 @@ use crate::store::Store;
 use crate::trust::Settings;
 use adw::prelude::*;
 use gtk::glib;
-use pf_client_core::presets::SettingsOverlay;
-use pf_l10n::client;
+use ly_client_core::presets::SettingsOverlay;
+use ly_l10n::client;
 use std::rc::Rc;
 
 /// What the pages are built from, and what they leave behind for the dialog to bind.
@@ -36,7 +36,7 @@ pub struct Build<'a> {
     /// The preset's overrides, in preset scope.
     pub overlay: Option<&'a SettingsOverlay>,
     /// What a Native stream asks for: the monitor the window is on.
-    pub native: punktfunk_core::Mode,
+    pub native: lilynk_core::Mode,
     pub store: &'a Rc<Store>,
     /// The values the rows open on: the defaults, or the preset over them.
     pub seed: &'a Settings,

@@ -19,14 +19,14 @@ SteamOS 3 is an **immutable, read-only Arch** base:
 
 So the host is built **natively inside a Debian-trixie distrobox** (`pf2`), chosen because its
 glibc ABI matches SteamOS's — the resulting binary runs **natively on SteamOS** (the container
-is only the build environment; `punktfunk-host` is launched directly, not via `distrobox enter`). A
+is only the build environment; `lilynk-host` is launched directly, not via `distrobox enter`). A
 rebuild always matches the running OS. Encode is **VAAPI** on the Deck's AMD GPU (NVENC on NVIDIA),
 auto-selected by `PUNKTFUNK_ENCODER=auto`.
 
 The honest trade-off: on-device building costs a slow first install (~10–15 min, ~1 GB of image +
 toolchain) and adds moving parts (apt mirrors, rustup, bun) — the price of an install that can
 always chase the OS. Both failure modes of that chase are automated away now:
-`punktfunk-rebuild-check` rebuilds when an OS update breaks the binary's links, and the
+`lilynk-rebuild-check` rebuilds when an OS update breaks the binary's links, and the
 atomic-update keep list preserves the `/etc` tuning. The eventual lighter-weight alternative is a
 CI-prebuilt bundle with the volatile libraries vendored under an `$ORIGIN` rpath —
 OS-update-proof without a toolchain on the device — worth it once SteamOS host volume justifies
@@ -41,15 +41,15 @@ serving HTTPS (HTTP/1.1 over TLS) with the host's identity cert), so its service
 
 | Script | What it does |
 |--------|--------------|
-| `install.sh` | Idempotent installer: ensure the `pf2` distrobox + toolchain → build host + web + **plugin runner** → write config → build the **HDR gamescope** below → tune sysctl + udev + `vhci-hcd` + `input` group and **register it on SteamOS's atomic-update keep list** (sudo) → install + start `punktfunk-host` / `punktfunk-web` systemd **user** services with linger, plus the **rebuild check** below. |
+| `install.sh` | Idempotent installer: ensure the `pf2` distrobox + toolchain → build host + web + **plugin runner** → write config → build the **HDR gamescope** below → tune sysctl + udev + `vhci-hcd` + `input` group and **register it on SteamOS's atomic-update keep list** (sudo) → install + start `lilynk-host` / `lilynk-web` systemd **user** services with linger, plus the **rebuild check** below. |
 | `update.sh` | Rebuild everything from the current source and restart the services (config + pairings persist). `--pull` does `git pull` first, on the branch the checkout follows: `stable` (releases, the default) or `main` (canary). Also retrofits anything a newer install.sh writes (runner, HDR gamescope, keep-list registration, rebuild check) onto older installs, and re-applies the system tuning and the host unit from the checkout. It asks for your password before the build. With **Reachable without logging in** on, a new version needs that password: without it `update.sh` stops before pulling or building, because the seats run a copy only `sudo` moves. |
 | `lib.sh` | Sourced by `install.sh`, `update.sh` and `rebuild-check.sh`: the build paths, the log helpers, `apply_system_tuning` (the repo's `/etc` files, groups and capabilities, every run) and `write_host_unit`. |
-| `door.sh` | Sourced by `lib.sh`: **Reachable without logging in**. `door_install` (sudo, every `install.sh` and `update.sh` that has it) lays out the files the `punktfunk-seats` package ships; `door_refresh` (no sudo) copies a same-version rebuild into the door's copy of the host and console. The copy records its commit in `source-commit`, which the door compares with its branch on the forge, so its console offers the update command. |
-| `build-version.sh` | The version a build reports: a release tag's `X.Y.Z`, else the canary base (`scripts/ci/pf-version.sh`) plus the commit, so the console and the channel's feed agree. |
+| `door.sh` | Sourced by `lib.sh`: **Reachable without logging in**. `door_install` (sudo, every `install.sh` and `update.sh` that has it) lays out the files the `lilynk-seats` package ships; `door_refresh` (no sudo) copies a same-version rebuild into the door's copy of the host and console. The copy records its commit in `source-commit`, which the door compares with its branch on the forge, so its console offers the update command. |
+| `build-version.sh` | The version a build reports: a release tag's `X.Y.Z`, else the canary base (`scripts/ci/ly-version.sh`) plus the commit, so the console and the channel's feed agree. |
 | `heal-box.sh` | Run by `install.sh` and `update.sh` before they enter the box: if its `fuse-overlayfs` helper died, podman reuses the dead mount on every start (`transport endpoint is not connected`). This detaches it so the next start remounts. A no-op on a healthy box. |
-| `install-tray.sh` | Run by `install.sh` and `update.sh`: build the status tray (`punktfunk-tray`) in its own cargo run and install it user-scoped. The host writes its autostart entry, so it shows in the Desktop-mode panel from the next login. Best-effort: a failure warns and the host runs without it. |
-| `build-gamescope.sh` | Build gamescope + the `pipewire-hdr` patches (`packaging/gamescope`) in the same distrobox and install it as `~/.local/bin/punktfunk-gamescope`, wiring `PUNKTFUNK_GAMESCOPE_BIN` into `host.env` — what lets Game Mode stream **10-bit BT.2020 PQ (HDR)** instead of 8-bit SDR. Best-effort: a failure warns and the host streams SDR. Content-stamped — a no-op unless `packaging/gamescope/` changed or the binary broke. |
-| `rebuild-check.sh` | The post-OS-update self-heal (run by `punktfunk-rebuild-check.service` before the host at session start): `ldd`-probes the host binary **and the HDR gamescope** — milliseconds when healthy, a full `update.sh` rebuild only when a SteamOS update actually broke library links. |
+| `install-tray.sh` | Run by `install.sh` and `update.sh`: build the status tray (`lilynk-tray`) in its own cargo run and install it user-scoped. The host writes its autostart entry, so it shows in the Desktop-mode panel from the next login. Best-effort: a failure warns and the host runs without it. |
+| `build-gamescope.sh` | Build gamescope + the `pipewire-hdr` patches (`packaging/gamescope`) in the same distrobox and install it as `~/.local/bin/lilynk-gamescope`, wiring `PUNKTFUNK_GAMESCOPE_BIN` into `host.env` — what lets Game Mode stream **10-bit BT.2020 PQ (HDR)** instead of 8-bit SDR. Best-effort: a failure warns and the host streams SDR. Content-stamped — a no-op unless `packaging/gamescope/` changed or the binary broke. |
+| `rebuild-check.sh` | The post-OS-update self-heal (run by `lilynk-rebuild-check.service` before the host at session start): `ldd`-probes the host binary **and the HDR gamescope** — milliseconds when healthy, a full `update.sh` rebuild only when a SteamOS update actually broke library links. |
 
 ```sh
 git clone --branch stable https://git.unom.io/unom/punktfunk ~/punktfunk   # --branch main: canary
@@ -69,45 +69,45 @@ default `pf2`), `PUNKTFUNK_MGMT_PORT` (writes `PUNKTFUNK_MGMT_BIND` to `host.env
 
 ## What gets installed
 
-- **Binary:** `~/punktfunk/target-steamos/release/punktfunk-host` (built in `pf2`, run natively).
+- **Binary:** `~/punktfunk/target-steamos/release/lilynk-host` (built in `pf2`, run natively).
 - **Config:** `~/.config/punktfunk/host.env` (encoder/compositor) and `web.env` (generated web login
   password + session secret). Trust material (`cert.pem`, `mgmt-token`, `punktfunk1-paired.json`) lives
   here too and persists across updates.
-- **Services:** `~/.config/systemd/user/punktfunk-host.service` — `scripts/punktfunk-host.service`
+- **Services:** `~/.config/systemd/user/lilynk-host.service` — `scripts/lilynk-host.service`
   with the Deck's `ExecStart` (`serve`, `+ --open` if chosen; the port is `host.env`'s — the native
   `punktfunk/1` plane is always on; GameStream follows the console's setting, and `update.sh` moves
   an older unit's `--gamestream` into it) and the session environment in
-  `punktfunk-host.service.d/steamdeck.conf`,
-  `punktfunk-web.service`, `punktfunk-rebuild-check.service` (post-OS-update self-heal, enabled), and
-  `punktfunk-scripting.service` (plugin runner, started by the first install; a re-run keeps it as
+  `lilynk-host.service.d/steamdeck.conf`,
+  `lilynk-web.service`, `lilynk-rebuild-check.service` (post-OS-update self-heal, enabled), and
+  `lilynk-scripting.service` (plugin runner, started by the first install; a re-run keeps it as
   you left it).
   Linger is enabled so they run without a login session.
 - **Plugin runner:** the deb's payload laid out user-scoped (read-only `/usr` can't take the
-  package): wrapper `~/.local/bin/punktfunk-scripting`, pinned `bun` in
-  `~/.local/lib/punktfunk-scripting/`, bundle in `~/.local/share/punktfunk-scripting/`.
-- **Status tray:** `~/.local/bin/punktfunk-tray`, started at login by
+  package): wrapper `~/.local/bin/lilynk-scripting`, pinned `bun` in
+  `~/.local/lib/lilynk-scripting/`, bundle in `~/.local/share/lilynk-scripting/`.
+- **Status tray:** `~/.local/bin/lilynk-tray`, started at login by
   `~/.config/autostart/io.unom.punktfunk.tray.desktop`, which the host writes from its **Tray
   autostart** setting; the **Punktfunk Host** launcher in
   `~/.local/share/applications/`, and its icons under `~/.local/share/icons/hicolor/`.
-- **HDR gamescope:** `~/.local/bin/punktfunk-gamescope` (gamescope + the `pipewire-hdr` patches,
+- **HDR gamescope:** `~/.local/bin/lilynk-gamescope` (gamescope + the `pipewire-hdr` patches,
   built in `pf2`, run natively — it does **not** replace the system gamescope; only the sessions
   the host spawns use it). `host.env` gains `PUNKTFUNK_GAMESCOPE_BIN=` pointing at it — a line
   `build-gamescope.sh` maintains and removes again if the binary ever stops working, because a
   stale absolute override would break session spawning, not just HDR. HDR is attempted by
   default when present; `PUNKTFUNK_GAMESCOPE_HDR=0` in `host.env` forces SDR. Verify with
-  `punktfunk-host hdr-probe`.
+  `lilynk-host hdr-probe`.
 - **System tuning (sudo, re-applied by every `install.sh` and `update.sh` run):**
-  `/etc/sysctl.d/99-punktfunk-net.conf` (32 MB UDP buffers — the #1 high-bitrate lever),
-  `/etc/systemd/system/user@.service.d/50-punktfunk-nice.conf` (nice-limit headroom for the host's
-  data-plane threads), `/etc/udev/rules.d/60-punktfunk.rules` (`uinput`/`uhid` access),
-  `/etc/modules-load.d/punktfunk.conf` (`vhci-hcd` for the native Deck pad), `$USER` in the `input`
-  group **and in `punktfunk`** — the latter created from `packaging/linux/punktfunk.sysusers` (the
+  `/etc/sysctl.d/99-lilynk-net.conf` (32 MB UDP buffers — the #1 high-bitrate lever),
+  `/etc/systemd/system/user@.service.d/50-lilynk-nice.conf` (nice-limit headroom for the host's
+  data-plane threads), `/etc/udev/rules.d/60-lilynk.rules` (`uinput`/`uhid` access),
+  `/etc/modules-load.d/lilynk.conf` (`vhci-hcd` for the native Deck pad), `$USER` in the `input`
+  group **and in `punktfunk`** — the latter created from `packaging/linux/lilynk.sysusers` (the
   file the packages ship) if missing, because the udev rule `chgrp`s the vhci `attach`/`detach`
   nodes to it and a rule that names a nonexistent group fails silently, leaving the native Deck pad
   unable to attach. It is separate from `input` on purpose: writing `attach` materialises an
   arbitrary emulated USB device. Drop it with `sudo gpasswd -d "$USER" punktfunk` if you would
   rather stream without that pad.
-  Plus `/etc/atomic-update.conf.d/punktfunk.conf`, which registers the four files on
+  Plus `/etc/atomic-update.conf.d/lilynk.conf`, which registers the four files on
   SteamOS's atomic-update keep list so A/B OS updates carry them over (verified: without it an
   update silently strips them — pads degrade to Xbox 360, buffers drop to 208 KB).
 
@@ -115,16 +115,16 @@ default `pf2`), `PUNKTFUNK_MGMT_PORT` (writes `PUNKTFUNK_MGMT_BIND` to `host.env
   door's helpers under `/opt/punktfunk/libexec` (root's), the host, console and plugin runner the
   door and seats run in `/opt/punktfunk/host` (yours, so a rebuild refreshes it), their units in
   `/etc/systemd/system`, the seats' runner unit in `/etc/systemd/user`, the polkit, udev and tmpfiles files in `/etc`, and `/var/lib/punktfunk`
-  and `/var/lib/punktfunk-seats` bind-mounted from `/home/.steamos/offload/var/lib`: the var
-  partition is 256 MB and holds every seat's home. `$USER` joins `punktfunk-update`, the group
+  and `/var/lib/lilynk-seats` bind-mounted from `/home/.steamos/offload/var/lib`: the var
+  partition is 256 MB and holds every seat's home. `$USER` joins `lilynk-update`, the group
   that may start the switch. Off until it's ticked under **Profiles**.
 
 ## Operating
 
 ```sh
-systemctl --user status  punktfunk-host punktfunk-web
-journalctl --user -u punktfunk-host -f          # watch sessions / pairing PIN
-systemctl --user restart punktfunk-host         # after editing host.env
+systemctl --user status  lilynk-host lilynk-web
+journalctl --user -u lilynk-host -f          # watch sessions / pairing PIN
+systemctl --user restart lilynk-host         # after editing host.env
 ```
 
 Pair from the web console (Devices → arm pairing) or directly from a client with the host's PIN. The
@@ -135,18 +135,18 @@ host advertises over mDNS as `_punktfunk._udp`, so clients discover it automatic
 - **distrobox required.** If missing: `curl -sfL https://raw.githubusercontent.com/89luca89/distrobox/main/install | sh -s -- --prefix ~/.local` (then ensure `~/.local/bin` is on PATH).
 - **First build is slow** (~20 min with the HDR gamescope, + ~1 GB toolchain/image). Incremental afterwards.
 - **No passwordless sudo** → the installer skips the sysctl/udev/group steps with a warning; high
-  bitrates will drop packets until you apply `99-punktfunk-net.conf` and join `input` (and
+  bitrates will drop packets until you apply `99-lilynk-net.conf` and join `input` (and
   `punktfunk`, for the native Deck pad) yourself. The script prints the exact commands.
 - **Installed before 0.25.0?** `web.env` was written at the ambient umask, i.e. world-readable, so
   the console password and session secret leaked to every local account. `install.sh`/`update.sh`
   now tighten `~/.config/punktfunk` to `0700` and `web.env` to `0600` on every run and say so —
   but reset the password afterwards, because a chmod does not un-leak a read secret: put a
-  `PUNKTFUNK_UI_PASSWORD=<new>` line in `web.env` and `systemctl --user restart punktfunk-web`.
+  `PUNKTFUNK_UI_PASSWORD=<new>` line in `web.env` and `systemctl --user restart lilynk-web`.
 - **Game Mode auto-suspend** drops the host off the network on idle — disable it (Settings → Power)
   for a headless host.
 - **WiFi tx ceiling** ≈ 250 Mbps goodput (a Deck hardware/driver packet-rate limit, band-independent);
   fine for 1080p/1440p60. A wired dock lifts it.
 - **After a SteamOS update** nothing should be needed: the `/etc` tuning survives via the
-  atomic-update keep list, and `punktfunk-rebuild-check` rebuilds the binary automatically if the
+  atomic-update keep list, and `lilynk-rebuild-check` rebuilds the binary automatically if the
   new base actually broke its library links (first session start after the update takes the build's
   few minutes in that case). A manual `update.sh` remains harmless.

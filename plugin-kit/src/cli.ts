@@ -42,7 +42,7 @@ const usage = <R>(
 	const rows = Object.entries(commands)
 		.map(([cmd, c]) => `  ${cmd.padEnd(12)} ${c.summary}`)
 		.join("\n");
-	return `${def.name}${def.version ? ` ${def.version}` : ""}\n\nUsage: punktfunk-plugin-${def.name} <command> [args...]\n\nCommands:\n${rows}\n`;
+	return `${def.name}${def.version ? ` ${def.version}` : ""}\n\nUsage: lilynk-plugin-${def.name} <command> [args...]\n\nCommands:\n${rows}\n`;
 };
 
 /**

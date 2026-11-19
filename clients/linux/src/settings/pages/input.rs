@@ -8,7 +8,7 @@ use crate::settings::shortcuts::{ring_chords, ShortcutsPage};
 use crate::settings::spec::{self, Page};
 use crate::settings::tables::*;
 use adw::prelude::*;
-use pf_l10n::{client, desktop};
+use ly_l10n::{client, desktop};
 
 pub fn input(b: &mut Build) {
     let mut p = b.page(Page::Input, "input-keyboard-symbolic");

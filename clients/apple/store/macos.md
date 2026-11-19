@@ -1,6 +1,6 @@
 # macOS — App Store metadata
 
-> **Scope correction.** The Mac app is a **client only**. There is no macOS host: `punktfunk-host`
+> **Scope correction.** The Mac app is a **client only**. There is no macOS host: `lilynk-host`
 > has no macOS capture, virtual-display, or encode backend (the two `cfg!(target_os = "macos")` hits
 > in the host crate are OS *detection* for the host tile and a path helper; the loopback-test host
 > is a synthetic frame source for `test-loopback.sh`, not a shippable host). A macOS host is a
@@ -80,7 +80,7 @@ Ein gestuftes Overlay zeigt Bildrate, Bitrate und Latenz – über zwei Maschine
 
 WAS DU BRAUCHST
 
-Einen Punktfunk-Host auf einem Linux-PC oder auf Windows 11 (22H2 oder neuer) im selben Netzwerk. Der Host ist quelloffen (MIT/Apache-2.0) und kostenlos – Anleitungen und Quellcode findest du auf punktfunk.unom.io. Diese App ist der Client: ein Mac kann derzeit nicht selbst Host sein.
+Einen Lilynk-Host auf einem Linux-PC oder auf Windows 11 (22H2 oder neuer) im selben Netzwerk. Der Host ist quelloffen (MIT/Apache-2.0) und kostenlos – Anleitungen und Quellcode findest du auf punktfunk.unom.io. Diese App ist der Client: ein Mac kann derzeit nicht selbst Host sein.
 
 Kein Konto. Keine Cloud. Keine Telemetrie. Die App erfasst keine Daten über dich.
 ```

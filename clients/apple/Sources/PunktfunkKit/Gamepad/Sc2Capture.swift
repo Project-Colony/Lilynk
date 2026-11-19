@@ -369,7 +369,7 @@ public final class Sc2Capture {
 
     /// Why a host write must not reach the pad, or nil to write it. `kind` 1 is a feature
     /// report; a Steam Controller 2's command is its first byte from `0x80`, else its second.
-    /// pf-client-core `sc2_capture.rs` refuses the same (`clients/shared/pad-write-vectors.json`).
+    /// ly-client-core `sc2_capture.rs` refuses the same (`clients/shared/pad-write-vectors.json`).
     static func refusedWrite(classic: Bool, kind: UInt8, data: [UInt8]) -> String? {
         if classic {
             guard kind == 1 else { return "a 2015 pad takes feature reports only" }

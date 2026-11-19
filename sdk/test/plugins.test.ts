@@ -1,4 +1,4 @@
-// The `punktfunk-host plugins …` package-op helpers: friendly-name resolution, the bunfig scope
+// The `lilynk-host plugins …` package-op helpers: friendly-name resolution, the bunfig scope
 // wiring (idempotent + merges into an existing file), and installed-plugin discovery. `add`/`remove`
 // shell out to bun over the network, so the live install is verified on-glass, not here.
 import { afterAll, describe, expect, test } from "bun:test";
@@ -75,7 +75,7 @@ describe("resolvePackage", () => {
 	});
 
 	test("refuses public-registry names without allowPublicRegistry", () => {
-		expect(() => resolvePackage("punktfunk-plugin-custom")).toThrow(
+		expect(() => resolvePackage("lilynk-plugin-custom")).toThrow(
 			/public/i,
 		);
 		expect(() => resolvePackage("@someone/plugin-x")).toThrow(/public/i);
@@ -84,8 +84,8 @@ describe("resolvePackage", () => {
 
 	test("passes public-registry names through with allowPublicRegistry", () => {
 		const allow = { allowPublicRegistry: true };
-		expect(resolvePackage("punktfunk-plugin-custom", allow)).toBe(
-			"punktfunk-plugin-custom",
+		expect(resolvePackage("lilynk-plugin-custom", allow)).toBe(
+			"lilynk-plugin-custom",
 		);
 		expect(resolvePackage("@someone/plugin-x", allow)).toBe(
 			"@someone/plugin-x",
@@ -151,7 +151,7 @@ describe("listInstalled", () => {
 
 	test("finds both scoped and unscoped plugins with versions, ignoring other packages", () => {
 		const dir = tmp("list-mixed");
-		writePkg(dir, "punktfunk-plugin-custom", "1.2.3");
+		writePkg(dir, "lilynk-plugin-custom", "1.2.3");
 		writePkg(dir, path.join("@punktfunk", "plugin-playnite"), "0.2.0");
 		writePkg(dir, "effect", "4.0.0"); // an ordinary dep — must not be listed
 		writePkg(dir, path.join("@punktfunk", "host"), "0.1.1"); // scoped non-plugin — ignored
@@ -159,17 +159,17 @@ describe("listInstalled", () => {
 		const found = listInstalled(dir);
 		expect(found).toEqual([
 			{ pkg: "@punktfunk/plugin-playnite", version: "0.2.0" },
-			{ pkg: "punktfunk-plugin-custom", version: "1.2.3" },
+			{ pkg: "lilynk-plugin-custom", version: "1.2.3" },
 		]);
 	});
 
 	test("tolerates a plugin with an unreadable package.json", () => {
 		const dir = tmp("list-broken");
-		fs.mkdirSync(path.join(dir, "node_modules", "punktfunk-plugin-broken"), {
+		fs.mkdirSync(path.join(dir, "node_modules", "lilynk-plugin-broken"), {
 			recursive: true,
 		});
 		expect(listInstalled(dir)).toEqual([
-			{ pkg: "punktfunk-plugin-broken", version: undefined },
+			{ pkg: "lilynk-plugin-broken", version: undefined },
 		]);
 	});
 
@@ -238,7 +238,7 @@ describe("ensurePluginsDir", () => {
 		const seeded = JSON.parse(
 			fs.readFileSync(path.join(dir, "package.json"), "utf8"),
 		) as { name: string; private: boolean };
-		expect(seeded.name).toBe("punktfunk-plugins");
+		expect(seeded.name).toBe("lilynk-plugins");
 		expect(seeded.private).toBe(true);
 	});
 
@@ -255,11 +255,11 @@ describe("ensurePluginsDir", () => {
 	// as gone (the host's installed-package scan narrows to that list).
 	test("leaves a tree that already has packages alone", () => {
 		const dir = tmp("ensure-existing");
-		writePkg(dir, "punktfunk-plugin-legacy", "0.1.0");
+		writePkg(dir, "lilynk-plugin-legacy", "0.1.0");
 		ensurePluginsDir(dir);
 		expect(fs.existsSync(path.join(dir, "package.json"))).toBe(false);
 		expect(listInstalled(dir).map((p) => p.pkg)).toEqual([
-			"punktfunk-plugin-legacy",
+			"lilynk-plugin-legacy",
 		]);
 	});
 });

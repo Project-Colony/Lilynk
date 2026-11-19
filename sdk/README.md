@@ -51,7 +51,7 @@ pf.events.on("stream.started", (e) => {
 
 ```sh
 bun install
-bun run gen        # regenerate src/gen/punktfunk.ts from ../api/openapi.json
+bun run gen        # regenerate src/gen/lilynk.ts from ../api/openapi.json
 bun run typecheck
 bun test
 ```

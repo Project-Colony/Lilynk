@@ -63,7 +63,7 @@ $statePath = "$root\g4-$Tag.state"
 $hostLog = 'C:\ProgramData\punktfunk\logs\host.log'
 $envPath = 'C:\ProgramData\punktfunk\host.env'
 $envBak = "$root\g4-$Tag-host.env.bak"
-$client = "$root\punktfunk-native\target\release\punktfunk-session.exe"
+$client = "$root\lilynk-native\target\release\lilynk-session.exe"
 $furmark = 'C:\Program Files\Geeks3D\FurMark2_x64\furmark.exe'
 $profiles = Join-Path $env:APPDATA 'punktfunk\client-profiles.json'
 $profilesBak = "$root\g4-$Tag-client-profiles.bak"
@@ -215,7 +215,7 @@ function Restore-Box {
   if (Test-Path $envBak) { Copy-Item $envBak $envPath -Force; Restart-Service PunktfunkHost -Force -ErrorAction SilentlyContinue }
   if (Test-Path $profilesBak) { Copy-Item $profilesBak $profiles -Force } else { Remove-Item $profiles -ErrorAction SilentlyContinue }
   Get-Process furmark -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
-  Get-Process punktfunk-session -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+  Get-Process lilynk-session -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
   foreach ($t in $unlockTask, $wakeTask) { Unregister-ScheduledTask $t -Confirm:$false -ErrorAction SilentlyContinue }
   Say "restored host.env + client profiles"
 }
@@ -314,7 +314,7 @@ foreach ($p in $client, $envPath, $hostLog) {
 }
 $token = Get-MgmtToken
 if ((Get-Mgmt '/api/v1/status' $token).http -ne 200) { Say 'PREFLIGHT-FAILED mgmt api not answering'; exit 1 }
-Say "preflight ok host=$((Get-Item 'C:\Program Files\punktfunk\punktfunk-host.exe').LastWriteTime) free_gb=$([int]((Get-PSDrive C).Free/1GB))"
+Say "preflight ok host=$((Get-Item 'C:\Program Files\punktfunk\lilynk-host.exe').LastWriteTime) free_gb=$([int]((Get-PSDrive C).Free/1GB))"
 
 # The client profile catalog gives each reconnect its mode; the resize leg drives the window.
 if (Test-Path $profiles) { Copy-Item $profiles $profilesBak -Force } else { '{"version":1,"profiles":[]}' | Set-Content $profiles }
@@ -326,7 +326,7 @@ if (Test-Path $profiles) { Copy-Item $profiles $profilesBak -Force } else { '{"v
   )
 } | ConvertTo-Json -Depth 8 | Set-Content $profiles -Encoding utf8
 
-$knobs = @{ PUNKTFUNK_IDD_DIAG = '1'; RUST_LOG = 'info,pf_capture=debug' }
+$knobs = @{ PUNKTFUNK_IDD_DIAG = '1'; RUST_LOG = 'info,ly_capture=debug' }
 if ($Vendor -eq 'amd') { $knobs['PUNKTFUNK_ENCODER'] = 'amf'; $knobs['PUNKTFUNK_RENDER_ADAPTER'] = 'Radeon' }
 else { $knobs['PUNKTFUNK_ENCODER'] = 'nvenc'; $knobs['PUNKTFUNK_RENDER_ADAPTER'] = 'NVIDIA' }
 Set-HostEnv $knobs

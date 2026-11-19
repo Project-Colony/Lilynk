@@ -1,5 +1,5 @@
 {
-  "$comment": "Generated from pf_client_core::video_color::csc_rows by csc_vectors_are_checked_in (UPDATE_VECTORS=1 rewrites it). The Swift CscRows tests replay every case.",
+  "$comment": "Generated from ly_client_core::video_color::csc_rows by csc_vectors_are_checked_in (UPDATE_VECTORS=1 rewrites it). The Swift CscRows tests replay every case.",
   "cases": [
     {"matrix": 1, "full_range": false, "depth": 8, "msb_packed": false, "rows": [[1.1643835, 0, 1.7927411, -0.9729451], [1.1643835, -0.21324861, -0.53290933, 0.30148268], [1.1643835, 2.1124017, 0, -1.1334022]]},
     {"matrix": 1, "full_range": false, "depth": 10, "msb_packed": false, "rows": [[1.1678082, 0, 1.7980138, -0.9729451], [1.1678082, -0.21387582, -0.5344767, 0.30148268], [1.1678082, 2.1186147, 0, -1.1334022]]},

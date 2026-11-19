@@ -3,7 +3,7 @@
   Generate the stable punktfunk driver code-signing certificate.
 
 .DESCRIPTION
-  Produces a self-signed code-signing cert (CN=punktfunk-driver) and writes the two values that
+  Produces a self-signed code-signing cert (CN=lilynk-driver) and writes the two values that
   become the DRIVER_CERT_PFX_B64 / DRIVER_CERT_PASSWORD Gitea Actions secrets.
 
   Built on the .NET CertificateRequest API rather than New-SelfSignedCertificate, for two reasons:
@@ -39,12 +39,12 @@ $ErrorActionPreference = 'Stop'
 $PSNativeCommandUseErrorActionPreference = $false
 . (Join-Path $PSScriptRoot 'signing.ps1')
 
-$subject = 'CN=punktfunk-driver'
+$subject = 'CN=lilynk-driver'
 $years   = 10
 
 if (-not $OutDir) {
     $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
-    $OutDir = Join-Path $env:USERPROFILE "punktfunk-driver-cert-$stamp"
+    $OutDir = Join-Path $env:USERPROFILE "lilynk-driver-cert-$stamp"
 }
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 
@@ -100,7 +100,7 @@ if ($signtool) {
         # Assert the signature is present and carries our subject. /pa chain trust FAILS until the
         # cert is in the machine's trust stores - expected, and not what this checks.
         $v = & $signtool verify /pa /v $scratch 2>&1 | Out-String
-        $selftest = if ($v -match 'punktfunk-driver') { 'PASS (signtool signed; signature carries CN=punktfunk-driver)' }
+        $selftest = if ($v -match 'lilynk-driver') { 'PASS (signtool signed; signature carries CN=lilynk-driver)' }
                     else { 'PASS (signtool signed)' }
     }
     elseif ($out -match '0x80090010') {

@@ -60,7 +60,7 @@ unsafe fn close_handle(handle: HANDLE) {
 pub(crate) fn positional_url(args: &[String]) -> Option<String> {
     args.iter()
         .skip(1)
-        .find(|a| pf_client_core::deeplink::is_link_arg(a))
+        .find(|a| ly_client_core::deeplink::is_link_arg(a))
         .cloned()
 }
 
@@ -309,7 +309,7 @@ pub(crate) fn write_shortcut(label: &str, url: &str) -> Result<std::path::PathBu
         .expect("an unused shortcut name");
     // Alias when packaged, absolute path when not — see the doc comment above.
     let target = if has_package_identity() {
-        "punktfunk-client.exe".to_string()
+        "lilynk-client.exe".to_string()
     } else {
         std::env::current_exe()
             .map_err(|e| format!("current exe: {e}"))?
@@ -333,7 +333,7 @@ pub(crate) fn write_shortcut(label: &str, url: &str) -> Result<std::path::PathBu
             .ok()
             .map_err(|e| format!("shortcut argument: {e}"))?;
         link.SetDescription(&HSTRING::from(
-            pf_l10n::desktop::desktop_shortcut_description(label),
+            ly_l10n::desktop::desktop_shortcut_description(label),
         ))
         .ok()
         .map_err(|e| format!("shortcut description: {e}"))?;
@@ -431,7 +431,7 @@ mod tests {
     fn positional_url_finds_links_only() {
         let args = |v: &[&str]| v.iter().map(|s| s.to_string()).collect::<Vec<_>>();
         assert_eq!(
-            positional_url(&args(&["punktfunk-client.exe", "punktfunk://connect/Desk"])),
+            positional_url(&args(&["lilynk-client.exe", "punktfunk://connect/Desk"])),
             Some("punktfunk://connect/Desk".into())
         );
         // The alias form still parses (it is never emitted, only accepted).

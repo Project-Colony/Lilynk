@@ -1,6 +1,6 @@
 // Replays `clients/shared/shortcut-vectors.json`, which the Rust and Kotlin ports replay too, so
 // the shortcut rules cannot drift. A new case belongs in that file; each section is read the way
-// pf-client-core's `shortcuts/tests.rs` reads it.
+// ly-client-core's `shortcuts/tests.rs` reads it.
 
 import XCTest
 @testable import PunktfunkKit

@@ -215,7 +215,7 @@ const windowsFileIsSafe = (file: string, log: LogSink): boolean => {
 	if (reason !== null) {
 		log(
 			`[runner] REFUSING ${file} — ${reason}. Reinstall the plugin with ` +
-				`\`punktfunk-host plugins add\`, or re-own the file to Administrators and strip ` +
+				`\`lilynk-host plugins add\`, or re-own the file to Administrators and strip ` +
 				`non-admin write ACEs (icacls).`,
 			"error",
 		);

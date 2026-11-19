@@ -11,7 +11,7 @@ plugins {
     id("com.android.library")
 }
 
-val ndkVer = providers.gradleProperty("punktfunk.ndkVersion").get() // gradle.properties
+val ndkVer = providers.gradleProperty("lilynk.ndkVersion").get() // gradle.properties
 
 android {
     namespace = "io.unom.punktfunk.kit"
@@ -47,8 +47,8 @@ dependencies {
 }
 
 // ------------------------------------------------------------------------------------------------
-// cargo-ndk: cross-compile clients/android/native (punktfunk-client-android) into this module's jniLibs/<abi>/ so the
-// resulting libpunktfunk_android.so is packaged into the app (and any AAR this module produces).
+// cargo-ndk: cross-compile clients/android/native (lilynk-client-android) into this module's jniLibs/<abi>/ so the
+// resulting liblilynk_android.so is packaged into the app (and any AAR this module produces).
 // NDK r28+ aligns to 16 KB pages by default — no extra linker flags. Prereqs (see clients/android
 // /README.md): `cargo install cargo-ndk` + `rustup target add aarch64-linux-android
 // armv7-linux-androideabi x86_64-linux-android`.
@@ -113,7 +113,7 @@ fun Exec.cargoNdkEnvironment() {
     for (triple in listOf("AARCH64_LINUX_ANDROID", "ARMV7_LINUX_ANDROIDEABI", "X86_64_LINUX_ANDROID")) {
         environment("CARGO_TARGET_${triple}_RUSTFLAGS", "-C link-arg=-Wl,--build-id=sha1")
     }
-    // The Skia console (pf-console-ui over skia-bindings): prebuilt Skia archives are keyed by
+    // The Skia console (ly-console-ui over skia-bindings): prebuilt Skia archives are keyed by
     // target + features (see the fetchSkiaBinaries block below for provenance and digests).
     // The default hands skia-bindings a file:// template into the directory fetchSkiaBinaries
     // has already SHA-256-verified — skia-bindings itself downloads without any content check,
@@ -147,7 +147,7 @@ fun Exec.cargoNdkEnvironment() {
 // `<skia-hash>-<target>-ganesh-gl-jpegd-jpege-pdf-textlayout` (hash `skiaBinariesHash`).
 // Re-derive tag + hash + digests on every skia-safe bump.
 // armv7 provenance: SKIA_GN_ARGS='extra_cflags+=["-D__ANDROID_MIN_SDK_VERSION__=26"]'
-// FORCE_SKIA_BUILD=1 cargo ndk -t armeabi-v7a build -p pf-console-ui --no-default-features, then
+// FORCE_SKIA_BUILD=1 cargo ndk -t armeabi-v7a build -p ly-console-ui --no-default-features, then
 // OUT_DIR/skia/{libskia,libskshaper,libskparagraph,libskunicode_core,libskunicode_icu,
 // libskia-bindings}.a + bindings.rs + LICENSE_SKIA + tag.txt + key.txt packed as skia-binaries/ in
 // skia-binaries-<key>.tar.gz. The define is for ICU: skia-bindings passes an unversioned --target,
@@ -219,7 +219,7 @@ val fetchSkiaBinaries = tasks.register("fetchSkiaBinaries") {
 fun registerCargoNdk(taskName: String, release: Boolean) =
     tasks.register<Exec>(taskName) {
         group = "rust"
-        description = "cargo-ndk build of punktfunk-client-android (${if (release) "release" else "debug"})"
+        description = "cargo-ndk build of lilynk-client-android (${if (release) "release" else "debug"})"
         dependsOn(fetchSkiaBinaries) // skia-bindings must only see digest-verified archives
         workingDir = repoRoot
         // cargo-ndk only adds to jniLibs. Empty it first, so no library an older tree built ships.
@@ -242,14 +242,14 @@ fun registerCargoNdk(taskName: String, release: Boolean) =
             // decode::install_render_callback, adpf).
             "--platform", "28",
             "-o", jniLibs.absolutePath,
-            "build", "-p", "punktfunk-client-android",
+            "build", "-p", "lilynk-client-android",
         )
         if (release) cmd += "--release"
         commandLine(cmd)
     }
 
 // ------------------------------------------------------------------------------------------------
-// Lint the ANDROID target. `punktfunk-client-android` and every `#[cfg(target_os = "android")]`
+// Lint the ANDROID target. `lilynk-client-android` and every `#[cfg(target_os = "android")]`
 // module elsewhere in the workspace are compiled out on the HOST, where ci.yml runs
 // `cargo clippy --workspace`, so this task is what lints them.
 //
@@ -265,7 +265,7 @@ fun registerCargoNdk(taskName: String, release: Boolean) =
 fun registerCargoNdkClippy(taskName: String) =
     tasks.register<Exec>(taskName) {
         group = "verification"
-        description = "clippy (deny warnings) for punktfunk-client-android on both Android widths"
+        description = "clippy (deny warnings) for lilynk-client-android on both Android widths"
         dependsOn(fetchSkiaBinaries) // skia-bindings must only see digest-verified archives
         workingDir = repoRoot
         cargoNdkEnvironment()
@@ -274,7 +274,7 @@ fun registerCargoNdkClippy(taskName: String) =
             "$cargoBin/cargo", "ndk",
             "-t", "arm64-v8a", "-t", "armeabi-v7a",
             "--platform", "28",
-            "clippy", "-p", "punktfunk-client-android", "--all-targets",
+            "clippy", "-p", "lilynk-client-android", "--all-targets",
             "--", "-D", "warnings",
         )
     }
@@ -288,7 +288,7 @@ val cargoNdkClippy = registerCargoNdkClippy("cargoNdkClippy")
 fun registerCheckJniImports(taskName: String, cargoTask: TaskProvider<Exec>) =
     tasks.register<Exec>(taskName) {
         group = "rust"
-        description = "verify libpunktfunk_android.so imports stay within the API-28 floor"
+        description = "verify liblilynk_android.so imports stay within the API-28 floor"
         dependsOn(cargoTask)
         workingDir = repoRoot
         commandLine(
@@ -313,7 +313,7 @@ val cargoNdkRelease = registerCargoNdk("cargoNdkRelease", release = true)
 val checkJniImportsDebug = registerCheckJniImports("checkJniImportsDebug", cargoNdkDebug)
 val checkJniImportsRelease = registerCheckJniImports("checkJniImportsRelease", cargoNdkRelease)
 
-// Strings: `pf-l10n android` writes values*/strings.xml and xml/locales_config.xml from
+// Strings: `ly-l10n android` writes values*/strings.xml and xml/locales_config.xml from
 // l10n/messages into a generated res directory, so R.string.<key> and R.plurals.<key> live in
 // this module's R (l10n/README.md). Nothing generated is committed. It runs host cargo, so every
 // build needs the Rust toolchain, -PskipRustBuild included. `--root` names this checkout's
@@ -339,7 +339,7 @@ abstract class GenerateMessages @Inject constructor(private val exec: ExecOperat
             workingDir = l10n.get().asFile
             environment("PATH", File(cargo.get()).parent + File.pathSeparator + System.getenv("PATH"))
             commandLine(
-                cargo.get(), "run", "-q", "-p", "pf-l10n", "--",
+                cargo.get(), "run", "-q", "-p", "ly-l10n", "--",
                 "android", "--root", l10n.get().asFile.absolutePath, "--out", out.absolutePath,
                 "--parts", "common,client,android,host",
             )
@@ -362,12 +362,12 @@ afterEvaluate {
     tasks.named("preDebugBuild").configure { dependsOn(checkJniNames) }
     tasks.named("preReleaseBuild").configure { dependsOn(checkJniNames) }
     // `-PskipRustBuild` skips the cargo-ndk native build — for JVM-only tasks (the Roborazzi
-    // screenshot unit tests render Compose on the JVM and never load libpunktfunk_android.so), so
+    // screenshot unit tests render Compose on the JVM and never load liblilynk_android.so), so
     // those runs need no NDK or Android Rust targets (generateMessages still runs host cargo).
     // The native build stays wired for every normal APK/AAR build.
     //
     // DEBUG APKs SHIP RELEASE RUST. The dev profile gives only dependencies opt-level 2: the
-    // AES-GCM decrypt's generic code builds in punktfunk-core at opt-level 0 with debug assertions,
+    // AES-GCM decrypt's generic code builds in lilynk-core at opt-level 0 with debug assertions,
     // and on a phone the receive pump cannot drain a 20 Mbps stream. The APK stays a debug build;
     // only the cargo profile changes. `-PrustDebug` restores a debug-profile native build.
     if (!project.hasProperty("skipRustBuild")) {

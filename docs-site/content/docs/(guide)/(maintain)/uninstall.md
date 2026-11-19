@@ -31,21 +31,21 @@ seat profiles, which deletes their accounts.
    and the units then fail at every login:
 
    ```sh
-   systemctl --user disable --now punktfunk-host punktfunk-web punktfunk-scripting
+   systemctl --user disable --now lilynk-host lilynk-web lilynk-scripting
    ```
 
-   Add `punktfunk-kde-session` if you set up the [headless KDE session](/docs/kde#headless-session).
+   Add `lilynk-kde-session` if you set up the [headless KDE session](/docs/kde#headless-session).
 
 2. Remove the packages and the repository. Name only the packages you installed:
 
    | How you installed | Remove |
    |---|---|
-   | Ubuntu (apt) | `sudo apt purge punktfunk-host punktfunk-web punktfunk-scripting punktfunk-seats punktfunk-gamescope punktfunk-bun punktfunk-client`, then `sudo rm -f /etc/apt/sources.list.d/punktfunk.list /etc/apt/keyrings/punktfunk.asc && sudo apt update` |
-   | Fedora (dnf) | `sudo dnf remove punktfunk punktfunk-web punktfunk-scripting punktfunk-client`, then `sudo rm -f /etc/yum.repos.d/punktfunk.repo` |
-   | Bazzite / Fedora Atomic, layered RPMs | `sudo rpm-ostree uninstall punktfunk punktfunk-web` (what `rpm-ostree status` lists), remove `/etc/yum.repos.d/punktfunk.repo`, then reboot |
+   | Ubuntu (apt) | `sudo apt purge lilynk-host lilynk-web lilynk-scripting lilynk-seats lilynk-gamescope lilynk-bun lilynk-client`, then `sudo rm -f /etc/apt/sources.list.d/lilynk.list /etc/apt/keyrings/lilynk.asc && sudo apt update` |
+   | Fedora (dnf) | `sudo dnf remove lilynk lilynk-web lilynk-scripting lilynk-client`, then `sudo rm -f /etc/yum.repos.d/lilynk.repo` |
+   | Bazzite / Fedora Atomic, layered RPMs | `sudo rpm-ostree uninstall lilynk lilynk-web` (what `rpm-ostree status` lists), remove `/etc/yum.repos.d/lilynk.repo`, then reboot |
    | Bazzite sysext | [See below](#bazzite--fedora-atomic-systemd-sysext) |
-   | Arch / CachyOS (pacman) | `sudo pacman -Rns punktfunk-host punktfunk-web punktfunk-scripting punktfunk-client`, then delete the `[punktfunk]` (or `[punktfunk-canary]`) section from `/etc/pacman.conf` |
-   | Omarchy | `punktfunk-omarchy remove` first, then as Arch |
+   | Arch / CachyOS (pacman) | `sudo pacman -Rns lilynk-host lilynk-web lilynk-scripting lilynk-client`, then delete the `[punktfunk]` (or `[lilynk-canary]`) section from `/etc/pacman.conf` |
+   | Omarchy | `lilynk-omarchy remove` first, then as Arch |
    | Steam Deck on-device build | [Uninstalling a SteamOS Host](/docs/uninstall-steamos) |
    | NixOS | [See below](#nixos) |
 
@@ -55,23 +55,23 @@ seat profiles, which deletes their accounts.
    ```sh
    rm -rf ~/.config/punktfunk ~/.config/systemd/user/punktfunk-*.service.d
    rm -f ~/.config/autostart/io.unom.punktfunk.tray.desktop
-   sudo groupdel punktfunk-update
-   sudo groupdel punktfunk-door
+   sudo groupdel lilynk-update
+   sudo groupdel lilynk-door
    sudo gpasswd -d "$USER" punktfunk; sudo groupdel punktfunk
    sudo loginctl disable-linger "$USER"      # only if nothing else needs it
    ```
 
    Drop the `punktfunk` group rather than keeping it: it can attach emulated USB devices. If
    Reachable without logging in was on, run `sudo userdel punktfunk` first, or
-   `groupdel punktfunk-door` refuses: the door's user holds that group. Seats leave a
-   `punktfunk-games` group: `sudo groupdel punktfunk-games`.
+   `groupdel lilynk-door` refuses: the door's user holds that group. Seats leave a
+   `lilynk-games` group: `sudo groupdel lilynk-games`.
 
 4. Close the firewall ports you opened:
 
    | Firewall | Close |
    |---|---|
-   | ufw | `sudo ufw delete allow punktfunk-native`, and `punktfunk-gamestream` / `punktfunk-web` if you allowed them |
-   | firewalld | `sudo firewall-cmd --permanent --remove-service=punktfunk-native` (and the other two), then `sudo firewall-cmd --reload` |
+   | ufw | `sudo ufw delete allow lilynk-native`, and `lilynk-gamestream` / `lilynk-web` if you allowed them |
+   | firewalld | `sudo firewall-cmd --permanent --remove-service=lilynk-native` (and the other two), then `sudo firewall-cmd --reload` |
 
    If the setup moved the management port next to Sunshine, also remove `47991/tcp`.
 
@@ -83,13 +83,13 @@ On Arch you can drop the repository key too:
 Stop the services (step 1) before you remove the image, because the binaries leave with it:
 
 ```sh
-sudo punktfunk-sysext remove
-sudo rm -f /etc/modules-load.d/punktfunk.conf /etc/udev/rules.d/60-punktfunk.rules
+sudo lilynk-sysext remove
+sudo rm -f /etc/modules-load.d/lilynk.conf /etc/udev/rules.d/60-lilynk.rules
 ```
 
-`remove` deletes the image, `/etc/punktfunk-sysext.conf` and the gamescope session drop-in
+`remove` deletes the image, `/etc/lilynk-sysext.conf` and the gamescope session drop-in
 unless you edited it. The two files above it leaves. On a Bazzite with Steam's
-session manager it may also have added an SELinux module: `sudo semodule -r punktfunk-ds-inhibit`.
+session manager it may also have added an SELinux module: `sudo semodule -r lilynk-ds-inhibit`.
 Then do steps 3 and 4.
 
 ### SteamOS / Steam Deck host (on-device build)
@@ -99,7 +99,7 @@ The on-device build has no uninstall script; remove it by hand with
 
 ### NixOS
 
-Remove what you declared: the `services.punktfunk.*` options, `punktfunk.nixosModules.default` and
+Remove what you declared: the `services.lilynk.*` options, `lilynk.nixosModules.default` and
 the `punktfunk` flake input. Then `sudo nixos-rebuild switch`. The unit, udev rules, tuning,
 firewall ports and group memberships go with the generation; store paths stay until you
 garbage-collect, and `~/.config/punktfunk` stays regardless.
@@ -110,14 +110,14 @@ Plugins live in the host's config directory, so they survive host removal. Remov
 delete the directories afterwards:
 
 ```sh
-punktfunk-host plugins list             # what's installed
-punktfunk-host plugins remove <name>    # uninstall one
-punktfunk-host plugins disable          # stop and disable the runner
+lilynk-host plugins list             # what's installed
+lilynk-host plugins remove <name>    # uninstall one
+lilynk-host plugins disable          # stop and disable the runner
 ```
 
 On Windows run these from an elevated PowerShell. `plugins remove` leaves each plugin's settings and
 cache in `plugin-state/<plugin>/` (including API keys you entered) and the runner's `plugin-token`;
-deleting the config directory removes them. The runner package (`punktfunk-scripting`) comes off
+deleting the config directory removes them. The runner package (`lilynk-scripting`) comes off
 with the host packages; on Windows it goes with the host installer.
 
 ## Removing the pairing, not the software
@@ -126,6 +126,6 @@ with the host packages; on Windows it goes with the host installer.
   trusted immediately.
 - **On a Linux or Windows client:** `punktfunk hosts forget <host>` drops one saved host;
   `punktfunk reset` drops all of them and the stream settings but keeps the client's identity.
-  The Linux desktop app also takes `punktfunk-client --forget-host <fingerprint|host[:port]>`.
+  The Linux desktop app also takes `lilynk-client --forget-host <fingerprint|host[:port]>`.
 
 See [Pairing](/docs/pairing) for how the two halves fit.

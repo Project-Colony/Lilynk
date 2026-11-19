@@ -1,5 +1,5 @@
 //! Reads an l10n directory: `locales.json`, `rules.json` and `messages/<part>/<lang>.json`,
-//! parsed to the subset `SPEC.md` describes. build.rs and the `pf-l10n` binary both include
+//! parsed to the subset `SPEC.md` describes. build.rs and the `ly-l10n` binary both include
 //! this file, so it uses nothing but `crate::json`, `crate::pack` and `crate::plural`.
 //!
 //! A problem is one line, `<path>: <key>: <reason>`, the path relative to the l10n directory.

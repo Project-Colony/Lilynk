@@ -34,7 +34,7 @@ func audioSamplesToMs(rateHz: Int, channels: Int, samples: Int) -> Int {
 }
 
 /// Interleaved samples in one `frameUs` frame — **per channel × channels**. Mirrors
-/// `punktfunk_core::audio::pcm::samples_per_frame`, which is the single source of truth for how
+/// `lilynk_core::audio::pcm::samples_per_frame`, which is the single source of truth for how
 /// long a frame is: the host fills a buffer of this size and this ring drains one, so the two agree
 /// by construction rather than by both re-deriving `rate × µs` and hoping they round the same way.
 ///
@@ -278,7 +278,7 @@ final class AudioRing: @unchecked Sendable {
 
 /// The A/V synchronisation controller: turns "when will this audio actually play" and "when did
 /// the picture it belongs with reach the glass" into a ring depth `AudioRing` should aim for.
-/// The Swift twin of `punktfunk_core::audio::AvSync`, held to it by `jitter-vectors.json`.
+/// The Swift twin of `lilynk_core::audio::AvSync`, held to it by `jitter-vectors.json`.
 ///
 /// **Video is the master.** In a game streamer the video leg is the input-feel budget and must
 /// never be inflated to satisfy the audio clock; audio tolerates small, crossfaded, rate-limited
@@ -442,7 +442,7 @@ struct AvSync {
 // MARK: - Drought concealment
 
 /// Bounded concealment of a packet DROUGHT — the Apple leg of the policy the Rust clients
-/// share (`punktfunk_core::audio::DroughtConceal`; design/host-source-stutter-fixes.md, WP-C1).
+/// share (`lilynk_core::audio::DroughtConceal`; design/host-source-stutter-fixes.md, WP-C1).
 ///
 /// The decode path already conceals a SEQ GAP: core's in-ABI decoder synthesizes the packets the
 /// sequence says went missing before the one that arrived (`nextAudioPcm`). But that only fires

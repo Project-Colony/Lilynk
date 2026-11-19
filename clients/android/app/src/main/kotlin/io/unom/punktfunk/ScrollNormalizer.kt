@@ -1,7 +1,7 @@
 package io.unom.punktfunk
 
 /**
- * The normalized-scroll wire vocabulary (`punktfunk_core::input::scroll`) in Kotlin: a delta is
+ * The normalized-scroll wire vocabulary (`lilynk_core::input::scroll`) in Kotlin: a delta is
  * signed Q24.8 in the source's own unit — 120-per-detent for a wheel (and for an unknown source,
  * which the wire prices as a wheel), device-independent pixels for everything that measures
  * distance. Positive is up on the vertical axis, right on the horizontal. `phase` carries the

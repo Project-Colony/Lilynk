@@ -371,7 +371,7 @@ final class ProfileUnlockTests: XCTestCase {
 }
 
 /// `clients/shared/profile-unlock-vectors.json`, every section: through the rules, then through
-/// the flow with the software key, as `pf-client-core`'s unlock.rs replays it.
+/// the flow with the software key, as `ly-client-core`'s unlock.rs replays it.
 extension ProfileUnlockTests {
     private func vectors(_ section: String) throws -> [[String: Any]] {
         let url = URL(fileURLWithPath: #filePath)

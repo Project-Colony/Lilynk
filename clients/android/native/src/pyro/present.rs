@@ -3,7 +3,7 @@
 //! ([`super::asc`]).
 //!
 //! The shader pair is the desktop presenter's, byte for byte
-//! (`pf_client_video::video_csc_spv`) — a second copy of the colour maths is a second place
+//! (`ly_client_video::video_csc_spv`) — a second copy of the colour maths is a second place
 //! for it to be wrong, and the coefficients come from the one tested `csc_rows`.
 //!
 //! Aspect is preserved by the viewport rather than by resizing the window: the surface is
@@ -13,8 +13,8 @@
 use crate::pyro_ring::{self, verdict, Call, Outcome, Verdict};
 use anyhow::{anyhow, Result};
 use ash::vk::{self, Handle as _};
-use pf_client_video::video_color::{csc_rows, ColorDesc};
-use pf_client_video::video_vk::QueueLock;
+use ly_client_video::video_color::{csc_rows, ColorDesc};
+use ly_client_video::video_vk::QueueLock;
 use std::marker::PhantomData;
 use std::sync::Arc;
 
@@ -948,10 +948,10 @@ fn build_pipeline(
 
     // include_bytes! alignment is unspecified; read_spv copies into aligned words.
     let vert_words = ash::util::read_spv(&mut std::io::Cursor::new(
-        pf_client_video::video_csc_spv::FULLSCREEN_VERT,
+        ly_client_video::video_csc_spv::FULLSCREEN_VERT,
     ))?;
     let frag_words = ash::util::read_spv(&mut std::io::Cursor::new(
-        pf_client_video::video_csc_spv::PLANAR_CSC_FRAG,
+        ly_client_video::video_csc_spv::PLANAR_CSC_FRAG,
     ))?;
     // SAFETY: the word slices outlive the create calls; modules are destroyed below.
     let vert = unsafe {

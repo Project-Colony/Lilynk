@@ -34,12 +34,12 @@ run() {
   echo "== cargo test $*"
   cargo test --no-fail-fast "$@" -- --ignored --test-threads=1 --nocapture 2>&1 | tee -a "$log"
 }
-run -p pf-zerocopy --lib "$@"
-run -p pf-encode --lib --features vulkan-encode,pyrowave "$@"
-run -p pf-vkdecode --test gpu_smoke --test gpu_parity "$@"
+run -p ly-zerocopy --lib "$@"
+run -p ly-encode --lib --features vulkan-encode,pyrowave "$@"
+run -p ly-vkdecode --test gpu_smoke --test gpu_parity "$@"
 # The route a device with no plane views takes, on one that has both.
-PUNKTFUNK_VKDECODE_ARRANGEMENT=sampler run -p pf-vkdecode --test gpu_smoke --test gpu_parity "$@"
-run -p pf-presenter --lib csc "$@"
+PUNKTFUNK_VKDECODE_ARRANGEMENT=sampler run -p ly-vkdecode --test gpu_smoke --test gpu_parity "$@"
+run -p ly-presenter --lib csc "$@"
 
 errors=$(grep -c 'Validation Error' "$log")
 if [ "$errors" -ne 0 ]; then

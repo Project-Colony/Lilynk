@@ -17,7 +17,7 @@
        service account — so they are NOT the whole authorization story (2026-08-05 review L-14).
        They cannot be tightened without breaking the lingering-user-unit deployment, which polkit
        classifies under allow_any precisely because it has no session. The actual gate is in the
-       helper: pf-dm-helper refuses any caller whose PKEXEC_UID is not in the `punktfunk` group.
+       helper: ly-dm-helper refuses any caller whose PKEXEC_UID is not in the `punktfunk` group.
        Keep the two in step — loosening the helper's check makes these defaults load-bearing. -->
   <action id="io.unom.punktfunk.dm-helper">
     <description>Stop or restore the display manager for a Punktfunk stream</description>
@@ -27,6 +27,6 @@
       <allow_inactive>yes</allow_inactive>
       <allow_active>yes</allow_active>
     </defaults>
-    <annotate key="org.freedesktop.policykit.exec.path">/usr/libexec/punktfunk/pf-dm-helper</annotate>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/libexec/punktfunk/ly-dm-helper</annotate>
   </action>
 </policyconfig>

@@ -23,7 +23,7 @@ impl Row {
 }
 
 /// A row's label is read each time the page renders, so a message such as
-/// `pf_l10n::client::player_stats_scale_pct()` reads in the language `pf_l10n` settled on.
+/// `ly_l10n::client::player_stats_scale_pct()` reads in the language `ly_l10n` settled on.
 macro_rules! rows {
     ($($name:ident: $key:literal, $label:expr, $page:literal, $advanced:literal;)*) => {
         $(pub(super) const $name: Row = Row {
@@ -41,61 +41,61 @@ macro_rules! rows {
 
 // Name: key, label, the sidebar page it sits on, whether it waits behind Show advanced.
 rows! {
-    FULLSCREEN_ON_STREAM: "fullscreen_on_stream", pf_l10n::client::player_fullscreen_on_stream(), "general", false;
-    AUTO_WAKE: "auto_wake", pf_l10n::client::player_auto_wake(), "general", false;
-    START_IN: "start_in", pf_l10n::client::player_start_in(), "general", false;
-    GAMEPAD_UI: "gamepad_ui_enabled", pf_l10n::client::player_gamepad_ui_enabled(), "general", false;
-    GAMEPAD_UI_MODE: "gamepad_ui_mode", pf_l10n::client::player_gamepad_ui_mode(), "general", false;
-    STATS: "stats_verbosity", pf_l10n::client::player_stats_verbosity(), "general", false;
-    SHOW_ADVANCED: "show_advanced", pf_l10n::client::player_show_advanced(), "general", false;
-    ADVANCED_STATS: "advanced_stats", pf_l10n::client::player_advanced_stats(), "general", true;
-    STATS_POSITION: "hud_placement", pf_l10n::client::player_hud_placement(), "general", true;
-    STATS_SIZE: "stats_scale_pct", pf_l10n::client::player_stats_scale_pct(), "general", true;
-    EXIT_HINT: "exit_hint", pf_l10n::client::player_exit_hint(), "general", true;
+    FULLSCREEN_ON_STREAM: "fullscreen_on_stream", ly_l10n::client::player_fullscreen_on_stream(), "general", false;
+    AUTO_WAKE: "auto_wake", ly_l10n::client::player_auto_wake(), "general", false;
+    START_IN: "start_in", ly_l10n::client::player_start_in(), "general", false;
+    GAMEPAD_UI: "gamepad_ui_enabled", ly_l10n::client::player_gamepad_ui_enabled(), "general", false;
+    GAMEPAD_UI_MODE: "gamepad_ui_mode", ly_l10n::client::player_gamepad_ui_mode(), "general", false;
+    STATS: "stats_verbosity", ly_l10n::client::player_stats_verbosity(), "general", false;
+    SHOW_ADVANCED: "show_advanced", ly_l10n::client::player_show_advanced(), "general", false;
+    ADVANCED_STATS: "advanced_stats", ly_l10n::client::player_advanced_stats(), "general", true;
+    STATS_POSITION: "hud_placement", ly_l10n::client::player_hud_placement(), "general", true;
+    STATS_SIZE: "stats_scale_pct", ly_l10n::client::player_stats_scale_pct(), "general", true;
+    EXIT_HINT: "exit_hint", ly_l10n::client::player_exit_hint(), "general", true;
 
-    RESOLUTION: "resolution", pf_l10n::client::player_resolution(), "display", false;
-    REFRESH: "refresh_hz", pf_l10n::client::player_refresh_hz(), "display", false;
-    BITRATE: "bitrate_kbps", pf_l10n::client::player_bitrate_kbps(), "display", false;
-    VIDEO_FIT: "video_fit", pf_l10n::client::player_video_fit(), "display", false;
-    SCREENS: "screens", pf_l10n::client::player_screens(), "display", false;
-    HOST_SCREEN: "host_screen", pf_l10n::client::preset_host_screen(), "display", false;
-    HDR: "hdr_enabled", pf_l10n::client::player_hdr_enabled(), "display", false;
-    PRESENT: "present_priority", pf_l10n::client::player_present_priority(), "display", false;
-    SMOOTH_BUFFER: "smooth_buffer", pf_l10n::client::player_smooth_buffer(), "display", true;
-    RENDER_SCALE: "render_scale", pf_l10n::client::player_render_scale(), "display", true;
-    CODEC: "codec", pf_l10n::client::player_codec(), "display", false;
-    PYROWAVE_QUALITY: "pyrowave_bpp", pf_l10n::client::player_pyrowave_bpp(), "display", false;
-    CHROMA: "enable_444", pf_l10n::client::player_enable_444(), "display", true;
-    TEN_BIT_SDR: "ten_bit_sdr", pf_l10n::client::player_ten_bit_sdr(), "display", true;
+    RESOLUTION: "resolution", ly_l10n::client::player_resolution(), "display", false;
+    REFRESH: "refresh_hz", ly_l10n::client::player_refresh_hz(), "display", false;
+    BITRATE: "bitrate_kbps", ly_l10n::client::player_bitrate_kbps(), "display", false;
+    VIDEO_FIT: "video_fit", ly_l10n::client::player_video_fit(), "display", false;
+    SCREENS: "screens", ly_l10n::client::player_screens(), "display", false;
+    HOST_SCREEN: "host_screen", ly_l10n::client::preset_host_screen(), "display", false;
+    HDR: "hdr_enabled", ly_l10n::client::player_hdr_enabled(), "display", false;
+    PRESENT: "present_priority", ly_l10n::client::player_present_priority(), "display", false;
+    SMOOTH_BUFFER: "smooth_buffer", ly_l10n::client::player_smooth_buffer(), "display", true;
+    RENDER_SCALE: "render_scale", ly_l10n::client::player_render_scale(), "display", true;
+    CODEC: "codec", ly_l10n::client::player_codec(), "display", false;
+    PYROWAVE_QUALITY: "pyrowave_bpp", ly_l10n::client::player_pyrowave_bpp(), "display", false;
+    CHROMA: "enable_444", ly_l10n::client::player_enable_444(), "display", true;
+    TEN_BIT_SDR: "ten_bit_sdr", ly_l10n::client::player_ten_bit_sdr(), "display", true;
     VSYNC: "vsync", "V-Sync", "display", true;
-    VRR: "allow_vrr", pf_l10n::client::player_allow_vrr(), "display", true;
-    COMPOSITOR: "compositor", pf_l10n::client::player_compositor(), "display", true;
-    KEEP_AWAKE: "keep_awake", pf_l10n::client::player_keep_awake(), "display", true;
-    DECODER: "decoder", pf_l10n::client::player_decoder(), "display", true;
-    ADAPTER: "adapter", pf_l10n::desktop::desktop_adapter(), "display", true;
+    VRR: "allow_vrr", ly_l10n::client::player_allow_vrr(), "display", true;
+    COMPOSITOR: "compositor", ly_l10n::client::player_compositor(), "display", true;
+    KEEP_AWAKE: "keep_awake", ly_l10n::client::player_keep_awake(), "display", true;
+    DECODER: "decoder", ly_l10n::client::player_decoder(), "display", true;
+    ADAPTER: "adapter", ly_l10n::desktop::desktop_adapter(), "display", true;
 
-    TOUCH: "touch_mode", pf_l10n::client::player_touch_mode(), "input", false;
-    MOUSE: "mouse_mode", pf_l10n::client::player_mouse_mode(), "input", false;
-    INHIBIT_SHORTCUTS: "inhibit_shortcuts", pf_l10n::client::player_inhibit_shortcuts(), "input", false;
-    INVERT_SCROLL: "invert_scroll", pf_l10n::client::player_invert_scroll(), "input", false;
-    QUICK_ACTIONS: "overlay_actions", pf_l10n::client::player_overlay_actions(), "quick_actions", false;
-    SHORTCUTS: "shortcuts", pf_l10n::client::player_shortcuts(), "shortcuts", false;
+    TOUCH: "touch_mode", ly_l10n::client::player_touch_mode(), "input", false;
+    MOUSE: "mouse_mode", ly_l10n::client::player_mouse_mode(), "input", false;
+    INHIBIT_SHORTCUTS: "inhibit_shortcuts", ly_l10n::client::player_inhibit_shortcuts(), "input", false;
+    INVERT_SCROLL: "invert_scroll", ly_l10n::client::player_invert_scroll(), "input", false;
+    QUICK_ACTIONS: "overlay_actions", ly_l10n::client::player_overlay_actions(), "quick_actions", false;
+    SHORTCUTS: "shortcuts", ly_l10n::client::player_shortcuts(), "shortcuts", false;
 
-    AUDIO_CHANNELS: "audio_channels", pf_l10n::client::player_audio_channels(), "audio", false;
-    SPEAKER: "speaker_device", pf_l10n::client::player_speaker_device(), "audio", false;
-    MIC: "mic_enabled", pf_l10n::client::player_mic_enabled(), "audio", false;
-    MIC_DEVICE: "mic_device", pf_l10n::client::player_mic_device(), "audio", false;
-    AUDIO_FORMAT: "audio_format", pf_l10n::client::player_audio_format(), "audio", true;
-    KEEP_HOST_AUDIO: "keep_host_audio", pf_l10n::client::player_keep_host_audio(), "audio", true;
-    ECHO_CANCEL: "echo_cancel", pf_l10n::client::player_echo_cancel(), "audio", true;
+    AUDIO_CHANNELS: "audio_channels", ly_l10n::client::player_audio_channels(), "audio", false;
+    SPEAKER: "speaker_device", ly_l10n::client::player_speaker_device(), "audio", false;
+    MIC: "mic_enabled", ly_l10n::client::player_mic_enabled(), "audio", false;
+    MIC_DEVICE: "mic_device", ly_l10n::client::player_mic_device(), "audio", false;
+    AUDIO_FORMAT: "audio_format", ly_l10n::client::player_audio_format(), "audio", true;
+    KEEP_HOST_AUDIO: "keep_host_audio", ly_l10n::client::player_keep_host_audio(), "audio", true;
+    ECHO_CANCEL: "echo_cancel", ly_l10n::client::player_echo_cancel(), "audio", true;
 
-    GAMEPAD: "gamepad", pf_l10n::client::player_gamepad(), "controllers", false;
-    PAD_RUMBLE: "pad_rumble", pf_l10n::client::player_pad_rumble(), "controllers", false;
-    FORWARDING: "gamepad_forwarding", pf_l10n::client::player_gamepad_forwarding(), "controllers", true;
-    FORWARD_PAD: "forward_pad", pf_l10n::client::player_forward_pad(), "controllers", true;
-    SYSTEM_BUTTONS: "system_buttons", pf_l10n::client::player_system_buttons(), "controllers", true;
-    PAD_HAPTICS: "pad_haptics", pf_l10n::client::player_pad_haptics(), "controllers", true;
-    PAD_SPEAKER: "pad_speaker", pf_l10n::client::player_pad_speaker(), "controllers", true;
+    GAMEPAD: "gamepad", ly_l10n::client::player_gamepad(), "controllers", false;
+    PAD_RUMBLE: "pad_rumble", ly_l10n::client::player_pad_rumble(), "controllers", false;
+    FORWARDING: "gamepad_forwarding", ly_l10n::client::player_gamepad_forwarding(), "controllers", true;
+    FORWARD_PAD: "forward_pad", ly_l10n::client::player_forward_pad(), "controllers", true;
+    SYSTEM_BUTTONS: "system_buttons", ly_l10n::client::player_system_buttons(), "controllers", true;
+    PAD_HAPTICS: "pad_haptics", ly_l10n::client::player_pad_haptics(), "controllers", true;
+    PAD_SPEAKER: "pad_speaker", ly_l10n::client::player_pad_speaker(), "controllers", true;
 }
 
 #[cfg(test)]
@@ -143,7 +143,7 @@ mod tests {
                 );
                 continue;
             };
-            match pf_l10n::get(&format!("player_{}", row.key)) {
+            match ly_l10n::get(&format!("player_{}", row.key)) {
                 Some(m) => assert_eq!(row.label(), m.text(), "{}", row.key),
                 None => assert_eq!((row.key, row.label()), ("vsync", "V-Sync")),
             }

@@ -142,7 +142,7 @@ enum AudioDrain {
             }
         }
     }
-        thread.name = "punktfunk-audio"
+        thread.name = "lilynk-audio"
         thread.qualityOfService = .userInteractive
         thread.start()
     }

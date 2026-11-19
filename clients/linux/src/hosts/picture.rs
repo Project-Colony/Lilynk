@@ -2,7 +2,7 @@
 
 use adw::prelude::*;
 use gtk::{gdk, glib};
-use pf_client_core::library::HostApi;
+use ly_client_core::library::HostApi;
 use std::cell::RefCell;
 use std::collections::HashMap;
 
@@ -22,7 +22,7 @@ pub fn show(avatar: &adw::Avatar, url: &str, api: HostApi) {
     let (tx, rx) = async_channel::bounded(1);
     let path = url.to_string();
     std::thread::spawn(move || {
-        let bytes = pf_client_core::profiles::fetch_avatar(&api, &path);
+        let bytes = ly_client_core::profiles::fetch_avatar(&api, &path);
         let decoded = bytes.and_then(|b| crate::library::art::decode(b, &(EDGE, EDGE)));
         let _ = tx.send_blocking(decoded);
     });

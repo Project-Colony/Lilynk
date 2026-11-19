@@ -26,12 +26,12 @@ static ICONS: &[(&str, &[u8])] = &[
     ("omarchy", include_bytes!("../../assets/os/omarchy.png")),
 ];
 
-/// The mark for an OS-identity chain: walk most-specific-first (pf-client-core's shared
+/// The mark for an OS-identity chain: walk most-specific-first (ly-client-core's shared
 /// order/aliases) and take the first token we ship art for. `None` (no image element at all)
 /// when the host doesn't advertise a chain or nothing in it is recognized — which is what
 /// keeps such a host's avatar on its name's initial rather than leaving an empty circle.
 pub fn image(chain: &str) -> Option<EncodedImage> {
-    pf_client_core::os::os_icon_tokens(chain)
+    ly_client_core::os::os_icon_tokens(chain)
         .iter()
         .find_map(|t| ICONS.iter().find(|(name, _)| *name == t.as_str()))
         .map(|(_, png)| EncodedImage::from_static(png))

@@ -14,7 +14,7 @@ Sunshine and its forks (Apollo, Vibeshine, …) want the same ports, TCP 47990 e
 off. You see `address already in use` in the host log, pairing that fails, or the wrong host
 answering.
 
-Run `punktfunk-host detect-conflicts`, or read **Competing streaming server** on the console's
+Run `lilynk-host detect-conflicts`, or read **Competing streaming server** on the console's
 **Troubleshooting** page. Then uninstall the other host, or keep both by moving Punktfunk's port:
 [Switching from Sunshine](/docs/switching-from-sunshine).
 
@@ -22,8 +22,8 @@ Run `punktfunk-host detect-conflicts`, or read **Competing streaming server** on
 
 Discovery uses mDNS on the local network, and anything that blocks it hides the host. Check:
 
-- The host is running: `systemctl --user status punktfunk-host` (Linux),
-  `punktfunk-host service status` (Windows, elevated).
+- The host is running: `systemctl --user status lilynk-host` (Linux),
+  `lilynk-host service status` (Windows, elevated).
 - Android: tap **Allow…** under **Local network access is off** at the top of the host list.
 - Both devices are on the same subnet. mDNS doesn't cross routers or most VPNs; add the host by
   its IP address instead.
@@ -58,7 +58,7 @@ Plugin pages come from their own port, TCP 47993, next to the console's 47992.
 - **The panel stays empty**: a firewall rule saved before 47993 existed blocks it. Refresh it:
 
   ```sh
-  sudo ufw app update punktfunk-web && sudo ufw reload    # ufw
+  sudo ufw app update lilynk-web && sudo ufw reload    # ufw
   sudo firewall-cmd --reload                               # firewalld
   ```
 

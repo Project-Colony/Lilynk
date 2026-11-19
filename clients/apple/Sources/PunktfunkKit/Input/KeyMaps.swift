@@ -33,7 +33,7 @@ extension InputCapture {
         }
     }
     /// HID usage (GCKeyCode raw) → Windows VK (the host maps VK → evdev; every VK emitted
-    /// here exists in pf-inject's inject/keymap.rs::vk_to_evdev — extend the two together).
+    /// here exists in ly-inject's inject/keymap.rs::vk_to_evdev — extend the two together).
     nonisolated static let hidToVK: [Int: UInt32] = {
         var m: [Int: UInt32] = [:]
         // a–z: HID 0x04..0x1D → VK 'A'..'Z'.

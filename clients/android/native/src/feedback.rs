@@ -12,8 +12,8 @@ use jni::errors::LogErrorAndDefault;
 use jni::objects::{JByteBuffer, JObject};
 use jni::sys::{jint, jlong};
 use jni::EnvUnowned;
-use punktfunk_core::error::PunktfunkError;
-use punktfunk_core::quic::HidOutput;
+use lilynk_core::error::PunktfunkError;
+use lilynk_core::quic::HidOutput;
 use std::time::Duration;
 
 /// Short blocking timeout: long enough not to busy-spin, short enough that the Kotlin poll thread
@@ -32,7 +32,7 @@ const PAD_BITS: u32 = 4;
 /// The packing is only lossless while every representable pad index fits in [`PAD_BITS`]:
 /// growing `MAX_PADS` past 16 fails the build instead of aliasing pad 16 onto pad 0.
 const _: () = assert!(
-    punktfunk_core::input::MAX_PADS <= 1usize << PAD_BITS,
+    lilynk_core::input::MAX_PADS <= 1usize << PAD_BITS,
     "MAX_PADS no longer fits the 4-bit pad field in the packed rumble long"
 );
 
@@ -178,7 +178,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeNextHidout(
 #[cfg(test)]
 mod pack_rumble_tests {
     use super::*;
-    use punktfunk_core::input::MAX_PADS;
+    use lilynk_core::input::MAX_PADS;
 
     /// Kotlin's `unpackRumbleEvent`, transcribed — if these two ever disagree the boundary is
     /// broken, and nothing else in the build would say so.

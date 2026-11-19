@@ -30,8 +30,8 @@ sudo apt install build-essential clang libclang-dev pkg-config cmake git curl \
   libpipewire-0.3-dev libopus-dev libwayland-dev libxkbcommon-dev libdrm-dev \
   libgl-dev libegl-dev libgbm-dev
 git clone https://git.unom.io/unom/punktfunk.git && cd punktfunk
-cargo build --release --locked -p punktfunk-host -p punktfunk-encode-worker \
-  --features punktfunk-host/nvenc,punktfunk-host/vulkan-encode
+cargo build --release --locked -p lilynk-host -p lilynk-encode-worker \
+  --features lilynk-host/nvenc,lilynk-host/vulkan-encode
 ```
 
 ### Fedora
@@ -41,8 +41,8 @@ sudo dnf install gcc gcc-c++ clang clang-devel cmake nasm git pkgconf-pkg-config
   pipewire-devel wayland-devel libxkbcommon-devel opus-devel \
   mesa-libGL-devel mesa-libgbm-devel
 git clone https://git.unom.io/unom/punktfunk.git && cd punktfunk
-cargo build --release --locked -p punktfunk-host -p punktfunk-encode-worker \
-  --features punktfunk-host/nvenc,punktfunk-host/vulkan-encode
+cargo build --release --locked -p lilynk-host -p lilynk-encode-worker \
+  --features lilynk-host/nvenc,lilynk-host/vulkan-encode
 ```
 
 Without `mesa-libGL-devel` the link fails with `cannot find -lGL`. To build an RPM instead, use the
@@ -51,14 +51,14 @@ then run `packaging/rpm/build-rpm.sh` inside it.
 
 ### Arch (PKGBUILD)
 
-The split `PKGBUILD` in `packaging/arch/` builds `punktfunk-host`, `punktfunk-client` and
-`punktfunk-seats`. Set `PF_WITH_WEB=1` to also build `punktfunk-web` and `PF_WITH_SCRIPTING=1` for
-`punktfunk-scripting` (both need `bun`):
+The split `PKGBUILD` in `packaging/arch/` builds `lilynk-host`, `lilynk-client` and
+`lilynk-seats`. Set `PF_WITH_WEB=1` to also build `lilynk-web` and `PF_WITH_SCRIPTING=1` for
+`lilynk-scripting` (both need `bun`):
 
 ```sh
 git clone https://git.unom.io/unom/punktfunk.git && cd punktfunk/packaging/arch
 PF_SRCDIR="$(git rev-parse --show-toplevel)" makepkg -f --holdver   # builds the working tree
-sudo pacman -U punktfunk-host-*.pkg.tar.zst
+sudo pacman -U lilynk-host-*.pkg.tar.zst
 ```
 
 NVENC and EGL come from `nvidia-utils`. On a builder without a GPU, link the CUDA stub first (the
@@ -73,19 +73,19 @@ The box also needs what [Requirements](/docs/requirements) lists for your GPU. R
 inside your desktop session; it detects the compositor:
 
 ```sh
-target/release/punktfunk-host serve              # native clients only
-target/release/punktfunk-host serve --gamestream # plus Moonlight (trusted LAN only)
+target/release/lilynk-host serve              # native clients only
+target/release/lilynk-host serve --gamestream # plus Moonlight (trusted LAN only)
 ```
 
-The host finds `punktfunk-encode-worker` beside itself and runs PyroWave and the NVIDIA frame
+The host finds `lilynk-encode-worker` beside itself and runs PyroWave and the NVIDIA frame
 convert there at raised GPU priority. Grant it the capability the packages grant:
-`sudo setcap cap_sys_nice=ep target/release/punktfunk-encode-worker`.
+`sudo setcap cap_sys_nice=ep target/release/lilynk-encode-worker`.
 
 To run the host as a user service from a clone at `~/punktfunk`, copy
-`scripts/punktfunk-host.service` to `~/.config/systemd/user/`, then:
+`scripts/lilynk-host.service` to `~/.config/systemd/user/`, then:
 
 ```sh
-systemctl --user daemon-reload && systemctl --user enable --now punktfunk-host
+systemctl --user daemon-reload && systemctl --user enable --now lilynk-host
 ```
 
 [Running as a service](/docs/running-as-a-service) covers the rest.
@@ -106,11 +106,11 @@ The first build downloads a prebuilt Skia (about 19 MB) for the console UI.
 ## Linux client
 
 ```sh
-cargo build --release -p punktfunk-client-linux -p punktfunk-client-session -p punktfunk-cli
-target/release/punktfunk-client
+cargo build --release -p lilynk-client-linux -p lilynk-client-session -p lilynk-cli
+target/release/lilynk-client
 ```
 
-It needs GTK 4.20+, libadwaita 1.8+ and SDL3. The shell starts `punktfunk-session` from beside
+It needs GTK 4.20+, libadwaita 1.8+ and SDL3. The shell starts `lilynk-session` from beside
 itself, so build both. More:
 [clients/linux](https://git.unom.io/unom/punktfunk/src/branch/main/clients/linux/README.md).
 
@@ -120,11 +120,11 @@ Install the MSVC toolchain, CMake and LLVM (libclang). In PowerShell, keep the t
 
 ```powershell
 $env:CARGO_TARGET_DIR = 'C:\t'
-cargo build --release -p punktfunk-host --features nvenc,qsv
-cargo build --release -p punktfunk-tray
-cargo build --release -p punktfunk-capture-worker
-cargo build --release --manifest-path crates/host/pf-seat-keeper/Cargo.toml
-cargo build --release -p punktfunk-client-windows -p punktfunk-client-session -p punktfunk-cli
+cargo build --release -p lilynk-host --features nvenc,qsv
+cargo build --release -p lilynk-tray
+cargo build --release -p lilynk-capture-worker
+cargo build --release --manifest-path crates/host/ly-seat-keeper/Cargo.toml
+cargo build --release -p lilynk-client-windows -p lilynk-client-session -p lilynk-cli
 ```
 
 `CARGO_HOME` must be an ASCII path; SDL3's build breaks otherwise. Pack the host installer, which
@@ -147,7 +147,7 @@ $env:Version_Number = '10.0.26100.0'
 
 `drivers-cargo.ps1` runs cargo through a short drive letter, because the CMake builds inside
 overflow `MAX_PATH`. To install a build on a test box, run `deploy-dev.ps1 -Install` from an
-elevated shell after stopping the host (`punktfunk-host service stop`). Signing and the dev loop:
+elevated shell after stopping the host (`lilynk-host service stop`). Signing and the dev loop:
 [packaging/windows](https://git.unom.io/unom/punktfunk/src/branch/main/packaging/windows/README.md).
 
 ## Apple client
@@ -157,7 +157,7 @@ On a Mac with Xcode 26.5:
 ```sh
 rustup target add aarch64-apple-darwin x86_64-apple-darwin
 bash scripts/build-xcframework.sh     # BUILD_IOS=1 / BUILD_TVOS=1 / BUILD_VISIONOS=1 add those slices
-cd clients/apple && open Punktfunk.xcodeproj
+cd clients/apple && open Lilynk.xcodeproj
 ```
 
 tvOS and visionOS slices build on a pinned nightly with `rust-src`; the script names it. More:
@@ -181,7 +181,7 @@ The APK lands in `app/build/outputs/apk/debug/`. More:
 
 ```sh
 cd clients/decky
-pnpm install && pnpm run package                # → out/punktfunk-v<ver>.zip
+pnpm install && pnpm run package                # → out/lilynk-v<ver>.zip
 DECK=deck@<deck-ip> pnpm run deploy              # install on a Deck and restart the loader
 ```
 
@@ -207,6 +207,6 @@ More:
 
 ## Client builds on 32-bit ARM
 
-A client that embeds `punktfunk-core` can add the `chacha-aws-lc-rs` feature to cut streaming CPU
+A client that embeds `lilynk-core` can add the `chacha-aws-lc-rs` feature to cut streaming CPU
 on 32-bit ARM devices such as webOS TVs. The client still has to ask for ChaCha20 when it connects;
 hosts need no change.

@@ -4,7 +4,7 @@
 
 use adw::prelude::*;
 use gtk::gio;
-use pf_l10n::desktop;
+use ly_l10n::desktop;
 
 /// A destination's header and bottom bar, both switching `views`. `narrow` swaps the header's
 /// switcher for the bar.

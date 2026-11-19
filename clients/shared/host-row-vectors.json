@@ -1,5 +1,5 @@
 {
-  "$comment": "Console home rows (pf-console-ui HostRow) each client builds from its saved and discovered hosts, replayed by the Kotlin ConsoleJson and Swift ConsoleJSON tests; clients/session/src/console.rs rows() follows the same rules. `saved` is store order, the order the hosts were added (an undated record predates the stamp and comes first). The console applies the player's sort on top, so producers never sort saved hosts. A saved host matches an advert by fingerprint when both carry one, else by addr:port. `rows` lists only the fields every producer derives the same way; `pin` is the pinned preset's id.",
+  "$comment": "Console home rows (ly-console-ui HostRow) each client builds from its saved and discovered hosts, replayed by the Kotlin ConsoleJson and Swift ConsoleJSON tests; clients/session/src/console.rs rows() follows the same rules. `saved` is store order, the order the hosts were added (an undated record predates the stamp and comes first). The console applies the player's sort on top, so producers never sort saved hosts. A saved host matches an advert by fingerprint when both carry one, else by addr:port. `rows` lists only the fields every producer derives the same way; `pin` is the pinned preset's id.",
   "cases": [
     {
       "name": "store order, pins, advert fallbacks, dual-boot neighbour",

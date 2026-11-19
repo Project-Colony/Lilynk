@@ -52,4 +52,4 @@ export * from "./wire.js";
  * from `@effect/openapi-generator` over `api/openapi.json`. Regenerate with `bun run gen`; CI
  * fails if this file and the spec disagree.
  */
-export * as api from "./gen/punktfunk.js";
+export * as api from "./gen/lilynk.js";

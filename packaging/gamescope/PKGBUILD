@@ -1,16 +1,16 @@
 # Maintainer: unom <packages@unom.io>
 #
-# gamescope + punktfunk's `pipewire-hdr` patches, installed as `punktfunk-gamescope`.
+# gamescope + punktfunk's `pipewire-hdr` patches, installed as `lilynk-gamescope`.
 #
 # Standalone on purpose (its own pkgbase, not part of ../arch/PKGBUILD): a C++ meson build with a
-# completely different dependency set from the Rust workspace. punktfunk-host depends on it.
+# completely different dependency set from the Rust workspace. lilynk-host depends on it.
 # Installing it does not touch the distro's own `gamescope`; the host resolves
-# `PUNKTFUNK_GAMESCOPE_BIN` > `punktfunk-gamescope` > `gamescope`.
+# `PUNKTFUNK_GAMESCOPE_BIN` > `lilynk-gamescope` > `gamescope`.
 #
 #   makepkg -si
 #
 # See ../README.md (packaging/gamescope/README.md) for what the patches do and why.
-pkgname=punktfunk-gamescope
+pkgname=lilynk-gamescope
 # The pin matches the shared build script; .pfhdrN matches the binary capability marker.
 # Bump pkgrel for packaging changes that keep the same capability level.
 _gsver=3.17.0
@@ -23,7 +23,7 @@ url="https://git.unom.io/unom/punktfunk"
 license=('BSD-2-Clause')
 # NOT a `provides`/`conflicts` of gamescope: this ships a differently-named binary and is meant to
 # sit BESIDE the distro package (a Steam Deck's gaming session keeps using its own gamescope).
-optdepends=('punktfunk-host: the streaming host that uses it')
+optdepends=('lilynk-host: the streaming host that uses it')
 # Mirrors Arch's own `gamescope` package. Keep in step with it when that one moves — this builds
 # the same tree, so a dependency it grows is one this needs too.
 depends=('glslang' 'libcap' 'libdrm' 'libinput' 'libx11' 'libxcomposite' 'libxdamage'
@@ -62,17 +62,17 @@ _check_version() {
 build() {
   # The shared recipe pins static wlroots and the matching WSI layer.
   # $startdir names packaging/gamescope in the punktfunk checkout.
-  grep -Fxq "GAMESCOPE_REV=\"${_gsrev}\"" "${startdir}/build-punktfunk-gamescope.sh" || {
-    echo "PKGBUILD _gsrev drifted from GAMESCOPE_REV in build-punktfunk-gamescope.sh" >&2
+  grep -Fxq "GAMESCOPE_REV=\"${_gsrev}\"" "${startdir}/build-lilynk-gamescope.sh" || {
+    echo "PKGBUILD _gsrev drifted from GAMESCOPE_REV in build-lilynk-gamescope.sh" >&2
     return 1
   }
-  bash "${startdir}/build-punktfunk-gamescope.sh" \
+  bash "${startdir}/build-lilynk-gamescope.sh" \
     --srcdir "${srcdir}/gamescope" \
     --destdir "${srcdir}/stage" \
     --prefix /usr \
     --jobs "$(nproc)"
   local banner
-  banner="$("${srcdir}/stage/usr/bin/punktfunk-gamescope" --version 2>&1)" || {
+  banner="$("${srcdir}/stage/usr/bin/lilynk-gamescope" --version 2>&1)" || {
     echo "built gamescope cannot report its version: $banner" >&2
     return 1
   }
@@ -83,7 +83,7 @@ check() {
   local marker="${pkgver##*.}" tag
   for tag in "${_gsver}+${marker}" "${_gsver}-23-g5fb8dce+${marker}" \
              "${_gsver}-23-g5fb8dce++${marker}"; do
-    _check_version "punktfunk-gamescope version $tag (gcc 16.1.1)" || return 1
+    _check_version "lilynk-gamescope version $tag (gcc 16.1.1)" || return 1
   done
   for tag in "${_gsver}+pfhdr9" "${_gsver}+${marker}0" "${_gsver}+${marker}junk" \
              "${_gsver}0+${marker}" "${_gsver}+pfhdr" "${_gsver}"; do
@@ -98,8 +98,8 @@ package() {
   # The compositor, under our own name: a full `meson install` would also lay down
   # gamescopectl / gamescopereaper / gamescopestream, colliding file-for-file with the distro's
   # `gamescope` package.
-  install -Dm755 "${srcdir}/stage/usr/bin/punktfunk-gamescope" \
-    "${pkgdir}/usr/bin/punktfunk-gamescope"
+  install -Dm755 "${srcdir}/stage/usr/bin/lilynk-gamescope" \
+    "${pkgdir}/usr/bin/lilynk-gamescope"
 
   # Its reaper, which gamescope `execvp`s for every child. It sits outside /usr/bin, where the host
   # puts it first on PATH, so it needs no distro gamescope and clashes with none.

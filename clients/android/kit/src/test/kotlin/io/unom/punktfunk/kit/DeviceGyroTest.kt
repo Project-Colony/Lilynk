@@ -42,7 +42,7 @@ class DeviceGyroTest {
         }
     }
 
-    /** The wire contract, shared with pf-client-core / the Swift client and now with every other
+    /** The wire contract, shared with ly-client-core / the Swift client and now with every other
      *  Android motion sender ([Gamepad.motionGyroWire]): 20 LSB/°·s means 1 rad/s ⇒ ~1145.9 raw;
      *  1 g ⇒ 10000 raw. */
     @Test

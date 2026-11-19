@@ -1,5 +1,5 @@
 //! Capture a real HID device's report descriptor, decode it, and print it in the shape
-//! `crates/host/pf-driver-proto/src/` keeps its blobs in (`pf-gamepad` serves them).
+//! `crates/host/ly-driver-proto/src/` keeps its blobs in (`ly-gamepad` serves them).
 //!
 //! WHY THIS EXISTS. SDL, Steam and Windows apply stock mappings keyed on the VID/PID we claim,
 //! so a layout that differs from the real pad lands every control on the wrong action.

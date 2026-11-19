@@ -5,7 +5,7 @@
 //! reads no controller, so a pad shortcut is always chosen. *Fires on* is Press or Hold, for
 //! buttons only. [`Shortcuts::validate`] judges every save. A save writes the whole blob
 //! through the settings page's [`super::settings::commit`], so a preset owns all its shortcuts
-//! once it changes one. The model is `pf_client_core::shortcuts`.
+//! once it changes one. The model is `ly_client_core::shortcuts`.
 
 use super::help::key_chip;
 use super::quick_actions::{
@@ -14,15 +14,15 @@ use super::quick_actions::{
 use super::settings::commit;
 use super::style::*;
 use crate::trust::Settings;
-use pf_client_core::overlay_actions::{
+use ly_client_core::overlay_actions::{
     catalogue, key_legend, CatalogueEntry, CatalogueGroup, GroupId, OverlayConfig, RingPlatform,
     SlotId, KEY_GRID,
 };
-use pf_client_core::shortcuts::{
+use ly_client_core::shortcuts::{
     resolve, Action, Binding, Client, Conflict, Device, Press, Shortcuts, Trigger, BUTTONS,
     MODIFIERS,
 };
-use pf_l10n::{client, common, desktop};
+use ly_l10n::{client, common, desktop};
 use std::rc::Rc;
 use windows_reactor::*;
 
@@ -359,7 +359,7 @@ fn list(props: &Props, cfg: &OverlayConfig, sc: &Shortcuts, ui: &Ui, set_ui: &Se
 }
 
 /// A labelled block of the editor: the label small above its controls.
-fn field(pal: &pf_fluent::Palette, label: &str, body: Vec<View>) -> View {
+fn field(pal: &ly_fluent::Palette, label: &str, body: Vec<View>) -> View {
     let mut parts: Vec<View> = vec![muted(pal, label).font_size(12.0).into()];
     parts.extend(body);
     vstack(parts).spacing(6.0).into()
@@ -718,7 +718,7 @@ fn editor(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use pf_client_core::shortcuts::button_bit;
+    use ly_client_core::shortcuts::button_bit;
 
     fn pad(names: &[&str], hold: bool) -> Trigger {
         Trigger::Pad {

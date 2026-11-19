@@ -17,14 +17,14 @@ Move Punktfunk's in `host.env` (`~/.config/punktfunk/host.env`, on Windows
 PUNKTFUNK_MGMT_BIND=0.0.0.0:47991
 ```
 
-Then restart the host: `systemctl --user restart punktfunk-host`, or on Windows
-`punktfunk-host service restart`. The guided installer and the Windows installer do this for you
+Then restart the host: `systemctl --user restart lilynk-host`, or on Windows
+`lilynk-host service restart`. The guided installer and the Windows installer do this for you
 when they find another host running or set to start on its own.
 
 - Clients and the console find the new port on their own. A host you added to a client **by IP
   address** assumes the default port: add it again from the host list.
-- On a Linux firewall, also allow the new port (`punktfunk-native` opens 47990):
-  [Ports & firewall](/docs/ports). On Windows, `punktfunk-host service install` re-creates the
+- On a Linux firewall, also allow the new port (`lilynk-native` opens 47990):
+  [Ports & firewall](/docs/ports). On Windows, `lilynk-host service install` re-creates the
   host's firewall rule for the port in `host.env`.
 - **Windows:** while streaming, Punktfunk turns your other displays off, and an Apollo virtual
   display counts as one. In the console, set **Displays** → **Your monitors while streaming** to
@@ -36,7 +36,7 @@ when they find another host running or set to start on its own.
 To see what is installed and who holds the port:
 
 ```sh
-punktfunk-host detect-conflicts   # exits 1 only when another host runs or starts on its own
+lilynk-host detect-conflicts   # exits 1 only when another host runs or starts on its own
 ss -lptn 'sport = :47990'         # Linux
 netstat -ano | findstr :47990     # Windows
 ```

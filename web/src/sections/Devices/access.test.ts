@@ -17,13 +17,13 @@ import {
 	normalizeLegacyFull,
 } from "./access";
 
-// Written by punktfunk-core's grant_vectors_are_checked_in. The console replays the stored
+// Written by lilynk-core's grant_vectors_are_checked_in. The console replays the stored
 // columns: the management API's masks are in the current vocabulary.
 const vectors = JSON.parse(
 	readFileSync(
 		join(
 			import.meta.dir,
-			"../../../../crates/core/punktfunk-core/testdata/grant-vectors.json",
+			"../../../../crates/core/lilynk-core/testdata/grant-vectors.json",
 		),
 		"utf8",
 	),

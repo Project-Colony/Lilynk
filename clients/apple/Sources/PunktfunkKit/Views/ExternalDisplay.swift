@@ -31,7 +31,7 @@ public final class ExternalDisplaySceneDelegate: UIResponder, UIWindowSceneDeleg
 public final class ExternalDisplay {
     public static let shared = ExternalDisplay()
     /// Posted when a monitor connects or disconnects.
-    static let didChange = Notification.Name("punktfunk.externalDisplayDidChange")
+    static let didChange = Notification.Name("lilynk.externalDisplayDidChange")
 
     private weak var scene: UIWindowScene?
     private var window: UIWindow?

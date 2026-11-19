@@ -8,7 +8,7 @@
 #   flatpak install --user -y flathub org.flatpak.Builder
 # Then run this script from the repo root:
 #   bash packaging/flatpak/build-flatpak.sh
-# Output: dist/punktfunk-client-<version>-<arch>.flatpak  (install: `flatpak install --user <file>`)
+# Output: dist/lilynk-client-<version>-<arch>.flatpak  (install: `flatpak install --user <file>`)
 #
 # Env knobs:
 #   VERSION=...        version string for the bundle name (default: git describe / 0.0.1-dev)
@@ -40,7 +40,7 @@ ARCH="${ARCH:-$(flatpak --default-arch 2>/dev/null || uname -m)}"
 BRANCH="${BRANCH:-stable}"
 # Arch-suffixed so an x86_64 and an aarch64 bundle can sit in dist/ together instead of the
 # second silently overwriting the first. (CI composes its own published filename.)
-BUNDLE="dist/punktfunk-client-${VERSION}-${ARCH}.flatpak"
+BUNDLE="dist/lilynk-client-${VERSION}-${ARCH}.flatpak"
 
 # --- pick a flatpak-builder (host binary, or the org.flatpak.Builder flatpak on the Deck) ---
 if [ -n "${BUILDER:-}" ]; then
@@ -91,7 +91,7 @@ else
     || { echo "error: $GEN does not match the pin for $GEN_REF — rm it and re-run" >&2; exit 1; }
   # Needs python3 + aiohttp + tomlkit. On a host that lacks them (e.g. the Deck), generate on the
   # Mac / a dev box instead and rsync the result next to the manifest (reused by the branch above).
-  # Prune the microsoft/windows-rs git crates first (punktfunk-client-windows only) — otherwise
+  # Prune the microsoft/windows-rs git crates first (lilynk-client-windows only) — otherwise
   # flatpak-builder full-clones that multi-GB repo and fills the disk. See prune-windows-lock.py.
   python3 packaging/flatpak/prune-windows-lock.py Cargo.lock /tmp/Cargo.flatpak.lock
   python3 "$GEN" /tmp/Cargo.flatpak.lock -o packaging/flatpak/cargo-sources.json

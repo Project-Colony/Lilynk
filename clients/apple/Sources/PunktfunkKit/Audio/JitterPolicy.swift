@@ -1,4 +1,4 @@
-// The playback de-jitter policy: the Swift twin of `punktfunk_core::audio::JitterPolicy` under
+// The playback de-jitter policy: the Swift twin of `lilynk_core::audio::JitterPolicy` under
 // `JitterTuning::COREAUDIO`. `clients/shared/jitter-vectors.json` holds the two together: core
 // writes it and `JitterVectorTests` replays it here, so a change lands on both sides or fails.
 //

@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
-# Package an already-built punktfunk-gamescope binary as a .deb, for the Gitea apt registry.
+# Package an already-built lilynk-gamescope binary as a .deb, for the Gitea apt registry.
 #
 # Counterpart to ../gamescope/build-gamescope-rpm.sh, and the same argument: the binary is a
 # meson build of an unrelated tree that CI does once and caches, so this repacks rather than
 # rebuilds. The Arch package (../gamescope/PKGBUILD) is the one recipe that builds from source,
 # because that is what makepkg is for.
 #
-# Installed as /usr/bin/punktfunk-gamescope — it does NOT replace the distro's gamescope, and does
-# not Provide/Conflict with it. Only the sessions punktfunk-host starts itself resolve this binary
-# (PUNKTFUNK_GAMESCOPE_BIN > punktfunk-gamescope > gamescope).
+# Installed as /usr/bin/lilynk-gamescope — it does NOT replace the distro's gamescope, and does
+# not Provide/Conflict with it. Only the sessions lilynk-host starts itself resolve this binary
+# (PUNKTFUNK_GAMESCOPE_BIN > lilynk-gamescope > gamescope).
 #
-# `--stage` is the DESTDIR build-punktfunk-gamescope.sh wrote, not a single binary: that tree carries
+# `--stage` is the DESTDIR build-lilynk-gamescope.sh wrote, not a single binary: that tree carries
 # the compositor AND the Vulkan WSI layer built beside it, and a game nested under gamescope gets its
 # HDR10 swapchain from that layer or from nowhere. Taking the whole tree is what stops the next file
 # in the package needing a new flag in every packaging script.
@@ -18,7 +18,7 @@
 # Usage:
 #   VERSION=3.16.25.pfhdr4~ci42.gdeadbee bash packaging/debian/build-gamescope-deb.sh \
 #     --stage gs-cache [--arch amd64]
-# Output: dist/punktfunk-gamescope_<version>_<arch>.deb
+# Output: dist/lilynk-gamescope_<version>_<arch>.deb
 set -euo pipefail
 
 SRC_STAGE=""
@@ -32,8 +32,8 @@ while [ $# -gt 0 ]; do
 done
 
 [ -n "$SRC_STAGE" ] || { echo "ERROR: --stage is required" >&2; exit 2; }
-# The layout build-punktfunk-gamescope.sh writes under its --destdir/--prefix.
-BINARY="$SRC_STAGE/usr/bin/punktfunk-gamescope"
+# The layout build-lilynk-gamescope.sh writes under its --destdir/--prefix.
+BINARY="$SRC_STAGE/usr/bin/lilynk-gamescope"
 REAPER="$SRC_STAGE/usr/lib/punktfunk/gamescope/gamescopereaper"
 LAYER_SO="$SRC_STAGE/usr/lib/punktfunk/libVkLayer_PUNKTFUNK_gamescope_wsi.so"
 LAYER_JSON="$SRC_STAGE/usr/lib/punktfunk/vulkan/implicit_layer.d/punktfunk_gamescope_wsi.json"
@@ -46,7 +46,7 @@ for f in "$LAYER_SO" "$LAYER_JSON"; do
   [ -f "$f" ] || { echo "ERROR: $f missing from the stage — no game HDR without it" >&2; exit 1; }
 done
 
-PKG="punktfunk-gamescope"
+PKG="lilynk-gamescope"
 ROOTDIR="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOTDIR"
 
@@ -77,7 +77,7 @@ trap 'rm -rf "$STAGE"' EXIT
 # mktemp gives 0700; the package root has to be world-readable or `dpkg-deb -c` shows the tree as
 # root-only and some tooling refuses it.
 chmod 0755 "$STAGE"
-install -Dm0755 "$BINARY" "$STAGE/usr/bin/punktfunk-gamescope"
+install -Dm0755 "$BINARY" "$STAGE/usr/bin/lilynk-gamescope"
 install -Dm0755 "$REAPER" "$STAGE/usr/lib/punktfunk/gamescope/gamescopereaper"
 # /usr/lib/punktfunk, not a multiarch triplet dir: the layer manifest carries that absolute path
 # baked in at build time, so the two have to agree. Nothing links the .so by soname — the Vulkan
@@ -86,7 +86,7 @@ install -Dm0755 "$LAYER_SO" "$STAGE/usr/lib/punktfunk/libVkLayer_PUNKTFUNK_games
 install -Dm0644 "$LAYER_JSON" \
   "$STAGE/usr/lib/punktfunk/vulkan/implicit_layer.d/punktfunk_gamescope_wsi.json"
 # gamescope's notice as Debian's `copyright`, the bundled libraries' own beside it.
-DOC_SRC="$SRC_STAGE/usr/share/doc/punktfunk-gamescope"
+DOC_SRC="$SRC_STAGE/usr/share/doc/lilynk-gamescope"
 if [ -d "$DOC_SRC" ]; then
   mkdir -p "$STAGE/usr/share/doc/$PKG"
   cp -a "$DOC_SRC/." "$STAGE/usr/share/doc/$PKG/"
@@ -103,7 +103,7 @@ if command -v dpkg-shlibdeps >/dev/null 2>&1; then
   # it alone links the system libwayland-client.
   mkdir -p "$STAGE/debian"
   : > "$STAGE/debian/control"
-  ( cd "$STAGE" && dpkg-shlibdeps -O --ignore-missing-info usr/bin/punktfunk-gamescope \
+  ( cd "$STAGE" && dpkg-shlibdeps -O --ignore-missing-info usr/bin/lilynk-gamescope \
       usr/lib/punktfunk/libVkLayer_PUNKTFUNK_gamescope_wsi.so 2>/dev/null ) \
     > "$STAGE/.shlibdeps" || true
   DEPS="$(sed -n 's/^shlibs:Depends=//p' "$STAGE/.shlibdeps" | head -1)"
@@ -121,7 +121,7 @@ fi
   [ -n "$DEPS" ] && echo "Depends: $DEPS"
   # Not a hard dependency in either direction: the host works without this binary (SDR,
   # host-composited cursor), and someone may want the binary for their own capture consumer.
-  echo "Recommends: punktfunk-host"
+  echo "Recommends: lilynk-host"
   echo "Homepage: https://git.unom.io/unom/punktfunk"
   echo "Description: gamescope with punktfunk's PipeWire capture patches"
   echo " gamescope built from the upstream revision punktfunk pins, plus the patches in"
@@ -137,7 +137,7 @@ fi
   echo "  * --pipewire-composite-external-overlay: the mangoapp performance overlay is painted"
   echo "    into the capture stream, so the fps/stats readout is visible remotely."
   echo " ."
-  echo " Installed as /usr/bin/punktfunk-gamescope, with its matching Vulkan WSI layer under"
+  echo " Installed as /usr/bin/lilynk-gamescope, with its matching Vulkan WSI layer under"
   echo " /usr/lib/punktfunk. The layer has its own name and its own enable variable, so it sits"
   echo " beside your gamescope package's rather than replacing it; your system gamescope is"
   echo " untouched."

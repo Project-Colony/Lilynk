@@ -2,7 +2,7 @@ package io.unom.punktfunk.kit
 
 /*
  * The quick-action ids and the key names the dial and the shortcuts both speak: the ids of
- * pf-client-core's `overlay_actions.rs` and the names of punktfunk-core's `key_vk`. In the kit so
+ * ly-client-core's `overlay_actions.rs` and the names of lilynk-core's `key_vk`. In the kit so
  * the pad router's [Shortcuts.Engine] can name an action; the ring's blob lives in the app's
  * `OverlayActions.kt`.
  */
@@ -119,7 +119,7 @@ sealed class SlotId {
 /**
  * The Windows virtual-key code a key name stands for (the wire speaks VKs); `null` for a name
  * this build does not know. Twin of the Rust `key_vk`: `OverlayActionsTest` replays
- * `crates/core/punktfunk-core/testdata/key-vk-vectors.json`, so a new name lands there first.
+ * `crates/core/lilynk-core/testdata/key-vk-vectors.json`, so a new name lands there first.
  */
 fun keyVk(name: String): Int? {
     val n = name.trim().lowercase()

@@ -12,7 +12,7 @@ encoder on its own, so most variables here are overrides you rarely need.
 | | Linux | Windows |
 |---|---|---|
 | File | `~/.config/punktfunk/host.env` | `%ProgramData%\punktfunk\host.env` |
-| Apply an edit | `systemctl --user restart punktfunk-host` | `punktfunk-host service restart` (elevated) |
+| Apply an edit | `systemctl --user restart lilynk-host` | `lilynk-host service restart` (elevated) |
 
 One `KEY=value` per line; `#` starts a comment and keys are case-sensitive. The host reads the file
 when it starts, so an edit does nothing until you restart it. A console setting set here shows as
@@ -139,7 +139,7 @@ Desktop) and rewrites them on every connect.
 | `PUNKTFUNK_COMPOSITOR` | `kwin` · `mutter` · `gamescope` · `wlroots` · `hyprland` · `niri` · `umbriel` (also `kde`, `plasma`, `gnome`, `sway`, `wlr`, `river`, `hypr`, `biri`) | Pins the virtual-display backend and turns session following off, so a Game Mode ↔ Desktop switch ends the stream. For single-purpose appliances only. |
 | `PUNKTFUNK_INPUT_BACKEND` | `libei` · `kwin` · `gamescope` · `wlr` · `wlr-layout` (Umbriel) | Pins input injection. Detected with the compositor; an unknown value is ignored. |
 | `PUNKTFUNK_VIDEO_SOURCE` | `virtual` (default) · `portal` | Moonlight sessions only: `portal` streams an existing monitor, which the GNOME 50+ HDR mirror needs — see [HDR](/docs/hdr#linux--gnome). |
-| `PUNKTFUNK_CAPTURE_MONITOR` | connector name, e.g. `DP-2`; on Windows the display name, e.g. `\\.\DISPLAY1` | Linux and Windows: stream this physical monitor instead of a virtual display, overriding the console. On Linux, `punktfunk-host list-monitors` lists the names; one that matches nothing fails the session. See [Stream a real monitor](/docs/stream-a-monitor). |
+| `PUNKTFUNK_CAPTURE_MONITOR` | connector name, e.g. `DP-2`; on Windows the display name, e.g. `\\.\DISPLAY1` | Linux and Windows: stream this physical monitor instead of a virtual display, overriding the console. On Linux, `lilynk-host list-monitors` lists the names; one that matches nothing fails the session. See [Stream a real monitor](/docs/stream-a-monitor). |
 | `PUNKTFUNK_MONITOR_LINGER_MS` | ms | Keep a client's virtual display this long after it disconnects. Unset, the display is removed at once. **After a device disconnects** in [Virtual displays](/docs/virtual-displays#keep-alive) supersedes it. |
 | `PUNKTFUNK_ZEROCOPY` | `1` · `0` | Linux: zero-copy capture to encode, on by default with a CPU fallback. `0` forces the CPU path; `1` turns a failed zero-copy setup into an error. |
 | `PUNKTFUNK_RENDER_NODE` | path, e.g. `/dev/dri/renderD129` | Linux: the GPU to capture and encode on (default `/dev/dri/renderD128`). A GPU picked under **Host → GPUs** wins. |
@@ -156,7 +156,7 @@ Env-only additions to the **Game Mode** rows above. See [gamescope](/docs/gamesc
 | `PUNKTFUNK_GAMESCOPE_ATTACH` | `1` · `0` | Stream the box's running gamescope at its own mode and never stop it, instead of taking Game Mode over. A change takes a host restart. Outranks `PUNKTFUNK_GAMESCOPE_SESSION`. To stream the screen the box drives, pick it under **Displays** → **Stream this monitor** instead. |
 | `PUNKTFUNK_GAMESCOPE_NODE` | `auto` · node id | Attach to a running gamescope's video node at its own mode. Outranks `PUNKTFUNK_GAMESCOPE_SESSION`. |
 | `PUNKTFUNK_GAMESCOPE_APP` | command | What a bare gamescope session runs, e.g. `vkcube --wsi xcb`. |
-| `PUNKTFUNK_GAMESCOPE_BIN` | path | The gamescope binary for sessions the host starts. Unset: `punktfunk-gamescope` on `PATH`, then `gamescope`. |
+| `PUNKTFUNK_GAMESCOPE_BIN` | path | The gamescope binary for sessions the host starts. Unset: `lilynk-gamescope` on `PATH`, then `gamescope`. |
 | `PUNKTFUNK_GAMESCOPE_WSI_LAYER_DIR` | path | Where the Vulkan layer that gives nested games an HDR10 swapchain lives (default `/usr/lib/punktfunk/vulkan/implicit_layer.d`; the NixOS module sets it). |
 
 ## Compositor-specific (Linux)
@@ -216,7 +216,7 @@ Env-only additions to the **Game Mode** rows above. See [gamescope](/docs/gamesc
 | `PUNKTFUNK_EXCLUSIVE_REASSERT_MS` | ms (default `2000`), `0` off | How often the host checks that exclusive topology held, re-applying it when Windows or a driver turns a physical monitor back on. |
 | `PUNKTFUNK_STANDBY_SINK_KEEP` | any value but `0`/`off` | Keep a connected but inactive external display (a TV on standby, a capture card) powered while streaming; by default the host turns it off, because Windows keeps drawing for it. Also keeps enabled the monitors **Disable monitor devices (PnP)** would disable. |
 | `PUNKTFUNK_NO_ISOLATE` | `1` | Extend the desktop onto the virtual display instead of making it the only one. **Topology** in [Virtual displays](/docs/virtual-displays) supersedes it. |
-| `PUNKTFUNK_HOST_CMD` | `serve` | The command the service runs; every install writes `serve`. With no line the service runs `serve --gamestream`, which `punktfunk-host service install` rewrites to `serve` with **GameStream** kept on. |
+| `PUNKTFUNK_HOST_CMD` | `serve` | The command the service runs; every install writes `serve`. With no line the service runs `serve --gamestream`, which `lilynk-host service install` rewrites to `serve` with **GameStream** kept on. |
 | `PUNKTFUNK_WEB_CONSOLE` | `off` | Don't run the web console alongside the service. |
 | `PUNKTFUNK_AMF_FULL_RANGE` | `on` · `off` | AMD: whether this GPU's encoder writes full-range colour. Unset, the host tests the GPU once at the first stream; Radeon RX 9000 cards write limited range whatever they are asked, so their 8-bit streams are sent and labelled limited range. `off` sends limited range on any AMD GPU; `on` skips the test. Leave it unset. |
 
@@ -261,12 +261,12 @@ can't carry them stays at standard size. Native protocol only.
 | `PUNKTFUNK_UI_PASSWORD_HASH` | argon2id hash | What a console sign-in is checked against; the console writes it to `~/.config/punktfunk/web-password`. See [Forgot your Password?](/docs/forgot-password). |
 | `PUNKTFUNK_UI_PASSWORD` | password | A console password in clear text; the next sign-in replaces it with the hash. This is how you reset it. |
 | `PUNKTFUNK_MGMT_BIND` | `IP:PORT` (default `0.0.0.0:47990`) | Where the management API listens; `--mgmt-bind` overrides it. `127.0.0.1:47990` keeps it off the LAN (paired clients then can't browse your library); another port lets it share the machine with Sunshine or Apollo. The console, plugin runner and tray follow the port through the `mgmt-endpoint` file. See [another streaming host is installed](/docs/troubleshooting-connect#another-streaming-host-sunshine-apollo--is-installed). |
-| `PUNKTFUNK_UI_BIND` | address (default `0.0.0.0`) | Where the web console listens: `0.0.0.0` for your network, `127.0.0.1` for this machine, or one address such as a VPN interface. It never answers the internet. The installers ask; on NixOS use `services.punktfunk.web.bind`. |
+| `PUNKTFUNK_UI_BIND` | address (default `0.0.0.0`) | Where the web console listens: `0.0.0.0` for your network, `127.0.0.1` for this machine, or one address such as a VPN interface. It never answers the internet. The installers ask; on NixOS use `services.lilynk.web.bind`. |
 | `PUNKTFUNK_UI_PLUGIN_PORT` | port (default console port + 1) | The separate origin plugin pages load from. If the console log says it couldn't open, point it at a free port. |
 | `PUNKTFUNK_CONFIG_DIR` | path | The config directory (default `~/.config/punktfunk`, `%ProgramData%\punktfunk` on Windows): pairing state, certificates, `apps.json`. The desktop clients read the same name for their own files — see [Client-side](#client-side-native-clients). |
-| `PUNKTFUNK_PLUGIN_SANDBOX` | `off` | Runs [plugins](/docs/plugins) without their sandboxes, with your account's access — only for a kernel that refuses unprivileged user namespaces. The runner doesn't read `host.env`: set it with `systemctl --user edit punktfunk-scripting` as `Environment=PUNKTFUNK_PLUGIN_SANDBOX=off`. |
+| `PUNKTFUNK_PLUGIN_SANDBOX` | `off` | Runs [plugins](/docs/plugins) without their sandboxes, with your account's access — only for a kernel that refuses unprivileged user namespaces. The runner doesn't read `host.env`: set it with `systemctl --user edit lilynk-scripting` as `Environment=PUNKTFUNK_PLUGIN_SANDBOX=off`. |
 | `PUNKTFUNK_LIBRARY_ART_ROOTS` | directories, separated like `PATH` | Where the host may read local game art. Replaces the defaults (your home plus the system icon and Flatpak directories on Linux; `C:\Users` and your Steam and Playnite installs on Windows), so list every root. The host logs `dropped local art the proxy may not serve` when one is missing. |
-| `PUNKTFUNK_LIBRARY_ART_CACHE` | path | Where downloaded covers are kept (default under `~/.cache` or `%LOCALAPPDATA%`). `punktfunk-host library art --clear` empties it. |
+| `PUNKTFUNK_LIBRARY_ART_CACHE` | path | Where downloaded covers are kept (default under `~/.cache` or `%LOCALAPPDATA%`). `lilynk-host library art --clear` empties it. |
 | `PUNKTFUNK_LIBRARY_ART_CACHE_MB` | MB (default `512`) | Size cap on that cache; the oldest covers go first. |
 
 ## Advanced performance tuning
@@ -284,9 +284,9 @@ can't carry them stays at standard size. Native protocol only.
 | `PUNKTFUNK_NVENC_SPLIT_ARBITRATE` | `1` | Lets NVENC change its split decision mid-session as the pixel rate moves. |
 | `PUNKTFUNK_GPU_PRIORITY_CLASS` | `realtime` (default) · `high` · `normal` · `off` | Windows: GPU priority of capture and encode under a heavy game; `realtime` preempts the game at some cost to its frame rate. Try `high` if NVENC freezes with HAGS on and VRAM nearly full. The display driver's own raise has its own switch, [`PFVD_NO_RT_GPU`](#virtual-display-driver-switches). |
 | `PUNKTFUNK_IDD_ADAPTIVE` | `1` · `0` | Watches whether encoding keeps up with the frame rate, on by default. While it falls behind, the bitrate stops climbing, Instant Replay pauses under **Pause Instant Replay** `auto`, and an NVENC, VA-API or Vulkan Video encoder on Linux hands back finished frames about a frame later. `0` turns all three off. Moonlight sessions don't use it. |
-| `PYROWAVE_QUEUE_PRIORITY` | `realtime` (default) · `high` · `off` | [PyroWave](/docs/pyrowave): ask the GPU to run the encode ahead of the game. On Linux an NVIDIA GPU defaults to `high`, because its `realtime` queue slows every submit. On Linux only `punktfunk-encode-worker` may raise it, never the host — see [GPU scheduling priority](/docs/running-as-a-service#gpu-scheduling-priority). `off` if the desktop stutters while streaming. |
-| `PUNKTFUNK_ENCODE_WORKER` | path · `off` | Where the host finds `punktfunk-encode-worker` (default beside the host, then `PATH`; the NixOS module sets it). `off` runs PyroWave and the NVIDIA frame convert from the host binary at normal priority. |
-| `PUNKTFUNK_SCRIPTING` | path | Where the host finds the `punktfunk-scripting` plugin runner. Set it when `punktfunk-host plugins add` works but the console says the runner isn't installed — the service's `PATH` is shorter than your shell's. |
+| `PYROWAVE_QUEUE_PRIORITY` | `realtime` (default) · `high` · `off` | [PyroWave](/docs/pyrowave): ask the GPU to run the encode ahead of the game. On Linux an NVIDIA GPU defaults to `high`, because its `realtime` queue slows every submit. On Linux only `lilynk-encode-worker` may raise it, never the host — see [GPU scheduling priority](/docs/running-as-a-service#gpu-scheduling-priority). `off` if the desktop stutters while streaming. |
+| `PUNKTFUNK_ENCODE_WORKER` | path · `off` | Where the host finds `lilynk-encode-worker` (default beside the host, then `PATH`; the NixOS module sets it). `off` runs PyroWave and the NVIDIA frame convert from the host binary at normal priority. |
+| `PUNKTFUNK_SCRIPTING` | path | Where the host finds the `lilynk-scripting` plugin runner. Set it when `lilynk-host plugins add` works but the console says the runner isn't installed — the service's `PATH` is shorter than your shell's. |
 
 ## Diagnostics
 

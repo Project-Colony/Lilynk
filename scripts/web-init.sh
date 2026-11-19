@@ -1,5 +1,5 @@
 #!/bin/sh
-# Pre-start for the punktfunk web console (run by punktfunk-web-init.service as the user):
+# Pre-start for the punktfunk web console (run by lilynk-web-init.service as the user):
 #
 #   1. generate the login password once, in the streaming user's config dir, and surface it to
 #      the journal;
@@ -41,20 +41,20 @@ fi
 #
 # The console listens on every interface and answers only peers on the local network or a VPN.
 # Write that down once so the operator finds the setting in host.env; an existing line always wins.
-# Runs before punktfunk-web.service reads host.env — the ordering punktfunk-web-init.service is for.
+# Runs before lilynk-web.service reads host.env — the ordering lilynk-web-init.service is for.
 HOST_ENV="$DIR/host.env"
 if ! grep -q '^[[:space:]]*PUNKTFUNK_UI_BIND=' "$HOST_ENV" 2>/dev/null; then
     printf '\n# Where the web console listens: 0.0.0.0 (your network, never the internet), 127.0.0.1\n# (this machine only), or one address, e.g. a VPN interface.\nPUNKTFUNK_UI_BIND=0.0.0.0\n' >> "$HOST_ENV"
     echo "host.env: the web console answers on your local network (PUNKTFUNK_UI_BIND=0.0.0.0)."
-    echo "To keep it to this machine, set PUNKTFUNK_UI_BIND=127.0.0.1 there and restart punktfunk-web."
+    echo "To keep it to this machine, set PUNKTFUNK_UI_BIND=127.0.0.1 there and restart lilynk-web."
 fi
 
 # ---------------------------------------------------------------- wait for the host's first run
 #
 # The console cannot START without two things the HOST creates on its first `serve`: `mgmt-token`
-# (a MANDATORY EnvironmentFile on punktfunk-web.service) and the TLS pair `Bun.serve` listens with.
+# (a MANDATORY EnvironmentFile on lilynk-web.service) and the TLS pair `Bun.serve` listens with.
 #
-# punktfunk-web.service says `After=punktfunk-host.service`, but that is not a readiness gate:
+# lilynk-web.service says `After=lilynk-host.service`, but that is not a readiness gate:
 # the host is `Type=simple`, so systemd considers it started the instant it is SPAWNED, before
 # either file lands. The two are also written at different points of `serve`: `mgmt-token` in
 # `serve_cli::prepare_serve`, the identity cert later, in `host::serve` via
@@ -64,7 +64,7 @@ fi
 # environment files: No such file or directory", result 'resources'), and only its Restart loop
 # brings it up.
 #
-# This unit is `Type=oneshot` and punktfunk-web.service is ordered `After=` it, so blocking HERE is
+# This unit is `Type=oneshot` and lilynk-web.service is ordered `After=` it, so blocking HERE is
 # the readiness gate that ordering already claimed to be — no new unit, no new directive, and the
 # check is the console's own precondition rather than a proxy for it.
 #
@@ -93,13 +93,13 @@ while ! host_ready; do
         # Not fatal: exit 0 so the console still starts and its own Restart=always retry takes
         # over. Say WHY, because a bare systemd error names a missing file and never the host
         # that owes it.
-        echo "punktfunk-host has not written its mgmt token + identity cert after ${WAIT_SECS}s."
+        echo "lilynk-host has not written its mgmt token + identity cert after ${WAIT_SECS}s."
         echo "Starting the console anyway — it retries every 2s until they appear."
-        echo "If it stays down:  systemctl --user status punktfunk-host"
+        echo "If it stays down:  systemctl --user status lilynk-host"
         break
     fi
     if [ "$waited" -eq 0 ]; then
-        echo "waiting for punktfunk-host to write its mgmt token + identity cert..."
+        echo "waiting for lilynk-host to write its mgmt token + identity cert..."
     fi
     sleep 1
     waited=$((waited + 1))

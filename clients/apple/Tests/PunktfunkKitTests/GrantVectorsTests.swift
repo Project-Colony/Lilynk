@@ -1,4 +1,4 @@
-// `crates/core/punktfunk-core/testdata/grant-vectors.json`, which core writes, against the Swift
+// `crates/core/lilynk-core/testdata/grant-vectors.json`, which core writes, against the Swift
 // grant rule: the wire reader's legacy-full read (`normalized`) and the level a mask labels as.
 // Kotlin replays the same columns; the web console replays the stored ones.
 
@@ -14,7 +14,7 @@ final class GrantVectorsTests: XCTestCase {
             .deletingLastPathComponent() // apple
             .deletingLastPathComponent() // clients
             .deletingLastPathComponent() // repo root
-            .appendingPathComponent("crates/core/punktfunk-core/testdata/grant-vectors.json")
+            .appendingPathComponent("crates/core/lilynk-core/testdata/grant-vectors.json")
         let root = try XCTUnwrap(
             try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any])
         XCTAssertEqual(root["all"] as? Int, Int(PunktfunkConnection.grantAll))

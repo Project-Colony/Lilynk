@@ -154,18 +154,18 @@ export interface UpdateInfo {
   // installed. A flatpak is compared by OSTree commit, in the scope it is installed in (a
   // system-wide `sudo flatpak update` misses a per-user install); every other install is
   // compared by the client itself against the signed per-channel manifest
-  // (`punktfunk-client --check-update`).
+  // (`lilynk-client --check-update`).
   client_update_available: boolean;
   client_current: string; // installed client commit (flatpak) or version (native)
   client_latest: string; // newest client commit (flatpak) or version (native)
   // "flatpak" | "apt" | "dnf" | "pacman" | "rpm-ostree" | "sysext" | "steamos-source" | "nix" |
-  // "source" | "" (`InstallKind::as_str` in pf-update-check).
+  // "source" | "" (`InstallKind::as_str` in ly-update-check).
   client_install: string;
   // Who can perform the update: "flatpak" (this plugin runs it), "helper" (the client drives the
   // packaged root helper), "none" (nothing here can — show `client_command`).
   client_applier: string;
   client_command: string; // one copy-pastable line that updates this install by hand
-  client_opt_in: string; // set when one-tap WOULD work after `usermod -aG punktfunk-update`
+  client_opt_in: string; // set when one-tap WOULD work after `usermod -aG lilynk-update`
   // The client check couldn't complete — NEVER rendered as "up to date". "client-outdated" |
   // "client-unavailable" | "no-origin" | "fetch-failed" (flatpak: the remote was unreachable).
   client_error?: string;
@@ -197,7 +197,7 @@ export const pair = callable<
 >("pair");
 /**
  * No-PIN pairing: wait for the host's operator to approve this Deck (`REQUEST_ACCESS_TIMEOUT` in
- * pf-client-core), pinned to `fp`, the advertised fingerprint `trustHost` saved. The address
+ * ly-client-core), pinned to `fp`, the advertised fingerprint `trustHost` saved. The address
  * alone names both OS installs of a dual-boot box. Never streams.
  */
 export const requestAccess = callable<
@@ -250,7 +250,7 @@ export const runAction = callable<
   [ref: string, actionId: string],
   { ok: boolean; error?: string; notice?: string }
 >("run_action");
-/** Wake a saved host and wait for it (`WAKE_TIMEOUT_SECS` in pf-client-core). `unresolved`: no
+/** Wake a saved host and wait for it (`WAKE_TIMEOUT_SECS` in ly-client-core). `unresolved`: no
  *  MAC is known. */
 export const wake = callable<[ref: string], CliResult>("wake");
 
@@ -342,7 +342,7 @@ export const endGame = callable<
 >("end_game");
 export const checkUpdate = callable<[force: boolean], UpdateInfo>("check_update");
 // Update the client by whichever route its install supports: `flatpak update` in its scope for
-// the flatpak, `punktfunk-client --apply-update` (the packaged root helper) for a one-tap-capable
+// the flatpak, `lilynk-client --apply-update` (the packaged root helper) for a one-tap-capable
 // native install. Everything else comes back `ok: false, error: "manual"` with `command` — the
 // line to run by hand. A package-manager run can take minutes; the backend allows 15.
 export const updateClient = callable<

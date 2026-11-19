@@ -55,7 +55,7 @@ case "${ID:-}${ID_LIKE:-}" in
     *steamos*|*arch*) ok "SteamOS / Arch base detected (${PRETTY_NAME:-unknown})" ;;
     *) warn "This installer targets SteamOS; '${PRETTY_NAME:-unknown}' may differ — on a normal distro use the apt/rpm packages instead." ;;
 esac
-[ -d "$SRC/crates/host/punktfunk-host" ] || die "no punktfunk source at $SRC. Clone or rsync it there first, or pass --src=DIR (see scripts/steamdeck/README.md)."
+[ -d "$SRC/crates/host/lilynk-host" ] || die "no punktfunk source at $SRC. Clone or rsync it there first, or pass --src=DIR (see scripts/steamdeck/README.md)."
 ok "source: $SRC"
 if ! have distrobox; then
     die "distrobox not found. Install it once (no root needed):
@@ -113,7 +113,7 @@ command -v bun >/dev/null 2>&1 || command -v ~/.bun/bin/bun >/dev/null 2>&1 || \
 ok "build deps ready"
 
 # --- 2. build host (+ web) -------------------------------------------------
-log "Building punktfunk-host (release) — first build is slow (~15 min)"
+log "Building lilynk-host (release) — first build is slow (~15 min)"
 # nvenc,vulkan-encode matches the packaged builds (deb/arch/rpm): the direct-SDK NVENC backend
 # plus the raw Vulkan Video HEVC/AV1 one (real RFI loss recovery). SteamOS also runs on NVIDIA
 # desktops, where a host without nvenc advertises HEVC and then dies at encoder open. Both entry
@@ -122,15 +122,15 @@ log "Building punktfunk-host (release) — first build is slow (~15 min)"
 # The version the console shows, in the same scheme as this channel's feed (build-version.sh).
 PF_BUILD_VERSION="$(bash "$SRC/scripts/steamdeck/build-version.sh" "$SRC")"
 
-# punktfunk-encode-worker is built alongside: the capability-carrying PyroWave encode worker, a
+# lilynk-encode-worker is built alongside: the capability-carrying PyroWave encode worker, a
 # SEPARATE binary that lands next to the host in $TARGET_DIR/release (which is how the host finds
 # it — sibling of /proc/self/exe). The sudo block further down setcaps that one and only that one;
 # the host must stay capability-free or KWin cannot identify it and Desktop mode dies.
-# punktfunk-seats is the seat supervisor behind Reachable without logging in (door.sh).
+# lilynk-seats is the seat supervisor behind Reachable without logging in (door.sh).
 distrobox enter "$BOX" -- bash -lc "
 set -e
 export PATH=\$HOME/.cargo/bin:\$PATH CARGO_TARGET_DIR='$TARGET_DIR' PUNKTFUNK_BUILD_VERSION='$PF_BUILD_VERSION'
-cd '$SRC' && cargo build -r -p punktfunk-host -p punktfunk-encode-worker -p punktfunk-seats --features punktfunk-host/nvenc,punktfunk-host/vulkan-encode
+cd '$SRC' && cargo build -r -p lilynk-host -p lilynk-encode-worker -p lilynk-seats --features lilynk-host/nvenc,lilynk-host/vulkan-encode
 "
 [ -x "$BIN" ] || die "build did not produce $BIN"
 # ldd out here on SteamOS, never inside the box, where every soname resolves by construction. The
@@ -146,7 +146,7 @@ ok "host binary: $BIN"
 if [ -x "$WORKER" ]; then
     ok "encode worker: $WORKER"
 else
-    warn "no punktfunk-encode-worker at $WORKER — PyroWave will encode at default GPU priority"
+    warn "no lilynk-encode-worker at $WORKER — PyroWave will encode at default GPU priority"
 fi
 
 if [ "$WITH_WEB" = 1 ]; then
@@ -164,33 +164,33 @@ cd '$SRC/web' && bun install --frozen-lockfile --ignore-scripts && bun run codeg
 fi
 
 # --- 2b. plugin runner (scripting) -----------------------------------------
-# The console's plugin store and `punktfunk-host plugins …` shell out to the scripting runner —
+# The console's plugin store and `lilynk-host plugins …` shell out to the scripting runner —
 # the SDK's runner CLI bundled to one self-contained JS, run on a pinned bun (it import()s the
 # operator's .ts plugins; see packaging/debian/build-scripting-deb.sh). The .deb lays it out under
 # /usr, which is read-only here, so ship the SAME payload user-scoped — wrapper + private bun +
 # bundle under ~/.local, where the host's runner discovery looks after the /usr layouts.
 log "Building the plugin runner (scripting)"
-mkdir -p "$HOME/.local/bin" "$HOME/.local/lib/punktfunk-scripting" "$HOME/.local/share/punktfunk-scripting"
+mkdir -p "$HOME/.local/bin" "$HOME/.local/lib/lilynk-scripting" "$HOME/.local/share/lilynk-scripting"
 distrobox enter "$BOX" -- bash -lc "
 set -e
 export PATH=\$HOME/.bun/bin:\$PATH
 cd '$SRC/sdk'
 bun install --frozen-lockfile --ignore-scripts
-bun build src/runner-cli.ts --target=bun --outfile \"\$HOME/.local/share/punktfunk-scripting/runner-cli.js\"
+bun build src/runner-cli.ts --target=bun --outfile \"\$HOME/.local/share/lilynk-scripting/runner-cli.js\"
 # Pin the runtime: copy the box's bun next to the bundle so a bun self-update (or a box rebuild)
 # never changes what the runner executes under.
-install -m0755 \"\$(command -v bun)\" \"\$HOME/.local/lib/punktfunk-scripting/bun\"
+install -m0755 \"\$(command -v bun)\" \"\$HOME/.local/lib/lilynk-scripting/bun\"
 "
-grep -q 'attempt=' "$HOME/.local/share/punktfunk-scripting/runner-cli.js" \
+grep -q 'attempt=' "$HOME/.local/share/lilynk-scripting/runner-cli.js" \
     || die "runner bundle missing the dynamic plugin import — wrong build"
-cat > "$HOME/.local/bin/punktfunk-scripting" <<'WRAP'
+cat > "$HOME/.local/bin/lilynk-scripting" <<'WRAP'
 #!/bin/sh
-# Generated by scripts/steamdeck/install.sh — user-scoped punktfunk-scripting (the .deb's /usr/bin
+# Generated by scripts/steamdeck/install.sh — user-scoped lilynk-scripting (the .deb's /usr/bin
 # wrapper, relocated): the runner bundle on its private pinned bun.
-exec "$HOME/.local/lib/punktfunk-scripting/bun" "$HOME/.local/share/punktfunk-scripting/runner-cli.js" "$@"
+exec "$HOME/.local/lib/lilynk-scripting/bun" "$HOME/.local/share/lilynk-scripting/runner-cli.js" "$@"
 WRAP
-chmod 0755 "$HOME/.local/bin/punktfunk-scripting"
-ok "plugin runner: ~/.local/bin/punktfunk-scripting"
+chmod 0755 "$HOME/.local/bin/lilynk-scripting"
+ok "plugin runner: ~/.local/bin/lilynk-scripting"
 
 # --- 2c. status tray (best-effort) -----------------------------------------
 log "Building the status tray"
@@ -201,12 +201,12 @@ log "Configuration ($CONFIG)"
 mkdir -p "$CONFIG"
 # Owner-only: this directory holds web.env (console password + session secret), the mgmt token and
 # the host key. A plain `mkdir -p` leaves it 0755 at the Deck's default umask, a world-TRAVERSABLE
-# directory. Matches what the host itself does via `pf_paths::create_private_dir`, and is
+# directory. Matches what the host itself does via `ly_paths::create_private_dir`, and is
 # idempotent on an existing dir.
 chmod 700 "$CONFIG" 2>/dev/null || true
 if [ ! -f "$CONFIG/host.env" ]; then
     cat > "$CONFIG/host.env" <<'EOF'
-# punktfunk Steam Deck host config (sourced by the punktfunk-host user service).
+# punktfunk Steam Deck host config (sourced by the lilynk-host user service).
 # Auto encoder: Vulkan Video (or VAAPI fallback) on the Deck's AMD GPU, NVENC on NVIDIA.
 PUNKTFUNK_ENCODER=auto
 # Van Gogh (LCD/OLED Deck) RADV still gates VK_KHR_video_encode_* behind this perftest flag;
@@ -291,7 +291,7 @@ elif [ "$WITH_WEB" = 1 ] && [ -f "$CONFIG/web.env" ]; then
         warn "web.env was group/world-readable — an older install wrote it at the default umask."
         warn "Tightened to 0600, but that does NOT un-expose the password it already leaked to every"
         warn "local account. Reset it: put a PUNKTFUNK_UI_PASSWORD line in $CONFIG/web.env, then"
-        warn "  systemctl --user restart punktfunk-web"
+        warn "  systemctl --user restart lilynk-web"
     else
         ok "web.env exists (login password unchanged, mode already 0600)"
     fi
@@ -305,7 +305,7 @@ elif [ "$WITH_WEB" = 1 ] && [ -f "$CONFIG/web.env" ]; then
     fi
 fi
 
-# --- 3b. HDR gamescope (punktfunk-gamescope, best-effort) ------------------
+# --- 3b. HDR gamescope (lilynk-gamescope, best-effort) ------------------
 # Stock gamescope offers only 8-bit capture, so Game Mode streams SDR. The punktfunk build adds
 # the 10-bit BT.2020 PQ formats, and the host attempts HDR by default the moment it is present
 # (PUNKTFUNK_GAMESCOPE_HDR=0 forces SDR). Best-effort by design: on any failure this warns and
@@ -326,11 +326,11 @@ else
     warn "A stock SteamOS 'deck' account has NO password, so sudo can't work until you set one:"
     warn "  passwd            # set a sudo password once, then re-run this script"
     warn "Or apply it by hand (then reboot):"
-    warn "  sudo install -m644 $SRC/scripts/60-punktfunk.rules /etc/udev/rules.d/ &&"
-    warn "  sudo install -m644 $SRC/scripts/punktfunk-modules.conf /etc/modules-load.d/punktfunk.conf &&"
+    warn "  sudo install -m644 $SRC/scripts/60-lilynk.rules /etc/udev/rules.d/ &&"
+    warn "  sudo install -m644 $SRC/scripts/lilynk-modules.conf /etc/modules-load.d/lilynk.conf &&"
     warn "  sudo groupadd --system punktfunk;"
     warn "  sudo usermod -aG input,punktfunk $USER &&"
-    warn "  sudo install -m644 $SRC/scripts/99-punktfunk-net.conf /etc/sysctl.d/ &&"
+    warn "  sudo install -m644 $SRC/scripts/99-lilynk-net.conf /etc/sysctl.d/ &&"
     warn "  sudo sysctl --system && sudo udevadm control --reload-rules && sudo udevadm trigger"
     warn "('punktfunk' owns the usbip vhci nodes the native Steam Deck pad attaches through — without"
     warn " it the pad silently never appears. Omit it if you do not want that pad.)"
@@ -341,7 +341,7 @@ log "Installing systemd user services"
 mkdir -p "$UNITS"
 # GameStream is the console's setting, never a unit flag: a flag locks the console's toggle. An
 # older unit's --gamestream moves into the store, so the upgrade keeps Moonlight working.
-if [ -z "$GAMESTREAM" ] && grep -qs -- '^ExecStart=.* --gamestream' "$UNITS/punktfunk-host.service"; then
+if [ -z "$GAMESTREAM" ] && grep -qs -- '^ExecStart=.* --gamestream' "$UNITS/lilynk-host.service"; then
     GAMESTREAM=true
 fi
 if [ -n "$GAMESTREAM" ]; then
@@ -354,18 +354,18 @@ fi
 SERVE_ARGS="serve"
 [ "$OPEN" = 1 ] && SERVE_ARGS="$SERVE_ARGS --open"
 write_host_unit "$BIN $SERVE_ARGS"
-ok "punktfunk-host.service ($SERVE_ARGS)"
+ok "lilynk-host.service ($SERVE_ARGS)"
 
 if [ "$WITH_WEB" = 1 ]; then
     # The console is a Nitro server run by bun (Bun.serve, HTTPS — HTTP/1.1 over TLS — with the host's
     # identity cert); it lives in the build container and proxies to the host's loopback HTTPS mgmt API.
     # No HOST/NITRO_HOST in the export below: web.env is sourced first and carries PUNKTFUNK_UI_BIND,
     # which the server prefers — an export here would silently out-rank the file the operator edits.
-    cat > "$UNITS/punktfunk-web.service" <<EOF
+    cat > "$UNITS/lilynk-web.service" <<EOF
 # Generated by scripts/steamdeck/install.sh — punktfunk web console (bun in the '$BOX' distrobox).
 [Unit]
 Description=punktfunk management web console
-After=punktfunk-host.service
+After=lilynk-host.service
 
 [Service]
 ExecStart=$DISTROBOX enter $BOX -- bash -lc 'cd $SRC/web; set -a; . $CONFIG/mgmt-token; . $CONFIG/web.env; [ ! -f $CONFIG/mgmt-endpoint ] || . $CONFIG/mgmt-endpoint; set +a; export PORT=$WEB_PORT NITRO_PORT=$WEB_PORT PUNKTFUNK_UI_TLS_CERT=$CONFIG/cert.pem PUNKTFUNK_UI_TLS_KEY=$CONFIG/key.pem PUNKTFUNK_UI_SECURE=1 PUNKTFUNK_UI_PASSWORD_FILE=$CONFIG/web.env; exec bun .output/server/index.mjs'
@@ -376,25 +376,25 @@ RestartSec=3
 WantedBy=default.target
 EOF
     door_yield_web_unit
-    ok "punktfunk-web.service (port $WEB_PORT)"
+    ok "lilynk-web.service (port $WEB_PORT)"
 fi
 
 # The runner's user unit. Like the packages it is turned on at the first install only (below), so
 # a player who turned it off keeps it off. ExecStart is rewritten from the packaged /usr wrapper
 # to the user-scoped one section 2b installed.
-[ -e "$UNITS/punktfunk-scripting.service" ] && RUNNER_FRESH=0 || RUNNER_FRESH=1
-sed 's|^ExecStart=.*|ExecStart=%h/.local/bin/punktfunk-scripting|' \
-    "$SRC/scripts/punktfunk-scripting.service" > "$UNITS/punktfunk-scripting.service"
-ok "punktfunk-scripting.service (started on a first install; a re-run leaves it as it is)"
+[ -e "$UNITS/lilynk-scripting.service" ] && RUNNER_FRESH=0 || RUNNER_FRESH=1
+sed 's|^ExecStart=.*|ExecStart=%h/.local/bin/lilynk-scripting|' \
+    "$SRC/scripts/lilynk-scripting.service" > "$UNITS/lilynk-scripting.service"
+ok "lilynk-scripting.service (started on a first install; a re-run leaves it as it is)"
 
 # Post-OS-update self-heal: SteamOS A/B updates can bump library sonames the host binary links
-# (PipeWire, libva, …) — this oneshot probes the binary with ldd before punktfunk-host starts
+# (PipeWire, libva, …) — this oneshot probes the binary with ldd before lilynk-host starts
 # and re-runs update.sh only when it actually stopped loading. Milliseconds on a normal boot.
-cat > "$UNITS/punktfunk-rebuild-check.service" <<EOF
+cat > "$UNITS/lilynk-rebuild-check.service" <<EOF
 # Generated by scripts/steamdeck/install.sh — rebuild the host if a SteamOS update broke its libs.
 [Unit]
 Description=punktfunk SteamOS post-update rebuild check
-Before=punktfunk-host.service
+Before=lilynk-host.service
 
 [Service]
 Type=oneshot
@@ -406,38 +406,38 @@ TimeoutStartSec=1800
 WantedBy=default.target
 EOF
 chmod +x "$SRC/scripts/steamdeck/rebuild-check.sh" 2>/dev/null || true
-systemctl --user enable punktfunk-rebuild-check.service 2>/dev/null || true
-ok "punktfunk-rebuild-check.service (auto-rebuild after SteamOS updates)"
+systemctl --user enable lilynk-rebuild-check.service 2>/dev/null || true
+ok "lilynk-rebuild-check.service (auto-rebuild after SteamOS updates)"
 
 systemctl --user daemon-reload
 loginctl show-user "$USER" 2>/dev/null | grep -q 'Linger=yes' || { sudo loginctl enable-linger "$USER" 2>/dev/null && ok "enabled linger (services run without login)" || warn "could not enable linger — services stop when you log out (sudo loginctl enable-linger $USER)"; }
 # enable + restart (not `enable --now`): restart picks up unit-file changes on a re-run, where
 # `--now` would no-op against an already-running service.
-systemctl --user enable punktfunk-host.service 2>/dev/null
-systemctl --user restart punktfunk-host.service
-ok "punktfunk-host started"
+systemctl --user enable lilynk-host.service 2>/dev/null
+systemctl --user restart lilynk-host.service
+ok "lilynk-host started"
 if [ "$WITH_WEB" = 1 ]; then
     # The host writes the mgmt token on first start; give it a moment so the web unit finds it.
     for _ in $(seq 1 10); do [ -f "$CONFIG/mgmt-token" ] && break; sleep 0.5; done
-    systemctl --user enable punktfunk-web.service 2>/dev/null
-    systemctl --user restart punktfunk-web.service
-    ok "punktfunk-web started"
+    systemctl --user enable lilynk-web.service 2>/dev/null
+    systemctl --user restart lilynk-web.service
+    ok "lilynk-web started"
 fi
 # After the daemon-reload, so the unit written above is the one enabled. A re-run rebuilds the
 # runner (§2b); try-restart leaves a runner the player turned off, off.
 if [ "$RUNNER_FRESH" = 1 ]; then
-    systemctl --user enable --now punktfunk-scripting.service 2>/dev/null \
-        && ok "punktfunk-scripting started" \
-        || warn "couldn't start the plugin runner — systemctl --user enable --now punktfunk-scripting"
+    systemctl --user enable --now lilynk-scripting.service 2>/dev/null \
+        && ok "lilynk-scripting started" \
+        || warn "couldn't start the plugin runner — systemctl --user enable --now lilynk-scripting"
 else
-    systemctl --user try-restart punktfunk-scripting.service 2>/dev/null || true
+    systemctl --user try-restart lilynk-scripting.service 2>/dev/null || true
 fi
 
 # --- 6. summary ------------------------------------------------------------
 IP="$(ip -4 route get 1.1.1.1 2>/dev/null | sed -n 's/.* src \([0-9.]*\).*/\1/p' | head -1 || true)"
 echo
 log "Done — punktfunk host is running on this Steam Deck"
-echo "  • Host status:   systemctl --user status punktfunk-host"
+echo "  • Host status:   systemctl --user status lilynk-host"
 if [ "$WITH_WEB" = 1 ]; then
     case "$WEB_BIND" in
         127.*|::1|localhost)

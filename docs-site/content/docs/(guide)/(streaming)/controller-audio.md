@@ -102,7 +102,7 @@ your profile afterwards; it never saves the switch. SteamOS already has a four-c
 Plug in the DualSense and run:
 
 ```sh
-punktfunk-session --pad-audio-test
+lilynk-session --pad-audio-test
 ```
 
 It lists the DualSense outputs it finds, names the one it picked, and plays a three-second tone
@@ -112,7 +112,7 @@ the game. Add `--speaker` to test the speaker instead, `--seconds N` to run long
 In a Flatpak install, including the Steam Deck:
 
 ```sh
-flatpak run --command=punktfunk-session io.unom.punktfunk --pad-audio-test
+flatpak run --command=lilynk-session io.unom.punktfunk --pad-audio-test
 ```
 
 ## Known limits

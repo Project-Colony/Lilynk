@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "punktfunk-android"
+rootProject.name = "lilynk-android"
 include(":app", ":kit")

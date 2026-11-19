@@ -72,11 +72,11 @@ describe("discovery", () => {
 		write(evil, "export {};");
 		fs.chmodSync(evil, 0o777);
 		write(
-			path.join(d.pluginsDir, "node_modules", "punktfunk-plugin-x", "package.json"),
-			JSON.stringify({ name: "punktfunk-plugin-x", main: "index.js" }),
+			path.join(d.pluginsDir, "node_modules", "lilynk-plugin-x", "package.json"),
+			JSON.stringify({ name: "lilynk-plugin-x", main: "index.js" }),
 		);
 		write(
-			path.join(d.pluginsDir, "node_modules", "punktfunk-plugin-x", "index.js"),
+			path.join(d.pluginsDir, "node_modules", "lilynk-plugin-x", "index.js"),
 			"export default { name: 'x', main: async () => {} };",
 		);
 		write(
@@ -89,7 +89,7 @@ describe("discovery", () => {
 		expect(units.map((u) => u.name)).toEqual([
 			"a-script",
 			"b-script",
-			"punktfunk-plugin-x",
+			"lilynk-plugin-x",
 		]);
 		expect(logs.join("\n")).toContain("REFUSING");
 		expect(logs.join("\n")).toContain("evil.ts");
@@ -156,14 +156,14 @@ describe("discovery", () => {
 		// Hand-assembled or older trees must still run, not silently discover nothing.
 		const d = mkdirs("discover-nodeps");
 		write(
-			path.join(d.pluginsDir, "node_modules", "punktfunk-plugin-legacy", "package.json"),
-			JSON.stringify({ name: "punktfunk-plugin-legacy", main: "index.js" }),
+			path.join(d.pluginsDir, "node_modules", "lilynk-plugin-legacy", "package.json"),
+			JSON.stringify({ name: "lilynk-plugin-legacy", main: "index.js" }),
 		);
 		write(
-			path.join(d.pluginsDir, "node_modules", "punktfunk-plugin-legacy", "index.js"),
+			path.join(d.pluginsDir, "node_modules", "lilynk-plugin-legacy", "index.js"),
 			"export default { name: 'l', main: async () => {} };",
 		);
-		expect(discoverUnits(d).map((u) => u.name)).toEqual(["punktfunk-plugin-legacy"]);
+		expect(discoverUnits(d).map((u) => u.name)).toEqual(["lilynk-plugin-legacy"]);
 	});
 
 	test("an emptied dependency list means nothing to run", () => {
@@ -476,12 +476,12 @@ describe("supervision", () => {
 
 	test("a plugin with a manifest gets a process of its own when asked (the Windows shape)", async () => {
 		const d = mkdirs("own-process");
-		const pkg = path.join(d.pluginsDir, "node_modules", "punktfunk-plugin-lonely");
+		const pkg = path.join(d.pluginsDir, "node_modules", "lilynk-plugin-lonely");
 		const counter = path.join(d.dir, "count.txt");
 		write(
 			path.join(pkg, "package.json"),
 			JSON.stringify({
-				name: "punktfunk-plugin-lonely",
+				name: "lilynk-plugin-lonely",
 				main: "index.ts",
 				punktfunk: { schema: 1, id: "lonely" },
 			}),
@@ -528,7 +528,7 @@ describe("supervision", () => {
 			if (entry === undefined) delete process.env.PUNKTFUNK_RUNNER_ENTRY;
 			else process.env.PUNKTFUNK_RUNNER_ENTRY = entry;
 		}
-		const failed = logs.find((l) => l.includes("[punktfunk-plugin-lonely] failed: "));
+		const failed = logs.find((l) => l.includes("[lilynk-plugin-lonely] failed: "));
 		expect(failed).toContain("plugin process exited with 3");
 		expect(failed).toContain("lonely run 0 pid");
 		expect(logs.some((l) => l.includes("restarting (attempt 2)"))).toBe(true);
@@ -539,11 +539,11 @@ describe("supervision", () => {
 		const d = mkdirs("grant-restart");
 		const packages = ["one", "two"];
 		for (const id of packages) {
-			const pkg = path.join(d.pluginsDir, "node_modules", `punktfunk-plugin-${id}`);
+			const pkg = path.join(d.pluginsDir, "node_modules", `lilynk-plugin-${id}`);
 			write(
 				path.join(pkg, "package.json"),
 				JSON.stringify({
-					name: `punktfunk-plugin-${id}`,
+					name: `lilynk-plugin-${id}`,
 					main: "index.js",
 					punktfunk: { schema: 1, id },
 				}),
@@ -553,7 +553,7 @@ describe("supervision", () => {
 		write(
 			path.join(d.pluginsDir, "package.json"),
 			JSON.stringify({
-				dependencies: Object.fromEntries(packages.map((id) => [`punktfunk-plugin-${id}`, "1.0.0"])),
+				dependencies: Object.fromEntries(packages.map((id) => [`lilynk-plugin-${id}`, "1.0.0"])),
 			}),
 		);
 		const grants = (one: unknown[] = []) =>
@@ -630,10 +630,10 @@ describe("supervision", () => {
 	test("a plugin package without a manifest does not run while sandboxing is on", async () => {
 		const d = mkdirs("no-manifest");
 		const ran = path.join(d.dir, "ran.txt");
-		const pkg = path.join(d.pluginsDir, "node_modules", "punktfunk-plugin-bare");
+		const pkg = path.join(d.pluginsDir, "node_modules", "lilynk-plugin-bare");
 		write(
 			path.join(pkg, "package.json"),
-			JSON.stringify({ name: "punktfunk-plugin-bare", main: "index.js" }),
+			JSON.stringify({ name: "lilynk-plugin-bare", main: "index.js" }),
 		);
 		write(
 			path.join(pkg, "index.js"),
@@ -643,10 +643,10 @@ describe("supervision", () => {
 		const fiber = Effect.runFork(
 			runner({ ...d, configDir: d.dir, sandbox: "on", log: (l) => logs.push(l) }),
 		);
-		await waitFor(() => logs.some((l) => l.includes("not starting punktfunk-plugin-bare")));
+		await waitFor(() => logs.some((l) => l.includes("not starting lilynk-plugin-bare")));
 		await new Promise((r) => setTimeout(r, 200)); // would have imported by now
 		await Effect.runPromise(Fiber.interrupt(fiber));
-		expect(logs.some((l) => l.includes("starting punktfunk-plugin-bare ("))).toBe(false);
+		expect(logs.some((l) => l.includes("starting lilynk-plugin-bare ("))).toBe(false);
 		expect(fs.existsSync(ran)).toBe(false);
 	});
 
@@ -654,11 +654,11 @@ describe("supervision", () => {
 
 	test("a box that builds no sandbox ends the runner before a plugin or a script starts", async () => {
 		const d = mkdirs("no-sandbox");
-		const pkg = path.join(d.pluginsDir, "node_modules", "punktfunk-plugin-demo");
+		const pkg = path.join(d.pluginsDir, "node_modules", "lilynk-plugin-demo");
 		write(
 			path.join(pkg, "package.json"),
 			JSON.stringify({
-				name: "punktfunk-plugin-demo",
+				name: "lilynk-plugin-demo",
 				main: "index.js",
 				punktfunk: { schema: 1, id: "demo" },
 			}),
@@ -689,7 +689,7 @@ describe("supervision", () => {
 		expect(fs.existsSync(ran)).toBe(false);
 		const about = (text: string) => logs.filter((l) => l.includes(text));
 		expect(about("can't be sandboxed here: no user namespaces")).toHaveLength(1);
-		expect(about("stopping instead of running punktfunk-plugin-demo")).toHaveLength(1);
+		expect(about("stopping instead of running lilynk-plugin-demo")).toHaveLength(1);
 		expect(about("] starting ")).toEqual([]);
 		// What the host's health check reads, until a start gets past the probe.
 		const refusal = path.join(d.dir, "plugin-state", "runner.refused");
@@ -724,7 +724,7 @@ describe("supervision", () => {
 	test("every supervisor leaves the runner stopped on the refusal status", () => {
 		const repo = path.join(import.meta.dir, "..", "..");
 		const read = (rel: string) => fs.readFileSync(path.join(repo, rel), "utf8");
-		for (const unit of ["punktfunk-scripting.service", "punktfunk-scripting-seat@.service"]) {
+		for (const unit of ["lilynk-scripting.service", "lilynk-scripting-seat@.service"]) {
 			expect(read(`scripts/${unit}`)).toContain(
 				`\nRestartPreventExitStatus=${SANDBOX_REFUSED_EXIT}\n`,
 			);
@@ -732,7 +732,7 @@ describe("supervision", () => {
 		// NixOS runs that same unit: the scripting package installs it, and the module's drop-in
 		// leaves the status alone.
 		expect(read("packaging/nix/packages.nix")).toContain(
-			"install -Dm0644 scripts/punktfunk-scripting.service",
+			"install -Dm0644 scripts/lilynk-scripting.service",
 		);
 		expect(read("packaging/nix/nixos-module.nix")).not.toContain("RestartPreventExitStatus");
 		expect(read("scripts/windows/scripting-run.cmd")).toContain(
@@ -898,9 +898,9 @@ describe("supervision", () => {
 
 test("a seat's runner dials its seat's pipe, never the box's", () => {
 	const seat = "0123456789abcdef0123456789abcdef";
-	expect(pipeName("steam", seat)).toBe(`\\\\.\\pipe\\punktfunk-seat-${seat}-plugin-steam`);
-	expect(pipeName("steam", undefined)).toBe("\\\\.\\pipe\\punktfunk-plugin-steam");
-	expect(pipeName("steam", "../x")).toBe("\\\\.\\pipe\\punktfunk-plugin-steam");
+	expect(pipeName("steam", seat)).toBe(`\\\\.\\pipe\\lilynk-seat-${seat}-plugin-steam`);
+	expect(pipeName("steam", undefined)).toBe("\\\\.\\pipe\\lilynk-plugin-steam");
+	expect(pipeName("steam", "../x")).toBe("\\\\.\\pipe\\lilynk-plugin-steam");
 });
 
 describe("a Windows plugin child's way to the host", () => {

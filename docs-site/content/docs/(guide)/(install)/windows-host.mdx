@@ -26,7 +26,7 @@ network and read [Security & Safe Use](/docs/security).
 
 ## Install
 
-Download `punktfunk-host-setup-<ver>.exe` from the
+Download `lilynk-host-setup-<ver>.exe` from the
 [latest release](https://git.unom.io/unom/punktfunk/releases) and run it, or install with winget
 from an **elevated** terminal:
 
@@ -61,7 +61,7 @@ wizard. winget carries stable releases only; canary builds come as the setup `.e
 ### Unattended install
 
 ```powershell
-punktfunk-host-setup-<ver>.exe /VERYSILENT /SUPPRESSMSGBOXES
+lilynk-host-setup-<ver>.exe /VERYSILENT /SUPPRESSMSGBOXES
 ```
 
 Change a default with `/MERGETASKS` and the task names above: a bare name turns a task on, `!name`
@@ -74,13 +74,13 @@ winget install unom.PunktfunkHost --override "/VERYSILENT /SUPPRESSMSGBOXES /MER
 
 An upgrade always updates both drivers and keeps your earlier Moonlight, firewall, console,
 HDR-layer and tray choices. A silent install shows no console password: print it from an elevated
-PowerShell with `punktfunk-host web password` before your first sign-in.
+PowerShell with `lilynk-host web password` before your first sign-in.
 
 ### About the signatures
 
 Setup and the Punktfunk programs are signed with a publicly trusted certificate. SmartScreen may
 still show *"Windows protected your PC"* for a new release: choose **More info** → **Run anyway**.
-The drivers carry a separate self-signed certificate (`CN=punktfunk-driver`). Setup adds it to the machine's **Trusted Root** and
+The drivers carry a separate self-signed certificate (`CN=lilynk-driver`). Setup adds it to the machine's **Trusted Root** and
 **Trusted Publishers** stores, and uninstalling removes it.
 
 ## Pair
@@ -93,11 +93,11 @@ a device.
 - **Status icon.** It shows whether the host is running. Its menu opens the console and the logs
   folder, approves pairing, and starts, stops or restarts the host, each behind a UAC prompt.
   While **Tray autostart** is on, the service restarts the icon if it closes;
-  [`punktfunk-host tray`](/docs/host-cli#tray-windows) controls it by hand. **Punktfunk Host** in
+  [`lilynk-host tray`](/docs/host-cli#tray-windows) controls it by hand. **Punktfunk Host** in
   the Start menu opens it and starts a stopped host.
 - **Settings.** Change them in the console under **Host**; **Moonlight support** is
   **GameStream** there. A line in `%ProgramData%\punktfunk\host.env` pins a setting. After editing
-  it, run `punktfunk-host service restart` from an elevated prompt. See
+  it, run `lilynk-host service restart` from an elevated prompt. See
   [Configuration](/docs/configuration).
 - **Encoder.** `PUNKTFUNK_ENCODER` in `host.env` forces `nvenc`, `amf`, `qsv` or `mf` (Media
   Foundation). A pin that doesn't match the selected GPU's vendor is ignored. When the native
@@ -113,9 +113,9 @@ a device.
   **same time** is the part that needs **Windows Server** and a Remote Desktop Services CAL per
   player ([Seats on Windows](/docs/windows-seats)); [Windows 11](/docs/windows-seats#windows-11)
   runs one desktop at a time.
-- **Two processes.** Task Manager shows two `punktfunk-host.exe`: the service and the worker it
+- **Two processes.** Task Manager shows two `lilynk-host.exe`: the service and the worker it
   starts in your session. Ending the worker only makes the service start another; stop the host
-  from the status icon or with `punktfunk-host service stop`.
+  from the status icon or with `lilynk-host service stop`.
 
 ## Updating
 

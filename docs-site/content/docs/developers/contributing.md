@@ -70,15 +70,15 @@ These are checked in, and CI fails when the committed copy drifts:
 
 | File | Regenerate |
 |---|---|
-| `include/punktfunk_core.h`, `include/punktfunk_console.h` | `cargo run -p gen-headers` |
-| `api/openapi.json` | `cargo run -p punktfunk-host -- openapi > api/openapi.json` |
+| `include/lilynk_core.h`, `include/punktfunk_console.h` | `cargo run -p gen-headers` |
+| `api/openapi.json` | `cargo run -p lilynk-host -- openapi > api/openapi.json` |
 | `docs-site/public/openapi.json` | `cp api/openapi.json docs-site/public/openapi.json` |
-| `sdk/src/gen/punktfunk.ts` | `cd sdk && bun run gen` |
+| `sdk/src/gen/lilynk.ts` | `cd sdk && bun run gen` |
 | `docs-site/src/data/platforms.json` | `cp data/platforms.json docs-site/src/data/platforms.json` |
 | `THIRD-PARTY-NOTICES.txt` (and the clients' copies) | `bash scripts/gen-third-party-notices.sh` |
 | `web/bun.nix`, `sdk/bun.nix` | `sh scripts/ci/check-bun-nix.sh --fix` |
-| `*.spv` shaders in `pf-zerocopy` and `pf-encode` | `glslangValidator -V <name>.comp -o <name>.spv` |
-| Settings table in `configuration.md` | `UPDATE_SETTINGS_DOCS=1 cargo test -p pf-host-config docs_table_is_current` |
+| `*.spv` shaders in `ly-zerocopy` and `ly-encode` | `glslangValidator -V <name>.comp -o <name>.spv` |
+| Settings table in `configuration.md` | `UPDATE_SETTINGS_DOCS=1 cargo test -p ly-host-config docs_table_is_current` |
 
 A management-API change needs the three OpenAPI rows. A `Cargo.lock` change needs the notices. A
 new dependency must be permissive; see [Licensing](#licensing).

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Emit the inline OS-mark registries from the assets/os-icons masters.
 
-    crates/client/pf-console-ui/src/os_marks.rs                in-session console UI, Skia Path::from_svg
+    crates/client/ly-console-ui/src/os_marks.rs                in-session console UI, Skia Path::from_svg
     web/src/components/os-icon.tsx                      web console, inline SVG
     clients/decky/src/os-icon.tsx                       Decky plugin, inline SVG
     clients/android/.../components/OsIcons.kt           Android, Compose ImageVector via PathParser
@@ -45,7 +45,7 @@ body = f"""{banner}
 //!
 //! Host-tile OS marks, fitted into a destination rect.
 //!
-//! Tokens come from [`pf_client_core::os::os_icon_tokens`] (most-specific-first,
+//! Tokens come from [`ly_client_core::os::os_icon_tokens`] (most-specific-first,
 //! brand aliases included). This module only maps those tokens to path art and
 //! letterboxes them. `None` means no art — the tile keeps its monogram.
 
@@ -60,7 +60,7 @@ static TABLE: MarkTable = MarkTable::new(&[
 /// the tile then draws its monogram. Partial chains still resolve because the shared
 /// resolver walks most-specific-first.
 pub fn os_mark(chain: &str, dst: Rect) -> Option<Path> {{
-    pf_client_core::os::os_icon_tokens(chain)
+    ly_client_core::os::os_icon_tokens(chain)
         .into_iter()
         .find_map(|token| TABLE.fit(&token, dst))
 }}
@@ -105,7 +105,7 @@ mod tests {{
 }}
 """
 
-path = write("crates/client/pf-console-ui/src/os_marks.rs", body)
+path = write("crates/client/ly-console-ui/src/os_marks.rs", body)
 
 # CI fmt-gates the whole tree, so a generator that emits anything rustfmt would rewrite leaves
 # every regeneration one dirty file away from a blocked commit. Formatting the output here is
@@ -141,7 +141,7 @@ const ALIASES: Record<string, string> = {{ macos: "apple", steamos: "steam" }};
 /**
  * Resolve an OS-identity chain (`HostInfo.os`, e.g. "linux/fedora/bazzite") to its mark:
  * walk most-specific-first and take the first token with art, so an unknown distro degrades
- * to its family's mark and finally to Tux. Mirrors pf-client-core's `os_icon_tokens`.
+ * to its family's mark and finally to Tux. Mirrors ly-client-core's `os_icon_tokens`.
  */
 const resolve = (os?: string): {{ viewBox: string; d: string }} | undefined => {{
 \tfor (const raw of (os ?? "").toLowerCase().split("/").reverse()) {{
@@ -191,7 +191,7 @@ write(
 // The host row's OS mark, resolved from the host's OS-identity chain (mDNS `os` TXT /
 // `--list-hosts` `os`, e.g. "linux/fedora/bazzite"): walk the chain most-specific-first and
 // take the first token we ship a mark for, so an unknown distro degrades to its family's
-// mark and finally to Tux. Mirrors pf-client-core's `os_icon_tokens` (aliases macos→apple,
+// mark and finally to Tux. Mirrors ly-client-core's `os_icon_tokens` (aliases macos→apple,
 // steamos→steam); null when the chain is absent or entirely unknown — the row then renders
 // exactly as it did before the field existed.
 //

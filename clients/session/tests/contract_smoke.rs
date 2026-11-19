@@ -1,4 +1,4 @@
-//! Runs the REAL `punktfunk-session` binary and asserts it speaks the stdout contract.
+//! Runs the REAL `lilynk-session` binary and asserts it speaks the stdout contract.
 //!
 //! A build gate cannot tell which program sits behind the binary's name: any program can
 //! compile cleanly under it. Only running it shows what it does, and whatever it does, it
@@ -14,7 +14,7 @@ use std::time::{Duration, Instant};
 /// the same contract before the deadline.
 #[test]
 fn a_failing_connect_still_speaks_the_contract() {
-    let mut child = Command::new(env!("CARGO_BIN_EXE_punktfunk-session"))
+    let mut child = Command::new(env!("CARGO_BIN_EXE_lilynk-session"))
         .args([
             "--connect",
             "127.0.0.1:1",
@@ -27,7 +27,7 @@ fn a_failing_connect_still_speaks_the_contract() {
         .stdout(Stdio::piped())
         .stderr(Stdio::null())
         .spawn()
-        .expect("spawn punktfunk-session");
+        .expect("spawn lilynk-session");
 
     let mut stdout = child.stdout.take().expect("piped stdout");
     let reader = std::thread::spawn(move || {
@@ -41,12 +41,12 @@ fn a_failing_connect_still_speaks_the_contract() {
     // blocked) gets anywhere near it.
     let deadline = Instant::now() + Duration::from_secs(120);
     loop {
-        match child.try_wait().expect("wait on punktfunk-session") {
+        match child.try_wait().expect("wait on lilynk-session") {
             Some(_) => break,
             None if Instant::now() > deadline => {
                 let _ = child.kill();
                 let _ = child.wait();
-                panic!("punktfunk-session neither exited nor spoke within 120 s");
+                panic!("lilynk-session neither exited nor spoke within 120 s");
             }
             None => std::thread::sleep(Duration::from_millis(200)),
         }

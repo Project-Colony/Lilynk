@@ -1,4 +1,4 @@
-// `AudioRing` driving the Swift twin of `punktfunk_core::audio::JitterPolicy` (which
+// `AudioRing` driving the Swift twin of `lilynk_core::audio::JitterPolicy` (which
 // `JitterVectorTests` holds to core). These pin what a listener notices through the ring itself:
 // the samples it plays, its seams and its depth over time.
 //
@@ -109,7 +109,7 @@ final class AudioRingDriftTests: XCTestCase {
     /// a delivery stall one device rides out de-primes the ring on another. Restore a fixed count
     /// and the quanta below stop agreeing.
     ///
-    /// Mirrors `deprime_fuse_is_a_duration_not_a_callback_count` in `punktfunk_core::audio`.
+    /// Mirrors `deprime_fuse_is_a_duration_not_a_callback_count` in `lilynk_core::audio`.
     func testDeprimeFuseIsADurationNotACallbackCount() {
         let deprimeMS = 60 // JitterPolicy.deprimeMS / JitterTuning::COREAUDIO.deprime_ms
         let quanta = [5, 8, 10, 16, 21]
@@ -1002,7 +1002,7 @@ final class AudioRingDriftTests: XCTestCase {
     /// frames a drought already covered are subtracted from the loss concealment the seq path then
     /// asks for — cannot be tested from here: on this leg the gap tracker lives behind the C ABI,
     /// and so does the subtraction (`drought_concealment_is_not_charged_again_by_the_loss_path` in
-    /// `punktfunk_ffi`).
+    /// `lilynk_ffi`).
     func testAPacketEndsTheDroughtAndRefreshesTheBudget() {
         var c = DroughtConceal(maxMS: JitterPolicy.plcMaxMS, frameUs: JitterPolicy.frameMS * 1_000)
         for _ in 0..<1_000 where c.conceal(sinceLastPacketMS: 2 * JitterPolicy.frameMS, depthMS: 0) {}

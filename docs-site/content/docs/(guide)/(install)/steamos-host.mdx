@@ -38,8 +38,8 @@ runs the same two lines and also asks about Moonlight compatibility and the shar
 
 The script asks for your `sudo` password first, then builds; it is safe to re-run. It builds the
 host, the web console and the plugin runner, sets up gamepad access, UDP buffers and the `input`
-and `punktfunk` groups so they survive SteamOS updates, and starts the `punktfunk-host` and
-`punktfunk-web` user services, which run without anyone logged in. It also sets up
+and `punktfunk` groups so they survive SteamOS updates, and starts the `lilynk-host` and
+`lilynk-web` user services, which run without anyone logged in. It also sets up
 [Reachable without logging in](/docs/profiles#on-linux), off until you tick it under **Profiles**.
 
 | Flag | Effect |
@@ -62,13 +62,13 @@ controller.
 **Next:** [Quick Start, step 3](/docs/quickstart#3-open-the-web-console): open the console and pair
 a device.
 
-Check the host with `systemctl --user status punktfunk-host`, and watch a client connect with
-`journalctl --user -u punktfunk-host -f`. The host streams Game Mode or the KDE desktop, whichever
+Check the host with `systemctl --user status lilynk-host`, and watch a client connect with
+`journalctl --user -u lilynk-host -f`. The host streams Game Mode or the KDE desktop, whichever
 is live when a client connects; see [Steam / gamescope](/docs/gamescope).
 
 ## HDR
 
-The installer also builds `punktfunk-gamescope`, gamescope with 10-bit capture, and points the host
+The installer also builds `lilynk-gamescope`, gamescope with 10-bit capture, and points the host
 at it. A 10-bit client with HDR on then streams HDR10 from Game Mode; anything else streams SDR. If
 that build fails, the rest works in SDR; run `update.sh` to retry. `PUNKTFUNK_GAMESCOPE_HDR=0` in
 `~/.config/punktfunk/host.env` forces SDR.
@@ -78,7 +78,7 @@ the wrong environment:
 
 ```sh
 ( set -a; . ~/.config/punktfunk/host.env; set +a
-  ~/punktfunk/target-steamos/release/punktfunk-host hdr-probe )
+  ~/punktfunk/target-steamos/release/lilynk-host hdr-probe )
 ```
 
 More in [HDR on gamescope](/docs/gamescope#hdr-on-gamescope).
@@ -116,7 +116,7 @@ bash ~/punktfunk/scripts/steamdeck/update.sh --pull
 - **One mode at a time.** Two clients asking for different resolutions fight over the Game Mode
   session.
 - **Plugins.** The first install starts the plugin runner; a re-run leaves it as you set it. Turn
-  it off with `systemctl --user disable --now punktfunk-scripting`, and back on with `enable --now`.
+  it off with `systemctl --user disable --now lilynk-scripting`, and back on with `enable --now`.
   See [plugins](/docs/plugins). A profile with a desktop of its own turns its runner on from its own **Plugins** page.
 
 ## Uninstalling

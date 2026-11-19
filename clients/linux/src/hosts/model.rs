@@ -5,11 +5,11 @@
 use super::ConnectRequest;
 use crate::discovery::{self, DiscoveredHost};
 use crate::trust::{KnownHost, Settings};
-use pf_client_core::display_targets::{BoundPreset, Targets};
-use pf_client_core::host_order::{self, Arrangeable};
-pub use pf_client_core::host_status::{Phase, Status};
-use pf_client_core::orchestrate::HostTarget;
-use pf_client_core::profiles::ProfilePick;
+use ly_client_core::display_targets::{BoundPreset, Targets};
+use ly_client_core::host_order::{self, Arrangeable};
+pub use ly_client_core::host_status::{Phase, Status};
+use ly_client_core::orchestrate::HostTarget;
+use ly_client_core::profiles::ProfilePick;
 use std::collections::HashMap;
 
 /// A preset as a card needs it: what to call it, the colour its chip carries, and the host
@@ -249,7 +249,7 @@ pub fn discovered_cards<'a>(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use pf_l10n::client;
+    use ly_l10n::client;
 
     fn host(name: &str, addr: &str, fp: &str) -> KnownHost {
         KnownHost {

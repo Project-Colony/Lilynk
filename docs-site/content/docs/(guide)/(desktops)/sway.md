@@ -42,8 +42,8 @@ when that changes. When the host stops, it puts your previous chooser back.
 From inside your sway session:
 
 ```sh
-systemctl --user enable --now punktfunk-host
-journalctl --user -u punktfunk-host -f    # watch it start and print its fingerprint
+systemctl --user enable --now lilynk-host
+journalctl --user -u lilynk-host -f    # watch it start and print its fingerprint
 ```
 
 Open [the web console](/docs/web-console) to pair a [client](/docs/clients). To serve Moonlight

@@ -30,49 +30,49 @@ const fixtureEntries: LogEntry[] = [
 	entry(
 		1,
 		"INFO",
-		"punktfunk_host",
-		"punktfunk-host 0.4.2 (punktfunk_core ABI v2)",
+		"lilynk_host",
+		"lilynk-host 0.4.2 (lilynk_core ABI v2)",
 	),
 	entry(
 		2,
 		"INFO",
-		"punktfunk_host::mgmt",
+		"lilynk_host::mgmt",
 		"management API listening over HTTPS addr=0.0.0.0:47990",
 	),
 	entry(
 		3,
 		"DEBUG",
-		"punktfunk_host::discovery",
+		"lilynk_host::discovery",
 		"mDNS advertise _punktfunk._udp pair=required",
 	),
 	entry(
 		4,
 		"INFO",
-		"punktfunk_host::punktfunk1",
+		"lilynk_host::punktfunk1",
 		"session start mode=1920x1080@60 codec=hevc",
 	),
 	entry(
 		5,
 		"INFO",
-		"punktfunk_host::inject",
+		"lilynk_host::inject",
 		"virtual Xbox 360 created (Windows XUSB companion)",
 	),
 	entry(
 		6,
 		"WARN",
-		"punktfunk_host::inject",
-		"gamepad driver not attached to Global\\pfxusb-shm-0 after 3s — is the pf_xusb driver installed? (punktfunk-host.exe driver install --gamepad)",
+		"lilynk_host::inject",
+		"gamepad driver not attached to Global\\pfxusb-shm-0 after 3s — is the ly_xusb driver installed? (lilynk-host.exe driver install --gamepad)",
 	),
 	entry(
 		7,
 		"ERROR",
-		"punktfunk_host::inject",
-		"virtual Xbox 360 creation failed — controller input disabled (is the pf_xusb driver installed?)",
+		"lilynk_host::inject",
+		"virtual Xbox 360 creation failed — controller input disabled (is the ly_xusb driver installed?)",
 	),
 	entry(
 		8,
 		"INFO",
-		"punktfunk_host::encode",
+		"lilynk_host::encode",
 		"NVENC opened 1920x1080 nv12 gop=inf rfi=on",
 	),
 	// Lines the plugin runner shipped up (`POST /api/v1/plugins/logs`), targeted `plugin:<name>`.
@@ -102,7 +102,7 @@ const DECK: ClientLogMeta = {
 };
 
 /**
- * A bundle as `pf_client_core::logring` renders it: a header line that does NOT parse, then
+ * A bundle as `ly_client_core::logring` renders it: a header line that does NOT parse, then
  * `<ISO8601-Z> <LEVEL> <target> <msg>`. The unparsed header is in the fixture on purpose — it is
  * the cheapest standing proof that `bundleRows` fails soft: a line it can't parse renders
  * rather than being swallowed.
@@ -112,11 +112,11 @@ const DECK: ClientLogMeta = {
  */
 const iso = (seq: number) => new Date(BASE + seq * 750).toISOString();
 const deckBundle = [
-	"punktfunk-session 0.4.2 (linux x86_64)",
-	`${iso(4)} INFO  punktfunk_session::stream connected host=skynet mode=1920x1080@60`,
-	`${iso(6)} WARN  punktfunk_session::audio egress late=31% — link stalled`,
-	`${iso(7)} ERROR punktfunk_session::pad no rumble device for DualSense (permission denied)`,
-	`${iso(9)} INFO  punktfunk_session::stream decode queue drained`,
+	"lilynk-session 0.4.2 (linux x86_64)",
+	`${iso(4)} INFO  lilynk_session::stream connected host=skynet mode=1920x1080@60`,
+	`${iso(6)} WARN  lilynk_session::audio egress late=31% — link stalled`,
+	`${iso(7)} ERROR lilynk_session::pad no rumble device for DualSense (permission denied)`,
+	`${iso(9)} INFO  lilynk_session::stream decode queue drained`,
 ].join("\n");
 
 const hostOnly = hostRows(fixtureEntries);

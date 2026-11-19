@@ -3,7 +3,7 @@
 // doc there lists them), which is the main thread — `ConsoleView` drives frames from the display
 // link there.
 //
-// The JSON on this boundary is the console's own model (`pf_console_ui::bridge`), the same the
+// The JSON on this boundary is the console's own model (`ly_console_ui::bridge`), the same the
 // Android client speaks, so there is no Swift mirror type to drift.
 
 import Foundation

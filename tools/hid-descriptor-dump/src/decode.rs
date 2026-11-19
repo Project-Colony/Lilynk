@@ -1,5 +1,5 @@
 //! A HID 1.11 report-descriptor decoder, written for ONE job: making a captured descriptor
-//! diffable, by eye, against the hand-annotated blobs in `crates/host/pf-driver-proto/src/`.
+//! diffable, by eye, against the hand-annotated blobs in `crates/host/ly-driver-proto/src/`.
 //!
 //! Two outputs matter, and they answer different questions:
 //!

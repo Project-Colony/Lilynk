@@ -3,20 +3,20 @@
 //! keys on the real keyboard and has controller buttons chosen from a grid, since this shell
 //! reads no controller. The blob lives in the dialog's state and the binder writes it to the
 //! scope in view on every change, as it does the ring's. Rows, defaults and rules are
-//! `pf_client_core::shortcuts`.
+//! `ly_client_core::shortcuts`.
 
 use super::quick_actions::{action_picker, describe, held_modifiers, key_name, unshifted_key_name};
 use crate::trust::Settings;
 use adw::prelude::*;
 use gtk::{gdk, glib};
-use pf_client_core::overlay_actions::{
+use ly_client_core::overlay_actions::{
     catalogue, CatalogueEntry, CatalogueGroup, GroupId, OverlayConfig, RingPlatform, SlotId,
 };
-use pf_client_core::shortcuts::{
+use ly_client_core::shortcuts::{
     resolve, Action, Binding, Client, Conflict, Device, Group, Item, Press, Shortcuts, Trigger,
     BUTTONS, MODIFIERS,
 };
-use pf_l10n::{client, common, desktop};
+use ly_l10n::{client, common, desktop};
 use std::cell::{Cell, RefCell};
 use std::rc::{Rc, Weak};
 
@@ -33,7 +33,7 @@ thread_local! {
 
 /// What a stream from this scope binds: the blob, or this client's defaults.
 pub fn live(blob: &str, legacy_guide_gesture: &str) -> Shortcuts {
-    let game_mode = pf_client_core::gamescope::under_gamescope();
+    let game_mode = ly_client_core::gamescope::under_gamescope();
     resolve(blob, Client::Desktop, game_mode, legacy_guide_gesture)
 }
 
@@ -819,7 +819,7 @@ fn limit(grid: &gtk::Widget) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use pf_client_core::shortcuts::button_bit;
+    use ly_client_core::shortcuts::button_bit;
 
     fn defaults() -> Shortcuts {
         resolve("", Client::Desktop, false, "auto")

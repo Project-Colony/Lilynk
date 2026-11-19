@@ -1,6 +1,6 @@
 // The ring's stick aiming (design/touch-client-overlay.md §2.6): the thumb points at a slot
 // rather than stepping one disc per push. Pinned here because the geometry is duplicated in
-// three languages — `pf_client_core::menu_nav::ring_sector` is the reference, and a drift in
+// three languages — `ly_client_core::menu_nav::ring_sector` is the reference, and a drift in
 // the +y sense or the 12-o'clock origin turns "aim at Disconnect" into "aim at Keyboard".
 
 import GameController

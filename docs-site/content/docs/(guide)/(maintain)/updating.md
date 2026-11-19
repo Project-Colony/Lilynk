@@ -22,7 +22,7 @@ The channel comes from the repository you installed from (on a Steam Deck, the b
 | Install | Button |
 |---|---|
 | Windows installer | Always. |
-| apt, dnf, Bazzite sysext, rpm-ostree layer | After a one-time opt-in: `sudo usermod -aG punktfunk-update $USER`, then restart the computer. The host keeps the groups it started with, so logging out is not enough. rpm-ostree stages the update: reboot to finish. |
+| apt, dnf, Bazzite sysext, rpm-ostree layer | After a one-time opt-in: `sudo usermod -aG lilynk-update $USER`, then restart the computer. The host keeps the groups it started with, so logging out is not enough. rpm-ostree stages the update: reboot to finish. |
 | Arch (pacman) | The same opt-in, plus `PACMAN_FULL_SYSUPGRADE=1` in `/etc/punktfunk/update.conf`: the button runs a full `pacman -Syu`. |
 | Steam Deck on-device build | Always, except while Reachable without logging in is on: then run `update.sh --pull` in Konsole. It rebuilds on the Deck, which takes a while; the log is `~/.config/punktfunk/logs/update-steamos.log`. |
 | Omarchy, NixOS, source builds | Command only. |
@@ -39,11 +39,11 @@ says so in the card and writes `update-rollback-from-<version>.log`.
 
 | How you installed | Command |
 |---|---|
-| Windows installer | Run the newer `punktfunk-host-setup-<version>.exe` from the [releases page](https://git.unom.io/unom/punktfunk/releases), or `winget upgrade unom.PunktfunkHost` ([winget source](/docs/windows-host#winget), stable only) |
+| Windows installer | Run the newer `lilynk-host-setup-<version>.exe` from the [releases page](https://git.unom.io/unom/punktfunk/releases), or `winget upgrade unom.PunktfunkHost` ([winget source](/docs/windows-host#winget), stable only) |
 | Ubuntu (apt) | `sudo apt update && sudo apt install --only-upgrade $(dpkg-query -W -f='${Package}\n' 'punktfunk*')` |
 | Fedora (dnf) | `sudo dnf upgrade 'punktfunk*'` |
-| Bazzite sysext | `sudo punktfunk-sysext update` |
-| Bazzite / Fedora Atomic, layered RPMs | `sudo /usr/share/punktfunk/update-punktfunk.sh`, then reboot |
+| Bazzite sysext | `sudo lilynk-sysext update` |
+| Bazzite / Fedora Atomic, layered RPMs | `sudo /usr/share/punktfunk/update-lilynk.sh`, then reboot |
 | Arch / CachyOS (pacman) | `sudo pacman -Syu` |
 | Omarchy | `omarchy update` |
 | Steam Deck on-device build | `bash ~/punktfunk/scripts/steamdeck/update.sh --pull` |
@@ -57,16 +57,16 @@ the sysext, the sysext wins: update that instead.
 ### Restart after a Linux package update
 
 Every update restarts the running console, host and plugin runner for each signed-in user: pacman,
-apt, dnf, a NixOS switch, **Update now**, the Windows installer, `punktfunk-sysext update` and the
+apt, dnf, a NixOS switch, **Update now**, the Windows installer, `lilynk-sysext update` and the
 Steam Deck script. A service you stopped stays stopped. A live stream drops when the host restarts.
 A layered rpm-ostree install moves at the reboot instead.
 
 A source build restarts by hand, console first:
 
 ```bash
-systemctl --user restart punktfunk-web
-systemctl --user restart punktfunk-host
-systemctl --user try-restart punktfunk-scripting
+systemctl --user restart lilynk-web
+systemctl --user restart lilynk-host
+systemctl --user try-restart lilynk-scripting
 ```
 
 A host left running on a replaced binary fails every new KDE desktop session with
@@ -74,13 +74,13 @@ A host left running on a replaced binary fails every new KDE desktop session wit
 
 ### Bazzite sysext: channels, rollback and rebases
 
-- `punktfunk-sysext status` shows the channel, the installed and the newest version.
-- Switch channel: `sudo punktfunk-sysext install --channel canary` (or `stable`).
+- `lilynk-sysext status` shows the channel, the installed and the newest version.
+- Switch channel: `sudo lilynk-sysext install --channel canary` (or `stable`).
 - Keep a build to go back to:
 
   ```sh
-  sudo cp /var/lib/extensions/punktfunk.raw ~/punktfunk-known-good.raw   # before updating
-  sudo punktfunk-sysext install --from-file ~/punktfunk-known-good.raw   # to go back
+  sudo cp /var/lib/extensions/lilynk.raw ~/lilynk-known-good.raw   # before updating
+  sudo lilynk-sysext install --from-file ~/lilynk-known-good.raw   # to go back
   ```
 
 - After a Bazzite major rebase the old image refuses to load. A unit the install left in `/etc`
@@ -94,7 +94,7 @@ A host left running on a replaced binary fails every new KDE desktop session wit
   ```
 
 - `refusing to downgrade`: the feed's newest image is older than yours. Roll back on purpose with
-  `sudo PUNKTFUNK_SYSEXT_ALLOW_DOWNGRADE=1 punktfunk-sysext update`, or the file you kept.
+  `sudo PUNKTFUNK_SYSEXT_ALLOW_DOWNGRADE=1 lilynk-sysext update`, or the file you kept.
 - The script checks the feed's signature with `gpg`. If it reports a bad signature, a foreign feed
   or an older serial, don't install: download the script again and retry.
 

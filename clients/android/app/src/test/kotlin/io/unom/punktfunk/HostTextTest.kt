@@ -23,7 +23,7 @@ import org.robolectric.annotation.Config
 
 /**
  * The host's sentences worded by id, replayed from `clients/shared/host-text-vectors.json` (the
- * vectors `pf_client_core::host_text` and the Swift `HostTextTests` run too).
+ * vectors `ly_client_core::host_text` and the Swift `HostTextTests` run too).
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [36])

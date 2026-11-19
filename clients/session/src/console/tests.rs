@@ -1,6 +1,6 @@
 use super::*;
-use pf_client_core::presets::{PresetsFile, StreamPreset};
-use pf_console_ui::model::pinned_key;
+use ly_client_core::presets::{PresetsFile, StreamPreset};
+use ly_console_ui::model::pinned_key;
 use std::net::TcpListener;
 
 /// A fingerprint of one repeated digit: readable, and distinct per digit.
@@ -390,8 +390,8 @@ fn service(library: &LibraryShared) -> ServiceState {
     ServiceState {
         console: ConsoleShared::default(),
         library: library.clone(),
-        bus: pf_console_ui::ConsoleBus::default(),
-        identity: punktfunk_core::quic::endpoint::generate_identity().expect("identity"),
+        bus: ly_console_ui::ConsoleBus::default(),
+        identity: lilynk_core::quic::endpoint::generate_identity().expect("identity"),
         seed: None,
         discovered: HashMap::new(),
         probed: Arc::default(),

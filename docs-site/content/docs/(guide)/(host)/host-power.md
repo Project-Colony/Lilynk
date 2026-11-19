@@ -47,5 +47,5 @@ Moonlight clients have no power actions.
 same way and the service comes straight back. The console offers it when a
 [setting](/docs/configuration#settings-in-the-web-console) applies only after a restart.
 
-It needs a service to start the host again: `punktfunk-host` as a user service on Linux, the
+It needs a service to start the host again: `lilynk-host` as a user service on Linux, the
 Punktfunk Host service on Windows. A host started by hand in a terminal shows it as unavailable.

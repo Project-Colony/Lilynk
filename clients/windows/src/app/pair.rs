@@ -6,7 +6,7 @@ use super::connect::{connect, request_access};
 use super::style::*;
 use super::{Screen, Svc};
 use crate::trust;
-use pf_l10n::{client, common, desktop};
+use ly_l10n::{client, common, desktop};
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::atomic::Ordering;

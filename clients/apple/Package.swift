@@ -1,5 +1,5 @@
 // swift-tools-version: 5.9
-// PunktfunkKit — Swift wrapper around the punktfunk-core C ABI (punktfunk/1 client connector) plus the
+// PunktfunkKit — Swift wrapper around the lilynk-core C ABI (punktfunk/1 client connector) plus the
 // SwiftUI/VideoToolbox presentation layer. Build PunktfunkCore.xcframework first:
 //   bash ../../scripts/build-xcframework.sh   (on a Mac; see README.md)
 import PackageDescription
@@ -18,7 +18,7 @@ let package = Package(
         .executable(name: "PunktfunkClient", targets: ["PunktfunkClient"]),
     ],
     dependencies: [
-        // Progressive backdrop blur with no material tint; `pf-console-ui`'s `blur.rs` follows it.
+        // Progressive backdrop blur with no material tint; `ly-console-ui`'s `blur.rs` follows it.
         // GlurBackdrop first ships in 2.0.
         .package(url: "https://github.com/joogps/Glur.git", from: "2.0.0"),
     ],
@@ -77,7 +77,7 @@ let package = Package(
         // Development app shell (swift run PunktfunkClient): connect form → stream + input.
         // (The tvOS slide-transition package is referenced by the Xcode PROJECT only —
         // its manifest breaks SwiftPM whole-graph validation on macOS, and only the
-        // Punktfunk-tvOS target links it; the #if os(tvOS) import never compiles here.)
+        // Lilynk-tvOS target links it; the #if os(tvOS) import never compiles here.)
         .executableTarget(
             name: "PunktfunkClient",
             dependencies: [
@@ -93,7 +93,7 @@ let package = Package(
             dependencies: ["PunktfunkKit", "PunktfunkShared", "PunktfunkCore", "PunktfunkTestLanguage"],
             resources: [
                 // PyroWave golden fixtures: host-encoded AUs + upstream-decoded reference
-                // planes (regenerate with punktfunk-host's `pyrowave_dump_golden` on a
+                // planes (regenerate with lilynk-host's `pyrowave_dump_golden` on a
                 // Vulkan box — see PyroWaveDecoderTests.swift).
                 .copy("PyroWaveFixtures")
             ]),

@@ -7,9 +7,9 @@ use super::ConnectRequest;
 use crate::store::Store;
 use adw::prelude::*;
 use gtk::glib;
-use pf_client_core::presets::StreamPreset;
-use pf_client_core::speed::{recommended_kbps, CleanRound, HealthReport, SpeedReport};
-use pf_l10n::{client, desktop};
+use ly_client_core::presets::StreamPreset;
+use ly_client_core::speed::{recommended_kbps, CleanRound, HealthReport, SpeedReport};
+use ly_l10n::{client, desktop};
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -106,7 +106,7 @@ pub fn push(
     }
     let (tx, rx) = async_channel::unbounded::<Probe>();
     std::thread::Builder::new()
-        .name("punktfunk-speed".into())
+        .name("lilynk-speed".into())
         .spawn(move || {
             let progress = |kbps| {
                 let _ = tx.send_blocking(Probe::Sample(kbps));
@@ -115,7 +115,7 @@ pub fn push(
                 canned(progress)
             } else {
                 let fp = req.host.fp_hex.as_deref();
-                pf_client_core::speed::run_network_check_with(
+                ly_client_core::speed::run_network_check_with(
                     &req.host.addr,
                     req.host.port,
                     fp,
@@ -158,7 +158,7 @@ pub fn push(
                     headline.set_label(&mbit(r.ceiling_kbps));
                     for f in &report.findings {
                         let row = adw::ActionRow::builder()
-                            .title(pf_client_core::findings::text(f.id as u8, f.numbers))
+                            .title(ly_client_core::findings::text(f.id as u8, f.numbers))
                             .title_lines(0)
                             .build();
                         findings.add(&row);
@@ -232,7 +232,7 @@ fn canned(mut progress: impl FnMut(u32)) -> Result<HealthReport, String> {
     for kbps in [40_000, 180_000, 310_000, 410_000, 462_000, 470_000, 468_000] {
         progress(kbps);
     }
-    let outcome = punktfunk_core::client::ProbeOutcome {
+    let outcome = lilynk_core::client::ProbeOutcome {
         done: true,
         throughput_kbps: 468_000,
         loss_pct: 0.0,

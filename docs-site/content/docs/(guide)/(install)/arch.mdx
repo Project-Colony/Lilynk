@@ -43,7 +43,7 @@ From a terminal inside your desktop session. The install already enabled the plu
 every user; this starts it with the host and the console:
 
 ```sh
-systemctl --user enable --now punktfunk-host punktfunk-web punktfunk-scripting
+systemctl --user enable --now lilynk-host lilynk-web lilynk-scripting
 ```
 
 Stock Arch has no firewall. **CachyOS** enables `ufw` and **EndeavourOS** enables firewalld; open
@@ -51,10 +51,10 @@ the host, and the console for other devices:
 
 ```sh
 # ufw (CachyOS)
-sudo ufw allow punktfunk-native && sudo ufw allow punktfunk-web
+sudo ufw allow lilynk-native && sudo ufw allow lilynk-web
 # firewalld (EndeavourOS)
 sudo firewall-cmd --reload
-sudo firewall-cmd --permanent --add-service=punktfunk-native --add-service=punktfunk-web
+sudo firewall-cmd --permanent --add-service=lilynk-native --add-service=lilynk-web
 sudo firewall-cmd --reload
 ```
 

@@ -8,9 +8,9 @@ client that can't connect needs [Pairing](/docs/pairing).
 
 | Host | Password file | Restart the console |
 |---|---|---|
-| Linux packages, NixOS | `~/.config/punktfunk/web-password` | `systemctl --user restart punktfunk-web` |
-| SteamOS | `~/.config/punktfunk/web.env` | `systemctl --user restart punktfunk-web` |
-| Windows | `%ProgramData%\punktfunk\web-password` | `punktfunk-host service restart`, elevated |
+| Linux packages, NixOS | `~/.config/punktfunk/web-password` | `systemctl --user restart lilynk-web` |
+| SteamOS | `~/.config/punktfunk/web.env` | `systemctl --user restart lilynk-web` |
+| Windows | `%ProgramData%\punktfunk\web-password` | `lilynk-host service restart`, elevated |
 
 ## Read it
 
@@ -25,7 +25,7 @@ sed -n 's/^PUNKTFUNK_UI_PASSWORD=//p' ~/.config/punktfunk/web.env        # Steam
 On Windows, from an elevated PowerShell (the file is readable by Administrators only):
 
 ```powershell
-punktfunk-host web password
+lilynk-host web password
 ```
 
 ## Reset it
@@ -36,7 +36,7 @@ sign-in hashes it and signs every other session out.
 ```sh
 printf 'PUNKTFUNK_UI_PASSWORD=%s\n' 'new-password' > ~/.config/punktfunk/web-password
 chmod 600 ~/.config/punktfunk/web-password
-systemctl --user restart punktfunk-web
+systemctl --user restart lilynk-web
 ```
 
 - SteamOS: edit `web.env` rather than overwriting it, because it also holds the session secret.
@@ -44,7 +44,7 @@ systemctl --user restart punktfunk-web
 
   ```powershell
   notepad "$env:ProgramData\punktfunk\web-password"   # add PUNKTFUNK_UI_PASSWORD=<new-password>
-  punktfunk-host service restart
+  lilynk-host service restart
   ```
 
 On the Linux packages you can instead delete `web-password` and restart the console. It generates a

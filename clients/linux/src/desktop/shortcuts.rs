@@ -11,7 +11,7 @@
 //! exactly this, with its own confirmation) is the intended upgrade there.
 
 use adw::prelude::*;
-use pf_l10n::{client, common, desktop};
+use ly_l10n::{client, common, desktop};
 use std::path::PathBuf;
 
 /// Create the shortcut, or — sandboxed — show the URL to place by hand. `Some` is the toast to
@@ -55,7 +55,7 @@ fn sandboxed() -> bool {
     std::path::Path::new("/.flatpak-info").exists()
 }
 
-/// Write `~/.local/share/applications/punktfunk-<slug>-<tag>.desktop` for this URL and
+/// Write `~/.local/share/applications/lilynk-<slug>-<tag>.desktop` for this URL and
 /// return the path. Best-effort `update-desktop-database` afterwards: an entry nothing indexes
 /// still works from a file manager, it just won't show up in search straight away.
 fn write_desktop_entry(label: &str, url: &str) -> Result<PathBuf, String> {
@@ -65,7 +65,7 @@ fn write_desktop_entry(label: &str, url: &str) -> Result<PathBuf, String> {
     // The URL, not just the label, names the file: two hosts can share a name. The same host
     // always resolves to the same URL, so re-creating its shortcut overwrites its own.
     let path = dir.join(format!(
-        "punktfunk-{}-{:08x}.desktop",
+        "lilynk-{}-{:08x}.desktop",
         file_slug(label),
         url_tag(url)
     ));
@@ -80,7 +80,7 @@ fn write_desktop_entry(label: &str, url: &str) -> Result<PathBuf, String> {
          Type=Application\n\
          Name={name}\n\
          Comment=Stream from this Punktfunk host\n\
-         Exec=punktfunk-client \"{exec_url}\"\n\
+         Exec=lilynk-client \"{exec_url}\"\n\
          Icon=io.unom.punktfunk\n\
          Terminal=false\n\
          Categories=Game;Network;\n\

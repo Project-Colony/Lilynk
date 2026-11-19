@@ -17,14 +17,14 @@ out of it). A repeated `--manifest` adds another workspace's crates:
 the root file also names the seat keeper's, a separate workspace the Windows host installer
 ships. `--packages <name>[,<name>…]` restricts one workspace to the transitive
 dependency closure of the named workspace members instead — the Apple and Android clients link
-exactly one Rust crate each (`punktfunk-client-apple`, and the JNI bridge over the core), so a
+exactly one Rust crate each (`lilynk-client-apple`, and the JNI bridge over the core), so a
 workspace-wide copy attributed them things they do not contain: the NVENC SDK, GTK, windows-rs.
 Listing a dependency that is not there is not a licence violation, but it is a false statement in
 a file whose entire job is to be true.
 
 Usage:  python3 scripts/gen-third-party-notices.py [--out THIRD-PARTY-NOTICES.txt]
                                                    [--manifest Cargo.toml …]
-                                                   [--packages punktfunk-core,…]
+                                                   [--packages lilynk-core,…]
 """
 import argparse
 import hashlib
@@ -72,11 +72,11 @@ LICENSE_OVERRIDES = {
 # workspace-member skip in main() hides them from `cargo metadata`, so they are listed
 # here explicitly: (label, license file relative to the repo root, source URL).
 VENDORED_TREES = [
-    ("Lucide 0.462.0 (icon path data, crates/client/pf-console-ui)",
-     "crates/client/pf-console-ui/LUCIDE-LICENSE",
+    ("Lucide 0.462.0 (icon path data, crates/client/ly-console-ui)",
+     "crates/client/ly-console-ui/LUCIDE-LICENSE",
      "https://lucide.dev"),
-    ("Kenney Input Prompts 1.5 (controller outlines, crates/client/pf-console-ui)",
-     "crates/client/pf-console-ui/KENNEY-LICENSE",
+    ("Kenney Input Prompts 1.5 (controller outlines, crates/client/ly-console-ui)",
+     "crates/client/ly-console-ui/KENNEY-LICENSE",
      "https://kenney.nl/assets/input-prompts"),
     ("pyrowave (vendored, crates/codec/pyrowave-sys)",
      "crates/codec/pyrowave-sys/vendor/pyrowave/LICENSE",
@@ -135,7 +135,7 @@ def main():
     # `--all-features` is what makes `--packages` a GUARANTEE rather than a coincidence. Without
     # it, cargo resolves the workspace with default features and unifies them across members, so a
     # scoped closure can pick up a crate only because some OTHER member turned the feature on —
-    # and, worse, can MISS one when no member does. punktfunk-core's `quic` is exactly that case:
+    # and, worse, can MISS one when no member does. lilynk-core's `quic` is exactly that case:
     # it is not a default feature, and quinn/opus/rustls reach the Apple file today only through
     # the workspace-wide union. Resolving every feature over-approximates instead, which is the
     # safe direction for an attribution file: listing a crate that is not linked is untidy,

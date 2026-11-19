@@ -7,8 +7,8 @@ use crate::settings::spec::{self, Page, Spec};
 use crate::settings::tables::*;
 use crate::trust::Settings;
 use adw::prelude::*;
-use pf_client_core::audio::AudioDevice;
-use pf_l10n::client;
+use ly_client_core::audio::AudioDevice;
+use ly_l10n::client;
 use std::cell::Cell;
 use std::rc::Rc;
 

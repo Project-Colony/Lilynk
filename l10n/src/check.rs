@@ -1,4 +1,4 @@
-//! `pf-l10n check`: the rules on top of the format. Each rule is a small function over one
+//! `ly-l10n check`: the rules on top of the format. Each rule is a small function over one
 //! message, file or list, tested on its own; [`run`] applies them all to an l10n directory.
 //! TypeScript-only parts get the key and placeholder rules, and the length budget when
 //! `budgets.parts` gives them one; Paraglide owns the rest.
@@ -140,7 +140,7 @@ fn budget(rules: &Rules, key: &str, source: bool) -> usize {
 
 /// Whether `c` is East Asian Wide or Fullwidth: it draws about two Latin letters wide.
 // A hand table of the common Wide blocks. Emoji, Yi and the rare blocks count 1; use
-// `unicode-width` when pf-l10n may take a dependency.
+// `unicode-width` when ly-l10n may take a dependency.
 fn is_wide(c: char) -> bool {
     matches!(u32::from(c),
         0x1100..=0x115F // Hangul Jamo

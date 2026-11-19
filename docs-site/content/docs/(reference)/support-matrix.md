@@ -91,9 +91,9 @@ Each session gets its own display at the client's resolution and refresh rate �
    separately.
 7. Virtual displays are SDR. Mirroring a real HDR monitor on GNOME 50+ carries HDR, on the
    Moonlight/GameStream plane only — see [HDR](/docs/hdr).
-8. Needs the patched `punktfunk-gamescope` (patch 2 or newer) and a session this host started or
+8. Needs the patched `lilynk-gamescope` (patch 2 or newer) and a session this host started or
    manages. Otherwise the host draws the pointer into the video.
-9. Needs the patched `punktfunk-gamescope` and a session this host started or manages; an attached
+9. Needs the patched `lilynk-gamescope` and a session this host started or manages; an attached
    session streams SDR. See [HDR on gamescope](/docs/gamescope#hdr-on-gamescope).
 10. Their portals offer no separate cursor, so the pointer is always part of the video.
 11. Mouse and keyboard reach Windows as a USB-style HID device, so games that refuse injected input
@@ -375,7 +375,7 @@ Either side can be the reason one of these didn't happen:
 
 | Part | Where it stands |
 |---|---|
-| **Protocol core** — `punktfunk-core`, the C ABI, FEC and crypto | Stable; the wire format and the C ABI are versioned contracts (see [Mixing versions](#mixing-versions)). |
+| **Protocol core** — `lilynk-core`, the C ABI, FEC and crypto | Stable; the wire format and the C ABI are versioned contracts (see [Mixing versions](#mixing-versions)). |
 | **Linux host** | The most exercised host. What it can do depends on the desktop — see the tables above. |
 | **Windows host** | An installer with its own display driver. Setup has a publicly trusted signature; the drivers carry Punktfunk's own, which setup trusts on install ([About the signatures](/docs/windows-host#about-the-signatures)). NVENC is well trodden; AMF and QSV see less field use. Runs in the signed-in console session, not session 0. |
 | **GameStream / Moonlight plane** | Works, and is off until you turn on **GameStream**. Pairs over plain HTTP — trusted LAN only ([Security](/docs/security#gamestream--moonlight-compatibility-is-the-weak-crypto-path)). Presets, links, clipboard and microphone aren't on it. |

@@ -19,7 +19,7 @@ same by hand.
 2. Leave **Browser origins** as it is. The list is a rule for browser pages; the TV app is not one
    and is admitted either way. Pairing is what lets it stream.
 3. Click **Restart Punktfunk**.
-4. Open TCP 47990 and UDP 9778 on the host. On Linux both are in the `punktfunk-native` firewall
+4. Open TCP 47990 and UDP 9778 on the host. On Linux both are in the `lilynk-native` firewall
    profile; on Windows the host opens them ([Ports](/docs/ports)).
 
 ## 2. Put the TV in Developer Mode

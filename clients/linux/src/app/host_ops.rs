@@ -2,7 +2,7 @@
 //! actions (sleep, restart, shut down).
 
 use super::*;
-use pf_l10n::{client, common};
+use ly_l10n::{client, common};
 
 impl AppModel {
     pub(super) fn send_logs(
@@ -14,14 +14,14 @@ impl AppModel {
         // Blocking network (the library agent's 5 s connect / 10 s global budgets) —
         // a worker thread, with the outcome routed back as a Toast.
         let identity = self.identity.clone();
-        let mgmt = mgmt_port.unwrap_or(pf_client_core::library::DEFAULT_MGMT_PORT);
+        let mgmt = mgmt_port.unwrap_or(ly_client_core::library::DEFAULT_MGMT_PORT);
         self.toast(&client::hostcard_sending_logs(&req.host.name));
         let out = sender.input_sender().clone();
         std::thread::Builder::new()
-            .name("punktfunk-sendlogs".into())
+            .name("lilynk-sendlogs".into())
             .spawn(move || {
-                let msg = pf_client_core::logring::send_bundle(
-                    "punktfunk-client",
+                let msg = ly_client_core::logring::send_bundle(
+                    "lilynk-client",
                     &req.host.name,
                     &req.host.addr,
                     (mgmt, req.host.port),
@@ -43,13 +43,13 @@ impl AppModel {
         danger: bool,
         sender: &ComponentSender<Self>,
     ) {
-        let mgmt = mgmt.unwrap_or(pf_client_core::library::DEFAULT_MGMT_PORT);
+        let mgmt = mgmt.unwrap_or(ly_client_core::library::DEFAULT_MGMT_PORT);
         // Restart and shut down lose whatever is running on that machine, so they ask
         // first — the same treatment Forget gets. Sleep is reversible from the same
         // menu ("Wake host"), so it goes straight through.
         if danger {
             let dialog = adw::AlertDialog::new(
-                Some(&pf_l10n::host::host_power_confirm_title(&label)),
+                Some(&ly_l10n::host::host_power_confirm_title(&label)),
                 Some(&client::hostcard_action_confirm_body(&req.host.name)),
             );
             dialog.add_responses(&[("cancel", common::common_cancel()), ("go", &label)]);
@@ -77,9 +77,9 @@ impl AppModel {
         self.toast(&client::hostcard_action_asking(&label, &req.host.name));
         let out = sender.input_sender().clone();
         std::thread::Builder::new()
-            .name("punktfunk-hostaction".into())
+            .name("lilynk-hostaction".into())
             .spawn(move || {
-                let msg = pf_client_core::host_actions::run(
+                let msg = ly_client_core::host_actions::run(
                     &req.host.name,
                     &req.host.addr,
                     mgmt,

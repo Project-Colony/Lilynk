@@ -1,22 +1,22 @@
 <#
 .SYNOPSIS
-  Build + sign the punktfunk virtual-gamepad UMDF drivers (pf-gamepad = the HID pad identities,
-  pf-xusb = Xbox 360 / XInput) FROM SOURCE, in CI, and stage them for the host installer. The
-  gamepad analogue of build-pf-vdisplay.ps1 - the .dll/.inf/.cat are built from the current source
+  Build + sign the punktfunk virtual-gamepad UMDF drivers (ly-gamepad = the HID pad identities,
+  ly-xusb = Xbox 360 / XInput) FROM SOURCE, in CI, and stage them for the host installer. The
+  gamepad analogue of build-ly-vdisplay.ps1 - the .dll/.inf/.cat are built from the current source
   on every run, so they stay in lockstep with it.
 
 .DESCRIPTION
   Every driver here is a member of the in-tree drivers workspace (packaging/windows/drivers/), so
   one `cargo build --release` builds the whole workspace (this shares wdk-sys/wdk-build + the
-  bindgen pin with pf-vdisplay). Then, per driver: CLEAR the FORCE_INTEGRITY PE bit, sign the .dll,
+  bindgen pin with ly-vdisplay). Then, per driver: CLEAR the FORCE_INTEGRITY PE bit, sign the .dll,
   stampinf a DriverVer into the INF; then Inf2Cat the catalogs and sign them. The drivers share ONE
   self-signed cert (or a supplied DRIVER_CERT secret) + ONE exported .cer - the layout
-  `punktfunk-host.exe driver install --gamepad` consumes (per-driver .inf/.cat/.dll + one shared
-  punktfunk-driver.cer).
+  `lilynk-host.exe driver install --gamepad` consumes (per-driver .inf/.cat/.dll + one shared
+  lilynk-driver.cer).
 
-  Output (-Out): pf_gamepad.{dll,inf,cat} + pf_xusb.{dll,inf,cat} + pf_mouse.{dll,inf,cat} +
-  pf_touchpad.{dll,inf,cat} + punktfunk-driver.cer. (pf_mouse is the resident virtual HID pointer
-  and pf_touchpad the per-session virtual touchpad, not gamepads - they share this pipeline + the
+  Output (-Out): ly_gamepad.{dll,inf,cat} + ly_xusb.{dll,inf,cat} + ly_mouse.{dll,inf,cat} +
+  ly_touchpad.{dll,inf,cat} + lilynk-driver.cer. (ly_mouse is the resident virtual HID pointer
+  and ly_touchpad the per-session virtual touchpad, not gamepads - they share this pipeline + the
   --gamepad install path.)
 
 .EXAMPLE
@@ -48,14 +48,14 @@ $DriversDir = (Resolve-Path $DriversDir).Path
 $clear = Join-Path $PSScriptRoot 'clear-force-integrity.ps1'
 
 $drivers = @(
-    @{ crate = 'pf-gamepad';   dll = 'pf_gamepad.dll';   inx = 'pf-gamepad\pf_gamepad.inx';     inf = 'pf_gamepad.inf';   cat = 'pf_gamepad.cat' }
-    @{ crate = 'pf-xusb';      dll = 'pf_xusb.dll';      inx = 'pf-xusb\pf_xusb.inx';           inf = 'pf_xusb.inf';      cat = 'pf_xusb.cat' }
+    @{ crate = 'ly-gamepad';   dll = 'ly_gamepad.dll';   inx = 'ly-gamepad\ly_gamepad.inx';     inf = 'ly_gamepad.inf';   cat = 'ly_gamepad.cat' }
+    @{ crate = 'ly-xusb';      dll = 'ly_xusb.dll';      inx = 'ly-xusb\ly_xusb.inx';           inf = 'ly_xusb.inf';      cat = 'ly_xusb.cat' }
     # Not a gamepad, but it rides the identical UMDF HID pipeline + the same install path
     # (`driver install --gamepad` adds every staged .inf): the resident virtual HID mouse that
     # keeps SM_MOUSEPRESENT true so DWM composites a cursor on headless hosts.
-    @{ crate = 'pf-mouse';     dll = 'pf_mouse.dll';     inx = 'pf-mouse\pf_mouse.inx';         inf = 'pf_mouse.inf';     cat = 'pf_mouse.cat' }
+    @{ crate = 'ly-mouse';     dll = 'ly_mouse.dll';     inx = 'ly-mouse\ly_mouse.inx';         inf = 'ly_mouse.inf';     cat = 'ly_mouse.cat' }
     # The per-session virtual Precision Touchpad, on the same pipeline and install path.
-    @{ crate = 'pf-touchpad';  dll = 'pf_touchpad.dll';  inx = 'pf-touchpad\pf_touchpad.inx';   inf = 'pf_touchpad.inf';  cat = 'pf_touchpad.cat' }
+    @{ crate = 'ly-touchpad';  dll = 'ly_touchpad.dll';  inx = 'ly-touchpad\ly_touchpad.inx';   inf = 'ly_touchpad.inf';  cat = 'ly_touchpad.cat' }
 )
 foreach ($d in $drivers) {
     if (-not (Test-Path (Join-Path $DriversDir $d.inx))) { throw "no $($d.inx) under $DriversDir" }
@@ -66,7 +66,7 @@ if (-not $env:Version_Number) { $env:Version_Number = '10.0.26100.0' }
 if (-not $env:LIBCLANG_PATH -and (Test-Path 'C:\Program Files\LLVM\bin\libclang.dll')) {
     $env:LIBCLANG_PATH = 'C:\Program Files\LLVM\bin'
 }
-# Builds through drivers-cargo.ps1 like build-pf-vdisplay.ps1: the in-tree target dir from one fixed
+# Builds through drivers-cargo.ps1 like build-ly-vdisplay.ps1: the in-tree target dir from one fixed
 # X: root, so a target kept between CI runs never sees two checkout paths.
 $triple = if ($Arch -eq 'arm64') { 'aarch64-pc-windows-msvc' } else { 'x86_64-pc-windows-msvc' }
 $stampArch = if ($Arch -eq 'arm64') { 'arm64' } else { 'amd64' }
@@ -115,7 +115,7 @@ elseif ($requireCert) {
 }
 else {
     Write-Host '==> no DRIVER_CERT_PFX_B64 -> generating a fresh self-signed driver cert (the installer trusts the bundled .cer at install time)'
-    $cleanupCert = New-SelfSignedCertificate -Type CodeSigningCert -Subject 'CN=punktfunk-driver' `
+    $cleanupCert = New-SelfSignedCertificate -Type CodeSigningCert -Subject 'CN=lilynk-driver' `
         -CertStoreLocation Cert:\CurrentUser\My -KeyExportPolicy Exportable -NotAfter (Get-Date).AddYears(10)
     $signArgs = @('/sha1', $cleanupCert.Thumbprint)
     $pubForCer = $cleanupCert
@@ -149,7 +149,7 @@ foreach ($d in $drivers) {
 }
 
 # --- 6. one shared public .cer ----------------------------------------------------------------
-Export-Certificate -Cert $pubForCer -FilePath (Join-Path $Out 'punktfunk-driver.cer') | Out-Null
+Export-Certificate -Cert $pubForCer -FilePath (Join-Path $Out 'lilynk-driver.cer') | Out-Null
 if ($cleanupCert) { Remove-Item "Cert:\CurrentUser\My\$($cleanupCert.Thumbprint)" -Force -ErrorAction SilentlyContinue }
 Remove-SigningPfx
 

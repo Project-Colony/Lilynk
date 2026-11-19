@@ -26,13 +26,13 @@ OUT="${1:-THIRD-PARTY-NOTICES.txt}"
 echo "==> gen-third-party-notices.py -> $OUT" >&2
 # The root file also names the seat keeper's crates: a separate workspace the host installer ships.
 # No host build fetches them, and the generator reads metadata offline. A version bump leaves
-# the keeper's lockfile naming the old pf-seats and pf-paths.
-cargo fetch --locked --manifest-path crates/host/pf-seat-keeper/Cargo.toml >&2 || {
-    echo "::error::crates/host/pf-seat-keeper/Cargo.lock is stale — run: cargo update --manifest-path crates/host/pf-seat-keeper/Cargo.toml -p pf-seats -p pf-paths" >&2
+# the keeper's lockfile naming the old ly-seats and ly-paths.
+cargo fetch --locked --manifest-path crates/host/ly-seat-keeper/Cargo.toml >&2 || {
+    echo "::error::crates/host/ly-seat-keeper/Cargo.lock is stale — run: cargo update --manifest-path crates/host/ly-seat-keeper/Cargo.toml -p ly-seats -p ly-paths" >&2
     exit 1
 }
 python3 scripts/gen-third-party-notices.py --out "$OUT" --manifest Cargo.toml \
-    --manifest crates/host/pf-seat-keeper/Cargo.toml
+    --manifest crates/host/ly-seat-keeper/Cargo.toml
 echo "==> wrote $OUT" >&2
 
 # Regenerate the per-client in-tree copies. EVERY client has one, because every client SHOWS
@@ -42,13 +42,13 @@ echo "==> wrote $OUT" >&2
 #
 # These are GENERATED, not copied: the workspace-wide file attributes to every client every crate
 # anything in this repo links: the NVENC SDK, GTK4, windows-rs. The Apple app links ONE Rust
-# library (punktfunk-client-apple, through PunktfunkCore.xcframework — see
+# library (lilynk-client-apple, through PunktfunkCore.xcframework — see
 # scripts/build-xcframework.sh) and Android links the JNI bridge over the core; everything else in
 # those apps is Swift/Kotlin and platform frameworks.
 #
 # The desktop copies are scoped too, each to the binaries its package actually installs — the
-# shell, the session streamer, the headless CLI, and on Linux the update helper (`pf-update`
-# ships as pf-update-client).
+# shell, the session streamer, the headless CLI, and on Linux the update helper (`ly-update`
+# ships as ly-update-client).
 #
 # The ROOT file stays workspace-wide on purpose: the HOST ships out of it.
 #
@@ -62,9 +62,9 @@ if [ "$OUT" = "THIRD-PARTY-NOTICES.txt" ]; then
         python3 scripts/gen-third-party-notices.py --packages "$packages" --out "$dest"
         echo "==> generated $dest ($packages closure)" >&2
     done <<'CLIENTS'
-clients/apple/Sources/PunktfunkKit/Resources/THIRD-PARTY-NOTICES.txt punktfunk-ffi
-clients/android/app/src/main/assets/THIRD-PARTY-NOTICES.txt punktfunk-client-android
-clients/linux/THIRD-PARTY-NOTICES.txt punktfunk-client-linux,punktfunk-client-session,punktfunk-cli,pf-update
-clients/windows/THIRD-PARTY-NOTICES.txt punktfunk-client-windows,punktfunk-client-session,punktfunk-cli
+clients/apple/Sources/PunktfunkKit/Resources/THIRD-PARTY-NOTICES.txt lilynk-ffi
+clients/android/app/src/main/assets/THIRD-PARTY-NOTICES.txt lilynk-client-android
+clients/linux/THIRD-PARTY-NOTICES.txt lilynk-client-linux,lilynk-client-session,lilynk-cli,ly-update
+clients/windows/THIRD-PARTY-NOTICES.txt lilynk-client-windows,lilynk-client-session,lilynk-cli
 CLIENTS
 fi

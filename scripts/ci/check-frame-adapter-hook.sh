@@ -1,10 +1,10 @@
 #!/bin/sh
-# Runs packaging/linux/90-punktfunk-frame-adapter against a fake /sys with iw, nmcli and logger
+# Runs packaging/linux/90-lilynk-frame-adapter against a fake /sys with iw, nmcli and logger
 # stubbed: the Frame adapter gets Steam's low-latency mode on connect, 'down' and any other
 # interface are left alone, and a box without iw writes power save into the connection profile.
 set -eu
 REPO="$(CDPATH='' cd -- "$(dirname -- "$0")/../.." && pwd)"
-HOOK="$REPO/packaging/linux/90-punktfunk-frame-adapter"
+HOOK="$REPO/packaging/linux/90-lilynk-frame-adapter"
 T=$(mktemp -d)
 trap 'rm -rf "$T"' EXIT
 

@@ -1,5 +1,5 @@
 {
-  "$comment": "GET /display/targets answers -> the Screen section every client draws, pinned by pf-client-core display_targets (Targets::rows, note, card_line) and the Swift and Kotlin copies. `rows` is in draw order. `put` is the PUT /display/clients/{fp} body picking the row sends, null when it sends nothing: the row is checked or not pickable. `header` heads a group from that row on. Under a `note` only the checked row is left, greyed. `card` is the host card's line.",
+  "$comment": "GET /display/targets answers -> the Screen section every client draws, pinned by ly-client-core display_targets (Targets::rows, note, card_line) and the Swift and Kotlin copies. `rows` is in draw order. `put` is the PUT /display/clients/{fp} body picking the row sends, null when it sends nothing: the row is checked or not pickable. `header` heads a group from that row on. Under a `note` only the checked row is left, greyed. `card` is the host card's line.",
   "$text": "A text slot (label, hint, header, reason, note, card): null is nothing; a string is the host's own words, shown as sent; {\"key\": k} is the client message k; \"args\" fills its placeholders by name.",
   "cases": [
     {

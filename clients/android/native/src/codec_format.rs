@@ -11,8 +11,8 @@ use std::collections::VecDeque;
 /// emitted HEVC).
 pub(crate) fn codec_mime(codec: u8) -> &'static str {
     match codec {
-        punktfunk_core::quic::CODEC_H264 => "video/avc",
-        punktfunk_core::quic::CODEC_AV1 => "video/av01",
+        lilynk_core::quic::CODEC_H264 => "video/avc",
+        lilynk_core::quic::CODEC_AV1 => "video/av01",
         _ => "video/hevc",
     }
 }
@@ -216,7 +216,7 @@ pub(crate) fn marked_strings(bytes: &[u8], marks: &[&str], cap: usize) -> Vec<St
 pub(crate) fn widens_poc(codec: u8, codec_name: &str, forced: Option<bool>) -> bool {
     let name = codec_name.to_ascii_lowercase();
     let amlogic = name.starts_with("omx.amlogic") || name.starts_with("c2.amlogic");
-    codec == punktfunk_core::quic::CODEC_HEVC && forced.unwrap_or(amlogic)
+    codec == lilynk_core::quic::CODEC_HEVC && forced.unwrap_or(amlogic)
 }
 
 /// Whether each fed AU goes through the concealer first. HEVC on a Realtek decoder, which keeps
@@ -224,7 +224,7 @@ pub(crate) fn widens_poc(codec: u8, codec_name: &str, forced: Option<bool>) -> b
 /// `strict` decoder (Google's Tensor, Realtek), which refuses a stale wave start: the concealer
 /// makes an error-resilient one conformant, so the wave heals it. `forced` is the debug override.
 pub(crate) fn conceals(codec: u8, codec_name: &str, strict: bool, forced: Option<bool>) -> bool {
-    use punktfunk_core::quic::{CODEC_AV1, CODEC_HEVC};
+    use lilynk_core::quic::{CODEC_AV1, CODEC_HEVC};
     let pick = match codec {
         CODEC_HEVC => is_realtek(codec_name),
         CODEC_AV1 => strict,
@@ -280,14 +280,14 @@ pub(crate) fn p50_max_ms(mut v: Vec<u64>) -> (f64, f64) {
 }
 
 /// p50, p95 and max of µs samples, in ms, ranked as every client stat is
-/// ([`punktfunk_core::hud::rank`]). Zeros when empty.
+/// ([`lilynk_core::hud::rank`]). Zeros when empty.
 pub(crate) fn p50_p95_max_ms(mut v: Vec<u64>) -> (f64, f64, f64) {
     if v.is_empty() {
         return (0.0, 0.0, 0.0);
     }
     v.sort_unstable();
     let ms = |us: u64| us as f64 / 1000.0;
-    let rank = punktfunk_core::hud::rank;
+    let rank = lilynk_core::hud::rank;
     (ms(rank(&v, 50)), ms(rank(&v, 95)), ms(v[v.len() - 1]))
 }
 
@@ -349,7 +349,7 @@ mod tests {
 
     #[test]
     fn only_amlogic_hevc_takes_the_wide_poc() {
-        use punktfunk_core::quic::{CODEC_AV1, CODEC_HEVC};
+        use lilynk_core::quic::{CODEC_AV1, CODEC_HEVC};
         assert!(super::widens_poc(
             CODEC_HEVC,
             "c2.amlogic.hevc.decoder",
@@ -386,7 +386,7 @@ mod tests {
 
     #[test]
     fn realtek_hevc_and_strict_av1_are_concealed() {
-        use punktfunk_core::quic::{CODEC_AV1, CODEC_H264, CODEC_HEVC};
+        use lilynk_core::quic::{CODEC_AV1, CODEC_H264, CODEC_HEVC};
         assert!(super::conceals(
             CODEC_HEVC,
             "OMX.realtek.video.dec.hevc",
@@ -684,7 +684,7 @@ mod tests {
 
     #[test]
     fn the_mime_follows_the_codec_and_anything_else_is_hevc() {
-        use punktfunk_core::quic::{CODEC_AV1, CODEC_H264, CODEC_HEVC, CODEC_PYROWAVE};
+        use lilynk_core::quic::{CODEC_AV1, CODEC_H264, CODEC_HEVC, CODEC_PYROWAVE};
         // (name, wire codec, mime)
         let rows = [
             ("H.264", CODEC_H264, "video/avc"),

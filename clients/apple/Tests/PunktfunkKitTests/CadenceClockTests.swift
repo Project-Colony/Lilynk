@@ -4,7 +4,7 @@ import XCTest
 @testable import PunktfunkKit
 
 /// Source-timestamp playout: the Swift `CadenceClock` against the SAME synthetic inputs its Rust
-/// original runs (`punktfunk_core::phase::tests`) — one test per Rust test, matching names, the
+/// original runs (`lilynk_core::phase::tests`) — one test per Rust test, matching names, the
 /// same constants, the same deterministic LCG. The port is hand-written because this pipeline does
 /// not link the Rust type, so agreement on these vectors is the whole lockstep contract: a
 /// constant or a rounding rule that drifts on either side fails here, not on a user's screen.

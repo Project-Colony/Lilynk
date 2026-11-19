@@ -18,7 +18,7 @@ In Desktop Mode, run the app directly. Both share one identity and one list of h
    flatpak install --user https://flatpak.unom.io/io.unom.punktfunk.flatpakref
    ```
 
-   A native `punktfunk-client` (a sysext, a distro package, your own build) works too. With both
+   A native `lilynk-client` (a sysext, a distro package, your own build) works too. With both
    installed the Flatpak wins; set `PF_DECKY_CLIENT=native` in the plugin's environment to change
    that. The client must be v0.22.0 or newer.
 3. Run a [Punktfunk host](/docs/install) on your network.
@@ -188,7 +188,7 @@ Panel → **Troubleshooting** → **Recreate library shortcut**.
    Delete `~/.config/punktfunk` as well to forget this Deck's identity and saved hosts.
 5. On the host, [unpair the Deck](/docs/pairing#managing-paired-devices).
 
-The Steam Input template stays behind at `~/.local/share/Steam/controller_base/templates/punktfunk.vdf`;
+The Steam Input template stays behind at `~/.local/share/Steam/controller_base/templates/lilynk.vdf`;
 delete it if you like.
 
 The plugin source is [`clients/decky`](https://git.unom.io/unom/punktfunk/src/branch/main/clients/decky/README.md).

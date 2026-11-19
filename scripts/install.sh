@@ -1,15 +1,15 @@
 #!/bin/sh
 # punktfunk guided installer — PREVIEW.
 #
-#   cargo build --release -p punktfunk-setup
-#   PUNKTFUNK_SETUP_BIN=target/release/punktfunk-setup sh scripts/install.sh
+#   cargo build --release -p lilynk-setup
+#   PUNKTFUNK_SETUP_BIN=target/release/lilynk-setup sh scripts/install.sh
 #
 # This is a stub. It checks that this is a Linux box it has a build for, then execs a
-# `punktfunk-setup` binary with every argument and every PUNKTFUNK_INSTALL_* variable untouched.
+# `lilynk-setup` binary with every argument and every PUNKTFUNK_INSTALL_* variable untouched.
 # The binary is PUNKTFUNK_SETUP_BIN, a local file, or a download from PUNKTFUNK_SETUP_REGISTRY,
 # checked against its sha256. No registry is published for this build, so there is no default.
 # The installer itself — distro detection, the guided screen, the plan it runs, uninstall,
-# channel switching — lives in that binary (crates/install/punktfunk-setup,
+# channel switching — lives in that binary (crates/install/lilynk-setup,
 # design/installer-v2.md).
 #
 # THE STUB NEVER GROWS A FLAG. The binary owns the interface, so a copy of this file cached
@@ -37,7 +37,7 @@ for arg in "$@"; do
             cat <<EOF
 punktfunk guided installer (preview)
 
-This script runs the punktfunk-setup binary. It takes no options of its own — everything you
+This script runs the lilynk-setup binary. It takes no options of its own — everything you
 pass is handed to the installer untouched, as is every PUNKTFUNK_INSTALL_* variable in the
 environment.
 
@@ -48,12 +48,12 @@ environment.
 
 Those four are the ones worth knowing before you start. The installer accepts more — component
 and channel selection, the per-option environment twins, the Omarchy hand-off — and prints the
-authoritative list itself: $DOCS/install, or "punktfunk-setup --help" once it is on the box.
+authoritative list itself: $DOCS/install, or "lilynk-setup --help" once it is on the box.
 
 No installer download is published for this build. Build one and point the script at it:
 
-  cargo build --release -p punktfunk-setup
-  PUNKTFUNK_SETUP_BIN=target/release/punktfunk-setup sh install.sh …
+  cargo build --release -p lilynk-setup
+  PUNKTFUNK_SETUP_BIN=target/release/lilynk-setup sh install.sh …
 
 PUNKTFUNK_SETUP_REGISTRY=<url> downloads it from a registry of your own instead, checked
 against the sha256 published next to it.
@@ -77,7 +77,7 @@ EOF
 case "$(uname -m)" in
     x86_64|amd64)   ARCH=x86_64 ;;
     aarch64|arm64)  ARCH=aarch64 ;;
-    *) die "no punktfunk-setup build for $(uname -m) — build from source: $DOCS/build-from-source" ;;
+    *) die "no lilynk-setup build for $(uname -m) — build from source: $DOCS/build-from-source" ;;
 esac
 
 # PUNKTFUNK_SETUP_BIN skips the download entirely. installer-smoke points it at the binary built
@@ -87,14 +87,14 @@ if [ -n "${PUNKTFUNK_SETUP_BIN:-}" ]; then
     exec "$PUNKTFUNK_SETUP_BIN" "$@"
 fi
 
-[ -n "$REGISTRY" ] || die "no installer download is published for this build — build it with 'cargo build --release -p punktfunk-setup', then run PUNKTFUNK_SETUP_BIN=target/release/punktfunk-setup sh install.sh"
+[ -n "$REGISTRY" ] || die "no installer download is published for this build — build it with 'cargo build --release -p lilynk-setup', then run PUNKTFUNK_SETUP_BIN=target/release/lilynk-setup sh install.sh"
 
 command -v curl >/dev/null 2>&1 || die "curl is required (install it with your package manager first)"
 
 TMP=$(mktemp -d) || die "could not create a temporary directory"
 trap 'rm -rf "$TMP"' EXIT INT TERM
 
-NAME=punktfunk-setup_$ARCH
+NAME=lilynk-setup_$ARCH
 URL=$REGISTRY/$CHANNEL_DIR/$NAME
 
 curl -fsSL -o "$TMP/$NAME" "$URL" \

@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# punktfunk — build the HDR-capable `punktfunk-gamescope` for a SteamOS host (called by
+# punktfunk — build the HDR-capable `lilynk-gamescope` for a SteamOS host (called by
 # install.sh and update.sh; safe to run by hand).
 #
 # Stock gamescope offers no 10-bit PQ formats on its PipeWire capture node, so every session on
 # the gamescope backend stays 8-bit SDR. This builds gamescope + punktfunk's `pipewire-hdr`
-# patches (the ONE canonical recipe, packaging/gamescope/build-punktfunk-gamescope.sh) inside the
+# patches (the ONE canonical recipe, packaging/gamescope/build-lilynk-gamescope.sh) inside the
 # same Debian-trixie distrobox the host is built in, installs it as
-# ~/.local/bin/punktfunk-gamescope, and pins the host to it via PUNKTFUNK_GAMESCOPE_BIN in
+# ~/.local/bin/lilynk-gamescope, and pins the host to it via PUNKTFUNK_GAMESCOPE_BIN in
 # host.env. HDR is on by default in the host; with this binary present a 10-bit-capable client
 # streams true HDR10 from Game Mode.
 #
@@ -28,7 +28,7 @@ warn() { printf '\033[1;33m  !!\033[0m %s\n' "$*" >&2; }
 
 SRC="${PUNKTFUNK_SRC:-$HOME/punktfunk}"
 BOX="${PUNKTFUNK_BOX:-pf2}"
-GS_BIN="$HOME/.local/bin/punktfunk-gamescope"
+GS_BIN="$HOME/.local/bin/lilynk-gamescope"
 STAMP="$HOME/.local/share/punktfunk/gamescope.stamp"
 HOST_ENV="$HOME/.config/punktfunk/host.env"
 PKGDIR="$SRC/packaging/gamescope"
@@ -39,7 +39,7 @@ unwire() {
     [ -f "$HOST_ENV" ] || return 0
     if grep -q '^PUNKTFUNK_GAMESCOPE_BIN=' "$HOST_ENV"; then
         sed -i '/^# HDR gamescope built by scripts\/steamdeck/d;/^PUNKTFUNK_GAMESCOPE_BIN=/d' "$HOST_ENV"
-        warn "host.env: removed PUNKTFUNK_GAMESCOPE_BIN (no working punktfunk-gamescope) — sessions stream SDR"
+        warn "host.env: removed PUNKTFUNK_GAMESCOPE_BIN (no working lilynk-gamescope) — sessions stream SDR"
     fi
 }
 wire() {
@@ -58,19 +58,19 @@ verifies() { [ -x "$GS_BIN" ] && "$GS_BIN" --version 2>&1 | head -1 | grep -q '+
 # else makes this a fast no-op.
 want_stamp="$(find "$PKGDIR" -type f | LC_ALL=C sort | xargs sha256sum | sha256sum | cut -d' ' -f1)"
 if [ -f "$STAMP" ] && [ "$(cat "$STAMP")" = "$want_stamp" ] && verifies; then
-    ok "punktfunk-gamescope up to date ($("$GS_BIN" --version 2>&1 | head -1))"
+    ok "lilynk-gamescope up to date ($("$GS_BIN" --version 2>&1 | head -1))"
     wire
     exit 0
 fi
 
-log "Building punktfunk-gamescope (HDR 10-bit capture; ~5 min, best-effort)"
+log "Building lilynk-gamescope (HDR 10-bit capture; ~5 min, best-effort)"
 # gamescope's build deps in the box (trixie names, mirroring packaging/gamescope/PKGBUILD — keep
 # the two lists in step). Provisioned here, not in install.sh's main pass, so a dep problem can
 # only ever cost this feature. glm/stb come in as meson wraps; wlroots/libliftoff/vkroots/
 # libdisplay-info are vendored submodules — none of those need packages.
 #
 # ⚠ The last two names are the WSI LAYER's. A missing x11-xcb does NOT fail the compositor build —
-# it fails layer/meson.build, and build-punktfunk-gamescope.sh treats a missing layer as a hard
+# it fails layer/meson.build, and build-lilynk-gamescope.sh treats a missing layer as a hard
 # error, so the whole build exits non-zero. ci/gamescope-trixie.Dockerfile asserts x11-xcb at
 # image build for the same reason.
 #
@@ -79,7 +79,7 @@ log "Building punktfunk-gamescope (HDR 10-bit capture; ~5 min, best-effort)"
 # build, install and print its +pfhdr banner in the box — then die on SteamOS with
 # `libdisplay-info.so.2: cannot open shared object file`, if meson preferred the system lib over
 # gamescope's vendored submodule and linked it SHARED. The force_fallback_for pin in
-# build-punktfunk-gamescope.sh, next to wlroots, prevents that; the package has no reason to be
+# build-lilynk-gamescope.sh, next to wlroots, prevents that; the package has no reason to be
 # here. Only add a name whose soname SteamOS itself ships.
 # bison and libexpat1-dev only build the bundled xkbcommon and wayland-scanner; neither is linked.
 if ! distrobox enter "$BOX" -- bash -lc '
@@ -107,7 +107,7 @@ sudo apt-get install -y -qq --no-install-recommends \
 fi
 if ! distrobox enter "$BOX" -- bash -lc "
 set -e
-bash '$PKGDIR/build-punktfunk-gamescope.sh' --prefix \"\$HOME/.local\" --no-setcap
+bash '$PKGDIR/build-lilynk-gamescope.sh' --prefix \"\$HOME/.local\" --no-setcap
 "; then
     # A failed build REPLACES NOTHING — the previously installed binary is untouched on disk. If it
     # still passes the on-glass check it is the very binary that was streaming HDR before this run,
@@ -115,10 +115,10 @@ bash '$PKGDIR/build-punktfunk-gamescope.sh' --prefix \"\$HOME/.local\" --no-setc
     # `verifies` — the else branch at the bottom, which also removes it. `wire` re-adds the
     # host.env line when it is missing.
     if verifies; then
-        warn "punktfunk-gamescope failed to build — keeping the installed $("$GS_BIN" --version 2>&1 | head -1) (stale; re-run update.sh to retry)"
+        warn "lilynk-gamescope failed to build — keeping the installed $("$GS_BIN" --version 2>&1 | head -1) (stale; re-run update.sh to retry)"
         wire
     else
-        warn "punktfunk-gamescope failed to build and none is installed — sessions stay SDR (re-run update.sh to retry)"
+        warn "lilynk-gamescope failed to build and none is installed — sessions stay SDR (re-run update.sh to retry)"
         unwire
     fi
     exit 0
@@ -135,7 +135,7 @@ if verifies; then
     mkdir -p "$(dirname "$STAMP")"
     printf '%s' "$want_stamp" > "$STAMP"
     wire
-    ok "punktfunk-gamescope ready: $("$GS_BIN" --version 2>&1 | head -1)"
+    ok "lilynk-gamescope ready: $("$GS_BIN" --version 2>&1 | head -1)"
 else
     # Built in the box but does not run on SteamOS (an ABI/soname seam) or lacks the marker. A
     # broken binary must not linger where PATH or host.env could resolve it.

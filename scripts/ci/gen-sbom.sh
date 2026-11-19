@@ -12,7 +12,7 @@
 # Requires: syft (pinned install in the workflow), python3 (a proven runner dependency).
 set -eu
 VERSION="${1:?usage: gen-sbom.sh VERSION [OUTPUT]}"
-OUT="${2:-punktfunk-${VERSION}.cdx.json}"
+OUT="${2:-lilynk-${VERSION}.cdx.json}"
 TMP="${OUT}.syft.tmp"
 
 syft scan "dir:." --source-name punktfunk --source-version "$VERSION" \

@@ -18,11 +18,11 @@ The guided installer, the Windows installer and the SteamOS script start the con
 Linux host installed by hand needs it enabled as your desktop user:
 
 ```sh
-systemctl --user enable --now punktfunk-web
+systemctl --user enable --now lilynk-web
 ```
 
 `Unit not found` means the console package is missing:
-[install it](/docs/troubleshooting-startup#systemctl---user-status-punktfunk-web-unit-not-found).
+[install it](/docs/troubleshooting-startup#systemctl---user-status-lilynk-web-unit-not-found).
 
 The console answers devices on your local network or a VPN and refuses the internet. To keep it to
 the host machine, set `PUNKTFUNK_UI_BIND=127.0.0.1` in `host.env`
@@ -33,7 +33,7 @@ the host machine, set `PUNKTFUNK_UI_BIND=127.0.0.1` in `host.env`
 Plugin interfaces are served on **TCP 47993**, a separate origin, so plugin code can't act with
 your console login.
 
-- Open **47992 and 47993** on the host's firewall. The packaged `punktfunk-web` firewall profile
+- Open **47992 and 47993** on the host's firewall. The packaged `lilynk-web` firewall profile
   lists both.
 - Your browser trusts the certificate per port. The first time you open a plugin, the console
   shows **Trust this plugin's port once**: click **Open in a new tab**, accept the warning, and

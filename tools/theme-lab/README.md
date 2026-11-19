@@ -2,10 +2,10 @@
 
 Edit the console's backdrop palettes on the field shader the console draws, and read the
 legibility checks while the field moves. The page exports each palette as a `PALETTES` entry for
-`crates/client/pf-console-ui/src/palette.rs`.
+`crates/client/ly-console-ui/src/palette.rs`.
 
 ```sh
-cargo test -p pf-console-ui --lib dump_theme_lab -- --ignored   # refresh lab-data.json
+cargo test -p ly-console-ui --lib dump_theme_lab -- --ignored   # refresh lab-data.json
 python3 -m http.server -d tools/theme-lab                       # then open http://localhost:8000
 ```
 

@@ -8,7 +8,7 @@ underneath, so the repo and packages are the [Arch](/docs/arch) ones; only the i
 the desktop wiring differ.
 
 **One command instead?** The [guided installer](/docs/install#guided-install-preview) (preview)
-runs every step below, `punktfunk-omarchy setup` included:
+runs every step below, `lilynk-omarchy setup` included:
 
 <Installer />
 
@@ -26,12 +26,12 @@ Run `pacman -Sy`, then `pacman -S`, as shown. Omarchy aborts any `pacman -Syu <p
 (*"Woah partner…"*) and installs nothing, because system upgrades go through `omarchy update`.
 </Callout>
 
-The last line, `punktfunk-omarchy setup`, does the rest. Each step is safe to re-run:
+The last line, `lilynk-omarchy setup`, does the rest. Each step is safe to re-run:
 
 | Step | What it does |
 | --- | --- |
 | **Groups** | Adds you to `input` (virtual gamepads) and `punktfunk` (the virtual Steam Deck pad). Restart the computer before streaming. |
-| **Autostart** | Enables `punktfunk-host` and `punktfunk-web` as user services that start at login. |
+| **Autostart** | Enables `lilynk-host` and `lilynk-web` as user services that start at login. |
 | **Firewall** | Opens the host's ufw profiles to your local networks (`192.168.0.0/16`, `10.0.0.0/8`, `172.16.0.0/12`), Tailscale's `tailscale0` and NetBird's `wt0`, plus a management port moved off 47990. |
 | **Browser trust** | Trusts the console's certificate in Chromium, so it opens without a warning. |
 | **App menu** | Adds **Punktfunk Web Console** to Apps (`Super`+`Space`), already signed in, plus a **Punktfunk Host** submenu. |
@@ -39,11 +39,11 @@ The last line, `punktfunk-omarchy setup`, does the rest. Each step is safe to re
 | **Toasts** | Pairing requests (with **Approve** / **Deny**) and stream start/stop as Omarchy notifications. |
 | **Idle** | Keeps the screen awake while a stream runs, then restores your setting. |
 | **Theme** | The web console and the Linux client follow `omarchy-theme-set`. |
-| **Client menu** | With `punktfunk-client` installed: your saved hosts in the Omarchy menu. |
+| **Client menu** | With `lilynk-client` installed: your saved hosts in the Omarchy menu. |
 
 To skip a part, pass `--groups=0`, `--cert=0`, `--toasts=0`, `--idle-guard=0`, `--theme=0` or
 `--menu=0`. The guided installer asks about toasts, idle and theme on its own settings screen.
-`punktfunk-omarchy status` shows what is on.
+`lilynk-omarchy status` shows what is on.
 
 ## 3. Pair
 
@@ -51,9 +51,9 @@ Open **Punktfunk Web Console** from Apps and [pair your first device](/docs/web-
 From a terminal instead:
 
 ```sh
-punktfunk-host ctl pair arm      # opens a pairing window and prints the PIN
-punktfunk-host ctl pending       # devices waiting, with name and fingerprint tail
-punktfunk-host ctl approve 1
+lilynk-host ctl pair arm      # opens a pairing window and prints the PIN
+lilynk-host ctl pending       # devices waiting, with name and fingerprint tail
+lilynk-host ctl approve 1
 ```
 
 The **Punktfunk Host** submenu has the same actions. Every verb: [`ctl`](/docs/host-cli#ctl).
@@ -66,7 +66,7 @@ The **Punktfunk Host** submenu has the same actions. Every verb: [`ctl`](/docs/h
 | **This screen** | This box's primary monitor, untouched. |
 
 Pick one from **Punktfunk Host** in Apps, from the bar widget's **Display** tab, or with
-`punktfunk-omarchy mode dedicated` / `mode mirror` (`mode --status` shows the current one).
+`lilynk-omarchy mode dedicated` / `mode mirror` (`mode --status` shows the current one).
 Switching restarts a running host and ends its stream. **This screen** is the
 [Streamed screen](/docs/stream-a-monitor) setting.
 
@@ -91,7 +91,7 @@ Sunshine's ports.
 - The guided installer moves Punktfunk's management API to 47991 when Sunshine, Apollo or
   Vibeshine is running or enabled, and `setup` opens that port. By hand: add
   `PUNKTFUNK_MGMT_BIND=0.0.0.0:47991` to `~/.config/punktfunk/host.env`, then re-run
-  `punktfunk-omarchy setup`.
+  `lilynk-omarchy setup`.
 - Leave GameStream off while Sunshine runs; only one host can bind those ports.
 
 To switch for good, run `omarchy remove service sunshine`. See
@@ -106,9 +106,9 @@ setting, restarts the host and opens the ufw profile. Enter the PIN a Moonlight 
 
 ## This box as a client
 
-The install line includes `punktfunk-client`. It follows the Omarchy theme live; turn that off with
+The install line includes `lilynk-client`. It follows the Omarchy theme live; turn that off with
 **Follow system theme** in its preferences or in the game console's settings. **Hosts in the
-Omarchy menu** in preferences (or `punktfunk-client --omarchy-menu on`) adds a **Punktfunk**
+Omarchy menu** in preferences (or `lilynk-client --omarchy-menu on`) adds a **Punktfunk**
 submenu with a connect row per saved host, a wake row where the MAC is known, and the game
 console. `setup` turns it on for you.
 
@@ -123,7 +123,7 @@ console. `setup` turns it on for you.
 
 ## Troubleshooting
 
-Run `punktfunk-omarchy status` first. It checks the units, ufw rules, groups, the portal and
+Run `lilynk-omarchy status` first. It checks the units, ufw rules, groups, the portal and
 Hyprland's permission mode in one pass.
 
 ### Black frames
@@ -132,7 +132,7 @@ Hyprland's permission enforcement is on and denies the host's screen capture. In
 affected. Add to your Hyprland config, then restart Hyprland:
 
 ```lua
-hl.permission("/usr/bin/punktfunk-host", "screencopy", "allow")
+hl.permission("/usr/bin/lilynk-host", "screencopy", "allow")
 hl.permission("/usr/(lib|libexec|lib64)/xdg-desktop-portal-hyprland", "screencopy", "allow")
 ```
 
@@ -145,21 +145,21 @@ Capture goes through `xdg-desktop-portal-hyprland`. Check it with
 
 ### The host isn't running after a reboot
 
-Autostart is off. Re-run `punktfunk-omarchy setup`.
+Autostart is off. Re-run `lilynk-omarchy setup`.
 
 ### Physical monitors stay dark after a disconnect
 
 The virtual display is still in its [keep-alive](/docs/virtual-displays#keep-alive) window, after
 which its workspace moves to a physical monitor. Release it early in the console (**Displays** →
-**Release**) or with `punktfunk-host ctl display release`.
+**Release**) or with `lilynk-host ctl display release`.
 
 More in [Troubleshooting](/docs/troubleshooting) and on the [Hyprland page](/docs/hyprland).
 
 ## Uninstall
 
 ```sh
-punktfunk-omarchy remove
-sudo pacman -R punktfunk-host punktfunk-web punktfunk-scripting punktfunk-client   # the ones you have
+lilynk-omarchy remove
+sudo pacman -R lilynk-host lilynk-web lilynk-scripting lilynk-client   # the ones you have
 ```
 
 `remove` undoes every `setup` step and restores the tray icon and the screen-share picker. Your

@@ -10,4 +10,4 @@
 # cargo-ndk sets RUSTFLAGS internally for its linker configuration.
 #
 # If a slowdown on the aarch64 per-packet decrypt path is suspected, run
-# `cargo bench -p punktfunk-core --bench pipeline -- in_place` rather than reaching for a cfg.
+# `cargo bench -p lilynk-core --bench pipeline -- in_place` rather than reaching for a cfg.

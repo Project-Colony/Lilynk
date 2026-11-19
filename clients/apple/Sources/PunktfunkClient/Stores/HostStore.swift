@@ -5,7 +5,7 @@
 // trust-on-first-use prompt (user compares the observed fingerprint against the host's
 // log) or the SPAKE2 PIN pairing ceremony (PairSheet; mutually verified, and the host
 // stores our identity from ClientIdentityStore in return). Every later connect passes
-// the pin into punktfunk-core, which refuses a host whose identity changed. A host admits only
+// the pin into lilynk-core, which refuses a host whose identity changed. A host admits only
 // paired clients unless started with --open, so for it pairing is the only way in.
 
 import Foundation

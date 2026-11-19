@@ -4,9 +4,9 @@ Status: accepted, 2026-10-20.
 
 ## Context
 
-`pf-capture` has two kinds of source. Pixel sources hand the stream loop pixels: PipeWire,
+`ly-capture` has two kinds of source. Pixel sources hand the stream loop pixels: PipeWire,
 direct Wayland capture, the synthetic patterns. Remote-encoder sources hand it the news that an
-encoder they do not run took a frame: IDD-push (the encoder runs in the pf-vdisplay driver) and
+encoder they do not run took a frame: IDD-push (the encoder runs in the ly-vdisplay driver) and
 WGC (it runs in the capture worker). One `Capturer` trait had grown as the union of their needs:
 26 methods, 14 of them with one implementor, so both loops called no-ops on most sources and
 every new need landed on all of them. The decisions fixed most often were OS calls interleaved
@@ -36,8 +36,8 @@ with choices, and environment knobs were read where they were used.
    samples the OS, steps the model, executes the actions.
 5. **Knobs once.** Every `PUNKTFUNK_*` read in the crate is in `knobs.rs`, resolved once per open
    and passed as a value.
-6. **Crate edges.** pf-capture depends on pf-frame, pf-zerocopy, the display leaves and
-   pf-encode-core (the `Encoder` contract), never on pf-encode or the host. What only the host
+6. **Crate edges.** ly-capture depends on ly-frame, ly-zerocopy, the display leaves and
+   ly-encode-core (the `Encoder` contract), never on ly-encode or the host. What only the host
    knows arrives at open: a value (`ZeroCopyPolicy`) or a closure (the driver IOCTL senders, the
    gamescope cursor targets).
 
@@ -52,4 +52,4 @@ with choices, and environment knobs were read where they were used.
 - Rejected: a capabilities struct (it borrows every role at once), downcasting (the host would
   name the source types), renaming the trait (no new information).
 
-Evidence: `design/pf-capture-overhaul.md` §3–4 in the planning repository.
+Evidence: `design/ly-capture-overhaul.md` §3–4 in the planning repository.

@@ -4,9 +4,9 @@ use super::{update_preset, Cx};
 use crate::app::style::*;
 use crate::app::{saved, AsyncSetState};
 use crate::trust::KnownHosts;
-use pf_client_core::presets::{PresetsFile, StreamPreset};
-use pf_client_core::settings::Label;
-use pf_l10n::{client, common, desktop};
+use ly_client_core::presets::{PresetsFile, StreamPreset};
+use ly_client_core::settings::Label;
+use ly_l10n::{client, common, desktop};
 use windows_reactor::*;
 
 /// The chip palette a preset can carry (`StreamPreset.accent`), same set as the GTK client so

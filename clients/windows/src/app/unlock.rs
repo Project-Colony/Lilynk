@@ -1,18 +1,18 @@
 //! The prompt before a dial to a profile on a person's own account, which asks for its
 //! password, or to a locked profile, which asks for its PIN; with Windows Hello beside it: a
 //! Hello proof when this device holds the profile's key, a new key from the prompt's switch.
-//! The rules are `pf_client_core::unlock`; this file runs them off the UI thread and draws the
+//! The rules are `ly_client_core::unlock`; this file runs them off the UI thread and draws the
 //! prompt as a root sheet, like the picker.
 
 use super::style::*;
 use super::{AppCtx, AsyncSetState, Screen, Target};
 use crate::hello::{self, Hello};
-use pf_client_core::library::HostApi;
-use pf_client_core::profiles::{ListedProfile, UnlockNeed};
-use pf_client_core::unlock::{self, DeviceKey, Gate};
-use pf_fluent::Palette;
-use pf_l10n::{client, common};
-use punktfunk_core::quic::v2::msg::{ProfileUnlock, Zeroizing};
+use lilynk_core::quic::v2::msg::{ProfileUnlock, Zeroizing};
+use ly_client_core::library::HostApi;
+use ly_client_core::profiles::{ListedProfile, UnlockNeed};
+use ly_client_core::unlock::{self, DeviceKey, Gate};
+use ly_fluent::Palette;
+use ly_l10n::{client, common};
 use std::rc::Rc;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
@@ -113,8 +113,8 @@ pub(crate) fn after_refusal(
             let row = super::profiles::relisted(&ctx, &target, pin, &id);
             let (Some(row), Some(box_fp)) = (row, pin) else {
                 st.call(error.unwrap_or_else(|| {
-                    pf_client_core::trust::connect_reject_message(
-                        punktfunk_core::reject::RejectReason::ProfileLocked,
+                    ly_client_core::trust::connect_reject_message(
+                        lilynk_core::reject::RejectReason::ProfileLocked,
                     )
                 }));
                 return ss.call(Screen::Home);
@@ -195,7 +195,7 @@ fn api(ctx: &AppCtx, target: &Target, box_fp: [u8; 32]) -> HostApi {
     let mgmt = target
         .host
         .mgmt_port
-        .unwrap_or(pf_client_core::library::DEFAULT_MGMT_PORT);
+        .unwrap_or(ly_client_core::library::DEFAULT_MGMT_PORT);
     let (addr, port) = (&target.host.addr, target.host.port);
     HostApi::new(addr, mgmt, port, &ctx.identity, Some(box_fp))
 }

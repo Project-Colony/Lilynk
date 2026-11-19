@@ -9,9 +9,9 @@ import Foundation
 /// Persisted-setting keys. The string VALUES are stable on disk — rename the symbol freely, but
 /// never the string (it would orphan everyone's saved value).
 public enum DefaultsKey {
-    public static let streamWidth = "punktfunk.width"
-    public static let streamHeight = "punktfunk.height"
-    public static let streamHz = "punktfunk.hz"
+    public static let streamWidth = "lilynk.width"
+    public static let streamHeight = "lilynk.height"
+    public static let streamHz = "lilynk.hz"
     /// Match-window resolution policy: when on, the stream mode FOLLOWS the session view — the
     /// connect asks for the view's pixel size and a mid-session resize (a windowed macOS window,
     /// an iPad Stage Manager / Split View scene) renegotiates the host's virtual display +
@@ -20,7 +20,7 @@ public enum DefaultsKey {
     /// `streamWidth`/`streamHeight` are used and never auto-resized (a fullscreen session is
     /// native either way, so this degenerates to Auto-native there). Read per session by the
     /// stream views' `MatchWindowFollower`.
-    public static let matchWindow = "punktfunk.matchWindow"
+    public static let matchWindow = "lilynk.matchWindow"
     /// Render-resolution multiplier (a `RenderScale` value, default 1.0): the client asks the host
     /// to render/encode at `chosen resolution × scale`, then the presenter downscales the larger
     /// decoded frame to this display, luma through a Lanczos pass (`lumaForTarget`). > 1
@@ -30,28 +30,28 @@ public enum DefaultsKey {
     /// it; above 1x the connect also names the 1x view, and a host that reads it scales down
     /// before encoding (`RenderScale`). Clamped even + to the codec's max dimension at connect.
     /// Applies to the fixed mode and the match-window path.
-    public static let renderScale = "punktfunk.renderScale"
+    public static let renderScale = "lilynk.renderScale"
     /// How a frame whose shape differs from the view fills it: a `VideoFit` raw value, `"fit"`
     /// (default, bars), `"crop"` or `"stretch"`. The cross-client `video_fit` key.
-    public static let videoFit = "punktfunk.videoFit"
+    public static let videoFit = "lilynk.videoFit"
     /// `"this"` (default) or `"all"`: a host screen on each of this Mac's displays. The
     /// cross-client `screens` key.
-    public static let screens = "punktfunk.screens"
-    public static let compositor = "punktfunk.compositor"
-    public static let gamepadType = "punktfunk.gamepadType"
-    public static let gamepadID = "punktfunk.gamepadID"
+    public static let screens = "lilynk.screens"
+    public static let compositor = "lilynk.compositor"
+    public static let gamepadType = "lilynk.gamepadType"
+    public static let gamepadID = "lilynk.gamepadID"
     /// The `PunktfunkConnection.GamepadType` raw value of the last controller that was actually
     /// attached — written by `GamepadManager` whenever one becomes active, never cleared on
     /// disconnect, so a button legend keeps speaking the pad the user owns once it sleeps or
     /// disconnects. See `GamepadGlyphs`.
-    public static let lastGamepadKind = "punktfunk.lastGamepadKind"
+    public static let lastGamepadKind = "lilynk.lastGamepadKind"
     /// Forward this device's controllers to the host at all (default true). Off is for a
     /// couch whose controller reaches the host another way — USB passthrough such as
     /// VirtualHere, or a pad plugged into the host — where forwarding as well would give the
     /// host two pads for one pair of hands. Read at connect: `GamepadCapture` still runs, for the
     /// shortcuts and the escape chord, but sends nothing, so no arrival reaches the host and no
     /// virtual pad is built.
-    public static let gamepadForwarding = "punktfunk.gamepadForwarding"
+    public static let gamepadForwarding = "lilynk.gamepadForwarding"
     /// Steam Controller 2 as-is passthrough: capture of a real SC2 → the host's virtual
     /// 28DE:1302, which the host's Steam drives directly. Two transports — CoreBluetooth against
     /// a paired pad's vendor GATT service (every platform), and raw USB HID against a wired pad
@@ -70,21 +70,21 @@ public enum DefaultsKey {
     /// controller interface carries the lizard keyboard collection). Android asks only when a
     /// pad is present, so it can capture by default and cost nothing without one. Do not align
     /// the platforms without moving the prompt.
-    public static let sc2Capture = "punktfunk.sc2Capture"
+    public static let sc2Capture = "lilynk.sc2Capture"
     /// Where a controller's SYSTEM buttons (guide + the share/QAM misc) land while streaming:
     /// `"auto"` | `"forward"` | `"local"` — the cross-client `system_buttons` key. Auto
     /// forwards on every Apple platform: the local Game Overlay is the OS's business (and on
     /// iOS 27+ the user can hand the Home button to the app in Settings), so suppressing our
     /// send would gain nothing.
-    public static let systemButtons = "punktfunk.systemButtons"
+    public static let systemButtons = "lilynk.systemButtons"
     /// The cross-client `guide_gesture` value: `"auto"` | `"on"` | `"off"`. No row sets it any
     /// more; a stored value decides the Hold Select row of the default shortcuts
     /// (`Shortcuts.defaults(legacyGuideGesture:)`).
-    public static let guideGesture = "punktfunk.guideGesture"
-    public static let bitrateKbps = "punktfunk.bitrateKbps"
+    public static let guideGesture = "lilynk.guideGesture"
+    public static let bitrateKbps = "lilynk.bitrateKbps"
     /// Requested audio channel count: 2 (stereo), 6 (5.1) or 8 (7.1). The host clamps to what it
     /// can capture; the resolved count drives the in-core decode + AVAudioEngine layout.
-    public static let audioChannels = "punktfunk.audioChannels"
+    public static let audioChannels = "lilynk.audioChannels"
     /// Requested audio format — `AudioFormatChoice`'s raw value: `"opus"` (the default), or one
     /// of the lossless rows, `"lossless441"` / `"lossless48"` / `"lossless882"` /
     /// `"lossless96"` / `"lossless1764"`.
@@ -97,107 +97,107 @@ public enum DefaultsKey {
     /// deliberately turned the plane off. A REQUEST: the host's `resolve_audio_plane` gate may
     /// resolve the session back to Opus, and `PunktfunkConnection.resolvedAudioRateHz`/
     /// `resolvedAudioBits`/`resolvedAudioChannels` are what actually happened.
-    public static let audioFormat = "punktfunk.audioFormat"
+    public static let audioFormat = "lilynk.audioFormat"
     /// Preferred video codec: `"auto"` (host decides), `"hevc"`, `"h264"`, `"av1"`, or
     /// `"pyrowave"` (the opt-in wired-LAN wavelet codec — picking it advertises AND prefers it).
     /// A soft preference — the host emits it when it can, else falls back. Drives the decoder
     /// via `Welcome.codec`.
-    public static let codec = "punktfunk.codec"
+    public static let codec = "lilynk.codec"
     /// PyroWave quality, bits per pixel from 0.5 to 2 (default 1.6): the most a PyroWave session
     /// sends. The row shows it as the rate it needs, never as bits per pixel.
-    public static let pyrowaveBpp = "punktfunk.pyrowaveBpp"
-    public static let micEnabled = "punktfunk.micEnabled"
+    public static let pyrowaveBpp = "lilynk.pyrowaveBpp"
+    public static let micEnabled = "lilynk.micEnabled"
     /// visionOS: the room places the stream's audio at its window (on, the platform's own
     /// default); off plays the game's mix straight to the ears. This device's, never a preset's.
-    public static let spatialAudio = "punktfunk.spatialAudio"
+    public static let spatialAudio = "lilynk.spatialAudio"
     /// visionOS: how the screen bends (`ScreenCurve`). This device's, never a preset's.
-    public static let screen = "punktfunk.screen"
+    public static let screen = "lilynk.screen"
     /// Echo cancellation for the mic uplink (on by default): playback + capture share ONE
     /// audio engine so the system voice processor can subtract what this device is playing
     /// from what its mic hears — without it a loudspeaker client feeds the game audio straight
     /// back to the host. Off = the raw two-engine capture path. macOS: an explicitly pinned
     /// speaker/mic or mic channel also bypasses it (the voice processor only follows the
     /// system default devices) — see SessionAudio's topology note.
-    public static let echoCancel = "punktfunk.echoCancel"
+    public static let echoCancel = "lilynk.echoCancel"
     /// Ask the host to leave ITS OWN audio devices alone for this session
     /// (`PUNKTFUNK_CLIENT_CAP_KEEP_HOST_AUDIO`): it captures whatever its default playback
     /// device already is, so the speakers/headphones on the host PC keep playing while this
     /// device hears the same audio. Off (the default): the host parks
     /// playback on a silent endpoint and goes quiet for the session. Best-effort: an older
     /// host ignores the ask and re-routes as it always did.
-    public static let keepHostAudio = "punktfunk.keepHostAudio"
-    public static let speakerUID = "punktfunk.speakerUID"
-    public static let micUID = "punktfunk.micUID"
+    public static let keepHostAudio = "lilynk.keepHostAudio"
+    public static let speakerUID = "lilynk.speakerUID"
+    public static let micUID = "lilynk.micUID"
     /// macOS: which input channel of the chosen mic device feeds the host. 0 = "Auto" (sum every
     /// channel to mono — a mic on a single input of a multi-channel interface passes at full
     /// level); n≥1 pins 1-based input channel n. Multi-channel interfaces expose the mic on ONE
     /// discrete channel, and the default N→stereo downmix grabs channels 0/1 (silence when the mic
     /// is higher up), so we fold to mono ourselves. Only meaningful for multi-channel devices.
-    public static let micChannel = "punktfunk.micChannel"
+    public static let micChannel = "lilynk.micChannel"
     /// The user's presentation intent: "latency" (default — every frame shows as soon as the
     /// display can; jitter appears as the occasional repeat/drop) or "smooth" (a small client
     /// jitter buffer evens the cadence at the cost of added, visible display latency).
     /// Resolved once per session by SessionPresenter — see PresentPriority.
-    public static let presentPriority = "punktfunk.presentPriority"
+    public static let presentPriority = "lilynk.presentPriority"
     /// Smoothness's jitter-buffer capacity in frames: 0 = Automatic (`PresentPriority.resolve`),
     /// or 1…3.
     /// Each buffered frame adds ~one refresh interval of display latency and absorbs ~one
     /// interval of arrival jitter. Only meaningful when `presentPriority` is "smooth".
-    public static let smoothBuffer = "punktfunk.smoothBuffer"
+    public static let smoothBuffer = "lilynk.smoothBuffer"
     /// macOS: V-Sync the stream's presents — each decoded frame flips on the next display vsync
     /// (evenly paced, no tearing under direct scanout) instead of as soon as the GPU finishes
     /// (lowest latency — the default, OFF). Adaptive-refresh Macs present sparse input immediately
     /// and dense input once per link target. PUNKTFUNK_PRESENT_MODE=immediate|vsync|slot|adaptive
     /// overrides that path for A/B. Resolved once per session; see `PresentPolicy`.
-    public static let vsync = "punktfunk.vsync"
+    public static let vsync = "lilynk.vsync"
     /// Allow variable refresh rate, a Mac setting: hand the display link a wide frame-rate RANGE
     /// (24 Hz through the stream rate, the stream rate preferred) so an adaptive-sync display can
     /// vary its physical refresh to match the stream; off fixes the link at the stream rate. On
     /// by default; a no-op on fixed-refresh displays. Read per session/reconfigure by
     /// `SessionPresenter.syncFrameRate`, which other platforms' default pacing never reaches.
-    public static let allowVRR = "punktfunk.allowVRR"
+    public static let allowVRR = "lilynk.allowVRR"
     /// Request a 10-bit BT.2020 PQ (HDR10) stream. On by default; only takes effect when the host
     /// has HDR content AND this display supports HDR — otherwise the stream stays 8-bit SDR.
-    public static let hdrEnabled = "punktfunk.hdrEnabled"
+    public static let hdrEnabled = "lilynk.hdrEnabled"
     /// Request a full-chroma 4:4:4 stream when this device can HARDWARE-decode it (`Stage444Probe`).
     /// Off by default; only takes effect when the host also opted in to 4:4:4 (otherwise the stream
     /// stays 4:2:0). Sharper text/UI at the cost of more bandwidth.
-    public static let enable444 = "punktfunk.enable444"
+    public static let enable444 = "lilynk.enable444"
     /// Advertise 10-bit WITHOUT HDR, so an SDR desktop arrives at Main10 instead of 8-bit.
     /// Off by default, and subsumed by `hdrEnabled`, which already advertises the depth.
     /// Asks nothing of the display: the panel shows the same SDR picture, banding aside.
-    public static let tenBitSdr = "punktfunk.tenBitSdr"
-    public static let hosts = "punktfunk.hosts"
+    public static let tenBitSdr = "lilynk.tenBitSdr"
+    public static let hosts = "lilynk.hosts"
     /// How the host grid is ordered (a `HostSort` raw value) and what it's divided by (a
     /// `HostGrouping`). Per device, never per preset: it is this device's window on its own
     /// list, not something about how a host is streamed.
-    public static let hostSort = "punktfunk.hostSort"
-    public static let hostGrouping = "punktfunk.hostGrouping"
+    public static let hostSort = "lilynk.hostSort"
+    public static let hostGrouping = "lilynk.hostGrouping"
     /// The settings-preset catalog (`PresetCatalog`, one JSON blob) — design
     /// client-settings-profiles.md §4.2. Lives in the APP GROUP suite with `hosts`, not with the
     /// settings: bindings and pins are fields on the host record, and an extension that can read
     /// the hosts should be able to read what they point at.
-    public static let presets = "punktfunk.presets"
+    public static let presets = "lilynk.presets"
     /// Where the catalog lived before the rename (design/preset-rename.md): read while `presets`
     /// is absent, and left as it was for an older build.
-    public static let legacyPresets = "punktfunk.profiles"
+    public static let legacyPresets = "lilynk.profiles"
     /// Physical-mouse model (macOS): "capture" (pointer lock + relative, the default) or
     /// "desktop" (uncaptured absolute pointer) — the cross-client `mouse_mode`.
-    public static let mouseMode = "punktfunk.mouseMode"
+    public static let mouseMode = "lilynk.mouseMode"
     /// Invert the scroll-wheel / two-finger-scroll direction sent to the host (both axes). Off by
     /// default: the local (natural-scrolling) sign passes through untouched. When on, the sign is
     /// negated at the connection's one outbound seam (`PunktfunkConnection.setInvertScroll`), so
     /// it flips consistently across the macOS wheel, the iOS trackpad pan, a GCMouse wheel, and the
     /// touch engine. For users whose host expects the opposite convention from their local OS
     /// preference.
-    public static let invertScroll = "punktfunk.invertScroll"
+    public static let invertScroll = "lilynk.invertScroll"
     /// The in-stream quick-action ring: one JSON blob parsed by `OverlayConfig.parse` (six slots,
     /// shortcuts, the virtual pad's preset). Empty = the platform default ring. Cross-client
     /// `overlay_actions`, presetable as the whole blob.
-    public static let overlayActions = "punktfunk.overlayActions"
+    public static let overlayActions = "lilynk.overlayActions"
     /// In-stream shortcuts: one JSON blob parsed by `Shortcuts.parse`. Empty = this platform's
     /// defaults, which read `guideGesture`. Cross-client `shortcuts`, presetable as the whole blob.
-    public static let shortcuts = "punktfunk.shortcuts"
+    public static let shortcuts = "lilynk.shortcuts"
     /// Location-based modifier mapping (a `ModifierLayout` value, default `.mac`): which Windows VK
     /// each PHYSICAL modifier position forwards to the host. `.mac` keeps ⌥ Option → Alt and
     /// ⌘ Command → Super/Win (the Apple positions). `.windows` swaps the Alt/Super ROLE between the
@@ -206,7 +206,7 @@ public enum DefaultsKey {
     /// Only what's FORWARDED changes; client-local shortcuts (⌘⎋ &co.) stay on the physical ⌘ key.
     /// Read per key event, from the session's settings, at the wire boundary (`InputCapture`).
     /// Control/Shift never move (same position on both keyboards).
-    public static let modifierLayout = "punktfunk.modifierLayout"
+    public static let modifierLayout = "lilynk.modifierLayout"
     /// Send system chords to the host while input is captured — the cross-client
     /// `inhibit_shortcuts`, ON by default. On the SDL clients it is SDL's keyboard grab (Alt+Tab,
     /// the Windows key); macOS has no such grab from a plain app, so `InputCapture`'s keyDown
@@ -217,20 +217,20 @@ public enum DefaultsKey {
     /// either way; ⌃⌘F is forwarded only with it on.
     /// It applies under both mouse models, as on the SDL clients. macOS-only today; nothing reads
     /// it on iOS/tvOS.
-    public static let inhibitShortcuts = "punktfunk.inhibitShortcuts"
+    public static let inhibitShortcuts = "lilynk.inhibitShortcuts"
     /// iPad: capture the mouse/trackpad pointer (pointer lock → relative movement) for games,
     /// rather than forwarding an absolute cursor position. On by default. Only meaningful on iPad
     /// with a hardware mouse/trackpad; the system grants the lock only to a full-screen, frontmost
     /// scene and silently falls back to the absolute pointer when it can't (Stage Manager / Slide
     /// Over). Read by `StreamViewController.prefersPointerLocked`.
-    public static let pointerCapture = "punktfunk.pointerCapture"
+    public static let pointerCapture = "lilynk.pointerCapture"
     /// iPhone/iPad: how touchscreen fingers drive the host — a `TouchInputMode` raw value:
     /// "trackpad" (default: relative cursor with tap-click / two-finger-scroll gestures),
     /// "pointer" (the cursor jumps to the finger), "touch" (real multi-touch passthrough), or
     /// "off" (fingers reach the host as nothing).
     /// Read at each gesture's start by `StreamLayerUIView` (`TouchInputMode.current`).
-    public static let touchMode = "punktfunk.touchMode"
-    // RETIRED: `punktfunk.libraryEnabled`, the "Show game library" switch. Pairing is the only
+    public static let touchMode = "lilynk.touchMode"
+    // RETIRED: `lilynk.libraryEnabled`, the "Show game library" switch. Pairing is the only
     // gate now — the fetch authenticates with the pinned identity, so an unpaired host could
     // only ever be refused. The Rust `library_enabled` went the same way; a stored value is
     // simply ignored, on every client. Do not reintroduce the key under a new name.
@@ -240,97 +240,97 @@ public enum DefaultsKey {
     /// The cross-client `library_sort` key: the desktop console persists the same ids, and an
     /// unknown value reads as host order. Presentation only — a device preference, never part of
     /// a stream preset. Written by the library's sort/view bar and by the Collections screen.
-    public static let librarySort = "punktfunk.librarySort"
+    public static let librarySort = "lilynk.librarySort"
     /// Which arrangement the console's library opens in — a `LibraryArrangement` stored value
     /// (`"grid"`, the default; `"shelf"`). The cross-client `library_view` key;
     /// unset and unknown read as grid. Presentation only. One key, two surfaces: the library's bar
     /// and the Interface settings row both write it.
-    public static let libraryView = "punktfunk.libraryView"
+    public static let libraryView = "lilynk.libraryView"
     /// Where a bare launch opens — a `StartIn` stored value (`"hosts"` the default, `"library"`,
     /// `"stream"`). The cross-client `start_in` key; unknown reads as hosts, and with no default
     /// host every value degrades to the host list. Resolve through `StartScreen.resolve`, never by
     /// reading this alone. Presentation only — a device preference, never part of a preset.
-    public static let startIn = "punktfunk.startIn"
+    public static let startIn = "lilynk.startIn"
     /// The host a bare launch opens on — a `StoredHost.id` uuid string, absent when there is none.
     /// The cross-client `default_host` key. Only half the answer: with exactly one paired host
     /// saved that host is the default with nothing written here, so `StartScreen.resolve` is the
     /// only correct reader. A dangling id falls through to that derived rule.
-    public static let defaultHost = "punktfunk.defaultHost"
+    public static let defaultHost = "lilynk.defaultHost"
     /// The TOUCH library grid's grouping — `""` (none, the default), `"platform"` or `"store"`:
     /// one section per collated group. Touch-only: on the console the grouping is a PLACE
     /// (Collections), not a mode of the shelf, so there is no cross-client key for it. The sort it
     /// composes with is the shared `librarySort`. Presentation only.
-    public static let libraryGroupBy = "punktfunk.libraryGroupBy"
+    public static let libraryGroupBy = "lilynk.libraryGroupBy"
     /// The Library tab's sections, in order: ids joined by commas, `-` before one switched off
     /// (`LibrarySectionLayout`). Empty means every section in its default order. Device-only,
     /// no cross-client key yet.
-    public static let librarySections = "punktfunk.librarySections"
+    public static let librarySections = "lilynk.librarySections"
     /// The shelf the Library tab last showed: a `LibraryTarget.id` (`<host uuid>` or
     /// `<host uuid>#<preset id>`). A shelf whose host is gone falls back to the default host.
-    public static let libraryShelf = "punktfunk.libraryShelf"
+    public static let libraryShelf = "lilynk.libraryShelf"
     /// macOS: take the window fullscreen while streaming and restore it on the host list. On by default.
-    public static let fullscreenWhileStreaming = "punktfunk.fullscreenWhileStreaming"
+    public static let fullscreenWhileStreaming = "lilynk.fullscreenWhileStreaming"
     /// macOS: open the window fullscreen and keep it there on the host list — the cross-client
     /// `fullscreen_always`. Outranks `fullscreenWhileStreaming`. A device preference, never part
     /// of a stream preset.
-    public static let fullscreenAlways = "punktfunk.fullscreenAlways"
+    public static let fullscreenAlways = "lilynk.fullscreenAlways"
     /// LEGACY (pre-tiered overlay): the old boolean stats-overlay toggle. Kept ONLY as the
     /// migration fallback `EffectiveSettings.storedStatsVerbosity` reads when `statsVerbosity` was
     /// never written (absent-or-true → .normal, explicit false → .off). Never written anymore.
-    public static let hudEnabled = "punktfunk.hudEnabled"
+    public static let hudEnabled = "lilynk.hudEnabled"
     /// The statistics overlay tier — a `StatsVerbosity` raw value ("off"/"compact"/"normal"/
     /// "detailed"). Absent → migrated from the legacy `hudEnabled` bool (see above). The tier a
     /// session starts at: ⌃⌥⇧S (the cross-client Ctrl+Alt+Shift+S; macOS / hardware keyboard)
     /// or a three-finger tap (touch) cycles the running session only (`StatsVerbosity.next`).
-    public static let statsVerbosity = "punktfunk.statsVerbosity"
+    public static let statsVerbosity = "lilynk.statsVerbosity"
     /// Which corner the statistics overlay sits in — a `HUDPlacement` raw value
     /// ("topLeading"/"topTrailing"/"bottomLeading"/"bottomTrailing"). Default top-trailing.
-    public static let hudPlacement = "punktfunk.hudPlacement"
+    public static let hudPlacement = "lilynk.hudPlacement"
     /// The statistics overlay's size in percent, on top of the system text size (cross-client
     /// `stats_scale_pct`). Default 100.
-    public static let statsScalePct = "punktfunk.statsScalePct"
+    public static let statsScalePct = "lilynk.statsScalePct"
     /// Show how to leave for a few seconds when a stream starts (cross-client `exit_hint`).
     /// Default on.
-    public static let exitHint = "punktfunk.exitHint"
+    public static let exitHint = "lilynk.exitHint"
     /// The player answered the macOS 26 variable-refresh stutter notice with "Don't warn again".
-    public static let vrrWarningMuted = "punktfunk.vrrWarningMuted"
+    public static let vrrWarningMuted = "lilynk.vrrWarningMuted"
     /// Settings show their advanced rows (cross-client `show_advanced`). Default off; hiding a
     /// row keeps its value.
-    public static let showAdvanced = "punktfunk.showAdvanced"
+    public static let showAdvanced = "lilynk.showAdvanced"
     /// The stats overlay's vocabulary: false (default) shows the figures Moonlight's overlay also
     /// shows, true the Advanced capture-to-glass view. Device-wide; a preset never carries it.
-    public static let advancedStats = "punktfunk.advancedStats"
+    public static let advancedStats = "lilynk.advancedStats"
     /// iOS/iPadOS/macOS: front the console instead of the touch/desktop layouts.
     /// On by default; WHEN it takes over is `gamepadUIMode`. See `GamepadUIEnvironment.isActive`.
-    public static let gamepadUIEnabled = "punktfunk.gamepadUIEnabled"
+    public static let gamepadUIEnabled = "lilynk.gamepadUIEnabled"
     /// When `gamepadUIEnabled` actually takes over: `"connected"` (the default — only while a
     /// usable controller is attached) or `"always"`,
     /// for someone who prefers the console layout with no pad in reach (a TV-connected iPad, a
     /// Mac driven from the couch). Read only while `gamepadUIEnabled` is on, which is why the
     /// settings rows hide it when the switch is off. Anything unrecognized reads as
     /// `"connected"`. A device preference, never part of a stream preset.
-    public static let gamepadUIMode = "punktfunk.gamepadUIMode"
+    public static let gamepadUIMode = "lilynk.gamepadUIMode"
     /// The console's backdrop palette — the cross-client `ui_palette` key, an id from the
     /// console's own table (`ConsoleBridge.palettes`). A device preference, never part of a
     /// stream preset. An unknown value reads as the default: a newer client may have shipped a
     /// palette this build doesn't know.
-    public static let uiPalette = "punktfunk.uiPalette"
+    public static let uiPalette = "lilynk.uiPalette"
     /// The cross-client `pad_rumble` key. Off, the host's rumble never reaches a controller or
     /// this device's own motor, and the console plays no menu pulses. On by default;
     /// `GamepadFeedback` reads it per command, so a change lands mid-stream. A device
     /// preference, never part of a stream preset.
-    public static let padRumble = "punktfunk.padRumble"
+    public static let padRumble = "lilynk.padRumble"
     /// The cross-client `keep_awake` key. On (default), a stream holds the screen awake for as
     /// long as it runs. Off, only while the player's input is recent
     /// (`PunktfunkConnection.holdsScreenAwake`), so the device's own sleep timer runs over a
     /// game left alone. Read each second mid-stream; never part of a stream preset.
-    public static let keepAwake = "punktfunk.keepAwake"
+    public static let keepAwake = "lilynk.keepAwake"
     /// iPhone: ALSO play the rumble the host addresses to controller 1 (wire pad 0) on this
     /// device's own Taptic Engine — for phone-clip pads that ship without rumble motors, where
     /// the phone body is the only actuator in the player's hands. Off by default (opt-in); read
     /// once per session by `GamepadFeedback`. The toggle is shown only where the device actually
     /// has a haptic actuator (no iPad/Mac/TV).
-    public static let rumbleOnDevice = "punktfunk.rumbleOnDevice"
+    public static let rumbleOnDevice = "lilynk.rumbleOnDevice"
     /// Use this device's own gyroscope as player 1's motion when the forwarded controller has
     /// none of its own — for clip-on and third-party pads without an IMU, where the device body
     /// moves with the player's hands. The rumble mirror's sibling, data flowing the other way.
@@ -338,23 +338,23 @@ public enum DefaultsKey {
     /// mirror engages only while pad 0's controller reports no rotation rate (a real gyro pad
     /// always wins). The toggle is shown only where the device has motion hardware
     /// (`DeviceGyro.isAvailable`).
-    public static let gyroFromDevice = "punktfunk.gyroFromDevice"
+    public static let gyroFromDevice = "lilynk.gyroFromDevice"
     /// Auto-wake on connect: when connecting to a saved host that isn't advertising on mDNS, fire
     /// Wake-on-LAN and, if the dial fails, wait for it to come back before retrying (the "Waking…"
     /// overlay). On by default. Turn off if a host that's already on just isn't seen on mDNS (a
     /// routed/VPN host), so connects go straight through instead of waiting out the wake timeout.
     /// The explicit "Wake Host" action stays available regardless. Read through `@AutoWake`.
-    public static let autoWake = "punktfunk.autoWake"
+    public static let autoWake = "lilynk.autoWake"
     /// iOS/iPadOS: keep a streaming session ALIVE when the app is backgrounded (audio background
     /// mode). Off by default: the stream freezes in the background. When on, backgrounding a
     /// live session keeps audio playing and the QUIC/pump live while DROPPING video decode, and a
     /// bounded timer (`backgroundTimeoutMinutes`) auto-disconnects if the user doesn't return. Read
     /// by ContentView's scenePhase driver. Hidden on tvOS/macOS.
-    public static let backgroundKeepAlive = "punktfunk.backgroundKeepAlive"
+    public static let backgroundKeepAlive = "lilynk.backgroundKeepAlive"
     /// iOS/iPadOS: minutes a backgrounded keep-alive session runs before auto-disconnecting (a
     /// battery/thermal/bandwidth backstop). Default 10; the UI offers 1/5/10/30. The auto-disconnect
     /// is non-deliberate (host linger kept), so a late return reconnects fast. Read on enterBackground.
-    public static let backgroundTimeoutMinutes = "punktfunk.backgroundTimeoutMinutes"
+    public static let backgroundTimeoutMinutes = "lilynk.backgroundTimeoutMinutes"
 }
 
 /// What a `DefaultsKey` reads as before anything wrote it. The app's `@AppStorage`, the console's

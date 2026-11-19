@@ -136,7 +136,7 @@ internal class StreamUi(
         }
 
     companion object {
-        /** `punktfunk_core::client::AUDIO_MUTE_LOCAL` / `AUDIO_MUTE_HOST`, as the JNI reports them. */
+        /** `lilynk_core::client::AUDIO_MUTE_LOCAL` / `AUDIO_MUTE_HOST`, as the JNI reports them. */
         const val AUDIO_MUTE_LOCAL = 1
         const val AUDIO_MUTE_HOST = 2
     }

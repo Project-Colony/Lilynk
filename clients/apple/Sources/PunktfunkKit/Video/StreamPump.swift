@@ -105,7 +105,7 @@ final class StreamPump {
                 }
             }
         }
-        thread.name = "punktfunk-pump"
+        thread.name = "lilynk-pump"
         thread.qualityOfService = .userInteractive
         joinable = true
         thread.start()

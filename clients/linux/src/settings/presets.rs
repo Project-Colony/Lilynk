@@ -8,8 +8,8 @@ use super::tables::Text;
 use super::Scope;
 use crate::store::Store;
 use adw::prelude::*;
-use pf_client_core::presets::{PresetsFile, StreamPreset};
-use pf_l10n::{client, common, desktop};
+use ly_client_core::presets::{PresetsFile, StreamPreset};
+use ly_l10n::{client, common, desktop};
 use std::cell::RefCell;
 use std::rc::Rc;
 

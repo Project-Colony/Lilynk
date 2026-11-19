@@ -7,12 +7,12 @@ use super::{
 };
 use crate::app::style::*;
 use crate::trust::{KnownHosts, Settings};
-use pf_client_core::settings::GamepadUi;
-use pf_client_core::shortcuts::Press;
-use pf_client_core::start;
-use pf_client_core::trust::{HudCorner, StatsVerbosity};
-use pf_l10n::{client, common, desktop};
-use punktfunk_core::hud::{stats_scale, STATS_SCALE_PCTS};
+use lilynk_core::hud::{stats_scale, STATS_SCALE_PCTS};
+use ly_client_core::settings::GamepadUi;
+use ly_client_core::shortcuts::Press;
+use ly_client_core::start;
+use ly_client_core::trust::{HudCorner, StatsVerbosity};
+use ly_l10n::{client, common, desktop};
 use windows_reactor::*;
 
 /// Names the host the Start in row resolves to, and says when it resolves to nothing — which

@@ -2,7 +2,7 @@
 //! wait: the bytes ([`Tail`]) and the reading that keeps or drops it ([`Trial`]). No codec:
 //! `decode/async_loop.rs` feeds the tail and reports each output.
 
-use punktfunk_core::quic::{CODEC_H264, CODEC_HEVC};
+use lilynk_core::quic::{CODEC_H264, CODEC_HEVC};
 
 /// What follows each whole AU in the codec's input buffer.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -18,7 +18,7 @@ pub(crate) enum Tail {
 }
 
 impl Tail {
-    /// The tail `debug.punktfunk.au_tail` names: `off`, `fill` or `aud`.
+    /// The tail `debug.lilynk.au_tail` names: `off`, `fill` or `aud`.
     pub(crate) fn named(name: &str) -> Option<Tail> {
         match name {
             "off" => Some(Tail::None),
@@ -171,7 +171,7 @@ impl Trial {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use punktfunk_core::quic::CODEC_AV1;
+    use lilynk_core::quic::CODEC_AV1;
 
     const GAP: u64 = 16_667;
 

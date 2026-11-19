@@ -7201,7 +7201,7 @@
           "plugins"
         ],
         "summary": "Attach a plugin UI channel",
-        "description": "`Upgrade: punktfunk-ui` from the plugin, on its own pipe. The connection is kept for the\nconsole's next request to the plugin's page, which the host sends down it as plain HTTP.",
+        "description": "`Upgrade: lilynk-ui` from the plugin, on its own pipe. The connection is kept for the\nconsole's next request to the plugin's page, which the host sends down it as plain HTTP.",
         "operationId": "attachPluginUi",
         "parameters": [
           {
@@ -7219,7 +7219,7 @@
             "description": "The connection is parked for the plugin's page"
           },
           "400": {
-            "description": "Not an `Upgrade: punktfunk-ui` request",
+            "description": "Not an `Upgrade: lilynk-ui` request",
             "content": {
               "application/json": {
                 "schema": {
@@ -7493,7 +7493,7 @@
           "profiles"
         ],
         "summary": "Turn Reachable without logging in on or off",
-        "description": "Linux. On moves the box's host to a system service that runs from boot, places every connect\non a seat of the box and keeps the box's files in `/var/lib/punktfunk`; the owner plays on a\nseat of their own. Off hands the door's own settings to the owner's host, then puts the files\nand the host back. The answer is 202 once the switch is\nqueued: the console reloads and polls `GET /host`, whose `door` says which host answers. The\nowner's user must be in the `punktfunk-update` group. Admin lane only.",
+        "description": "Linux. On moves the box's host to a system service that runs from boot, places every connect\non a seat of the box and keeps the box's files in `/var/lib/punktfunk`; the owner plays on a\nseat of their own. Off hands the door's own settings to the owner's host, then puts the files\nand the host back. The answer is 202 once the switch is\nqueued: the console reloads and polls `GET /host`, whose `door` says which host answers. The\nowner's user must be in the `lilynk-update` group. Admin lane only.",
         "operationId": "setDoor",
         "requestBody": {
           "content": {
@@ -7523,7 +7523,7 @@
             }
           },
           "403": {
-            "description": "The owner's user isn't in the punktfunk-update group",
+            "description": "The owner's user isn't in the lilynk-update group",
             "content": {
               "application/json": {
                 "schema": {
@@ -11620,7 +11620,7 @@
         "properties": {
           "backend": {
             "type": "string",
-            "description": "`pf-vdisplay`, `kwin`, …"
+            "description": "`ly-vdisplay`, `kwin`, …"
           },
           "client": {
             "type": [
@@ -12377,7 +12377,7 @@
           },
           "encoder_backend": {
             "type": "string",
-            "description": "Backend that actually opened (`\"nvenc\"`, `\"vaapi\"`, `\"vulkan\"`, `\"amf\"`,\n`\"qsv\"`, `\"software\"`, …), from `pf_gpu::active()`. Stage timings are\nunreadable without it. `\"\"` if nothing was streaming at registration."
+            "description": "Backend that actually opened (`\"nvenc\"`, `\"vaapi\"`, `\"vulkan\"`, `\"amf\"`,\n`\"qsv\"`, `\"software\"`, …), from `ly_gpu::active()`. Stage timings are\nunreadable without it. `\"\"` if nothing was streaming at registration."
           },
           "fps": {
             "type": "integer",
@@ -12386,7 +12386,7 @@
           },
           "gpu": {
             "type": "string",
-            "description": "GPU name from `pf_gpu::active()`, or `\"\"`."
+            "description": "GPU name from `ly_gpu::active()`, or `\"\"`."
           },
           "height": {
             "type": "integer",
@@ -13389,7 +13389,7 @@
               "null"
             ],
             "format": "int32",
-            "description": "Protocol the installed pf-vdisplay driver answered at the last handshake; absent until a session ran one.",
+            "description": "Protocol the installed ly-vdisplay driver answered at the last handshake; absent until a session ran one.",
             "minimum": 0
           },
           "host_protocol": {
@@ -13467,7 +13467,7 @@
           },
           "edid_lock": {
             "type": "boolean",
-            "description": "Windows/AMD: pin connector EDID emulation while streaming\n(`pf_win_display::adl_emul`). Locked at first Exclusive isolate\nbefore physicals deactivate (awake sink answers the live-EDID read),\nunlocked at last-member teardown, crash-journaled. Inert without\n`atiadlxx.dll`. Orthogonal to `preset`; default off."
+            "description": "Windows/AMD: pin connector EDID emulation while streaming\n(`ly_win_display::adl_emul`). Locked at first Exclusive isolate\nbefore physicals deactivate (awake sink answers the live-EDID read),\nunlocked at last-member teardown, crash-journaled. Inert without\n`atiadlxx.dll`. Orthogonal to `preset`; default off."
           },
           "game_session": {
             "$ref": "#/components/schemas/GameSession",
@@ -15383,7 +15383,7 @@
           "abi_version": {
             "type": "integer",
             "format": "int32",
-            "description": "`punktfunk-core` C ABI version.",
+            "description": "`lilynk-core` C ABI version.",
             "minimum": 0
           },
           "status": {
@@ -15393,7 +15393,7 @@
           },
           "version": {
             "type": "string",
-            "description": "`punktfunk-host` crate version."
+            "description": "`lilynk-host` crate version."
           }
         }
       },
@@ -15445,7 +15445,7 @@
           },
           "elevated": {
             "type": "boolean",
-            "description": "Windows: `run` gets the signed-in administrator's full token, with no UAC prompt. Runs\nonly after an administrator ran `punktfunk-host hooks elevated on`."
+            "description": "Windows: `run` gets the signed-in administrator's full token, with no UAC prompt. Runs\nonly after an administrator ran `lilynk-host hooks elevated on`."
           },
           "filter": {
             "oneOf": [
@@ -15723,7 +15723,7 @@
           "abi_version": {
             "type": "integer",
             "format": "int32",
-            "description": "`punktfunk-core` C ABI version.",
+            "description": "`lilynk-core` C ABI version.",
             "minimum": 0
           },
           "app_version": {
@@ -15754,7 +15754,7 @@
               "string",
               "null"
             ],
-            "description": "Why turning the door on would be refused here, as the operator's next move, such as the\nfiles a channel installs it with missing, or the account not in `punktfunk-update`. `null`\nwhen it would start, on the door itself and on a seat host, and for every lane but the\nadmin one. The answer is up to 30 s old; a switch request drops it."
+            "description": "Why turning the door on would be refused here, as the operator's next move, such as the\nfiles a channel installs it with missing, or the account not in `lilynk-update`. `null`\nwhen it would start, on the door itself and on a seat host, and for every lane but the\nadmin one. The answer is up to 30 s old; a switch request drops it."
           },
           "door_unavailable_code": {
             "type": [
@@ -15781,7 +15781,7 @@
               "boolean",
               "null"
             ],
-            "description": "Whether hooks and prep steps marked `elevated` run as administrator: `true` once an\nadministrator ran `punktfunk-host hooks elevated on` here. `null` where commands can't\nelevate (every OS but Windows), and for every lane but the admin one."
+            "description": "Whether hooks and prep steps marked `elevated` run as administrator: `true` once an\nadministrator ran `lilynk-host hooks elevated on` here. `null` where commands can't\nelevate (every OS but Windows), and for every lane but the admin one."
           },
           "fingerprint": {
             "type": [
@@ -15825,7 +15825,7 @@
           },
           "version": {
             "type": "string",
-            "description": "`punktfunk-host` crate version."
+            "description": "`lilynk-host` crate version."
           }
         }
       },
@@ -17428,7 +17428,7 @@
           "buttons": {
             "type": "integer",
             "format": "int32",
-            "description": "`punktfunk_core::input::gamepad::BTN_*` mask, as applied.",
+            "description": "`lilynk_core::input::gamepad::BTN_*` mask, as applied.",
             "minimum": 0
           },
           "declared": {
@@ -18403,7 +18403,7 @@
       },
       "PresetRef": {
         "type": "object",
-        "description": "The settings preset a client dialled with ([`punktfunk_core::quic::SessionPreset`]). The\nid is the client's own and stable across a rename, so it is what a hook or plugin keys on\ntogether with the device fingerprint; the name is for people.",
+        "description": "The settings preset a client dialled with ([`lilynk_core::quic::SessionPreset`]). The\nid is the client's own and stable across a rename, so it is what a hook or plugin keys on\ntogether with the device fingerprint; the name is for people.",
         "required": [
           "id",
           "name"
@@ -19648,7 +19648,7 @@
       },
       "SessionEndReason": {
         "type": "string",
-        "description": "Why a session ended, in the client's own words\n([`punktfunk_core::client::PunktfunkEndReason`]) so both ends name the same end the\nsame way. The bytes match that ABI where the two overlap.\n\n[`Self::StoppedByOperator`] from a console stop and [`Self::Stolen`] close as code 0, which\nevery client reads as `host_ended`. A `stopped_by_operator` after an access expiry, an\nunpair, a power action or a closed profile closes with a typed reject code the client names.",
+        "description": "Why a session ended, in the client's own words\n([`lilynk_core::client::PunktfunkEndReason`]) so both ends name the same end the\nsame way. The bytes match that ABI where the two overlap.\n\n[`Self::StoppedByOperator`] from a console stop and [`Self::Stolen`] close as code 0, which\nevery client reads as `host_ended`. A `stopped_by_operator` after an access expiry, an\nunpair, a power action or a closed profile closes with a typed reject code the client names.",
         "enum": [
           "local",
           "game_exited",
@@ -21232,7 +21232,7 @@
               "string",
               "null"
             ],
-            "description": "One-click apply is possible but not opted in — command to run\n(Linux: join `punktfunk-update`)."
+            "description": "One-click apply is possible but not opted in — command to run\n(Linux: join `lilynk-update`)."
           }
         }
       },
@@ -21362,7 +21362,7 @@
     },
     {
       "name": "plugins",
-      "description": "Plugin directory: running `punktfunk-plugin-*` processes register a lease and, optionally, a loopback UI the web console proxies and adds to its nav"
+      "description": "Plugin directory: running `lilynk-plugin-*` processes register a lease and, optionally, a loopback UI the web console proxies and adds to its nav"
     },
     {
       "name": "plugin-access",

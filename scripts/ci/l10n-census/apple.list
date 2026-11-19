@@ -2,7 +2,6 @@ clients/apple/PunktfunkWidgets/HostsWidget.swift	Living Room
 clients/apple/PunktfunkWidgets/LibraryWidget.swift	Choose Host
 clients/apple/PunktfunkWidgets/LibraryWidget.swift	Leave empty to follow your most recent host.
 clients/apple/PunktfunkWidgets/LibraryWidget.swift	Pick whose game library this widget opens.
-clients/apple/PunktfunkWidgets/SessionLiveActivity.swift	Hades II
 clients/apple/Sources/PunktfunkClient/Home/DemoMode.swift	Demo Host
 clients/apple/Sources/PunktfunkClient/Intents/SessionShortcuts.swift	Connect to Host
 clients/apple/Sources/PunktfunkClient/Intents/SessionShortcuts.swift	Connect to {} in {}
@@ -105,7 +104,7 @@ clients/apple/Sources/PunktfunkKit/Connection/ClientTLS.swift	Couldn't load the 
 clients/apple/Sources/PunktfunkKit/Connection/ClientTLS.swift	Couldn't load the client key: {}
 clients/apple/Sources/PunktfunkKit/Connection/ClientTLS.swift	SecIdentityCreateWithCertificate (OSStatus {})
 clients/apple/Sources/PunktfunkKit/Connection/HostDiscovery.swift	Punktfunk host
-clients/apple/Sources/PunktfunkKit/Connection/MgmtTransport.swift	User-Agent: punktfunk-apple Accept: */*
+clients/apple/Sources/PunktfunkKit/Connection/MgmtTransport.swift	User-Agent: lilynk-apple Accept: */*
 clients/apple/Sources/PunktfunkKit/Connection/ProfileUnlock.swift	Face ID
 clients/apple/Sources/PunktfunkKit/Connection/ProfileUnlock.swift	Optic ID
 clients/apple/Sources/PunktfunkKit/Connection/ProfileUnlock.swift	Touch ID
@@ -118,8 +117,8 @@ clients/apple/Sources/PunktfunkKit/Demo/DemoScene.swift	Nothing yet
 clients/apple/Sources/PunktfunkKit/Demo/DemoScene.swift	Right click
 clients/apple/Sources/PunktfunkKit/Demo/DemoScene.swift	Right stick
 clients/apple/Sources/PunktfunkKit/Demo/DemoScene.swift	Scroll down
-clients/apple/Sources/PunktfunkKit/Demo/DemoScene.swift	Scroll down
-clients/apple/Sources/PunktfunkKit/Demo/DemoScene.swift	Scroll up
+clients/apple/Sources/PunktfunkKit/Demo/DemoScene.swift	Scroll left
+clients/apple/Sources/PunktfunkKit/Demo/DemoScene.swift	Scroll right
 clients/apple/Sources/PunktfunkKit/Demo/DemoScene.swift	Scroll up
 clients/apple/Sources/PunktfunkKit/Demo/DemoScene.swift	Streamed from the demo host running inside this app.
 clients/apple/Sources/PunktfunkKit/Gamepad/GamepadManager.swift	Steam Controller

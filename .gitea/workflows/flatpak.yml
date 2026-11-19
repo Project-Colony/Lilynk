@@ -40,16 +40,16 @@ on:
       - 'clients/linux/**'
       - 'clients/session/**'
       - 'clients/cli/**'
-      - 'crates/client/pf-client-core/**'
-      - 'crates/client/pf-client-video/**'
-      - 'crates/client/pf-console-ui/**'
-      - 'crates/client/pf-presenter/**'
-      - 'crates/codec/pf-bitstream/**'
-      - 'crates/codec/pf-libva/**'
-      - 'crates/codec/pf-v4l2/**'
-      - 'crates/codec/pf-v4l2dec/**'
-      - 'crates/codec/pf-vaapi/**'
-      - 'crates/codec/pf-vkdecode/**'
+      - 'crates/client/ly-client-core/**'
+      - 'crates/client/ly-client-video/**'
+      - 'crates/client/ly-console-ui/**'
+      - 'crates/client/ly-presenter/**'
+      - 'crates/codec/ly-bitstream/**'
+      - 'crates/codec/ly-libva/**'
+      - 'crates/codec/ly-v4l2/**'
+      - 'crates/codec/ly-v4l2dec/**'
+      - 'crates/codec/ly-vaapi/**'
+      - 'crates/codec/ly-vkdecode/**'
       - 'crates/codec/pyrowave-sys/**'
       - 'crates/core/**'
       - 'l10n/**'
@@ -59,7 +59,7 @@ on:
       - 'packaging/linux/icons/hicolor/scalable/apps/io.unom.punktfunk.svg'
       - 'Cargo.toml'
       - 'Cargo.lock'
-      - 'scripts/ci/pf-version.sh'
+      - 'scripts/ci/ly-version.sh'
       # This job's own correctness, not the bundle's content: a change to any of these can only
       # be proven by a real run, and there is no other trigger that would give it one.
       - '.gitea/workflows/flatpak.yml'
@@ -76,7 +76,7 @@ env:
   # onto APP_ID, so `flatpak update` moves an old install instead of failing on a missing ref.
   LEGACY_APP_ID: io.unom.Punktfunk
   MANIFEST: packaging/flatpak/io.unom.punktfunk.yml
-  PACKAGE: punktfunk-client-flatpak     # generic-registry package name
+  PACKAGE: lilynk-client-flatpak     # generic-registry package name
   REPO_URL: https://flatpak.unom.io   # shared unom OSTree repo (reusable across unom apps)
   DEPLOY_DIR: unom-flatpak             # ~/<dir> on unom-1 (compose + ./site tree)
 
@@ -92,11 +92,11 @@ jobs:
         include:
           - arch: x86_64
             runner: ubuntu-24.04
-            image: 192.168.1.58:5010/punktfunk-flatpak-ci:latest
+            image: 192.168.1.58:5010/lilynk-flatpak-ci:latest
             suffix: ''
           - arch: aarch64
             runner: linux-arm64
-            image: 192.168.1.58:5010/punktfunk-flatpak-ci-arm64:latest
+            image: 192.168.1.58:5010/lilynk-flatpak-ci-arm64:latest
             suffix: '-aarch64'
     runs-on: ${{ matrix.runner }}
     # The aarch64 leg must never hold back the x86_64 canary while it is unproven on hardware.
@@ -143,7 +143,7 @@ jobs:
           # Fail loudly instead.
           for t in flatpak flatpak-builder ostree git python3 gpg rsync ssh curl jq node; do
             command -v "$t" >/dev/null \
-              || { echo "::error::$t is missing from punktfunk-flatpak-ci — docker.yml must republish :latest"; exit 1; }
+              || { echo "::error::$t is missing from lilynk-flatpak-ci — docker.yml must republish :latest"; exit 1; }
           done
           python3 -c 'import aiohttp, tomlkit' \
             || { echo "::error::flatpak-cargo-generator.py's deps (aiohttp/tomlkit) missing from the image"; exit 1; }
@@ -185,18 +185,18 @@ jobs:
 
       - name: Version + channel
         # Tag vX.Y.Z -> X.Y.Z on the OSTree `stable` branch (a real release); a main push ->
-        # <next-minor>-ciN.g<sha> on the `canary` branch (scripts/ci/pf-version.sh owns the rule).
+        # <next-minor>-ciN.g<sha> on the `canary` branch (scripts/ci/ly-version.sh owns the rule).
         # The two branches live side-by-side in one repo (rsync runs without --delete), each tracked
         # by its own .flatpakref, so `flatpak update` on a stable box never jumps to a canary build.
         # The generic-registry version string allows letters/dots/hyphens.
         run: |
-          eval "$(bash scripts/ci/pf-version.sh --format flatpak)"   # -> PF_VERSION, PF_CHANNEL
+          eval "$(bash scripts/ci/ly-version.sh --format flatpak)"   # -> PF_VERSION, PF_CHANNEL
           case "$PF_CHANNEL" in
             stable) ALIAS=latest ;;
             *)      ALIAS=canary ;;
           esac
           echo "VERSION=$PF_VERSION" >> "$GITHUB_ENV"
-          echo "BUNDLE=punktfunk-client-${PF_VERSION}${{ matrix.suffix }}.flatpak" >> "$GITHUB_ENV"
+          echo "BUNDLE=lilynk-client-${PF_VERSION}${{ matrix.suffix }}.flatpak" >> "$GITHUB_ENV"
           echo "FLATPAK_BRANCH=$PF_CHANNEL" >> "$GITHUB_ENV"
           echo "ALIAS=$ALIAS" >> "$GITHUB_ENV"
           # The manifest's cargo step reads this into PUNKTFUNK_BUILD_VERSION (the repo dir is
@@ -207,10 +207,10 @@ jobs:
       - name: Generate offline cargo sources
         # flatpak builds with no network; vendor every crate from Cargo.lock into
         # cargo-sources.json next to the manifest (referenced by the manifest's
-        # punktfunk-client module).
+        # lilynk-client module).
         #
         # Prune the microsoft/windows-rs git crates first: they belong to
-        # punktfunk-client-windows, which the flatpak never builds, and leaving them in makes
+        # lilynk-client-windows, which the flatpak never builds, and leaving them in makes
         # flatpak-builder full-clone that multi-GB repo at build time → "No space left on
         # device" (see packaging/flatpak/prune-windows-lock.py). The committed Cargo.lock is
         # untouched; cargo --offline only needs sources for the crates it compiles.
@@ -306,7 +306,7 @@ jobs:
             echo "deps satisfied by the baked image — not touching Flathub"
             flatpak list --user --columns=ref
           else
-            echo "::warning::$MANIFEST declares deps punktfunk-flatpak-ci does not have — pulling from Flathub (~1.5 GB). Bump GNOME_VERSION/FREEDESKTOP_VERSION in ci/flatpak-ci.Dockerfile so this stays off the hot path."
+            echo "::warning::$MANIFEST declares deps lilynk-flatpak-ci does not have — pulling from Flathub (~1.5 GB). Bump GNOME_VERSION/FREEDESKTOP_VERSION in ci/flatpak-ci.Dockerfile so this stays off the hot path."
             bash scripts/ci/retry.sh 10 flatpak-builder --user --force-clean --disable-rofiles-fuse \
               --install-deps-from=flathub --install-deps-only \
               "$PWD/build-dir" "$MANIFEST"
@@ -370,7 +370,7 @@ jobs:
           # 2) Channel alias (stable release -> latest/, canary main build -> canary/) for the
           #    Decky fallback + scripts. The generic registry rejects re-uploading an existing
           #    version/file (409), so delete the prior alias file first (ignore 404 on run #1).
-          AFILE="punktfunk-client${{ matrix.suffix }}.flatpak"
+          AFILE="lilynk-client${{ matrix.suffix }}.flatpak"
           curl -fsS -o /dev/null --user "enricobuehler:$TOKEN" -X DELETE \
             "$BASE/$ALIAS/$AFILE" || true
           curl -fsS --user "enricobuehler:$TOKEN" --upload-file "$BUNDLE" \

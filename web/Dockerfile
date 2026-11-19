@@ -2,7 +2,7 @@
 # preset bundle. Build context is the REPO ROOT: orval reads ../api/openapi.json and Paraglide
 # reads ../l10n/messages, both relative to web/:
 #
-#   docker build -f web/Dockerfile -t punktfunk-web .
+#   docker build -f web/Dockerfile -t lilynk-web .
 #
 # Runtime: PORT (default 47992) and PUNKTFUNK_MGMT_URL (upstream management API the Nitro
 # server proxies /api to; see web/server/routes).

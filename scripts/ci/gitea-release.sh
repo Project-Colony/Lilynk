@@ -7,7 +7,7 @@
 # asset first.
 #
 # upsert_asset also attaches a `<asset>.sha256` sidecar for every asset, so a download off a
-# release page is verifiable (`sha256sum -c punktfunk-1.2.3.dmg.sha256`) — see its comment for
+# release page is verifiable (`sha256sum -c lilynk-1.2.3.dmg.sha256`) — see its comment for
 # why sidecars rather than one shared SHA256SUMS.
 #
 # Callers run under `bash -eo pipefail` or POSIX `sh -e` (see _release_notes_path), so a
@@ -144,7 +144,7 @@ PY
 
 # upsert_asset RELEASE_ID FILE [NAME]
 #   Attach FILE to the release AND a `<NAME>.sha256` checksum sidecar next to it, so every
-#   download off a release page can be verified:  sha256sum -c punktfunk-1.2.3.dmg.sha256
+#   download off a release page can be verified:  sha256sum -c lilynk-1.2.3.dmg.sha256
 #
 #   Sidecars, not one shared SHA256SUMS, ON PURPOSE: every platform's workflow (windows-*,
 #   android, apple, decky, deb, rpm, arch, flatpak) attaches to the SAME release object
@@ -163,7 +163,7 @@ upsert_asset() {
   # A sidecar gets no sidecar of its own (and neither does a caller attaching one by hand).
   case "$name" in *.sha256) return 0 ;; esac
   # `sha256sum -c` wants "<digest>  <filename>" with the filename as downloaded — i.e. the ASSET
-  # name, which is not necessarily the local basename (callers rename, e.g. Punktfunk-$VERSION.dmg).
+  # name, which is not necessarily the local basename (callers rename, e.g. Lilynk-$VERSION.dmg).
   sums="$(mktemp)"
   printf '%s  %s\n' "$(_sha256 "$file")" "$name" > "$sums"
   if _put_asset "$rid" "$sums" "$name.sha256"; then rm -f "$sums"; else rm -f "$sums"; return 1; fi

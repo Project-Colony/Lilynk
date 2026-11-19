@@ -16,11 +16,11 @@ set "BUN=%~dp0..\bun\bun.exe"
 set "RUNNER=%~dp0runner-cli.js"
 
 if not exist "%RUNNER%" (
-  echo [punktfunk-scripting] runner bundle missing at "%RUNNER%".
+  echo [lilynk-scripting] runner bundle missing at "%RUNNER%".
   exit /b 1
 )
 if not exist "%BUN%" (
-  echo [punktfunk-scripting] bundled bun missing at "%BUN%".
+  echo [lilynk-scripting] bundled bun missing at "%BUN%".
   exit /b 1
 )
 
@@ -42,7 +42,7 @@ set "LOGGED="
 if exist "%LOG%" move /y "%LOG%" "%LOG%.1" >nul 2>&1
 copy /y nul "%LOG%" >nul 2>&1 && set "LOGGED=1"
 if defined LOGGED (
-  >> "%LOG%" echo [punktfunk-scripting] %DATE% %TIME% starting "%BUN%" "%RUNNER%" as %USERNAME%
+  >> "%LOG%" echo [lilynk-scripting] %DATE% %TIME% starting "%BUN%" "%RUNNER%" as %USERNAME%
   "%BUN%" "%RUNNER%" >> "%LOG%" 2>&1
 ) else (
   "%BUN%" "%RUNNER%"

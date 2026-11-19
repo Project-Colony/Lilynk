@@ -112,7 +112,7 @@ function clientUpdateResultBody(r: Awaited<ReturnType<typeof updateClient>>): st
  * Apply whichever updates are pending.
  *
  * The CLIENT goes first and is awaited, by whichever route its install supports — a `flatpak
- * update` in the scope it is installed in, or the packaged root helper via `punktfunk-client
+ * update` in the scope it is installed in, or the packaged root helper via `lilynk-client
  * --apply-update`. An install neither can serve is not attempted at all: the user gets the
  * command in a toast, because a button that can only fail teaches nothing.
  *

@@ -1,7 +1,7 @@
 DualSense Wireless Controller — report descriptor, captured 2026-08-09 on .173 over USB.
 
 WHY THIS FILE EXISTS: it is the CONTROL that makes the Elite capture next to it trustworthy.
-`DUALSENSE_RDESC` in packaging/windows/drivers/pf-gamepad/src/lib.rs is verbatim from real hardware
+`DUALSENSE_RDESC` in packaging/windows/drivers/ly-gamepad/src/lib.rs is verbatim from real hardware
 (via inputtino), so pointing the tool at a real DualSense on the same box, in the same session,
 tests the tool against a known-good answer.
 

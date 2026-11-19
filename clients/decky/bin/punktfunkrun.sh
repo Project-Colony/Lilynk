@@ -68,11 +68,11 @@ case "${GAMESCOPE_WAYLAND_DISPLAY:-}" in
 esac
 
 # The client is not always the flatpak: a sysext, a .deb/.rpm, an AUR build or a nix profile
-# installs a native `punktfunk-client` with the CLI as its sibling, and the plugin passes the
+# installs a native `lilynk-client` with the CLI as its sibling, and the plugin passes the
 # client's absolute path here when that is what it resolved.
 #
 # run_cli execs the HEADLESS CLI (`punktfunk`); run_session execs the GTK/console shell
-# (`punktfunk-client`). Both live in the same place in both install kinds — /app/bin inside the
+# (`lilynk-client`). Both live in the same place in both install kinds — /app/bin inside the
 # flatpak, reachable with `--command=`, and one bindir natively.
 run_cli() {
     if [ -n "${PF_CLIENT_BIN:-}" ]; then
@@ -81,7 +81,7 @@ run_cli() {
         exec "${PF_CLIENT_BIN%/*}/punktfunk" "$@"
     fi
     # shellcheck disable=SC2086 # FLATPAK_ARGS is two options, split on purpose
-    exec "$FLATPAK" run $FLATPAK_ARGS --command=punktfunk "$APPID" "$@"
+    exec "$FLATPAK" run $FLATPAK_ARGS --command=lilynk "$APPID" "$@"
 }
 
 run_session() {

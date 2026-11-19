@@ -8,8 +8,8 @@ use crate::settings::spec::{self, Page};
 use crate::settings::tables::*;
 use crate::trust::Settings;
 use adw::prelude::*;
-use pf_client_core::display_targets::{self, host_screen_choices, Targets};
-use pf_l10n::{client, common, desktop};
+use ly_client_core::display_targets::{self, host_screen_choices, Targets};
+use ly_l10n::{client, common, desktop};
 use std::cell::Cell;
 use std::rc::Rc;
 
@@ -21,7 +21,7 @@ pub fn display(b: &mut Build) {
     let names: Vec<String> = REFRESH
         .iter()
         .map(|&r| match r {
-            0 => pf_client_core::settings::native_refresh_label(b.native),
+            0 => ly_client_core::settings::native_refresh_label(b.native),
             r => common::common_hz(r),
         })
         .collect();
@@ -171,7 +171,7 @@ fn host_screen_row(b: &Build) -> Field {
     for k in known.iter().filter(|k| k.paired && !k.fp_hex.is_empty()) {
         let mgmt = k
             .mgmt_port
-            .unwrap_or(pf_client_core::library::DEFAULT_MGMT_PORT);
+            .unwrap_or(ly_client_core::library::DEFAULT_MGMT_PORT);
         display_targets::refresh(&k.addr, mgmt, k.port, &k.fp_hex);
         answers.extend(display_targets::cached(&k.fp_hex).map(|t| (k.name.as_str(), t)));
     }
@@ -220,7 +220,7 @@ fn hardware(b: &mut Build, p: &mut PageB) {
             &row,
             // A stored `vulkan`/`vaapi` maps onto its `native-*` entry for the lookup only.
             |s| {
-                let stored = pf_client_core::video::migrate_decoder_pref(&s.decoder);
+                let stored = ly_client_core::video::migrate_decoder_pref(&s.decoder);
                 DECODERS.iter().position(|&d| d == stored).unwrap_or(0) as u32
             },
             |s, i| s.decoder = at(DECODERS, i).to_string(),
@@ -271,11 +271,11 @@ fn resolution(b: &Build) -> Field {
     );
     let width = size_row(
         client::player_resolution_width(),
-        punktfunk_core::resolutions::MIN_WIDTH,
+        lilynk_core::resolutions::MIN_WIDTH,
     );
     let height = size_row(
         client::player_resolution_height(),
-        punktfunk_core::resolutions::MIN_HEIGHT,
+        lilynk_core::resolutions::MIN_HEIGHT,
     );
     let aspect = ChoiceRow::new(
         &b.dialog,
@@ -350,7 +350,7 @@ fn resolution(b: &Build) -> Field {
             s.match_window = i == 1;
             (s.width, s.height) = match i {
                 0 | 1 => (0, 0),
-                i if i == custom => punktfunk_core::resolutions::custom(
+                i if i == custom => lilynk_core::resolutions::custom(
                     width.value() as u32,
                     height.value() as u32,
                     &s.codec,
@@ -406,7 +406,7 @@ fn render_scale(b: &Build) -> Field {
         let (choice, percent) = (choice.clone(), percent.clone());
         move |s: &Settings| {
             let at = index::render_scale(s);
-            percent.set_value(f64::from(punktfunk_core::render_scale::percent(
+            percent.set_value(f64::from(lilynk_core::render_scale::percent(
                 s.render_scale,
             )));
             percent.set_visible(at == index::CUSTOM_SCALE);
@@ -418,7 +418,7 @@ fn render_scale(b: &Build) -> Field {
         move |s: &mut Settings| {
             s.render_scale = match RENDER_SCALES.get(choice.selected() as usize) {
                 Some(&stop) => stop,
-                None => punktfunk_core::render_scale::from_percent(percent.value() as u32),
+                None => lilynk_core::render_scale::from_percent(percent.value() as u32),
             };
         }
     };
@@ -453,7 +453,7 @@ fn size_row(title: &str, min: u32) -> adw::SpinRow {
 /// quality row stands in for the rate and Bitrate offers Automatic or Fixed, which only move
 /// the spin between 0 and a fixed rate. The returned closure swaps the two rows.
 fn bitrate_row(b: &Build) -> (Field, Rc<dyn Fn(bool)>) {
-    use pf_client_core::settings::PYROWAVE_FIXED_KBPS;
+    use ly_client_core::settings::PYROWAVE_FIXED_KBPS;
     let row = adw::SpinRow::with_range(0.0, 3000.0, 1.0);
     row.set_title(spec::BITRATE.title());
     row.set_subtitle(&spec::BITRATE.caption());
@@ -519,7 +519,7 @@ fn bitrate_row(b: &Build) -> (Field, Rc<dyn Fn(bool)>) {
 /// re-read as any row moves; a warning row follows while this device's link is short of it.
 /// The returned closure shows both under PyroWave.
 fn pyrowave_quality_row(b: &Build) -> (Field, Rc<dyn Fn(bool)>) {
-    use punktfunk_core::pyrowave::{BPP_DEFAULT, BPP_FLOOR, BPP_MAX};
+    use lilynk_core::pyrowave::{BPP_DEFAULT, BPP_FLOOR, BPP_MAX};
     let scale = gtk::Scale::with_range(gtk::Orientation::Horizontal, BPP_FLOOR, BPP_MAX, 0.1);
     scale.set_draw_value(false);
     scale.set_round_digits(1);
@@ -540,7 +540,7 @@ fn pyrowave_quality_row(b: &Build) -> (Field, Rc<dyn Fn(bool)>) {
     // Weak: the store outlives the dialog and keeps its listeners.
     let refresh: Rc<dyn Fn()> = {
         let (store, preset_id, native) = (Rc::downgrade(b.store), b.preset_id.clone(), b.native);
-        let link = punktfunk_core::transport::ifinfo::local_link_facts(None);
+        let link = lilynk_core::transport::ifinfo::local_link_facts(None);
         let (row, warning, scale, shown) = (
             row.downgrade(),
             warning.downgrade(),

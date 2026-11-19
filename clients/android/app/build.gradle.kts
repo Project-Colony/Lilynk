@@ -14,7 +14,7 @@ android {
     compileSdk = 37 // Android 17 — the minCompileSdk core-ktx declares.
     // The NDK whose llvm-strip strips the packaged .so. Unset, AGP looks for its own default
     // NDK and packages the library unstripped when that one is not installed.
-    ndkVersion = providers.gradleProperty("punktfunk.ndkVersion").get()
+    ndkVersion = providers.gradleProperty("lilynk.ndkVersion").get()
 
     defaultConfig {
         // Load from .env if it exists (local dev), otherwise from System.getenv (CI)

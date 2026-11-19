@@ -9,7 +9,7 @@
 //! WHY IT MATTERS BEYOND ENUMERATION. `XINPUT_VIBRATION` has exactly two members, so classic
 //! XInput can never exercise an Xbox pad's two IMPULSE-TRIGGER motors. `GameInputRumbleParams` has
 //! four — `lowFrequency`, `highFrequency`, `leftTrigger`, `rightTrigger`. `parse_xbox_output`
-//! (pf-inject `xbox_proto.rs`) reads the `enable` mask of HID output report `0x03` as bit 0 = weak,
+//! (ly-inject `xbox_proto.rs`) reads the `enable` mask of HID output report `0x03` as bit 0 = weak,
 //! bit 1 = strong, bit 2 = right trigger, bit 3 = left trigger, as hid-microsoft and xpadneo do.
 //!
 //! `--gi-rumble` drives four DISTINCT magnitudes, then the pad's decoded output identifies the

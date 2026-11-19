@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# punktfunk seat runner: a headless desktop, then a stock `punktfunk-host serve` on it.
+# punktfunk seat runner: a headless desktop, then a stock `lilynk-host serve` on it.
 #
-# punktfunk-seat@.service runs this as the seat's user inside a logind session. The seat contract
+# lilynk-seat@.service runs this as the seat's user inside a logind session. The seat contract
 # (PUNKTFUNK_SEAT_*, the ports, the trust dir, PUNKTFUNK_MGMT_TOKEN) arrives in the environment.
 # The desktop mirrors scripts/headless/run-headless-kde.sh; without a kwin_wayland that starts the
 # host starts gamescope itself.
@@ -18,15 +18,15 @@
 # the owner's in a `background` session, another person's in the unit's `user` class, which a
 # shutdown at the machine counts as another user's session. It leaves their config and their
 # PipeWire alone, and their user manager but for another person's seat plugin runner: the
-# desktop and the host sit on a bus of their own, and the person's own punktfunk-host and
-# punktfunk-kde-session stand down while this runs (their units
+# desktop and the host sit on a bus of their own, and the person's own lilynk-host and
+# lilynk-kde-session stand down while this runs (their units
 # have ConditionPathExists= on the runtime directory). Two variables say so. PUNKTFUNK_SEAT_OWNER=1 is the box owner's row, which
 # also takes the owner's host.env and stops the owner's own user units. PUNKTFUNK_SEAT_OWN_ACCOUNT=1
 # is another person's row: a contract seat's host on their account, with no owner's settings and
 # none of their processes stopped. The seat contract wins over any file.
 set -u
 
-HOST="${PUNKTFUNK_HOST_BIN:-/usr/bin/punktfunk-host}"
+HOST="${PUNKTFUNK_HOST_BIN:-/usr/bin/lilynk-host}"
 SIZE="${PUNKTFUNK_SEAT_SIZE:-1920x1080}"
 W="${SIZE%x*}"
 H="${SIZE#*x}"
@@ -120,7 +120,7 @@ EOF
 fi
 
 if [[ -z "${XDG_SESSION_ID:-}" || -z "${RUNTIME_DIRECTORY:-}" ]]; then
-    echo "seat-session: no logind session or runtime directory; run it from punktfunk-seat@.service" >&2
+    echo "seat-session: no logind session or runtime directory; run it from lilynk-seat@.service" >&2
     exit 1
 fi
 printf '%s\n' "$XDG_SESSION_ID" >"$RUNTIME_DIRECTORY/session"
@@ -139,7 +139,7 @@ SHELL_PID=""
 stop_runner() {
     [[ -n "${PUNKTFUNK_SEAT_OWN_ACCOUNT:-}" && -n "${PUNKTFUNK_SEAT_ID:-}" ]] || return 0
     env -u DBUS_SESSION_BUS_ADDRESS systemctl --user --no-block stop \
-        "punktfunk-scripting-seat@$PUNKTFUNK_SEAT_ID.service" >/dev/null 2>&1 || true
+        "lilynk-scripting-seat@$PUNKTFUNK_SEAT_ID.service" >/dev/null 2>&1 || true
 }
 cleanup() {
     trap - TERM INT
@@ -195,8 +195,8 @@ EOF
 load_owner_settings() {
     local contract=${1-} file key extra=()
     local -A keep=()
-    # The runtime directory is /run/punktfunk-seat-<instance>, the unit's %i like the contract's.
-    if [[ -z $contract && ${RUNTIME_DIRECTORY-} =~ ^/run/punktfunk-seat-([^/]+)$ ]]; then
+    # The runtime directory is /run/lilynk-seat-<instance>, the unit's %i like the contract's.
+    if [[ -z $contract && ${RUNTIME_DIRECTORY-} =~ ^/run/lilynk-seat-([^/]+)$ ]]; then
         contract=/run/punktfunk/seats/${BASH_REMATCH[1]}.env
     fi
     # Names only: the sed pattern is the whole parser, and nothing in the file runs.
@@ -248,7 +248,7 @@ start_private_portal() {
     echo "seat-session: no xdg-desktop-portal found; input and capture need it" >&2
 }
 
-# A login with the password (`punktfunk-seats login`) leaves the KDE wallet waiting for this
+# A login with the password (`lilynk-seats login`) leaves the KDE wallet waiting for this
 # session's bus and compositor, which exist by now. Plasma's autostart doesn't run here; its
 # entry names the distro's script.
 unlock_wallet() {
@@ -281,8 +281,8 @@ alive() { [[ -z "$KWIN_PID" ]] || kill -0 "$KWIN_PID" 2>/dev/null; }
 
 # Whether the host finds a gamescope to start, by its own rungs.
 has_gamescope() {
-    [[ -x ${PUNKTFUNK_GAMESCOPE_BIN:-} || -x ${HOST%/*}/punktfunk-gamescope ]] ||
-        command -v punktfunk-gamescope >/dev/null 2>&1 || command -v gamescope >/dev/null 2>&1
+    [[ -x ${PUNKTFUNK_GAMESCOPE_BIN:-} || -x ${HOST%/*}/lilynk-gamescope ]] ||
+        command -v lilynk-gamescope >/dev/null 2>&1 || command -v gamescope >/dev/null 2>&1
 }
 
 # KWin where it is installed and comes up; otherwise the host starts gamescope itself.
@@ -318,7 +318,7 @@ start_kwin() {
 
     [[ -n "$OWN" ]] && start_private_bus
     # Under the 0700 runtime dir: the DISPLAY detection below reads this file.
-    local log="$XDG_RUNTIME_DIR/punktfunk-kwin.log"
+    local log="$XDG_RUNTIME_DIR/lilynk-kwin.log"
     : >"$log"
     chmod 600 "$log"
     # kwin hands the apps it starts its public X display; their output lands in the log.
@@ -382,22 +382,22 @@ start_kwin() {
 
     # Pre-authorised RemoteDesktop grant: without it the portal asks a question nobody answers.
     local share=/usr/share/punktfunk/headless db="$HOME/.local/share/flatpak/db/kde-authorized"
-    # The Debian host package keeps this data under punktfunk-host.
-    [[ -d $share ]] || share=/usr/share/punktfunk-host/headless
+    # The Debian host package keeps this data under lilynk-host.
+    [[ -d $share ]] || share=/usr/share/lilynk-host/headless
     if [[ ! -s "$db" && -s "$share/kde-authorized" ]]; then
         mkdir -p "$(dirname "$db")" && cp "$share/kde-authorized" "$db"
     fi
     # The virtual speaker the host captures; PipeWire reads its config at start.
-    local sink="$HOME/.config/pipewire/pipewire.conf.d/50-punktfunk-sink.conf"
-    if [[ ! -s "$sink" && -s "$share/punktfunk-sink.conf" ]]; then
-        mkdir -p "$(dirname "$sink")" && cp "$share/punktfunk-sink.conf" "$sink"
+    local sink="$HOME/.config/pipewire/pipewire.conf.d/50-lilynk-sink.conf"
+    if [[ ! -s "$sink" && -s "$share/lilynk-sink.conf" ]]; then
+        mkdir -p "$(dirname "$sink")" && cp "$share/lilynk-sink.conf" "$sink"
         systemctl --user restart pipewire 2>/dev/null || true
     fi
     # xdg-desktop-portal needs graphical-session.target, which refuses a manual start by default.
     local dropin="$HOME/.config/systemd/user/graphical-session.target.d"
-    if [[ ! -f "$dropin/10-punktfunk-headless.conf" ]]; then
+    if [[ ! -f "$dropin/10-lilynk-headless.conf" ]]; then
         mkdir -p "$dropin"
-        printf '[Unit]\nRefuseManualStart=no\n' >"$dropin/10-punktfunk-headless.conf"
+        printf '[Unit]\nRefuseManualStart=no\n' >"$dropin/10-lilynk-headless.conf"
         systemctl --user daemon-reload 2>/dev/null || true
     fi
     systemctl --user start graphical-session.target 2>/dev/null || true
@@ -489,9 +489,9 @@ EOF
     # contract that isn't there leaves the owner's files unread; the seat still starts.
     unset PUNKTFUNK_HOST_NAME
     read_with() { RUNTIME_DIRECTORY=$1 load_owner_settings 2>&1; echo "${PUNKTFUNK_HOST_NAME-unset}"; }
-    [[ $(read_with /run/punktfunk-seat-gone) == *"at '/run/punktfunk/seats/gone.env'"*unset ]] ||
+    [[ $(read_with /run/lilynk-seat-gone) == *"at '/run/punktfunk/seats/gone.env'"*unset ]] ||
         { echo "seat-session self-test: the runtime directory doesn't name the contract" >&2; exit 1; }
-    for dir in /run/punktfunk-seat- /run/punktfunk-seat-a/b /tmp/punktfunk-seat-a ''; do
+    for dir in /run/lilynk-seat- /run/lilynk-seat-a/b /tmp/lilynk-seat-a ''; do
         [[ $(read_with "$dir") == *"at ''"*unset ]] ||
             { echo "seat-session self-test: '$dir' names a contract" >&2; exit 1; }
     done
@@ -502,7 +502,7 @@ if [[ -n "$OWNER" ]]; then
     load_owner_settings
     # The owner's own host must not hold the row's ports. Nothing streams their headless desktop
     # while it is down, and a second desktop takes single-instance apps such as Steam.
-    systemctl --user stop punktfunk-host.service punktfunk-kde-session.service 2>/dev/null || true
+    systemctl --user stop lilynk-host.service lilynk-kde-session.service 2>/dev/null || true
     mark_ready_when_serving
 fi
 install_switch_commands

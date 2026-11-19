@@ -15,7 +15,7 @@
 # ./data/data.json is NOT shipped by deploy-services.yml — windows-host.yml copies it on each stable
 # tag (the same split the flatpak repo uses: config deploys separately from content). server.mjs
 # reloads it on mtime change, so publishing a release needs no restart here.
-name: punktfunk-winget-prod
+name: lilynk-winget-prod
 services:
   winget:
     image: oven/bun:1.4.4-alpine

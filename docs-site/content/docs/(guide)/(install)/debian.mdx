@@ -53,7 +53,7 @@ sudo usermod -aG punktfunk "$USER"   # virtual Steam Deck controller
 From a terminal inside your desktop session:
 
 ```sh
-systemctl --user enable --now punktfunk-host punktfunk-web
+systemctl --user enable --now lilynk-host lilynk-web
 ```
 
 Debian enables no firewall. If you run one, the package installed profiles for ufw and firewalld:
@@ -67,9 +67,9 @@ a device.
 Cinnamon can't give the host a virtual display, so stream games through gamescope instead:
 
 ```sh
-sudo apt install punktfunk-gamescope
+sudo apt install lilynk-gamescope
 echo 'PUNKTFUNK_COMPOSITOR=gamescope' >> ~/.config/punktfunk/host.env
-systemctl --user restart punktfunk-host
+systemctl --user restart lilynk-host
 ```
 
 Each client then gets its own headless gamescope: [Steam / gamescope](/docs/gamescope). Linux

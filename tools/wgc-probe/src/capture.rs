@@ -61,7 +61,7 @@ use windows::Win32::UI::WindowsAndMessaging::{
 
 use crate::win::{hr, log, Opts};
 
-/// A stage that runs longer than this is a hang: the host waits `SOURCE_BOUND` (pf-capture
+/// A stage that runs longer than this is a hang: the host waits `SOURCE_BOUND` (ly-capture
 /// `windows/wgc.rs`) for `OPEN_SOURCE`.
 const HANG: Duration = Duration::from_secs(5);
 /// How long a capture waits for its first frame before it reports none.
@@ -155,7 +155,7 @@ fn targets() -> Result<Vec<Target>, String> {
 fn resolve(want: &str) -> Result<Target, String> {
     let gdi = match want {
         "ours" | "physical" => {
-            let snap = pf_win_display::display_events::snapshot_or_query();
+            let snap = ly_win_display::display_events::snapshot_or_query();
             snap.targets
                 .iter()
                 .find(|t| t.active && t.ours == (want == "ours"))
@@ -173,7 +173,7 @@ fn resolve(want: &str) -> Result<Target, String> {
 
 pub fn list() -> Result<i32, String> {
     init();
-    let snap = pf_win_display::display_events::snapshot_or_query();
+    let snap = ly_win_display::display_events::snapshot_or_query();
     for t in targets()? {
         let inv = snap
             .targets
@@ -537,7 +537,7 @@ impl Session {
         for stale in self.take(Duration::ZERO) {
             let _ = stale.Close();
         }
-        if !pf_win_display::compose_probe::present(rect) {
+        if !ly_win_display::compose_probe::present(rect) {
             return Err("the compose canary has no window".into());
         }
         let until = Instant::now() + SETTLE;
@@ -970,7 +970,7 @@ fn first_frame(s: &mut Session, t: &Target, o: &Opts) -> (Option<u128>, bool) {
             return (Some(waited.as_millis()), kicked);
         }
         if !kicked && o.canary_ms > 0 && waited >= Duration::from_millis(o.canary_ms) {
-            kicked = pf_win_display::compose_probe::present(t.rect);
+            kicked = ly_win_display::compose_probe::present(t.rect);
             log(
                 "canary",
                 format!("drawn={kicked} after_ms={}", waited.as_millis()),

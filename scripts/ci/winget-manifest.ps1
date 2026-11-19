@@ -10,7 +10,7 @@
 # buried in a generator.
 #
 # Usage (from windows-host.yml, stable tags only):
-#     & scripts/ci/winget-manifest.ps1 -Version 0.19.2 -InstallerPath C:\t\out\punktfunk-host-setup-0.19.2.exe -OutDir C:\t\out\winget
+#     & scripts/ci/winget-manifest.ps1 -Version 0.19.2 -InstallerPath C:\t\out\lilynk-host-setup-0.19.2.exe -OutDir C:\t\out\winget
 #
 # Emits: <OutDir>/unom.PunktfunkHost.yaml
 #        <OutDir>/unom.PunktfunkHost.installer.yaml

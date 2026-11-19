@@ -43,7 +43,7 @@ export interface ResolvedConfig extends Connection {
 }
 
 /**
- * The host's config dir, resolved like `pf_paths::config_dir` except that an empty or relative
+ * The host's config dir, resolved like `ly_paths::config_dir` except that an empty or relative
  * `XDG_CONFIG_HOME` is taken as given here, where the host ignores it.
  */
 export const configDir = (): string => {
@@ -64,7 +64,7 @@ export const configDir = (): string => {
  *
  * WHY this and not `<config_dir>/<name>` directly: on Windows the managed runner is de-privileged
  * (runs as `NT AUTHORITY\LocalService`), and in the config dir it may write only `plugin-state` —
- * so a plugin writing straight under it fails with EPERM. `punktfunk-host plugins enable` grants
+ * so a plugin writing straight under it fails with EPERM. `lilynk-host plugins enable` grants
  * the runner **Modify** on exactly `plugin-state` (the config dir and the plugin *code* stay
  * read-only), so this is the one place a supervised plugin can write. On Linux the runner is a
  * `systemd --user` unit owning the whole config dir, so the path is writable there too — same
@@ -86,7 +86,7 @@ export const pluginStateDir = (name?: string): string => {
  * The mirror of {@link pluginStateDir}, and the answer to a problem the de-privileging creates on
  * Windows: the LocalService runner can no longer traverse the interactive user's profile, so a
  * plugin can't read a file an app running as *you* produced (e.g. the Playnite exporter's library
- * JSON under your `%APPDATA%`). `punktfunk-host plugins enable` grants `BUILTIN\Users` **write** on
+ * JSON under your `%APPDATA%`). `lilynk-host plugins enable` grants `BUILTIN\Users` **write** on
  * exactly `ingest` — so your app drops `ingest/<plugin>/…` and the runner reads it there. On Linux
  * the runner is a `systemd --user` unit owning the config dir, so a same-user producer writes here
  * with no special step; a sandboxed plugin (the default) sees `/run/punktfunk` as its config dir,

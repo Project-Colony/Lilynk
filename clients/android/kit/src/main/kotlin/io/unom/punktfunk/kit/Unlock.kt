@@ -5,7 +5,7 @@ import org.json.JSONObject
 /**
  * Opening a profile on a person's own account or a locked one: whether a dial prompts, signs with
  * this device's unlock key or goes as it is, what the PIN field sends, and what the host's
- * challenge names. A port of `pf-client-core`'s `unlock.rs` rules;
+ * challenge names. A port of `ly-client-core`'s `unlock.rs` rules;
  * `clients/shared/profile-unlock-vectors.json` pins them in every client.
  */
 

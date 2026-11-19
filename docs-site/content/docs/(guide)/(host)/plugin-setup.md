@@ -47,7 +47,7 @@ paths as `D:\\roms`. Options:
 Mirrors your [Playnite](https://playnite.link) library; launching a title hands it back to
 Playnite. It has two parts, both on the Windows host:
 
-1. The plugin, from an elevated PowerShell: `punktfunk-host plugins add playnite`.
+1. The plugin, from an elevated PowerShell: `lilynk-host plugins add playnite`.
 2. The **Punktfunk Sync** extension in Playnite: download `punktfunk-sync.pext` from the
    [plugin's builds](https://git.unom.io/unom/punktfunk-plugin-playnite/actions), double-click it
    and restart Playnite.
@@ -71,7 +71,7 @@ You need both halves of VirtualHere running first:
 - **The USB Client on the host**, ideally as a service.
 
 ```sh
-punktfunk-host plugins add virtualhere
+lilynk-host plugins add virtualhere
 ```
 
 On the console's **VirtualHere** page, **Devices** lists what the couch shares; pick one to add a
@@ -133,7 +133,7 @@ none of it.
 
 1. Install RTSS and turn on **Start with Windows** in its main window. RTSS enforces the cap
    inside the game, so it must be running when the game starts.
-2. Install **RTSS Frame Cap** from **Plugins**, or run `punktfunk-host plugins add rtss`.
+2. Install **RTSS Frame Cap** from **Plugins**, or run `lilynk-host plugins add rtss`.
 3. Let the plugin write RTSS's profiles. Once, from an elevated PowerShell:
 
    ```powershell

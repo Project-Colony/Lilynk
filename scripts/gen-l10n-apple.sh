@@ -6,5 +6,5 @@
 # otherwise hands back its binary, which reads its own.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-cargo run -q -p pf-l10n -- apple --root "$PWD/l10n" \
+cargo run -q -p ly-l10n -- apple --root "$PWD/l10n" \
     --out clients/apple/Sources/PunktfunkShared/Generated --parts common,client,apple,host

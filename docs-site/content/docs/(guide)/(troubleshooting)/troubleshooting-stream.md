@@ -48,7 +48,7 @@ session over. The checks and the fix:
 The virtual display driver isn't answering, isn't installed, or doesn't match the host. The console's
 **Troubleshooting** page says which under **Virtual display driver**.
 
-- Not answering: run `punktfunk-host service restart` from an elevated PowerShell. RivaTuner
+- Not answering: run `lilynk-host service restart` from an elevated PowerShell. RivaTuner
   Statistics Server (MSI Afterburner) is a known cause; close it before you connect again.
 - Missing or out of date: reinstall the host. Setup brings the matching driver.
 

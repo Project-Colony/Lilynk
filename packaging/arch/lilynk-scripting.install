@@ -1,0 +1,29 @@
+# pacman scriptlet for the plugin runner — mirrors build-scripting-deb.sh's postinst.
+_load_apparmor() {
+  # Boot loads it from /etc/apparmor.d; this covers the running kernel. Unused unless the
+  # lilynk-scripting-apparmor generator selects it.
+  if command -v apparmor_parser >/dev/null 2>&1 && aa-enabled --quiet 2>/dev/null; then
+    apparmor_parser -r -T -W /etc/apparmor.d/lilynk-scripting || true
+  fi
+}
+
+post_install() {
+  # `--global`: a scriptlet has no user session, and this is the only way to turn a `--user` unit
+  # on for everyone. pacman runs post_install on a fresh install only, so an upgrade never undoes
+  # `systemctl --user mask lilynk-scripting`.
+  if command -v systemctl >/dev/null 2>&1; then
+    systemctl --global enable lilynk-scripting.service >/dev/null 2>&1 || true
+  fi
+  _load_apparmor
+  echo "lilynk-scripting installed and enabled for all users."
+  echo "It runs your automation — game-library sources, scripts in"
+  echo "    ~/.config/punktfunk/scripts/  (loose .ts/.js files)"
+  echo "and plugins under ~/.config/punktfunk/plugins/."
+  echo "It starts with your next login; start it now with:"
+  echo "    systemctl --user start lilynk-scripting"
+  echo "Don't want it? systemctl --user mask lilynk-scripting"
+}
+
+post_upgrade() {
+  _load_apparmor
+}

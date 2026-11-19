@@ -8,12 +8,12 @@
 # Vulkan; opus is vendored via cmake) is soname-compatible across that range, so this ONE
 # universal host .deb replaces the 26.04-built one for every Ubuntu user.
 #
-# libcuda is deliberately NOT provided: the host dlopen's libcuda.so.1 at runtime (pf-zerocopy /
-# pf-encode) and never link-imports it, so — unlike the full-workspace rust-ci image, which builds
+# libcuda is deliberately NOT provided: the host dlopen's libcuda.so.1 at runtime (ly-zerocopy /
+# ly-encode) and never link-imports it, so — unlike the full-workspace rust-ci image, which builds
 # tests that DO link a cuda stub — this host-only build needs no NVIDIA driver package. NVENC/EGL
 # come from whatever driver the target runs, out of band.
 #
-# Rebuilt+pushed by .gitea/workflows/docker.yml (matrix: punktfunk-rust-ci-noble); consumed by the
+# Rebuilt+pushed by .gitea/workflows/docker.yml (matrix: lilynk-rust-ci-noble); consumed by the
 # `build-publish-host` job in .gitea/workflows/deb.yml. Bootstrap: like rust-ci, the first deb.yml
 # run after this image is added uses the image from a PRIOR docker.yml push — seed it once manually
 # (docker build -f ci/rust-ci-noble.Dockerfile -t … ci && docker push) before the host job can run.
@@ -30,7 +30,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     mold \
     # .deb assembly: dpkg-shlibdeps/dpkg-deb
     dpkg-dev \
-    # libdrm: render-node enumeration. libva itself is dlopen'd by pf-libva, headers not needed.
+    # libdrm: render-node enumeration. libva itself is dlopen'd by ly-libva, headers not needed.
     libdrm-dev \
     # host link deps present on 24.04 with sonames compatible up to 26.04
     libpipewire-0.3-dev libwayland-dev libxkbcommon-dev \

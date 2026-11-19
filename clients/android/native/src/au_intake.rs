@@ -3,8 +3,8 @@
 //! rebuilt decoder. No codec and no clock: the loop reports each delivery and its own drops,
 //! and feeds what comes back. The freeze and every ask are core's.
 
-use punktfunk_core::packet::FLAG_SOF;
-use punktfunk_core::reanchor::{AuAdmission, Concealment, DecoderClass, Resume};
+use lilynk_core::packet::FLAG_SOF;
+use lilynk_core::reanchor::{AuAdmission, Concealment, DecoderClass, Resume};
 
 /// One delivery from the feeder: a whole AU, or one part of a sliced one.
 #[derive(Clone, Copy)]
@@ -154,9 +154,9 @@ impl Intake {
 #[cfg(test)]
 mod tests {
     use super::{hand_on, Delivery, Intake, Verdict};
-    use punktfunk_core::packet::{FLAG_SOF, USER_FLAG_RECOVERY_ANCHOR, USER_FLAG_RECOVERY_POINT};
-    use punktfunk_core::reanchor::Concealment;
-    use punktfunk_core::reanchor::DecoderClass::{self, Lenient, Strict};
+    use lilynk_core::packet::{FLAG_SOF, USER_FLAG_RECOVERY_ANCHOR, USER_FLAG_RECOVERY_POINT};
+    use lilynk_core::reanchor::Concealment;
+    use lilynk_core::reanchor::DecoderClass::{self, Lenient, Strict};
 
     const SOF: u32 = FLAG_SOF as u32;
     const ANCHOR: u32 = USER_FLAG_RECOVERY_ANCHOR;

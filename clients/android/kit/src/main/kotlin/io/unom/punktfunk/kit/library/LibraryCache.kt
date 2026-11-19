@@ -7,7 +7,7 @@ import java.io.File
 import java.security.MessageDigest
 
 // On-disk cache for a host's library CATALOG — the list of titles, not their art. The Android
-// mirror of the Apple client's `LibraryCache.swift` and the Rust `pf_client_core::library_cache`.
+// mirror of the Apple client's `LibraryCache.swift` and the Rust `ly_client_core::library_cache`.
 //
 // The catalog is cached per host and rendered immediately, marked stale, and reconciled when the
 // host answers. A host that is asleep, or not reachable yet, still shows its last-known library,
@@ -165,7 +165,7 @@ class LibraryCache(private val directory: File) {
 
     companion object {
         /** The app's standard location for this cache, under Android's evictable cache dir. */
-        fun standard(cacheDir: File): LibraryCache = LibraryCache(File(cacheDir, "punktfunk-library"))
+        fun standard(cacheDir: File): LibraryCache = LibraryCache(File(cacheDir, "lilynk-library"))
 
         /**
          * The key a host's catalog is filed under, in both shells: the saved record's id, so a

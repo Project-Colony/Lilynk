@@ -1,5 +1,5 @@
 // The Library's Customize panel (design/apple-touch-ui-overhaul.md §2.5): every section with a
-// switch, in the order the tab draws them. It writes `punktfunk.librarySections`, which the tab
+// switch, in the order the tab draws them. It writes `lilynk.librarySections`, which the tab
 // reads; a switched-off section stays listed. A sheet on the iPhone and the TV (a TV's rows move
 // from their context menu), a plain popover on the Mac, where each row carries a drag grip.
 

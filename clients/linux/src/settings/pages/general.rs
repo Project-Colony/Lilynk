@@ -11,11 +11,11 @@ use crate::settings::Scope;
 use crate::store::Store;
 use crate::trust::Settings;
 use adw::prelude::*;
-use pf_client_core::settings::GamepadUi;
-use pf_client_core::start::{self, StartIn};
-use pf_client_core::trust::{HudCorner, StatsVerbosity};
-use pf_l10n::{client, common, desktop};
-use punktfunk_core::hud::STATS_SCALE_PCTS;
+use lilynk_core::hud::STATS_SCALE_PCTS;
+use ly_client_core::settings::GamepadUi;
+use ly_client_core::start::{self, StartIn};
+use ly_client_core::trust::{HudCorner, StatsVerbosity};
+use ly_l10n::{client, common, desktop};
 use std::rc::Rc;
 
 pub fn general(b: &mut Build, switcher: adw::PreferencesGroup, next: &NextScope) {
@@ -27,7 +27,7 @@ pub fn general(b: &mut Build, switcher: adw::PreferencesGroup, next: &NextScope)
         console(b, &mut p);
     }
     // Only where the theme exists, rather than sitting disabled.
-    if pf_client_core::omarchy::present() {
+    if ly_client_core::omarchy::present() {
         omarchy(b, &mut p);
     }
 
@@ -240,7 +240,7 @@ fn omarchy(b: &mut Build, p: &mut PageB) {
 /// Not a setting: the block's presence in the user's omarchy-menu.jsonc is the state, so two
 /// installs cannot disagree with it.
 fn omarchy_menu() -> Field {
-    use pf_client_core::omarchy_menu as menu;
+    use ly_client_core::omarchy_menu as menu;
     let row = adw::SwitchRow::builder()
         .title(spec::OMARCHY_MENU.title())
         .subtitle(spec::OMARCHY_MENU.caption())
@@ -310,7 +310,7 @@ fn clear_art_row(dialog: &adw::PreferencesDialog) -> adw::ActionRow {
     row.add_suffix(&crate::widgets::lucide::row_icon("trash-2"));
     let dialog = dialog.downgrade();
     row.connect_activated(move |_| {
-        let toast = match pf_client_core::art_cache::clear() {
+        let toast = match ly_client_core::art_cache::clear() {
             Ok(()) => desktop::desktop_clear_art_done().to_string(),
             Err(e) => desktop::desktop_clear_art_failed(e),
         };

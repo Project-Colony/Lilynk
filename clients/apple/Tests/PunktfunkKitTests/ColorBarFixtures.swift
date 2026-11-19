@@ -1,7 +1,7 @@
 // Golden colour-bar fixtures — one 256×64 LOSSLESS x265 IDR of 8 saturated bars per signaling
 // variant, generated offline with ffmpeg/libx265, RGB→YUV matched to the declared VUI so the
 // original RGB is recoverable ±1 code. The Rust H.264 counterparts are
-// crates/client/pf-client-video/tests/bars-*.h264, the same three variants. Test-target only;
+// crates/client/ly-client-video/tests/bars-*.h264, the same three variants. Test-target only;
 // nothing here ships.
 
 enum ColorBarFixtures {

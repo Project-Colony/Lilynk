@@ -85,7 +85,7 @@ Die nativen Apps sprechen punktfunk/1: eine QUIC-Steuerebene und eine verschlüs
 
 WAS DU BRAUCHST
 
-Einen Punktfunk-Host auf einem Linux-PC oder auf Windows 11 (22H2 oder neuer) im selben Netzwerk. Für die beste Erfahrung hängt der Apple TV am Kabel oder an einem guten 5-GHz-WLAN. Der Host ist quelloffen (MIT/Apache-2.0) und kostenlos – Anleitungen und Quellcode findest du auf punktfunk.unom.io.
+Einen Lilynk-Host auf einem Linux-PC oder auf Windows 11 (22H2 oder neuer) im selben Netzwerk. Für die beste Erfahrung hängt der Apple TV am Kabel oder an einem guten 5-GHz-WLAN. Der Host ist quelloffen (MIT/Apache-2.0) und kostenlos – Anleitungen und Quellcode findest du auf punktfunk.unom.io.
 
 Kein Konto. Keine Cloud. Keine Telemetrie. Die App erfasst keine Daten über dich.
 ```

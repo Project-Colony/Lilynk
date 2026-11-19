@@ -1,15 +1,15 @@
 // The pad vocabulary the Controllers page draws and logs: wire bits, their evdev names,
 // and the drawings' control ids.
 //
-// Names come from the host's own `BUTTON_MAP` (pf-inject `linux/gamepad.rs`), so a line here
+// Names come from the host's own `BUTTON_MAP` (ly-inject `linux/gamepad.rs`), so a line here
 // reads the way the same press reads in an evdev dump. A wire bit `BUTTON_MAP` has no key code
 // for (the D-pad, which the uinput pad emits as a hat; touchpad, misc) keeps its wire name.
 // `BIT` and `BUTTON_NAMES` are pinned by
-// `crates/core/punktfunk-core/testdata/gamepad-button-vectors.json`.
+// `crates/core/lilynk-core/testdata/gamepad-button-vectors.json`.
 
 import type { PadFrame } from "@/api/gen/model/padFrame";
 
-/** GameStream/XInput `buttonFlags` — `punktfunk_core::input::gamepad`. */
+/** GameStream/XInput `buttonFlags` — `lilynk_core::input::gamepad`. */
 export const BIT = {
 	DPAD_UP: 0x0001,
 	DPAD_DOWN: 0x0002,

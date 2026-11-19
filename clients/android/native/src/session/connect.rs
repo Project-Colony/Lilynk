@@ -5,10 +5,10 @@ use jni::errors::LogErrorAndDefault;
 use jni::objects::{JByteArray, JObject, JString};
 use jni::sys::{jboolean, jint, jlong};
 use jni::EnvUnowned;
-use punktfunk_core::client::{ConnectParams, NativeClient};
-use punktfunk_core::config::{CompositorPref, GamepadPref, Mode};
-use punktfunk_core::quic::v2::hello::ScreenWish;
-use punktfunk_core::quic::v2::msg::{self, ProfileUnlock, Zeroizing};
+use lilynk_core::client::{ConnectParams, NativeClient};
+use lilynk_core::config::{CompositorPref, GamepadPref, Mode};
+use lilynk_core::quic::v2::hello::ScreenWish;
+use lilynk_core::quic::v2::msg::{self, ProfileUnlock, Zeroizing};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
@@ -29,8 +29,8 @@ static DIAL_PENDING: AtomicBool = AtomicBool::new(false);
 /// (`ConnectErrors.kt`). A typed host rejection gives its `RejectReason::as_str()` token
 /// ("not-armed", "denied", "approval-timeout", …) and what the host said; transport causes give
 /// "crypto", "timeout" or "io", anything else "error", each with no sentence.
-fn error_token(e: &punktfunk_core::error::PunktfunkError) -> (&str, &str) {
-    use punktfunk_core::error::PunktfunkError as E;
+fn error_token(e: &lilynk_core::error::PunktfunkError) -> (&str, &str) {
+    use lilynk_core::error::PunktfunkError as E;
     match e {
         E::Rejected(r, said) => (r.as_str(), said.as_str()),
         E::Crypto => ("crypto", ""),
@@ -41,7 +41,7 @@ fn error_token(e: &punktfunk_core::error::PunktfunkError) -> (&str, &str) {
 }
 
 /// Keep `e`'s token and sentence for `nativeTakeLastError` and `nativeTakeLastSaid`.
-fn note_error(e: &punktfunk_core::error::PunktfunkError) {
+fn note_error(e: &lilynk_core::error::PunktfunkError) {
     let (token, said) = error_token(e);
     *lock_recover(&LAST_ERROR) = token.to_string();
     *lock_recover(&LAST_SAID) = said.to_string();
@@ -90,7 +90,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeGenerateIde
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
 ) -> JString<'local> {
-    let out = match punktfunk_core::quic::endpoint::generate_identity() {
+    let out = match lilynk_core::quic::endpoint::generate_identity() {
         Ok((cert, key)) => format!("{cert}\n-----PUNKTFUNK-KEY-----\n{key}"),
         Err(e) => {
             log::error!("nativeGenerateIdentity failed: {e}");
@@ -113,22 +113,22 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSetLowLaten
     enabled: jboolean,
 ) {
     jni_guard((), || {
-        punktfunk_core::transport::set_dscp_default(enabled);
+        lilynk_core::transport::set_dscp_default(enabled);
     })
 }
 
-/// `debug.punktfunk.force_parts` = 1: arm slice-progressive parts delivery even when the
+/// `debug.lilynk.force_parts` = 1: arm slice-progressive parts delivery even when the
 /// Kotlin `FEATURE_PartialFrame` probe said no, for a decoder that may accept
 /// `BUFFER_FLAG_PARTIAL_FRAME` without declaring the feature. Android-only; everywhere else the
 /// probe verdict stands.
 fn force_parts_sysprop() -> bool {
-    crate::sys::sysprop(c"debug.punktfunk.force_parts").as_deref() == Some("1")
+    crate::sys::sysprop(c"debug.lilynk.force_parts").as_deref() == Some("1")
 }
 
 /// The rates this session may ask for when the one the user chose will not open, best first.
 ///
 /// **Down the requested rate's own FAMILY, then the 48 kHz floor.** The two families
-/// ([`punktfunk_core::audio::pcm::rate_is_supported`]) are 44.1 / 88.2 / 176.4 kHz and 48 / 96 kHz,
+/// ([`lilynk_core::audio::pcm::rate_is_supported`]) are 44.1 / 88.2 / 176.4 kHz and 48 / 96 kHz,
 /// and within a family the lower rates are the same material at half the samples — a 176.4 kHz
 /// interface that will not open is overwhelmingly likely to be an 88.2 or 44.1 kHz one, and asking
 /// there next is asking for the rate the endpoint most plausibly runs at.
@@ -143,7 +143,7 @@ fn force_parts_sysprop() -> bool {
 /// The requested rate is the first rung, so an openable rate is asked for unchanged and a default
 /// session's ladder is one rung long.
 fn rate_fallback_ladder(rate_hz: u32) -> &'static [u32] {
-    const HZ48: u32 = punktfunk_core::audio::SAMPLE_RATE_HZ;
+    const HZ48: u32 = lilynk_core::audio::SAMPLE_RATE_HZ;
     match rate_hz {
         176_400 => &[176_400, 88_200, 44_100, HZ48],
         88_200 => &[88_200, 44_100, HZ48],
@@ -171,7 +171,7 @@ fn rate_fallback_ladder(rate_hz: u32) -> &'static [u32] {
 /// resolves to `(0, 0)`. That pair also keeps the `Hello` byte-identical to a legacy one: the
 /// wire encodes an explicit 48 000/16 the same as absent, so the difference is the capability bit.
 fn resolve_requested_audio_format(rate_hz: u32, bits: u8, channels: u8) -> (u32, u8) {
-    const HZ48: u32 = punktfunk_core::audio::SAMPLE_RATE_HZ;
+    const HZ48: u32 = lilynk_core::audio::SAMPLE_RATE_HZ;
     /// "This session did not ask for the lossless plane" — see the fn docs for why this is a
     /// pair of zeroes and not the legacy 48 000/16.
     const UNSPECIFIED: (u32, u8) = (0, 0);
@@ -179,8 +179,8 @@ fn resolve_requested_audio_format(rate_hz: u32, bits: u8, channels: u8) -> (u32,
     // nothing, rather than being an error: the request is a preference, and an unrecognized one
     // must not block a connect. The rate set comes from core rather than being re-expressed here,
     // so the host's gate and every client's request validation cannot drift apart.
-    if !punktfunk_core::audio::pcm::depth_is_supported(bits)
-        || !punktfunk_core::audio::pcm::rate_is_supported(rate_hz)
+    if !lilynk_core::audio::pcm::depth_is_supported(bits)
+        || !lilynk_core::audio::pcm::rate_is_supported(rate_hz)
     {
         return UNSPECIFIED;
     }
@@ -232,7 +232,7 @@ fn audio_rate_is_openable(_rate_hz: u32, _channels: u8) -> bool {
 /// Android ARMv7 always asks for ChaCha because software AES limits these TV-class devices. Other
 /// ABIs keep AES; their hardware acceleration makes the tradeoff target-specific.
 fn video_caps(hdr: bool, ten_bit_sdr: bool, multi_slice: bool) -> u8 {
-    use punktfunk_core::quic::{
+    use lilynk_core::quic::{
         VIDEO_CAP_10BIT, VIDEO_CAP_CHACHA20, VIDEO_CAP_HDR, VIDEO_CAP_MULTI_SLICE,
     };
     let mut caps = if cfg!(all(target_os = "android", target_arch = "arm")) {
@@ -264,9 +264,7 @@ fn video_caps(hdr: bool, ten_bit_sdr: bool, multi_slice: bool) -> u8 {
 /// `client_cursor` is Desktop mouse mode with a mouse: Kotlin's `HostCursor` wears the host's
 /// pointer and says when the host composites it instead.
 fn client_caps(pad_audio_ok: bool, keep_host_audio: bool, client_cursor: bool) -> u8 {
-    use punktfunk_core::quic::{
-        CLIENT_CAP_CURSOR, CLIENT_CAP_KEEP_HOST_AUDIO, CLIENT_CAP_PAD_AUDIO,
-    };
+    use lilynk_core::quic::{CLIENT_CAP_CURSOR, CLIENT_CAP_KEEP_HOST_AUDIO, CLIENT_CAP_PAD_AUDIO};
     let mut caps = 0;
     if pad_audio_ok {
         caps |= CLIENT_CAP_PAD_AUDIO;
@@ -284,7 +282,7 @@ fn client_caps(pad_audio_ok: bool, keep_host_audio: bool, client_cursor: bool) -
 /// H.264|HEVC when none is left, so a bogus mask cannot advertise nothing and kill the
 /// handshake. PyroWave is the one bit naming no MediaCodec; it decodes as Vulkan compute.
 fn advertised_codecs(bits: u8) -> u8 {
-    use punktfunk_core::quic::{CODEC_AV1, CODEC_H264, CODEC_HEVC, CODEC_PYROWAVE};
+    use lilynk_core::quic::{CODEC_AV1, CODEC_H264, CODEC_HEVC, CODEC_PYROWAVE};
     let known = bits & (CODEC_H264 | CODEC_HEVC | CODEC_AV1 | CODEC_PYROWAVE);
     if known == 0 {
         CODEC_H264 | CODEC_HEVC
@@ -315,7 +313,7 @@ fn identity_of(cert: String, key: String) -> Option<(String, String)> {
 #[cfg(test)]
 mod caps_tests {
     use super::video_caps;
-    use punktfunk_core::quic::{
+    use lilynk_core::quic::{
         VIDEO_CAP_10BIT, VIDEO_CAP_CHACHA20, VIDEO_CAP_HDR, VIDEO_CAP_MULTI_SLICE,
     };
 
@@ -536,7 +534,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConnectWith
 ) -> jlong {
     type Read = Option<(
         ConnectRequest,
-        Option<punktfunk_core::error::Result<ProfileUnlock>>,
+        Option<lilynk_core::error::Result<ProfileUnlock>>,
     )>;
     let read: Read = env
         .with_env(|env| -> jni::errors::Result<Read> {
@@ -548,7 +546,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConnectWith
             }
             // An unlock goes only to a pinned host; refused before its secret is read.
             if parse_hex32(&req.pin_hex).is_none() {
-                let unpinned = punktfunk_core::error::PunktfunkError::InvalidArg(
+                let unpinned = lilynk_core::error::PunktfunkError::InvalidArg(
                     "a profile unlock needs a pinned host",
                 );
                 return Ok(Some((req, Some(Err(unpinned)))));
@@ -580,7 +578,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConnectWith
 
 /// `NativeBridge.nativeProfileUnlockMessage(challenge, seatId, deviceFp, boxFp): ByteArray?` —
 /// the [`msg::UNLOCK_SIGNED_LEN`] bytes a profile's unlock key signs, with SHA-256 as the digest
-/// ([`punktfunk_core::quic::v2::msg::unlock_signed_message`]). `seatId` is the seat's 32
+/// ([`lilynk_core::quic::v2::msg::unlock_signed_message`]). `seatId` is the seat's 32
 /// lowercase hex characters; the three arrays are 32 bytes each. Null for anything else.
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeProfileUnlockMessage<
@@ -691,16 +689,16 @@ fn connect(req: ConnectRequest, prompts_unlock: bool, unlock: Option<ProfileUnlo
     } = req;
     // Which shell asked, for the host's `handshake complete` line. Set before the dial: core reads
     // it once the host says it parses the block.
-    punktfunk_core::client::set_client_label(&dialer);
+    lilynk_core::client::set_client_label(&dialer);
     let preset = preset_id.as_deref().and_then(|id| {
-        punktfunk_core::quic::SessionPreset::new(id, preset_name.as_deref().unwrap_or(""))
+        lilynk_core::quic::SessionPreset::new(id, preset_name.as_deref().unwrap_or(""))
     });
     let launch = non_empty(launch);
     let profile = non_empty(profile);
     let device_name = device_label(device_name);
     let identity = identity_of(cert, key);
     // Slice-progressive parts, by decoder truth (Kotlin's FEATURE_PartialFrame probe), or forced
-    // on by `debug.punktfunk.force_parts` for a decoder that may take BUFFER_FLAG_PARTIAL_FRAME
+    // on by `debug.lilynk.force_parts` for a decoder that may take BUFFER_FLAG_PARTIAL_FRAME
     // input without declaring the feature.
     let force_parts = force_parts_sysprop();
     let frame_parts = frame_parts_ok || force_parts;
@@ -739,14 +737,14 @@ fn connect(req: ConnectRequest, prompts_unlock: bool, unlock: Option<ProfileUnlo
     // Requested surround layout (2 = stereo / 6 = 5.1 / 8 = 7.1); anything else is stereo. The
     // host clamps it and echoes the resolved count in `connector.audio_channels`, which drives the
     // decoder + AAudio layout (read through `client.audio_format()` in `AudioPlayback::start`).
-    let audio_channels = punktfunk_core::audio::normalize_channels(audio_channels);
+    let audio_channels = lilynk_core::audio::normalize_channels(audio_channels);
     // The audio format, downgraded to something this device has PROVED it can open before the
     // `Hello` carries it — see `resolve_requested_audio_format` for why it cannot wait until
     // playback.
     let (audio_rate_hz, audio_bits) =
         resolve_requested_audio_format(audio_rate_hz, audio_bits, audio_channels);
     let params = ConnectParams {
-        probe_only: delivery_flags & punktfunk_core::quic::EXT_DELIVERY_PROBE_ONLY != 0,
+        probe_only: delivery_flags & lilynk_core::quic::EXT_DELIVERY_PROBE_ONLY != 0,
         compositor: CompositorPref::from_u8(compositor_pref),
         gamepad: GamepadPref::from_u8(gamepad_pref),
         bitrate_kbps, // 0 = host default
@@ -762,8 +760,8 @@ fn connect(req: ConnectRequest, prompts_unlock: bool, unlock: Option<ProfileUnlo
         audio_rate_hz,
         audio_bits,
         // Legacy coupling: libopus here decodes either, and nothing on Android needs the other.
-        audio_layout: punktfunk_core::audio::AudioLayout::Legacy,
-        video_fit: punktfunk_core::video_fit::VideoFit::from_name(&video_fit),
+        audio_layout: lilynk_core::audio::AudioLayout::Legacy,
+        video_fit: lilynk_core::video_fit::VideoFit::from_name(&video_fit),
         // Codecs this device decodes (`VideoDecoders.decodableCodecBits`). The host echoes its
         // pick in `connector.codec`.
         video_codecs: advertised_codecs(video_codecs),
@@ -773,7 +771,7 @@ fn connect(req: ConnectRequest, prompts_unlock: bool, unlock: Option<ProfileUnlo
         display_hdr: None,
         client_caps: client_caps(pad_audio_ok, keep_host_audio, client_cursor),
         // Slice-progressive delivery, by decoder truth (Kotlin probes FEATURE_PartialFrame on
-        // every decoder this device would use; `debug.punktfunk.force_parts` overrides for the
+        // every decoder this device would use; `debug.lilynk.force_parts` overrides for the
         // on-glass experiment): AU prefixes then arrive as `Frame::part` pieces and the decode
         // loop feeds them with BUFFER_FLAG_PARTIAL_FRAME.
         frame_parts,
@@ -808,7 +806,7 @@ fn connect(req: ConnectRequest, prompts_unlock: bool, unlock: Option<ProfileUnlo
             let client = Arc::new(client);
             // A forwardable cursor starts composited by the host until the mouse takes it
             // (Kotlin's HostCursor), so no session starts without a pointer.
-            if client.host_caps() & punktfunk_core::quic::HOST_CAP_CURSOR != 0 {
+            if client.host_caps() & lilynk_core::quic::HOST_CAP_CURSOR != 0 {
                 let _ = client.set_cursor_render(false);
             }
             let handle = SessionHandle {
@@ -947,7 +945,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSharesScree
     _this: JObject,
     handle: jlong,
 ) -> jboolean {
-    use punktfunk_core::quic::v2::hello::ScreenEcho;
+    use lilynk_core::quic::v2::hello::ScreenEcho;
     jni_guard(false, || {
         SESSIONS
             .get(handle)
@@ -1016,7 +1014,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeRedialDelay
     attempt: jint,
 ) -> jlong {
     jni_guard(-1, || {
-        punktfunk_core::client::PunktfunkEndReason::from_u8(end_reason as u8)
+        lilynk_core::client::PunktfunkEndReason::from_u8(end_reason as u8)
             .redial_delay(attempt.max(0) as u32)
             .map_or(-1, |d| d.as_millis() as jlong)
     })
@@ -1032,7 +1030,7 @@ fn since_first(since_first_ms: jlong) -> Option<Duration> {
 /// `NativeBridge.nativeWakeRedialDelayMs(autoWake, token, sinceFirstMs)` — milliseconds before
 /// dialing again a host that refused a connect with `token` (`nativeTakeLastError`),
 /// `sinceFirstMs` after its first such refusal (`-1`: the first); `-1` means show the refusal.
-/// The rule every client shares (`punktfunk_core::reject::wake_redial_delay`).
+/// The rule every client shares (`lilynk_core::reject::wake_redial_delay`).
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeWakeRedialDelayMs<'local>(
     mut env: EnvUnowned<'local>,
@@ -1045,8 +1043,8 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeWakeRedialD
         .with_env(|env| token.try_to_string(env))
         .resolve::<LogErrorAndDefault>();
     jni_guard(-1, || {
-        let refused = punktfunk_core::reject::RejectReason::from_token(&token);
-        punktfunk_core::reject::wake_redial_delay(
+        let refused = lilynk_core::reject::RejectReason::from_token(&token);
+        lilynk_core::reject::wake_redial_delay(
             auto_wake,
             refused,
             false,
@@ -1153,7 +1151,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeRequestAcce
         let host = g(env, &host);
         let cert = g(env, &cert_pem);
         let key = g(env, &key_pem);
-        let pin = punktfunk_core::fp::parse_hex32(&g(env, &pin_hex));
+        let pin = lilynk_core::fp::parse_hex32(&g(env, &pin_hex));
         let name = g(env, &name);
 
         let out = if host.is_empty() || cert.is_empty() || key.is_empty() {
@@ -1166,7 +1164,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeRequestAcce
                 (&cert, &key),
                 pin,
                 &name,
-                pf_client_core::trust::REQUEST_ACCESS_TIMEOUT,
+                ly_client_core::trust::REQUEST_ACCESS_TIMEOUT,
                 None,
             ) {
                 Ok(host_fp) => hex(&host_fp),
@@ -1189,8 +1187,8 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeRequestAcce
 #[cfg(test)]
 mod tests {
     use super::*;
-    use punktfunk_core::audio::pcm::{BITS_16, BITS_24};
-    use punktfunk_core::audio::SAMPLE_RATE_HZ;
+    use lilynk_core::audio::pcm::{BITS_16, BITS_24};
+    use lilynk_core::audio::SAMPLE_RATE_HZ;
 
     /// The `Hello` never asks for an audio format this device has not proved it can open: after
     /// the handshake there is no way back, because AAudio grants an explicit rate or fails the
@@ -1309,7 +1307,7 @@ mod tests {
             );
             for &rung in ladder {
                 assert!(
-                    punktfunk_core::audio::pcm::rate_is_supported(rung),
+                    lilynk_core::audio::pcm::rate_is_supported(rung),
                     "{rung} Hz is on {rate} Hz's ladder but is not a rate the plane carries"
                 );
             }
@@ -1423,12 +1421,12 @@ mod request_vectors {
 #[cfg(test)]
 mod decoder_tests {
     use super::*;
-    use punktfunk_core::error::PunktfunkError;
-    use punktfunk_core::quic::{
+    use lilynk_core::error::PunktfunkError;
+    use lilynk_core::quic::{
         CLIENT_CAP_CURSOR, CLIENT_CAP_KEEP_HOST_AUDIO, CLIENT_CAP_PAD_AUDIO, CODEC_AV1, CODEC_H264,
         CODEC_HEVC, CODEC_PYROWAVE,
     };
-    use punktfunk_core::reject::RejectReason;
+    use lilynk_core::reject::RejectReason;
 
     /// Tokens Kotlin reads for a transport failure; no typed rejection may take one.
     const TRANSPORT_TOKENS: [&str; 4] = ["crypto", "timeout", "io", "error"];

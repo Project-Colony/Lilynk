@@ -6,7 +6,7 @@
 import Foundation
 import PunktfunkShared
 
-/// One band of the Library tab. The raw value is the id stored in `punktfunk.librarySections`.
+/// One band of the Library tab. The raw value is the id stored in `lilynk.librarySections`.
 public enum LibrarySection: String, CaseIterable, Hashable, Sendable, Identifiable {
     case desktops
     case recent

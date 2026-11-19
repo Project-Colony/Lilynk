@@ -1,5 +1,5 @@
-// `punktfunk-host plugins …` package operations, run on the vendored bun. The host CLI forwards
-// add/remove/list here (crates/host/punktfunk-host/src/plugin_host/plugins.rs) and the runner-cli
+// `lilynk-host plugins …` package operations, run on the vendored bun. The host CLI forwards
+// add/remove/list here (crates/host/lilynk-host/src/plugin_host/plugins.rs) and the runner-cli
 // exposes them as subcommands. Everything a plugin needs to be installed — the plugins dir, the
 // `@punktfunk` registry scope in bunfig.toml, and the right bun — is handled here, so the operator
 // types one line.
@@ -20,7 +20,7 @@ export const pluginsDirDefault = (): string => path.join(configDir(), "plugins")
 
 export interface ResolveOptions {
 	/**
-	 * Allow names that resolve on the PUBLIC npm registry (unscoped `punktfunk-plugin-*`, foreign
+	 * Allow names that resolve on the PUBLIC npm registry (unscoped `lilynk-plugin-*`, foreign
 	 * scopes, arbitrary paths). Off by default: only the `@punktfunk` scope — pinned to the Gitea
 	 * registry by [`ensureBunfig`] — installs without it, so a typo or a squatted look-alike
 	 * package can't silently pull operator-privileged code from npmjs.org (the CLI flag is
@@ -33,7 +33,7 @@ export interface ResolveOptions {
  * Resolve a friendly plugin name to its npm package. A bare first-party name maps into the
  * `@punktfunk` scope (`playnite` → `@punktfunk/plugin-playnite`, `rom-manager` →
  * `@punktfunk/plugin-rom-manager`); an `@punktfunk/…` name is used verbatim. Anything else —
- * the unscoped `punktfunk-plugin-…` convention, foreign scopes, registry paths — resolves on
+ * the unscoped `lilynk-plugin-…` convention, foreign scopes, registry paths — resolves on
  * the public registry and is refused unless [`ResolveOptions.allowPublicRegistry`] is set.
  */
 export const resolvePackage = (
@@ -42,7 +42,7 @@ export const resolvePackage = (
 ): string => {
 	const n = name.trim();
 	if (!n) throw new Error("empty plugin name");
-	if (!n.startsWith("@") && !n.includes("/") && !n.startsWith("punktfunk-plugin-")) {
+	if (!n.startsWith("@") && !n.includes("/") && !n.startsWith("lilynk-plugin-")) {
 		return firstParty(`@punktfunk/plugin-${n}`); // bare first-party name
 	}
 	if (n.startsWith("@punktfunk/")) return firstParty(n); // first-party scope, pinned to our registry
@@ -88,7 +88,7 @@ export const ensurePluginsDir = (dir = pluginsDirDefault()): string => {
 	fs.mkdirSync(dir, { recursive: true });
 	const manifest = path.join(dir, "package.json");
 	if (!fs.existsSync(manifest) && !fs.existsSync(path.join(dir, "node_modules"))) {
-		fs.writeFileSync(manifest, '{\n  "name": "punktfunk-plugins",\n  "private": true\n}\n');
+		fs.writeFileSync(manifest, '{\n  "name": "lilynk-plugins",\n  "private": true\n}\n');
 	}
 	return dir;
 };
@@ -438,7 +438,7 @@ export const removePlugins = (names: string[], opts: PkgOpts = {}): void =>
 	);
 
 export interface InstalledPlugin {
-	/** npm package name, e.g. `@punktfunk/plugin-playnite` or `punktfunk-plugin-foo`. */
+	/** npm package name, e.g. `@punktfunk/plugin-playnite` or `lilynk-plugin-foo`. */
 	pkg: string;
 	/** Installed version from the package's package.json, if readable. */
 	version?: string;
@@ -446,7 +446,7 @@ export interface InstalledPlugin {
 
 /**
  * Enumerate installed plugin packages under `<dir>/node_modules` — the unscoped convention
- * (`punktfunk-plugin-*`) and **any** scope's `plugin-*` (`@punktfunk/plugin-rom-manager`,
+ * (`lilynk-plugin-*`) and **any** scope's `plugin-*` (`@punktfunk/plugin-rom-manager`,
  * `@retro-hub/plugin-x`). Follows the naming convention of `discoverUnits` (discover.ts), but
  * lists every match, whether or not it is a top-level dependency of the plugins dir.
  */
@@ -470,7 +470,7 @@ export const listInstalled = (dir = pluginsDirDefault()): InstalledPlugin[] => {
 		return out; // no plugins installed yet
 	}
 	for (const entry of entries) {
-		if (entry.startsWith("punktfunk-plugin-")) {
+		if (entry.startsWith("lilynk-plugin-")) {
 			out.push({ pkg: entry, version: versionOf(path.join(modules, entry)) });
 		} else if (entry.startsWith("@")) {
 			let scoped: string[] = [];

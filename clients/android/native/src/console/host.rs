@@ -13,18 +13,18 @@ use super::egl::{EglContext, EglSurface, GlesVersion};
 use super::gpu::Gpu;
 use crate::console_lifecycle::{half_rate, Action, Event as SurfaceEvent, Lifecycle};
 use anyhow::{bail, Result};
-use ndk::native_window::NativeWindow;
-use pf_client_core::console::{PointerInput, SessionPhase};
-use pf_client_core::menu_nav::{MenuEvent, MenuNav, MenuSample, PadInfo};
-use pf_console_ui::bridge::{
+use lilynk_core::config::GamepadPref;
+use ly_client_core::console::{PointerInput, SessionPhase};
+use ly_client_core::menu_nav::{MenuEvent, MenuNav, MenuSample, PadInfo};
+use ly_console_ui::bridge::{
     phase_code, Event, Published, PHASE_PROFILE_GONE, PHASE_PROFILE_LOCKED,
 };
-use pf_console_ui::console::FrameCost;
-use pf_console_ui::{
+use ly_console_ui::console::FrameCost;
+use ly_console_ui::{
     Console, ConsoleEntry, ConsoleHandles, ConsoleOptions, InputSource, Insets, Key, SnapshotStore,
     Viewport,
 };
-use punktfunk_core::config::GamepadPref;
+use ndk::native_window::NativeWindow;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 

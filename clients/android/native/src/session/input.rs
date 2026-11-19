@@ -10,10 +10,10 @@ use jni::errors::LogErrorAndDefault;
 use jni::objects::{JByteArray, JByteBuffer, JFloatArray, JLongArray, JObject, JString};
 use jni::sys::{jboolean, jint, jlong};
 use jni::EnvUnowned;
-use punktfunk_core::client::SurfaceTouch;
-use punktfunk_core::input::scroll::ScrollEvent;
-use punktfunk_core::input::{InputEvent, InputKind};
-use punktfunk_core::quic::{
+use lilynk_core::client::SurfaceTouch;
+use lilynk_core::input::scroll::ScrollEvent;
+use lilynk_core::input::{InputEvent, InputKind};
+use lilynk_core::quic::{
     PenSample, PenTool, RichInput, HID_REPORT_MAX, HOST_CAP2_TOUCH, HOST_CAP_PEN,
     HOST_CAP_TEXT_INPUT, PEN_ANGLE_UNKNOWN, PEN_BATCH_MAX, PEN_DISTANCE_UNKNOWN, PEN_TILT_UNKNOWN,
 };
@@ -75,7 +75,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendMouseCo
     time_us: jlong,
 ) {
     jni_guard((), || {
-        let flags = punktfunk_core::input::mouse_counts_flags(time_us as u64);
+        let flags = lilynk_core::input::mouse_counts_flags(time_us as u64);
         send_event(handle, InputKind::MouseMove, 0, dx, dy, flags);
     })
 }
@@ -213,7 +213,7 @@ fn touch_kind(kind: jint) -> InputKind {
 /// distinguishes fingers (reusable after up); coordinates are pixels on the client's touch
 /// surface, whose size rides in `flags` so the host can rescale into the output (identical
 /// packing to MouseMoveAbs). On up only the id matters. The host injects a real touch contact
-/// where it can (`pf_inject::touch_supported`).
+/// where it can (`ly_inject::touch_supported`).
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendTouch(
     _env: EnvUnowned,
@@ -362,7 +362,7 @@ const SURFACE_KEPT: jint = 1;
 const SURFACE_FORWARDED: jint = 2;
 
 /// The status Kotlin reads for core's answer to one update.
-fn surface_status(answer: punktfunk_core::error::Result<bool>) -> jint {
+fn surface_status(answer: lilynk_core::error::Result<bool>) -> jint {
     match answer {
         Ok(true) => SURFACE_FORWARDED,
         Ok(false) => SURFACE_KEPT,
@@ -372,7 +372,7 @@ fn surface_status(answer: punktfunk_core::error::Result<bool>) -> jint {
 
 /// `NativeBridge.nativeTouchpadSurface(handle, ids, xs, ys, count, maxContacts, button, keep,
 /// retractTaps, widthDmm, heightDmm, timeUs)` — every touch down on a touch surface now, as
-/// [`NativeClient::touchpad_surface`](punktfunk_core::client::NativeClient::touchpad_surface)
+/// [`NativeClient::touchpad_surface`](lilynk_core::client::NativeClient::touchpad_surface)
 /// takes it: the first `count` platform ids with x/y in 0..1 of the surface. Answers
 /// [`surface_status`]: refused, kept (the gesture is Kotlin's), or forwarded.
 #[unsafe(no_mangle)]
@@ -691,7 +691,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendGamepad
 /// actually reach the game, or would be decoded and dropped by a host backend with no motion plane.
 ///
 /// The whole question is answered here rather than in Kotlin so the reasoning lives in exactly one
-/// place — [`punktfunk_core::config::pad_motion_reaches`], which carries the argument and the tests.
+/// place — [`lilynk_core::config::pad_motion_reaches`], which carries the argument and the tests.
 /// A third transcription of it would be a third thing to get subtly wrong, and every way of getting
 /// it wrong is silent: too strict kills a working gyro, too lax keeps ~250 Hz of samples flowing
 /// into a host that drops every one.
@@ -709,10 +709,10 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativePadMotionRe
         let Some(h) = SESSIONS.get(handle) else {
             return true;
         };
-        let declared = punktfunk_core::config::GamepadPref::from_u8(
+        let declared = lilynk_core::config::GamepadPref::from_u8(
             declared_pref.clamp(0, u8::MAX as jint) as u8,
         );
-        punktfunk_core::config::pad_motion_reaches(
+        lilynk_core::config::pad_motion_reaches(
             declared,
             h.client.requested_gamepad,
             h.client.resolved_gamepad,
@@ -726,7 +726,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativePadMotionRe
 /// that never declared: the session default answers for it.
 ///
 /// Answered here for the reason `nativePadMotionReaches` is:
-/// [`punktfunk_core::config::pad_has_quick_access`] carries the rule and its tests. A `0`
+/// [`lilynk_core::config::pad_has_quick_access`] carries the rule and its tests. A `0`
 /// handle answers `false`, which sends the chord: every pad Steam reads takes it.
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativePadHasQuickAccess(
@@ -741,9 +741,9 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativePadHasQuick
         };
         let declared = u8::try_from(declared_pref).map_or(
             h.client.requested_gamepad,
-            punktfunk_core::config::GamepadPref::from_u8,
+            lilynk_core::config::GamepadPref::from_u8,
         );
-        punktfunk_core::config::pad_has_quick_access(
+        lilynk_core::config::pad_has_quick_access(
             declared,
             h.client.requested_gamepad,
             h.client.resolved_gamepad,
@@ -836,7 +836,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSetSc2Gate(
 ) {
     jni_guard((), || {
         if let Some(h) = SESSIONS.get(handle) {
-            let gate = punktfunk_core::client::Sc2Gate::from_bits(gate as u32);
+            let gate = lilynk_core::client::Sc2Gate::from_bits(gate as u32);
             h.client.set_sc2_gate(wire_pad(pad), gate);
         }
     })
@@ -853,7 +853,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSc2Identity
 ) -> JByteArray<'local> {
     env.with_env(|env| -> jni::errors::Result<JByteArray<'local>> {
         let nth = usize::try_from(index).ok();
-        match nth.and_then(|i| punktfunk_core::client::sc2::identity_requests(puck).nth(i)) {
+        match nth.and_then(|i| lilynk_core::client::sc2::identity_requests(puck).nth(i)) {
             Some(request) => env.byte_array_from_slice(request),
             None => Ok(JByteArray::default()),
         }
@@ -871,7 +871,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSc1Identity
 ) -> JByteArray<'local> {
     env.with_env(|env| -> jni::errors::Result<JByteArray<'local>> {
         let nth = usize::try_from(index).ok();
-        match nth.and_then(|i| punktfunk_core::client::sc2::classic_identity_requests().nth(i)) {
+        match nth.and_then(|i| lilynk_core::client::sc2::classic_identity_requests().nth(i)) {
             Some(request) => env.byte_array_from_slice(request),
             None => Ok(JByteArray::default()),
         }
@@ -886,7 +886,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSc1BleState
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
 ) -> JByteArray<'local> {
-    use punktfunk_core::client::sc1_ble::CLASSIC_BLE_STATE;
+    use lilynk_core::client::sc1_ble::CLASSIC_BLE_STATE;
     env.with_env(|env| env.byte_array_from_slice(&[0u8; CLASSIC_BLE_STATE]))
         .resolve::<LogErrorAndDefault>()
 }
@@ -901,7 +901,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSc1BleInput
     state: JByteArray<'local>,
     segment: JByteArray<'local>,
 ) -> JByteArray<'local> {
-    use punktfunk_core::client::sc1_ble::{classic_ble_input, CLASSIC_BLE_STATE};
+    use lilynk_core::client::sc1_ble::{classic_ble_input, CLASSIC_BLE_STATE};
     env.with_env(|env| -> jni::errors::Result<JByteArray<'local>> {
         let mut held = [0i8; CLASSIC_BLE_STATE];
         state.get_region(env, 0, &mut held)?;
@@ -929,7 +929,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSc1BleSegme
 ) -> JByteArray<'local> {
     env.with_env(|env| -> jni::errors::Result<JByteArray<'local>> {
         let frame = env.convert_byte_array(&frame)?;
-        let segs: Vec<u8> = punktfunk_core::client::sc1_ble::classic_ble_segments(&frame)
+        let segs: Vec<u8> = lilynk_core::client::sc1_ble::classic_ble_segments(&frame)
             .flatten()
             .collect();
         env.byte_array_from_slice(&segs)
@@ -948,7 +948,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSc1BleReply
     env.with_env(|env| -> jni::errors::Result<JByteArray<'local>> {
         let segments = env.convert_byte_array(&segments)?;
         let mut reply = [0u8; 73];
-        match punktfunk_core::client::sc1_ble::classic_ble_reply(&segments, &mut reply) {
+        match lilynk_core::client::sc1_ble::classic_ble_reply(&segments, &mut reply) {
             Some(n) => env.byte_array_from_slice(&reply[..n]),
             None => Ok(JByteArray::default()),
         }
@@ -977,7 +977,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendPadIden
         let replies = env.convert_byte_array(&replies)?;
         let pad = wire_pad(pad);
         let slot = u8::try_from(slot).unwrap_or(0);
-        let id = punktfunk_core::quic::PadIdentity {
+        let id = lilynk_core::quic::PadIdentity {
             pad,
             serial,
             replies,
@@ -1075,7 +1075,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendPadMoti
 ///
 /// Answered here because every input this client forwards goes through the session's
 /// `send_input`, which is the one clock for "recent"; the rule is
-/// [`punktfunk_core::client::holds_screen_awake`]. A `0` handle answers `true`: a screen that
+/// [`lilynk_core::client::holds_screen_awake`]. A `0` handle answers `true`: a screen that
 /// stays on is the safe answer when the session cannot be asked.
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeHoldsScreenAwake(
@@ -1088,7 +1088,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeHoldsScreen
         let Some(h) = SESSIONS.get(handle) else {
             return true;
         };
-        punktfunk_core::client::holds_screen_awake(keep_awake, h.client.input_idle())
+        lilynk_core::client::holds_screen_awake(keep_awake, h.client.input_idle())
     })
 }
 
@@ -1168,7 +1168,7 @@ mod tests {
 
     #[test]
     fn a_refusal_reads_apart_from_a_kept_gesture() {
-        use punktfunk_core::PunktfunkError;
+        use lilynk_core::PunktfunkError;
         assert_eq!(surface_status(Ok(true)), SURFACE_FORWARDED);
         assert_eq!(surface_status(Ok(false)), SURFACE_KEPT);
         let refused = Err(PunktfunkError::Unsupported("no touchpad"));

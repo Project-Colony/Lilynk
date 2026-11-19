@@ -3,10 +3,10 @@
 use super::{described_overridable, group, presets, rows, setting_combo, setting_toggle, Cx};
 use crate::app::quick_actions::{Props, QuickActions};
 use crate::app::shortcuts::{resolved, ring_keys, ShortcutsPage};
-use pf_client_core::overlay_actions::SlotId;
-use pf_client_core::settings::{MouseMode, TouchMode};
-use pf_client_core::shortcuts::{Action, Device};
-use pf_l10n::{client, desktop};
+use ly_client_core::overlay_actions::SlotId;
+use ly_client_core::settings::{MouseMode, TouchMode};
+use ly_client_core::shortcuts::{Action, Device};
+use ly_l10n::{client, desktop};
 use windows_reactor::*;
 
 /// Input: touch, keyboard and mouse.

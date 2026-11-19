@@ -11,7 +11,7 @@ import org.junit.Test
 
 /**
  * Pure JVM tests of [Sc2Device] — the SC2 protocol surface this client shares with the Apple
- * client (`Sc2Device.swift`) and the host (`triton_proto.rs` / `pf_driver_proto::triton`).
+ * client (`Sc2Device.swift`) and the host (`triton_proto.rs` / `ly_driver_proto::triton`).
  * Run: `./gradlew :kit:testDebugUnitTest`.
  *
  * The tables the three share are pinned by `clients/shared/sc2-vectors.json`, so an edit on one

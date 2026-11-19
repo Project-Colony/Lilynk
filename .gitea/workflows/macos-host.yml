@@ -1,4 +1,4 @@
-# Does `punktfunk-host` still COMPILE on a third platform? Nothing more.
+# Does `lilynk-host` still COMPILE on a third platform? Nothing more.
 #
 # There is no macOS host backend and none is shipped. What this protects is the seam: every
 # platform-gated call site saying which platform it means, rather than assuming Linux-or-Windows
@@ -27,30 +27,30 @@ on:
     branches: [main]
     paths:
       - '.cargo/**'
-      - 'crates/client/punktfunk-ffi/**'
-      - 'crates/codec/pf-bitstream/**'
-      - 'crates/core/pf-update-check/**'
-      - 'crates/core/punktfunk-core/**'
+      - 'crates/client/lilynk-ffi/**'
+      - 'crates/codec/ly-bitstream/**'
+      - 'crates/core/ly-update-check/**'
+      - 'crates/core/lilynk-core/**'
       - 'l10n/**'
-      - 'crates/host/pf-audio/**'
-      - 'crates/host/pf-capture/**'
-      - 'crates/host/pf-clipboard/**'
-      - 'crates/host/pf-driver-proto/**'
-      - 'crates/host/pf-encode/**'
-      - 'crates/host/pf-encode-core/**'
-      - 'crates/host/pf-frame/**'
-      - 'crates/host/pf-gpu/**'
-      - 'crates/host/pf-host-config/**'
-      - 'crates/host/pf-inject/**'
-      - 'crates/host/pf-paths/**'
-      - 'crates/host/pf-paths-win/**'
-      - 'crates/host/pf-portal/**'
-      - 'crates/host/pf-seats/**'
-      - 'crates/host/pf-vdisplay/**'
-      - 'crates/host/pf-win-display/**'
-      - 'crates/host/pf-zerocopy/**'
-      - 'crates/host/punktfunk-host/**'
-      - 'crates/install/punktfunk-setup/**'
+      - 'crates/host/ly-audio/**'
+      - 'crates/host/ly-capture/**'
+      - 'crates/host/ly-clipboard/**'
+      - 'crates/host/ly-driver-proto/**'
+      - 'crates/host/ly-encode/**'
+      - 'crates/host/ly-encode-core/**'
+      - 'crates/host/ly-frame/**'
+      - 'crates/host/ly-gpu/**'
+      - 'crates/host/ly-host-config/**'
+      - 'crates/host/ly-inject/**'
+      - 'crates/host/ly-paths/**'
+      - 'crates/host/ly-paths-win/**'
+      - 'crates/host/ly-portal/**'
+      - 'crates/host/ly-seats/**'
+      - 'crates/host/ly-vdisplay/**'
+      - 'crates/host/ly-win-display/**'
+      - 'crates/host/ly-zerocopy/**'
+      - 'crates/host/lilynk-host/**'
+      - 'crates/install/lilynk-setup/**'
       - 'Cargo.toml'
       - 'Cargo.lock'
       - 'rust-toolchain.toml'
@@ -59,30 +59,30 @@ on:
   pull_request:
     paths:
       - '.cargo/**'
-      - 'crates/client/punktfunk-ffi/**'
-      - 'crates/codec/pf-bitstream/**'
-      - 'crates/core/pf-update-check/**'
-      - 'crates/core/punktfunk-core/**'
+      - 'crates/client/lilynk-ffi/**'
+      - 'crates/codec/ly-bitstream/**'
+      - 'crates/core/ly-update-check/**'
+      - 'crates/core/lilynk-core/**'
       - 'l10n/**'
-      - 'crates/host/pf-audio/**'
-      - 'crates/host/pf-capture/**'
-      - 'crates/host/pf-clipboard/**'
-      - 'crates/host/pf-driver-proto/**'
-      - 'crates/host/pf-encode/**'
-      - 'crates/host/pf-encode-core/**'
-      - 'crates/host/pf-frame/**'
-      - 'crates/host/pf-gpu/**'
-      - 'crates/host/pf-host-config/**'
-      - 'crates/host/pf-inject/**'
-      - 'crates/host/pf-paths/**'
-      - 'crates/host/pf-paths-win/**'
-      - 'crates/host/pf-portal/**'
-      - 'crates/host/pf-seats/**'
-      - 'crates/host/pf-vdisplay/**'
-      - 'crates/host/pf-win-display/**'
-      - 'crates/host/pf-zerocopy/**'
-      - 'crates/host/punktfunk-host/**'
-      - 'crates/install/punktfunk-setup/**'
+      - 'crates/host/ly-audio/**'
+      - 'crates/host/ly-capture/**'
+      - 'crates/host/ly-clipboard/**'
+      - 'crates/host/ly-driver-proto/**'
+      - 'crates/host/ly-encode/**'
+      - 'crates/host/ly-encode-core/**'
+      - 'crates/host/ly-frame/**'
+      - 'crates/host/ly-gpu/**'
+      - 'crates/host/ly-host-config/**'
+      - 'crates/host/ly-inject/**'
+      - 'crates/host/ly-paths/**'
+      - 'crates/host/ly-paths-win/**'
+      - 'crates/host/ly-portal/**'
+      - 'crates/host/ly-seats/**'
+      - 'crates/host/ly-vdisplay/**'
+      - 'crates/host/ly-win-display/**'
+      - 'crates/host/ly-zerocopy/**'
+      - 'crates/host/lilynk-host/**'
+      - 'crates/install/lilynk-setup/**'
       - 'Cargo.toml'
       - 'Cargo.lock'
       - 'rust-toolchain.toml'
@@ -151,16 +151,16 @@ jobs:
           echo "$BREW_BIN" >> "$GITHUB_PATH"
 
       # `check`, not `clippy`, and no `-D warnings`: the graph carries code that is dead on macOS
-      # (`pf-encode::vbv_frames_env`, the `hidout` sink in `native/input.rs`). Failing the gate on
+      # (`ly-encode::vbv_frames_env`, the `hidout` sink in `native/input.rs`). Failing the gate on
       # that would only teach people to ignore it. This asks one question — does it compile.
-      - name: Check (punktfunk-host, default features)
-        run: cargo check -p punktfunk-host --locked
+      - name: Check (lilynk-host, default features)
+        run: cargo check -p lilynk-host --locked
 
       # Tests, not `check`: the installer engine promises the whole flow is reviewable off-box
       # (design/installer-v2.md D9), and that only stays true while facts/plan take no unix-only
       # type. This runner is what enforces it — the suite is pure and needs no Linux.
-      - name: Test (punktfunk-setup, the installer engine)
-        run: cargo test -p punktfunk-setup --locked
+      - name: Test (lilynk-setup, the installer engine)
+        run: cargo test -p lilynk-setup --locked
 
       - name: sccache stats (visibility only)
         if: always()

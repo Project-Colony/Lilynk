@@ -1,5 +1,5 @@
 // Convenience constructors for the wire input events (field semantics match
-// punktfunk_core::input::InputEvent; see punktfunk_core.h).
+// lilynk_core::input::InputEvent; see lilynk_core.h).
 
 import Foundation
 import PunktfunkCore
@@ -64,7 +64,7 @@ public extension PunktfunkInputEvent {
             flags: UInt32(source.rawValue) | (UInt32(phase.rawValue) << 8))
     }
 
-    // Gamepad (wire contract in punktfunk_core::input::gamepad): one transition per event,
+    // Gamepad (wire contract in lilynk_core::input::gamepad): one transition per event,
     // `pad` = controller index, accumulated host-side into a virtual pad of the kind
     // `gamepadArrival` declared, else the session's negotiated `GamepadType`.
 

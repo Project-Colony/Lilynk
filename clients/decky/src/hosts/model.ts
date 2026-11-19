@@ -1,5 +1,5 @@
 // The host rows the QAM panel and the game page's "Play from" menu draw: the saved store and the
-// live mDNS browse joined by pf-client-core's `same_host` rule. Pure, so scripts/test-merge.ts
+// live mDNS browse joined by ly-client-core's `same_host` rule. Pure, so scripts/test-merge.ts
 // replays clients/shared/host-row-vectors.json through it under plain node.
 import type { DiscoveredHost, Preset, SavedHost } from "../backend";
 
@@ -90,7 +90,7 @@ export function splitByAccess(views: HostView[]): { ready: HostView[]; access: H
 
 /**
  * Is this advert that saved record? The CLI's own match decides when it names the record; the
- * rule below, `same_host` in pf-client-core, covers a client too old to say and a record the CLI
+ * rule below, `same_host` in ly-client-core, covers a client too old to say and a record the CLI
  * read before it had an id. Two known fingerprints decide it alone: the other OS of a dual-boot
  * box answers at the same lease with the same MAC, so the address would read it as the OS
  * already saved.

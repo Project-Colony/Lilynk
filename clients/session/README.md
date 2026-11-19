@@ -1,8 +1,8 @@
-# punktfunk-session
+# lilynk-session
 
 The Vulkan session binary: one stream per invocation in an SDL3 window, no UI toolkit. It is
 deliberately dumb — a renderer the front-ends call *into*. The GTK shell, the WinUI shell and the
-`punktfunk` CLI all spawn it through the same brain (`pf_client_core::orchestrate`), which resolves
+`punktfunk` CLI all spawn it through the same brain (`ly_client_core::orchestrate`), which resolves
 policy (presets, settings, wake) and hands the result down, normally as a `--resolved-spec` file.
 It reads the shared stores only as the compat fallback for a bare hand-launched invocation.
 
@@ -10,8 +10,8 @@ It reads the shared stores only as the compat fallback for a bare hand-launched 
 mirror and the exit codes. Read them there rather than trusting a copy here.
 
 ```
-punktfunk-session --connect host[:port] [--fp HEX] [--launch id] [--fullscreen] [--stats]
-punktfunk-session --browse host[:port] [--mgmt PORT] [--fullscreen]
+lilynk-session --connect host[:port] [--fp HEX] [--launch id] [--fullscreen] [--stats]
+lilynk-session --browse host[:port] [--mgmt PORT] [--fullscreen]
 ```
 
 `--browse` opens the console game library instead of connecting: A launches the focused title in the
@@ -29,13 +29,13 @@ dependency tree.
 
 ## Decode rungs
 
-`auto` walks native rungs in device-specific order: NVIDIA/AMD try pf-vkdecode over Vulkan
-Video first; Intel/unknown try the platform rung first (pf-dxvadec on Windows, pf-vaapi on Linux).
+`auto` walks native rungs in device-specific order: NVIDIA/AMD try ly-vkdecode over Vulkan
+Video first; Intel/unknown try the platform rung first (ly-dxvadec on Windows, ly-vaapi on Linux).
 Admission may skip a rung before the CPU fallback (openh264/rav1d). **There is no FFmpeg in this
 binary.**
 
 The confidence used to prioritize rung/codec pairs lives in
-`pf_client_core::video::native_evidence`. Its note names the hardware evidence and remaining gap;
+`ly_client_core::video::native_evidence`. Its note names the hardware evidence and remaining gap;
 the same facts appear in the session log:
 
 ```

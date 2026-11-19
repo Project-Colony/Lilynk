@@ -33,8 +33,8 @@ sockets. The [headless session](#headless-session) pins them on purpose. Every o
 From inside your Plasma session:
 
 ```sh
-systemctl --user enable --now punktfunk-host
-journalctl --user -u punktfunk-host -f    # watch it start and print its fingerprint
+systemctl --user enable --now lilynk-host
+journalctl --user -u lilynk-host -f    # watch it start and print its fingerprint
 ```
 
 Then add the drop-in from
@@ -48,14 +48,14 @@ too, see [What the unit starts](/docs/running-as-a-service#what-the-unit-starts)
 
 ## Headless session
 
-A box with no graphical login runs its own headless KWin session, `punktfunk-kde-session`, which
+A box with no graphical login runs its own headless KWin session, `lilynk-kde-session`, which
 needs none of the permissions above. It needs KWin 6.5.6 or newer (`kwin_wayland --version`).
 
 ```sh
 mkdir -p ~/.config/punktfunk
-cp /usr/share/punktfunk/host.env.kde ~/.config/punktfunk/host.env  # Ubuntu: punktfunk-host/
+cp /usr/share/punktfunk/host.env.kde ~/.config/punktfunk/host.env  # Ubuntu: lilynk-host/
 systemctl --user daemon-reload
-systemctl --user enable --now punktfunk-kde-session punktfunk-host
+systemctl --user enable --now lilynk-kde-session lilynk-host
 sudo loginctl enable-linger "$USER"
 ```
 
@@ -70,13 +70,13 @@ Full setup: [Running as a Service](/docs/running-as-a-service).
 
 ## Troubleshooting
 
-`punktfunk-host probe-compositor`, run inside the session, exits 0 when KWin is ready and prints
+`lilynk-host probe-compositor`, run inside the session, exits 0 when KWin is ready and prints
 the reason when it isn't.
 
 ### KWin does not expose `zkde_screencast_unstable_v1`
 
 KWin hasn't granted the host its screencast permission. Log out and back in once. If that doesn't
-fix it, `getcap /usr/bin/punktfunk-host` must print nothing: KWin can't identify a binary that
+fix it, `getcap /usr/bin/lilynk-host` must print nothing: KWin can't identify a binary that
 carries a capability — see
 [GPU scheduling priority](/docs/running-as-a-service#gpu-scheduling-priority).
 
@@ -86,7 +86,7 @@ KWin refused the display; the message arrives in your session's language. Its ba
 one (a nested KWin, or `kwin_wayland --virtual` below 6.5.6), or KWin 6.6 created it disabled. The
 host enables a disabled one and retries on its own. If it keeps failing:
 
-- `punktfunk-host list-monitors` shows a `Virtual-punktfunk-*` display marked `disabled`.
+- `lilynk-host list-monitors` shows a `Virtual-punktfunk-*` display marked `disabled`.
 - `~/.config/kwinoutputconfig.json` holds a stale entry for it.
 - `journalctl --user -b -t kwin_wayland` says "Applying output configuration failed!": KWin won't
   enable one more display beside your monitors.

@@ -50,14 +50,14 @@ sudo usermod -aG punktfunk "$USER"   # virtual Steam Deck controller
 From a terminal inside your desktop session:
 
 ```sh
-systemctl --user enable --now punktfunk-host punktfunk-web
+systemctl --user enable --now lilynk-host lilynk-web
 ```
 
 Ubuntu ships `ufw` turned off. If you turned it on, open the host, and the console for other
 devices:
 
 ```sh
-sudo ufw allow punktfunk-native && sudo ufw allow punktfunk-web
+sudo ufw allow lilynk-native && sudo ufw allow lilynk-web
 ```
 
 **Next:** [Quick Start, step 3](/docs/quickstart#3-open-the-web-console): open the console and pair

@@ -1,5 +1,5 @@
 {
-  "name": "punktfunk-winget-source",
+  "name": "lilynk-winget-source",
   "private": true,
   "type": "module",
   "description": "winget REST source for the Punktfunk Windows host (read path only).",

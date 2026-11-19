@@ -703,7 +703,7 @@ public final class InputCapture {
     ///
     /// The mouse model is NOT a condition, and re-adding it is the trap: `inhibit_shortcuts`
     /// applies in both models here exactly as it does on the SDL clients, whose keyboard grab
-    /// reads `inhibit` and never `desktop` (`pf-presenter`'s `apply_capture`). A remote desktop
+    /// reads `inhibit` and never `desktop` (`ly-presenter`'s `apply_capture`). A remote desktop
     /// needs the host's ⌘ chords too, and under the desktop model the unlocked pointer clicking
     /// another window is the always-available way back.
     nonisolated static func forwardsCommandChord(

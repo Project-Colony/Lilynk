@@ -43,7 +43,7 @@ is removed.
 Log out and back in so niri restarts as biri, then restart the host:
 
 ```sh
-systemctl --user restart punktfunk-host
+systemctl --user restart lilynk-host
 ```
 
 On the next connect the log says `niri: virtual outputs available`.
@@ -61,8 +61,8 @@ Leave `PUNKTFUNK_COMPOSITOR` unset: a pin turns off detection and session follow
 From inside your niri session:
 
 ```sh
-systemctl --user enable --now punktfunk-host
-journalctl --user -u punktfunk-host -f    # watch it start and print its fingerprint
+systemctl --user enable --now lilynk-host
+journalctl --user -u lilynk-host -f    # watch it start and print its fingerprint
 ```
 
 Open [the web console](/docs/web-console) to pair a [client](/docs/clients). To serve Moonlight
