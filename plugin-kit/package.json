@@ -48,9 +48,6 @@
 		"dist",
 		"README.md"
 	],
-	"publishConfig": {
-		"registry": "https://git.unom.io/api/packages/unom/npm/"
-	},
 	"scripts": {
 		"typecheck": "tsc --noEmit",
 		"build": "tsc -p tsconfig.build.json && cp src/theme.css dist/theme.css",

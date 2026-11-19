@@ -5,6 +5,7 @@ import { afterAll, describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import {
+	BLOCKED_REGISTRY,
 	ensureBunfig,
 	ensurePluginsDir,
 	listInstalled,
@@ -102,14 +103,13 @@ describe("resolvePackage", () => {
 describe("ensureBunfig", () => {
 	const HUB = { "@retro-hub": "https://retro.example/npm/" };
 
-	test("never maps the first-party scope without a registry", () => {
+	test("points the first-party scope at a registry that never resolves", () => {
 		const dir = tmp("bunfig-fresh");
 		ensureBunfig(dir);
-		expect(fs.existsSync(path.join(dir, "bunfig.toml"))).toBe(false);
-		ensureBunfig(dir, HUB);
 		const toml = fs.readFileSync(path.join(dir, "bunfig.toml"), "utf8");
 		expect(toml).toContain("[install.scopes]");
-		expect(toml).not.toContain("@punktfunk");
+		expect(toml).toContain(`"@punktfunk" = "${BLOCKED_REGISTRY}"`);
+		expect(BLOCKED_REGISTRY).toMatch(/^https:\/\/[^/]+\.invalid\/$/);
 	});
 
 	test("is idempotent — a second call doesn't duplicate the scope", () => {
@@ -187,11 +187,11 @@ describe("listInstalled", () => {
 describe("ensureBunfig with extra scopes", () => {
 	const read = (dir: string) => fs.readFileSync(path.join(dir, "bunfig.toml"), "utf8");
 
-	test("maps a third-party scope and nothing first-party", () => {
+	test("maps a third-party scope next to the blocked first-party one", () => {
 		const dir = tmp("bunfig-extra");
 		ensureBunfig(dir, { "@retro-hub": "https://retro.example/npm/" });
 		const out = read(dir);
-		expect(out).not.toContain("@punktfunk");
+		expect(out).toContain(`"@punktfunk" = "${BLOCKED_REGISTRY}"`);
 		expect(out).toContain('"@retro-hub" = "https://retro.example/npm/"');
 	});
 
@@ -205,7 +205,7 @@ describe("ensureBunfig with extra scopes", () => {
 		const out = read(dir);
 		expect(out).toContain('"@retro-hub" = "https://new.example/npm/"');
 		expect(out).not.toContain("old.example");
-		expect(out).not.toContain("@punktfunk");
+		expect(out).toContain(`"@punktfunk" = "${BLOCKED_REGISTRY}"`);
 	});
 
 	test("preserves unrelated scopes already in the file", () => {

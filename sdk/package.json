@@ -43,9 +43,6 @@
 		"dist",
 		"README.md"
 	],
-	"publishConfig": {
-		"registry": "https://git.unom.io/api/packages/unom/npm/"
-	},
 	"scripts": {
 		"prepare": "if command -v bun2nix >/dev/null 2>&1; then bun2nix -o bun.nix; fi",
 		"gen": "bun scripts/gen-spec.ts ../api/openapi.json node_modules/.cache/openapi.gen.json && openapigen --spec node_modules/.cache/openapi.gen.json --name Punktfunk --format httpclient > src/gen/lilynk.ts",

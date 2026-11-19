@@ -11,9 +11,16 @@ import { SDK_VERSION } from "./version.js";
 
 /**
  * The `@punktfunk` package registry. Empty: this build has none, so first-party names are refused
- * and the scope is never mapped, rather than left to resolve on the public registry.
+ * and the scope points at [`BLOCKED_REGISTRY`] instead of the public registry.
  */
 export const REGISTRY = "";
+
+/**
+ * Where the first-party scope points while [`REGISTRY`] is empty. `.invalid` never resolves
+ * (RFC 2606), so a first-party package, named or pulled in by another plugin, fails to install
+ * instead of resolving on the public registry, where nobody here owns the scope.
+ */
+export const BLOCKED_REGISTRY = "https://registry.invalid/";
 
 /** Where plugin packages install: `<config_dir>/plugins` (matches discover.ts discovery). */
 export const pluginsDirDefault = (): string => path.join(configDir(), "plugins");
@@ -108,7 +115,7 @@ export const ensureBunfig = (
 ): void => {
 	const file = path.join(dir, "bunfig.toml");
 	const wanted: Record<string, string> = {
-		...(REGISTRY ? { "@punktfunk": REGISTRY } : {}),
+		"@punktfunk": REGISTRY || BLOCKED_REGISTRY,
 		...extraScopes,
 	};
 	let existing = "";
