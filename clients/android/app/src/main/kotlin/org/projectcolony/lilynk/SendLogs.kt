@@ -1,0 +1,73 @@
+package org.projectcolony.lilynk
+
+import android.content.Context
+import org.projectcolony.lilynk.kit.NativeBridge
+import org.projectcolony.lilynk.kit.R
+import org.projectcolony.lilynk.kit.library.MgmtReply
+import org.projectcolony.lilynk.kit.library.mgmtCall
+import org.projectcolony.lilynk.kit.security.ClientIdentity
+import org.projectcolony.lilynk.kit.security.KnownHost
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+
+/**
+ * "Send logs to host" — this device's log file, earlier runs included
+ * ([NativeBridge.nativeRenderLogs]; the `ly_client_core::logring` ring when no file is open),
+ * posted to a paired host's `POST /api/v1/client-logs` over the same mTLS identity the library
+ * fetch uses. The bundle is then listed in that host's web console, on its Logs page, beside the
+ * host's own log.
+ *
+ * ONE implementation for both Android shells — the Skia console's host menu
+ * (`console.SkiaConsole`) and the touch home's host page ([HostDetailScreen]). The outcome lines
+ * are the `hostcard_logs_*` messages the desktop's `logring::send_bundle` also returns, so a
+ * quoted message means the same thing on every client.
+ *
+ * Blocking — call it off the main thread.
+ */
+object SendLogs {
+    /** `lilynk-android <ver> (android <rel>; <abi>) — client log bundle`, the desktop's shape. */
+    fun header(context: Context): String {
+        val version = runCatching {
+            context.packageManager.getPackageInfo(context.packageName, 0).versionName
+        }.getOrNull() ?: "?"
+        return "lilynk-android $version (android ${android.os.Build.VERSION.RELEASE}; " +
+            "${android.os.Build.SUPPORTED_ABIS.firstOrNull() ?: "?"}) — client log bundle"
+    }
+
+    /** The user-facing outcome: the success line, or "Couldn't send logs — <why>". */
+    fun toHost(context: Context, identity: ClientIdentity, host: KnownHost): String =
+        toHost(
+            context, identity,
+            addr = host.address, mgmtPort = host.effectiveMgmtPort, fpHex = host.fpHex,
+            hostName = host.name.ifBlank { host.address }, streamPort = host.port,
+        )
+
+    /**
+     * The address-and-port form, for the console — its menu addresses a `HostRow`, which carries
+     * the mgmt port the ADVERT taught it (fresher than the saved record's).
+     */
+    fun toHost(
+        context: Context,
+        identity: ClientIdentity,
+        addr: String,
+        mgmtPort: Int,
+        fpHex: String,
+        hostName: String,
+        streamPort: Int = 0,
+    ): String {
+        val reply = mgmtCall(identity, addr, mgmtPort, fpHex, streamPort = streamPort) { base ->
+            val body = NativeBridge.nativeRenderLogs(header(context))
+            Request.Builder()
+                .url("$base/api/v1/client-logs")
+                .post(body.toRequestBody("text/plain; charset=utf-8".toMediaType()))
+                .build()
+        }
+        // The host answers 201 Created: the route STORES a bundle, so any 2xx is a success.
+        return if (reply is MgmtReply.Answer && reply.ok) {
+            context.getString(R.string.hostcard_logs_sent_body, hostName)
+        } else {
+            context.getString(R.string.hostcard_logs_failed, reply.why.words(context.resources))
+        }
+    }
+}

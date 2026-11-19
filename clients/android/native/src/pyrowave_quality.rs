@@ -50,7 +50,7 @@ fn quality_lines(
 /// `NativeBridge.nativeLocalLink(): IntArray`: `[kind, mbps]` of this device's link toward its
 /// default route, `IFACE_KIND_*` and Mbit/s. A route lookup and a few file reads: nothing is sent.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeLocalLink<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeLocalLink<'local>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
 ) -> JIntArray<'local> {
@@ -71,7 +71,9 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeLocalLink<'
 /// linkKind, linkMbps): String`: [`quality_lines`] for that link.
 #[unsafe(no_mangle)]
 #[allow(clippy::too_many_arguments)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativePyrowaveQuality<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativePyrowaveQuality<
+    'local,
+>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     width: jint,

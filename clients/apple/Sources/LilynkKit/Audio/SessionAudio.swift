@@ -72,7 +72,7 @@ public final class SessionAudio: @unchecked Sendable {
     /// voice-processing start can take would freeze the stream's input for that long. The main
     /// queue keeps only the trigger bookkeeping (debounce, backoff, retry ladder).
     private let engineQueue = DispatchQueue(
-        label: "io.unom.punktfunk.audio.engines", qos: .userInitiated)
+        label: "org.projectcolony.lilynk.audio.engines", qos: .userInitiated)
     /// The video plane's end-to-end meter (capture→on-glass), if the owner wired one — the
     /// reference the A/V sync loop steers the ring against. `nil` leaves the loop inert and the
     /// ring free-running: a loop with no reference must not invent one. The stage-1 pump feeds
@@ -88,7 +88,7 @@ public final class SessionAudio: @unchecked Sendable {
     /// new session's activate (a per-instance queue would let them race and leave the new session's
     /// audio deactivated). stop() enqueues its deactivate promptly so it lands before the next
     /// session's activate.
-    private static let sessionQueue = DispatchQueue(label: "io.unom.punktfunk.audio.session")
+    private static let sessionQueue = DispatchQueue(label: "org.projectcolony.lilynk.audio.session")
     #endif
     #if !os(macOS)
     /// Token for the route-change observer: it revives an engine the route change stopped, and on

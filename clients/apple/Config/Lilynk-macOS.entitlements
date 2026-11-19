@@ -81,7 +81,7 @@
 	     time (the Developer ID codesign step in release.yml resolves it via sed). -->
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)io.unom.punktfunk</string>
+		<string>$(AppIdentifierPrefix)org.projectcolony.lilynk</string>
 	</array>
 
 	<!-- App Group: same shared UserDefaults suite as iOS (Config/Lilynk.entitlements). Shared
@@ -91,7 +91,7 @@
 	     Dev-ID codesign step in release.yml must verify this value against the Dev-ID profile. -->
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.io.unom.punktfunk</string>
+		<string>group.org.projectcolony.lilynk</string>
 	</array>
 </dict>
 </plist>

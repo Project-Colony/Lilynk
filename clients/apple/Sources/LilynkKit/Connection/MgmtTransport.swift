@@ -302,7 +302,7 @@ actor MgmtConnectionPool {
 /// `isHealthy` is the exception: the pool reads it from its actor while `queue` may be writing it,
 /// so it sits behind a lock. `poolEpoch` and `pooledAt` belong to the pool alone.
 final class MgmtConnection: @unchecked Sendable {
-    private let queue = DispatchQueue(label: "io.unom.punktfunk.mgmt-connection")
+    private let queue = DispatchQueue(label: "org.projectcolony.lilynk.mgmt-connection")
     private let connection: NWConnection
     private let host: String
     private let port: UInt16

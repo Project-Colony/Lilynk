@@ -54,7 +54,7 @@ seat profiles, which deletes their accounts.
 
    ```sh
    rm -rf ~/.config/punktfunk ~/.config/systemd/user/punktfunk-*.service.d
-   rm -f ~/.config/autostart/io.unom.punktfunk.tray.desktop
+   rm -f ~/.config/autostart/org.projectcolony.lilynk.tray.desktop
    sudo groupdel lilynk-update
    sudo groupdel lilynk-door
    sudo gpasswd -d "$USER" punktfunk; sudo groupdel punktfunk

@@ -82,11 +82,11 @@ public final class ClipboardSync: NSObject {
     private var pendingFetches: [UInt32: PendingFetch] = [:]
     /// Fires the deadline that keeps a blocked paste from waiting forever on a host that went
     /// quiet mid-transfer.
-    private let deadlines = DispatchQueue(label: "io.unom.punktfunk.clipboard.deadline")
+    private let deadlines = DispatchQueue(label: "org.projectcolony.lilynk.clipboard.deadline")
     /// Serves host pastes off the drain thread where a pasteboard read can await a user decision
     /// (iOS's paste permission alert) — the drain thread must keep running, it is the one that
     /// would deliver the host's cancel.
-    private let serves = DispatchQueue(label: "io.unom.punktfunk.clipboard.serve")
+    private let serves = DispatchQueue(label: "org.projectcolony.lilynk.clipboard.serve")
 
     private final class Flag: @unchecked Sendable {
         private let lock = NSLock()

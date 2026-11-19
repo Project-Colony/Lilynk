@@ -26,7 +26,7 @@ use super::SESSIONS;
 /// `AccessUpdate` drained from the connector's event plane. Not android-gated — pure `jni` +
 /// connector reads, so it links on the host build too. Cheap; safe on the UI thread.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeAccessState<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeAccessState<'local>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     handle: jlong,

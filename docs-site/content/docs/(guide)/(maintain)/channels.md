@@ -43,7 +43,7 @@ The [releases page](https://git.unom.io/unom/punktfunk/releases) and winget carr
 | **pacman** | `sudo pacman -U /var/cache/pacman/pkg/lilynk-host-<version>-x86_64.pkg.tar.zst`, then `IgnorePkg = lilynk-host` in `/etc/pacman.conf` so `-Syu` leaves it. |
 | **Bazzite sysext** | `lilynk-sysext status` prints the feed URL; download `lilynk-<version>-x86-64.raw` from it and `sudo lilynk-sysext install --from-file lilynk-<version>-x86-64.raw`. |
 | **Windows installer** | Run the older `lilynk-host-setup-<version>.exe` over the current install. |
-| **winget** | `winget install unom.PunktfunkHost --version <x.y.z>` |
+| **winget** | `winget install Lilynk.LilynkHost --version <x.y.z>` |
 | **Decky plugin** | Install from URL: `…/generic/lilynk-decky/<version>/lilynk.zip`. |
 | **SteamOS on-device build** | `git -C ~/punktfunk checkout v<x.y.z>`, then `bash ~/punktfunk/scripts/steamdeck/update.sh`. Updates stop until you switch back to a branch. |
 | **NixOS** | `sudo nixos-rebuild switch --rollback`, or pin the flake input to a `v<x.y.z>` tag and rebuild. |

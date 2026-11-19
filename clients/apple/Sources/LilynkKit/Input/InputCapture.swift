@@ -953,7 +953,7 @@ private func CGSGetGlobalHotKeyOperatingMode(_ connection: UInt32, _ mode: Unsaf
 /// They come back on while the main thread has not answered for 2 s: a hung app must not keep
 /// ⌥⌘⎋ from the user. Everything runs on `queue`, so the watchdog works with main stuck.
 enum SystemHotKeys {
-    private static let queue = DispatchQueue(label: "io.unom.punktfunk.system-hot-keys")
+    private static let queue = DispatchQueue(label: "org.projectcolony.lilynk.system-hot-keys")
     // Queue-only state.
     private static var holders = 0
     private static var off = false

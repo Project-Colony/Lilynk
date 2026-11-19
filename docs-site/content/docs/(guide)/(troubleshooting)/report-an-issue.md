@@ -63,7 +63,7 @@ For stutter or lag, add a [performance recording](/docs/stats#recording-a-captur
 | Linux host | `journalctl --user -u lilynk-host` |
 | Windows host | `%ProgramData%\punktfunk\logs\` (`host.log`, `service.log`, `web.log`) from an **elevated** PowerShell |
 | Windows client | **Settings → About → Diagnostics → Open log folder** |
-| Mac, iPhone, iPad | Console.app on a Mac, subsystem `io.unom.punktfunk` |
+| Mac, iPhone, iPad | Console.app on a Mac, subsystem `org.projectcolony.lilynk` |
 | Android | `adb logcat`, tag `punktfunk` |
 | Linux client | Start it from a terminal; it logs there |
 

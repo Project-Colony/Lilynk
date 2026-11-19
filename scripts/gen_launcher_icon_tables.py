@@ -100,8 +100,8 @@ rows = "\n".join(
     for t, d, w, h in MARKS
 )
 write(
-    "clients/android/app/src/main/kotlin/io/unom/punktfunk/components/LauncherIcons.kt",
-    f"""package io.unom.punktfunk.components
+    "clients/android/app/src/main/kotlin/org/projectcolony/lilynk/components/LauncherIcons.kt",
+    f"""package org.projectcolony.lilynk.components
 
 {comment(BANNER, "//")}
 

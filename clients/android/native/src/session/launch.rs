@@ -13,7 +13,9 @@ use super::SESSIONS;
 /// `{"id", "message", "params": {name: value}}`; `""` otherwise. The latest verdict wins, so poll
 /// it. Cheap; safe on the UI thread.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeLaunchRefusal<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeLaunchRefusal<
+    'local,
+>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     handle: jlong,

@@ -5,7 +5,7 @@
 #
 #   bash /usr/share/punktfunk/bazzite/kde-desktop-setup.sh
 #
-# The VIRTUAL OUTPUT (video) needs no setup: the host package ships io.unom.punktfunk.host.desktop,
+# The VIRTUAL OUTPUT (video) needs no setup: the host package ships org.projectcolony.lilynk.host.desktop,
 # whose X-KDE-Wayland-Interfaces grants the host KWin's restricted zkde_screencast protocol (and two
 # others) on a normal interactive Plasma session — least-privilege (only the host, only the listed
 # interfaces), the same mechanism krfb/krdp use. No session-wide KWIN_WAYLAND_NO_PERMISSION_CHECKS

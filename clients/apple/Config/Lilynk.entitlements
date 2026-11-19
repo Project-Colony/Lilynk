@@ -9,7 +9,7 @@
 	     team prefix at signing time. -->
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)io.unom.punktfunk</string>
+		<string>$(AppIdentifierPrefix)org.projectcolony.lilynk</string>
 	</array>
 	<!-- Wake-on-LAN needs to send a UDP broadcast magic packet (a sleeping host has no ARP
 	     entry, so unicast can't wake it). Since iOS 14 / tvOS 14 the OS blocks sending to
@@ -20,14 +20,14 @@
 	     is true on iOS/tvOS too. -->
 	<key>com.apple.developer.networking.multicast</key>
 	<true/>
-	<!-- App Group: the shared UserDefaults suite (group.io.unom.punktfunk) that both the app and
+	<!-- App Group: the shared UserDefaults suite (group.org.projectcolony.lilynk) that both the app and
 	     the Widget/Live-Activity extension read — the saved-host store moved there so a launcher
 	     widget can see it (HostStore reads UserDefaults(suiteName:)). Must be registered on the
 	     developer portal and enabled in the provisioning profile for BOTH app ids
-	     (io.unom.punktfunk + io.unom.punktfunk.widgets). tvOS carries the key harmlessly. -->
+	     (org.projectcolony.lilynk + org.projectcolony.lilynk.widgets). tvOS carries the key harmlessly. -->
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.io.unom.punktfunk</string>
+		<string>group.org.projectcolony.lilynk</string>
 	</array>
 </dict>
 </plist>

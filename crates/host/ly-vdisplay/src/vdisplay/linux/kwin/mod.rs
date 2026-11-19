@@ -7,7 +7,7 @@
 //! Before KWin 6.8 the global is restricted: KWin advertises it only to a client whose
 //! `.desktop` lists it under `X-KDE-Wayland-Interfaces` (matched by `/proc/<pid>/exe` →
 //! `Exec=`); 6.8 refuses it only to sandboxed clients. Packages ship
-//! `io.unom.punktfunk.host.desktop` for that. The host binary must carry no file capability and
+//! `org.projectcolony.lilynk.host.desktop` for that. The host binary must carry no file capability and
 //! must still be the file at its path ([`screencast_withheld`] names which one broke).
 //! Headless tests use `KWIN_WAYLAND_NO_PERMISSION_CHECKS=1`. `createVirtualOutput` needs the
 //! DRM or nested Wayland backend, or VirtualBackend from KWin 6.5.4.
@@ -930,7 +930,7 @@ fn screencast_withheld() -> anyhow::Error {
     anyhow!(
         "{WITHHELD} ({}) — KWin grants it only to a binary whose path is the Exec= of an \
          installed .desktop listing it in X-KDE-Wayland-Interfaces \
-         (io.unom.punktfunk.host.desktop){}",
+         (org.projectcolony.lilynk.host.desktop){}",
         exe.display(),
         identity_hint(replaced, permitted)
     )

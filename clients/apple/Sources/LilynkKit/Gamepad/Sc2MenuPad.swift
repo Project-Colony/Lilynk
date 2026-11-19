@@ -33,7 +33,7 @@ final class Sc2MenuPad {
     /// The link's report queue — USER_INTERACTIVE for the same reason `Sc2Capture`'s is: BLE
     /// packets are dropped silently if the consumer stalls.
     private let queue = DispatchQueue(
-        label: "io.unom.punktfunk.sc2-menu", qos: .userInteractive)
+        label: "org.projectcolony.lilynk.sc2-menu", qos: .userInteractive)
     private var link: Sc2BleLink!
     private var observers: [NSObjectProtocol] = []
 

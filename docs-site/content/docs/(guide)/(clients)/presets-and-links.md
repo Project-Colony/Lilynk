@@ -149,7 +149,7 @@ launcher file.
 2. Have the frontend open `.punktfunk` files with this activity and the file's URI:
 
    ```text
-   am start -n io.unom.punktfunk/io.unom.punktfunk.MainActivity -a android.intent.action.VIEW -d <file URI>
+   am start -n org.projectcolony.lilynk/org.projectcolony.lilynk.MainActivity -a android.intent.action.VIEW -d <file URI>
    ```
 
 A launcher file is the game's link on one line, as **Copy link** gives it, so a text editor can

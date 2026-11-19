@@ -97,7 +97,7 @@ final class RumbleRenderer: @unchecked Sendable {
         case device
     }
 
-    private let queue = DispatchQueue(label: "io.unom.punktfunk.haptics", qos: .userInteractive)
+    private let queue = DispatchQueue(label: "org.projectcolony.lilynk.haptics", qos: .userInteractive)
     private let actuator: Actuator
 
     /// One finite haptic play on a motor: the player plus when (engine timeline) it expires.

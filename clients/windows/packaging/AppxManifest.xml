@@ -28,7 +28,7 @@
   IgnorableNamespaces="uap uap5 rescap">
 
   <Identity
-    Name="io.unom.punktfunk"
+    Name="org.projectcolony.lilynk"
     Publisher="{PUBLISHER}"
     Version="{VERSION}"
     ProcessorArchitecture="{ARCH}" />

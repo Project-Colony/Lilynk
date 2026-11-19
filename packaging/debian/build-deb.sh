@@ -91,8 +91,8 @@ done
 # Managed gamescope takeover on DM-autologin boxes: root helper + polkit action so the host can
 # stop/restore the display manager for the stream (the helper derives the DM unit itself).
 install -Dm0755 scripts/ly-dm-helper               "$STAGE/usr/libexec/punktfunk/ly-dm-helper"
-install -Dm0644 scripts/io.unom.punktfunk.dm-helper.policy \
-                                                   "$STAGE/usr/share/polkit-1/actions/io.unom.punktfunk.dm-helper.policy"
+install -Dm0644 scripts/org.projectcolony.lilynk.dm-helper.policy \
+                                                   "$STAGE/usr/share/polkit-1/actions/org.projectcolony.lilynk.dm-helper.policy"
 # ...and the other half of stopping one: with the DM stopped the box has no active local session,
 # so logind's power actions fall to auth_admin_keep and Steam's power menu goes quiet mid-stream.
 install -Dm0644 packaging/linux/49-lilynk-power.rules \
@@ -142,16 +142,16 @@ sed -i 's#%h/punktfunk/scripts/headless/run-headless-kde.sh#/usr/share/lilynk-ho
 # management globals on an interactive Plasma session. Must ship with the host — KWin caches the
 # per-exe grant on first connect, so it has to be present before the host ever connects. See the
 # file's header comment.
-install -Dm0644 packaging/linux/io.unom.punktfunk.host.desktop \
-    "$STAGE/usr/share/applications/io.unom.punktfunk.host.desktop"
+install -Dm0644 packaging/linux/org.projectcolony.lilynk.host.desktop \
+    "$STAGE/usr/share/applications/org.projectcolony.lilynk.host.desktop"
 # Status tray: the per-user SNI icon + the hicolor status icons it names. Its autostart entry is
 # per user, written by the host from the tray_autostart setting.
 install -Dm0755 "$TRAY_BIN"                        "$STAGE/usr/bin/lilynk-tray"
-install -Dm0644 packaging/linux/io.unom.punktfunk.starthost.desktop \
-    "$STAGE/usr/share/applications/io.unom.punktfunk.starthost.desktop"
+install -Dm0644 packaging/linux/org.projectcolony.lilynk.starthost.desktop \
+    "$STAGE/usr/share/applications/org.projectcolony.lilynk.starthost.desktop"
 # Opens the web console signed in: a person's own inside their seat, the operator's elsewhere.
-install -Dm0644 packaging/linux/io.unom.punktfunk.webconsole.desktop \
-    "$STAGE/usr/share/applications/io.unom.punktfunk.webconsole.desktop"
+install -Dm0644 packaging/linux/org.projectcolony.lilynk.webconsole.desktop \
+    "$STAGE/usr/share/applications/org.projectcolony.lilynk.webconsole.desktop"
 for sz in 22x22 48x48; do
   for png in packaging/linux/icons/hicolor/$sz/apps/*.png; do
     install -Dm0644 "$png" "$STAGE/usr/share/icons/hicolor/$sz/apps/$(basename "$png")"

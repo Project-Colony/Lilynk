@@ -30,13 +30,13 @@ command -v omarchy-notification-send >/dev/null || exit 0
 if [[ -n "$id" ]] && command -v lilynk-host >/dev/null; then
   omarchy-notification-send \
     --urgency=critical \
-    --icon=io.unom.punktfunk \
+    --icon=org.projectcolony.lilynk \
     "Punktfunk pairing request" "$body" \
     --exec "Approve:lilynk-host ctl approve $id" \
     --exec "Deny:lilynk-host ctl deny $id"
 else
   omarchy-notification-send \
     --urgency=critical \
-    --icon=io.unom.punktfunk \
+    --icon=org.projectcolony.lilynk \
     "Punktfunk pairing request" "$body — approve it in the console"
 fi

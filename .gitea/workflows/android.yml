@@ -465,7 +465,7 @@ jobs:
           SERVICE_ACCOUNT_JSON: ${{ secrets.SERVICE_ACCOUNT_JSON }}
         run: |
           echo "uploading to Play track '$PLAY_TRACK'${PLAY_ALSO_TRACK:+ (+ '$PLAY_ALSO_TRACK')}"
-          set -- --package io.unom.punktfunk \
+          set -- --package org.projectcolony.lilynk \
                  --aab clients/android/app/build/outputs/bundle/release/app-release.aab \
                  --track "$PLAY_TRACK" --status completed
           if [ -n "${PLAY_ALSO_TRACK:-}" ]; then set -- "$@" --also-track "$PLAY_ALSO_TRACK"; fi

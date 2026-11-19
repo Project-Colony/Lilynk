@@ -63,18 +63,18 @@ DOCDIR="$STAGE/usr/share/doc/$PKG"
 install -Dm0755 "$BIN"                                   "$STAGE/usr/bin/$PKG"
 install -Dm0755 "$SESSION_BIN"                           "$STAGE/usr/bin/lilynk-session"
 install -Dm0755 "$CLI_BIN"                               "$STAGE/usr/bin/lilynk"
-install -Dm0644 packaging/linux/io.unom.punktfunk.desktop \
-                "$STAGE/usr/share/applications/io.unom.punktfunk.desktop"
+install -Dm0644 packaging/linux/org.projectcolony.lilynk.desktop \
+                "$STAGE/usr/share/applications/org.projectcolony.lilynk.desktop"
 # Second launcher, straight into the gamepad console (`--browse`): the couch entry point a
 # TV/HTPC user picks from the app grid, and what gets added to Steam as a non-Steam game.
-install -Dm0644 packaging/linux/io.unom.punktfunk.console.desktop \
-                "$STAGE/usr/share/applications/io.unom.punktfunk.console.desktop"
+install -Dm0644 packaging/linux/org.projectcolony.lilynk.console.desktop \
+                "$STAGE/usr/share/applications/org.projectcolony.lilynk.console.desktop"
 # The app icon the desktop entry (and the About dialog) name. Without it the launcher falls
 # back to a generic monitor glyph.
-install -Dm0644 packaging/linux/icons/hicolor/scalable/apps/io.unom.punktfunk.svg \
-                "$STAGE/usr/share/icons/hicolor/scalable/apps/io.unom.punktfunk.svg"
+install -Dm0644 packaging/linux/icons/hicolor/scalable/apps/org.projectcolony.lilynk.svg \
+                "$STAGE/usr/share/icons/hicolor/scalable/apps/org.projectcolony.lilynk.svg"
 # The CamelCase icon name, which desktop entries users already have still name.
-ln -s io.unom.punktfunk.svg "$STAGE/usr/share/icons/hicolor/scalable/apps/io.unom.Punktfunk.svg"
+ln -s org.projectcolony.lilynk.svg "$STAGE/usr/share/icons/hicolor/scalable/apps/org.projectcolony.Lilynk.svg"
 # DualSense hidraw access (full pad fidelity through SDL's HIDAPI driver).
 install -Dm0644 scripts/70-lilynk-client.rules \
                 "$STAGE/usr/lib/udev/rules.d/70-lilynk-client.rules"

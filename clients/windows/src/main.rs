@@ -159,8 +159,9 @@ fn set_app_user_model_id() {
     // SAFETY: `SetCurrentProcessExplicitAppUserModelID` takes a static wide literal.
     unsafe {
         // Must stay in sync with ly-presenter's win32.rs, or the windows stop grouping.
-        let _ =
-            SetCurrentProcessExplicitAppUserModelID(windows::core::w!("io.unom.punktfunk.client"));
+        let _ = SetCurrentProcessExplicitAppUserModelID(windows::core::w!(
+            "org.projectcolony.lilynk.client"
+        ));
     }
 }
 

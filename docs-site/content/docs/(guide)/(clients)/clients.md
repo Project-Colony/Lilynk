@@ -108,7 +108,7 @@ link; the native speed test and jumbo frames are Lilynk-app only.
 ## Scripting: the `punktfunk` CLI
 
 `punktfunk` is the client without a window. It ships with every Linux package and the Windows
-installer. Under the Flatpak, run it as `flatpak run --command=lilynk io.unom.punktfunk`.
+installer. Under the Flatpak, run it as `flatpak run --command=lilynk org.projectcolony.lilynk`.
 
 ```sh
 punktfunk discover                            # hosts advertising on this network

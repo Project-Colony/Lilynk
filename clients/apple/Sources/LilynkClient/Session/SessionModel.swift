@@ -28,7 +28,7 @@ private let sessionLog = ClientLog(category: "session")
 /// modern macOS, `log collect --device-name` needs root and then fails "Device not configured"
 /// (an Apple TV has no USB to fall back to), and libimobiledevice pairs against a different
 /// database than Xcode. Stdout, however, IS bridged — `xcrun devicectl device process launch
-/// --console -e '{"LILYNK_STATS_STDOUT":"1"}' io.unom.punktfunk` streams these lines straight
+/// --console -e '{"LILYNK_STATS_STDOUT":"1"}' org.projectcolony.lilynk` streams these lines straight
 /// to the Mac. That is the only way to read a session's numbers with the **stats overlay OFF**,
 /// which matters because the overlay is itself a composited layer over the Metal one — i.e. a
 /// plausible cause of the very present-floor inflation the overlay is used to measure.

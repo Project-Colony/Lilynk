@@ -20,11 +20,11 @@ from pathlib import Path
 
 import decky
 
-# Flatpak application id of the GTK client (packaging/flatpak/io.unom.punktfunk.yml).
-APP_ID = "io.unom.punktfunk"
+# Flatpak application id of the GTK client (packaging/flatpak/org.projectcolony.lilynk.yml).
+APP_ID = "org.projectcolony.lilynk"
 # The id before the lowercase rename. A Deck still on it is driven under it until its next client
 # update, which the remote's end-of-life marker turns into a rebase onto APP_ID.
-LEGACY_APP_ID = "io.unom.Punktfunk"
+LEGACY_APP_ID = "org.projectcolony.Lilynk"
 
 
 def _runner_path() -> str:
@@ -68,7 +68,7 @@ def _native_client() -> str | None:
 def _flatpak_ref() -> dict | None:
     """The installed client flatpak as ``{scope, branch, arch, app_id, ref}``, or None.
 
-    ``ref`` names the branch in full (``io.unom.punktfunk//canary``): the remote publishes
+    ``ref`` names the branch in full (``org.projectcolony.lilynk//canary``): the remote publishes
     ``stable`` and ``canary`` with no default branch, so ``flatpak remote-info`` refuses an
     unqualified ref even with one branch installed. With both installed this picks ``stable``;
     a plain ``flatpak run`` starts the last-installed branch, so :func:`_client_argv` pins

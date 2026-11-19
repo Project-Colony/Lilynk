@@ -18,7 +18,7 @@ use std::time::Duration;
 /// and the caller compares it against the record's pin.
 /// Blocking (builds its own runtime) — Kotlin runs it off the main thread.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeProbe<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeProbe<'local>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     host: JString<'local>,

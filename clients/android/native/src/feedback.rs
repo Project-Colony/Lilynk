@@ -70,7 +70,7 @@ const TAG_MIC_LED: u8 = 0x07;
 /// back to the controller holding that wire `pad` index (multi-pad rumble). Run from a Kotlin
 /// poll thread.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeNextRumble(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeNextRumble(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -108,7 +108,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeNextRumble(
 /// Returns the byte count written, or `-1` on timeout / session closed / an event with no
 /// Android replay (dropped). A buffer too small for the event is logged.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeNextHidout(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeNextHidout(
     mut env: EnvUnowned,
     _this: JObject,
     handle: jlong,

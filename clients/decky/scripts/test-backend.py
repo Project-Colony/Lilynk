@@ -54,7 +54,7 @@ def check(name: str, cond: bool):
 #
 # `flatpak run --command=X <app-id> ARGS` — everything after the app id is the APP's argv, so
 # an app id that drifts left silently turns our flags into the client's.
-client._client_argv = lambda: ["/usr/bin/flatpak", "run", "--arch=x86_64", "io.unom.punktfunk"]
+client._client_argv = lambda: ["/usr/bin/flatpak", "run", "--arch=x86_64", "org.projectcolony.lilynk"]
 client._flatpak = lambda: "/usr/bin/flatpak"
 check(
     "cli argv: flatpak form, app id last",
@@ -64,7 +64,7 @@ check(
         "run",
         "--arch=x86_64",
         "--command=lilynk",
-        "io.unom.punktfunk",
+        "org.projectcolony.lilynk",
     ],
 )
 
@@ -87,11 +87,11 @@ check("cli argv: native sibling found", client._cli_argv() == [str(tmp / "lilynk
 # ---- _flatpak_ref: the branch must be NAMED, always ---------------------------------------
 #
 # The remote publishes `stable` AND `canary`, so a query that names no branch, such as
-# `flatpak remote-info <origin> io.unom.punktfunk`, fails with "Multiple branches available".
+# `flatpak remote-info <origin> org.projectcolony.lilynk`, fails with "Multiple branches available".
 # One branch INSTALLED is not enough to make it unambiguous; the ambiguity lives on the remote.
 shutil.rmtree("/tmp/pf-test-home", ignore_errors=True)
 # An arm install (Steam Frame): the resolver must look under the installed arch, not uname's.
-_fp_root = Path("/tmp/pf-test-home/.local/share/flatpak/app/io.unom.punktfunk/aarch64")
+_fp_root = Path("/tmp/pf-test-home/.local/share/flatpak/app/org.projectcolony.lilynk/aarch64")
 client._flatpak = lambda: "/usr/bin/flatpak"
 client._client_argv = _real_client_argv  # undo the fixture patches above
 
@@ -111,13 +111,13 @@ check("ref: a branch dir without `active` is leftovers, not an install", client.
 _install_branch("canary")
 ref = client._flatpak_ref()
 check("ref: the single installed branch is used", ref == {
-    "scope": "--user", "branch": "canary", "arch": "aarch64", "app_id": "io.unom.punktfunk",
-    "ref": "io.unom.punktfunk//canary",
+    "scope": "--user", "branch": "canary", "arch": "aarch64", "app_id": "org.projectcolony.lilynk",
+    "ref": "org.projectcolony.lilynk//canary",
 })
 check(
     "ref: the launcher pins that branch, app id still LAST",
     client._client_argv() == [
-        "/usr/bin/flatpak", "run", "--arch=aarch64", "--branch=canary", "io.unom.punktfunk",
+        "/usr/bin/flatpak", "run", "--arch=aarch64", "--branch=canary", "org.projectcolony.lilynk",
     ],
 )
 # The pin must survive _cli_argv's rewrite, or the CLI runs a different build than the GUI.
@@ -125,7 +125,7 @@ check(
     "ref: --command= is inserted before the app id, keeping the pin",
     client._cli_argv() == [
         "/usr/bin/flatpak", "run", "--arch=aarch64", "--branch=canary",
-        "--command=lilynk", "io.unom.punktfunk",
+        "--command=lilynk", "org.projectcolony.lilynk",
     ],
 )
 
@@ -145,17 +145,17 @@ Path("/tmp/pf-test-home").mkdir(parents=True)
 if (Path("/tmp/pf-test-home") / "caseprobe").exists():
     print("skip ref: legacy id (case-insensitive /tmp)")
 else:
-    _fp_root = Path("/tmp/pf-test-home/.local/share/flatpak/app/io.unom.Punktfunk/x86_64")
+    _fp_root = Path("/tmp/pf-test-home/.local/share/flatpak/app/org.projectcolony.Lilynk/x86_64")
     _install_branch("stable")
     ref = client._flatpak_ref()
     check("ref: a legacy-only install resolves under its own id",
-          ref["app_id"] == "io.unom.Punktfunk" and ref["ref"] == "io.unom.Punktfunk//stable")
+          ref["app_id"] == "org.projectcolony.Lilynk" and ref["ref"] == "org.projectcolony.Lilynk//stable")
     check("ref: the launcher runs the legacy id, still LAST",
-          client._client_argv()[-1] == "io.unom.Punktfunk")
-    _fp_root = Path("/tmp/pf-test-home/.local/share/flatpak/app/io.unom.punktfunk/x86_64")
+          client._client_argv()[-1] == "org.projectcolony.Lilynk")
+    _fp_root = Path("/tmp/pf-test-home/.local/share/flatpak/app/org.projectcolony.lilynk/x86_64")
     _install_branch("stable")
     check("ref: the new id wins once both are installed",
-          client._flatpak_ref()["app_id"] == "io.unom.punktfunk")
+          client._flatpak_ref()["app_id"] == "org.projectcolony.lilynk")
 
 shutil.rmtree("/tmp/pf-test-home", ignore_errors=True)
 
@@ -354,7 +354,7 @@ except ValueError:
     check("fetch: a body over the cap raises", True)
 
 # ---- _field_from (flatpak info parsing, drives the client update check) ------------------
-info = "        ID: io.unom.punktfunk\n    Origin: lilynk-origin\n    Commit: abc123def\n"
+info = "        ID: org.projectcolony.lilynk\n    Origin: lilynk-origin\n    Commit: abc123def\n"
 check("field: commit", update._field_from(info, "Commit") == "abc123def")
 check("field: origin", update._field_from(info, "Origin") == "lilynk-origin")
 check("field: absent", update._field_from(info, "Nope") == "")
@@ -371,7 +371,7 @@ async def _spy_exec(argv, label, timeout, **kw):
 
 client._exec = _spy_exec
 client._flatpak = lambda: "/usr/bin/flatpak"
-asyncio.run(update._flatpak_capture(["info", "--user", "io.unom.punktfunk//stable"]))
+asyncio.run(update._flatpak_capture(["info", "--user", "org.projectcolony.lilynk//stable"]))
 check("flatpak: info is read in the C locale", _seen.get("env_extra") == {"LC_ALL": "C"})
 client._exec = _real_exec
 

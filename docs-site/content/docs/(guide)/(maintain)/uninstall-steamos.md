@@ -29,9 +29,9 @@ hand, in this order.
    rm -f  ~/.local/bin/lilynk-scripting ~/.local/bin/lilynk-gamescope
    rm -rf ~/.local/lib/lilynk-scripting ~/.local/share/lilynk-scripting
    rm -f  ~/.local/share/punktfunk/gamescope.stamp
-   rm -f  ~/.local/share/applications/io.unom.punktfunk.host.desktop
-   rm -f  ~/.local/bin/lilynk-tray ~/.config/autostart/io.unom.punktfunk.tray.desktop
-   rm -f  ~/.local/share/applications/io.unom.punktfunk.starthost.desktop
+   rm -f  ~/.local/share/applications/org.projectcolony.lilynk.host.desktop
+   rm -f  ~/.local/bin/lilynk-tray ~/.config/autostart/org.projectcolony.lilynk.tray.desktop
+   rm -f  ~/.local/share/applications/org.projectcolony.lilynk.starthost.desktop
    rm -f  ~/.local/share/icons/hicolor/*/apps/lilynk-tray*.png
    rm -rf ~/punktfunk                        # the source checkout and its build
    ```

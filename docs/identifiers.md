@@ -1,7 +1,7 @@
 # Identifiers
 
-A reverse-DNS identifier is `io.unom.punktfunk`, all lowercase. A second part is a lowercase
-dotted suffix: `io.unom.punktfunk.host`. Linux and Windows compare these case-sensitively, so a
+A reverse-DNS identifier is `org.projectcolony.lilynk`, all lowercase. A second part is a lowercase
+dotted suffix: `org.projectcolony.lilynk.host`. Linux and Windows compare these case-sensitively, so a
 match that ignores case is no match. A name that follows a platform's own convention keeps that
 convention instead.
 
@@ -9,11 +9,11 @@ convention instead.
 
 | Platform | Identifiers | Defined in |
 | --- | --- | --- |
-| Apple | Bundle `io.unom.punktfunk`, widgets `io.unom.punktfunk.widgets`, App Group `group.io.unom.punktfunk` | `clients/apple/Lilynk.xcodeproj` |
-| Android | Application id and package `io.unom.punktfunk` | `clients/android/app/build.gradle.kts` |
-| Linux client | Flatpak, AppStream, GTK and Wayland app id, icon `io.unom.punktfunk`; console window app id `io.unom.punktfunk.console`; launchers `io.unom.punktfunk.desktop` and `io.unom.punktfunk.console.desktop` | `packaging/flatpak/`, `packaging/linux/`, `crates/client/ly-presenter/` |
-| Linux host | KWin grant `io.unom.punktfunk.host.desktop`, launchers `io.unom.punktfunk.starthost.desktop` and `io.unom.punktfunk.webconsole.desktop`, tray autostart `io.unom.punktfunk.tray.desktop`, D-Bus `io.unom.punktfunk.shell`, polkit `io.unom.punktfunk.dm-helper` | `packaging/linux/`, `crates/host/` |
-| Windows | MSIX `io.unom.punktfunk`, AUMIDs `io.unom.punktfunk.client` and `io.unom.punktfunk.tray` | `clients/windows/`, `crates/install/` |
+| Apple | Bundle `org.projectcolony.lilynk`, widgets `org.projectcolony.lilynk.widgets`, App Group `group.org.projectcolony.lilynk` | `clients/apple/Lilynk.xcodeproj` |
+| Android | Application id and package `org.projectcolony.lilynk` | `clients/android/app/build.gradle.kts` |
+| Linux client | Flatpak, AppStream, GTK and Wayland app id, icon `org.projectcolony.lilynk`; console window app id `org.projectcolony.lilynk.console`; launchers `org.projectcolony.lilynk.desktop` and `org.projectcolony.lilynk.console.desktop` | `packaging/flatpak/`, `packaging/linux/`, `crates/client/ly-presenter/` |
+| Linux host | KWin grant `org.projectcolony.lilynk.host.desktop`, launchers `org.projectcolony.lilynk.starthost.desktop` and `org.projectcolony.lilynk.webconsole.desktop`, tray autostart `org.projectcolony.lilynk.tray.desktop`, D-Bus `org.projectcolony.lilynk.shell`, polkit `org.projectcolony.lilynk.dm-helper` | `packaging/linux/`, `crates/host/` |
+| Windows | MSIX `org.projectcolony.lilynk`, AUMIDs `org.projectcolony.lilynk.client` and `org.projectcolony.lilynk.tray` | `clients/windows/`, `crates/install/` |
 
 ## Platform conventions
 
@@ -21,9 +21,9 @@ convention instead.
 | --- | --- | --- |
 | Packages, binaries, systemd units, sysext images | Lowercase, hyphenated | `lilynk-host`, `lilynk-client.raw` |
 | Windows services, tasks, registry keys | CamelCase, no dots | `LilynkHost`, `HKLM\SOFTWARE\Punktfunk` |
-| winget | Publisher.Package | `unom.PunktfunkHost` |
+| winget | Publisher.Package | `Lilynk.LilynkHost` |
 | URL scheme, DNS-SD service | Lowercase | `punktfunk://`, `_punktfunk._udp` |
-| GNOME Shell extension | name@domain | `punktfunk-windows@unom.io` |
+| GNOME Shell extension | name@domain | `lilynk-windows@projectcolony.org` |
 
 ## Never rename
 
@@ -39,7 +39,7 @@ convention instead.
 
 ## Older names still read
 
-Older releases shipped `io.unom.Punktfunk` on Linux and `unom.punktfunk.*` on Windows. The code
+Older releases shipped `org.projectcolony.Lilynk` on Linux and `lilynk.*` on Windows. The code
 that moves those installs names the old form on purpose:
 
 - The Flatpak remote keeps the old refs, end-of-life with a rebase onto the new id

@@ -20,7 +20,7 @@ use jni::EnvUnowned;
 /// hostSndbufKb, nLegs, burstsLossPct, cappedLossPct, nFindings]`, five per finding
 /// `[id, severity, n0, n1, n2]`, then `recommendedKbps` (the core's headroom under the ceiling).
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeNetworkCheck<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeNetworkCheck<'local>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     handle: jlong,

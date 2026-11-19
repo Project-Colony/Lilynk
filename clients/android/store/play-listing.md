@@ -75,7 +75,7 @@ French:
 ### Review video
 
 One take on a phone or tablet with a hardware keyboard and a paired host. Reset the one-time
-prompt first with `adb shell pm clear io.unom.punktfunk`. Record every step:
+prompt first with `adb shell pm clear org.projectcolony.lilynk`. Record every step:
 
 1. Launch the app. The prompt appears over the home screen. Hold on the full text.
 2. Tap No thanks. The app keeps working; start a stream and show Alt+` standing in for Alt+Tab.

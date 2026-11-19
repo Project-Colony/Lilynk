@@ -666,7 +666,7 @@ in
           "${cfg.host.gamescopePackage}/lib/punktfunk/vulkan/implicit_layer.d";
         serviceConfig = {
           # The store path DIRECTLY — not a capability wrapper. /proc/<pid>/exe then resolves to the
-          # very path packages.nix substituted into io.unom.punktfunk.host.desktop's Exec=, which is
+          # very path packages.nix substituted into org.projectcolony.lilynk.host.desktop's Exec=, which is
           # what lets KWin identify the host (see the note above the firewall block). The empty
           # entry clears the packaged ExecStart.
           ExecStart = mkIf cfg.host.gamestream [

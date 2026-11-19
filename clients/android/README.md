@@ -21,8 +21,8 @@ machine, trust logic — instead of re-porting all of it into Kotlin.
 | **Rust** (`native/` → `liblilynk_android.so`) | the JNI seam, `NativeClient` (QUIC control + UDP data plane), AnnexB → `AMediaCodec` decode incl. HDR10 and PyroWave over Vulkan compute, Opus + AAudio audio and mic, controller feedback, latency math, trust/pairing, `mdns-sd` discovery |
 | **Kotlin** (`app/`, `kit/`) | Compose UI, `SurfaceView` lifecycle, input capture, the Wi-Fi `MulticastLock` and permission UX, Keystore identity |
 
-The single seam is `io.unom.punktfunk.kit.NativeBridge` ⇄
-`Java_io_unom_punktfunk_kit_NativeBridge_*`. Keep it that way: a second seam is a second ABI to
+The single seam is `org.projectcolony.lilynk.kit.NativeBridge` ⇄
+`Java_org_projectcolony_lilynk_kit_NativeBridge_*`. Keep it that way: a second seam is a second ABI to
 version.
 
 ## Build

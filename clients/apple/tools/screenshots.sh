@@ -46,7 +46,7 @@ APPLE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$APPLE_DIR"
 
 OUT="${OUT:-$APPLE_DIR/screenshots}"
-BUNDLE_ID="io.unom.punktfunk"
+BUNDLE_ID="org.projectcolony.lilynk"
 
 # The App Store set, in listing order — the first three are what most people ever see, so they are
 # the stream itself, the machines it found, and their games. Everything else in

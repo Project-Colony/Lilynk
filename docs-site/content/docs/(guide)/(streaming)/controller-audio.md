@@ -112,7 +112,7 @@ the game. Add `--speaker` to test the speaker instead, `--seconds N` to run long
 In a Flatpak install, including the Steam Deck:
 
 ```sh
-flatpak run --command=lilynk-session io.unom.punktfunk --pad-audio-test
+flatpak run --command=lilynk-session org.projectcolony.lilynk --pad-audio-test
 ```
 
 ## Known limits

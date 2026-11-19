@@ -8,7 +8,7 @@ Remove the Punktfunk host from a Windows PC and clear what the uninstaller leave
 ## Windows host
 
 Uninstall **Punktfunk Host** from **Settings → Apps → Installed apps**, or run
-`winget uninstall unom.PunktfunkHost`. Both remove the service, the drivers, the scheduled tasks and
+`winget uninstall Lilynk.LilynkHost`. Both remove the service, the drivers, the scheduled tasks and
 the firewall rules ([full list](/docs/windows-host#uninstalling)). Left behind on purpose:
 
 - **`%ProgramData%\punktfunk`**, your config and pairings:

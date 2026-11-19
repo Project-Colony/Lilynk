@@ -502,7 +502,7 @@ fn uninstall_sweeps_a_flatpak_client_too() {
     let cmds = plan_for(&facts, &un).commands();
     assert!(
         cmds.iter()
-            .any(|c| c == "flatpak uninstall --user io.unom.punktfunk"),
+            .any(|c| c == "flatpak uninstall --user org.projectcolony.lilynk"),
         "the flatpak client was left behind: {cmds:?}"
     );
     let mut bare = installed("debian", Family::Apt, Channel::Stable);
@@ -526,13 +526,13 @@ fn a_legacy_flatpak_client_is_swept_and_not_doubled() {
     let cmds = plan_for(&facts, &un).commands();
     assert!(
         cmds.iter()
-            .any(|c| c == "flatpak uninstall --user io.unom.Punktfunk"),
+            .any(|c| c == "flatpak uninstall --user org.projectcolony.Lilynk"),
         "{cmds:?}"
     );
     assert!(
         !cmds
             .iter()
-            .any(|c| c == "flatpak uninstall --user io.unom.punktfunk"),
+            .any(|c| c == "flatpak uninstall --user org.projectcolony.lilynk"),
         "{cmds:?}"
     );
 

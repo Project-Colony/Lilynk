@@ -100,7 +100,7 @@ jobs:
           set -eu
           dnf -y -q install desktop-file-utils appstream
           desktop-file-validate packaging/linux/*.desktop
-          appstreamcli validate --no-net packaging/flatpak/io.unom.punktfunk.metainfo.xml
+          appstreamcli validate --no-net packaging/flatpak/org.projectcolony.lilynk.metainfo.xml
 
   makepkg:
     runs-on: ubuntu-24.04

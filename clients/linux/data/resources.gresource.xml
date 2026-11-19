@@ -4,7 +4,7 @@
      assets/launcher-icons masters). See each directory's README for provenance/licensing.
      Registered under the hicolor-style layout IconTheme::add_resource_path expects. -->
 <gresources>
-  <gresource prefix="/io/unom/punktfunk">
+  <gresource prefix="/org/projectcolony/lilynk">
     <file>style.css</file>
     <file>icons/scalable/actions/ly-launcher-steam-symbolic.svg</file>
     <file>icons/scalable/actions/ly-launcher-lutris-symbolic.svg</file>

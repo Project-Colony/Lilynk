@@ -44,7 +44,7 @@ classify() {
                 scripts/ci/ensure-sccache.sh|scripts/ci/install-retrying-curl.sh|\
                 scripts/ci/check-installer-behavior.sh|scripts/ci/check-install-defaults.sh|\
                 scripts/ci/check-unsafe-hygiene.sh|scripts/ci/check-android-jni-names.sh|\
-                clients/android/kit/src/main/kotlin/io/unom/punktfunk/kit/NativeBridge.kt|\
+                clients/android/kit/src/main/kotlin/org/projectcolony/lilynk/kit/NativeBridge.kt|\
                 scripts/unsafe-census.py|scripts/ci/unsafe-census-baseline.json|\
                 packaging/windows/drivers/*.rs|packaging/windows/drivers/*/*.inx|\
                 clients/windows/*.rs|packaging/windows/ly-vkhdr-layer/*.rs|\
@@ -132,7 +132,7 @@ self_test() {
     check android 'clients/android/app/build.gradle.kts' \
         'rust=false rust_arm64=false web=false docs_site=false sdk_plugin_kit=false decky_typecheck=false'
     # The rust job compares its JNI names with the native exports.
-    check android-bridge 'clients/android/kit/src/main/kotlin/io/unom/punktfunk/kit/NativeBridge.kt' \
+    check android-bridge 'clients/android/kit/src/main/kotlin/org/projectcolony/lilynk/kit/NativeBridge.kt' \
         'rust=true rust_arm64=false web=false docs_site=false sdk_plugin_kit=false decky_typecheck=false'
     # A workspace member with no cfg gate: workspace clippy compiles it on Linux, android.yml
     # (cargo-ndk, android cfg) does not stand in for that.

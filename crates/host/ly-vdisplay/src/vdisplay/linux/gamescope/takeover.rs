@@ -813,7 +813,7 @@ impl std::fmt::Display for DmHelperError {
             } => write!(
                 f,
                 "pkexec never ran {helper} (exit {code}{}) — polkit did not authorize \
-                 io.unom.punktfunk.dm-helper, so the action is missing or overridden; reinstall \
+                 org.projectcolony.lilynk.dm-helper, so the action is missing or overridden; reinstall \
                  the punktfunk package, or add a display-manager polkit rule for your user (see \
                  https://docs.punktfunk.unom.io/docs/gamescope)",
                 suffix(stderr)

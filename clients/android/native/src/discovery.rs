@@ -87,7 +87,7 @@ static DISCOVERIES: HandleTable<Discovery> = HandleTable::new(0x3000_0000_0000_0
 /// Start `_punktfunk._udp` browsing and return an opaque table key.
 /// Kotlin holds its Wi-Fi multicast lock until stop; `0` reports daemon setup failure.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeDiscoveryStart(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeDiscoveryStart(
     _env: EnvUnowned,
     _this: JObject,
 ) -> jlong {
@@ -100,7 +100,9 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeDiscoverySt
 /// Return the current newline-delimited host snapshot for one retained browse.
 /// Missing or concurrently stopped keys produce an empty string.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeDiscoveryPoll<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeDiscoveryPoll<
+    'local,
+>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     handle: jlong,
@@ -119,7 +121,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeDiscoveryPo
 
 /// Re-query on a live browse. A missing or concurrently stopped key is a no-op.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeDiscoveryRescan(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeDiscoveryRescan(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -134,7 +136,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeDiscoveryRe
 /// Remove one browse key; final drop closes its event channel and the shared worker then ends.
 /// Zero, stale, duplicate, and concurrent stops are no-ops.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeDiscoveryStop(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeDiscoveryStop(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,

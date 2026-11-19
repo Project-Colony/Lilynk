@@ -49,7 +49,7 @@ grep -q 'Woah partner' /tmp/canary || {
 }
 
 # Omarchy's install line takes the host AND the client. On both channels they depend on
-# lilynk-icons, the one owner of io.unom.punktfunk.svg, so pacman sees no conflicting files.
+# lilynk-icons, the one owner of org.projectcolony.lilynk.svg, so pacman sees no conflicting files.
 echo "==> The installer succeeds anyway, under the armed guard"
 $PF --yes --no-start --no-omarchy-setup --channel canary
 test -x /usr/bin/lilynk-host

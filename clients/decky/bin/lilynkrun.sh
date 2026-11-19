@@ -18,7 +18,7 @@
 #              set by a stream started from a Steam game's page          (optional)
 #   PF_AS      profile id to play as, for this stream only               (optional)
 #   PF_BROWSE  non-empty = open the client's console home instead of streaming
-#   PF_APPID   flatpak app id                        (default io.unom.punktfunk)
+#   PF_APPID   flatpak app id                        (default org.projectcolony.lilynk)
 #   PF_FLATPAK override the flatpak binary path      (default: `flatpak` on PATH)
 #   PF_CLIENT_BIN  absolute path of a NATIVE client  (optional; set by the plugin when it
 #                  resolved a non-flatpak install — then the client is run directly and
@@ -39,13 +39,13 @@
 # clean.
 set -u
 
-APPID="${PF_APPID:-io.unom.punktfunk}"
+APPID="${PF_APPID:-org.projectcolony.lilynk}"
 FLATPAK="${PF_FLATPAK:-flatpak}"
 # A Deck still on the CamelCase id runs that until its next client update rebases it.
 if [ -z "${PF_APPID:-}" ] && [ -z "${PF_CLIENT_BIN:-}" ] \
     && ! "$FLATPAK" info "$APPID" >/dev/null 2>&1 \
-    && "$FLATPAK" info io.unom.Punktfunk >/dev/null 2>&1; then
-    APPID=io.unom.Punktfunk
+    && "$FLATPAK" info org.projectcolony.Lilynk >/dev/null 2>&1; then
+    APPID=org.projectcolony.Lilynk
 fi
 
 # Steam's launch environment is a game's. Its LD_LIBRARY_PATH names the Steam runtime and

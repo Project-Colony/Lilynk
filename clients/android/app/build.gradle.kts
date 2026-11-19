@@ -10,7 +10,7 @@ plugins {
 }
 
 android {
-    namespace = "io.unom.punktfunk"
+    namespace = "org.projectcolony.lilynk"
     compileSdk = 37 // Android 17 — the minCompileSdk core-ktx declares.
     // The NDK whose llvm-strip strips the packaged .so. Unset, AGP looks for its own default
     // NDK and packages the library unstripped when that one is not installed.
@@ -24,7 +24,7 @@ android {
             envFile.inputStream().use { props.load(it) }
         }
 
-        applicationId = "io.unom.punktfunk"
+        applicationId = "org.projectcolony.lilynk"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // Android 9. Reaches older Android TV boxes (e.g. Amlogic streamers still on Android 9–11);
         // the handful of API 31+ APIs we use are runtime-gated (Material You → brand palette, rumble
@@ -201,6 +201,6 @@ tasks.withType<Test>().configureEach {
     // They share this source set but are a release-artifact job (android-screenshots.yml, v* tags):
     // their @Test methods write PNGs and assert nothing.
     if (project.hasProperty("excludeScreenshots")) {
-        filter { excludeTestsMatching("io.unom.punktfunk.screenshots.*") }
+        filter { excludeTestsMatching("org.projectcolony.lilynk.screenshots.*") }
     }
 }

@@ -1,16 +1,16 @@
 # winget manifests — Windows host
 
-The reviewed source of truth for the `unom.PunktfunkHost` winget package. Everything except
+The reviewed source of truth for the `Lilynk.LilynkHost` winget package. Everything except
 `PackageVersion` / `InstallerUrl` / `InstallerSha256` / `ReleaseNotesUrl` is edited **here**;
 `scripts/ci/winget-manifest.ps1` only substitutes those four per release, so the switches,
 agreements and installation notes stay under normal code review.
 
 | File | Purpose |
 | --- | --- |
-| `unom.PunktfunkHost.yaml` | Version manifest — ties the others together. |
-| `unom.PunktfunkHost.installer.yaml` | Installer type, scope, silent switches, `ProductCode`, URL + hash. |
-| `unom.PunktfunkHost.locale.en-US.yaml` | User-facing metadata, `Agreements`, `InstallationNotes`. |
-| `unom.PunktfunkHost.locale.<locale>.yaml` | One language's descriptions and notes. No `Agreements` or `Moniker`: winget takes those from en-US. |
+| `Lilynk.LilynkHost.yaml` | Version manifest — ties the others together. |
+| `Lilynk.LilynkHost.installer.yaml` | Installer type, scope, silent switches, `ProductCode`, URL + hash. |
+| `Lilynk.LilynkHost.locale.en-US.yaml` | User-facing metadata, `Agreements`, `InstallationNotes`. |
+| `Lilynk.LilynkHost.locale.<locale>.yaml` | One language's descriptions and notes. No `Agreements` or `Moniker`: winget takes those from en-US. |
 
 ## Why these choices
 
@@ -24,7 +24,7 @@ agreements and installation notes stay under normal code review.
   it is what lets an Inno-installed host upgrade onto the engine. **It must track `HOST_ARP_KEY` in
   `crates/install/lilynk-setup/src/platform/windows/mod.rs`** — if that GUID ever changes, change it
   here too or upgrades silently stop being detected.
-- **`interactive` is in `InstallModes`.** `winget install unom.PunktfunkHost --interactive` runs the
+- **`interactive` is in `InstallModes`.** `winget install Lilynk.LilynkHost --interactive` runs the
   full existing wizard: every task checkbox and the web-console password page.
   Nothing about the installer changes to support it.
 - **No `/MERGETASKS` in the silent switches.** A silent install deliberately takes the *same* task
@@ -42,7 +42,7 @@ The Inno-dialect `/MERGETASKS` takes `!` prefixes to deselect a default-checked 
 `/MERGETASKS` on one command line):
 
 ```powershell
-winget install unom.PunktfunkHost --override "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- /MERGETASKS=!gamestream"
+winget install Lilynk.LilynkHost --override "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- /MERGETASKS=!gamestream"
 ```
 
 Task names: `installdriver`, `installgamepad`, `installhdrlayer`,
@@ -102,7 +102,7 @@ ships its catalogue on every stable tag, so releasing is one pipeline with no ma
 
 ```powershell
 winget source add -n punktfunk https://winget.punktfunk.unom.io -t Microsoft.Rest   # elevated, once
-winget install unom.PunktfunkHost
+winget install Lilynk.LilynkHost
 ```
 
 These manifests stay in winget-pkgs' own format rather than a bespoke one, so submitting upstream

@@ -1,4 +1,4 @@
-// The widget extension's entry point. ONE extension target (bundle id io.unom.punktfunk.widgets,
+// The widget extension's entry point. ONE extension target (bundle id org.projectcolony.lilynk.widgets,
 // iOS only) hosts both the launcher widgets and the Live Activity UI. It links LilynkShared and
 // NOTHING else — never LilynkKit (Rust staticlib + presentation layer would blow the widget
 // process's ~30 MB budget).

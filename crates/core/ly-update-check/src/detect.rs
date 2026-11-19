@@ -58,7 +58,7 @@ pub const OSTREE_BOOTED: &str = "/run/ostree-booted";
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum InstallKind {
     WindowsInstaller,
-    /// Client only — the sandboxed GTK app (`io.unom.punktfunk`).
+    /// Client only — the sandboxed GTK app (`org.projectcolony.lilynk`).
     Flatpak,
     Sysext,
     RpmOstree,
@@ -264,7 +264,7 @@ pub fn update_command(kind: InstallKind, product: Product) -> String {
         (InstallKind::WindowsInstaller, _) => {
             "re-run the newer installer".into()
         }
-        (InstallKind::Flatpak, _) => "flatpak update --user io.unom.punktfunk".into(),
+        (InstallKind::Flatpak, _) => "flatpak update --user org.projectcolony.lilynk".into(),
         // The signed feed carries the host image only; the client sysext is a local rebuild.
         (InstallKind::Sysext, Product::Host) => "sudo lilynk-sysext update   (an image you \
              built with packaging/arch/build-sysext.sh: rebuild it the same way)"

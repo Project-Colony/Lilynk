@@ -15,7 +15,7 @@ public final class DemoHost: @unchecked Sendable {
     private let handle: OpaquePointer
     /// Library id → title, for the launched title the picture names.
     private let titles: [String: String]
-    private let queue = DispatchQueue(label: "io.unom.punktfunk.demo-host", qos: .userInteractive)
+    private let queue = DispatchQueue(label: "org.projectcolony.lilynk.demo-host", qos: .userInteractive)
     // Render state, touched only on `queue`.
     private var timer: DispatchSourceTimer?
     private var timerHz = 0

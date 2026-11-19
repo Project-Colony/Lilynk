@@ -80,7 +80,7 @@ English: `docs/l10n.md`. Wording rules: `docs/writing.md` §4d.
 
 ## Identifiers
 
-Reverse-DNS IDs are lowercase `io.unom.punktfunk`, with a lowercase suffix. Adding or renaming an
+Reverse-DNS IDs are lowercase `org.projectcolony.lilynk`, with a lowercase suffix. Adding or renaming an
 app, bundle, package or service ID: read `docs/identifiers.md` first, for platform conventions and
 the IDs that never change.
 

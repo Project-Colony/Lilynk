@@ -470,38 +470,38 @@ extension Notification.Name {
     /// session swallows the combo in InputCapture's monitor and the frozen cursor can't click
     /// menus) — it exists so the menu item is honest whenever it CAN fire, and as the shortcut's
     /// discoverable menu-bar surface.
-    public static let lilynkReleaseCapture = Notification.Name("io.unom.punktfunk.release-capture")
+    public static let lilynkReleaseCapture = Notification.Name("org.projectcolony.lilynk.release-capture")
     /// A quick action only the stream view can run, from the dial or a shortcut: `object` is the
     /// session's connection, `userInfo["slot"]` the slot id (`release_input`, `mouse_mode`,
     /// `minimize`).
-    public static let lilynkStreamSlot = Notification.Name("io.unom.punktfunk.stream-slot")
+    public static let lilynkStreamSlot = Notification.Name("org.projectcolony.lilynk.stream-slot")
     /// The quick-action ring's Keyboard slot: show the stream view's soft keyboard, or hide it (iOS).
-    public static let lilynkToggleSoftKeyboard = Notification.Name("io.unom.punktfunk.toggle-soft-keyboard")
+    public static let lilynkToggleSoftKeyboard = Notification.Name("org.projectcolony.lilynk.toggle-soft-keyboard")
     /// Asks a session to advance its stats tier; `object` is its connection, nil for every session.
     /// Posted by `StatsVerbosity.requestCycle`. The stored default does not move.
-    public static let lilynkStatsCycled = Notification.Name("io.unom.punktfunk.stats-cycled")
+    public static let lilynkStatsCycled = Notification.Name("org.projectcolony.lilynk.stats-cycled")
 
     /// Posted by the session view when the quick-action ring opens or closes (`object` is a Bool
     /// `NSNumber`). The ring's buttons are SwiftUI above the video, and a grabbed pointer can
     /// never reach one. So the Mac's stream layer releases a captured mouse for as long as the
     /// ring is up, and the iPad's drops its pointer lock; both take it back on close. macOS and
     /// iOS only: a finger reaches the ring either way.
-    public static let lilynkRingOpen = Notification.Name("io.unom.punktfunk.ring-open")
+    public static let lilynkRingOpen = Notification.Name("org.projectcolony.lilynk.ring-open")
 
     /// Posted by the app's Stream menu ("Toggle Fullscreen", ⌃⌘F) and by InputCapture's monitor
     /// when the same combo fires while input is captured with `inhibitShortcuts` off (the menu
     /// key-equivalent never reaches a captured stream view). The key window's `FullscreenController` flips the window's fullscreen
     /// state. macOS only.
-    public static let lilynkToggleFullscreen = Notification.Name("io.unom.punktfunk.toggle-fullscreen")
+    public static let lilynkToggleFullscreen = Notification.Name("org.projectcolony.lilynk.toggle-fullscreen")
 
     /// Posted by the Live Activity's / Shortcuts' End-stream intent (`EndStreamIntent.perform`,
     /// which runs in the app's process): the app tears the active session down deliberately
     /// (quit-close the host). Same cross-process-signal pattern as `lilynkReleaseCapture` —
     /// the intent lives in LilynkShared and can't reach the app's `SessionModel` directly.
-    public static let lilynkEndActiveSession = Notification.Name("io.unom.punktfunk.end-active-session")
+    public static let lilynkEndActiveSession = Notification.Name("org.projectcolony.lilynk.end-active-session")
 
     /// Posted by the Connect App Intent (Siri/Shortcuts) with a `punktfunk://` URL as an `NSURL`
     /// `object`: one window routes it through the SAME `.onOpenURL` handler a widget tap uses. The
     /// intent uses `openAppWhenRun`, so the app is foregrounded to receive it.
-    public static let lilynkOpenDeepLink = Notification.Name("io.unom.punktfunk.open-deep-link")
+    public static let lilynkOpenDeepLink = Notification.Name("org.projectcolony.lilynk.open-deep-link")
 }

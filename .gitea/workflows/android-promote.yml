@@ -76,7 +76,7 @@ jobs:
           USER_FRACTION: ${{ inputs.user_fraction }}
           DRY_RUN: ${{ inputs.dry_run }}
         run: |
-          set -- --package io.unom.punktfunk \
+          set -- --package org.projectcolony.lilynk \
                  --promote "$VERSION_CODE" \
                  --track "$TO_TRACK" --status "$STATUS"
           # Explicit `if`, not `[ ] && …`: under `sh -e` a false AND-OR list that ends up LAST in

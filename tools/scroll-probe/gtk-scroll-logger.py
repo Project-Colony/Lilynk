@@ -90,4 +90,4 @@ class App(Gtk.Application):
         GLib.timeout_add_seconds(SECONDS, self.quit)
 
 
-App(application_id="io.unom.punktfunk.scrolllogger").run([])
+App(application_id="org.projectcolony.lilynk.scrolllogger").run([])

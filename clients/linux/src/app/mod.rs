@@ -33,7 +33,7 @@ use std::rc::Rc;
 use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
 
-pub const APP_ID: &str = "io.unom.punktfunk";
+pub const APP_ID: &str = "org.projectcolony.lilynk";
 
 /// How long a session asked to quit gets to close the host before it is killed.
 const DISCONNECT_GRACE: std::time::Duration = std::time::Duration::from_secs(2);
@@ -879,14 +879,14 @@ fn install_resources() {
         return;
     }
     if let Some(display) = gdk::Display::default() {
-        gtk::IconTheme::for_display(&display).add_resource_path("/io/unom/punktfunk/icons");
+        gtk::IconTheme::for_display(&display).add_resource_path("/org/projectcolony/lilynk/icons");
     }
 }
 
 fn load_css() {
     let provider = gtk::CssProvider::new();
     // Registered with the icons just before.
-    provider.load_from_resource("/io/unom/punktfunk/style.css");
+    provider.load_from_resource("/org/projectcolony/lilynk/style.css");
     if let Some(display) = gdk::Display::default() {
         gtk::style_context_add_provider_for_display(
             &display,

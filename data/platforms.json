@@ -188,7 +188,7 @@
       "url": "https://git.unom.io/api/packages/unom/generic/punktfunk-host-windows/latest/punktfunk-host-setup.exe",
       "install": [
         "winget source add -n punktfunk https://winget.punktfunk.unom.io -t Microsoft.Rest",
-        "winget install unom.PunktfunkHost"
+        "winget install Lilynk.LilynkHost"
       ]
     },
     {

@@ -171,7 +171,7 @@ jobs:
             rmweb: pacman -Rns --noconfirm lilynk-web
             haveclient: pacman -Q lilynk-client
             # The published STABLE host and client each ship /usr/share/icons/.../
-            # io.unom.punktfunk.svg and pacman refuses the co-install (rpm tolerates identical
+            # org.projectcolony.lilynk.svg and pacman refuses the co-install (rpm tolerates identical
             # duplicate files, so fedora keeps the default channel). Canary splits the file
             # into lilynk-icons. Drop the pin when stable splits it too — same trap as
             # ci/omarchy/row.sh.

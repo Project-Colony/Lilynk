@@ -30,9 +30,9 @@ fi
 
 install -Dm0755 "$BUILT" "$TRAY"
 # `Exec=` expands no variables, so the launcher names this install's absolute path.
-rm -f "$HOME/.local/share/applications/io.unom.Punktfunk.StartHost.desktop"  # the CamelCase name
-sed "s|/usr/bin/lilynk-tray|$TRAY|" "$LINUX/io.unom.punktfunk.starthost.desktop" \
-    | install -Dm0644 /dev/stdin "$HOME/.local/share/applications/io.unom.punktfunk.starthost.desktop"
+rm -f "$HOME/.local/share/applications/org.projectcolony.Lilynk.StartHost.desktop"  # the CamelCase name
+sed "s|/usr/bin/lilynk-tray|$TRAY|" "$LINUX/org.projectcolony.lilynk.starthost.desktop" \
+    | install -Dm0644 /dev/stdin "$HOME/.local/share/applications/org.projectcolony.lilynk.starthost.desktop"
 for png in "$LINUX"/icons/hicolor/*/apps/lilynk-tray*.png; do
     install -Dm0644 "$png" "$HOME/.local/share/icons/${png#"$LINUX"/icons/}"
 done

@@ -29,7 +29,7 @@
 # ── Signing / distribution notes (all of these belong to `distribute`) ────────────────────────────
 #
 # One App Store listing for all platforms (universal purchase): every target shares the
-# bundle ID io.unom.punktfunk.
+# bundle ID org.projectcolony.lilynk.
 #
 # The macOS app is App-SANDBOXED for both channels (Config/Lilynk-macOS.entitlements —
 # app-sandbox + network client/server + audio-input + bluetooth/usb device access; the
@@ -43,7 +43,7 @@
 #
 # macOS App Store prerequisites (one-time, Apple portal — NOT done by this workflow; the
 # step is continue-on-error until they exist):
-#   * App Store Connect: add the macOS platform to the io.unom.punktfunk app record
+#   * App Store Connect: add the macOS platform to the org.projectcolony.lilynk app record
 #     (universal purchase).
 #   * A "Punktfunk macOS App Store Distribution" provisioning profile installed on the
 #     runner (under ~/Library/Developer/Xcode/UserData/Provisioning Profiles/).
@@ -53,7 +53,7 @@
 #
 # macOS Developer ID (DMG) prerequisite (one-time, Apple portal — the DMG step embeds it):
 #   * A "Punktfunk macOS Developer ID" provisioning profile (Distribution -> Developer ID,
-#     App ID io.unom.punktfunk, with the Keychain Sharing capability) installed on the runner
+#     App ID org.projectcolony.lilynk, with the Keychain Sharing capability) installed on the runner
 #     under ~/Library/Developer/Xcode/UserData/Provisioning Profiles/. It authorizes the
 #     managed keychain-access-groups entitlement; without it the DMG is SIGKILLed at launch
 #     (errno 163). If it is missing the DMG step warns and strips that entitlement (the app
@@ -471,7 +471,7 @@ jobs:
           # must be AUTHORIZED by an embedded provisioning profile. Without one, AMFI refuses to
           # spawn the sandboxed process at launch — "Launchd job spawn failed" (POSIX errno 163),
           # SIGKILL before main() — even though the bundle is validly signed and notarized. Embed
-          # a "Developer ID" distribution profile for io.unom.punktfunk (Keychain Sharing) so its
+          # a "Developer ID" distribution profile for org.projectcolony.lilynk (Keychain Sharing) so its
           # entitlements authorize the access group, exactly like the App Store build's profile
           # does. Located by profile Name among the profiles installed on the runner (see header).
           DEVID_PROFILE_NAME="Punktfunk macOS Developer ID"
@@ -563,7 +563,7 @@ jobs:
           # the resource bundle (and the macOS-host macro plugins) alone, and bakes the sandbox
           # entitlements in. -allowProvisioningUpdates lets Xcode sync the App ID capabilities and
           # regenerate the managed *development* profile (the App Groups capability,
-          # group.io.unom.punktfunk in Config/Lilynk-macOS.entitlements, changes what it must
+          # group.org.projectcolony.lilynk in Config/Lilynk-macOS.entitlements, changes what it must
           # carry). This is DEVELOPMENT signing against the Apple Development cert already in the
           # keychain, so the App-Manager ASC key suffices. DISTRIBUTION signing happens in the export
           # step below (manual, via the plist). Quit Xcode so it can't prune the manually-installed
@@ -602,7 +602,7 @@ jobs:
             <key>signingCertificate</key><string>Apple Distribution</string>
             <key>installerSigningCertificate</key><string>3rd Party Mac Developer Installer</string>
             <key>provisioningProfiles</key>
-            <dict><key>io.unom.punktfunk</key><string>$PROFILE</string></dict>
+            <dict><key>org.projectcolony.lilynk</key><string>$PROFILE</string></dict>
           </dict>
           </plist>
           EOF
@@ -627,8 +627,8 @@ jobs:
           # ("does not support provisioning profiles"). Automatic signing profiles only the app and
           # leaves the resource bundle (and the macOS-host macro plugins) alone.
           # -allowProvisioningUpdates lets Xcode sync the App ID capabilities and regenerate the
-          # managed *development* profiles for both io.unom.punktfunk AND the embedded
-          # io.unom.punktfunk.widgets (the App Groups capability, group.io.unom.punktfunk, is
+          # managed *development* profiles for both org.projectcolony.lilynk AND the embedded
+          # org.projectcolony.lilynk.widgets (the App Groups capability, group.org.projectcolony.lilynk, is
           # shared with the Widget/Live-Activity extension). This is DEVELOPMENT signing against the
           # Apple Development cert already in the keychain — no cert creation, so the App-Manager
           # ASC key is sufficient (it only manages App IDs/dev profiles).
@@ -638,9 +638,9 @@ jobs:
           osascript -e 'tell application "Xcode" to quit' >/dev/null 2>&1 || true
           pkill -x Xcode 2>/dev/null || true
           PROFILE="Punktfunk iOS App Store Distribution"
-          # The embedded LilynkWidgetsExtension (bundle io.unom.punktfunk.widgets) is a second
+          # The embedded LilynkWidgetsExtension (bundle org.projectcolony.lilynk.widgets) is a second
           # distribution artifact in the .ipa, so manual signing must map its App ID to its own
-          # App Store profile too — else exportArchive fails ("no profile for io.unom.punktfunk.widgets").
+          # App Store profile too — else exportArchive fails ("no profile for org.projectcolony.lilynk.widgets").
           WIDGET_PROFILE="Punktfunk iOS Widgets App Store Distribution"
           DEVELOPER_DIR="$XCODE_DEV_DIR" xcodebuild archive \
             -project "$PROJECT" -scheme Lilynk-iOS \
@@ -667,8 +667,8 @@ jobs:
             <key>signingCertificate</key><string>Apple Distribution</string>
             <key>provisioningProfiles</key>
             <dict>
-              <key>io.unom.punktfunk</key><string>$PROFILE</string>
-              <key>io.unom.punktfunk.widgets</key><string>$WIDGET_PROFILE</string>
+              <key>org.projectcolony.lilynk</key><string>$PROFILE</string>
+              <key>org.projectcolony.lilynk.widgets</key><string>$WIDGET_PROFILE</string>
             </dict>
           </dict>
           </plist>
@@ -710,8 +710,8 @@ jobs:
             <key>signingCertificate</key><string>Apple Distribution</string>
             <key>provisioningProfiles</key>
             <dict>
-              <key>io.unom.punktfunk</key><string>$PROFILE</string>
-              <key>io.unom.punktfunk.widgets</key><string>$WIDGET_PROFILE</string>
+              <key>org.projectcolony.lilynk</key><string>$PROFILE</string>
+              <key>org.projectcolony.lilynk.widgets</key><string>$WIDGET_PROFILE</string>
             </dict>
           </dict>
           </plist>
@@ -774,7 +774,7 @@ jobs:
           # leaves the resource bundle + the macOS-host macro plugins (OnceMacro/SwizzlingMacro/
           # AssociationMacro) alone. -allowProvisioningUpdates lets Xcode sync the App ID
           # capabilities and regenerate the managed *development* profile (the tvOS app carries the
-          # App Groups key, group.io.unom.punktfunk, too). DEVELOPMENT signing against the Apple
+          # App Groups key, group.org.projectcolony.lilynk, too). DEVELOPMENT signing against the Apple
           # Development cert already in the keychain, so the App-Manager ASC key suffices.
           # DISTRIBUTION signing is the export step below (manual, plist).
           osascript -e 'tell application "Xcode" to quit' >/dev/null 2>&1 || true
@@ -804,7 +804,7 @@ jobs:
             <key>signingStyle</key><string>manual</string>
             <key>signingCertificate</key><string>Apple Distribution</string>
             <key>provisioningProfiles</key>
-            <dict><key>io.unom.punktfunk</key><string>$PROFILE</string></dict>
+            <dict><key>org.projectcolony.lilynk</key><string>$PROFILE</string></dict>
           </dict>
           </plist>
           EOF
@@ -851,7 +851,7 @@ jobs:
             <key>signingStyle</key><string>manual</string>
             <key>signingCertificate</key><string>Apple Distribution</string>
             <key>provisioningProfiles</key>
-            <dict><key>io.unom.punktfunk</key><string>$PROFILE</string></dict>
+            <dict><key>org.projectcolony.lilynk</key><string>$PROFILE</string></dict>
           </dict>
           </plist>
           EOF

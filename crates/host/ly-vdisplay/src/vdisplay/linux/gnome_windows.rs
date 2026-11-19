@@ -1,7 +1,7 @@
 //! GNOME's window list, from punktfunk's own GNOME Shell extension over D-Bus.
 //!
 //! Mutter offers Wayland clients no toplevel list, and the shell's `Introspect` API answers only
-//! GNOME's own portal and screencast services. The extension (`gnome-shell/punktfunk-windows@unom.io`,
+//! GNOME's own portal and screencast services. The extension (`gnome-shell/lilynk-windows@projectcolony.org`,
 //! embedded below) runs inside the shell and serves `ListWindows`: pid, class, focus and fullscreen
 //! per window, never titles.
 //!
@@ -15,12 +15,14 @@ use std::path::PathBuf;
 use std::sync::{Mutex, Once};
 use std::time::Duration;
 
-const UUID: &str = "punktfunk-windows@unom.io";
-const METADATA: &str = include_str!("../../../gnome-shell/punktfunk-windows@unom.io/metadata.json");
-const EXTENSION: &str = include_str!("../../../gnome-shell/punktfunk-windows@unom.io/extension.js");
+const UUID: &str = "lilynk-windows@projectcolony.org";
+const METADATA: &str =
+    include_str!("../../../gnome-shell/lilynk-windows@projectcolony.org/metadata.json");
+const EXTENSION: &str =
+    include_str!("../../../gnome-shell/lilynk-windows@projectcolony.org/extension.js");
 
-const BUS_NAME: &str = "io.unom.punktfunk.shell";
-const OBJECT_PATH: &str = "/io/unom/punktfunk/shell";
+const BUS_NAME: &str = "org.projectcolony.lilynk.shell";
+const OBJECT_PATH: &str = "/org/projectcolony/lilynk/shell";
 
 /// One read, connect to reply. The lease watcher asks every second.
 const READ_BUDGET: Duration = Duration::from_millis(800);

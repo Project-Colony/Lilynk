@@ -69,7 +69,7 @@ turns it off. `/WEBBIND=localhost` keeps the console on this PC (`lan` or an add
 With winget, pass the whole line through `--override`:
 
 ```powershell
-winget install unom.PunktfunkHost --override "/VERYSILENT /SUPPRESSMSGBOXES /MERGETASKS=gamestream"
+winget install Lilynk.LilynkHost --override "/VERYSILENT /SUPPRESSMSGBOXES /MERGETASKS=gamestream"
 ```
 
 An upgrade always updates both drivers and keeps your earlier Moonlight, firewall, console,
@@ -119,14 +119,14 @@ a device.
 
 ## Updating
 
-Press **Update now** on the console's **Updates** card, run `winget upgrade unom.PunktfunkHost`, or
+Press **Update now** on the console's **Updates** card, run `winget upgrade Lilynk.LilynkHost`, or
 run a newer setup over the old one. All three keep your config, pairings and console password. See
 [Updating](/docs/updating).
 
 ## Uninstalling
 
 Open **Settings** → **Apps** → **Installed apps** → **Punktfunk Host** → **Uninstall**, or run
-`winget uninstall unom.PunktfunkHost`. It turns [seats](/docs/windows-seats) off and removes the
+`winget uninstall Lilynk.LilynkHost`. It turns [seats](/docs/windows-seats) off and removes the
 service, the status icon and its Start menu entry, the virtual display, gamepad and audio devices
 with the driver certificate, the scheduled task, the firewall rules, the HDR layer and the `PATH`
 entry. `%ProgramData%\punktfunk` stays, so

@@ -93,7 +93,7 @@ Privacy policy: https://unom.io/en/legal/privacy#punktfunk-apps
 ## Separately worth checking: the privacy manifest
 
 There is **no `PrivacyInfo.xcprivacy`** anywhere in `clients/apple`. The app does use
-`UserDefaults` (`HostStore` reads the `group.io.unom.punktfunk` suite), and `UserDefaults` is one of
+`UserDefaults` (`HostStore` reads the `group.org.projectcolony.lilynk` suite), and `UserDefaults` is one of
 Apple's "required reason" APIs, which are expected to be declared in a privacy manifest. Apps
 missing a declaration typically get an automated **ITMS-91053** notice on upload.
 

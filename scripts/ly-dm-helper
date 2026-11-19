@@ -5,7 +5,7 @@
 # plasmalogin, unknown DMs), taking the Gaming Mode session over means stopping the display
 # manager for the length of the stream and restarting it afterwards — root-only operations. The
 # host invokes this helper via pkexec under its own polkit action
-# (io.unom.punktfunk.dm-helper.policy, installed by the packages), the same mechanism these
+# (org.projectcolony.lilynk.dm-helper.policy, installed by the packages), the same mechanism these
 # distros use for their own session switching (Nobara's os-session-select).
 #
 # The unit is NEVER caller-controlled: it is derived here from the display-manager.service alias

@@ -16,7 +16,7 @@ use crate::feedback::{idle_pull, PULL_TIMEOUT};
 /// `NativeBridge.nativeCursorChannel(handle)` — the host forwards its cursor instead of
 /// compositing it. `0` handle → false.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeCursorChannel(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeCursorChannel(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -32,7 +32,9 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeCursorChann
 /// `[serial, flags, x, y]`, the hotspot in frame pixels. Waits up to 100 ms; `null` when none
 /// came, which is all the host sends while it composites.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeNextCursorState<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeNextCursorState<
+    'local,
+>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     handle: jlong,
@@ -61,7 +63,9 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeNextCursorS
 /// `[serial, w, h, hotX, hotY, pixels…]`, the pixels unpremultiplied ARGB for
 /// `Bitmap.createBitmap(int[], …)`. Never waits; `null` when the queue is empty.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeNextCursorShape<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeNextCursorShape<
+    'local,
+>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     handle: jlong,
@@ -91,7 +95,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeNextCursorS
 /// `NativeBridge.nativeSetCursorRender(handle, clientDraws)` — `true`: the host leaves the
 /// pointer out of the picture and forwards it; `false`: the host composites it. Latest-wins.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSetCursorRender(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSetCursorRender(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,

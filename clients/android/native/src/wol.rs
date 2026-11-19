@@ -12,7 +12,7 @@ use jni::EnvUnowned;
 /// mDNS `mac` TXT while it was online); `lastIp` is the host's last-known IPv4 (or empty).
 /// Returns true if at least one datagram went out.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeWakeOnLan<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeWakeOnLan<'local>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     macs_csv: JString<'local>,

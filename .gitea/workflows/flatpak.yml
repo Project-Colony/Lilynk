@@ -54,9 +54,9 @@ on:
       - 'crates/core/**'
       - 'l10n/**'
       - 'packaging/flatpak/**'
-      - 'packaging/linux/io.unom.punktfunk.desktop'
-      - 'packaging/linux/io.unom.punktfunk.console.desktop'
-      - 'packaging/linux/icons/hicolor/scalable/apps/io.unom.punktfunk.svg'
+      - 'packaging/linux/org.projectcolony.lilynk.desktop'
+      - 'packaging/linux/org.projectcolony.lilynk.console.desktop'
+      - 'packaging/linux/icons/hicolor/scalable/apps/org.projectcolony.lilynk.svg'
       - 'Cargo.toml'
       - 'Cargo.lock'
       - 'scripts/ci/ly-version.sh'
@@ -71,11 +71,11 @@ on:
 env:
   REGISTRY: git.unom.io
   OWNER: unom
-  APP_ID: io.unom.punktfunk
+  APP_ID: org.projectcolony.lilynk
   # The CamelCase id the client shipped under. Its refs stay published, end-of-life with a rebase
   # onto APP_ID, so `flatpak update` moves an old install instead of failing on a missing ref.
-  LEGACY_APP_ID: io.unom.Punktfunk
-  MANIFEST: packaging/flatpak/io.unom.punktfunk.yml
+  LEGACY_APP_ID: org.projectcolony.Lilynk
+  MANIFEST: packaging/flatpak/org.projectcolony.lilynk.yml
   PACKAGE: lilynk-client-flatpak     # generic-registry package name
   REPO_URL: https://flatpak.unom.io   # shared unom OSTree repo (reusable across unom apps)
   DEPLOY_DIR: unom-flatpak             # ~/<dir> on unom-1 (compose + ./site tree)
@@ -226,7 +226,7 @@ jobs:
             "https://raw.githubusercontent.com/flatpak/flatpak-builder-tools/$GEN_REF/cargo/flatpak-cargo-generator.py"
           echo "$GEN_SHA  /tmp/flatpak-cargo-generator.py" | sha256sum -c - \
             || { echo "::error::flatpak-cargo-generator.py sha256 mismatch at $GEN_REF"; exit 1; }
-          # The manifest prune runs inside the sandbox (io.unom.punktfunk.yml); its self-test
+          # The manifest prune runs inside the sandbox (org.projectcolony.lilynk.yml); its self-test
           # here fails the job before flatpak-builder spends its minutes.
           python3 packaging/flatpak/prune-windows-toml.py --self-test
           python3 packaging/flatpak/prune-windows-lock.py Cargo.lock /tmp/Cargo.flatpak.lock
@@ -339,7 +339,7 @@ jobs:
           # commit-pinned (see the manifest), so "don't update" is a semantic no-op. Anything
           # genuinely missing still downloads, so a cold state dir self-heals.
           #
-          # --default-branch=$FLATPAK_BRANCH pins the ref to app/io.unom.punktfunk/<arch>/<branch>
+          # --default-branch=$FLATPAK_BRANCH pins the ref to app/org.projectcolony.lilynk/<arch>/<branch>
           # (canary or stable) so the matching hosted .flatpakref resolves deterministically
           # (manifest sets no branch).
           flatpak-builder --user --force-clean --disable-rofiles-fuse \

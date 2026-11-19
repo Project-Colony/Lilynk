@@ -50,7 +50,7 @@ fn send_event(handle: jlong, kind: InputKind, code: u32, x: i32, y: i32, flags: 
 
 /// `NativeBridge.nativeSendPointerMove(handle, dx, dy)` — relative mouse motion (screen +y down).
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendPointerMove(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSendPointerMove(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -66,7 +66,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendPointer
 /// down), captured at `timeUs` on the event clock. A host with a mouse of its own reports them
 /// there, under its pointer settings.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendMouseCounts(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSendMouseCounts(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -86,7 +86,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendMouseCo
 /// region (it drops the event if that size is zero). This is the touch "direct pointing" path — the
 /// cursor jumps to the finger — and matches the Apple client's absolute touch forwarding.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendPointerAbs(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSendPointerAbs(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -104,7 +104,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendPointer
 /// `NativeBridge.nativeSendPointerButton(handle, button, down)` — one button transition.
 /// `button`: GameStream id (1=left, 2=middle, 3=right, 4=X1, 5=X2). `down`: 1=press, 0=release.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendPointerButton(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSendPointerButton(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -144,7 +144,7 @@ fn scroll_event(axis: jint, delta: jint, source: jint, phase: jint) -> Option<In
 /// Wheel/Unknown, DIP for the rest); `source`/`phase` are the wire bytes packed into `flags`.
 /// A pair [`scroll_event`] refuses is dropped before the session is looked up.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendNormalizedScroll(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSendNormalizedScroll(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -168,7 +168,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendNormali
 /// applied once at the core's outbound seam (wheel, continuous and controller scroll alike).
 /// `false` when the session is gone.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSetInvertScroll(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSetInvertScroll(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -186,7 +186,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSetInvertSc
 /// core shows the host where this device is now, so a roam heals within a round trip. `false`
 /// when the session is gone.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativePathChanged(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativePathChanged(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -215,7 +215,7 @@ fn touch_kind(kind: jint) -> InputKind {
 /// packing to MouseMoveAbs). On up only the id matters. The host injects a real touch contact
 /// where it can (`ly_inject::touch_supported`).
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendTouch(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSendTouch(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -236,7 +236,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendTouch(
 /// Virtual-Key code (0 = unmapped → dropped). `down`: 1=press, 0=release. `mods`: VK modifier
 /// bitmask (Kotlin passes 0: the host folds modifiers from the L/R modifier key events itself).
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendKey(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSendKey(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -261,7 +261,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendKey(
 /// `HOST_CAP_TEXT_INPUT` (its inject backend types committed text), so the Kotlin side can pick
 /// the real IME `InputConnection` over the TYPE_NULL raw-key fallback. `0` handle → false.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeTextInputSupported(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeTextInputSupported(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -277,7 +277,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeTextInputSu
 /// Kotlin side splits stylus pointers out of the touch path onto the pen plane
 /// (design/pen-tablet-input.md §7). `0` handle → false.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeHostSupportsPen(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeHostSupportsPen(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -293,7 +293,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeHostSupport
 /// passthrough contacts land somewhere. Without it Kotlin runs the trackpad model instead and
 /// says so (design/touch-client-overlay.md §5.4). `0` handle → false.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeHostSupportsTouch(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeHostSupportsTouch(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -309,7 +309,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeHostSupport
 /// touchpad of its own (`FEATURE_TOUCHPAD`), so a touch surface sends contacts, not mouse
 /// counts. `0` handle → false.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeHostPresentsTouchpad(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeHostPresentsTouchpad(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -324,7 +324,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeHostPresent
 /// `NativeBridge.nativeHostTapsClick(handle)` — the host OS clicks on a tap on that touchpad
 /// (`FEATURE_TOUCHPAD_TAPS`), so a touchscreen makes no clicks of its own. `0` handle → false.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeHostTapsClick(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeHostTapsClick(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -377,7 +377,7 @@ fn surface_status(answer: lilynk_core::error::Result<bool>) -> jint {
 /// [`surface_status`]: refused, kept (the gesture is Kotlin's), or forwarded.
 #[unsafe(no_mangle)]
 #[allow(clippy::too_many_arguments)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeTouchpadSurface(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeTouchpadSurface(
     mut env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -513,7 +513,7 @@ fn pen_batches(flat: &[f32]) -> impl Iterator<Item = ([PenSample; PEN_BATCH_MAX]
 /// against a [`nativeHostSupportsPen`] host; the client heartbeats the last sample ≤100 ms
 /// while in range (Kotlin side — see `StylusStream`).
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendPen(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSendPen(
     mut env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -550,9 +550,9 @@ fn text_scalars(text: &str) -> impl Iterator<Item = u32> + '_ {
 /// `NativeBridge.nativeSendText(handle, text)` — committed IME text, one `TextInput` event per
 /// Unicode scalar (`code` = the scalar; multi-char commits are consecutive events in order),
 /// control characters left out ([`text_scalars`]). Call only when
-/// [`Java_io_unom_punktfunk_kit_NativeBridge_nativeTextInputSupported`] returned true.
+/// [`Java_org_projectcolony_lilynk_kit_NativeBridge_nativeTextInputSupported`] returned true.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendText(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSendText(
     mut env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -582,7 +582,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendText(
 /// wire pad index `pad`. `bit`: a `gamepad::BTN_*` bit (e.g. BTN_A = 0x1000). `down`: 1=press,
 /// 0=release. `pad`: wire pad index 0..15 (rides `flags`).
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendGamepadButton(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSendGamepadButton(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -606,7 +606,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendGamepad
 /// pad index `pad`. `axisId`: a `gamepad::AXIS_*` id (LS_X=0..RT=5). `value`: stick i16
 /// (−32768..32767, +y=up) or trigger 0..255. `pad`: wire pad index 0..15 (rides `flags`).
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendGamepadAxis(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSendGamepadAxis(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -629,7 +629,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendGamepad
 /// `NativeBridge.nativePadMouseMode(handle, target)` — the controller-mouse mode the wire pads in
 /// `target` share: `0` off, `1` touchpad, `2` full. `0` once the session is gone.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativePadMouseMode(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativePadMouseMode(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -646,7 +646,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativePadMouseMod
 /// controller-mouse mode (off, touchpad, full) and return it. `-1` when the session is gone or the
 /// host did not grant pointer input.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeCyclePadMouse(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeCyclePadMouse(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -667,7 +667,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeCyclePadMou
 /// re-sends it against datagram loss, and an older host ignores the unknown tag (that pad then
 /// uses the session-default kind from the handshake).
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendGamepadArrival(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSendGamepadArrival(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -699,7 +699,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendGamepad
 /// A `0` handle answers `true` — "don't suppress" is the safe answer when we cannot tell, matching
 /// the `Auto` rule inside the predicate itself.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativePadMotionReaches(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativePadMotionReaches(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -729,7 +729,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativePadMotionRe
 /// [`lilynk_core::config::pad_has_quick_access`] carries the rule and its tests. A `0`
 /// handle answers `false`, which sends the chord: every pad Steam reads takes it.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativePadHasQuickAccess(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativePadHasQuickAccess(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -756,7 +756,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativePadHasQuick
 /// core stamps the per-pad seq (in the snapshot seq space, so a reordered snapshot can't resurrect the
 /// pad) and arms a re-send burst against datagram loss. An older host ignores the unknown tag.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendGamepadRemove(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSendGamepadRemove(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -783,7 +783,7 @@ fn hid_report_len(len: jint, capacity: usize) -> usize {
 /// `len` is bounded by [`hid_report_len`]. Called from the capture thread at the controller's
 /// own report rate (~250 Hz) — the direct-buffer read avoids a JNI array copy per report.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendPadHidReport(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSendPadHidReport(
     mut env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -827,7 +827,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendPadHidR
 /// `NativeBridge.nativeSetSc2Gate(handle, pad, gate)` — what core holds back of a Steam
 /// Controller 2's raw reports on wire pad `pad`: `LILYNK_SC2_GATE_*` bits, latest wins.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSetSc2Gate(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSetSc2Gate(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -845,7 +845,9 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSetSc2Gate(
 /// `NativeBridge.nativeSc2IdentityRequest(puck, index): ByteArray?` — the `index`th feature
 /// query a Steam Controller 2's identity is read with; null past the last.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSc2IdentityRequest<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSc2IdentityRequest<
+    'local,
+>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     puck: jboolean,
@@ -864,7 +866,9 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSc2Identity
 /// `NativeBridge.nativeSc1IdentityRequest(index): ByteArray?` — the `index`th feature query a
 /// 2015 Steam Controller's identity is read with; null past the last.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSc1IdentityRequest<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSc1IdentityRequest<
+    'local,
+>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     index: jint,
@@ -882,7 +886,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSc1Identity
 /// `NativeBridge.nativeSc1BleState(): ByteArray` — a fresh state for one 2015 Steam Controller's
 /// Bluetooth input, for [`nativeSc1BleInput`].
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSc1BleState<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSc1BleState<'local>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
 ) -> JByteArray<'local> {
@@ -895,7 +899,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSc1BleState
 /// Controller's Bluetooth input, `[0x03, header, 18 bytes]`; the 64-byte wired frame when it
 /// completed a state message, else null. `state` is updated in place.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSc1BleInput<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSc1BleInput<'local>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     state: JByteArray<'local>,
@@ -922,7 +926,9 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSc1BleInput
 /// `NativeBridge.nativeSc1BleSegments(frame): ByteArray` — a wired feature frame for a 2015
 /// Steam Controller, report id 0 first, as its Bluetooth segments back to back.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSc1BleSegments<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSc1BleSegments<
+    'local,
+>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     frame: JByteArray<'local>,
@@ -940,7 +946,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSc1BleSegme
 /// `NativeBridge.nativeSc1BleReply(segments): ByteArray?` — the segments read back for one 2015
 /// Steam Controller feature query, in order; the reply, report id 0 first, once the last is in.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSc1BleReply<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSc1BleReply<'local>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     segments: JByteArray<'local>,
@@ -960,7 +966,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSc1BleReply
 /// Controller 2's identity for wire pad `pad`: its Puck slot (0 off a Puck), its USB serial (empty
 /// when unknown) and its replies to the identity queries, packed `[len][request][len][reply]…`.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendPadIdentity(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSendPadIdentity(
     mut env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -1020,7 +1026,7 @@ fn pad_motion(pad: jint, gyro: [jint; 3], accel: [jint; 3]) -> RichInput {
 /// host's DualSense-family backends scale onto the virtual pad's touch surface. On-change only —
 /// the capture diffs, the host holds per-slot state.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendPadTouch(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSendPadTouch(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -1047,7 +1053,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendPadTouc
 /// controller's report rate.
 #[unsafe(no_mangle)]
 #[allow(clippy::too_many_arguments)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendPadMotion(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSendPadMotion(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -1078,7 +1084,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSendPadMoti
 /// [`lilynk_core::client::holds_screen_awake`]. A `0` handle answers `true`: a screen that
 /// stays on is the safe answer when the session cannot be asked.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeHoldsScreenAwake(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeHoldsScreenAwake(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,

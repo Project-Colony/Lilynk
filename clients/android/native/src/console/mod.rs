@@ -79,7 +79,7 @@ macro_rules! json_pusher {
 /// The render thread parks until a surface arrives. `0` means setup failed and Kotlin keeps its
 /// fallback console; no Rust allocation address crosses JNI.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleCreate(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleCreate(
     mut env: EnvUnowned,
     _this: JObject,
     options: JString,
@@ -107,7 +107,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleCrea
 /// `NativeBridge.nativePadMark(pref)` — the console's 24-unit outline for a `GamepadPref` wire
 /// byte's pad family ([`ly_console_ui::glyphs::pad_icon`]), as SVG path data; empty for Automatic.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativePadMark<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativePadMark<'local>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     pref: jint,
@@ -125,7 +125,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativePadMark<'lo
 /// `NativeBridge.nativeConsoleSurfaceCreated(handle, surface)` — the `SurfaceView`'s surface is
 /// up; the render thread wraps it in EGL and starts drawing.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSurfaceCreated(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleSurfaceCreated(
     mut env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -147,7 +147,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSurf
 
 /// `NativeBridge.nativeConsoleSurfaceChanged(handle)` — size changed; the thread re-reads it.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSurfaceChanged(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleSurfaceChanged(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -163,7 +163,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSurf
 /// released the EGL surface: Android forbids touching a `Surface` after `surfaceDestroyed`
 /// returns, and the GL driver would otherwise still be presenting into it.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSurfaceDestroyed(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleSurfaceDestroyed(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -178,7 +178,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSurf
 /// `NativeBridge.nativeConsoleSetViewport(handle, left, top, right, bottom, scale)` — safe-area
 /// insets in surface pixels and the design-unit scale (`0` = the shell's own couch formula).
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSetViewport(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleSetViewport(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -209,7 +209,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSetV
 /// `MenuNav` turns it into menu events with the same dead zone, repeat cadence and hysteresis
 /// as the desktop.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsolePadSample(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsolePadSample(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -244,7 +244,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsolePadS
 /// 8 jump back (L1), 9 jump forward (R1), 10/11 a remote's OK down/up (acts on release, held
 /// it is the card's menu).
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleMenu(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleMenu(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -269,7 +269,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleMenu
 /// (= Back), 4 wheel (`dy` steps, + = up), 5 cancel, 6 primary down from a finger/stylus on
 /// the glass — the shell defers it so a swipe scrolls instead of acting on contact.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsolePointer(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsolePointer(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -290,7 +290,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsolePoin
 /// understands: 0..3 left/right/up/down, 4 return, 5 space, 6 escape, 7 backspace, 8 page up,
 /// 9 page down, 10 tab, 11 the letter Y, 12 the letter X. Anything else is Kotlin's to keep.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleKey(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleKey(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -308,7 +308,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleKey(
 /// `NativeBridge.nativeConsoleText(handle, text)` — typed characters while the console reports
 /// `editing` (see the `editing` event).
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleText(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleText(
     mut env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -327,7 +327,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleText
 /// console asked for stands: 0 connecting, 1 streaming, 2 failed(message), 3 ended(message or
 /// empty = clean), 4 reconnecting(message). The remaining codes are in `bridge::phase_code`.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSessionPhase(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleSessionPhase(
     mut env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -352,7 +352,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSess
 /// the session it launched waits for `ShowStream`. False when the shell raised no hold, as for a
 /// link's launch.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleHoldsLaunch(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleHoldsLaunch(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -369,7 +369,9 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleHold
 /// null when it holds none. `stays[0]` gets its "Stay signed in" switch. The model's copy wipes
 /// as this returns; Kotlin wipes the array once its dial returns.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleTakeUnlock<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleTakeUnlock<
+    'local,
+>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     handle: jlong,
@@ -393,7 +395,7 @@ json_pusher!(
 /// `NativeBridge.nativeConsoleNavigate(handle, entryJson)` — re-root the console (`{"library":
 /// <HostRow>}` opens that host's shelf over Home; `{}` is Home; `bridge::EntryJson` has the
 /// `stream` and `pair` entries).
-    Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleNavigate,
+    Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleNavigate,
     EntryJson,
     |h, e| h.shared.send(Cmd::Navigate(e.into_entry()))
 );
@@ -401,7 +403,7 @@ json_pusher!(
 json_pusher!(
 /// `NativeBridge.nativeConsoleSetPads(handle, padsJson)` — the connected controllers for the
 /// chip, the settings rows and the controllers screen, as `bridge::PadsJson` reads them.
-    Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSetPads,
+    Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleSetPads,
     PadsJson,
     |h, p| {
         let mut p = p;
@@ -417,7 +419,9 @@ json_pusher!(
 /// `{"settings": <Settings>}` (persist it), `{"gles": 2|3}`, `{"dead": "<why>"}`. Empty string
 /// on timeout / no handle. Run from a Kotlin poll thread.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleNextEvent<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleNextEvent<
+    'local,
+>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     handle: jlong,
@@ -438,7 +442,9 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleNext
 /// `NativeBridge.nativeConsoleDrainCmds(handle): String` — every `ConsoleCmd` queued since the
 /// last call, as a JSON array (`[]` when none). Poll on a short cadence from the service side.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleDrainCmds<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleDrainCmds<
+    'local,
+>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     handle: jlong,
@@ -460,7 +466,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleDrai
 
 json_pusher!(
 /// `NativeBridge.nativeConsoleSetHosts(handle, json)` — the home carousel's rows (`[HostRow]`).
-    Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSetHosts,
+    Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleSetHosts,
     Vec<HostRow>,
     |h, rows| h.handles.console.set_hosts(rows)
 );
@@ -468,7 +474,7 @@ json_pusher!(
 json_pusher!(
 /// `NativeBridge.nativeConsoleSetPair(handle, json)` — the pairing ceremony's phase and the
 /// command's `req` (`{"req": …, "phase": "Busy" | {"Failed": "why"} | {"Paired": {"key": "…"}}}`).
-    Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSetPair,
+    Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleSetPair,
     PairStatus,
     |h, p| h.handles.console.set_pair(p)
 );
@@ -476,7 +482,7 @@ json_pusher!(
 json_pusher!(
 /// `NativeBridge.nativeConsoleSetWake(handle, json)` — the wake card's status under the
 /// `Wake`'s `req` (`WakeStatus` JSON), or `null` when the wake ended.
-    Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSetWake,
+    Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleSetWake,
     Option<WakeStatus>,
     |h, w| h.handles.console.set_wake(w)
 );
@@ -485,7 +491,7 @@ json_pusher!(
 /// speed test on `key`. No setter for the status itself: the shell seeds and clears that slot,
 /// which is what makes a dismissed (or superseded) test's late result a no-op here.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleAdvanceSpeed(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleAdvanceSpeed(
     mut env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -509,7 +515,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleAdva
 /// `ConsoleCmd::FetchProfiles` for the host pinned to `fpHex`: `{"Listed": [rows]}`,
 /// `"NoProfiles"` or `{"Failed": "why"}`.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSetProfiles(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleSetProfiles(
     mut env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -533,7 +539,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSetP
 /// `ConsoleCmd::FetchHidden` for `profile` on the host pinned to `fpHex`: `{"Listed": [games]}`
 /// or `{"Failed": "why"}`. The posters follow through `nativeConsoleLibraryArt`.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSetHiddenList(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleSetHiddenList(
     mut env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -558,14 +564,14 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSetH
 json_pusher!(
 /// `NativeBridge.nativeConsoleSetHideAnswer(handle, json)` — what a `ConsoleCmd::SetHidden` came
 /// to, echoing its host, profile, title and `hidden`. The console shows the notice.
-    Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSetHideAnswer,
+    Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleSetHideAnswer,
     HideAnswer,
     |h, a| h.handles.console.set_hide_answer(a)
 );
 
 /// `NativeBridge.nativeConsoleNotice(handle, text)` — a one-shot toast from a service worker.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleNotice(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleNotice(
     mut env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -583,7 +589,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleNoti
 /// `NativeBridge.nativeConsoleLaunchRefused(handle, text)` — the host's sentence for the held
 /// launch it did not start; the hold says it in place of waiting.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleLaunchRefused(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleLaunchRefused(
     mut env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -601,7 +607,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleLaun
 /// `NativeBridge.nativeConsoleSetDeviceCode(handle, code)` — this device's code, once its
 /// identity has loaded. The console shows it while a request waits for approval.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSetDeviceCode(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleSetDeviceCode(
     mut env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -619,7 +625,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSetD
 /// `NativeBridge.nativeConsoleLibraryBegin(handle)` — a fetch is starting: `Loading`, and the
 /// posters a superseded fetch left go.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleLibraryBegin(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleLibraryBegin(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -634,7 +640,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleLibr
 json_pusher!(
 /// `NativeBridge.nativeConsoleSetPadTest(handle, json)` — `{"held": [..], "axes": [[name, v]]}`,
 /// the pad's reading while `ConsoleCmd::PadTest` is on.
-    Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSetPadTest,
+    Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleSetPadTest,
     ly_console_ui::PadTestState,
     |h, v| h.handles.console.set_pad_test(v)
 );
@@ -642,7 +648,7 @@ json_pusher!(
 json_pusher!(
 /// `NativeBridge.nativeConsoleSetLicenses(handle, json)` — `[{"heading", "text"}]`, what this app
 /// bundles; the answer to `ConsoleCmd::LoadLicenses`.
-    Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSetLicenses,
+    Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleSetLicenses,
     Vec<ly_console_ui::LicenseSection>,
     |h, v| h.handles.console.set_licenses(v)
 );
@@ -650,7 +656,7 @@ json_pusher!(
 json_pusher!(
 /// `NativeBridge.nativeConsoleLibraryPhase(handle, json)` — `{"req": …, "phase": "Loading" |
 /// "Empty" | "Ready" | {"Error": {"title", "body", "can_retry"}}}`, `req` the `FetchLibrary`'s.
-    Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleLibraryPhase,
+    Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleLibraryPhase,
     PhasePush,
     |h, p| h.handles.library.set_phase(&p.req, p.phase)
 );
@@ -659,7 +665,7 @@ json_pusher!(
 /// `{"req": …, "games": [LibraryGame]}`, `req` the `FetchLibrary`'s; `cached` = this is the
 /// last-known list from the cache, shown while the fetch runs.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleLibraryGames(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleLibraryGames(
     mut env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -682,7 +688,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleLibr
 /// `NativeBridge.nativeConsoleLibraryArt(handle, id, bytes)` — one title's poster, encoded
 /// (JPEG/PNG); the shell decodes at the size it draws.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleLibraryArt(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleLibraryArt(
     mut env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -704,7 +710,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleLibr
 /// `NativeBridge.nativeConsoleAvatar(handle, url, bytes)` — a profile's picture, encoded,
 /// under the URL `ConsoleCmd::FetchAvatar` named.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleAvatar(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleAvatar(
     mut env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -726,7 +732,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleAvat
 json_pusher!(
 /// `NativeBridge.nativeConsoleLibraryRunning(handle, json)` — the host's `/status` `games[]`
 /// (`[{"app_id": "steam:570", "state": "running"}, …]`).
-    Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleLibraryRunning,
+    Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleLibraryRunning,
     Vec<ly_client_core::library::RunningGame>,
     |h, games| h.handles.library.set_running(&games)
 );
@@ -735,14 +741,14 @@ json_pusher!(
 /// `NativeBridge.nativeConsoleLibraryDownloads(handle, json)` — the host's `/status`
 /// `{"downloads": [...], "grants": n}`, pushed before the same read's
 /// `nativeConsoleLibraryRunning`.
-    Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleLibraryDownloads,
+    Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleLibraryDownloads,
     ly_console_ui::DownloadsPush,
     |h, p| h.handles.library.set_downloads(&p.downloads, p.grants)
 );
 
 /// `NativeBridge.nativeConsoleLibraryStale(handle, stale)` — 0 fresh, 1 waking, 2 offline.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleLibraryStale(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleLibraryStale(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -760,7 +766,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleLibr
 json_pusher!(
 /// `NativeBridge.nativeConsoleSetSettings(handle, json)` — a settings change made elsewhere
 /// (the touch UI, a deep link): the shell reads this on its next mutation. Not a save.
-    Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSetSettings,
+    Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleSetSettings,
     ly_client_core::trust::Settings,
     |h, s| h.store.set(s)
 );
@@ -768,7 +774,7 @@ json_pusher!(
 json_pusher!(
 /// `NativeBridge.nativeConsoleSetPresets(handle, json)` — the preset catalog
 /// `[{id, name, overrides}]`.
-    Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSetPresets,
+    Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleSetPresets,
     Vec<PresetJson>,
     |h, p| h.store.set_presets(p.into_iter().map(Into::into).collect())
 );
@@ -776,7 +782,7 @@ json_pusher!(
 json_pusher!(
 /// `NativeBridge.nativeConsoleSetKnownHosts(handle, json)` — the known-hosts records
 /// (`KnownHosts` JSON) the console builds `punktfunk://` links from.
-    Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleSetKnownHosts,
+    Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleSetKnownHosts,
     ly_client_core::trust::KnownHosts,
     |h, k| h.store.set_known_hosts(k)
 );

@@ -126,7 +126,7 @@ final class ClientLogFile: @unchecked Sendable {
     /// 1 MiB bundle cap.
     let maxBytes: Int
     private let header: String
-    private let queue = DispatchQueue(label: "io.unom.punktfunk.client-log", qos: .utility)
+    private let queue = DispatchQueue(label: "org.projectcolony.lilynk.client-log", qos: .utility)
     private var handle: FileHandle?
     private var bytes = 0
     private var lastSyncNs: UInt64 = 0
@@ -194,7 +194,7 @@ final class ClientLogFile: @unchecked Sendable {
     }
 }
 
-/// Drop-in for `Logger(subsystem: "io.unom.punktfunk", category:)`: the same call shape (string
+/// Drop-in for `Logger(subsystem: "org.projectcolony.lilynk", category:)`: the same call shape (string
 /// interpolation with `privacy:`/`format:` options), forwarded to os_log AND noted in
 /// `ClientLogRing`. Interpolated values are rendered in the clear in both places — the unified log
 /// was already being read with the app attached, and the ring only ever leaves the device by an
@@ -205,7 +205,7 @@ public struct ClientLog: Sendable {
 
     public init(category: String) {
         self.category = category
-        self.logger = Logger(subsystem: "io.unom.punktfunk", category: category)
+        self.logger = Logger(subsystem: "org.projectcolony.lilynk", category: category)
     }
 
     /// os_log only — see the file comment for why debug stays out of the ring.

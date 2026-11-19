@@ -20,7 +20,7 @@
 // it stopped.
 //
 // The group ships EMPTY and joining it is a deliberate act. It is the same group the takeover's own
-// root helper (`io.unom.punktfunk.dm-helper`) authorizes on, and a takeover that stops a display
+// root helper (`org.projectcolony.lilynk.dm-helper`) authorizes on, and a takeover that stops a display
 // manager cannot work without that helper — so this grants to exactly the population the fault
 // reaches, and to nobody else.
 //

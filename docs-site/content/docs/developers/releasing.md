@@ -31,7 +31,7 @@ reports; the Windows packer stamps it into the finished binary.
      `packaging/windows/drivers`, `crates/host/ly-seat-keeper` and `fuzz`;
    - both OpenAPI copies, whose `info.version` follows the crate version;
    - `docs/releases/vX.Y.Z.md`, `docs/releases/whatsnew/vX.Y.Z.txt`, the `CHANGELOG.md` card and a
-     `<release>` entry in `packaging/flatpak/io.unom.punktfunk.metainfo.xml`
+     `<release>` entry in `packaging/flatpak/org.projectcolony.lilynk.metainfo.xml`
      ([Release notes](#release-notes)).
 
    ```sh

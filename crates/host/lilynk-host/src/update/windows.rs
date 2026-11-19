@@ -25,7 +25,7 @@ const KEEP_INSTALLERS: usize = 2;
 const CREATE_BREAKAWAY_FROM_JOB: u32 = 0x0100_0000;
 const CREATE_NO_WINDOW: u32 = 0x0800_0000;
 
-/// Must match `packaging/winget/unom.PunktfunkHost.installer.yaml`.
+/// Must match `packaging/winget/Lilynk.LilynkHost.installer.yaml`.
 const SILENT_ARGS: [&str; 4] = ["/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/SP-"];
 
 fn staging_dir() -> PathBuf {

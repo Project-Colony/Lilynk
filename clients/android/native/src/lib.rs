@@ -12,7 +12,7 @@
 //! instead of re-porting it into Kotlin: the audio jitter policy, the trust store, pairing and
 //! **mDNS discovery** ([`discovery`], the same `mdns-sd` browse the Linux/Windows clients use).
 //!
-//! JNI symbols map to `io.unom.punktfunk.kit.NativeBridge` in the `:kit` Gradle module
+//! JNI symbols map to `org.projectcolony.lilynk.kit.NativeBridge` in the `:kit` Gradle module
 //! (`clients/android`). The surface includes: mDNS host discovery ([`discovery`]) and the session
 //! lifecycle in [`session`] — connect/pair + the trust surface, the per-plane pumps (video →
 //! AMediaCodec, audio ↔ AAudio, mic uplink), input, and rumble/HID feedback ([`feedback`]), and
@@ -204,7 +204,7 @@ pub extern "system" fn JNI_OnLoad(
 /// build that drops the host on some ABI degrades to the touch UI rather than an
 /// `UnsatisfiedLinkError`. The `console` module's `cfg` decides it: every Android ABI carries it.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleAvailable(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleAvailable(
     _env: EnvUnowned,
     _this: JObject,
 ) -> jni::sys::jboolean {
@@ -216,7 +216,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConsoleAvai
 /// does this from its `languages`; call it first when the PyroWave row or the stats overlay's
 /// warnings are read with no console. Bad JSON leaves the language as it was.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSetLanguages<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSetLanguages<'local>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     tags: jni::objects::JString<'local>,

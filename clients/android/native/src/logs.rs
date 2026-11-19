@@ -138,7 +138,7 @@ pub(crate) fn dir() -> Option<PathBuf> {
 /// `NativeBridge.nativeOpenLogFile(dir)` — from now on every log line also lands in `dir`'s
 /// `client.log`. Once per process, before anything worth keeping is logged.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeOpenLogFile<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeOpenLogFile<'local>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     dir: JString<'local>,
@@ -159,7 +159,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeOpenLogFile
 /// side's identity line). With no file open it is the ring. Never empty (the header line is
 /// always present); reads the file, so call it off the main thread.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeRenderLogs<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeRenderLogs<'local>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     header: JString<'local>,
@@ -177,7 +177,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeRenderLogs<
 /// `NativeBridge.nativeLogCrash(text)` — each line of `text` as an ERROR `pf.crash` record, on
 /// disk before this returns: an uncaught exception's stack, written just before the process dies.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeLogCrash<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeLogCrash<'local>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     text: JString<'local>,
@@ -195,7 +195,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeLogCrash<'l
 /// `ApplicationExitInfo` as one `pf.exit` line, then what its `trace` holds for that `reason`
 /// ([`crate::crash::trace_lines`]) as `pf.crash` lines. `trace` is empty when Android kept none.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeLogExit<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeLogExit<'local>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     summary: JString<'local>,
@@ -216,7 +216,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeLogExit<'lo
 /// `pf.wifi` line in the ring. Kotlin reads the link and decides when (`WifiLinkLog`); its own
 /// `Log` reaches logcat but never a "Send logs" bundle. `-1` is unknown; `freqMhz` ≤ 0 is off Wi-Fi.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeLogWifiLink<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeLogWifiLink<'local>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     reason: JString<'local>,
@@ -242,7 +242,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeLogWifiLink
 /// `NativeBridge.nativeLogDisplay(line)` — one `pf.display` line in the ring: the displays and
 /// fold features a stream sees, so a bundle says which dual-screen shape a device reports.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeLogDisplay<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeLogDisplay<'local>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     line: JString<'local>,
@@ -259,7 +259,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeLogDisplay<
 /// `MediaCodecList` shows, so a bundle says which one a codec resolved to and why one is missing,
 /// and the device behind each forwarded controller.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeLogCaps<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeLogCaps<'local>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     line: JString<'local>,

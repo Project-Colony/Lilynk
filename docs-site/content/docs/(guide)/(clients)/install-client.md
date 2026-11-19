@@ -29,7 +29,7 @@ Works on any distro with Flatpak:
 
 ```sh
 flatpak install --user https://flatpak.unom.io/io.unom.punktfunk.flatpakref
-flatpak run io.unom.punktfunk
+flatpak run org.projectcolony.lilynk
 ```
 
 To use your package manager instead, add the Punktfunk repo from your distro's guide, then:
@@ -125,7 +125,7 @@ A client and a host don't need the same version. To update the host, see [Updati
 | apt, dnf, pacman | Your normal system upgrade, or [`lilynk-client --apply-update`](#the-linux-client-can-update-itself) |
 | Fedora Atomic, layered | See below |
 | Windows installer | Run the newer installer. Hosts and pairing are kept. |
-| Windows MSIX or portable | Add the newer `.msix`, or unzip the newer build over the old one. An MSIX named `unom.Punktfunk` is the older package and doesn't upgrade: remove it as below first. |
+| Windows MSIX or portable | Add the newer `.msix`, or unzip the newer build over the old one. |
 | macOS `.dmg` | Drag the newer app over the old one |
 | iPhone, iPad, Apple TV | App Store, or TestFlight for the beta |
 | Android | Google Play. For the APK, install the newer one over it. |
@@ -144,7 +144,7 @@ sudo rpm-ostree update --uninstall lilynk-client --install lilynk-client
 takes its saved hosts and pairing with it, so pair again once:
 
 ```powershell
-Get-AppxPackage *unom.punktfunk | Remove-AppxPackage
+Get-AppxPackage org.projectcolony.lilynk | Remove-AppxPackage
 ```
 
 ### The Linux client can update itself

@@ -32,9 +32,9 @@ impl Shell {
         // Wayland `app_id` and X11 WM_CLASS name the desktop entry a task manager groups and
         // pins this window under. The console has its own entry, so it carries that one's id.
         let app_id = if browse {
-            "io.unom.punktfunk.console"
+            "org.projectcolony.lilynk.console"
         } else {
-            "io.unom.punktfunk"
+            "org.projectcolony.lilynk"
         };
         sdl3::hint::set("SDL_APP_ID", app_id);
         // SDL picks XWayland where the compositor lacks `fifo-v1` (KWin before 6.4, Mutter

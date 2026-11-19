@@ -102,7 +102,7 @@ final class ClientIdentityStore: @unchecked Sendable {
     private static func query(dataProtection: Bool) -> [String: Any] {
         var q: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: "io.unom.punktfunk",
+            kSecAttrService as String: "org.projectcolony.lilynk",
             kSecAttrAccount as String: "client-identity",
         ]
         if dataProtection { q[kSecUseDataProtectionKeychain as String] = true }

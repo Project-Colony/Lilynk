@@ -730,8 +730,8 @@ final class SharedFoundationTests: XCTestCase {
     /// The whole per-connect resolution, in the precedence every client shares:
     /// one-off pick ?? host binding ?? none.
     func testEffectiveSettingsResolutionPrecedence() {
-        let defaults = UserDefaults(suiteName: "io.unom.punktfunk.tests.effective")!
-        defaults.removePersistentDomain(forName: "io.unom.punktfunk.tests.effective")
+        let defaults = UserDefaults(suiteName: "org.projectcolony.lilynk.tests.effective")!
+        defaults.removePersistentDomain(forName: "org.projectcolony.lilynk.tests.effective")
         defaults.set(2_560, forKey: DefaultsKey.streamWidth)
         defaults.set(30_000, forKey: DefaultsKey.bitrateKbps)
 
@@ -781,7 +781,7 @@ final class SharedFoundationTests: XCTestCase {
                                       defaults: defaults).bitrateKbps,
             30_000)
 
-        defaults.removePersistentDomain(forName: "io.unom.punktfunk.tests.effective")
+        defaults.removePersistentDomain(forName: "org.projectcolony.lilynk.tests.effective")
     }
 
     /// The console's Native is a zero; a host refuses a 0 Hz or 0 px mode, so it never goes out.

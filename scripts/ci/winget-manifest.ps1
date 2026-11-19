@@ -12,10 +12,10 @@
 # Usage (from windows-host.yml, stable tags only):
 #     & scripts/ci/winget-manifest.ps1 -Version 0.19.2 -InstallerPath C:\t\out\lilynk-host-setup-0.19.2.exe -OutDir C:\t\out\winget
 #
-# Emits: <OutDir>/unom.PunktfunkHost.yaml
-#        <OutDir>/unom.PunktfunkHost.installer.yaml
-#        <OutDir>/unom.PunktfunkHost.locale.en-US.yaml
-#        <OutDir>/unom.PunktfunkHost.locale.<locale>.yaml for every other locale template
+# Emits: <OutDir>/Lilynk.LilynkHost.yaml
+#        <OutDir>/Lilynk.LilynkHost.installer.yaml
+#        <OutDir>/Lilynk.LilynkHost.locale.en-US.yaml
+#        <OutDir>/Lilynk.LilynkHost.locale.<locale>.yaml for every other locale template
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)][string]$Version,
@@ -44,10 +44,10 @@ New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 # PackageVersion appears in every file; InstallerUrl/Sha256 only in the installer manifest.
 # Anchored replacements (line-leading key) so a version string inside prose — e.g. the release-notes
 # URL in the locale manifest — is never rewritten by accident.
-$default = 'unom.PunktfunkHost.locale.en-US.yaml'
-$locales = Get-ChildItem -Path $TemplateDir -Filter 'unom.PunktfunkHost.locale.*.yaml' |
+$default = 'Lilynk.LilynkHost.locale.en-US.yaml'
+$locales = Get-ChildItem -Path $TemplateDir -Filter 'Lilynk.LilynkHost.locale.*.yaml' |
     Where-Object Name -ne $default | Sort-Object Name | ForEach-Object Name
-$files = @('unom.PunktfunkHost.yaml', 'unom.PunktfunkHost.installer.yaml', $default) + @($locales)
+$files = @('Lilynk.LilynkHost.yaml', 'Lilynk.LilynkHost.installer.yaml', $default) + @($locales)
 foreach ($f in $files) {
     $src = Join-Path $TemplateDir $f
     if (-not (Test-Path $src)) { throw "template missing: $src" }
@@ -68,7 +68,7 @@ foreach ($f in $files) {
 
 # Fail loudly if a template ever loses one of the fields we rewrite — a silently un-substituted
 # manifest would publish the PREVIOUS release's hash, which winget would then refuse to install.
-$inst = Get-Content -Path (Join-Path $OutDir 'unom.PunktfunkHost.installer.yaml') -Raw
+$inst = Get-Content -Path (Join-Path $OutDir 'Lilynk.LilynkHost.installer.yaml') -Raw
 foreach ($needle in @($Version, $sha, $url)) {
     if ($inst -notmatch [regex]::Escape($needle)) { throw "substitution failed - '$needle' missing from the installer manifest" }
 }

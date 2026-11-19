@@ -1,4 +1,4 @@
-//! The status tray's per-user autostart entry, `~/.config/autostart/io.unom.punktfunk.tray.desktop`.
+//! The status tray's per-user autostart entry, `~/.config/autostart/org.projectcolony.lilynk.tray.desktop`.
 //!
 //! The host writes it from the `tray_autostart` setting. The tray's "Start at log-in" item and
 //! the desktop's own startup settings change it too. An entry is off when it is missing, or
@@ -7,11 +7,11 @@
 use std::path::{Path, PathBuf};
 
 /// The file name. A same-named file in the system autostart folder would be shadowed by this one.
-pub const ENTRY_FILE: &str = "io.unom.punktfunk.tray.desktop";
+pub const ENTRY_FILE: &str = "org.projectcolony.lilynk.tray.desktop";
 
 /// The CamelCase name older hosts wrote. [`entry_path`] adopts it, so the user's on/off choice
 /// carries over and no second tray starts.
-const LEGACY_FILE: &str = "io.unom.Punktfunk.Tray.desktop";
+const LEGACY_FILE: &str = "org.projectcolony.Lilynk.Tray.desktop";
 
 /// The tray beside `exe`, by absolute path: a session need not have `~/.local/bin` on `PATH`.
 /// A Nix store path changes with every build, so there the profile's `PATH` finds the bare name.

@@ -182,7 +182,7 @@ Panel → **Troubleshooting** → **Recreate library shortcut**.
 4. To remove the client too, in Desktop Mode:
 
    ```sh
-   flatpak uninstall --user --delete-data io.unom.punktfunk
+   flatpak uninstall --user --delete-data org.projectcolony.lilynk
    ```
 
    Delete `~/.config/punktfunk` as well to forget this Deck's identity and saved hosts.

@@ -28,7 +28,7 @@ public struct EnclaveUnlockKeys: UnlockKeys {
 
     static func tag(host: Data, profile: String) -> Data {
         let hex = host.map { String(format: "%02x", $0) }.joined()
-        return Data("io.unom.punktfunk.unlock-key.\(hex).\(profile)".utf8)
+        return Data("org.projectcolony.lilynk.unlock-key.\(hex).\(profile)".utf8)
     }
 
     private static func query(_ host: Data, _ profile: String) -> [CFString: Any] {

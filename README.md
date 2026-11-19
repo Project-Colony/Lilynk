@@ -66,7 +66,7 @@ On **Windows 11 22H2+** it's a signed installer (host + virtual-display and game
 
 ```powershell
 winget source add -n punktfunk https://winget.punktfunk.unom.io -t Microsoft.Rest
-winget install unom.PunktfunkHost
+winget install Lilynk.LilynkHost
 ```
 
 Prefer to add the repo yourself? Every platform has a one-page guide — apt, dnf, pacman, the Bazzite

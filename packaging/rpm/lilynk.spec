@@ -387,7 +387,7 @@ install -Dm0644 scripts/alsa-ucm2/USB-Audio/Punktfunk/DualSense-PS5-Haptic-HiFi.
 # action let the host stop/restore the display manager for the stream without a hand-installed
 # polkit rule. The helper derives the DM unit itself — callers can't name arbitrary units.
 install -Dm0755 scripts/ly-dm-helper %{buildroot}%{_libexecdir}/punktfunk/ly-dm-helper
-install -Dm0644 scripts/io.unom.punktfunk.dm-helper.policy %{buildroot}%{_datadir}/polkit-1/actions/io.unom.punktfunk.dm-helper.policy
+install -Dm0644 scripts/org.projectcolony.lilynk.dm-helper.policy %{buildroot}%{_datadir}/polkit-1/actions/org.projectcolony.lilynk.dm-helper.policy
 # ...and the other half of stopping a display manager: with it stopped the box has no active local
 # session, so logind's own power actions fall to auth_admin_keep and Steam's power menu goes quiet
 # mid-stream. Scoped to the same (shipped-empty) punktfunk group the helper above gates on.
@@ -464,8 +464,8 @@ sed -i 's#%h/punktfunk/scripts/headless/run-headless-kde.sh#%{pf_datadir}/headle
 # fake_input globals on an interactive Plasma session. Must ship with the host so it is present
 # before the host first connects (KWin caches the per-exe grant). Replaces the old manual
 # KWIN_WAYLAND_NO_PERMISSION_CHECKS hack for the screencast permission.
-install -Dm0644 packaging/linux/io.unom.punktfunk.host.desktop \
-                %{buildroot}%{_datadir}/applications/io.unom.punktfunk.host.desktop
+install -Dm0644 packaging/linux/org.projectcolony.lilynk.host.desktop \
+                %{buildroot}%{_datadir}/applications/org.projectcolony.lilynk.host.desktop
 
 # Scheduling headroom for the host's data-plane threads (see the no-caps note in %%files): raise
 # the user-session nice hard limit so ly-frame's setpriority() also works where RealtimeKit isn't
@@ -476,11 +476,11 @@ install -Dm0644 packaging/linux/50-lilynk-nice.conf \
 # Status tray: the per-user SNI icon + the hicolor status icons it names. Its autostart entry is
 # per user, written by the host from the tray_autostart setting.
 install -Dm0755 target/release/lilynk-tray %{buildroot}%{_bindir}/lilynk-tray
-install -Dm0644 packaging/linux/io.unom.punktfunk.starthost.desktop \
-                %{buildroot}%{_datadir}/applications/io.unom.punktfunk.starthost.desktop
+install -Dm0644 packaging/linux/org.projectcolony.lilynk.starthost.desktop \
+                %{buildroot}%{_datadir}/applications/org.projectcolony.lilynk.starthost.desktop
 # Opens the web console signed in: a person's own inside their seat, the operator's elsewhere.
-install -Dm0644 packaging/linux/io.unom.punktfunk.webconsole.desktop \
-                %{buildroot}%{_datadir}/applications/io.unom.punktfunk.webconsole.desktop
+install -Dm0644 packaging/linux/org.projectcolony.lilynk.webconsole.desktop \
+                %{buildroot}%{_datadir}/applications/org.projectcolony.lilynk.webconsole.desktop
 for sz in 22x22 48x48; do
   for png in packaging/linux/icons/hicolor/$sz/apps/*.png; do
     install -Dm0644 "$png" %{buildroot}%{_datadir}/icons/hicolor/$sz/apps/"$(basename "$png")"
@@ -494,17 +494,17 @@ install -Dm0755 target/release/lilynk-client %{buildroot}%{_bindir}/lilynk-clien
 install -Dm0755 target/release/lilynk-session %{buildroot}%{_bindir}/lilynk-session
 # The headless CLI (design/client-architecture-split.md §4).
 install -Dm0755 target/release/lilynk %{buildroot}%{_bindir}/lilynk
-install -Dm0644 packaging/linux/io.unom.punktfunk.desktop \
-                %{buildroot}%{_datadir}/applications/io.unom.punktfunk.desktop
+install -Dm0644 packaging/linux/org.projectcolony.lilynk.desktop \
+                %{buildroot}%{_datadir}/applications/org.projectcolony.lilynk.desktop
 # Second launcher, straight into the gamepad console (`--browse`) — the couch entry point.
-install -Dm0644 packaging/linux/io.unom.punktfunk.console.desktop \
-                %{buildroot}%{_datadir}/applications/io.unom.punktfunk.console.desktop
+install -Dm0644 packaging/linux/org.projectcolony.lilynk.console.desktop \
+                %{buildroot}%{_datadir}/applications/org.projectcolony.lilynk.console.desktop
 # The app icon the desktop entry (and the About dialog) name. Without it the launcher falls
 # back to a generic monitor glyph, which is what shipped until now.
-install -Dm0644 packaging/linux/icons/hicolor/scalable/apps/io.unom.punktfunk.svg \
-                %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/io.unom.punktfunk.svg
+install -Dm0644 packaging/linux/icons/hicolor/scalable/apps/org.projectcolony.lilynk.svg \
+                %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/org.projectcolony.lilynk.svg
 # The CamelCase icon name, which desktop entries users already have still name.
-ln -s io.unom.punktfunk.svg %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/io.unom.Punktfunk.svg
+ln -s org.projectcolony.lilynk.svg %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/org.projectcolony.Lilynk.svg
 # DualSense hidraw access (full pad fidelity through SDL's HIDAPI driver).
 install -Dm0644 scripts/70-lilynk-client.rules \
                 %{buildroot}%{_udevrulesdir}/70-lilynk-client.rules
@@ -548,7 +548,7 @@ install -Dm0644 scripts/host.env.example               %{buildroot}%{pf_datadir}
 install -Dm0644 packaging/bazzite/host.env             %{buildroot}%{pf_datadir}/host.env.bazzite
 install -Dm0644 packaging/kde/host.env                 %{buildroot}%{pf_datadir}/host.env.kde
 # Bazzite KDE Desktop-mode one-shot setup (seeds the RemoteDesktop grant for libei input; the
-# screencast/virtual-output grant ships as io.unom.punktfunk.host.desktop, installed above).
+# screencast/virtual-output grant ships as org.projectcolony.lilynk.host.desktop, installed above).
 install -d %{buildroot}%{pf_datadir}/bazzite
 install -Dm0755 packaging/bazzite/kde-desktop-setup.sh %{buildroot}%{pf_datadir}/bazzite/kde-desktop-setup.sh
 # SELinux dontaudit drop-in for Bazzite/SteamOS: Valve's ds_inhibit (steamos-manager) walks
@@ -643,7 +643,7 @@ install -Dm0755 "$(command -v bun)" %{buildroot}%{_libexecdir}/lilynk-bun/bun
 # KWin hands out its restricted Wayland protocols (zkde_screencast_unstable_v1 for the virtual
 # output, org_kde_kwin_fake_input for input) only to a client it can IDENTIFY, by resolving that
 # client's /proc/<pid>/exe and matching it against an installed .desktop's Exec= — ours is the
-# io.unom.punktfunk.host.desktop installed below. The kernel refuses that readlink to any reader
+# org.projectcolony.lilynk.host.desktop installed below. The kernel refuses that readlink to any reader
 # whose effective set is not a superset of the target's PERMITTED set (cap_ptrace_access_check),
 # and KWin holds no capabilities. So a capability here makes the host unidentifiable: KWin's
 # executablePath() is empty, no .desktop can match, and the globals are never advertised.
@@ -702,7 +702,7 @@ install -Dm0755 "$(command -v bun)" %{buildroot}%{_libexecdir}/lilynk-bun/bun
 %{_unitdir}/lilynk-update.service
 %{_datadir}/polkit-1/rules.d/49-lilynk-update.rules
 %{_datadir}/polkit-1/rules.d/49-lilynk-power.rules
-%{_datadir}/polkit-1/actions/io.unom.punktfunk.dm-helper.policy
+%{_datadir}/polkit-1/actions/org.projectcolony.lilynk.dm-helper.policy
 %{_prefix}/lib/modules-load.d/lilynk.conf
 %{_prefix}/lib/sysctl.d/99-lilynk-net.conf
 %{_prefix}/lib/NetworkManager/dispatcher.d/90-lilynk-frame-adapter
@@ -711,9 +711,9 @@ install -Dm0755 "$(command -v bun)" %{buildroot}%{_libexecdir}/lilynk-bun/bun
 %{_prefix}/lib/firewalld/services/lilynk-web.xml
 %{_userunitdir}/lilynk-host.service
 %{_userunitdir}/lilynk-kde-session.service
-%{_datadir}/applications/io.unom.punktfunk.host.desktop
-%{_datadir}/applications/io.unom.punktfunk.starthost.desktop
-%{_datadir}/applications/io.unom.punktfunk.webconsole.desktop
+%{_datadir}/applications/org.projectcolony.lilynk.host.desktop
+%{_datadir}/applications/org.projectcolony.lilynk.starthost.desktop
+%{_datadir}/applications/org.projectcolony.lilynk.webconsole.desktop
 %{_datadir}/icons/hicolor/*/apps/lilynk-tray*.png
 %dir /etc/gamescope-session-plus
 %dir /etc/gamescope-session-plus/sessions.d
@@ -753,10 +753,10 @@ install -Dm0755 "$(command -v bun)" %{buildroot}%{_libexecdir}/lilynk-bun/bun
 %{_bindir}/lilynk-client
 %{_bindir}/lilynk-session
 %{_bindir}/lilynk
-%{_datadir}/applications/io.unom.punktfunk.desktop
-%{_datadir}/applications/io.unom.punktfunk.console.desktop
-%{_datadir}/icons/hicolor/scalable/apps/io.unom.punktfunk.svg
-%{_datadir}/icons/hicolor/scalable/apps/io.unom.Punktfunk.svg
+%{_datadir}/applications/org.projectcolony.lilynk.desktop
+%{_datadir}/applications/org.projectcolony.lilynk.console.desktop
+%{_datadir}/icons/hicolor/scalable/apps/org.projectcolony.lilynk.svg
+%{_datadir}/icons/hicolor/scalable/apps/org.projectcolony.Lilynk.svg
 %{_udevrulesdir}/70-lilynk-client.rules
 %{_prefix}/lib/sysctl.d/99-lilynk-client-net.conf
 # Co-owned with the host subpackage (rpm allows that for DIRECTORIES, unlike files) so a

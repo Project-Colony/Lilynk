@@ -34,7 +34,7 @@ public final class Sc2Capture {
     /// The link delegate/report queue — USER_INTERACTIVE (SDL's warning: BLE packets are
     /// silently dropped if the consumer stalls).
     private let queue = DispatchQueue(
-        label: "io.unom.punktfunk.sc2-ble",
+        label: "org.projectcolony.lilynk.sc2-ble",
         qos: .userInteractive)
     private var link: Sc2BleLink!
     #if os(macOS)

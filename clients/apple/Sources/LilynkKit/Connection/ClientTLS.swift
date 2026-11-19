@@ -88,8 +88,8 @@ enum ClientTLS {
               let cert = SecCertificateCreateWithData(nil, certDER as CFData)
         else { throw TLSError.badCert }
 
-        let tag = Data("io.unom.punktfunk.library-client-key".utf8)
-        let certLabel = "io.unom.punktfunk.library-client-cert"
+        let tag = Data("org.projectcolony.lilynk.library-client-key".utf8)
+        let certLabel = "org.projectcolony.lilynk.library-client-cert"
         // The stored key and cert are derived artifacts — the PEM store is the durable state.
         // Drop whatever a previous identity left, or a regenerated identity would keep vending
         // pairs built from the OLD key while QUIC presents the new PEM: one device, two certs.

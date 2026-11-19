@@ -50,7 +50,7 @@ fn note_error(e: &lilynk_core::error::LilynkError) {
 /// `NativeBridge.nativeTakeLastSaid(): String` — the host's own sentence with the most recent
 /// refusal, cleared on read (`""` when it said none). Read beside `nativeTakeLastError`.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeTakeLastSaid<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeTakeLastSaid<'local>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
 ) -> JString<'local> {
@@ -62,7 +62,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeTakeLastSai
 /// `NativeBridge.nativeDialPending(): Boolean` — the dial `nativeConnect` is blocked on was
 /// parked by the host for its operator's approval; it now waits for that verdict.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeDialPending(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeDialPending(
     _env: EnvUnowned,
     _this: JObject,
 ) -> jboolean {
@@ -73,7 +73,9 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeDialPending
 /// `nativeConnect`/`nativePair`, cleared on read (`""` when none). Call right after a `0`
 /// handle / `""` fingerprint.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeTakeLastError<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeTakeLastError<
+    'local,
+>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
 ) -> JString<'local> {
@@ -86,7 +88,9 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeTakeLastErr
 /// Returns `"<certPem>\n-----PUNKTFUNK-KEY-----\n<keyPem>"`, or `""` on failure (logged). Kotlin
 /// persists it (Keystore-wrapped) and only calls this again when the store is genuinely empty.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeGenerateIdentity<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeGenerateIdentity<
+    'local,
+>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
 ) -> JString<'local> {
@@ -107,7 +111,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeGenerateIde
 /// creation); Kotlin's one connect choke point (`HostConnect.connectToHost`) does. The rest of the
 /// toggle rides explicit per-session parameters (`nativeStartVideo` / `nativeStartAudio`).
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSetLowLatencyMode(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSetLowLatencyMode(
     _env: EnvUnowned,
     _this: JObject,
     enabled: jboolean,
@@ -495,7 +499,7 @@ fn request_of(env: &jni::Env, request: &JString) -> jni::errors::Result<Option<C
 /// `NativeBridge.nativeConnect(requestJson): Long` — see [`ConnectRequest`]. Returns an opaque
 /// handle, or 0 on failure (`nativeTakeLastError` carries the cause).
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConnect<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConnect<'local>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     request: JString<'local>,
@@ -521,7 +525,9 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConnect<'lo
 /// "error" before anything is dialed.
 #[unsafe(no_mangle)]
 #[allow(clippy::too_many_arguments)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConnectWithUnlock<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConnectWithUnlock<
+    'local,
+>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     request: JString<'local>,
@@ -581,7 +587,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeConnectWith
 /// ([`lilynk_core::quic::v2::msg::unlock_signed_message`]). `seatId` is the seat's 32
 /// lowercase hex characters; the three arrays are 32 bytes each. Null for anything else.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeProfileUnlockMessage<
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeProfileUnlockMessage<
     'local,
 >(
     env: EnvUnowned<'local>,
@@ -600,7 +606,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeProfileUnlo
 /// ([`msg::profile_unlock_signed_message`]). `profileId` is 1 to 64 of `[A-Za-z0-9_-]`; the three
 /// arrays are 32 bytes each. Null for anything else.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeLockedProfileUnlockMessage<
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeLockedProfileUnlockMessage<
     'local,
 >(
     env: EnvUnowned<'local>,
@@ -847,7 +853,7 @@ fn connect(req: ConnectRequest, prompts_unlock: bool, unlock: Option<ProfileUnlo
 /// JNI calls keep their `Arc` until they return; the final drop joins the remaining workers and
 /// closes the connector. Zero, stale, duplicate, and concurrent closes are no-ops.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeClose(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeClose(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -868,7 +874,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeClose(
 /// Missing keys are ignored. The table lookup retains the session through this call even when
 /// `nativeClose` removes the key concurrently.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeDisconnectQuit(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeDisconnectQuit(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -888,7 +894,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeDisconnectQ
 /// A concurrent close cannot invalidate the table-retained session during this enqueue.
 #[unsafe(no_mangle)]
 #[allow(clippy::too_many_arguments)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeRequestMode(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeRequestMode(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -924,7 +930,9 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeRequestMode
 /// Return the connected host certificate's SHA-256 as 64 lowercase hex characters.
 /// Missing or concurrently closed session keys return an empty string.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeHostFingerprint<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeHostFingerprint<
+    'local,
+>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     handle: jlong,
@@ -940,7 +948,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeHostFingerp
 /// Report whether the keyed session started on a screen another device opened and sized.
 /// Missing or concurrently closed keys, and a host that does not say, return `false`.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSharesScreen(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSharesScreen(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -956,7 +964,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSharesScree
 /// Return the reason byte of the host's role echo: `0` as asked, `1` not allowed, `2` monitors
 /// held, `3` unavailable, `4` no monitors. A missing key and a host that sends no echo read `0`.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeScreenRoleReason(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeScreenRoleReason(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -973,7 +981,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeScreenRoleR
 /// The stream watchdog polls this to leave a frozen final frame after disconnect. Missing or
 /// concurrently closed keys return `false`; a successful lookup is one atomic client read.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSessionEnded(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSessionEnded(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -990,7 +998,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSessionEnde
 /// `0` means no reason, including a missing or concurrently closed key. A retained lookup
 /// distinguishes deliberate host closure from network loss without exposing session memory.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeEndReason(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeEndReason(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -1007,7 +1015,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeEndReason(
 /// (0-based) of a session that ended with `endReason`, on the schedule every client shares; `-1`
 /// means stay ended. Only a lost connection redials.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeRedialDelayMs(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeRedialDelayMs(
     _env: EnvUnowned,
     _this: JObject,
     end_reason: jint,
@@ -1032,7 +1040,9 @@ fn since_first(since_first_ms: jlong) -> Option<Duration> {
 /// `sinceFirstMs` after its first such refusal (`-1`: the first); `-1` means show the refusal.
 /// The rule every client shares (`lilynk_core::reject::wake_redial_delay`).
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeWakeRedialDelayMs<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeWakeRedialDelayMs<
+    'local,
+>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     auto_wake: jboolean,
@@ -1057,7 +1067,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeWakeRedialD
 /// `NativeBridge.nativeSessionWakeRedialDelayMs(handle, autoWake, sinceFirstMs)` — the same for
 /// a session that ended: its typed close counts only before any frame. `-1` for a missing key.
 #[unsafe(no_mangle)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSessionWakeRedialDelayMs(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeSessionWakeRedialDelayMs(
     _env: EnvUnowned,
     _this: JObject,
     handle: jlong,
@@ -1081,7 +1091,7 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeSessionWake
 /// `""` (logged). Blocking — Kotlin calls it off the UI thread.
 #[unsafe(no_mangle)]
 #[allow(clippy::too_many_arguments)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativePair<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativePair<'local>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     host: JString<'local>,
@@ -1134,7 +1144,9 @@ pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativePair<'local
 /// paired, or `""` with the cause in `nativeTakeLastError`. Never streams. Blocking.
 #[unsafe(no_mangle)]
 #[allow(clippy::too_many_arguments)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeRequestAccess<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeRequestAccess<
+    'local,
+>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     host: JString<'local>,

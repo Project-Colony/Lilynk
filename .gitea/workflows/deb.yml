@@ -120,7 +120,7 @@ on:
       - 'scripts/99-lilynk-client-net.conf'
       - 'scripts/headless/**'
       - 'scripts/host.env.example'
-      - 'scripts/io.unom.punktfunk.dm-helper.policy'
+      - 'scripts/org.projectcolony.lilynk.dm-helper.policy'
       - 'scripts/ly-dm-helper'
       - 'scripts/lilynk-host-desktop-session.conf'
       - 'scripts/lilynk-host.service'

@@ -203,20 +203,20 @@ in
         install -Dm0644 scripts/60-lilynk-dualsense.conf "$out/share/wireplumber/wireplumber.conf.d/60-lilynk-dualsense.conf"
 
         # KWin Desktop-mode authorization (zkde_screencast + fake_input). Point Exec at the store binary.
-        install -Dm0644 packaging/linux/io.unom.punktfunk.host.desktop \
-          "$out/share/applications/io.unom.punktfunk.host.desktop"
-        substituteInPlace "$out/share/applications/io.unom.punktfunk.host.desktop" \
+        install -Dm0644 packaging/linux/org.projectcolony.lilynk.host.desktop \
+          "$out/share/applications/org.projectcolony.lilynk.host.desktop"
+        substituteInPlace "$out/share/applications/org.projectcolony.lilynk.host.desktop" \
           --replace-fail "/usr/bin/lilynk-host" "$out/bin/lilynk-host"
 
         # The tray's launcher + hicolor status icons. The host writes its per-user autostart entry.
-        install -Dm0644 packaging/linux/io.unom.punktfunk.starthost.desktop \
-          "$out/share/applications/io.unom.punktfunk.starthost.desktop"
-        substituteInPlace "$out/share/applications/io.unom.punktfunk.starthost.desktop" \
+        install -Dm0644 packaging/linux/org.projectcolony.lilynk.starthost.desktop \
+          "$out/share/applications/org.projectcolony.lilynk.starthost.desktop"
+        substituteInPlace "$out/share/applications/org.projectcolony.lilynk.starthost.desktop" \
           --replace-fail "/usr/bin/lilynk-tray" "$out/bin/lilynk-tray"
         # Opens the web console signed in: a person's own inside their seat, the operator's elsewhere.
-        install -Dm0644 packaging/linux/io.unom.punktfunk.webconsole.desktop \
-          "$out/share/applications/io.unom.punktfunk.webconsole.desktop"
-        substituteInPlace "$out/share/applications/io.unom.punktfunk.webconsole.desktop" \
+        install -Dm0644 packaging/linux/org.projectcolony.lilynk.webconsole.desktop \
+          "$out/share/applications/org.projectcolony.lilynk.webconsole.desktop"
+        substituteInPlace "$out/share/applications/org.projectcolony.lilynk.webconsole.desktop" \
           --replace-fail "/usr/bin/lilynk-host" "$out/bin/lilynk-host"
         for sz in 22x22 48x48; do
           for png in packaging/linux/icons/hicolor/$sz/apps/*.png; do
@@ -383,15 +383,15 @@ in
         install -Dm0644 scripts/70-lilynk-client.rules "$out/lib/udev/rules.d/70-lilynk-client.rules"
 
         # The app icon the desktop entry (and the About dialog) name.
-        install -Dm0644 packaging/linux/icons/hicolor/scalable/apps/io.unom.punktfunk.svg \
-          "$out/share/icons/hicolor/scalable/apps/io.unom.punktfunk.svg"
+        install -Dm0644 packaging/linux/icons/hicolor/scalable/apps/org.projectcolony.lilynk.svg \
+          "$out/share/icons/hicolor/scalable/apps/org.projectcolony.lilynk.svg"
         # The CamelCase icon name, which desktop entries users already have still name.
-        ln -s io.unom.punktfunk.svg "$out/share/icons/hicolor/scalable/apps/io.unom.Punktfunk.svg"
+        ln -s org.projectcolony.lilynk.svg "$out/share/icons/hicolor/scalable/apps/org.projectcolony.Lilynk.svg"
 
         # Desktop launcher — point Exec at the store binary (wrapped below).
-        install -Dm0644 packaging/linux/io.unom.punktfunk.desktop \
-          "$out/share/applications/io.unom.punktfunk.desktop"
-        substituteInPlace "$out/share/applications/io.unom.punktfunk.desktop" \
+        install -Dm0644 packaging/linux/org.projectcolony.lilynk.desktop \
+          "$out/share/applications/org.projectcolony.lilynk.desktop"
+        substituteInPlace "$out/share/applications/org.projectcolony.lilynk.desktop" \
           --replace-fail "Exec=lilynk-client" "Exec=$out/bin/lilynk-client"
       '';
 

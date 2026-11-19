@@ -158,9 +158,9 @@ if [ -f "$HOST_ENV" ] && ! grep -q '^RADV_PERFTEST=' "$HOST_ENV"; then
     ok "host.env: added RADV_PERFTEST=video_encode"
 fi
 mkdir -p "$HOME/.local/share/applications"
-rm -f "$HOME/.local/share/applications/io.unom.Punktfunk.Host.desktop"  # the CamelCase name
-sed "s|^Exec=.*|Exec=$TARGET_DIR/release/lilynk-host|" "$SRC/packaging/linux/io.unom.punktfunk.host.desktop" \
-    > "$HOME/.local/share/applications/io.unom.punktfunk.host.desktop"
+rm -f "$HOME/.local/share/applications/org.projectcolony.Lilynk.Host.desktop"  # the CamelCase name
+sed "s|^Exec=.*|Exec=$TARGET_DIR/release/lilynk-host|" "$SRC/packaging/linux/org.projectcolony.lilynk.host.desktop" \
+    > "$HOME/.local/share/applications/org.projectcolony.lilynk.host.desktop"
 ok "KWin desktop-capture authorization refreshed"
 
 # The system tuning install.sh applies, from this checkout's files (lib.sh).

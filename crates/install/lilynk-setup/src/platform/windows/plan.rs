@@ -440,8 +440,8 @@ fn enabled(state: TaskState) -> Option<bool> {
     }
 }
 
-/// The tray's toast AUMID before the `io.` prefix. Install and uninstall both delete it.
-const LEGACY_TRAY_AUMID: &str = r"HKLM\SOFTWARE\Classes\AppUserModelId\unom.punktfunk.tray";
+/// The tray's toast AUMID before the `org.projectcolony.` prefix. Install and uninstall both delete it.
+const LEGACY_TRAY_AUMID: &str = r"HKLM\SOFTWARE\Classes\AppUserModelId\lilynk.tray";
 
 fn registry_steps(facts: &WinFacts, choices: &WinChoices, app: &str) -> Vec<WinAction> {
     // The host owns the tray's `Run` value: its `settings set` stores the choice, where the
@@ -454,7 +454,7 @@ fn registry_steps(facts: &WinFacts, choices: &WinChoices, app: &str) -> Vec<WinA
         &choices.tray_autostart.to_string(),
     ])];
     // Toast AUMID; must stay in lockstep with `lilynk-tray/src/win.rs`.
-    let aumid = r"HKLM\SOFTWARE\Classes\AppUserModelId\io.unom.punktfunk.tray";
+    let aumid = r"HKLM\SOFTWARE\Classes\AppUserModelId\org.projectcolony.lilynk.tray";
     steps.push(run_lenient(&["reg", "delete", LEGACY_TRAY_AUMID, "/f"]));
     steps.push(run(&[
         "reg",
@@ -672,7 +672,7 @@ fn host_uninstall(facts: &WinFacts, choices: &WinChoices) -> WinPlan {
             run_lenient(&[
                 "reg",
                 "delete",
-                r"HKLM\SOFTWARE\Classes\AppUserModelId\io.unom.punktfunk.tray",
+                r"HKLM\SOFTWARE\Classes\AppUserModelId\org.projectcolony.lilynk.tray",
                 "/f",
             ]),
             run_lenient(&["reg", "delete", LEGACY_TRAY_AUMID, "/f"]),

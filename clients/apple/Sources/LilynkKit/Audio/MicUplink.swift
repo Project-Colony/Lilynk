@@ -159,7 +159,7 @@ final class MicUplink: @unchecked Sendable {
                 }
             }
         }
-        worker.name = "io.unom.punktfunk.mic-uplink"
+        worker.name = "org.projectcolony.lilynk.mic-uplink"
         worker.qualityOfService = .userInteractive
         worker.start()
     }

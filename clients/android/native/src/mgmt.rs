@@ -16,7 +16,7 @@ use std::time::Duration;
 /// HTTPS may. Blocking — Kotlin runs it off the main thread.
 #[unsafe(no_mangle)]
 #[allow(clippy::too_many_arguments)]
-pub extern "system" fn Java_io_unom_punktfunk_kit_NativeBridge_nativeMgmtRequest<'local>(
+pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeMgmtRequest<'local>(
     mut env: EnvUnowned<'local>,
     _this: JObject<'local>,
     host: JString<'local>,

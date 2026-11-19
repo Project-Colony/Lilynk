@@ -8,9 +8,9 @@ Punktfunk Windows host, so users can install and upgrade with `winget` instead o
 # one-time, from an ELEVATED prompt (winget requires admin to add a source)
 winget source add -n punktfunk https://winget.punktfunk.unom.io -t Microsoft.Rest
 
-winget install unom.PunktfunkHost                 # silent, wizard defaults
-winget install unom.PunktfunkHost --interactive   # the full wizard
-winget upgrade unom.PunktfunkHost
+winget install Lilynk.LilynkHost                 # silent, wizard defaults
+winget install Lilynk.LilynkHost --interactive   # the full wizard
+winget upgrade Lilynk.LilynkHost
 ```
 
 ## Why self-hosted rather than the community repo

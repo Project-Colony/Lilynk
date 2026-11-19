@@ -285,7 +285,7 @@ post_merge() {
     install -Dm0644 "$ETC_SRC/gamescope-session-plus/sessions.d/steam" \
       /etc/gamescope-session-plus/sessions.d/steam
   fi
-  rm -f /etc/xdg/autostart/io.unom.Punktfunk.Tray.desktop
+  rm -f /etc/xdg/autostart/org.projectcolony.Lilynk.Tray.desktop
 }
 
 # do_install VERSION FILENAME SHA256 | do_install --from-file X.raw
@@ -450,7 +450,7 @@ cmd_remove() {
       rm -f /etc/gamescope-session-plus/sessions.d/steam
     fi
   fi
-  rm -f /etc/xdg/autostart/io.unom.Punktfunk.Tray.desktop
+  rm -f /etc/xdg/autostart/org.projectcolony.Lilynk.Tray.desktop
   # $FLOOR_FILE deliberately survives: it is anti-rollback state, not installation state, and a
   # remove/re-install cycle is the obvious way to hand a box a replayed manifest it already refused.
   systemctl disable --now "$(basename "$REBASE_UNIT")" >/dev/null 2>&1 || :

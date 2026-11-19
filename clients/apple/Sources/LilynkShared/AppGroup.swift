@@ -10,9 +10,9 @@ import Foundation
 
 /// The one App-Group identifier, matched by `Config/*.entitlements` and
 /// `LilynkWidgetsExtension.entitlements` (`com.apple.security.application-groups`). Registered on the developer portal for both the app
-/// id (`io.unom.punktfunk`) and the widget extension id (`io.unom.punktfunk.widgets`).
+/// id (`org.projectcolony.lilynk`) and the widget extension id (`org.projectcolony.lilynk.widgets`).
 public enum AppGroup {
-    public static let suiteName = "group.io.unom.punktfunk"
+    public static let suiteName = "group.org.projectcolony.lilynk"
 
     /// The shared defaults suite. A process without the group entitlement (unsigned `swift run`,
     /// a misprovisioned build) still gets a suite, private to it, so the widget does not see the

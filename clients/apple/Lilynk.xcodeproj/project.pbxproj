@@ -546,7 +546,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 0.9.1;
-				PRODUCT_BUNDLE_IDENTIFIER = io.unom.punktfunk;
+				PRODUCT_BUNDLE_IDENTIFIER = org.projectcolony.lilynk;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SUPPORTED_PLATFORMS = macosx;
@@ -583,7 +583,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 0.9.1;
-				PRODUCT_BUNDLE_IDENTIFIER = io.unom.punktfunk;
+				PRODUCT_BUNDLE_IDENTIFIER = org.projectcolony.lilynk;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SUPPORTED_PLATFORMS = macosx;
@@ -626,7 +626,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.9.1;
-				PRODUCT_BUNDLE_IDENTIFIER = io.unom.punktfunk;
+				PRODUCT_BUNDLE_IDENTIFIER = org.projectcolony.lilynk;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
@@ -673,7 +673,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.9.1;
-				PRODUCT_BUNDLE_IDENTIFIER = io.unom.punktfunk;
+				PRODUCT_BUNDLE_IDENTIFIER = org.projectcolony.lilynk;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator xros xrsimulator";
@@ -706,7 +706,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.9.1;
-				PRODUCT_BUNDLE_IDENTIFIER = io.unom.punktfunk;
+				PRODUCT_BUNDLE_IDENTIFIER = org.projectcolony.lilynk;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator";
@@ -736,7 +736,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.9.1;
-				PRODUCT_BUNDLE_IDENTIFIER = io.unom.punktfunk;
+				PRODUCT_BUNDLE_IDENTIFIER = org.projectcolony.lilynk;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SUPPORTED_PLATFORMS = "appletvos appletvsimulator";
@@ -778,7 +778,7 @@
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 0.9.1;
-				PRODUCT_BUNDLE_IDENTIFIER = io.unom.punktfunk.widgets;
+				PRODUCT_BUNDLE_IDENTIFIER = org.projectcolony.lilynk.widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = iphoneos;
@@ -823,7 +823,7 @@
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 0.9.1;
-				PRODUCT_BUNDLE_IDENTIFIER = io.unom.punktfunk.widgets;
+				PRODUCT_BUNDLE_IDENTIFIER = org.projectcolony.lilynk.widgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = iphoneos;

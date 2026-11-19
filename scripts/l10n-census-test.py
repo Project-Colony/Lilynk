@@ -146,7 +146,7 @@ class Prose(unittest.TestCase):
             self.assertTrue(self.check(t), t)
 
     def test_does_not_count(self):
-        for t in ["Settings", "io.unom.punktfunk", "/usr/bin/punktfunk", "--pin", "{} hosts",
+        for t in ["Settings", "org.projectcolony.lilynk", "/usr/bin/punktfunk", "--pin", "{} hosts",
                   "Steam Deck", "DualSense", "player_stats_scale_pct", "open config file",
                   "read body: {e}", "{}x{} @ {} fps", "C:\\Program Files\\Punktfunk",
                   "https://docs.punktfunk.unom.io", "width=1920", ".row { color: red; }",

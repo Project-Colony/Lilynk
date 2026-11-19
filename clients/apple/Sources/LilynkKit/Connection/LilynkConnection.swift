@@ -2948,5 +2948,5 @@ public final class LilynkConnection: @unchecked Sendable {
 extension Notification.Name {
     /// The connection (`object`) changed its scroll inversion, so `hostPresentsTouchpad` may read
     /// differently and every touchpad source decides again. Posted on the caller's thread.
-    static let lilynkTouchpadChanged = Notification.Name("io.unom.punktfunk.touchpad-changed")
+    static let lilynkTouchpadChanged = Notification.Name("org.projectcolony.lilynk.touchpad-changed")
 }

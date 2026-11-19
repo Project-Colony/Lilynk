@@ -38,7 +38,7 @@ Checked against the source rather than taken on trust, and it holds:
 - **No account system.** Identity is a client keypair in the device keychain
   (`keychain-access-groups`, `ClientIdentityStore`); pairing is SPAKE2 with a PIN, host-to-device.
 - **Data stays on device.** Saved hosts and settings live in a shared `UserDefaults` suite
-  (`group.io.unom.punktfunk`) so the widget can read them. Nothing syncs; there is no CloudKit
+  (`group.org.projectcolony.lilynk`) so the widget can read them. Nothing syncs; there is no CloudKit
   entitlement.
 - **No ATT.** No `NSUserTrackingUsageDescription` anywhere, consistent with no tracking.
 

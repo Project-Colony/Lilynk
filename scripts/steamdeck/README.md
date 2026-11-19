@@ -86,7 +86,7 @@ default `pf2`), `LILYNK_MGMT_PORT` (writes `LILYNK_MGMT_BIND` to `host.env`; def
   package): wrapper `~/.local/bin/lilynk-scripting`, pinned `bun` in
   `~/.local/lib/lilynk-scripting/`, bundle in `~/.local/share/lilynk-scripting/`.
 - **Status tray:** `~/.local/bin/lilynk-tray`, started at login by
-  `~/.config/autostart/io.unom.punktfunk.tray.desktop`, which the host writes from its **Tray
+  `~/.config/autostart/org.projectcolony.lilynk.tray.desktop`, which the host writes from its **Tray
   autostart** setting; the **Punktfunk Host** launcher in
   `~/.local/share/applications/`, and its icons under `~/.local/share/icons/hicolor/`.
 - **HDR gamescope:** `~/.local/bin/lilynk-gamescope` (gamescope + the `pipewire-hdr` patches,

@@ -14,7 +14,7 @@ plugins {
 val ndkVer = providers.gradleProperty("lilynk.ndkVersion").get() // gradle.properties
 
 android {
-    namespace = "io.unom.punktfunk.kit"
+    namespace = "org.projectcolony.lilynk.kit"
     compileSdk = 37 // Android 17 — align with :app, whose androidx.core requires it
     ndkVersion = ndkVer
 

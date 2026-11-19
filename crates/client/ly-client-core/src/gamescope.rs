@@ -1,7 +1,7 @@
 //! Whether a gamescope compositor is actually on the other end, and which socket reaches it.
 //!
 //! `GAMESCOPE_WAYLAND_DISPLAY` is not proof: the flatpak sets it on every launch so the
-//! vendored gamescope WSI layer can negotiate HDR10 (`packaging/flatpak/io.unom.punktfunk.yml`).
+//! vendored gamescope WSI layer can negotiate HDR10 (`packaging/flatpak/org.projectcolony.lilynk.yml`).
 //!
 //! [`under_gamescope`] is the only check. Proof is `WAYLAND_DISPLAY` naming gamescope's
 //! socket, by name or by inode (a flatpak may bind it as `wayland-0`); with no
