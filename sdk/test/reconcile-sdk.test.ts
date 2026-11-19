@@ -82,7 +82,9 @@ describe("reconcileSharedSdk", () => {
 		fs.mkdirSync(path.dirname(plugin), { recursive: true });
 		fs.writeFileSync(plugin, "the bytes that ran before");
 		const lines: string[] = [];
-		expect(() => reconcileSharedSdk(dir, (l) => lines.push(l))).not.toThrow();
+		// A registry must be set, or the refresh is skipped before it starts.
+		const registry = "https://registry.example/npm/";
+		expect(() => reconcileSharedSdk(dir, (l) => lines.push(l), registry)).not.toThrow();
 		expect(fs.readFileSync(path.join(dir, "bun.lock"), "utf8")).toBe(
 			"ORIGINAL-LOCK\n",
 		);
