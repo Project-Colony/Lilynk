@@ -80,7 +80,7 @@ Ein gestuftes Overlay zeigt Bildrate, Bitrate und Latenz – über zwei Maschine
 
 WAS DU BRAUCHST
 
-Einen Lilynk-Host auf einem Linux-PC oder auf Windows 11 (22H2 oder neuer) im selben Netzwerk. Der Host ist quelloffen (MIT/Apache-2.0) und kostenlos – Anleitungen und Quellcode findest du auf punktfunk.unom.io. Diese App ist der Client: ein Mac kann derzeit nicht selbst Host sein.
+Einen Lilynk-Host auf einem Linux-PC oder auf Windows 11 (22H2 oder neuer) im selben Netzwerk. Der Host ist quelloffen (GPL-3.0-or-later) und kostenlos – Anleitungen und Quellcode findest du auf punktfunk.unom.io. Diese App ist der Client: ein Mac kann derzeit nicht selbst Host sein.
 
 Kein Konto. Keine Cloud. Keine Telemetrie. Die App erfasst keine Daten über dich.
 ```
@@ -124,7 +124,7 @@ A tiered overlay shows frame rate, bitrate, and latency — corrected for clock 
 
 WHAT YOU NEED
 
-A Punktfunk host on a Linux PC or on Windows 11 (22H2 or later) on the same network. The host is open source (MIT/Apache-2.0) and free — guides and source at punktfunk.unom.io. This app is the client: a Mac cannot currently act as a host.
+A Punktfunk host on a Linux PC or on Windows 11 (22H2 or later) on the same network. The host is open source (GPL-3.0-or-later) and free — guides and source at punktfunk.unom.io. This app is the client: a Mac cannot currently act as a host.
 
 No account. No cloud. No telemetry. This app collects no data about you.
 ```

@@ -1,8 +1,9 @@
 import PunktfunkKit
 import SwiftUI
 
-/// Open-source acknowledgements: Punktfunk's own license (MIT OR Apache-2.0) followed by the
-/// third-party software notices. Opened from `AboutView`: pushed on tvOS, a sheet elsewhere.
+/// Open-source acknowledgements: Punktfunk's own license (GPL-3.0-or-later) and punktfunk's MIT
+/// and Apache-2.0 texts, followed by the third-party software notices. Opened from `AboutView`:
+/// pushed on tvOS, a sheet elsewhere.
 struct AcknowledgementsView: View {
     private var version: String? {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
@@ -128,22 +129,18 @@ struct TVFocusable: ViewModifier {
     }
 }
 
-/// One license wall: a single selectable Text on touch/desktop; on tvOS, focus-page-sized
-/// chunks (see TVFocusable). The caller's `.font` cascades into either form.
+/// One license wall in `Licenses.chunked` pieces: one Text with the GPL runs past the render
+/// height limit, and on tvOS each piece is a focus stop. The caller's `.font` cascades into each.
 private struct LicenseWall: View {
     let text: String
 
     var body: some View {
-        #if os(tvOS)
         let chunks = Licenses.chunked(text)
         ForEach(chunks.indices, id: \.self) { i in
             Text(chunks[i])
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .modifier(SelectableText())
                 .modifier(TVFocusable())
         }
-        #else
-        Text(text)
-            .modifier(SelectableText())
-        #endif
     }
 }

@@ -1147,7 +1147,7 @@
 	"about_stream_controls_hint": "The keys, controller chords and gestures that work while you stream.",
 	"about_licenses": "Open-source licenses",
 	"about_licenses_hint": "The open-source licenses this app ships under.",
-	"about_license_statement": "Punktfunk is licensed under MIT OR Apache-2.0, at your option.",
+	"about_license_statement": "Punktfunk is licensed under GPL-3.0-or-later and is based on punktfunk, which is licensed under MIT OR Apache-2.0.",
 	"about_bundled_font": "Bundled font",
 	"preset_new": "New preset…",
 	"preset_menu_rename": "Rename…",

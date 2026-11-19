@@ -3,10 +3,12 @@
 use adw::prelude::*;
 use ly_l10n::{client, desktop};
 
-/// punktfunk's own license texts (MIT OR Apache-2.0), shown on the About dialog's Legal page
-/// after the message that states the choice.
+/// The app's license (GPL-3.0-or-later), then punktfunk's MIT and Apache-2.0 texts, shown on
+/// the About dialog after the message that names both.
 const LICENSE_TEXTS: &str = concat!(
-    "================================ MIT ================================\n\n",
+    "=========================== GPL-3.0-or-later ===========================\n\n",
+    include_str!("../../../../LICENSE"),
+    "\n\n================================ MIT ================================\n\n",
     include_str!("../../../../LICENSE-MIT"),
     "\n\n=============================== Apache-2.0 ===============================\n\n",
     include_str!("../../../../LICENSE-APACHE"),

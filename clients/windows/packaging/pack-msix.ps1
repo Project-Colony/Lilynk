@@ -125,8 +125,9 @@ foreach ($d in $crtDlls) { Copy-Item $d.FullName (Join-Path $layout $d.Name) -Fo
 Write-Host "VC++ runtime from $crt : $(($crtDlls | ForEach-Object Name) -join ', ')"
 
 # license/attribution payload (MSIX has no installer EULA page, so ship them as files): the
-# project's own MIT/Apache texts plus the generated third-party notices, which is where every
-# vendored/statically-linked dependency's attribution lives (openh264 BSD-2, rav1d BSD-2, …).
+# project's GPL, punktfunk's MIT/Apache texts and the generated third-party notices, which is
+# where every vendored/statically-linked dependency's attribution lives (openh264 BSD-2, rav1d
+# BSD-2, …).
 #
 # No FFmpeg LGPL notice ships: nothing in this package links libav*, so one would claim a
 # dependency that is not there.
@@ -140,7 +141,7 @@ $licDir = Join-Path $layout 'licenses'
 New-Item -ItemType Directory -Force -Path $licDir | Out-Null
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..\..')).Path
 $clientRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
-foreach ($n in @('LICENSE-MIT', 'LICENSE-APACHE')) {
+foreach ($n in @('LICENSE', 'LICENSE-MIT', 'LICENSE-APACHE')) {
     $p = Join-Path $repoRoot $n
     if (Test-Path $p) { Copy-Item $p $licDir -Force }
 }

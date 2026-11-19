@@ -14,15 +14,18 @@ public enum Licenses {
         return text
     }
 
-    /// Punktfunk's own license — MIT OR Apache-2.0, at your option.
+    /// The app's license (GPL-3.0-or-later), then punktfunk's MIT and Apache-2.0 texts.
     public static var appLicense: String {
+        let gpl = resource("LICENSE-GPL")
         let mit = resource("LICENSE-MIT")
         let apache = resource("LICENSE-APACHE")
-        if mit.isEmpty && apache.isEmpty {
+        if gpl.isEmpty && mit.isEmpty && apache.isEmpty {
             return String(localized: L10n.aboutLicenseStatement)
         }
         return String(localized: L10n.aboutLicenseStatement) + "\n\n"
-            + "================================ MIT ================================\n\n"
+            + "=========================== GPL-3.0-or-later ===========================\n\n"
+            + gpl
+            + "\n\n================================ MIT ================================\n\n"
             + mit
             + "\n\n============================== Apache-2.0 ==============================\n\n"
             + apache

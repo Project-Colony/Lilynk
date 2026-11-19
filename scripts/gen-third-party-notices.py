@@ -164,7 +164,7 @@ def main():
     pkgs = []
     for p in by_id.values():
         if p["id"] in ws_members:
-            continue  # first-party (covered by the root LICENSE-MIT / LICENSE-APACHE)
+            continue  # first-party (covered by the root LICENSE, LICENSE-MIT and LICENSE-APACHE)
         if keep is not None and p["id"] not in keep:
             continue
         pkgs.append(p)

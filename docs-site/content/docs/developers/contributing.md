@@ -81,7 +81,7 @@ These are checked in, and CI fails when the committed copy drifts:
 | Settings table in `configuration.md` | `UPDATE_SETTINGS_DOCS=1 cargo test -p ly-host-config docs_table_is_current` |
 
 A management-API change needs the three OpenAPI rows. A `Cargo.lock` change needs the notices. A
-new dependency must be permissive; see [Licensing](#licensing).
+new dependency must be GPL-3.0-compatible; see [Licensing](#licensing).
 
 ## Docs
 
@@ -110,6 +110,6 @@ style for commits and the pull-request title (§1), the changelog (§2), comment
 
 ## Licensing
 
-Contributions are licensed MIT OR Apache-2.0 (inbound = outbound), copyleft code is never pasted,
-and every dependency must be permissive. The terms:
+Contributions are licensed GPL-3.0-or-later (inbound = outbound). Code copied from another project
+and every new dependency must be under a license compatible with GPL-3.0-or-later. The terms:
 [CONTRIBUTING.md](https://git.unom.io/unom/punktfunk/src/branch/main/CONTRIBUTING.md#licensing-of-contributions-inbound--outbound).

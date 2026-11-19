@@ -39,7 +39,7 @@ pkgrel="${PF_PKGREL:-1}"
 # makepkg builds only the client and never tries to compile the host crate.
 arch=('x86_64' 'aarch64')
 url="https://git.unom.io/unom/punktfunk"
-license=('MIT OR Apache-2.0')
+license=('GPL-3.0-or-later')
 # !lto: makepkg's `lto` option injects -flto=auto into CFLAGS; aws-lc-sys (rustls' crypto)
 # compiles its C with those flags and GCC LTO bitcode objects are unreadable by rust's lld
 # linker -> "undefined symbol: aws_lc_*" at link (reproduced 2026-07-04, Arch + rust 1.90).
@@ -357,6 +357,7 @@ package_lilynk-host() {
   # deliberately (see README.md → Firewall). ufw's equivalent is the lilynk-web profile above.
   install -Dm0644 "$R/packaging/linux/lilynk-web.xml" \
     "$pkgdir/usr/lib/firewalld/services/lilynk-web.xml"
+  install -Dm0644 "$R/LICENSE"        "$pkgdir/usr/share/licenses/lilynk-host/LICENSE"
   install -Dm0644 "$R/LICENSE-MIT"    "$pkgdir/usr/share/licenses/lilynk-host/LICENSE-MIT"
   install -Dm0644 "$R/LICENSE-APACHE" "$pkgdir/usr/share/licenses/lilynk-host/LICENSE-APACHE"
   install -Dm0644 "$R/README.md"      "$pkgdir/usr/share/doc/lilynk-host/README.md"
@@ -426,6 +427,7 @@ package_lilynk-client() {
   [[ $pkgrel == 0.* ]] && _pf_client_channel=canary
   printf 'pacman %s\n' "$_pf_client_channel" | \
     install -Dm0644 /dev/stdin "$pkgdir/usr/share/lilynk-client/install-kind"
+  install -Dm0644 "$R/LICENSE"        "$pkgdir/usr/share/licenses/lilynk-client/LICENSE"
   install -Dm0644 "$R/LICENSE-MIT"    "$pkgdir/usr/share/licenses/lilynk-client/LICENSE-MIT"
   install -Dm0644 "$R/LICENSE-APACHE" "$pkgdir/usr/share/licenses/lilynk-client/LICENSE-APACHE"
 }
@@ -461,6 +463,7 @@ package_lilynk-seats() {
     install -Dm0644 "$R/packaging/linux/$f" "$pkgdir/usr/lib/systemd/system/$f"
   done
   install -Dm0644 "$R/packaging/linux/49-lilynk-door.rules" "$pkgdir/usr/share/polkit-1/rules.d/49-lilynk-door.rules"
+  install -Dm0644 "$R/LICENSE"        "$pkgdir/usr/share/licenses/lilynk-seats/LICENSE"
   install -Dm0644 "$R/LICENSE-MIT"    "$pkgdir/usr/share/licenses/lilynk-seats/LICENSE-MIT"
   install -Dm0644 "$R/LICENSE-APACHE" "$pkgdir/usr/share/licenses/lilynk-seats/LICENSE-APACHE"
 }
@@ -500,6 +503,7 @@ package_lilynk-web() {
   install -Dm0644 "$R/scripts/lilynk-web-init.service" "$pkgdir/usr/lib/systemd/user/lilynk-web-init.service"
   install -Dm0755 "$R/scripts/web-init.sh"                "$pkgdir/usr/share/lilynk-web/web-init.sh"
   install -Dm0644 "$R/web/web.env.example"                "$pkgdir/usr/share/lilynk-web/web.env.example"
+  install -Dm0644 "$R/LICENSE"        "$pkgdir/usr/share/licenses/lilynk-web/LICENSE"
   install -Dm0644 "$R/LICENSE-MIT"    "$pkgdir/usr/share/licenses/lilynk-web/LICENSE-MIT"
   install -Dm0644 "$R/LICENSE-APACHE" "$pkgdir/usr/share/licenses/lilynk-web/LICENSE-APACHE"
 }
@@ -510,6 +514,8 @@ package_lilynk-scripting() {
   # plugin's namespace comes from util-linux's unshare, and passt's pasta connects it. The runtime
   # is lilynk-bun's private bun (it import()s the operator's .ts plugins), pinned to this build.
   depends=('bubblewrap' 'passt' 'util-linux' "lilynk-bun=${pkgver}-${pkgrel}")
+  # The runner is built from sdk/, which keeps its own license.
+  license=('MIT OR Apache-2.0')
   install=lilynk-scripting.install
   backup=('etc/apparmor.d/lilynk-scripting')
   local R; R="$(_repo)"

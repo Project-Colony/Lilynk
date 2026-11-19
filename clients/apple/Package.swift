@@ -40,6 +40,7 @@ let package = Package(
             // scripts/gen-third-party-notices.sh (it copies the generated file into Resources/).
             resources: [
                 .copy("Resources/THIRD-PARTY-NOTICES.txt"),
+                .copy("Resources/LICENSE-GPL.txt"),
                 .copy("Resources/LICENSE-MIT.txt"),
                 .copy("Resources/LICENSE-APACHE.txt"),
                 // Geist (SIL OFL 1.1) — the brand typeface, shared with punktfunk-website.

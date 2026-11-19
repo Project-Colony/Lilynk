@@ -175,10 +175,11 @@ fn is_product(t: &str) -> bool {
 fn legal() -> &'static str {
     static LEGAL: std::sync::LazyLock<String> = std::sync::LazyLock::new(|| {
         let files = [
+            include_str!("../../../../../../LICENSE"),
             include_str!("../../../../../../LICENSE-MIT"),
             include_str!("../../../../../../LICENSE-APACHE"),
             include_str!("../../../assets/fonts/Geist-OFL.txt"),
-            "MIT License Apache License 2.0",
+            "GPL-3.0-or-later MIT License Apache License 2.0",
         ];
         files
             .join(" ")

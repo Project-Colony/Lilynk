@@ -119,13 +119,13 @@ foreach ($p in @($exe, $trayExe, $keeperExe, $workerExe, $hostEnvSrc, $readmeSrc
     if (-not (Test-Path -LiteralPath $p)) { throw "installer source file missing: $p" }
 }
 
-# License/attribution payload bundled into {app}\licenses: the project's own MIT/Apache texts and the
-# generated third-party crate notices. THIRD-PARTY-NOTICES.txt ships verbatim from
+# License/attribution payload bundled into {app}\licenses: the project's GPL, punktfunk's MIT/Apache
+# texts and the generated third-party crate notices. THIRD-PARTY-NOTICES.txt ships verbatim from
 # the committed copy; nothing regenerates it here. ci.yml's THIRD-PARTY-NOTICES drift gate is
 # what keeps that copy true.
 $licStage = Join-Path $OutDir 'licenses'
 New-Item -ItemType Directory -Force -Path $licStage | Out-Null
-foreach ($n in @('LICENSE-MIT', 'LICENSE-APACHE', 'THIRD-PARTY-NOTICES.txt')) {
+foreach ($n in @('LICENSE', 'LICENSE-MIT', 'LICENSE-APACHE', 'THIRD-PARTY-NOTICES.txt')) {
     $p = Join-Path $repoRoot $n
     if (Test-Path $p) { Copy-Item $p -Destination $licStage -Force }
     else { Write-Warning "license payload missing (skipped): $p" }

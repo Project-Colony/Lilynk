@@ -747,7 +747,7 @@
 	"player_guide_gesture_hint": "button is the controller's Select/View/Share button as the client names it.",
 	"about_stream_controls": "Row in About that opens the keys, controller chords and gestures that work in a stream.",
 	"about_licenses": "Row in About that opens the licenses screen.",
-	"about_license_statement": "First line of the licenses screen. MIT OR Apache-2.0 is an SPDX expression: keep it as written.",
+	"about_license_statement": "First line of the licenses screen. GPL-3.0-or-later and MIT OR Apache-2.0 are SPDX expressions, and lowercase punktfunk is the upstream project: keep all three as written.",
 	"preset_new": "Entry that creates a preset: last row of the Presets tab, last item of the preset chooser.",
 	"preset_menu_rename": "Menu item: rename the preset.",
 	"preset_new_title": "Title of the dialog or screen that names a new preset.",

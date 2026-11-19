@@ -178,7 +178,7 @@
 	"apple_preset_color_graphite": "Graphite",
 	"apple_about_community": "Community",
 	"apple_about_tagline": "Low-latency desktop and game streaming with first-class Linux and Windows hosts.",
-	"apple_about_source_license": "Punktfunk's source is open under MIT or Apache-2.0.",
+	"apple_about_source_license": "Punktfunk's source is open under GPL-3.0-or-later and is based on punktfunk, which is licensed under MIT or Apache-2.0.",
 	"apple_about_version_build": "Version {version} ({build})",
 	"apple_about_swift_packages": "Swift packages",
 	"apple_about_swift_packages_body": "Punktfunk uses Glur (progressive backdrop blur), © 2023 João Gabriel, under the MIT License.",

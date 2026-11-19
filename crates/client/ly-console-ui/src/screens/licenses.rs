@@ -1,7 +1,8 @@
 //! Open-source licences, drawn by the console on every platform that shows the row. The
-//! console's own texts are compiled in: Punktfunk's licence and the Geist typeface it
-//! embeds, whose OFL has to travel with it. Each host adds what it bundles
-//! ([`LicenseSection`]), asked for with [`ConsoleCmd::LoadLicenses`] when the screen opens.
+//! console's own texts are compiled in: the app's GPL, punktfunk's MIT and Apache-2.0 texts,
+//! and the OFL of the Geist typeface it embeds, which has to travel with it. Each host adds
+//! what it bundles ([`LicenseSection`]), asked for with [`ConsoleCmd::LoadLicenses`] when the
+//! screen opens.
 //!
 //! A host's notices run to ~14 000 lines, so lines wrap once per width and only the ones
 //! on screen are drawn.
@@ -15,6 +16,7 @@ use crate::widgets::{bleed_view, soft_scroll, Flick};
 use ly_client_core::menu_nav::{MenuEvent, MenuPulse};
 use skia_safe::{Canvas, Rect};
 
+const GPL: &str = include_str!("../../../../../LICENSE");
 const MIT: &str = include_str!("../../../../../LICENSE-MIT");
 const APACHE: &str = include_str!("../../../../../LICENSE-APACHE");
 const GEIST_OFL: &str = include_str!("../../assets/fonts/Geist-OFL.txt");
@@ -106,6 +108,9 @@ impl LicensesScreen {
         };
         push(Style::Title, &format!("Punktfunk {}", crate::VERSION));
         push(Style::Body, ly_l10n::client::about_license_statement());
+        push(Style::Body, "");
+        push(Style::Heading, "GPL-3.0-or-later");
+        push(Style::Text, GPL);
         push(Style::Body, "");
         push(Style::Heading, "MIT License");
         push(Style::Text, MIT);

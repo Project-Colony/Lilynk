@@ -111,6 +111,7 @@
 	"apple_preset_preview_name": "Placeholder text on the preset chip preview while the name is empty.",
 	"apple_preset_edit_hint": "Under the name field while editing a preset.",
 	"apple_about_community": "About page link to the community chat.",
+	"apple_about_source_license": "About page footer under the licenses row. GPL-3.0-or-later is an SPDX expression, and lowercase punktfunk is the upstream project: keep both as written.",
 	"apple_about_version_build": "About page. version is the marketing version, build the build number.",
 	"apple_about_swift_packages": "Heading on the licenses screen.",
 	"apple_player_pointer_capture": "iPad only: lock a hardware mouse.",

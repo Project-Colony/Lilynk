@@ -28,7 +28,7 @@ Version:        %{?ly_version}%{!?ly_version:0.3.0}
 Release:        %{?pf_release}%{!?pf_release:1}%{?dist}
 Summary:        Low-latency desktop/game streaming host (Moonlight-compatible + punktfunk/2)
 
-License:        MIT OR Apache-2.0
+License:        GPL-3.0-or-later
 URL:            https://git.unom.io/unom/punktfunk
 # COPR SCM builds provide the checkout; for a tarball build, drop a git archive here:
 Source0:        %{name}-%{version}.tar.gz
@@ -221,6 +221,8 @@ Requires:       util-linux
 # from lilynk-bun, pinned to this exact build. The runner itself is bundled to ONE
 # self-contained JS (effect + SDK inlined), so no node_modules ship.
 Requires:       %{name}-bun%{?_isa} = %{version}-%{release}
+# The runner is built from sdk/, which keeps its own license.
+License:        MIT OR Apache-2.0
 
 %description scripting
 The plugin/script runner for a punktfunk streaming host: it discovers loose scripts under
@@ -631,7 +633,7 @@ install -Dm0755 "$(command -v bun)" %{buildroot}%{_libexecdir}/lilynk-bun/bun
 
 %if %{with host}
 %files
-%license LICENSE-MIT LICENSE-APACHE THIRD-PARTY-NOTICES.txt
+%license LICENSE LICENSE-MIT LICENSE-APACHE THIRD-PARTY-NOTICES.txt
 %doc README.md packaging/README.md
 # NO %caps() on the host binary. 0.26.0-1 declared `%caps(cap_sys_nice=ep)` here for the
 # GPU-priority lever and that BROKE DESKTOP STREAMING ON EVERY KDE BOX — on Fedora and, via
@@ -722,7 +724,7 @@ install -Dm0755 "$(command -v bun)" %{buildroot}%{_libexecdir}/lilynk-bun/bun
 
 %if %{with host}
 %files seats
-%license LICENSE-MIT LICENSE-APACHE THIRD-PARTY-NOTICES.txt
+%license LICENSE LICENSE-MIT LICENSE-APACHE THIRD-PARTY-NOTICES.txt
 %dir %{_libexecdir}/punktfunk
 %{_libexecdir}/punktfunk/lilynk-seats
 %{_libexecdir}/punktfunk/seat-session
@@ -747,7 +749,7 @@ install -Dm0755 "$(command -v bun)" %{buildroot}%{_libexecdir}/lilynk-bun/bun
 # dependency graph, which is a superset of this subpackage's. Same file the GTK shell shows on
 # About → Legal (scripts/gen-third-party-notices.sh
 # generates both). `%%license` installs it under its basename, so the path stays the usual one.
-%license LICENSE-MIT LICENSE-APACHE clients/linux/THIRD-PARTY-NOTICES.txt
+%license LICENSE LICENSE-MIT LICENSE-APACHE clients/linux/THIRD-PARTY-NOTICES.txt
 %{_bindir}/lilynk-client
 %{_bindir}/lilynk-session
 %{_bindir}/lilynk
@@ -769,7 +771,7 @@ install -Dm0755 "$(command -v bun)" %{buildroot}%{_libexecdir}/lilynk-bun/bun
 
 %if %{with web}
 %files web
-%license LICENSE-MIT LICENSE-APACHE THIRD-PARTY-NOTICES.txt
+%license LICENSE LICENSE-MIT LICENSE-APACHE THIRD-PARTY-NOTICES.txt
 %{_bindir}/lilynk-web-server
 %dir %{_datadir}/lilynk-web
 %{_datadir}/lilynk-web/.output

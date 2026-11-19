@@ -1074,7 +1074,7 @@
 	"about_stream_controls_hint": "As teclas, combinações do controle e gestos que funcionam durante a transmissão.",
 	"about_licenses": "Licenças de código aberto",
 	"about_licenses_hint": "As licenças de código aberto sob as quais este app é distribuído.",
-	"about_license_statement": "O Punktfunk é licenciado sob MIT OR Apache-2.0, à sua escolha.",
+	"about_license_statement": "O Punktfunk é licenciado sob GPL-3.0-or-later e é baseado no punktfunk, que é licenciado sob MIT OR Apache-2.0.",
 	"about_bundled_font": "Fonte incluída",
 	"preset_new": "Nova predefinição…",
 	"preset_menu_rename": "Renomear…",

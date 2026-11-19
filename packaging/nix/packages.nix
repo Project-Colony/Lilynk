@@ -121,10 +121,7 @@ let
 
   meta = {
     homepage = "https://git.unom.io/unom/punktfunk";
-    license = with lib.licenses; [
-      mit
-      asl20
-    ];
+    license = lib.licenses.gpl3Plus;
     platforms = [ "x86_64-linux" ]; # NVENC desktop host; the RPM's ExclusiveArch also lists aarch64
     maintainers = [ ];
   };
@@ -616,6 +613,11 @@ in
     meta = meta // {
       description = "punktfunk plugin/script runner (Effect SDK on bun)";
       mainProgram = "lilynk-scripting";
+      # The runner is built from sdk/, which keeps its own license.
+      license = with lib.licenses; [
+        mit
+        asl20
+      ];
     };
   };
 }

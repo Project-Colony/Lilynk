@@ -1136,7 +1136,7 @@
 	"about_stream_controls_hint": "Die Tasten, Controller-Kürzel und Gesten, die beim Streamen funktionieren.",
 	"about_licenses": "Open-Source-Lizenzen",
 	"about_licenses_hint": "Die Open-Source-Lizenzen, unter denen diese App ausgeliefert wird.",
-	"about_license_statement": "Punktfunk steht nach deiner Wahl unter MIT OR Apache-2.0.",
+	"about_license_statement": "Punktfunk steht unter GPL-3.0-or-later und basiert auf punktfunk, das unter MIT OR Apache-2.0 steht.",
 	"about_bundled_font": "Mitgelieferte Schrift",
 	"preset_new": "Neue Voreinstellung…",
 	"preset_menu_rename": "Umbenennen…",

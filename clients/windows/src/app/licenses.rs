@@ -6,8 +6,10 @@ use ly_fluent::{Palette, Token};
 use ly_l10n::{client, desktop};
 use windows_reactor::*;
 
-/// punktfunk's own license (MIT OR Apache-2.0).
+/// The app's license (GPL-3.0-or-later), then punktfunk's MIT and Apache-2.0 texts.
 const APP_LICENSE: &str = concat!(
+    include_str!("../../../../LICENSE"),
+    "\n\n================================ MIT ================================\n\n",
     include_str!("../../../../LICENSE-MIT"),
     "\n\n================================ Apache-2.0 ================================\n\n",
     include_str!("../../../../LICENSE-APACHE"),

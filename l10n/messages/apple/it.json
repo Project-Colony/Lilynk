@@ -166,7 +166,7 @@
 	"apple_preset_color_graphite": "Grafite",
 	"apple_about_community": "Community",
 	"apple_about_tagline": "Streaming di desktop e giochi a bassa latenza, con pieno supporto per host Linux e Windows.",
-	"apple_about_source_license": "Il codice sorgente di Punktfunk è open source con licenza MIT o Apache-2.0.",
+	"apple_about_source_license": "Il codice sorgente di Punktfunk è open source con licenza GPL-3.0-or-later ed è basato su punktfunk, con licenza MIT o Apache-2.0.",
 	"apple_about_version_build": "Versione {version} ({build})",
 	"apple_about_swift_packages": "Pacchetti Swift",
 	"apple_about_swift_packages_body": "Punktfunk usa Glur (sfocatura progressiva dello sfondo), © 2023 João Gabriel, con licenza MIT.",

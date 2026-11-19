@@ -85,7 +85,7 @@ Die nativen Apps sprechen punktfunk/1: eine QUIC-Steuerebene und eine verschlüs
 
 WAS DU BRAUCHST
 
-Einen Lilynk-Host auf einem Linux-PC oder auf Windows 11 (22H2 oder neuer) im selben Netzwerk. Für die beste Erfahrung hängt der Apple TV am Kabel oder an einem guten 5-GHz-WLAN. Der Host ist quelloffen (MIT/Apache-2.0) und kostenlos – Anleitungen und Quellcode findest du auf punktfunk.unom.io.
+Einen Lilynk-Host auf einem Linux-PC oder auf Windows 11 (22H2 oder neuer) im selben Netzwerk. Für die beste Erfahrung hängt der Apple TV am Kabel oder an einem guten 5-GHz-WLAN. Der Host ist quelloffen (GPL-3.0-or-later) und kostenlos – Anleitungen und Quellcode findest du auf punktfunk.unom.io.
 
 Kein Konto. Keine Cloud. Keine Telemetrie. Die App erfasst keine Daten über dich.
 ```
@@ -121,7 +121,7 @@ The native apps speak punktfunk/1: a QUIC control plane and an encrypted data pl
 
 WHAT YOU NEED
 
-A Punktfunk host on a Linux PC or on Windows 11 (22H2 or later) on the same network. For the best experience, put your Apple TV on Ethernet or on good 5 GHz Wi-Fi. The host is open source (MIT/Apache-2.0) and free — guides and source at punktfunk.unom.io.
+A Punktfunk host on a Linux PC or on Windows 11 (22H2 or later) on the same network. For the best experience, put your Apple TV on Ethernet or on good 5 GHz Wi-Fi. The host is open source (GPL-3.0-or-later) and free — guides and source at punktfunk.unom.io.
 
 No account. No cloud. No telemetry. This app collects no data about you.
 ```

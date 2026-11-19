@@ -107,6 +107,7 @@ case "$VERSION" in
 esac
 printf 'apt %s\n' "$_pf_client_channel" | \
     install -Dm0644 /dev/stdin "$STAGE/usr/share/lilynk-client/install-kind"
+install -Dm0644 LICENSE                                  "$DOCDIR/LICENSE"
 install -Dm0644 LICENSE-MIT                              "$DOCDIR/LICENSE-MIT"
 install -Dm0644 LICENSE-APACHE                           "$DOCDIR/LICENSE-APACHE"
 install -Dm0644 README.md                                "$DOCDIR/README.md"
@@ -132,9 +133,20 @@ Source: https://git.unom.io/unom/punktfunk
 
 Files: *
 Copyright: unom and the punktfunk contributors
-License: MIT or Apache-2.0
- Dual-licensed. Full texts in /usr/share/doc/$PKG/LICENSE-MIT and
- /usr/share/doc/$PKG/LICENSE-APACHE.
+License: GPL-3+
+Comment: Based on punktfunk, which is licensed under MIT or Apache-2.0, at your
+ option. The punktfunk code stays available under those terms. Full texts in
+ /usr/share/doc/$PKG/LICENSE-MIT and /usr/share/doc/$PKG/LICENSE-APACHE.
+
+License: GPL-3+
+ This program is free software: you can redistribute it and/or modify it under
+ the terms of the GNU General Public License as published by the Free Software
+ Foundation, either version 3 of the License, or (at your option) any later
+ version.
+ .
+ On Debian systems, the complete text of the GNU General Public License version
+ 3 can be found in /usr/share/common-licenses/GPL-3. A copy is also in
+ /usr/share/doc/$PKG/LICENSE.
 EOF
 printf '%s (%s) stable; urgency=medium\n\n  * Automated build %s.\n\n -- unom <packages@unom.io>  %s\n' \
   "$PKG" "$VERSION" "$VERSION" "$(date -uR 2>/dev/null || echo 'Thu, 01 Jan 1970 00:00:00 +0000')" \
