@@ -28,7 +28,8 @@ pub(crate) struct HostFacts {
 pub(crate) struct SourceView {
     pub name: String,
     pub url: String,
-    /// Built-in `unom`: not editable, not removable; only its entries may be `verified`.
+    /// A built-in source: not editable, not removable; only its entries may be `verified`. This
+    /// build has none.
     pub builtin: bool,
     /// Unsigned sources still serve; the console flags them.
     pub signed: bool,
@@ -63,7 +64,7 @@ pub(crate) struct CatalogEntry {
     /// `verified` (built-in) or `external` (operator-added). Never `unverified`: those come from a
     /// raw spec and are not listed.
     pub tier: String,
-    /// When unom reviewed this exact tarball (built-in source only).
+    /// When the built-in source reviewed this exact tarball.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reviewed_at: Option<String>,
     pub platforms: Vec<String>,
@@ -236,7 +237,7 @@ fn build_catalog(force: bool) -> CatalogResponse {
                 license: e.license.clone(),
                 version: e.version.clone(),
                 source: st.source.name.clone(),
-                // Verified is the built-in source only; a third-party curator cannot confer unom's review.
+                // Verified is the built-in source only; a third-party curator cannot confer its review.
                 tier: if verified { "verified" } else { "external" }.to_string(),
                 reviewed_at: verified
                     .then(|| e.verification.as_ref().map(|v| v.reviewed_at.clone()))

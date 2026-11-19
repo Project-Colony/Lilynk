@@ -106,8 +106,8 @@ version = "0.47.0"
 edition = "2024"
 rust-version = "1.85"
 license = "GPL-3.0-or-later"
-authors = ["unom"]
-repository = "https://git.unom.io/unom/punktfunk"
+authors = ["Lilynk"]
+repository = "https://github.com/Project-Colony/Lilynk"
 
 # Pins every member must share. A member adds `optional` and its own features on top; cargo
 # unions them with the entry's.

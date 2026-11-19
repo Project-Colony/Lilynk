@@ -19,10 +19,6 @@ the firewall rules ([full list](/docs/windows-host#uninstalling)). Left behind o
   Management** → **Local Users and Groups** afterwards.
 - **VB-CABLE**, if an older Punktfunk installed it. Other apps may use it; remove it with its own
   uninstaller (**VB-Audio Virtual Cable** in Installed apps).
-- **The old unom certificate**, if you imported it by hand for release 0.28.1 or earlier. Current
-  releases don't need it: in `certlm.msc`, delete the certificate issued to **unom** (thumbprint
-  `CD1EFDEEEC9743AFC38F56C5AF30C5A3009BE941`) from **Trusted Publishers** and **Trusted Root
-  Certification Authorities**.
 
 ### A Punktfunk display or gamepad stays in Device Manager
 
