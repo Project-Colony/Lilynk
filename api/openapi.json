@@ -7,8 +7,8 @@
       "name": "unom"
     },
     "license": {
-      "name": "MIT OR Apache-2.0",
-      "identifier": "MIT OR Apache-2.0"
+      "name": "GPL-3.0-or-later",
+      "identifier": "GPL-3.0-or-later"
     },
     "version": "0.47.0"
   },
