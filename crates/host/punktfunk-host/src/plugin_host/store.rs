@@ -511,7 +511,11 @@ mod tests {
     #[test]
     fn a_failed_refresh_holds_off_the_next_one_for_minutes() {
         let now = crate::clock::unix_secs_u64();
-        let mut s = SourceState::empty(Source::official());
+        let mut s = SourceState::empty(Source {
+            name: "retro-hub".into(),
+            url: "https://example.org/index.json".into(),
+            public_key: None,
+        });
         assert!(!s.is_fresh(), "a source never fetched is due");
         s.failed_at = Some(now - 60);
         assert!(s.is_fresh(), "a minute after a failure it waits");

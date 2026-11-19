@@ -11,7 +11,7 @@ fn main() {
             .set_icon_with_id(icon, "1")
             .set("FileDescription", "Punktfunk")
             .set("ProductName", "Punktfunk")
-            .set("CompanyName", "unom")
+            .set("CompanyName", "Lilynk")
             .compile()
             .expect("embed windows icon/version resources");
     }

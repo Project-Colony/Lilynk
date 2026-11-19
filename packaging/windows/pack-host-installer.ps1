@@ -6,7 +6,7 @@
   From a release `cargo build -p punktfunk-host --features nvenc` output (the exe), this:
     1. resolves a signing backend - Azure Artifact Signing (formerly Trusted Signing) when the
        AZURE_CODESIGNING_* trio is set, else a supplied stable .pfx from CI secrets, else an
-       ephemeral self-signed CN=unom - same scheme as the client's pack-msix.ps1. The .pfx paths
+       ephemeral self-signed CN=Lilynk - same scheme as the client's pack-msix.ps1. The .pfx paths
        also export the public .cer; Azure does not (see below). The ephemeral fallback is for
        canary/CI/dev ONLY: on a v* tag build a missing cert (or -NoSign) is a hard failure, never
        a silent downgrade to a throwaway cert - see -RequireSignedCert,
@@ -36,7 +36,7 @@ param(
     # Subject for the EPHEMERAL self-signed fallback only. Azure signing carries its own subject
     # (the profile's verified CN/O), and nothing downstream of setup.exe compares the two - unlike
     # the MSIX, whose manifest Identity/@Publisher must match byte-for-byte. See pack-msix.ps1.
-    [string]$Publisher = 'CN=unom',
+    [string]$Publisher = 'CN=Lilynk',
     [string]$PfxBase64 = $env:MSIX_CERT_PFX_B64,                    # reuse the client's signing secret
     [string]$PfxPassword = $env:MSIX_CERT_PASSWORD,
     # Azure Artifact Signing (formerly Trusted Signing). All three must be set to select it; it then

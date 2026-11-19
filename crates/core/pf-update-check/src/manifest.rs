@@ -21,7 +21,7 @@ pub const SCHEMA: u32 = 1;
 pub const MAX_MANIFEST_BYTES: usize = 64 * 1024;
 
 /// `notes_url` must start with this origin or parse fails.
-const NOTES_ORIGIN: &str = "https://git.unom.io/";
+const NOTES_ORIGIN: &str = "https://github.com/Project-Colony/Lilynk/";
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Manifest {
@@ -153,12 +153,12 @@ mod tests {
             "serial": 1785400000u64,
             "published_at": "2026-07-30T12:00:00Z",
             "version": "0.23.0",
-            "notes_url": "https://git.unom.io/unom/punktfunk/releases/tag/v0.23.0",
+            "notes_url": "https://github.com/Project-Colony/Lilynk/releases/tag/v0.23.0",
             "windows_host": {
-                "url": "https://git.unom.io/unom/punktfunk/releases/download/v0.23.0/punktfunk-host-setup-0.23.0.exe",
+                "url": "https://github.com/Project-Colony/Lilynk/releases/download/v0.23.0/punktfunk-host-setup-0.23.0.exe",
                 "sha256": "aa".repeat(32),
                 "authenticode_sha256": ["bb".repeat(32)],
-                "authenticode_subject": "unom UG",
+                "authenticode_subject": "Example Publisher",
                 "min_os": "10.0.22621"
             }
         })
@@ -186,7 +186,7 @@ mod tests {
         );
         assert_eq!(
             m.windows_host.as_ref().unwrap().authenticode_subject,
-            "unom UG"
+            "Example Publisher"
         );
 
         let mut tampered = body.clone();
@@ -235,7 +235,7 @@ mod tests {
         v["windows_host"]["sha256"] = serde_json::json!("nothex");
         assert!(parse_verified(&bytes(&v), "stable").is_err());
         let mut v = doc();
-        v["windows_host"]["url"] = serde_json::json!("http://git.unom.io/x.exe");
+        v["windows_host"]["url"] = serde_json::json!("http://github.com/x.exe");
         assert!(parse_verified(&bytes(&v), "stable").is_err());
         let mut v = doc();
         v["windows_host"]["authenticode_sha256"] = serde_json::json!(["nothex"]);

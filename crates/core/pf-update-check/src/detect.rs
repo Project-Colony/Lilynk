@@ -110,7 +110,7 @@ pub const SOURCE_CHECKOUT: &str = "punktfunk";
 
 /// Where a Deck build's checkout comes from. A system copy has no checkout to ask, so a door
 /// built from a fork reads as behind.
-pub const SOURCE_REMOTE: &str = "https://git.unom.io/unom/punktfunk";
+pub const SOURCE_REMOTE: &str = "https://github.com/Project-Colony/Lilynk";
 
 /// The copy of a Deck build that its door and seats run, outside the owner's 0700 home
 /// (`scripts/steamdeck/door.sh`). `source-head` and `source-commit` beside it are the checkout's
@@ -262,7 +262,7 @@ pub fn update_command(kind: InstallKind, product: Product) -> String {
     let bin = product.binary();
     match (kind, product) {
         (InstallKind::WindowsInstaller, _) => {
-            "winget upgrade unom.PunktfunkHost   (or re-run the newer installer)".into()
+            "re-run the newer installer".into()
         }
         (InstallKind::Flatpak, _) => "flatpak update --user io.unom.punktfunk".into(),
         // The signed feed carries the host image only; the client sysext is a local rebuild.

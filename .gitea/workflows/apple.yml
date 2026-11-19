@@ -330,7 +330,7 @@ jobs:
     runs-on: macos-arm64
     timeout-minutes: 120
     env:
-      TEAM_ID: F4H37KF6WC
+      TEAM_ID: ${{ vars.APPLE_TEAM_ID }}
       PROJECT: clients/apple/Punktfunk.xcodeproj
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

@@ -911,7 +911,8 @@ mod tests {
                 "version":"0.3.0","integrity":"sha512-AAAA"}]}"#,
         )
         .unwrap();
-        let plan = Plan::from_entry(&idx.plugins[0], "unom", true).unwrap();
+        let plan =
+            Plan::from_entry(&idx.plugins[0], super::super::sources::OFFICIAL_NAME, true).unwrap();
         assert_eq!(plan.spec, "@punktfunk/plugin-rom-manager@0.3.0");
         assert_eq!(plan.version.as_deref(), Some("0.3.0"));
         assert_eq!(plan.tier, Tier::Verified);

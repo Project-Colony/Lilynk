@@ -77,22 +77,11 @@ us beyond the download itself.
 - **Release-page downloads** (DMG, MSIX, setup.exe, APK, decky zip, .deb/.rpm) each ship a
   `<file>.sha256` next to them. In your download directory:
   `sha256sum -c punktfunk-1.2.3.dmg.sha256` (macOS: `shasum -a 256 -c …`).
-- **RPMs** from the dnf repo are OpenPGP-signed with `packages@unom.io` (`AF245C506F4E4763`); the
-  repo file in [`packaging/rpm/README.md`](packaging/rpm/README.md) sets `gpgcheck=1`, so dnf
-  checks every package for you. `rpmkeys --checksig` on a downloaded RPM verifies it by hand.
-- **The Bazzite sysext feed** carries a detached signature over its `SHA256SUMS`, from that same
-  key. `punktfunk-sysext` verifies it before installing and refuses a feed it cannot verify — the
-  public key is baked into the script rather than fetched from the feed. The manifest also names
-  the feed it was signed for and carries a monotonic publish serial, both inside the signed bytes,
-  so a genuinely-signed manifest replayed from another channel — or an older one put back — is
-  refused too.
 - **Windows installers and MSIX packages** are Authenticode-signed; a release build that cannot
   reach its code-signing certificate fails to build rather than falling back to a self-signed one.
   Check with `Get-AuthenticodeSignature punktfunk-host-setup-1.2.3.exe`.
 - **The Windows drivers** (virtual display, virtual gamepads) are signed with a stable self-signed
-  certificate, `CN=punktfunk-driver`
-  (SHA-1 `4B8493E7CD565758D335F8F4F05C5A7261A13E02`), also published in
-  [`packaging/windows/README.md`](packaging/windows/README.md). The installer has to add it to the
+  certificate, `CN=punktfunk-driver`. The installer has to add it to the
   machine's trusted roots for a self-signed driver to install at all, so — unlike the cases above —
   this signature does **not** authenticate the download: it gives the drivers a stable publisher
   identity you can compare against the published fingerprint, and it is removed again on uninstall.

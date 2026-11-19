@@ -26,7 +26,7 @@ fn main() {
             // packers read from here).
             .set("FileDescription", "Punktfunk Setup")
             .set("ProductName", "Punktfunk")
-            .set("CompanyName", "unom")
+            .set("CompanyName", "Lilynk")
             .compile()
             .expect("embed the icon resource");
     }

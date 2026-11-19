@@ -32,7 +32,7 @@ fn main() {
             // UAC, firewall prompts and Task Manager name the exe by FileDescription.
             .set("FileDescription", "Punktfunk")
             .set("ProductName", "Punktfunk")
-            .set("CompanyName", "unom")
+            .set("CompanyName", "Lilynk")
             .compile()
             .expect("embed windows icon resource");
     }

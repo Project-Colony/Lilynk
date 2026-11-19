@@ -20,7 +20,7 @@ fn main() {
             // lists FileDescription).
             .set("FileDescription", "Punktfunk Session")
             .set("ProductName", "Punktfunk")
-            .set("CompanyName", "unom")
+            .set("CompanyName", "Lilynk")
             .compile()
             .expect("embed windows icon resource");
     }

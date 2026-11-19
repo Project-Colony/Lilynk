@@ -9,8 +9,11 @@ import * as path from "node:path";
 import { configDir } from "./config.js";
 import { SDK_VERSION } from "./version.js";
 
-/** The `@punktfunk` package registry (Gitea's npm registry for the `unom` org). */
-export const REGISTRY = "https://git.unom.io/api/packages/unom/npm/";
+/**
+ * The `@punktfunk` package registry. Empty: this build has none, so first-party names are refused
+ * and the scope is never mapped, rather than left to resolve on the public registry.
+ */
+export const REGISTRY = "";
 
 /** Where plugin packages install: `<config_dir>/plugins` (matches discover.ts discovery). */
 export const pluginsDirDefault = (): string => path.join(configDir(), "plugins");
@@ -40,9 +43,9 @@ export const resolvePackage = (
 	const n = name.trim();
 	if (!n) throw new Error("empty plugin name");
 	if (!n.startsWith("@") && !n.includes("/") && !n.startsWith("punktfunk-plugin-")) {
-		return `@punktfunk/plugin-${n}`; // bare first-party name
+		return firstParty(`@punktfunk/plugin-${n}`); // bare first-party name
 	}
-	if (n.startsWith("@punktfunk/")) return n; // first-party scope, pinned to our registry
+	if (n.startsWith("@punktfunk/")) return firstParty(n); // first-party scope, pinned to our registry
 	if (!opts.allowPublicRegistry) {
 		throw new Error(
 			`'${n}' would install from the PUBLIC npm registry, not Punktfunk's. Plugins run ` +
@@ -51,6 +54,17 @@ export const resolvePackage = (
 		);
 	}
 	return n;
+};
+
+/** A first-party package, or an error when this build has no first-party registry. */
+const firstParty = (pkg: string): string => {
+	if (!REGISTRY) {
+		throw new Error(
+			`'${pkg}' is a first-party plugin, and this build has no plugin registry. Install ` +
+				"from a path, or from the public npm registry with --allow-public-registry.",
+		);
+	}
+	return pkg;
 };
 
 /** Does this resolved package name install from Punktfunk's own (Gitea) registry? */
@@ -93,7 +107,10 @@ export const ensureBunfig = (
 	extraScopes: Record<string, string> = {},
 ): void => {
 	const file = path.join(dir, "bunfig.toml");
-	const wanted: Record<string, string> = { "@punktfunk": REGISTRY, ...extraScopes };
+	const wanted: Record<string, string> = {
+		...(REGISTRY ? { "@punktfunk": REGISTRY } : {}),
+		...extraScopes,
+	};
 	let existing = "";
 	try {
 		existing = fs.readFileSync(file, "utf8");
@@ -306,7 +323,10 @@ export const movedPins = (dir: string, before: string, after: string): string[] 
 export const reconcileSharedSdk = (
 	dir = pluginsDirDefault(),
 	log: (line: string) => void = (l) => console.log(l),
+	registry = REGISTRY,
 ): void => {
+	// Without a first-party registry the SDK would resolve on the public one: no refresh.
+	if (!registry) return;
 	const have = installedSdkVersion(dir);
 	// Nothing installed = no plugins yet; the first `bun add` resolves the current SDK on its own.
 	if (have === undefined || have === SDK_VERSION) return;

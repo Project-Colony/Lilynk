@@ -1,31 +1,16 @@
 //! Catalog sources: one URL, one signed index (design `plugin-store.md`).
 //!
-//! The official source is compiled in (slug, URL, two key slots) and is not
-//! stored in config, so a hand-edited file cannot remove it. Operator sources
-//! live in `<config_dir>/plugin-sources.json`.
-//!
-//! Official entries may show Verified. Operator sources get attribution only;
-//! a third-party curator does not inherit tarball review.
+//! This build compiles in no source: every source is an operator's, from
+//! `<config_dir>/plugin-sources.json`. Operator sources get attribution only,
+//! never Verified; a third-party curator does not inherit tarball review.
 
 use super::index::PublicKey;
 use anyhow::{bail, Context, Result};
 use serde::{Deserialize, Serialize};
 
-/// Built-in slug. Operator sources may not reuse it.
-pub(crate) const OFFICIAL_NAME: &str = "unom";
-
-/// Built-in index URL. The document is signed; HTTPS is not the trust.
-///
-/// CI signs after merge, so the index can be newer than `<url>.sig`. That
-/// window fails closed: verify rejects, the host keeps the last good copy.
-pub(crate) const OFFICIAL_URL: &str =
-    "https://git.unom.io/unom/punktfunk-plugin-index/raw/branch/main/v1/index.json";
-
-/// Official signing keys. Two slots so rotation can overlap; an empty slot is ignored.
-pub(crate) const OFFICIAL_KEYS: [&str; 2] = [
-    "ed25519:V7KKMg8sq2A2TW7D/GFWaM0ruAvigpld9r93JdWcQHw=",
-    "", // rotation slot
-];
+/// Slug reserved for a built-in source. None ships, and operator sources may not take it, so
+/// no source can install the first-party package scope.
+pub(crate) const OFFICIAL_NAME: &str = "lilynk";
 
 /// Operator-source cap. Guard rail, not a protocol limit.
 const MAX_SOURCES: usize = 32;
@@ -44,28 +29,12 @@ pub(crate) struct Source {
 }
 
 impl Source {
-    pub(crate) fn official() -> Source {
-        Source {
-            name: OFFICIAL_NAME.to_string(),
-            url: OFFICIAL_URL.to_string(),
-            // Keys live in [`OFFICIAL_KEYS`]. Config must not downgrade official to unsigned.
-            public_key: None,
-        }
-    }
-
     pub(crate) fn is_official(&self) -> bool {
         self.name == OFFICIAL_NAME
     }
 
     /// Empty ⇒ unsigned (accepted, flagged).
     pub(crate) fn keys(&self) -> Vec<PublicKey> {
-        if self.is_official() {
-            return OFFICIAL_KEYS
-                .iter()
-                .filter(|k| !k.is_empty())
-                .filter_map(|k| PublicKey::parse(k).ok())
-                .collect();
-        }
         self.public_key
             .as_deref()
             .and_then(|k| PublicKey::parse(k).ok())
@@ -113,9 +82,9 @@ fn sources_path() -> std::path::PathBuf {
     pf_paths::config_dir().join("plugin-sources.json")
 }
 
-/// Official is prepended here, never stored in the config file.
+/// The operator's sources; this build adds no built-in one.
 pub(crate) fn load() -> Vec<Source> {
-    let mut out = vec![Source::official()];
+    let mut out: Vec<Source> = Vec::new();
     let path = sources_path();
     let Ok(bytes) = std::fs::read(&path) else {
         return out;
@@ -134,7 +103,7 @@ pub(crate) fn load() -> Vec<Source> {
             }
         }
         Err(e) => tracing::warn!(
-            "plugin-sources.json is unreadable ({e}) — using the official source only"
+            "plugin-sources.json is unreadable ({e}) — no plugin source is in use"
         ),
     }
     out
@@ -185,22 +154,14 @@ mod tests {
     use super::*;
 
     #[test]
-    fn official_source_is_signed_by_compiled_in_keys() {
-        let s = Source::official();
-        assert!(s.is_official());
-        assert!(s.is_signed(), "the built-in source must carry a pinned key");
-        assert_eq!(s.sig_url(), format!("{OFFICIAL_URL}.sig"));
-        // `keys()` ignores the record field; config cannot swap the official key.
-        let mut forged = Source::official();
-        forged.public_key = Some("ed25519:AAAA".into());
-        assert_eq!(forged.keys().len(), 1);
-    }
-
-    #[test]
-    fn compiled_in_keys_parse() {
-        for k in OFFICIAL_KEYS.iter().filter(|k| !k.is_empty()) {
-            PublicKey::parse(k).expect("compiled-in official key must parse");
-        }
+    fn no_source_is_built_in_and_its_slug_stays_reserved() {
+        assert!(load().iter().all(|s| !s.is_official()));
+        let squat = Source {
+            name: OFFICIAL_NAME.into(),
+            url: "https://example.org/index.json".into(),
+            public_key: None,
+        };
+        assert!(put(squat).is_err(), "an operator source cannot take the reserved slug");
     }
 
     #[test]

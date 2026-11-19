@@ -51,13 +51,11 @@ MSIX requires a strictly 4-part numeric version:
 `pack-msix.ps1` and `pack-client-installer.ps1` pick a backend through
 `packaging/windows/signing.ps1`, in this order:
 
-1. **Azure Artifact Signing** when `AZURE_CODESIGNING_ENDPOINT` / `_ACCOUNT` / `_PROFILE` are all set
-   (the workflow sets them; they are not secret). Credentials are the `punktfunk-ci-signing` service
-   principal, which holds only the *Artifact Signing Certificate Profile Signer* role scoped to the
-   `unom-io` profile. Keys are HSM-backed and never leave Azure — no `.pfx`, no `.cer` emitted, and
-   the chain is publicly trusted so there is nothing for a user to import.
-2. **`MSIX_CERT_PFX_B64` / `MSIX_CERT_PASSWORD`** — the older self-signed `CN=unom` cert, public half
-   checked in as [`punktfunk-codesign.cer`](punktfunk-codesign.cer).
+1. **Azure Artifact Signing** when `AZURE_CODESIGNING_ENDPOINT` / `_ACCOUNT` / `_PROFILE` are all set.
+   The credentials are a service principal with only the *Artifact Signing Certificate Profile
+   Signer* role on that profile. Keys stay in Azure: no `.pfx`, no `.cer` emitted, and the chain is
+   publicly trusted, so there is nothing for a user to import.
+2. **`MSIX_CERT_PFX_B64` / `MSIX_CERT_PASSWORD`**: a `.pfx` you supply.
 3. An **ephemeral** self-signed cert, for forks and local builds with no secrets.
 
 Modes 2 and 3 emit a `.cer` to import into `Cert:\LocalMachine\TrustedPeople` first. On a `v*` tag a

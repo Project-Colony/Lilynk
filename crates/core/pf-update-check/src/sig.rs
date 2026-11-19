@@ -81,7 +81,7 @@ pub(crate) mod tests {
 
     #[test]
     fn key_format_is_enforced() {
-        assert!(PublicKey::parse("6rmlLg1aQ55cgB6icpC5BEpbMJxwPKdGaDQtDcJ0yLI=").is_err());
+        assert!(PublicKey::parse("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=").is_err());
         assert!(PublicKey::parse("ed25519:not base64!!").is_err());
         assert!(PublicKey::parse("ed25519:AAAA").is_err());
     }

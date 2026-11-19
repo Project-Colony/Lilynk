@@ -86,9 +86,9 @@ pub struct Status {
     pub not_published: bool,
 }
 
-/// Operator kill switch for checks. Same env name the host honours.
+/// Checks are off unless the env turns them on. Same env name the host honours.
 pub fn check_disabled() -> bool {
-    crate::env_on("PUNKTFUNK_UPDATE_CHECK") == Some(false)
+    crate::env_on("PUNKTFUNK_UPDATE_CHECK") != Some(true)
 }
 
 /// Operator kill switch for apply. Status still reports what is available and the hand command.
@@ -229,7 +229,7 @@ pub fn check(current: &str) -> Status {
     status.applier = applier;
 
     if check_disabled() {
-        status.error = Some("update checks are disabled (PUNKTFUNK_UPDATE_CHECK=0)".into());
+        status.error = Some("update checks are off (PUNKTFUNK_UPDATE_CHECK=1 turns them on)".into());
         return status;
     }
 

@@ -11,9 +11,9 @@ use crate::manifest::{self, Manifest, MAX_MANIFEST_BYTES};
 use crate::sig::PublicKey;
 use std::time::Duration;
 
-/// Feed base — `<base>/<channel>/manifest.json` + `.sig`.
-pub const DEFAULT_FEED_BASE: &str =
-    "https://git.unom.io/api/packages/unom/generic/punktfunk-update";
+/// Feed base — `<base>/<channel>/manifest.json` + `.sig`. Empty: this build has no
+/// feed, and a fetch without a base is refused.
+pub const DEFAULT_FEED_BASE: &str = "";
 
 const FETCH_TIMEOUT: Duration = Duration::from_secs(15);
 
@@ -56,13 +56,19 @@ pub fn feed_base() -> String {
         .unwrap_or_else(|| DEFAULT_FEED_BASE.to_string())
 }
 
-/// Fetch and verify the channel manifest. An empty `keys` list is refused, not treated as skip-verify.
+/// Fetch and verify the channel manifest. An empty `base` or `keys` list is refused before any
+/// request, never treated as skip-verify.
 pub fn fetch_manifest_blocking(
     base: &str,
     channel: &str,
     keys: &[PublicKey],
     user_agent: &str,
 ) -> Result<Manifest, FeedError> {
+    if base.is_empty() {
+        return Err(FeedError::Failed(
+            "no update feed is configured in this build".into(),
+        ));
+    }
     if keys.is_empty() {
         return Err(FeedError::Failed(
             "no update key is pinned in this build".into(),
@@ -225,6 +231,24 @@ mod tests {
         );
         let mut whole = gzip_response(&GZIP_4096_ZEROS, GZIP_4096_ZEROS.len());
         assert_eq!(read_capped(&mut whole, 4096).unwrap(), vec![0u8; 4096]);
+    }
+
+    #[test]
+    fn no_feed_and_no_key_refuse_before_any_request() {
+        let refused = |base: &str| {
+            fetch_manifest_blocking(base, "stable", &[], "test")
+                .unwrap_err()
+                .to_string()
+        };
+        assert_eq!(
+            refused(DEFAULT_FEED_BASE),
+            "no update feed is configured in this build"
+        );
+        // Port 9 is discard: a request would fail differently.
+        assert_eq!(
+            refused("http://127.0.0.1:9/feed"),
+            "no update key is pinned in this build"
+        );
     }
 
     #[test]

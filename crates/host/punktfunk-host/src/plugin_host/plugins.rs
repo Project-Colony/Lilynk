@@ -431,7 +431,7 @@ fn print_usage() {
         "punktfunk-host plugins — install and run host plugins
 
 USAGE:
-    punktfunk-host plugins add <name…>       install a plugin (playnite, rom-manager, …)
+    punktfunk-host plugins add <package…>    install a plugin package
     punktfunk-host plugins remove <name…>    uninstall a plugin
     punktfunk-host plugins list              list installed plugins
     punktfunk-host plugins enable            enable + start the plugin runner
@@ -448,11 +448,9 @@ USAGE:
                                              take one granted directory back
 
 NAMES:
-    A bare first-party name resolves into the @punktfunk scope: `playnite` installs
-    @punktfunk/plugin-playnite, `rom-manager` installs @punktfunk/plugin-rom-manager —
-    always from Punktfunk's own package registry. Any other name (`punktfunk-plugin-*`,
-    a foreign @scope) installs from the PUBLIC npm registry and is refused unless you
-    pass --allow-public-registry.
+    This build has no first-party package registry, so a bare name such as `playnite`
+    is refused. A full package name (`punktfunk-plugin-*`, an @scope/plugin-*) installs
+    from the PUBLIC npm registry and is refused unless you pass --allow-public-registry.
 
 NOTES:
     Plugins run under the runner. The install turns it on; `plugins disable` turns it off

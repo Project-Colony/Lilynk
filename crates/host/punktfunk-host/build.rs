@@ -35,7 +35,7 @@ fn main() {
             .set_icon_with_id(icon, "1")
             .set("FileDescription", "Punktfunk Host")
             .set("ProductName", "Punktfunk")
-            .set("CompanyName", "unom")
+            .set("CompanyName", "Lilynk")
             .set_manifest(MANIFEST)
             .compile()
             .expect("embed windows icon/version/manifest resources");

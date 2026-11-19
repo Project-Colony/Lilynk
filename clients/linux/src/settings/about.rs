@@ -43,10 +43,10 @@ pub fn show_about(parent: &impl IsA<gtk::Widget>) {
         // resolves from the installed hicolor icon; an uninstalled dev run simply shows the
         // generic fallback rather than nothing.
         .application_icon(crate::app::APP_ID)
-        .developer_name("unom")
+        .developer_name("Lilynk")
         // The package version `--version` prints, canary suffix included (build.rs).
         .version(env!("PUNKTFUNK_VERSION"))
-        .website("https://git.unom.io/unom/punktfunk")
+        .website("https://github.com/Project-Colony/Lilynk")
         .license_type(gtk::License::Custom)
         .license(license.as_str())
         .build();

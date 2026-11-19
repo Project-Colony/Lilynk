@@ -34,7 +34,7 @@ param(
     [ValidateSet('x64', 'arm64')][string]$Arch = 'x64',
     [string]$OutDir = (Join-Path (Split-Path -Parent $LayoutDir) 'installer'),
     # Subject for the EPHEMERAL self-signed fallback only; Azure/pfx carry their own subjects.
-    [string]$Publisher = "CN=unom - Enrico B$([char]0xFC)hler, O=unom - Enrico B$([char]0xFC)hler, L=Rottweil, S=Baden-W$([char]0xFC)rttemberg, C=DE",
+    [string]$Publisher = "CN=Lilynk",
     [string]$PfxBase64 = $env:MSIX_CERT_PFX_B64,                    # reuse the client's signing secret
     [string]$PfxPassword = $env:MSIX_CERT_PASSWORD,
     [string]$AzureEndpoint = $env:AZURE_CODESIGNING_ENDPOINT,

@@ -18,14 +18,14 @@
 #![forbid(unsafe_code)]
 
 /// Pinned Ed25519 keys for update manifests. Two slots: sign with the new key,
-/// ship builds that trust both, then retire the old. Private half is the
-/// `UPDATE_MANIFEST_KEY` CI secret plus the operator's offline backup.
+/// ship builds that trust both, then retire the old.
 ///
-/// Lives here, not in either binary: host and client consume the same manifest,
-/// so one pin list. `scripts/ci/publish-update-manifest.sh` checks the signing
-/// key against this file before it signs.
+/// Both slots are empty: this build pins no key, so every manifest is refused
+/// before a request is made. Host and client consume the same manifest, so one
+/// pin list. `scripts/ci/publish-update-manifest.sh` checks the signing key
+/// against this file before it signs.
 pub const OFFICIAL_UPDATE_KEYS: [&str; 2] = [
-    "ed25519:6rmlLg1aQ55cgB6icpC5BEpbMJxwPKdGaDQtDcJ0yLI=",
+    "", // no key pinned
     "", // rotation slot
 ];
 
@@ -61,11 +61,7 @@ pub use version::{canary_run, is_newer, triple, Channel};
 #[cfg(all(test, feature = "verify"))]
 mod tests {
     #[test]
-    fn pinned_keys_skip_the_empty_rotation_slot() {
-        assert_eq!(
-            super::pinned_keys().len(),
-            1,
-            "one live key, one empty slot"
-        );
+    fn no_update_key_is_pinned() {
+        assert!(super::pinned_keys().is_empty(), "this build trusts no feed");
     }
 }

@@ -177,7 +177,8 @@ Our three UMDF drivers are signed with a **stable self-signed code-signing cert*
 is a **hard failure** (`-RequireSignedCert`, default `auto` off `GITHUB_REF`); canary and local
 builds still fall back to a per-build throwaway.
 
-**Current fingerprint (SHA-1 thumbprint):** `4B8493E7CD565758D335F8F4F05C5A7261A13E02`
+No driver certificate is published yet: the fingerprint to check against is the one of the
+`.pfx` in `DRIVER_CERT_PFX_B64`.
 
 Verify a shipped driver against it:
 

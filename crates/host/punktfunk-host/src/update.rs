@@ -9,8 +9,8 @@
 //! Apply takes no version, URL, or channel from the request; those come from the
 //! verified cache. Trust and failure rules live in [`manifest`]. The serial floor
 //! in `update-state.json` makes a replayed older manifest an error, not a silent
-//! downgrade. `PUNKTFUNK_UPDATE_CHECK=0` disables network activity; status then
-//! reports `check_disabled`. `PUNKTFUNK_UPDATE_APPLY=0` leaves check intact and
+//! downgrade. Checks are off unless `PUNKTFUNK_UPDATE_CHECK=1`; status then reports
+//! `check_disabled`. `PUNKTFUNK_UPDATE_APPLY=0` leaves check intact and
 //! 409s apply.
 
 pub(crate) mod detect;
@@ -819,7 +819,7 @@ mod tests {
                     serde_json::to_vec(&serde_json::json!({
                         "schema": 1, "channel": "stable", "serial": serial,
                         "version": "0.23.0",
-                        "notes_url": "https://git.unom.io/unom/punktfunk/releases",
+                        "notes_url": "https://github.com/Project-Colony/Lilynk/releases",
                     }))
                     .unwrap()
                     .as_slice(),

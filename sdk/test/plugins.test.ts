@@ -15,6 +15,7 @@ import {
 } from "../src/plugins.js";
 
 const ROOT = path.join(import.meta.dir, "..", `.plugins-fixtures-${process.pid}`);
+const TEST_REGISTRY = "https://registry.example/npm/";
 fs.mkdirSync(ROOT, { recursive: true });
 afterAll(() => fs.rmSync(ROOT, { recursive: true, force: true }));
 
@@ -43,31 +44,34 @@ describe("reconcileSharedSdk", () => {
 			JSON.stringify({ dependencies: { missing: "file:./not-there" } }),
 		);
 		const lines: string[] = [];
-		reconcileSharedSdk(dir, (l) => lines.push(l));
+		reconcileSharedSdk(dir, (l) => lines.push(l), TEST_REGISTRY);
 		expect(lines.some((l) => l.includes("WARNING"))).toBe(true);
 		lines.length = 0;
-		reconcileSharedSdk(dir, (l) => lines.push(l));
+		reconcileSharedSdk(dir, (l) => lines.push(l), TEST_REGISTRY);
 		expect(lines).toEqual([]);
 		// A changed plugin set retries.
 		fs.writeFileSync(
 			path.join(dir, "package.json"),
 			JSON.stringify({ dependencies: { missing: "file:./still-not-there" } }),
 		);
-		reconcileSharedSdk(dir, (l) => lines.push(l));
+		reconcileSharedSdk(dir, (l) => lines.push(l), TEST_REGISTRY);
 		expect(lines.some((l) => l.includes("refreshing"))).toBe(true);
+	});
+
+	test("does not refresh without a first-party registry", () => {
+		const dir = tmp("sdk-no-registry");
+		writePkg(dir, "@punktfunk/host", "0.0.1");
+		const lines: string[] = [];
+		reconcileSharedSdk(dir, (l) => lines.push(l));
+		expect(lines).toEqual([]);
 	});
 });
 
 describe("resolvePackage", () => {
-	test("maps bare first-party names into the @punktfunk scope", () => {
-		expect(resolvePackage("playnite")).toBe("@punktfunk/plugin-playnite");
-		expect(resolvePackage("rom-manager")).toBe("@punktfunk/plugin-rom-manager");
-	});
-
-	test("passes @punktfunk-scoped names through verbatim (our registry, no gate)", () => {
-		expect(resolvePackage("@punktfunk/plugin-playnite")).toBe(
-			"@punktfunk/plugin-playnite",
-		);
+	test("refuses first-party names: this build has no plugin registry", () => {
+		expect(REGISTRY).toBe("");
+		expect(() => resolvePackage("playnite")).toThrow(/no plugin registry/);
+		expect(() => resolvePackage("@punktfunk/plugin-playnite")).toThrow(/no plugin registry/);
 	});
 
 	test("refuses public-registry names without allowPublicRegistry", () => {
@@ -89,26 +93,31 @@ describe("resolvePackage", () => {
 	});
 
 	test("trims and rejects empty", () => {
-		expect(resolvePackage("  playnite  ")).toBe("@punktfunk/plugin-playnite");
+		const allow = { allowPublicRegistry: true };
+		expect(resolvePackage("  @someone/plugin-x  ", allow)).toBe("@someone/plugin-x");
 		expect(() => resolvePackage("   ")).toThrow();
 	});
 });
 
 describe("ensureBunfig", () => {
-	test("writes the @punktfunk scope map when absent", () => {
+	const HUB = { "@retro-hub": "https://retro.example/npm/" };
+
+	test("never maps the first-party scope without a registry", () => {
 		const dir = tmp("bunfig-fresh");
 		ensureBunfig(dir);
+		expect(fs.existsSync(path.join(dir, "bunfig.toml"))).toBe(false);
+		ensureBunfig(dir, HUB);
 		const toml = fs.readFileSync(path.join(dir, "bunfig.toml"), "utf8");
 		expect(toml).toContain("[install.scopes]");
-		expect(toml).toContain(`"@punktfunk" = "${REGISTRY}"`);
+		expect(toml).not.toContain("@punktfunk");
 	});
 
 	test("is idempotent — a second call doesn't duplicate the scope", () => {
 		const dir = tmp("bunfig-idempotent");
-		ensureBunfig(dir);
-		ensureBunfig(dir);
+		ensureBunfig(dir, HUB);
+		ensureBunfig(dir, HUB);
 		const toml = fs.readFileSync(path.join(dir, "bunfig.toml"), "utf8");
-		expect(toml.match(/@punktfunk/g)?.length).toBe(1);
+		expect(toml.match(/@retro-hub/g)?.length).toBe(1);
 	});
 
 	test("merges into an existing [install.scopes] table, keeping other scopes", () => {
@@ -117,21 +126,21 @@ describe("ensureBunfig", () => {
 			path.join(dir, "bunfig.toml"),
 			'[install.scopes]\n"@other" = "https://example.test/npm/"\n',
 		);
-		ensureBunfig(dir);
+		ensureBunfig(dir, HUB);
 		const toml = fs.readFileSync(path.join(dir, "bunfig.toml"), "utf8");
 		expect(toml).toContain('"@other" = "https://example.test/npm/"');
-		expect(toml).toContain(`"@punktfunk" = "${REGISTRY}"`);
+		expect(toml).toContain('"@retro-hub" = "https://retro.example/npm/"');
 		expect(toml.match(/\[install\.scopes\]/g)?.length).toBe(1);
 	});
 
 	test("appends a table to an unrelated existing bunfig", () => {
 		const dir = tmp("bunfig-append");
 		fs.writeFileSync(path.join(dir, "bunfig.toml"), "telemetry = false\n");
-		ensureBunfig(dir);
+		ensureBunfig(dir, HUB);
 		const toml = fs.readFileSync(path.join(dir, "bunfig.toml"), "utf8");
 		expect(toml).toContain("telemetry = false");
 		expect(toml).toContain("[install.scopes]");
-		expect(toml).toContain(`"@punktfunk" = "${REGISTRY}"`);
+		expect(toml).toContain('"@retro-hub" = "https://retro.example/npm/"');
 	});
 });
 
@@ -178,11 +187,11 @@ describe("listInstalled", () => {
 describe("ensureBunfig with extra scopes", () => {
 	const read = (dir: string) => fs.readFileSync(path.join(dir, "bunfig.toml"), "utf8");
 
-	test("maps a third-party scope alongside @punktfunk", () => {
+	test("maps a third-party scope and nothing first-party", () => {
 		const dir = tmp("bunfig-extra");
 		ensureBunfig(dir, { "@retro-hub": "https://retro.example/npm/" });
 		const out = read(dir);
-		expect(out).toContain(`"@punktfunk" = "${REGISTRY}"`);
+		expect(out).not.toContain("@punktfunk");
 		expect(out).toContain('"@retro-hub" = "https://retro.example/npm/"');
 	});
 
@@ -196,8 +205,7 @@ describe("ensureBunfig with extra scopes", () => {
 		const out = read(dir);
 		expect(out).toContain('"@retro-hub" = "https://new.example/npm/"');
 		expect(out).not.toContain("old.example");
-		// the first-party mapping survives an unrelated scope edit
-		expect(out).toContain(`"@punktfunk" = "${REGISTRY}"`);
+		expect(out).not.toContain("@punktfunk");
 	});
 
 	test("preserves unrelated scopes already in the file", () => {
@@ -210,7 +218,6 @@ describe("ensureBunfig with extra scopes", () => {
 		const out = read(dir);
 		expect(out).toContain('"@acme" = "https://acme.example/"');
 		expect(out).toContain('"@retro-hub" = "https://retro.example/npm/"');
-		expect(out).toContain(`"@punktfunk" = "${REGISTRY}"`);
 	});
 });
 

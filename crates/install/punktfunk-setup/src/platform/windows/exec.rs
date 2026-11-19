@@ -423,7 +423,7 @@ impl WinExecutor<'_> {
         let values: [(&str, &str, String); 8] = [
             ("DisplayName", "REG_SZ", display_name.into()),
             ("DisplayVersion", "REG_SZ", self.sub(version)),
-            ("Publisher", "REG_SZ", "unom".into()),
+            ("Publisher", "REG_SZ", "Lilynk".into()),
             ("InstallLocation", "REG_SZ", location.clone()),
             (
                 "DisplayIcon",
@@ -1023,7 +1023,7 @@ mod tests {
         for (name, ty, data) in [
             ("DisplayName", "REG_SZ", "Punktfunk Host".to_string()),
             ("DisplayVersion", "REG_SZ", "9.9.9".to_string()),
-            ("Publisher", "REG_SZ", "unom".to_string()),
+            ("Publisher", "REG_SZ", "Lilynk".to_string()),
             ("InstallLocation", "REG_SZ", r"C:\app".to_string()),
             ("DisplayIcon", "REG_SZ", r"C:\app\punktfunk.ico".to_string()),
             (

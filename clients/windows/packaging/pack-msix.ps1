@@ -41,12 +41,9 @@ param(
     [Parameter(Mandatory = $true)][string]$TargetDir,                   # cargo --release output dir (has the exe)
     [ValidateSet('x64', 'arm64')][string]$Arch = 'x64',                 # package ProcessorArchitecture + artifact suffix
     [string]$OutDir = (Join-Path $TargetDir 'msix'),
-    # MUST equal the signing cert subject DN — this is the verified subject the Azure 'unom-io'
-    # certificate profile issues. The 'ü' is written as an escape, not a literal: this file is UTF-8
-    # with no BOM, and read by anything other than pwsh 7 a literal would silently mojibake into a
-    # publisher that no longer matches the signer, which surfaces only as an Add-AppxPackage refusal
-    # on a user's machine. Verified against the real signer after signing below.
-    [string]$Publisher = "CN=unom - Enrico B$([char]0xFC)hler, O=unom - Enrico B$([char]0xFC)hler, L=Rottweil, S=Baden-W$([char]0xFC)rttemberg, C=DE",
+    # MUST equal the signing cert subject DN; pass the real signer's subject. A mismatch surfaces
+    # only as an Add-AppxPackage refusal on a user's machine. Verified against the signer below.
+    [string]$Publisher = "CN=Lilynk",
     [string]$PfxBase64 = $env:MSIX_CERT_PFX_B64,                        # optional: base64 of a code-signing .pfx
     [string]$PfxPassword = $env:MSIX_CERT_PASSWORD,
     # Azure Artifact Signing. All three select it, ahead of any .pfx. Credentials arrive through the

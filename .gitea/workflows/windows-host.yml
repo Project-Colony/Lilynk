@@ -641,10 +641,10 @@ jobs:
           # endpoint, all inert without the credentials below, so they live here where a reviewer
           # can see which profile a release was signed by.
           AZURE_CODESIGNING_ENDPOINT: https://neu.codesigning.azure.net/
-          AZURE_CODESIGNING_ACCOUNT: unomsigning
-          AZURE_CODESIGNING_PROFILE: unom-io
+          AZURE_CODESIGNING_ACCOUNT: ${{ vars.AZURE_CODESIGNING_ACCOUNT }}
+          AZURE_CODESIGNING_PROFILE: ${{ vars.AZURE_CODESIGNING_PROFILE }}
           # Service principal 'punktfunk-ci-signing', holding ONLY the Artifact Signing Certificate
-          # Profile Signer role, scoped to the unom-io profile — it can sign and nothing else.
+          # Profile Signer role, scoped to that profile — it can sign and nothing else.
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}

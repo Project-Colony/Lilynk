@@ -574,7 +574,8 @@ pub static SETTINGS: &[Setting] = &[
     // The quirk is per exe name, for the whole PC. Off = the GameInput default fight.
     row("seat_background_input", "PUNKTFUNK_SEAT_BACKGROUND_INPUT", Kind::Bool, D::Bool(true), Seats, Now, "Players keep controllers", "windows-seats").only(WINDOWS),
     // --- System
-    row("update_check", "PUNKTFUNK_UPDATE_CHECK", Kind::Bool, D::Bool(true), System, Now, "Check for updates", "updating"),
+    // Off: this build has no update feed (pf-update-check pins no key).
+    row("update_check", "PUNKTFUNK_UPDATE_CHECK", Kind::Bool, D::Bool(false), System, Now, "Check for updates", "updating"),
     row("update_apply", "PUNKTFUNK_UPDATE_APPLY", Kind::Bool, D::Bool(true), System, Now, "Console updates", "updating").advanced(),
     row("tray_autostart", "PUNKTFUNK_TRAY_AUTOSTART", Kind::Bool, D::Bool(true), System, Now, "Tray autostart", "configuration").only(LINUX_WINDOWS),
 ];

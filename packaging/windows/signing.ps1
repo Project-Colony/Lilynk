@@ -187,7 +187,7 @@ function Sign-File {
         # UAC names a signed file by /d. The exe's own FileDescription stays the one source.
         $desc = (Get-Item $Path).VersionInfo.FileDescription
         if ($desc) { $signArgs += @('/d', $desc) }
-        $signArgs += @('/du', 'https://punktfunk.unom.io')
+        $signArgs += @('/du', 'https://github.com/Project-Colony/Lilynk')
     }
     $signtool = $Signing.Signtool
     & $signtool ($signArgs + @('/tr', $ts, '/td', 'SHA256', $Path))
