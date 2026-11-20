@@ -45,7 +45,7 @@ where the host's capture, its encoder and your client all support it. The full b
 
 ## Two protocols
 
-- **punktfunk/2** — Lilynk's own protocol: control, video and audio over one encrypted QUIC
+- **lilynk/2** — Lilynk's own protocol: control, video and audio over one encrypted QUIC
   port, with forward error correction on the video. The [native clients](/docs/clients) (Apple, Android, Linux,
   Windows) use it. It is always on.
 - **GameStream** — the protocol [Moonlight](/docs/moonlight) speaks, so any Moonlight client

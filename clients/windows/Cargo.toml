@@ -1,6 +1,6 @@
 [package]
 name = "lilynk-client-windows"
-description = "Native Windows punktfunk/1 client — WinUI 3 (windows-reactor) shell, SDL3 gamepads; streaming runs in the spawned lilynk-session binary"
+description = "Native Windows lilynk/1 client — WinUI 3 (windows-reactor) shell, SDL3 gamepads; streaming runs in the spawned lilynk-session binary"
 version.workspace = true
 edition.workspace = true
 # Not workspace-inherited (1.85): windows-reactor at the pinned rev declares rust-version 1.95+

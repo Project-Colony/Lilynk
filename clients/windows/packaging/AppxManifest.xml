@@ -63,7 +63,7 @@
       </uap:VisualElements>
       <Extensions>
         <!--
-          The punktfunk:// scheme (design/client-deep-links.md §4.2). Protocol activation of a
+          The lilynk:// scheme (design/client-deep-links.md §4.2). Protocol activation of a
           full trust packaged exe delivers the URI as the command line, so this and a shortcut
           land in the same place: the positional URL parse in main().
 
@@ -72,7 +72,7 @@
           installed app, which is the origin friction this design wants and does not duplicate.
         -->
         <uap:Extension Category="windows.protocol">
-          <uap:Protocol Name="punktfunk">
+          <uap:Protocol Name="lilynk">
             <uap:DisplayName>Lilynk stream link</uap:DisplayName>
           </uap:Protocol>
         </uap:Extension>

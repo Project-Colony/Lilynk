@@ -24,7 +24,7 @@ Pick the app for the device you stream *to*. Install steps for each are on
 Every Lilynk app [pairs](/docs/pairing) once and reconnects on its own, browses the host's
 [game library](/docs/game-library), and has a controller interface for the couch. All but the
 Samsung TV app find hosts on your network by themselves. They share
-[presets and `punktfunk://` links](/docs/presets-and-links), the
+[presets and `lilynk://` links](/docs/presets-and-links), the
 [in-stream keys](/docs/shortcuts#getting-your-input-back) and the settings on
 [Client settings](/docs/client-settings). The Apple, Android, Linux and Windows apps also ask which
 [profile](/docs/profiles#how-players-pick) plays.
@@ -119,7 +119,7 @@ lilynk launch <host-ref> --game <id>       # stream, waking the host first
 lilynk profiles <host-ref>                 # who plays on the host; --pick saves one
 lilynk launch <host-ref> --as <profile>    # stream as that profile, this time only
 lilynk end-game <host-ref> --game <id>     # close a game this device launched
-lilynk open 'punktfunk://connect/<host-ref>'
+lilynk open 'lilynk://connect/<host-ref>'
 lilynk speed-test <host-ref>               # what the link carries, loss at a rate it holds
 lilynk network-check <host-ref>            # the speed test plus what the link does, by finding
 ```

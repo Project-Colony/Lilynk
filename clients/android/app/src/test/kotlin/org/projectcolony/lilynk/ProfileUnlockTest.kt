@@ -36,14 +36,14 @@ class ProfileUnlockTest {
 
     /** The vectors' `seat` form, built byte by byte; the production builder is the native one. */
     private fun contractMessage(challenge: ByteArray, seat: String, device: ByteArray, box: ByteArray) =
-        "punktfunk-seat-unlock-v1".toByteArray() + challenge + seat.toByteArray() + device + box
+        "lilynk-seat-unlock-msg-1".toByteArray() + challenge + seat.toByteArray() + device + box
 
     @Test
     fun the_contract_message_matches_its_vector() {
         val m = contractMessage(vectorChallenge, vectorSeat, deviceFp, boxFp)
         assertEquals(152, m.size)
         assertEquals(
-            "31de46821f3058729b14c3585ad13159085ecb0d18c87194a34b1bddc8ddc31a",
+            "70c89c17d9a34295d3cb6f6ebc2336daef54ee2fda37957eac2b0cb81396b089",
             MessageDigest.getInstance("SHA-256").digest(m).joinToString("") { "%02x".format(it) },
         )
     }
@@ -346,7 +346,7 @@ class ProfileUnlockTest {
 
     /** The vectors' 187-byte `profile` form for a locked profile: its id zero-padded to 64. */
     private fun profileMessage(challenge: ByteArray, id: String, device: ByteArray, box: ByteArray) =
-        "punktfunk-profile-unlock-v1".toByteArray() + challenge + id.toByteArray().copyOf(64) + device + box
+        "lilynk-profile-unlock-msg-1".toByteArray() + challenge + id.toByteArray().copyOf(64) + device + box
 
     /** What the scripted host answers: a [answer] challenge, and [fresh] as the refused profile's row. */
     private class Host(val answer: UnlockChallenge = UnlockChallenge(ByteArray(32) { (it + 1).toByte() }, "0123456789abcdef0123456789abcdef")) {

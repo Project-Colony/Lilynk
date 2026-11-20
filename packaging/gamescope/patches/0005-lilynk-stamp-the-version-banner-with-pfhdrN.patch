@@ -36,7 +36,7 @@ index adeaa11b..2d737dbe 100644
 -version_tag = vcs_tag + ' (' + compiler_name + ' ' + compiler_version + ')'
 +# lilynk carries patches on top of upstream; stamp the banner so a host can probe what this
 +# binary can do from `gamescope --version` alone, before it has to commit a session to it (the
-+# punktfunk/1 Welcome is irrevocable). The number is a monotonic PATCH-SET revision:
++# lilynk/1 Welcome is irrevocable). The number is a monotonic PATCH-SET revision:
 +#   +pfhdr1 — 10-bit BT.2020/PQ capture formats on the PipeWire node
 +#   +pfhdr2 — …and `--pipewire-composite-cursor`
 +#   +pfhdr3 — …and the headless connector advertises its mode + `--custom-refresh-rates`

@@ -1,4 +1,4 @@
-//! GPU-free microbenchmarks for the punktfunk/2 media hot path; they run in ordinary CI.
+//! GPU-free microbenchmarks for the lilynk/2 media hot path; they run in ordinary CI.
 //!
 //! `crypto/*` — AES-128-GCM and ChaCha20-Poly1305 on one ~MTU shard, sealed in place as media
 //! is.

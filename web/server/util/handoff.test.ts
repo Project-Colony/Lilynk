@@ -137,7 +137,7 @@ describe("verifyHandoff", () => {
 		});
 		// And the message really is the documented one.
 		expect(handoffMessage(String(ts), nonce)).toBe(
-			`pf-console-handoff:v1:${ts}:${nonce}`,
+			`ly-console-handoff:v1:${ts}:${nonce}`,
 		);
 	});
 });

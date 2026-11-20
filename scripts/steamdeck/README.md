@@ -75,7 +75,7 @@ default `pf2`), `LILYNK_MGMT_PORT` (writes `LILYNK_MGMT_BIND` to `host.env`; def
   here too and persists across updates.
 - **Services:** `~/.config/systemd/user/lilynk-host.service` — `scripts/lilynk-host.service`
   with the Deck's `ExecStart` (`serve`, `+ --open` if chosen; the port is `host.env`'s — the native
-  `punktfunk/1` plane is always on; GameStream follows the console's setting, and `update.sh` moves
+  `lilynk/1` plane is always on; GameStream follows the console's setting, and `update.sh` moves
   an older unit's `--gamestream` into it) and the session environment in
   `lilynk-host.service.d/steamdeck.conf`,
   `lilynk-web.service`, `lilynk-rebuild-check.service` (post-OS-update self-heal, enabled), and
@@ -128,7 +128,7 @@ systemctl --user restart lilynk-host         # after editing host.env
 ```
 
 Pair from the web console (Devices → arm pairing) or directly from a client with the host's PIN. The
-host advertises over mDNS as `_punktfunk._udp`, so clients discover it automatically.
+host advertises over mDNS as `_lilynk._udp`, so clients discover it automatically.
 
 ## Gotchas
 

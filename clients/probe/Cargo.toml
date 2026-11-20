@@ -1,6 +1,6 @@
 [package]
 name = "lilynk-probe"
-description = "lilynk reference/probe client: headless punktfunk/1 client for testing + latency measurement"
+description = "lilynk reference/probe client: headless lilynk/1 client for testing + latency measurement"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -18,7 +18,7 @@ tokio = { version = "1", features = ["rt-multi-thread", "net", "time", "macros"]
 anyhow = "1"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-# LAN host discovery (`--discover`): browse the native `_punktfunk._udp` mDNS service the host
+# LAN host discovery (`--discover`): browse the native `_lilynk._udp` mDNS service the host
 # advertises (same crate/version the host advertises with).
 mdns-sd = "0.21"
 # Opus: multistream DECODE of the host's audio plane (the surround validator) + `--mic-test`'s

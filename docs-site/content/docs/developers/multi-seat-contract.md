@@ -411,7 +411,7 @@ entry and opens with the owner's lock, list and PIN. A take-turns profile keeps 
   left, `enumerate` says `pin_key` on a profile it holds a key for, and
   `POST /profiles/{id}/unlock-challenge` answers `{challenge, profile}`: 32 bytes as 64 hex,
   valid 120 seconds and once, the device's only live one for that id. The key signs
-  `"punktfunk-profile-unlock-v1"` ‖ challenge ‖ the profile id, zero bytes after it to 64 ‖ the
+  `"lilynk-profile-unlock-msg-1"` ‖ challenge ‖ the profile id, zero bytes after it to 64 ‖ the
   device fingerprint ‖ the fingerprint of the host the device dialled, 187 bytes, signed as the
   seat form is, and verified with that profile's key alone;
   `clients/shared/profile-unlock-vectors.json` holds both. A right proof makes the device
@@ -434,7 +434,7 @@ entry and opens with the owner's lock, list and PIN. A take-turns profile keeps 
   its PIN and the owner's id answer 403 `profile_change_not_allowed`; an unknown id 404
   `profile_unknown`. Art picks stay off: the host fetches a pick's URL itself. Asked on every
   call. The box's own host decides, the door on a door: it passes the call to the owner's host,
-  which writes the library, carrying `X-Punktfunk-Person` beside `X-Punktfunk-Device`. That host
+  which writes the library, carrying `X-Lilynk-Person` beside `X-Lilynk-Device`. That host
   honours it only with its admin token, on these routes, for the profile `as` names and never
   the owner, and needs no pairing record for the device. Any other seat host decides nothing.
 
@@ -721,7 +721,7 @@ document (`every_route_has_a_side_on_the_door`). The door releases a seat's laun
 seat (`game/holds/{token}/release`, below). A device's `game/end`, `GET display/targets`,
 `PUT display/clients/*` and `GET compositors` go to the seat it plays on, and its
 `library/install/*` to the owner's host, whose plugins download into the shared game files, each
-as that device: the door's call carries `X-Punktfunk-Device`, which a seat host honours only with
+as that device: the door's call carries `X-Lilynk-Device`, which a seat host honours only with
 its admin token and only for a device paired there, and then answers on the device's grants. A
 [person's](#a-profiles-lock) calls go to the owner's host too, once the door found the person. A
 call starts a stopped seat and answers 503, except `host`, `status` and `diagnostics`, which
@@ -891,7 +891,7 @@ reaches this lane.
   and take no ticket. A Windows seat keeps its token in memory ([below](#a-windows-seats-person)).
 - **The ticket.** `lilynk-host ctl console-url`, run as the person in the seat, signs
   `<unix s>.<32 hex nonce>.<profile id>.<HMAC-SHA256 hex>` over
-  `pf-person-session:v1:<unix s>:<nonce>:<profile id>` with the token, and writes a page opening
+  `ly-person-session:v1:<unix s>:<nonce>:<profile id>` with the token, and writes a page opening
   `https://127.0.0.1:47992/_auth/person?ticket=<ticket>`.
 - **The session.** `POST /api/v1/auth/person/session` with `{"ticket"}`, from loopback, answers
   `{token, expires_at, profile}`. The host takes a ticket at most 60 s from its stamp, once, for
@@ -905,7 +905,7 @@ reaches this lane.
   An `as` naming another profile is 403. `GET auth/person/profile` answers the session's own
   profile from the seat's trust copy, `{id, display_name, accent?, has_avatar}`, and
   `GET auth/person/profile/avatar` its picture; any other lane gets 404.
-- **On the box.** The console sends `X-Punktfunk-Person-Session` and `X-Punktfunk-Person-Profile`
+- **On the box.** The console sends `X-Lilynk-Person-Session` and `X-Lilynk-Person-Profile`
   with no bearer, and `?as=` naming that profile, to the door (on Windows the box host) from
   loopback. The door asks the
   profile's seat host `POST /api/v1/auth/person/verify` `{"token"}` with its admin token, and
@@ -917,7 +917,7 @@ reaches this lane.
   `library/overrides` carries the box's shared sets as `box_sets`, which the person reads and
   points at but never changes, and the box's entries as `box_games` and `box_sources`, only for
   the titles and sources the profile's library lists. The owner's host takes the door's word
-  with `X-Punktfunk-Person` and its admin token, as for a device's person.
+  with `X-Lilynk-Person` and its admin token, as for a device's person.
 - **What only it writes, on a person's own account.** `PUT hooks` and the custom-entry writes.
   The host marks each with `person: true`, and runs only hooks and lists only own titles so
   marked: a file planted without the mark runs nothing. A `prep` step runs only when an own
@@ -1014,7 +1014,7 @@ A refusal is `backend` with `<code>: <sentence>`, the sentence the person reads.
   runs and the device is admitted, else `key` when it has a key, else `password`.
 - **`challenge {id, fingerprint}`** answers `challenge {challenge, seat}`: 32 bytes from the OS as
   64 hex, valid 120 seconds and once, the device's only live one. A device with no key gets
-  `unlock_required`. The key signs `"punktfunk-seat-unlock-v1"` ‖ challenge ‖ the seat id's 32 hex
+  `unlock_required`. The key signs `"lilynk-seat-unlock-msg-1"` ‖ challenge ‖ the seat id's 32 hex
   characters ‖ the device fingerprint ‖ the box fingerprint, 152 bytes, with SHA-256: ECDSA P-256
   as an ASN.1 DER signature, or RSA 2048 as a 256-byte signature, PKCS#1 v1.5 or PSS with a
   32-byte salt.

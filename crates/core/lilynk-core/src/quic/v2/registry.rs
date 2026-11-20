@@ -1,4 +1,4 @@
-//! Every number on the `punktfunk/2` wire, in one file.
+//! Every number on the `lilynk/2` wire, in one file.
 //!
 //! Frame types, stream types, datagram kinds, feature bits and stream stop codes are allocated
 //! here, each with a doc line; a message's field tags live in the module named after it, and a
@@ -10,12 +10,12 @@
 //! `tests::every_number_is_tabled` fails until a new constant is in its table, and
 //! `tests::numbers_are_unique` until it differs from its neighbours.
 
-/// ALPN of this wire. `punktfunk/1` is `pkf1`.
-pub const ALPN: &[u8] = b"pkf2";
+/// ALPN of this wire. `lilynk/1` is `lyk1`.
+pub const ALPN: &[u8] = b"lyk2";
 
 /// TLS exporter label for the media secrets; the context is the session id. 32 bytes out
 /// feed [`crate::crypto::MediaKeys::derive`].
-pub const MEDIA_EXPORTER_LABEL: &[u8] = b"EXPORTER-punktfunk/2 media";
+pub const MEDIA_EXPORTER_LABEL: &[u8] = b"EXPORTER-lilynk/2 media";
 
 /// Bound on the body of a frame whose type this build does not know. The reader skips it, but
 /// holds it first, so the bound is what one unknown frame can make the peer buffer.
@@ -217,17 +217,17 @@ pub const DGRAM_HDR_META: u64 = 0x09;
 /// Stream stop code for a stream type this build does not know.
 pub const STOP_UNKNOWN_STREAM: u32 = 0x71;
 
-// Feature bits 0–31 are the four `punktfunk/1` capability bytes in place, so core maps between
+// Feature bits 0–31 are the four `lilynk/1` capability bytes in place, so core maps between
 // the wires exactly: `video_caps` 0–7, `client_caps` 8–15, `host_caps` 16–23, `host_caps2`
 // 24–31. A feature new to this wire takes the next free bit from 32 and a constant here.
 
-/// First bit of `punktfunk/1`'s `video_caps`.
+/// First bit of `lilynk/1`'s `video_caps`.
 pub const FEATURE_V1_VIDEO_CAPS: u32 = 0;
-/// First bit of `punktfunk/1`'s `client_caps`.
+/// First bit of `lilynk/1`'s `client_caps`.
 pub const FEATURE_V1_CLIENT_CAPS: u32 = 8;
-/// First bit of `punktfunk/1`'s `host_caps`.
+/// First bit of `lilynk/1`'s `host_caps`.
 pub const FEATURE_V1_HOST_CAPS: u32 = 16;
-/// First bit of `punktfunk/1`'s `host_caps2`.
+/// First bit of `lilynk/1`'s `host_caps2`.
 pub const FEATURE_V1_HOST_CAPS2: u32 = 24;
 /// Both ends: the host sends a `StreamConfig` for every epoch, and the client moves its mode
 /// at that epoch's first frame. `Reconfigured` then only says a switch was accepted.
@@ -311,7 +311,7 @@ mod tests {
         ("DGRAM_HDR_META", DGRAM_HDR_META),
     ];
 
-    /// Bit positions; the four `punktfunk/1` bytes are 8 wide each.
+    /// Bit positions; the four `lilynk/1` bytes are 8 wide each.
     const FEATURES: &[(&str, u32)] = &[
         ("FEATURE_V1_VIDEO_CAPS", FEATURE_V1_VIDEO_CAPS),
         ("FEATURE_V1_CLIENT_CAPS", FEATURE_V1_CLIENT_CAPS),

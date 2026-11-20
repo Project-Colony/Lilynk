@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- punktfunk/1 QUIC/UDP data plane. -->
+    <!-- lilynk/1 QUIC/UDP data plane. -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!-- mDNS discovery of _punktfunk._udp on the LAN (native mdns-sd browse). Requested
+    <!-- mDNS discovery of _lilynk._udp on the LAN (native mdns-sd browse). Requested
          opportunistically — raw multicast reception needs only the MulticastLock, not this. -->
     <uses-permission
         android:name="android.permission.NEARBY_WIFI_DEVICES"
@@ -106,7 +106,7 @@
                 <!-- TV launcher entry. -->
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
-            <!-- punktfunk:// deep links (design/client-deep-links.md §2): an external tool, an OS
+            <!-- lilynk:// deep links (design/client-deep-links.md §2): an external tool, an OS
                  shortcut or a wiki page opens a stream on a host this device already trusts. The
                  URL carries only REFERENCES to things that exist here (a host record, a settings
                  preset, a library id) — never resolution/bitrate/codec values, and never a
@@ -119,7 +119,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="punktfunk" />
+                <data android:scheme="lilynk" />
             </intent-filter>
         </activity>
 

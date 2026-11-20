@@ -781,7 +781,7 @@ json_pusher!(
 
 json_pusher!(
 /// `NativeBridge.nativeConsoleSetKnownHosts(handle, json)` — the known-hosts records
-/// (`KnownHosts` JSON) the console builds `punktfunk://` links from.
+/// (`KnownHosts` JSON) the console builds `lilynk://` links from.
     Java_org_projectcolony_lilynk_kit_NativeBridge_nativeConsoleSetKnownHosts,
     ly_client_core::trust::KnownHosts,
     |h, k| h.store.set_known_hosts(k)

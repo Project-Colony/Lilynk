@@ -150,7 +150,7 @@ data class SettingsOverlay(
 
 /**
  * One named bundle of overrides. [id] is stable across renames — host bindings, pinned cards and
- * `punktfunk://` links all point at it, never at the name.
+ * `lilynk://` links all point at it, never at the name.
  */
 data class StreamPreset(
     val id: String,

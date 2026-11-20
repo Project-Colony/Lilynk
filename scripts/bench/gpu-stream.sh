@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Tier-3 GPU stream benchmark — the REAL pipeline: virtual output → zero-copy dmabuf→CUDA → NVENC →
-# punktfunk/1 over loopback UDP → FEC/decrypt/reassemble, with the client measuring end-to-end
+# lilynk/1 over loopback UDP → FEC/decrypt/reassemble, with the client measuring end-to-end
 # latency. This is the "real-world" regression test the GPU-less CI can't run; it runs on a
 # self-hosted GPU runner (a dev box with an NVIDIA GPU + a KWin session). Report-only by default.
 #

@@ -1,7 +1,7 @@
 //! A host on `127.0.0.1`, inside the client library: the app's demo mode.
 //!
 //! The embedder draws and encodes the pictures and hands each access unit to
-//! [`DemoHost::submit_video`]. This side speaks what a real host speaks — `punktfunk/2`: the
+//! [`DemoHost::submit_video`]. This side speaks what a real host speaks — `lilynk/2`: the
 //! handshake, the clock handshake, the sealed media and the Opus audio plane — so the embedder's
 //! connect, decode, present, HUD and input paths run unchanged against a pinned loopback host.
 //!
@@ -95,7 +95,7 @@ impl DemoHost {
             .thread_name("pf-demo-host")
             .enable_all()
             .build()?;
-        let cert = rcgen::generate_simple_self_signed(vec!["punktfunk".into()])
+        let cert = rcgen::generate_simple_self_signed(vec!["lilynk".into()])
             .map_err(|_| LilynkError::Crypto)?;
         let fingerprint = lilynk_core::tls::cert_fingerprint(cert.cert.der());
         let (endpoint, media_socket) = {

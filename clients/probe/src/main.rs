@@ -1,4 +1,4 @@
-//! Reference `punktfunk/2` client for protocol verification and stream diagnostics.
+//! Reference `lilynk/2` client for protocol verification and stream diagnostics.
 //!
 //! A synthetic host enables deterministic frame checks; a virtual host writes encoded AUs and
 //! reports capture-to-receive latency. Input, microphone, touch and rich-input flags exercise the
@@ -139,7 +139,7 @@ struct Args {
     /// client), flip to the capture model at 15 s and back at 35 s, wiggling throughout. The
     /// host's encoder must follow each flip.
     cursor_channel: bool,
-    /// `--discover [SECS]` — browse the LAN for native (`_punktfunk._udp`) hosts for `SECS`
+    /// `--discover [SECS]` — browse the LAN for native (`_lilynk._udp`) hosts for `SECS`
     /// seconds (default 4), print what's found, and exit. No connection is made.
     discover: Option<u64>,
     /// `--trajectory FILE` — stream on the shared client pump (the one the desktop and TV
@@ -197,11 +197,11 @@ fn screens_ask(args: &Args) -> Vec<lilynk_core::quic::v2::msg::Screen> {
         .collect()
 }
 
-/// The control stream's halves; `punktfunk/2`'s cross the translation edges.
+/// The control stream's halves; `lilynk/2`'s cross the translation edges.
 type CtlTx = quinn::SendStream;
 type CtlRx = v2io::FrameReader<quinn::RecvStream>;
 
-/// The connection, its datagrams as `punktfunk/1` encodings: on `punktfunk/2` they carry a kind.
+/// The connection, its datagrams as `lilynk/1` encodings: on `lilynk/2` they carry a kind.
 #[derive(Clone)]
 struct Wire {
     conn: quinn::Connection,
@@ -515,7 +515,7 @@ fn run(args: Args) -> Result<()> {
     rt.block_on(session(args))
 }
 
-/// Browse the LAN for native (`_punktfunk._udp`) hosts for `secs` seconds and print them, then
+/// Browse the LAN for native (`_lilynk._udp`) hosts for `secs` seconds and print them, then
 /// exit — the discovery side of the host's mDNS advert (host crate `hostsys/discovery.rs`).
 /// It prints the TXT keys `fp` (host cert fingerprint to pin), `pair` (required|optional) and
 /// `wire` (the protocols the host answers), and dedups on `id` (stable host id).
@@ -526,12 +526,9 @@ fn discover(secs: u64) -> Result<()> {
 
     let daemon = ServiceDaemon::new().context("create mDNS daemon")?;
     let receiver = daemon
-        .browse("_punktfunk._udp.local.")
-        .context("browse _punktfunk._udp")?;
-    tracing::info!(
-        secs,
-        "browsing for native punktfunk/1 hosts (_punktfunk._udp)…"
-    );
+        .browse("_lilynk._udp.local.")
+        .context("browse _lilynk._udp")?;
+    tracing::info!(secs, "browsing for native lilynk/1 hosts (_lilynk._udp)…");
     // One row per host, keyed by the stable uniqueid (falls back to the fullname) so the same
     // host re-advertising or answering on several interfaces collapses to a single entry.
     let mut hosts: BTreeMap<String, String> = BTreeMap::new();
@@ -581,9 +578,9 @@ fn discover(secs: u64) -> Result<()> {
     }
     let _ = daemon.shutdown();
     if hosts.is_empty() {
-        println!("no native punktfunk/1 hosts found on the LAN ({secs}s)");
+        println!("no native lilynk/1 hosts found on the LAN ({secs}s)");
     } else {
-        println!("native punktfunk/1 hosts ({}):", hosts.len());
+        println!("native lilynk/1 hosts ({}):", hosts.len());
         for row in hosts.values() {
             println!("{row}");
         }
@@ -822,7 +819,7 @@ async fn connect(
     );
     let (ep, media) = r.map_err(|e| anyhow!("QUIC client endpoint: {e}"))?;
     let conn = ep
-        .connect(remote, "punktfunk")
+        .connect(remote, "lilynk")
         .context("connect")?
         .await
         .context("QUIC handshake (a pin mismatch fails here)")?;

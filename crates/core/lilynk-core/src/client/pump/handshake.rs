@@ -1,7 +1,7 @@
-//! Connect + handshake: cert-pinned `pkf2` dial, `ClientHello`/`ServerHello`/`Ready` on the
+//! Connect + handshake: cert-pinned `lyk2` dial, `ClientHello`/`ServerHello`/`Ready` on the
 //! control stream, wall-clock skew, and the [`Session`] over the connection's own socket, keyed from its exporter. A typed application
 //! close from the host is [`LilynkError::Rejected`], not a transport error; a host that
-//! answers no `pkf2` is the wire-version rejection. A host may answer with a `Redirect`
+//! answers no `lyk2` is the wire-version rejection. A host may answer with a `Redirect`
 //! instead: the session runs on another host of the same box, and the dial repeats there, once.
 //! A profile unlock rides the first dial only, right after its `ClientHello`.
 
@@ -162,7 +162,7 @@ async fn dial(
     let redial_until = deadline.checked_sub(CONTROL_HEADROOM).unwrap_or(deadline);
     let conn = loop {
         let connecting = ep
-            .connect(remote, "punktfunk")
+            .connect(remote, "lilynk")
             .map_err(|_| LilynkError::InvalidArg("connect"))?;
         // Remaining budget only: a late success must not land after `ready_rx` gave up.
         let now = tokio::time::Instant::now();

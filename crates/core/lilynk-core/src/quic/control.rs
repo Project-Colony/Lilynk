@@ -356,7 +356,7 @@ pub struct ClipState {
 
 /// Symmetric ([`MSG_CLIP_OFFER`]): format list only. A new offer replaces the
 /// previous; `seq` lets the holder reject stale fetches. Files are one
-/// `application/x-punktfunk-files` kind — the list is fetched, never inlined.
+/// `application/x-lilynk-files` kind — the list is fetched, never inlined.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ClipOffer {
     /// Monotonic per sender; newest wins.

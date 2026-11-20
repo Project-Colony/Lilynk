@@ -717,7 +717,7 @@ fn client_install(facts: &WinFacts, choices: &WinChoices) -> WinPlan {
         ],
     );
 
-    let proto = r"HKCU\Software\Classes\punktfunk";
+    let proto = r"HKCU\Software\Classes\lilynk";
     let mut registry = vec![
         run(&[
             "reg",
@@ -822,7 +822,7 @@ fn client_uninstall(choices: &WinChoices) -> WinPlan {
             .iter()
             .map(|exe| run_lenient(&["taskkill", "/F", "/IM", exe]))
             .chain([
-                run_lenient(&["reg", "delete", r"HKCU\Software\Classes\punktfunk", "/f"]),
+                run_lenient(&["reg", "delete", r"HKCU\Software\Classes\lilynk", "/f"]),
                 // The engine lays the links down itself, so it owes the sweep: a link left
                 // behind points at a deleted exe.
                 WinAction::DeleteFiles {

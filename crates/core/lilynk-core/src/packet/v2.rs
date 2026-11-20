@@ -1,4 +1,4 @@
-//! The `punktfunk/2` media packet header: 30 bytes, with a stream id and a config epoch.
+//! The `lilynk/2` media packet header: 30 bytes, with a stream id and a config epoch.
 //!
 //! `tag u8 ‖ seq u32` stay in the clear and are the AEAD's associated data; `epoch u8 ‖
 //! flags u16 ‖ frame u32 ‖ pts_us u32 ‖ block u16 ‖ base u32 ‖ shard u16 ‖ k u16 ‖ m u16 ‖

@@ -27,7 +27,7 @@
 	"desktop_hostcard_remove_failed": "Impossible de supprimer l’hôte — {reason}",
 	"desktop_hostcard_create_shortcut": "Créer un raccourci…",
 	"desktop_hostcard_create_shortcut_hint": "Une entrée du lanceur d’applications qui se connecte à cet hôte",
-	"desktop_hostcard_copy_link_hint": "Un lien punktfunk:// qui se connecte à cet hôte",
+	"desktop_hostcard_copy_link_hint": "Un lien lilynk:// qui se connecte à cet hôte",
 	"desktop_shortcut_title": "Créer un raccourci",
 	"desktop_shortcut_sandboxed_body": "Lilynk s’exécute ici dans un bac à sable, il ne peut donc pas ajouter lui-même le raccourci. Copiez ce lien et créez un lanceur pour lui — il ouvre le même stream.",
 	"desktop_shortcut_added_body": "Raccourci pour « {name} » ajouté à vos applications",

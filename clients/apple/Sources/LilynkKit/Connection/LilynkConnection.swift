@@ -1,4 +1,4 @@
-// Swift wrapper around the lilynk-core C ABI's punktfunk/1 connection API.
+// Swift wrapper around the lilynk-core C ABI's lilynk/1 connection API.
 //
 // Threading contract (mirrors the C header): each plane has one puller thread. Video pulls
 // nextAU() and nextHdrMeta(); each further screen's pump pulls nextScreenAU(); audio pulls

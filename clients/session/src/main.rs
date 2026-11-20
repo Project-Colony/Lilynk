@@ -278,7 +278,7 @@ mod session_main {
 
     /// `--preset <id|name>` — the preset this one session runs with, overriding the host's own
     /// binding for this launch only (never rebinding it): the shells' "Connect with ▸ X" and a
-    /// `punktfunk://…&preset=` link both land here. Absent = honor the host's binding;
+    /// `lilynk://…&preset=` link both land here. Absent = honor the host's binding;
     /// `--preset ""` (or a bare `--preset`) forces the global defaults, which is how "Connect
     /// with ▸ Default settings" reaches a bound host. `--profile` is the pre-rename spelling.
     fn preset_arg() -> Option<String> {

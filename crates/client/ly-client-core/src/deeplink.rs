@@ -1,17 +1,17 @@
-//! The `punktfunk://` URL grammar: one parser/emitter for every native client
+//! The `lilynk://` URL grammar: one parser/emitter for every native client
 //! (`design/client-deep-links.md`). Swift (`LilynkShared/DeepLink.swift`) and
 //! Kotlin keep their own ports; all three consume
 //! `clients/shared/deeplink-vectors.json`.
 //!
 //! ```text
-//! punktfunk://connect/<host-ref>[?fp=<64-hex>][&host=<addr[:port]>][&launch=<id>]
+//! lilynk://connect/<host-ref>[?fp=<64-hex>][&host=<addr[:port]>][&launch=<id>]
 //!                               [&preset=<ref>][&as=<profile>][&name=<label>]
 //! ```
 //!
 //! A URL may only do what a click on an existing card could do, minus trust
 //! decisions: references (host record, settings preset, library id), never
 //! values (resolution, bitrate, codec). `pair` is not a route; pairing stays
-//! interactive. `pf://` parses as an alias so a typed or legacy link still
+//! interactive. `ly://` parses as an alias so a typed or legacy link still
 //! works, but nothing emits or registers it — claiming a two-letter scheme on
 //! MSIX/Apple is squatting, and a link that resolves on one platform only is a trap.
 
@@ -72,7 +72,7 @@ pub struct DeepLink {
 /// Rejection codes shared with the Swift/Kotlin ports via `clients/shared/deeplink-vectors.json`.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ParseError {
-    /// Not `punktfunk://` / `pf://` — ignore, do not warn.
+    /// Not `lilynk://` / `ly://` — ignore, do not warn.
     NotOurScheme,
     TooLong,
     UnknownRoute(String),
@@ -127,7 +127,7 @@ impl ParseError {
 
 /// `lilynk`, or its `pf` input alias, in any case.
 fn our_scheme(scheme: &str) -> bool {
-    scheme.eq_ignore_ascii_case("punktfunk") || scheme.eq_ignore_ascii_case("pf")
+    scheme.eq_ignore_ascii_case("lilynk") || scheme.eq_ignore_ascii_case("ly")
 }
 
 /// Whether a command-line argument is a link addressed to us. [`parse`] validates it.
@@ -136,7 +136,7 @@ pub fn is_link_arg(arg: &str) -> bool {
         .is_some_and(|(scheme, _)| our_scheme(scheme))
 }
 
-/// Hostile input is rejected here once for every front-end; `pf://` is an alias.
+/// Hostile input is rejected here once for every front-end; `ly://` is an alias.
 pub fn parse(url: &str) -> Result<DeepLink, ParseError> {
     if url.len() > MAX_URL_LEN {
         return Err(ParseError::TooLong);
@@ -155,7 +155,7 @@ pub fn parse(url: &str) -> Result<DeepLink, ParseError> {
     let path = path.trim_end_matches('/');
     let (route_word, host_ref_raw) = match path.split_once('/') {
         Some((r, h)) => (r, h),
-        // Bare path is a host-ref unless it is a route word: `punktfunk://pair` must refuse,
+        // Bare path is a host-ref unless it is a route word: `lilynk://pair` must refuse,
         // not hunt for a host named "pair".
         None if is_route_word(path) => (path, ""),
         None => ("connect", path),
@@ -244,11 +244,11 @@ pub fn parse(url: &str) -> Result<DeepLink, ParseError> {
 }
 
 impl DeepLink {
-    /// Always `punktfunk://`, never the `pf://` alias. Self-emitted links carry the stable
+    /// Always `lilynk://`, never the `ly://` alias. Self-emitted links carry the stable
     /// id and `host`+`fp` so a wiped store still resolves.
     pub fn to_url(&self) -> String {
         let mut s = format!(
-            "punktfunk://{}/{}",
+            "lilynk://{}/{}",
             self.route.as_str(),
             encode(&self.host_ref)
         );
@@ -357,7 +357,7 @@ pub enum HostResolution {
 /// literal → `host=` recovery.
 ///
 /// Only the record id is unguessable, so only it is [`HostResolution::Known`].
-/// `.desktop` files register `x-scheme-handler/punktfunk`, so any web page can
+/// `.desktop` files register `x-scheme-handler/lilynk`, so any web page can
 /// hand this a guessable name or LAN address; those are [`HostResolution::Confirm`].
 ///
 /// Returns an index, not a borrow, so callers can rekey / touch-last-used.
@@ -600,21 +600,18 @@ mod tests {
         assert_eq!(parse("https://example.com/"), Err(ParseError::NotOurScheme));
         assert_eq!(parse("lilynk:/connect/x"), Err(ParseError::NotOurScheme));
         assert_eq!(
-            parse(&format!("punktfunk://connect/{}", "a".repeat(MAX_URL_LEN))),
+            parse(&format!("lilynk://connect/{}", "a".repeat(MAX_URL_LEN))),
             Err(ParseError::TooLong)
         );
-        assert_eq!(parse("punktfunk://pair/1234"), Err(ParseError::PairRefused));
+        assert_eq!(parse("lilynk://pair/1234"), Err(ParseError::PairRefused));
         assert_eq!(
-            parse("punktfunk://teardown/host"),
+            parse("lilynk://teardown/host"),
             Err(ParseError::UnknownRoute("teardown".into()))
         );
-        assert_eq!(
-            parse("punktfunk://connect/"),
-            Err(ParseError::MissingHostRef)
-        );
+        assert_eq!(parse("lilynk://connect/"), Err(ParseError::MissingHostRef));
         assert_eq!(
             parse(&format!(
-                "punktfunk://connect/{}",
+                "lilynk://connect/{}",
                 "n".repeat(MAX_HOST_REF_LEN + 1)
             )),
             Err(ParseError::ParamTooLong("host-ref"))
@@ -649,26 +646,26 @@ mod tests {
         let r = |url: &str| resolve_host(&parse(url).unwrap(), &known);
 
         assert_eq!(
-            r("punktfunk://connect/11111111-2222-4333-8444-555555555555"),
+            r("lilynk://connect/11111111-2222-4333-8444-555555555555"),
             HostResolution::Known(0)
         );
-        assert_eq!(r("punktfunk://connect/desk"), HostResolution::Confirm(0));
-        assert_eq!(r("punktfunk://connect/couch"), HostResolution::Ambiguous);
+        assert_eq!(r("lilynk://connect/desk"), HostResolution::Confirm(0));
+        assert_eq!(r("lilynk://connect/couch"), HostResolution::Ambiguous);
         assert_eq!(
-            r("punktfunk://connect/192.168.1.50"),
+            r("lilynk://connect/192.168.1.50"),
             HostResolution::Confirm(0)
         );
         assert_eq!(
-            r("punktfunk://connect/192.168.1.50:9777"),
+            r("lilynk://connect/192.168.1.50:9777"),
             HostResolution::Confirm(0)
         );
         assert_eq!(
-            r("punktfunk://connect/00000000-0000-4000-8000-000000000000?host=192.168.1.50"),
+            r("lilynk://connect/00000000-0000-4000-8000-000000000000?host=192.168.1.50"),
             HostResolution::Confirm(0)
         );
         assert_eq!(
             r(&format!(
-                "punktfunk://connect/10.0.0.9:7000?name=Studio&fp={fp}"
+                "lilynk://connect/10.0.0.9:7000?name=Studio&fp={fp}"
             )),
             HostResolution::Unknown {
                 addr: "10.0.0.9".into(),
@@ -678,7 +675,7 @@ mod tests {
             }
         );
         assert_eq!(
-            r("punktfunk://connect/nas.local"),
+            r("lilynk://connect/nas.local"),
             HostResolution::Unknown {
                 addr: "nas.local".into(),
                 port: DEFAULT_PORT,
@@ -688,17 +685,17 @@ mod tests {
         );
         // Stale record id is not a hostname; without `host=` there is nothing to dial.
         assert_eq!(
-            r("punktfunk://connect/00000000-0000-4000-8000-000000000000"),
+            r("lilynk://connect/00000000-0000-4000-8000-000000000000"),
             HostResolution::Unresolvable
         );
         assert_eq!(
-            r("punktfunk://connect/Basement%20PC"),
+            r("lilynk://connect/Basement%20PC"),
             HostResolution::Unresolvable
         );
 
-        let link = parse(&format!("punktfunk://connect/desk?fp={}", "b".repeat(64))).unwrap();
+        let link = parse(&format!("lilynk://connect/desk?fp={}", "b".repeat(64))).unwrap();
         assert!(link.pin_conflict(&known.hosts[0]));
-        assert!(!parse(&format!("punktfunk://connect/desk?fp={fp}"))
+        assert!(!parse(&format!("lilynk://connect/desk?fp={fp}"))
             .unwrap()
             .pin_conflict(&known.hosts[0]));
         // Empty stored pin: nothing to contradict.
@@ -719,17 +716,17 @@ mod tests {
         let r = |url: &str| resolve_host(&parse(url).unwrap(), &known);
 
         assert_eq!(
-            r("punktfunk://connect/11111111-2222-4333-8444-555555555555"),
+            r("lilynk://connect/11111111-2222-4333-8444-555555555555"),
             HostResolution::Known(0)
         );
         for guess in [
-            "punktfunk://connect/desk",
-            "punktfunk://connect/DESK",
-            "punktfunk://connect/192.168.1.50",
-            "punktfunk://connect/192.168.1.50:9777",
+            "lilynk://connect/desk",
+            "lilynk://connect/DESK",
+            "lilynk://connect/192.168.1.50",
+            "lilynk://connect/192.168.1.50:9777",
             // Extra params do not upgrade a guess to one-click.
-            "punktfunk://connect/desk?launch=steam:570",
-            "punktfunk://connect/00000000-0000-4000-8000-000000000000?host=192.168.1.50",
+            "lilynk://connect/desk?launch=steam:570",
+            "lilynk://connect/00000000-0000-4000-8000-000000000000?host=192.168.1.50",
         ] {
             assert_eq!(r(guess), HostResolution::Confirm(0), "{guess}");
         }
@@ -758,7 +755,7 @@ mod tests {
         };
         let r = |url: &str| resolve_host(&parse(url).unwrap(), &known);
 
-        let at = |fp: &str| format!("punktfunk://connect/192.168.1.50?fp={fp}");
+        let at = |fp: &str| format!("lilynk://connect/192.168.1.50?fp={fp}");
         assert_eq!(r(&at(&windows)), HostResolution::Confirm(0));
         assert_eq!(r(&at(&linux)), HostResolution::Confirm(1));
         assert_eq!(
@@ -773,7 +770,7 @@ mod tests {
         // A stale id recovering through `host=` lands on the pin's own record too.
         assert_eq!(
             r(&format!(
-                "punktfunk://connect/00000000-0000-4000-8000-000000000000\
+                "lilynk://connect/00000000-0000-4000-8000-000000000000\
                  ?host=192.168.1.50&fp={linux}"
             )),
             HostResolution::Confirm(1)
@@ -794,7 +791,7 @@ mod tests {
         let url = link.to_url();
         assert_eq!(
             url,
-            "punktfunk://connect/11111111-2222-4333-8444-555555555555\
+            "lilynk://connect/11111111-2222-4333-8444-555555555555\
              ?fp=cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc\
              &host=192.168.1.50:7777&launch=steam:570&preset=aaaaaaaaaaaa&profile=aaaaaaaaaaaa"
         );
@@ -814,7 +811,7 @@ mod tests {
             Some(url),
             "the store's record, wherever the screen last saw it"
         );
-        assert!(is_link_arg("PF://connect/Desk") && !is_link_arg("--pf://"));
+        assert!(is_link_arg("LY://connect/Desk") && !is_link_arg("--ly://"));
 
         // The desktop tile's NUL id would make the link unparseable: its link is the host's.
         let desktop = DeepLink::for_host(&h, Some(crate::library::DESKTOP_ID), None);
@@ -844,7 +841,7 @@ mod tests {
         };
         assert!(link
             .to_url()
-            .starts_with("punktfunk://connect/Wohnzimmer%20PC?"));
+            .starts_with("lilynk://connect/Wohnzimmer%20PC?"));
         assert_eq!(parse(&link.to_url()).unwrap(), link);
     }
 

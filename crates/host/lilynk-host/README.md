@@ -10,7 +10,7 @@ for the wire format, `ly-vdisplay` for the virtual outputs, `ly-capture`, `ly-en
 orchestration, the two protocol planes, the management API and the game library around them. Each
 module's `//!` is its own map; browse `src/` rather than trusting a list here.
 
-Two protocols from one process: `punktfunk/2` (QUIC on one UDP port, GF(2¹⁶) FEC + AES-GCM media)
+Two protocols from one process: `lilynk/2` (QUIC on one UDP port, GF(2¹⁶) FEC + AES-GCM media)
 is what a native client uses and always runs; `--gamestream` additionally serves stock Moonlight and
 is opt-in, trusted-LAN only.
 

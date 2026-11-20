@@ -1,10 +1,10 @@
 //! Native lilynk mDNS advert; [`crate::gamestream::mdns`] is the GameStream analogue.
 //!
-//! Type **`_punktfunk._udp.local.`** (UDP: the protocol is QUIC). Port is the QUIC
+//! Type **`_lilynk._udp.local.`** (UDP: the protocol is QUIC). Port is the QUIC
 //! control/data port a client `--connect`s. TXT:
 //!
-//! - `proto` — service id ([`NATIVE_PROTO`], `punktfunk/2`). The desktop and Android clients
-//!   drop an advert with another value, and 0.43 ones accept only `punktfunk/1`; the Apple
+//! - `proto` — service id ([`NATIVE_PROTO`], `lilynk/2`). The desktop and Android clients
+//!   drop an advert with another value, and 0.43 ones accept only `lilynk/1`; the Apple
 //!   client does not read it. `wire` names the protocols answered.
 //! - `fp` — host cert SHA-256 (lowercase hex). mDNS is unauthenticated, so this is advisory;
 //!   TOFU still verifies on connect.
@@ -26,7 +26,7 @@ use std::net::{IpAddr, Ipv4Addr};
 use std::sync::mpsc;
 use std::time::Duration;
 
-pub const NATIVE_SERVICE: &str = "_punktfunk._udp.local.";
+pub const NATIVE_SERVICE: &str = "_lilynk._udp.local.";
 
 /// The `LILYNK_MDNS` row. Default ON; off disables both native and GameStream adverts.
 /// CLI `--no-mdns` is the same knob. Multicast-dead environments (bridged Docker, CI netns)
@@ -35,7 +35,7 @@ pub(crate) fn mdns_enabled() -> bool {
     ly_host_config::row_bool("LILYNK_MDNS")
 }
 
-pub const NATIVE_PROTO: &str = "punktfunk/2";
+pub const NATIVE_PROTO: &str = "lilynk/2";
 
 /// A-record target (`<label>.local.`), not the service instance name. Instance may be free
 /// text (`LILYNK_HOST_NAME`); a host name may not. `mdns-sd` rejects the whole `ServiceInfo`
@@ -181,7 +181,7 @@ pub fn advertise_native(
         fixed.insert("os".into(), os_chain.to_string());
     }
     tracing::info!(
-        service = "_punktfunk._udp",
+        service = "_lilynk._udp",
         port,
         host = %host_name,
         pair = if require_pairing { "required" } else { "optional" },

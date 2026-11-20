@@ -7,7 +7,7 @@
 ///
 /// Windows maps semantic VKs through the foreground layout and positional VKs through a
 /// fixed table; mixing them swaps y/z on German layouts. Set by `gamestream::input::decode`.
-/// The punktfunk/1 ingest strips this bit from wire events.
+/// The lilynk/1 ingest strips this bit from wire events.
 pub const KEY_FLAG_SEMANTIC_VK: u32 = 0x8000_0000;
 
 /// Win32 `VK_PAUSE`. Shares set-1 scan 0x45 with NumLock; SendInput uses `wVk` (E1, not E0).

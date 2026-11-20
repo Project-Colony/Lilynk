@@ -33,7 +33,7 @@ const MAX_NAME_CHARS: usize = 64;
 const MAX_RSA_KEY_BYTES: usize = 600;
 const MAX_SIGNATURE_BYTES: usize = 1024;
 /// What a key proof signs first; the multi-seat contract page lists the whole message.
-const CONTEXT: &[u8; 24] = b"punktfunk-seat-unlock-v1";
+const CONTEXT: &[u8; 24] = b"lilynk-seat-unlock-msg-1";
 
 /// A person's row's devices, as `devices.json` holds them.
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -468,7 +468,7 @@ mod tests {
         let digest = aws_lc_rs::digest::digest(&aws_lc_rs::digest::SHA256, &signed);
         assert_eq!(
             hex::encode(digest.as_ref()),
-            "31de46821f3058729b14c3585ad13159085ecb0d18c87194a34b1bddc8ddc31a"
+            "70c89c17d9a34295d3cb6f6ebc2336daef54ee2fda37957eac2b0cb81396b089"
         );
     }
 

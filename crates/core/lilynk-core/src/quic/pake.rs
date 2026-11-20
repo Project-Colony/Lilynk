@@ -74,8 +74,8 @@ impl PairingPake {
             .finish(peer_msg)
             .map_err(|_| LilynkError::Crypto)?;
         Ok(Confirmations {
-            host: confirm(&key, b"punktfunk-pair-host", &self.transcript),
-            client: confirm(&key, b"punktfunk-pair-client", &self.transcript),
+            host: confirm(&key, b"lilynk-pair-host", &self.transcript),
+            client: confirm(&key, b"lilynk-pair-client", &self.transcript),
         })
     }
 }

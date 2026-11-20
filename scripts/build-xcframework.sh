@@ -6,7 +6,7 @@
 #
 # Output: clients/apple/LilynkCore.xcframework (consumed by clients/apple/Package.swift).
 # The library is clients/apple/native: the C ABI (lilynk-ffi) WITH the `quic` feature (the
-# punktfunk/1 connection API), so the bundled header gets LILYNK_FEATURE_QUIC pre-defined, plus
+# lilynk/1 connection API), so the bundled header gets LILYNK_FEATURE_QUIC pre-defined, plus
 # the Skia console (`lilynk_console.h`).
 set -euo pipefail
 cd "$(dirname "$0")/.."

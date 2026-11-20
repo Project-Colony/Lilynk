@@ -96,7 +96,7 @@ final class ClipboardFormatsTests: XCTestCase {
         // than failing the whole paste.
         let kinds = [
             LilynkConnection.ClipKind(mime: "text/plain;charset=utf-8"),
-            LilynkConnection.ClipKind(mime: "application/x-punktfunk-files"),
+            LilynkConnection.ClipKind(mime: "application/x-lilynk-files"),
             LilynkConnection.ClipKind(mime: "image/png"),
         ]
         XCTAssertEqual(
@@ -108,7 +108,7 @@ final class ClipboardFormatsTests: XCTestCase {
             XCTAssertEqual(ClipboardFormats.uti(forWire: wire), uti)
             XCTAssertEqual(ClipboardFormats.wire(forUti: uti), wire)
         }
-        XCTAssertNil(ClipboardFormats.uti(forWire: "application/x-punktfunk-files"))
+        XCTAssertNil(ClipboardFormats.uti(forWire: "application/x-lilynk-files"))
         XCTAssertNil(ClipboardFormats.wire(forUti: "public.tiff"))
     }
 

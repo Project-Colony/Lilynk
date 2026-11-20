@@ -1,5 +1,5 @@
 // swift-tools-version: 5.9
-// LilynkKit — Swift wrapper around the lilynk-core C ABI (punktfunk/1 client connector) plus the
+// LilynkKit — Swift wrapper around the lilynk-core C ABI (lilynk/1 client connector) plus the
 // SwiftUI/VideoToolbox presentation layer. Build LilynkCore.xcframework first:
 //   bash ../../scripts/build-xcframework.sh   (on a Mac; see README.md)
 import PackageDescription

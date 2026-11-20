@@ -533,7 +533,7 @@ impl PlaneFormat {
             },
             redundancy = budget.redundancy && opus,
             layout = ?plane.layout,
-            "punktfunk/1 audio streaming"
+            "lilynk/1 audio streaming"
         );
     }
 }
@@ -775,7 +775,7 @@ impl WireEnc {
 type PartEncoder = fn(u32, u64, u8, u8, &[u8]) -> Vec<u8>;
 
 /// `unit` as `encode`'s parts of near-equal size into `out`, each with `seq` and `pts_ns`.
-/// `max_datagram` is net of the `punktfunk/2` kind byte ([`super::link::SessionLink`] takes
+/// `max_datagram` is net of the `lilynk/2` kind byte ([`super::link::SessionLink`] takes
 /// it off). `false` when 15 parts cannot carry it.
 fn split_unit(
     encode: PartEncoder,
@@ -1530,7 +1530,7 @@ mod tests {
             (server, conn)
         });
         let client = endpoint::client_insecure().unwrap();
-        let _client_conn = client.connect(addr, "punktfunk").unwrap().await.unwrap();
+        let _client_conn = client.connect(addr, "lilynk").unwrap().await.unwrap();
         let (_server, conn) = accept.await.unwrap();
         let sender = conn.clone();
         let socket = Arc::new(std::net::UdpSocket::bind("127.0.0.1:0").unwrap());

@@ -513,7 +513,7 @@ impl ConnectPlan {
 pub enum PlanOutcome {
     Connect(Box<ConnectPlan>),
     /// Same plan, but the link named the host by a guessable label, address, or `host=`.
-    /// `x-scheme-handler/punktfunk` lets any page emit that, so the front-end asks first.
+    /// `x-scheme-handler/lilynk` lets any page emit that, so the front-end asks first.
     /// Not [`PlanOutcome::ConfirmUnknown`]: this host is saved and pinned; pairing would
     /// drop the pin.
     ConfirmConnect(Box<ConnectPlan>),
@@ -563,7 +563,7 @@ impl PlanError {
     }
 }
 
-/// Plan from a `punktfunk://` link against this device's stores. Shared URL-router
+/// Plan from a `lilynk://` link against this device's stores. Shared URL-router
 /// half (`design/client-architecture-split.md`): no pairing, no silent trust, no
 /// dial on a guessable reference — only the stable record id yields
 /// [`PlanOutcome::Connect`]; a name or address yields [`PlanOutcome::ConfirmConnect`].
@@ -1943,7 +1943,7 @@ mod tests {
         let plan =
             |url: &str| plan_from_link(&deeplink::parse(url).unwrap(), &known, &catalog, &base);
 
-        let out = plan("punktfunk://connect/11111111-2222-4333-8444-555555555555").unwrap();
+        let out = plan("lilynk://connect/11111111-2222-4333-8444-555555555555").unwrap();
         match out {
             PlanOutcome::Connect(p) => {
                 assert_eq!(p.host.addr, "192.168.1.50");
@@ -1955,42 +1955,42 @@ mod tests {
 
         // Same host named by its label: any page can guess that, so the shell must ask.
         // Not ConfirmUnknown — that would re-run pairing on an already-pinned host.
-        match plan("punktfunk://connect/Desk").unwrap() {
+        match plan("lilynk://connect/Desk").unwrap() {
             PlanOutcome::ConfirmConnect(p) => {
                 assert_eq!(p.host.addr, "192.168.1.50");
                 assert!(p.host.pin().is_some());
             }
             other => panic!("expected a confirm-connect, got {other:?}"),
         }
-        match plan("punktfunk://connect/192.168.1.50?launch=steam:570").unwrap() {
+        match plan("lilynk://connect/192.168.1.50?launch=steam:570").unwrap() {
             PlanOutcome::ConfirmConnect(p) => assert_eq!(p.launch.as_deref(), Some("steam:570")),
             other => panic!("expected a confirm-connect, got {other:?}"),
         }
 
         assert_eq!(
-            plan(&format!("punktfunk://connect/Desk?fp={}", "b".repeat(64))),
+            plan(&format!("lilynk://connect/Desk?fp={}", "b".repeat(64))),
             Err(PlanError::PinConflict {
                 host: "Desk".into()
             })
         );
         assert_eq!(
-            plan("punktfunk://connect/Couch"),
+            plan("lilynk://connect/Couch"),
             Err(PlanError::AmbiguousHost("Couch".into()))
         );
         assert_eq!(
-            plan("punktfunk://connect/00000000-0000-4000-8000-000000000000"),
+            plan("lilynk://connect/00000000-0000-4000-8000-000000000000"),
             Err(PlanError::UnresolvableHost(
                 "00000000-0000-4000-8000-000000000000".into()
             ))
         );
         assert_eq!(
-            plan("punktfunk://connect/Desk?profile=NoSuchProfile"),
+            plan("lilynk://connect/Desk?profile=NoSuchProfile"),
             Err(PlanError::UnknownPreset("NoSuchProfile".into()))
         );
         // Unknown address: confirmation sheet, never auto-connect. Carries the claimed
         // name and expected pin so the first connect is verified, not TOFU.
         match plan(&format!(
-            "punktfunk://connect/10.0.0.9:7000?name=Studio&fp={fp}"
+            "lilynk://connect/10.0.0.9:7000?name=Studio&fp={fp}"
         ))
         .unwrap()
         {
@@ -2009,7 +2009,7 @@ mod tests {
             other => panic!("expected a confirmation, got {other:?}"),
         }
         // Saved but never pinned: known ≠ trusted.
-        match plan("punktfunk://connect/192.168.1.60").unwrap() {
+        match plan("lilynk://connect/192.168.1.60").unwrap() {
             PlanOutcome::ConfirmUnknown(u) => {
                 assert_eq!(u.addr, "192.168.1.60");
                 assert_eq!(u.name.as_deref(), Some("Couch"));
@@ -2017,7 +2017,7 @@ mod tests {
             other => panic!("expected a confirmation, got {other:?}"),
         }
         assert!(matches!(
-            plan("punktfunk://wake/Desk").unwrap(),
+            plan("lilynk://wake/Desk").unwrap(),
             PlanOutcome::Unsupported(Route::Wake)
         ));
     }
@@ -2036,8 +2036,8 @@ mod tests {
         };
         let (catalog, base) = (PresetsFile::default(), Settings::default());
         for url in [
-            "punktfunk://connect/10.0.0.9:7000?as=Kid",
-            "punktfunk://connect/192.168.1.60?as=Kid",
+            "lilynk://connect/10.0.0.9:7000?as=Kid",
+            "lilynk://connect/192.168.1.60?as=Kid",
         ] {
             let link = deeplink::parse(url).unwrap();
             match plan_from_link(&link, &known, &catalog, &base).unwrap() {

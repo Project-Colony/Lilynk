@@ -73,7 +73,7 @@ struct FrameBuf {
     block_count: usize,
     pts_ns: u64,
     user_flags: u32,
-    /// Config generation (`punktfunk/2`); every packet of the frame carries the same.
+    /// Config generation (`lilynk/2`); every packet of the frame carries the same.
     epoch: u8,
     /// Leading blocks already handed up as slice-progressive prefix parts.
     next_part_block: u16,

@@ -241,8 +241,8 @@ describe("a person's calls", () => {
 		const toBox = boxCalls.at(-1);
 		expect(toBox?.authorization).toBeNull();
 		expect(toBox?.cookie).toBeNull();
-		expect(toBox?.headers["x-punktfunk-person-session"]).toBe(seatSays.token);
-		expect(toBox?.headers["x-punktfunk-person-profile"]).toBe(PROFILE);
+		expect(toBox?.headers["x-lilynk-person-session"]).toBe(seatSays.token);
+		expect(toBox?.headers["x-lilynk-person-profile"]).toBe(PROFILE);
 		expect(new URLSearchParams(toBox?.search).getAll("as")).toEqual([PROFILE]);
 		expect(new URLSearchParams(toBox?.search).get("limit")).toBe("5");
 

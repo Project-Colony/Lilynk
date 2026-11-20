@@ -1,6 +1,6 @@
 [package]
 name = "lilynk-client-linux"
-description = "Native Linux punktfunk/1 client — GTK4/libadwaita shell, PipeWire audio, SDL3 gamepads; streaming runs in the spawned lilynk-session binary"
+description = "Native Linux lilynk/1 client — GTK4/libadwaita shell, PipeWire audio, SDL3 gamepads; streaming runs in the spawned lilynk-session binary"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true

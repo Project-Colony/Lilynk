@@ -1,7 +1,7 @@
 # latency-probe
 
 **Glass-to-glass latency**, measured photon to photon with `glass-timer.html` and a camera. There is
-no binary here. For per-frame capture→…→reassembled percentiles over a real `punktfunk/1` session,
+no binary here. For per-frame capture→…→reassembled percentiles over a real `lilynk/1` session,
 use the [`probe`](../../clients/probe/README.md) client.
 
 Companion to [`loss-harness`](../loss-harness/README.md) (FEC loss sweep).

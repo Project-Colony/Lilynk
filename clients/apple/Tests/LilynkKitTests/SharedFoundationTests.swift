@@ -2,7 +2,7 @@
 // deep-link senders (readers). These pin the formats that cross that boundary:
 //   • the `StoredHost` JSON codec — the widget decodes the exact bytes the app persisted, and
 //     older saved JSON (missing `mgmtPort` / `macAddresses` / `presetID`) must still decode;
-//   • the `punktfunk://` deep-link grammar — driven by `clients/shared/deeplink-vectors.json`,
+//   • the `lilynk://` deep-link grammar — driven by `clients/shared/deeplink-vectors.json`,
 //     the SAME file the Rust suite runs, so the two parsers cannot drift into two security
 //     postures;
 //   • the settings-preset catalog — including the don't-clobber rule that keeps an older build
@@ -222,7 +222,7 @@ final class SharedFoundationTests: XCTestCase {
         let link = DeepLink.browse(host: id)
         XCTAssertEqual(link.route, .browse)
         XCTAssertEqual(
-            link.urlString, "punktfunk://browse/11111111-2222-4333-8444-555555555555")
+            link.urlString, "lilynk://browse/11111111-2222-4333-8444-555555555555")
         XCTAssertEqual(try DeepLink(url: link.url), link)
     }
 
@@ -236,7 +236,7 @@ final class SharedFoundationTests: XCTestCase {
         let link = DeepLink.forHost(host, launch: "steam:570", preset: "aaaaaaaaaaaa")
         XCTAssertEqual(
             link.urlString,
-            "punktfunk://connect/11111111-2222-4333-8444-555555555555"
+            "lilynk://connect/11111111-2222-4333-8444-555555555555"
                 + "?fp=cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
                 + "&host=192.168.1.50:7777&launch=steam:570&preset=aaaaaaaaaaaa"
                 + "&profile=aaaaaaaaaaaa")
@@ -259,36 +259,36 @@ final class SharedFoundationTests: XCTestCase {
         }
 
         XCTAssertEqual(
-            try resolve("punktfunk://connect/11111111-2222-4333-8444-555555555555"), .known(desk))
+            try resolve("lilynk://connect/11111111-2222-4333-8444-555555555555"), .known(desk))
         // The id is a UUID nothing can guess; a display name and a LAN address are guesses any web
         // page can make. So the id — and only the id — dials unattended; everything else that finds
         // a saved host stops at the confirmation.
-        XCTAssertEqual(try resolve("punktfunk://connect/desk"), .confirm(desk))
-        XCTAssertEqual(try resolve("punktfunk://connect/DESK"), .confirm(desk))
-        XCTAssertEqual(try resolve("punktfunk://connect/couch"), .ambiguous)
-        XCTAssertEqual(try resolve("punktfunk://connect/192.168.1.50:9777"), .confirm(desk))
+        XCTAssertEqual(try resolve("lilynk://connect/desk"), .confirm(desk))
+        XCTAssertEqual(try resolve("lilynk://connect/DESK"), .confirm(desk))
+        XCTAssertEqual(try resolve("lilynk://connect/couch"), .ambiguous)
+        XCTAssertEqual(try resolve("lilynk://connect/192.168.1.50:9777"), .confirm(desk))
         XCTAssertEqual(
-            try resolve("punktfunk://connect/desk?launch=steam:570"), .confirm(desk))
+            try resolve("lilynk://connect/desk?launch=steam:570"), .confirm(desk))
         // A stale id with the recovery parameter: the address finds the record anyway — and, being
         // an address, behind the confirmation.
         XCTAssertEqual(
             try resolve(
-                "punktfunk://connect/00000000-0000-4000-8000-000000000000?host=192.168.1.50"),
+                "lilynk://connect/00000000-0000-4000-8000-000000000000?host=192.168.1.50"),
             .confirm(desk))
         // Nothing local matches: the sheet gets the address, the claimed name and the pin — which
         // is what makes a first connect verified rather than blind trust-on-first-use.
         XCTAssertEqual(
-            try resolve("punktfunk://connect/10.0.0.9:7000?name=Studio"),
+            try resolve("lilynk://connect/10.0.0.9:7000?name=Studio"),
             .unknown(address: "10.0.0.9", port: 7000, name: "Studio", fp: nil))
         // But a stale record id is not a hostname: without `host=` there is nothing to dial.
         XCTAssertEqual(
-            try resolve("punktfunk://connect/00000000-0000-4000-8000-000000000000"), .unresolvable)
-        XCTAssertEqual(try resolve("punktfunk://connect/Basement%20PC"), .unresolvable)
+            try resolve("lilynk://connect/00000000-0000-4000-8000-000000000000"), .unresolvable)
+        XCTAssertEqual(try resolve("lilynk://connect/Basement%20PC"), .unresolvable)
 
         // A pin that contradicts the stored one is the link lying — the caller hard-refuses.
-        let lying = try DeepLink.parse("punktfunk://connect/desk?fp=\(String(repeating: "b", count: 64))")
+        let lying = try DeepLink.parse("lilynk://connect/desk?fp=\(String(repeating: "b", count: 64))")
         XCTAssertTrue(lying.pinConflict(with: desk))
-        let honest = try DeepLink.parse("punktfunk://connect/desk?fp=\(String(repeating: "a", count: 64))")
+        let honest = try DeepLink.parse("lilynk://connect/desk?fp=\(String(repeating: "a", count: 64))")
         XCTAssertFalse(honest.pinConflict(with: desk))
         // No pin stored → nothing to contradict; the trust flow runs as usual.
         XCTAssertFalse(lying.pinConflict(with: couchA))
@@ -304,7 +304,7 @@ final class SharedFoundationTests: XCTestCase {
             name: "Desk (Linux)", address: "192.168.1.50",
             pinnedSHA256: Data(repeating: 0xBB, count: 32))
         func resolve(_ fp: String) throws -> DeepLink.HostResolution {
-            try DeepLink.parse("punktfunk://connect/192.168.1.50:9777?fp=\(fp)")
+            try DeepLink.parse("lilynk://connect/192.168.1.50:9777?fp=\(fp)")
                 .resolveHost(in: [windows, linux])
         }
         XCTAssertEqual(try resolve(String(repeating: "a", count: 64)), .confirm(windows))

@@ -79,7 +79,7 @@
 	"setup_phase_checking": "Verifica",
 	"setup_verify_running": "lilynk-host è in esecuzione",
 	"setup_verify_not_active": "lilynk-host non è attivo — journalctl --user -u lilynk-host -e ({url})",
-	"setup_verify_listening": "In ascolto su UDP 9777 (punktfunk/2)",
+	"setup_verify_listening": "In ascolto su UDP 9777 (lilynk/2)",
 	"setup_verify_not_listening": "Ancora nulla su UDP 9777 — aspetta un secondo, poi: journalctl --user -u lilynk-host -e",
 	"setup_nvidia_no_driver": "GPU NVIDIA senza il driver NVIDIA — nulla può codificare finché non viene installato: passaggio 1 di {url}",
 	"setup_nvidia_no_module": "GPU NVIDIA, ma nvidia-smi non riesce a comunicare con il driver — il modulo del kernel non è stato caricato (Secure Boot? esegui: mokutil --sb-state): {url}",

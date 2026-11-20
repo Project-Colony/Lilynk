@@ -24,7 +24,7 @@ pub mod audio_vitals;
 // video path. rtkit / Realtime portal on Linux, MMCSS on Windows.
 #[cfg(desktop)]
 pub mod audio_rt;
-// mDNS browse of `_punktfunk._udp`. Android folds the same events behind its JNI poll.
+// mDNS browse of `_lilynk._udp`. Android folds the same events behind its JNI poll.
 #[cfg(all(
     feature = "discovery",
     any(
@@ -88,7 +88,7 @@ pub mod display_targets;
 // Android posts via OkHttp (`SendLogs`).
 #[cfg(portable)]
 pub mod logring;
-// `punktfunk://` grammar (`design/client-deep-links.md`). One parser/emitter, held to the Swift/Kotlin ports by a shared vector file.
+// `lilynk://` grammar (`design/client-deep-links.md`). One parser/emitter, held to the Swift/Kotlin ports by a shared vector file.
 #[cfg(portable)]
 pub mod deeplink;
 // Where a bare launch opens (`design/default-host.md`). One resolver, held to the Swift/Kotlin ports by a shared vector file.

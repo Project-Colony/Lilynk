@@ -18,9 +18,9 @@ use std::sync::Mutex;
 use std::time::{Duration, Instant};
 
 /// The session token on a call the console sends the box for a person.
-pub(crate) const SESSION_HEADER: &str = "x-punktfunk-person-session";
+pub(crate) const SESSION_HEADER: &str = "x-lilynk-person-session";
 /// The profile that session is for.
-pub(crate) const PROFILE_HEADER: &str = "x-punktfunk-person-profile";
+pub(crate) const PROFILE_HEADER: &str = "x-lilynk-person-profile";
 
 /// The longest a session lives. It also ends with the host and on `DELETE`.
 const SESSION_TTL: Duration = Duration::from_secs(12 * 60 * 60);
@@ -176,7 +176,7 @@ pub(crate) enum Refused {
 #[derive(Serialize, ToSchema)]
 pub(crate) struct PersonGrant {
     /// Present as `Authorization: Bearer <token>` to this seat host, or as
-    /// `X-Punktfunk-Person-Session` to the box. 64 lowercase hex.
+    /// `X-Lilynk-Person-Session` to the box. 64 lowercase hex.
     pub(crate) token: String,
     /// Unix seconds; it ends sooner when this host stops or the session is closed.
     pub(crate) expires_at: i64,

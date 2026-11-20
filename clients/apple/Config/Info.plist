@@ -24,7 +24,7 @@
 	</array>
 	<key>NSBonjourServices</key>
 	<array>
-		<string>_punktfunk._udp</string>
+		<string>_lilynk._udp</string>
 	</array>
 	<!-- CoreBluetooth: the Steam Controller 2 as-is passthrough (Sc2BleLink) reads an OS-paired
 	     SC2's custom Valve GATT service, on all three app targets. Both keys so older iOS
@@ -61,7 +61,7 @@
 	     (SafeDisplay.coversHousing), which is the audit this key asserts. -->
 	<key>NSPrefersDisplaySafeAreaCompatibilityMode</key>
 	<false/>
-	<!-- Deep links: punktfunk://connect/<host-uuid>[?launch=<GameEntry.id>]. Emitted by the
+	<!-- Deep links: lilynk://connect/<host-uuid>[?launch=<GameEntry.id>]. Emitted by the
 	     launcher widget and Siri/Shortcuts; routed by ContentView.onOpenURL into the existing
 	     connect path. Shared across all three targets (tvOS/macOS accept it harmlessly). -->
 	<key>CFBundleURLTypes</key>
@@ -71,7 +71,7 @@
 			<string>org.projectcolony.lilynk.deeplink</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>punktfunk</string>
+				<string>lilynk</string>
 			</array>
 		</dict>
 	</array>

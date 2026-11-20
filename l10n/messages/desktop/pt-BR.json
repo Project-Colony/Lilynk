@@ -27,7 +27,7 @@
 	"desktop_hostcard_remove_failed": "Não foi possível remover o host — {reason}",
 	"desktop_hostcard_create_shortcut": "Criar atalho…",
 	"desktop_hostcard_create_shortcut_hint": "Uma entrada no menu de aplicativos que conecta a este host",
-	"desktop_hostcard_copy_link_hint": "Um link punktfunk:// que conecta a este host",
+	"desktop_hostcard_copy_link_hint": "Um link lilynk:// que conecta a este host",
 	"desktop_shortcut_title": "Criar atalho",
 	"desktop_shortcut_sandboxed_body": "O Lilynk roda em um sandbox aqui, então não consegue adicionar o atalho sozinho. Copie este link e crie um atalho para ele — ele abre a mesma transmissão.",
 	"desktop_shortcut_added_body": "Atalho para “{name}” adicionado aos seus aplicativos",

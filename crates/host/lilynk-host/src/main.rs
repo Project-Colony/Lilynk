@@ -823,7 +823,7 @@ LILYNK1-HOST OPTIONS:
     --pairing-pin <PIN>          fixed pairing PIN instead of the random per-ceremony one — for
                                  test harnesses/CI (deterministic `probe --pair`); do not use on
                                  a real LAN (a guessable PIN defeats the ceremony's rate limit)
-    --no-mdns                    skip the _punktfunk._udp mDNS advert (multicast-dead environments;
+    --no-mdns                    skip the _lilynk._udp mDNS advert (multicast-dead environments;
                                  clients use --connect HOST:PORT). Also LILYNK_MDNS=0
 
 SPIKE OPTIONS:
@@ -854,7 +854,7 @@ NOTES:
     Encoded AUs are written to a playable file AND (unless --no-loopback) fed through a
     lilynk_core host→client loopback that reassembles and byte-verifies each one.
     Both 'serve' and 'lilynk1-host' advertise the native service over mDNS
-    (_punktfunk._udp) for client auto-discovery — 'lilynk-probe --discover' lists them."
+    (_lilynk._udp) for client auto-discovery — 'lilynk-probe --discover' lists them."
     );
     windows::entry::print_usage();
 }

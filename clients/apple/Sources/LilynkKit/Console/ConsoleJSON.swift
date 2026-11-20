@@ -205,7 +205,7 @@ public enum ConsoleJSON {
         string(["id": id, "title": title, "message": message, "choices": choices])
     }
 
-    /// `KnownHosts` — what the console needs to build a `punktfunk://` link.
+    /// `KnownHosts` — what the console needs to build a `lilynk://` link.
     public static func knownHosts(_ saved: [StoredHost]) -> String {
         string([
             "hosts": saved.map { host in

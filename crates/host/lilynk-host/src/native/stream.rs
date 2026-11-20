@@ -1,4 +1,4 @@
-//! Native `punktfunk/1` capture→encode→send data plane.
+//! Native `lilynk/1` capture→encode→send data plane.
 //!
 //! Owns the synthetic and software protocol-test sources, speed-test probes, the paced submit,
 //! and [`SessionContext`], the per-session inputs `serve_session` hands to [`virtual_stream`],

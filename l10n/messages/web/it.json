@@ -298,13 +298,13 @@
 			"n=*": "Dissociare tutti i {count} dispositivi?"
 		}
 	}],
-	"pairing_native_unpair_all_body": "Ogni dispositivo associato — punktfunk/2 e Moonlight — dovrà essere associato di nuovo per connettersi, e tutto ciò che è in streaming ora viene disconnesso.",
+	"pairing_native_unpair_all_body": "Ogni dispositivo associato — lilynk/2 e Moonlight — dovrà essere associato di nuovo per connettersi, e tutto ciò che è in streaming ora viene disconnesso.",
 	"pairing_knock_title": "Un dispositivo vuole associarsi",
 	"pairing_knock_desc": "{name} è in attesa di approvazione.",
 	"pairing_knock_action": "Rivedi",
 	"pairing_native_unpair_all_failed": "Impossibile dissociare alcuni dispositivi",
 	"pairing_native_unpair_failed": "Impossibile dissociare {name}",
-	"pairing_protocol_native": "punktfunk/2",
+	"pairing_protocol_native": "lilynk/2",
 	"pairing_protocol_moonlight": "Moonlight",
 	"pairing_pending_title": "In attesa di approvazione",
 	"pairing_pending_approve": "Approva",

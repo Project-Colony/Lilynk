@@ -69,7 +69,7 @@ pub const RFI_MAX_RANGE: u32 = 256;
 pub const MAX_DATAGRAM_BYTES: usize = 9216;
 
 /// One packet's place in its frame, as the packetizer emits it and [`decode_v2`] reads it
-/// back. Not a wire layout: [`encode_v2`] writes the `punktfunk/2` header from it.
+/// back. Not a wire layout: [`encode_v2`] writes the `lilynk/2` header from it.
 ///
 /// `block_count == 0` marks a sentinel: a non-last block of a frame whose size is not known
 /// yet. Its `frame_bytes` is the block's byte base under [`USER_FLAG_SLICE_STREAM`], else `0`.

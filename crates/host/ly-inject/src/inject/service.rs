@@ -1,7 +1,7 @@
 //! Off-thread pointer/keyboard injector plus the pre-injection [`coalesce`] pass.
 //!
 //! The backend owns non-`Send` compositor state (Wayland / xkb / EIS), so it lives on one thread
-//! and is fed over a clonable `Send` channel. GameStream and native punktfunk/1 both forward
+//! and is fed over a clonable `Send` channel. GameStream and native lilynk/1 both forward
 //! decoded input here instead of injecting inline.
 
 use super::*;

@@ -44,11 +44,11 @@ struct ContentView: View {
     /// The window is in a fullscreen THIS app drove it into (FullscreenController owns it).
     @State private var appDrivenFullscreen = false
     @State private var showAddHost = false
-    /// A `punktfunk://` deep link (widget / Siri / Shortcuts) couldn't be honored — unknown host, or
+    /// A `lilynk://` deep link (widget / Siri / Shortcuts) couldn't be honored — unknown host, or
     /// a live session is already up. Surfaced as an informational alert (distinct from the
     /// "Connection failed" one, which is for actual connect errors).
     @State private var deepLinkNotice: String?
-    /// A `punktfunk://` deep link that named a saved host by something GUESSABLE — its display
+    /// A `lilynk://` deep link that named a saved host by something GUESSABLE — its display
     /// name, its address, or the `host=` recovery parameter — instead of by its stable record id.
     /// Anything that can open a URL can guess "Gaming PC", so the link's action waits for this
     /// confirmation; a link that names the id (every shortcut this app emits) still runs on its own.
@@ -450,7 +450,7 @@ struct ContentView: View {
             model.disconnect(deliberate: true)
         }
         #endif
-        // Connect App Intent (Siri/Shortcuts/Spotlight): route its punktfunk:// URL through the
+        // Connect App Intent (Siri/Shortcuts/Spotlight): route its lilynk:// URL through the
         // same handler a widget tap uses. NOT iOS-gated — the Connect intent compiles on macOS and
         // tvOS too, and an intent that posts to nobody would be a shortcut that silently does
         // nothing.
@@ -758,7 +758,7 @@ struct ContentView: View {
             activeHostName: model.activeHost?.displayName)
     }
 
-    /// Route a `punktfunk://` deep link into the existing connect path — the whole §2 grammar
+    /// Route a `lilynk://` deep link into the existing connect path — the whole §2 grammar
     /// (design/client-deep-links.md): a stable id, a unique host name or an `addr[:port]`, with
     /// `fp`/`host` recovery parameters and a one-off `preset`.
     ///
@@ -820,7 +820,7 @@ struct ContentView: View {
         }
     }
 
-    /// `punktfunk://browse/<host-ref>` — jump into a host's game library. Drives the SAME
+    /// `lilynk://browse/<host-ref>` — jump into a host's game library. Drives the SAME
     /// `libraryTarget` every internal surface writes, so the link lands in whichever presentation
     /// the current mode owns: the gamepad console's in-place library screen, the touch cover, the
     /// macOS sheet, or tvOS's cover. Connect's posture minus the connect itself: a pin conflict

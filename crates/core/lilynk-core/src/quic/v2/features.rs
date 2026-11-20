@@ -1,6 +1,6 @@
 //! The capability bitset: bit `n` is bit `n % 8` of byte `n / 8`, trailing zero bytes dropped.
 //!
-//! Bits 0–31 are the four `punktfunk/1` capability bytes in place
+//! Bits 0–31 are the four `lilynk/1` capability bytes in place
 //! ([`FEATURE_V1_VIDEO_CAPS`](super::registry::FEATURE_V1_VIDEO_CAPS) and its neighbours), so
 //! core maps between the wires exactly and embedders keep setting the bytes they set today.
 //! A reader keeps the first 128 bits and ignores the rest: a bit it does not know is a feature it
@@ -50,7 +50,7 @@ impl FeatureSet {
         FeatureSet(u128::from_le_bytes(w))
     }
 
-    /// A client's set from its `punktfunk/1` capability bytes.
+    /// A client's set from its `lilynk/1` capability bytes.
     pub fn client(video_caps: u8, client_caps: u8) -> FeatureSet {
         FeatureSet(
             u128::from(video_caps) << FEATURE_V1_VIDEO_CAPS
@@ -58,7 +58,7 @@ impl FeatureSet {
         )
     }
 
-    /// A host's set from its `punktfunk/1` capability bytes.
+    /// A host's set from its `lilynk/1` capability bytes.
     pub fn host(host_caps: u8, host_caps2: u8) -> FeatureSet {
         FeatureSet(
             u128::from(host_caps) << FEATURE_V1_HOST_CAPS

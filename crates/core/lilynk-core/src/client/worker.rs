@@ -86,9 +86,9 @@ pub(crate) struct ClientShared {
     /// The demux thread's counters for that socket: its full queue drops packets here too.
     pub(crate) demux: Mutex<Option<Arc<crate::transport::shared::SharedStats>>>,
     /// The address the host's packets arrive at, where `data_sock` is unconnected
-    /// (`punktfunk/2`'s shared socket) and its own address names no interface.
+    /// (`lilynk/2`'s shared socket) and its own address names no interface.
     pub(crate) local_ip: Mutex<Option<std::net::IpAddr>>,
-    /// The `punktfunk/2` session id the host issued, kept for a resume if the link is lost.
+    /// The `lilynk/2` session id the host issued, kept for a resume if the link is lost.
     pub(crate) v2_session: Mutex<Option<[u8; 16]>>,
     /// Moves [`Self::mode`] at the first frame of each configured epoch, and books each
     /// epoch's video format.

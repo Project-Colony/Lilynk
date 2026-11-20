@@ -13,7 +13,7 @@ use crate::profiles::{Opens, OsAccount, Profile, Profiles};
 pub(crate) use lilynk_core::mgmt_routes::person_route;
 
 /// The profile the door names a vouched device the person of.
-pub(crate) const VOUCH_HEADER: &str = "x-punktfunk-person";
+pub(crate) const VOUCH_HEADER: &str = "x-lilynk-person";
 
 /// The profile the door vouches the device is the person of. `require_auth` stamps it only on
 /// the owner's host ([`takes_vouch`]), with that host's own token, on a [`person_route`].

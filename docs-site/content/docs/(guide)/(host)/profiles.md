@@ -244,7 +244,7 @@ The controller interface asks on every connect instead:
 
 Elsewhere:
 
-- A [`punktfunk://` link's `as=`](/docs/presets-and-links) or the command line's
+- A [`lilynk://` link's `as=`](/docs/presets-and-links) or the command line's
   [`--as`](/docs/clients#scripting-the-lilynk-cli) plays as a profile for one connect.
 - The [Decky plugin](/docs/steam-deck) shows one chip per profile under the host.
 - [Moonlight](/docs/moonlight) and the other clients play as the owner.

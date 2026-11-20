@@ -157,7 +157,7 @@ fun RequestAccessPrompt(
 }
 
 /**
- * A `punktfunk://` link that named a saved host by its label or its address rather than by its
+ * A `lilynk://` link that named a saved host by its label or its address rather than by its
  * stable id: both are guessable, and the activity is exported, so the dial happens on the user's
  * tap instead of on the link's say-so. A link that names the id — every shortcut Lilynk itself
  * emits — never reaches this prompt.

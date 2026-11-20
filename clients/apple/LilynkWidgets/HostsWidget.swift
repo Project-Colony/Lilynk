@@ -1,6 +1,6 @@
 // Home-Screen / Lock-Screen quick-launch widget (kind "LilynkHosts"). Reads the saved-host
 // store from the shared App-Group suite, sorts most-recent-first, and deep-links each host into a
-// session via `punktfunk://connect/<uuid>` — the app's onOpenURL routes it through the normal
+// session via `lilynk://connect/<uuid>` — the app's onOpenURL routes it through the normal
 // connect path (trust policy / WoL / approval all apply).
 //
 // No reachability probing (a UDP check has no place in a timeline build; WoL handles offline

@@ -27,7 +27,7 @@
 	"desktop_hostcard_remove_failed": "Der Host konnte nicht entfernt werden – {reason}",
 	"desktop_hostcard_create_shortcut": "Verknüpfung erstellen…",
 	"desktop_hostcard_create_shortcut_hint": "Ein Starter-Eintrag, der sich mit diesem Host verbindet",
-	"desktop_hostcard_copy_link_hint": "Ein punktfunk://-Link, der sich mit diesem Host verbindet",
+	"desktop_hostcard_copy_link_hint": "Ein lilynk://-Link, der sich mit diesem Host verbindet",
 	"desktop_shortcut_title": "Verknüpfung erstellen",
 	"desktop_shortcut_sandboxed_body": "Lilynk läuft hier in einer Sandbox und kann die Verknüpfung nicht selbst anlegen. Kopiere diesen Link und lege einen Starter dafür an – er öffnet denselben Stream.",
 	"desktop_shortcut_added_body": "Verknüpfung für „{name}“ zu deinen Anwendungen hinzugefügt",

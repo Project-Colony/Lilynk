@@ -73,7 +73,7 @@ lilynk — the Lilynk client, headless
   lilynk launch [<host-ref>] [--game ID] [--preset REF] [--as PROFILE]
                                 [--request-access] [--exec] [--fullscreen]
   lilynk profiles <host-ref> [--json] [--pick PROFILE | --clear]
-  lilynk open <punktfunk://…> [--yes]
+  lilynk open <lilynk://…> [--yes]
   lilynk reachable <host-ref>
   lilynk speed-test <host-ref>
   lilynk network-check <host-ref> [--json]
@@ -82,7 +82,7 @@ lilynk — the Lilynk client, headless
   lilynk reset
 
 A <host-ref> is a saved host's id, its name, or an address — the same reference a
-punktfunk:// link takes. Where it is optional, leaving it out means the default host.
+lilynk:// link takes. Where it is optional, leaving it out means the default host.
 Exit codes: 0 ok, 2 connect, 3 trust, 4 renderer, 5 not found, 6 needs a person.
 
 \"lilynk help <command>\" (or any command with --help) explains that command.";
@@ -296,7 +296,7 @@ lists settings presets, as it did before presets were renamed."
             }
             "open" => {
                 "\
-lilynk open <punktfunk://…> — follow a punktfunk:// link, headless
+lilynk open <lilynk://…> — follow a lilynk:// link, headless
 
 Same parser and same refusal rules as clicking the link in a shell: a
 contradicted fingerprint refuses and says so, an ambiguous name refuses
@@ -343,7 +343,7 @@ lilynk presets list [--json] — the stream presets on this device
 
 One line per preset: id TAB name TAB how many settings it overrides.
 Presets are created and edited in the desktop client; a connect uses one via
-`lilynk launch --preset` or a punktfunk:// link that names it.
+`lilynk launch --preset` or a lilynk:// link that names it.
 `lilynk profiles` with no host is the old spelling; its --json keeps the
 `profiles` key."
             }
@@ -430,7 +430,7 @@ from the config directory for a true factory reset."
 
     /// Resolve a host reference the way every other surface does: stable id, then a unique
     /// name, then `addr[:port]` (design/client-deep-links.md §2). Sharing `resolve_host` is
-    /// what keeps `lilynk launch desk` and `punktfunk://connect/desk` from disagreeing.
+    /// what keeps `lilynk launch desk` and `lilynk://connect/desk` from disagreeing.
     ///
     /// [`HostResolution::Confirm`] — a guessable reference — is accepted WITHOUT a prompt here,
     /// and only here: this reference is an argument the user typed in their own terminal, so
@@ -1621,11 +1621,11 @@ from the config directory for a true factory reset."
         OK
     }
 
-    /// `open <url>` — the `punktfunk://` grammar, headless. Same parser, same refusal rules and
+    /// `open <url>` — the `lilynk://` grammar, headless. Same parser, same refusal rules and
     /// same connect path as a card click; what changes is only where the notices go.
     fn open(args: &[String]) -> u8 {
         let Some(url) = positional(args, 0) else {
-            eprintln!("usage: lilynk open <punktfunk://…>");
+            eprintln!("usage: lilynk open <lilynk://…>");
             return UNRESOLVED;
         };
         let link = match deeplink::parse(&url) {
@@ -2200,7 +2200,7 @@ from the config directory for a true factory reset."
             let known = KnownHosts { hosts: vec![saved] };
             let mut advert = ly_client_core::discovery::DiscoveredHost {
                 key: "id-2".into(),
-                fullname: "desk._punktfunk._udp.local.".into(),
+                fullname: "desk._lilynk._udp.local.".into(),
                 name: "desk".into(),
                 addr: "192.168.1.9".into(),
                 port: 9777,

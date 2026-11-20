@@ -18,7 +18,7 @@ export type HandoffVerdict =
 /** The signed message. Kept in one place because it is a cross-language contract: change it here
  * and `handoff_ticket` in the host's ctl.rs must change in the same commit. */
 export function handoffMessage(ts: string, nonce: string): string {
-	return `pf-console-handoff:v1:${ts}:${nonce}`;
+	return `ly-console-handoff:v1:${ts}:${nonce}`;
 }
 
 async function macFor(key: string, ts: string, nonce: string): Promise<string> {

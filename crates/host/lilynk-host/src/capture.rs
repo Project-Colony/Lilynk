@@ -362,7 +362,7 @@ pub fn capture_virtual_output(
 }
 
 /// Can the native-plane source this session will drive deliver 10-bit PQ/BT.2020?
-/// Capture half of the punktfunk/1 bit-depth gate (`native::handshake`).
+/// Capture half of the lilynk/1 bit-depth gate (`native::handshake`).
 ///
 /// Must be truthful before spawn: `bit_depth` is decided before the display
 /// exists, and PQ frames to an 8-bit encoder are a hard error (`ly-encode`

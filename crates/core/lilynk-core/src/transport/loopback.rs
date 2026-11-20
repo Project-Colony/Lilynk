@@ -104,7 +104,7 @@ pub fn loopback_pair(
 }
 
 /// A pair whose video path loses the first `n` packets of every frame: a receiver whose
-/// adapter wakes late. Frames are told apart by the unsealed `punktfunk/2` header.
+/// adapter wakes late. Frames are told apart by the unsealed `lilynk/2` header.
 pub fn loopback_drop_head(n: u32) -> (LoopbackTransport, LoopbackTransport) {
     edge_pair(Edge::Head, n)
 }

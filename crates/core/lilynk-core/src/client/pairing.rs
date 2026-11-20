@@ -80,7 +80,7 @@ impl NativeClient {
 
             let ceremony = async {
                 let conn = ep
-                    .connect(remote, "punktfunk")
+                    .connect(remote, "lilynk")
                     .map_err(|_| LilynkError::InvalidArg("connect"))?
                     .await
                     .map_err(|e| match endpoint::refused_alpn(&e) {
@@ -152,7 +152,7 @@ impl NativeClient {
             let ep = ep.map_err(|e| LilynkError::Io(std::io::Error::other(e.to_string())))?;
             let knock = async {
                 let conn = ep
-                    .connect(remote, "punktfunk")
+                    .connect(remote, "lilynk")
                     .map_err(|_| LilynkError::InvalidArg("connect"))?
                     .await
                     .map_err(|e| {

@@ -93,7 +93,7 @@ host itself. ABI changes per release:
    user chose to stop (the host then drops the display instead of holding it for a reconnect), then
    `lilynk_connection_close`, which joins the core's threads and frees the handle.
 
-Discovery isn't part of the C ABI. Browse mDNS for `_punktfunk._udp` with the platform's API, or
+Discovery isn't part of the C ABI. Browse mDNS for `_lilynk._udp` with the platform's API, or
 let the user type an address. `lilynk_probe` checks a known address; compare its
 `observed_sha256_out` with the stored fingerprint, since any machine on that address answers.
 `lilynk_wake_on_lan` wakes a host from the MACs in its mDNS `mac` TXT record.

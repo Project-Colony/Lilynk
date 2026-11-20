@@ -1,10 +1,10 @@
 ---
 title: Presets and links
-description: How settings presets override your client defaults per host or per connect, and how punktfunk:// links start a stream from a shortcut, a script or a browser.
+description: How settings presets override your client defaults per host or per connect, and how lilynk:// links start a stream from a shortcut, a script or a browser.
 ---
 
 A settings preset is a named set of stream settings you attach to a host, a game or one connect. A
-`punktfunk://` link starts a stream you already set up, from a shortcut, a script or a browser.
+`lilynk://` link starts a stream you already set up, from a shortcut, a script or a browser.
 Both live in the Lilynk apps, not in the host's web console.
 
 ## What a preset is
@@ -67,12 +67,12 @@ for this game**, and in the console a row the host sets notes **Set by Couch PC 
 Deleting a preset says how many hosts and pinned cards use it. Those fall back to your default
 settings; nothing fails to connect.
 
-## `punktfunk://` links
+## `lilynk://` links
 
 A link starts a stream on a host this device already trusts:
 
 ```text
-punktfunk://connect/<host-ref>[?fp=<64-hex>][&host=<addr[:port]>][&launch=<id>][&preset=<ref>][&as=<profile>][&name=<label>]
+lilynk://connect/<host-ref>[?fp=<64-hex>][&host=<addr[:port]>][&launch=<id>][&preset=<ref>][&as=<profile>][&name=<label>]
 ```
 
 `<host-ref>` is a saved host's record id, its name (ignoring case), or `addr[:port]`, tried in that
@@ -97,9 +97,9 @@ Linux app handle it; Apple's library widget and **Open Game Library** shortcut u
 show a notice.
 
 ```text
-punktfunk://connect/Living%20Room%20PC
-punktfunk://connect/Living%20Room%20PC?launch=steam:570
-punktfunk://connect/Living%20Room%20PC?preset=Work
+lilynk://connect/Living%20Room%20PC
+lilynk://connect/Living%20Room%20PC?launch=steam:570
+lilynk://connect/Living%20Room%20PC?preset=Work
 ```
 
 These name the host by label, so each asks first. **Copy link** writes the record id instead, which
@@ -110,7 +110,7 @@ opens in one click.
 A link can do what clicking a card you already have does, and no more.
 
 - It carries references, never values: no resolution, bitrate or codec parameters.
-- It can't pair. `punktfunk://pair/…` is refused; [pairing](/docs/pairing) stays manual.
+- It can't pair. `lilynk://pair/…` is refused; [pairing](/docs/pairing) stays manual.
 - Only the record id connects without asking. A name or an address, including `host=`, shows **Open
   this link?** first, naming the host and the game.
 - A host you haven't saved is never connected. With an address, Linux, Windows and the Android app
@@ -159,7 +159,7 @@ From a script, use the [`lilynk` command](/docs/clients#scripting-the-lilynk-cli
 
 ```bash
 lilynk presets list
-lilynk open --yes 'punktfunk://connect/Desk?preset=Work'
+lilynk open --yes 'lilynk://connect/Desk?preset=Work'
 ```
 
 `--yes` answers the confirmation a name or address raises.

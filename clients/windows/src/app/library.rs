@@ -635,7 +635,7 @@ impl RowCx {
         }
     }
 
-    /// One title's `punktfunk://` link: this shelf's host with the game's own `launch=`, and
+    /// One title's `lilynk://` link: this shelf's host with the game's own `launch=`, and
     /// the shelf's preset. `None` when the host has left the store while the page was open.
     fn link(&self, id: &str) -> Option<String> {
         let t = &self.shelf.target;

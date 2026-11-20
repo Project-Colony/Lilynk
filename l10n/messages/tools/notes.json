@@ -79,7 +79,7 @@
 	"setup_phase_checking": "Last phase heading: setup checks that the host came up.",
 	"setup_verify_running": "Result line under 'Checking'. 'lilynk-host' is a program's name.",
 	"setup_verify_not_active": "Warning under 'Checking'. The journalctl command is typed as shown. {url}: the troubleshooting docs section.",
-	"setup_verify_listening": "Result line under 'Checking'. 'punktfunk/2' is the protocol's name.",
+	"setup_verify_listening": "Result line under 'Checking'. 'lilynk/2' is the protocol's name.",
 	"setup_verify_not_listening": "Warning under 'Checking'. The journalctl command is typed as shown.",
 	"setup_nvidia_no_driver": "Warning after an install on a box with an NVIDIA card and no driver. {url}: this distro's install docs page.",
 	"setup_nvidia_no_module": "Warning after an install. 'nvidia-smi' and 'mokutil --sb-state' are commands. {url}: the troubleshooting docs section.",

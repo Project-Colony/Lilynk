@@ -1,4 +1,4 @@
-//! Embeddable `punktfunk/2` client connector, behind the `quic` feature.
+//! Embeddable `lilynk/2` client connector, behind the `quic` feature.
 //!
 //! [`NativeClient::connect`] runs QUIC handshake ([`crate::quic`]), the data plane
 //! ([`crate::session::Session`] on a native thread), and input datagrams. The surface is
@@ -741,7 +741,7 @@ impl ConnectParams {
 }
 
 impl NativeClient {
-    /// Dial a `punktfunk/2` host and block until the handshake lands, `timeout` passes or
+    /// Dial a `lilynk/2` host and block until the handshake lands, `timeout` passes or
     /// `cancel` is set. A host that turns the dial away is [`LilynkError::Rejected`]; an
     /// unlock outside the wire's bounds or without a `pin` is `InvalidArg` before any dial.
     ///
@@ -948,7 +948,7 @@ impl NativeClient {
             // connect timeout.
             let (ep, observed) = endpoint::client_pinned_with_identity(None, None);
             let ep = ep.ok()?;
-            let reachable = match ep.connect(remote, "punktfunk") {
+            let reachable = match ep.connect(remote, "lilynk") {
                 Ok(connecting) => {
                     matches!(tokio::time::timeout(timeout, connecting).await, Ok(Ok(_)))
                 }

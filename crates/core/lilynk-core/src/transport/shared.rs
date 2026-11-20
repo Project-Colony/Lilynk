@@ -1,4 +1,4 @@
-//! One UDP socket for QUIC and `punktfunk/2` media. A packet whose first byte has its two top
+//! One UDP socket for QUIC and `lilynk/2` media. A packet whose first byte has its two top
 //! bits clear is media; anything else is QUIC (RFC 9443). The client's endpoint does not offer
 //! QUIC bit greasing, so the host never clears those bits on a QUIC packet toward it.
 //!
@@ -243,7 +243,7 @@ impl ClientMedia {
 
 /// Bind the client's shared socket and start its reader. Hand the [`ClientSocket`] to
 /// `quinn::Endpoint::new_with_abstract_socket`; the [`ClientMedia`] becomes the session's
-/// transport once the host speaks `punktfunk/2`.
+/// transport once the host speaks `lilynk/2`.
 pub fn client_socket(bind: SocketAddr) -> std::io::Result<(Arc<ClientSocket>, ClientMedia)> {
     let socket = Arc::new(UdpSocket::bind(bind)?);
     let state = Arc::new(UdpSocketState::new((&*socket).into())?);
@@ -645,12 +645,12 @@ impl quinn::AsyncUdpSocket for ClientSocket {
 
 impl Transport for ClientMedia {
     fn send(&self, _packet: &[u8]) -> std::io::Result<bool> {
-        Err(std::io::Error::other("punktfunk/2 clients send no media"))
+        Err(std::io::Error::other("lilynk/2 clients send no media"))
     }
 
     fn recv(&self) -> std::io::Result<Option<Vec<u8>>> {
         Err(std::io::Error::other(
-            "punktfunk/2 media is read in batches (recv_owned)",
+            "lilynk/2 media is read in batches (recv_owned)",
         ))
     }
 
@@ -1007,14 +1007,14 @@ mod tests {
             &cert,
             &key,
             Duration::from_secs(8),
-            &[crate::quic::v2::registry::ALPN, b"pkf1"],
+            &[crate::quic::v2::registry::ALPN, b"lyk1"],
         )
         .unwrap();
         let addr = dial(server.local_addr().unwrap());
         let (client, _) = endpoint::client_shared(
             None,
             None,
-            &[crate::quic::v2::registry::ALPN, b"pkf1"],
+            &[crate::quic::v2::registry::ALPN, b"lyk1"],
             None,
         );
         let (client, media) = client.unwrap();
@@ -1022,7 +1022,7 @@ mod tests {
             let server = server.clone();
             async move { server.accept().await.unwrap().await.unwrap() }
         });
-        let client_conn = client.connect(addr, "punktfunk").unwrap().await.unwrap();
+        let client_conn = client.connect(addr, "lilynk").unwrap().await.unwrap();
         let host_conn = accept.await.unwrap();
         media.set_host(addr);
         (server, socket, client, media, host_conn, client_conn)

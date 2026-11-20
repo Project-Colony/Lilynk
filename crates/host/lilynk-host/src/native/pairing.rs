@@ -19,16 +19,16 @@
 use super::*;
 use crate::native_pairing::sanitize_device_name;
 use lilynk_core::quic::v2::io::{self as v2io, FrameReader};
-use lilynk_core::quic::{pkf1, PairChallenge, PairProof, PairResult};
+use lilynk_core::quic::{lyk1, PairChallenge, PairProof, PairResult};
 
 /// 60 s: a person reads the PIN off the host and types it. Session handshake is machine-speed.
 const PAIRING_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(60);
 
-/// A pairing connection's stream and how it frames the ceremony: `punktfunk/2` frames, or the
-/// `pkf1` framing a client from before `punktfunk/2` still pairs in.
+/// A pairing connection's stream and how it frames the ceremony: `lilynk/2` frames, or the
+/// `lyk1` framing a client from before `lilynk/2` still pairs in.
 pub(crate) enum PairWire<W, R> {
     V2 { send: W, recv: FrameReader<R> },
-    Pkf1 { send: W, recv: R },
+    Lyk1 { send: W, recv: R },
 }
 
 impl<W, R> PairWire<W, R>
@@ -39,7 +39,7 @@ where
     async fn send_challenge(&mut self, c: &PairChallenge) -> std::io::Result<()> {
         match self {
             PairWire::V2 { send, .. } => v2io::send(send, c).await,
-            PairWire::Pkf1 { send, .. } => pkf1::write(send, &c.encode_pkf1()).await,
+            PairWire::Lyk1 { send, .. } => lyk1::write(send, &c.encode_lyk1()).await,
         }
     }
 
@@ -50,8 +50,8 @@ where
                 let (ty, body) = recv.read_frame().await?;
                 lilynk_core::quic::v2::msg::decode::<PairProof>(ty, &body).map_err(bad)
             }
-            PairWire::Pkf1 { recv, .. } => {
-                PairProof::decode_pkf1(&pkf1::read(recv).await?).map_err(bad)
+            PairWire::Lyk1 { recv, .. } => {
+                PairProof::decode_lyk1(&lyk1::read(recv).await?).map_err(bad)
             }
         }
     }
@@ -59,13 +59,13 @@ where
     async fn send_result(&mut self, r: &PairResult) -> std::io::Result<()> {
         match self {
             PairWire::V2 { send, .. } => v2io::send(send, r).await,
-            PairWire::Pkf1 { send, .. } => pkf1::write(send, &r.encode_pkf1()).await,
+            PairWire::Lyk1 { send, .. } => lyk1::write(send, &r.encode_lyk1()).await,
         }
     }
 
     /// The generic write side's "no more data": quinn's `finish` under another name.
     async fn shutdown(&mut self) {
-        let (PairWire::V2 { send, .. } | PairWire::Pkf1 { send, .. }) = self;
+        let (PairWire::V2 { send, .. } | PairWire::Lyk1 { send, .. }) = self;
         let _ = tokio::io::AsyncWriteExt::shutdown(send).await;
     }
 }

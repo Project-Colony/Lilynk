@@ -81,7 +81,7 @@ pub const LILYNK_CONSOLE_PUSH_LIBRARY_DOWNLOADS: u8 = 19;
 pub const LILYNK_CONSOLE_PUSH_SETTINGS: u8 = 11;
 /// `[{id, name, overrides}]` — the preset catalog.
 pub const LILYNK_CONSOLE_PUSH_PRESETS: u8 = 12;
-/// `KnownHosts` — the records `punktfunk://` links are built from.
+/// `KnownHosts` — the records `lilynk://` links are built from.
 pub const LILYNK_CONSOLE_PUSH_KNOWN_HOSTS: u8 = 13;
 /// `{"label", "pref", "pads": [..], "others": [..]}` — the connected controllers and the other
 /// input devices; `ly_console_ui::bridge::PadsJson` has the fields.

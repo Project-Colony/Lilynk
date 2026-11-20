@@ -122,7 +122,7 @@ fun SkiaConsoleShell(
         SkiaConsole.openLibrary(id, pinId)
         onReopenLibraryHandled()
     }
-    // A `punktfunk://` link on the way in: consumed once; the bridge dials a known-and-pinned
+    // A `lilynk://` link on the way in: consumed once; the bridge dials a known-and-pinned
     // host and refuses (with a notice) anything that would need a trust decision.
     LaunchedEffect(deepLink) {
         val url = deepLink ?: return@LaunchedEffect

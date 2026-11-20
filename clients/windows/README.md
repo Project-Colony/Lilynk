@@ -56,5 +56,5 @@ Walk this after a reactor bump or a change to the render/state architecture:
 - **Pair** — PIN entry pairs, and the typed PIN reaches the Connect click (the `use_ref` mirror path).
 - **Session** — connect spawns the session; HUD stats tick; Ctrl+Alt+Shift+Q releases the pointer;
   the shell window restores on exit.
-- **Shell** — speed test completes; a `punktfunk://` deep link routes and a second instance hands
+- **Shell** — speed test completes; a `lilynk://` deep link routes and a second instance hands
   off and exits; the window icon appears; light and dark theme.

@@ -196,7 +196,7 @@ pub(super) struct Live {
     pub(super) geometry: crate::native::geometry::Geometry,
     pub(super) cur_node_id: u32,
     pub(super) cur_display_gen: Option<u64>,
-    /// The `punktfunk/2` stream epoch every AU from now on carries. It moves whenever the
+    /// The `lilynk/2` stream epoch every AU from now on carries. It moves whenever the
     /// pipeline or the mode under it changes, so a client drops what was encoded before. A
     /// rate rebuild keeps it: the same picture at the same mode.
     pub(super) epoch: u8,
@@ -832,7 +832,7 @@ impl StreamState {
             source_seq = src.as_ref().map_or(0, |h| h.source_seq),
             published = src.as_ref().map_or(0, |h| h.published_total),
             dropped = src.as_ref().map_or(0, |h| h.dropped_total),
-            "punktfunk/1 virtual stream complete"
+            "lilynk/1 virtual stream complete"
         );
         crate::session_status::record_tally(
             self.live_session.id,
@@ -997,7 +997,7 @@ fn settle_mode(
         mode = ?intent.mode(),
         bitrate_kbps,
         bit_depth = c.bit_depth,
-        "punktfunk/1 virtual display"
+        "lilynk/1 virtual display"
     );
     (intent, bitrate_kbps, adopted.is_some())
 }

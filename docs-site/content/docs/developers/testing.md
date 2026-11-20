@@ -109,7 +109,7 @@ From `packaging/windows/drivers`, as in
 
 ## Run a host from source against a client
 
-**Without a desktop.** The synthetic host speaks `punktfunk/2` with generated frames and runs
+**Without a desktop.** The synthetic host speaks `lilynk/2` with generated frames and runs
 anywhere the host compiles, macOS included. In two terminals, start it and connect the probe,
 which byte-checks the frames:
 

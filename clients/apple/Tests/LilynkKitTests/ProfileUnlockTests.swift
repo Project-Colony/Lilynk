@@ -91,10 +91,10 @@ final class ProfileUnlockTests: XCTestCase {
             ProfileUnlock.message(challenge: challenge, seat: seat, device: device, box: box))
         XCTAssertEqual(message.count, 152)
         XCTAssertEqual(
-            message, Data("punktfunk-seat-unlock-v1".utf8) + challenge + Data(seat.utf8) + device + box)
+            message, Data("lilynk-seat-unlock-msg-1".utf8) + challenge + Data(seat.utf8) + device + box)
         XCTAssertEqual(
             hex(SHA256.hash(data: message)),
-            "31de46821f3058729b14c3585ad13159085ecb0d18c87194a34b1bddc8ddc31a")
+            "70c89c17d9a34295d3cb6f6ebc2336daef54ee2fda37957eac2b0cb81396b089")
     }
 
     func testAMisshapenArgumentBuildsNoMessage() {

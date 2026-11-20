@@ -7,7 +7,7 @@ Guideline 2.1(a) asks for a way to exercise every feature, and a reviewer has no
 0.37.0 was rejected on exactly that (September 14, 2026), with no notes attached.
 
 The app answers it with a **built-in demo host** (`Home/DemoMode.swift`, `lilynk-ffi`'s `demo_host.rs`): a
-real `punktfunk/1` host on `127.0.0.1` inside the app. It renders a live desktop that reacts to
+real `lilynk/1` host on `127.0.0.1` inside the app. It renders a live desktop that reacts to
 every input, encodes it with VideoToolbox and streams it through the same connect, decode, audio,
 HUD and input path a real PC uses.
 
@@ -53,7 +53,7 @@ Remove "Demo Host" from its host page to hide it again.
 
 WHY THE APP ASKS FOR WHAT IT ASKS FOR
 
-- Local Network: finds hosts via Bonjour (_punktfunk._udp) and connects to them -- the app's
+- Local Network: finds hosts via Bonjour (_lilynk._udp) and connects to them -- the app's
   entire purpose. The demo needs no permission.
 - Microphone (optional, off by default): audio goes to the user's own paired host, appearing
   there as a virtual microphone for voice chat. Never recorded, never sent to us.

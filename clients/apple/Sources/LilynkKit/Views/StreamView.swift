@@ -1,4 +1,4 @@
-// The macOS stream view: SwiftUI hosts an NSView that SessionPresenter draws the punktfunk/1
+// The macOS stream view: SwiftUI hosts an NSView that SessionPresenter draws the lilynk/1
 // stream into (stage-2 Metal, with the AVSampleBufferDisplayLayer as its fallback).
 //
 // The view also owns the input-capture state machine (Moonlight-style): capture is a

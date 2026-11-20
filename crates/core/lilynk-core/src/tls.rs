@@ -49,7 +49,7 @@ pub fn cert_fingerprint(cert_der: &[u8]) -> [u8; 32] {
 
 /// Domain separation for the host's signature over its browser plane's certificate hash. The host
 /// key also signs X.509, so this signature must not pass for one over anything else.
-pub const PLANE_ATTESTATION_CONTEXT: &str = "punktfunk-wt-cert-v1:";
+pub const PLANE_ATTESTATION_CONTEXT: &str = "lilynk-wt-cert-v1:";
 
 /// Check that the host holding `host_cert_der` vouches for the browser plane whose certificate
 /// hashes to `cert_hash_hex`, and return that host's fingerprint ([`cert_fingerprint`]).

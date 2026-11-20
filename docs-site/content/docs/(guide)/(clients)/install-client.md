@@ -43,7 +43,7 @@ for scripts.
 1. Build the client and its installer from a clone
    ([Build from source → Windows host and client](/docs/developers/build-from-source#windows-host-and-client)).
 2. Run it. No admin prompt: it installs to `%LOCALAPPDATA%\Programs\Lilynk`, registers
-   `punktfunk://` links, puts `lilynk` on your PATH and fetches the Windows App Runtime if it's
+   `lilynk://` links, puts `lilynk` on your PATH and fetches the Windows App Runtime if it's
    missing.
 3. Open **Lilynk** from the Start menu, or **Lilynk Console** for the controller interface
    (x64 only: the Arm64 build has no console yet).

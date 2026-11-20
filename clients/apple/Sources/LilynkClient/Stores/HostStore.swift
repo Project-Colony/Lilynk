@@ -1,6 +1,6 @@
 // Saved hosts + their pinned identities, persisted as JSON in UserDefaults.
 //
-// Trust model (client side of punktfunk/1): the host serves a persistent certificate and
+// Trust model (client side of lilynk/1): the host serves a persistent certificate and
 // logs its SHA-256 fingerprint at startup. The pin lands here one of two ways — the
 // trust-on-first-use prompt (user compares the observed fingerprint against the host's
 // log) or the SPAKE2 PIN pairing ceremony (PairSheet; mutually verified, and the host

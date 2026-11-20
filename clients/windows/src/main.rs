@@ -1,4 +1,4 @@
-//! `lilynk-client` — the native Windows punktfunk/1 client.
+//! `lilynk-client` — the native Windows lilynk/1 client.
 //!
 //! Pure Rust: `NativeClient` linked as a crate (no C ABI, like the GTK Linux client) · SDL3
 //! gamepads · a **WinUI 3** shell (windows-reactor). Streaming (decode + present + audio) runs in
@@ -24,7 +24,7 @@ mod app;
 // The `--console` couch hand-off, shared verbatim with `lilynk-console.exe`.
 #[cfg(windows)]
 mod couch;
-// `punktfunk://` activation: single instance, hand-off, and the positional URL parse
+// `lilynk://` activation: single instance, hand-off, and the positional URL parse
 // (design/client-deep-links.md §4.2).
 #[cfg(windows)]
 mod deeplink;
@@ -76,7 +76,7 @@ fn main() {
     let args: Vec<String> = std::env::args().collect();
     let flag = |name: &str| args.iter().any(|a| a == name);
 
-    // A `punktfunk://` link — from protocol activation, `start`, or a shortcut. If a shell is
+    // A `lilynk://` link — from protocol activation, `start`, or a shortcut. If a shell is
     // already running, hand it over and get out of the way: one window, and the link opens
     // where the user's hosts already are. A hand-off that finds nobody falls through and this
     // process becomes the shell that opens it, so the link is never simply lost.

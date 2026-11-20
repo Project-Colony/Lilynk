@@ -809,7 +809,7 @@ impl HostsPage {
             .ok();
     }
 
-    /// The host's self-emitted `punktfunk://` link and a launcher label for it. It carries the
+    /// The host's self-emitted `lilynk://` link and a launcher label for it. It carries the
     /// stable id AND host+fp, so it still resolves after a re-address or a reinstall.
     fn link(&self, host: &HostRef, preset: Option<&str>) -> Option<(String, String)> {
         let known = self.store.hosts();

@@ -48,11 +48,11 @@ pub struct HostEvent {
 #[derive(Serialize, Deserialize, ToSchema, Clone, Copy, Debug, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum Plane {
-    /// `punktfunk/1` over quinn.
+    /// `lilynk/1` over quinn.
     Native,
     /// The Moonlight-compatible plane.
     Gamestream,
-    /// `punktfunk/1` from a browser, over WebTransport.
+    /// `lilynk/1` from a browser, over WebTransport.
     Web,
 }
 

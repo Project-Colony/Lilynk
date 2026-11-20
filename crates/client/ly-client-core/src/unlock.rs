@@ -591,7 +591,7 @@ mod tests {
         let signed = keys.signed.borrow();
         assert_eq!(
             crate::trust::hex(&lilynk_core::tls::cert_fingerprint(&signed)),
-            "31de46821f3058729b14c3585ad13159085ecb0d18c87194a34b1bddc8ddc31a"
+            "70c89c17d9a34295d3cb6f6ebc2336daef54ee2fda37957eac2b0cb81396b089"
         );
         assert_eq!(calls(&keys), ["sign K"]);
 

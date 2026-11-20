@@ -223,25 +223,25 @@ fuzz_target!(|data: &[u8]| {
         4 => {
             settle(
                 b,
-                |b| PairRequest::decode_pkf1(b).ok(),
-                PairRequest::encode_pkf1,
+                |b| PairRequest::decode_lyk1(b).ok(),
+                PairRequest::encode_lyk1,
             );
             settle(
                 b,
-                |b| PairChallenge::decode_pkf1(b).ok(),
-                PairChallenge::encode_pkf1,
+                |b| PairChallenge::decode_lyk1(b).ok(),
+                PairChallenge::encode_lyk1,
             );
             settle(
                 b,
-                |b| PairProof::decode_pkf1(b).ok(),
-                PairProof::encode_pkf1,
+                |b| PairProof::decode_lyk1(b).ok(),
+                PairProof::encode_lyk1,
             );
             settle(
                 b,
-                |b| PairResult::decode_pkf1(b).ok(),
-                PairResult::encode_pkf1,
+                |b| PairResult::decode_lyk1(b).ok(),
+                PairResult::encode_lyk1,
             );
-            settle(b, |b| Refused::decode_pkf1(b).ok(), Refused::encode_pkf1);
+            settle(b, |b| Refused::decode_lyk1(b).ok(), Refused::encode_lyk1);
         }
         // Text off the LAN: an mDNS advert's TXT values, a fingerprint, a MAC.
         _ => {

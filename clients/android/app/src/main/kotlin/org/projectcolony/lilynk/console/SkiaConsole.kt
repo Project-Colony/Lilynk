@@ -188,7 +188,7 @@ object SkiaConsole {
      * the native handle (`0` = the console could not be built; [healthy] is false and the touch
      * UI takes over).
      *
-     * @param pendingLink true when a `punktfunk://` URL is waiting to be routed. Explicit intent
+     * @param pendingLink true when a `lilynk://` URL is waiting to be routed. Explicit intent
      *   beats the start-screen policy, and the link is handled after composition — so the console
      *   must not open a shelf first and make the link the second thing that happens.
      */
@@ -488,7 +488,7 @@ object SkiaConsole {
     }
 
     /**
-     * A `punktfunk://` link while the console is up. Named-by-id and pinned is the one-click
+     * A `lilynk://` link while the console is up. Named-by-id and pinned is the one-click
      * contract (the same dial the console's own Launch takes); anything that would need a trust
      * decision — or that named the host by a guessable label or address — is a notice here. A link
      * may never establish trust, the console's Pair screen is reached from the host's tile rather

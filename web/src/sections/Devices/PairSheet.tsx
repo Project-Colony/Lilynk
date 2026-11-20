@@ -44,7 +44,7 @@ export interface BoundDevice {
 }
 
 /**
- * Native (punktfunk/1) pairing: arm a window, poll fast while armed for the countdown. Shared by
+ * Native (lilynk/1) pairing: arm a window, poll fast while armed for the countdown. Shared by
  * the sheet and the list's armed row.
  *
  * The armed PIN lives here, not in the polled status: the BFF strips it from that read

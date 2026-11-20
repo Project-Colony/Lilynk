@@ -83,7 +83,7 @@ webpki = { package = "rustls-webpki", version = "0.103", optional = true, featur
 rcgen = { workspace = true, optional = true }
 # `rustls-webpki-roots` (workspace entry) is the CA set for the non-pinned origins (cover-art CDNs).
 ureq = { workspace = true, optional = true, features = ["gzip"] }
-# `punktfunk/2` media keys expand with HMAC-SHA256 in every build (`crypto::MediaKeys`).
+# `lilynk/2` media keys expand with HMAC-SHA256 in every build (`crypto::MediaKeys`).
 sha2 = "0.11"
 serde = { version = "1", features = ["derive"], optional = true }
 ly-l10n = { path = "../../../l10n", features = ["client"], optional = true }

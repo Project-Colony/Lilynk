@@ -1,4 +1,4 @@
-// Advertise a fake punktfunk/1 host over real mDNS (NWListener) and assert HostDiscovery's
+// Advertise a fake lilynk/1 host over real mDNS (NWListener) and assert HostDiscovery's
 // NWBrowser finds it, resolves an address+port, and parses the TXT (id / pair / fp). This
 // exercises the whole client discovery path on the loopback/LAN; it self-skips if the test
 // environment blocks Bonjour (sandboxed CI without local-network access).
@@ -24,14 +24,14 @@ final class HostDiscoveryTests: XCTestCase {
         let uniqueid = "test-\(UUID().uuidString)"
 
         var txt = NWTXTRecord()
-        txt["proto"] = "punktfunk/2"
+        txt["proto"] = "lilynk/2"
         txt["fp"] = String(repeating: "ab", count: 32) // 64 hex chars, like a real cert SHA-256
         txt["pair"] = "required"
         txt["id"] = uniqueid
 
         let listener = try NWListener(using: .udp)
         listener.service = NWListener.Service(
-            name: String(serviceName), type: "_punktfunk._udp", txtRecord: txt)
+            name: String(serviceName), type: "_lilynk._udp", txtRecord: txt)
         // The resolver opens a throwaway UDP flow to read the resolved endpoint — accept and
         // drop it so it doesn't linger.
         listener.newConnectionHandler = { connection in connection.cancel() }

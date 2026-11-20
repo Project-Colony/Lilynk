@@ -7,7 +7,7 @@
 import Foundation
 
 public struct HostFormDraft: Equatable, Sendable {
-    /// The punktfunk/1 data plane's default. A blank port field means this, not zero.
+    /// The lilynk/1 data plane's default. A blank port field means this, not zero.
     public static let defaultPort: UInt16 = 9777
 
     public var name: String

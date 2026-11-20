@@ -1,4 +1,4 @@
-//! `punktfunk/2` sessions this process lost to the network, by the host they were dialed at.
+//! `lilynk/2` sessions this process lost to the network, by the host they were dialed at.
 //!
 //! The next dial to that host presents the id as `resume`, and the host retires exactly that
 //! session instead of waiting out its release. Only a lost session is kept: one still live, or

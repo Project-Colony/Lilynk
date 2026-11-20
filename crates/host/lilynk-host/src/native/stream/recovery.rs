@@ -842,7 +842,7 @@ impl RingFrame {
     }
 }
 
-/// A plaintext packet's place in its block, from its `punktfunk/2` header.
+/// A plaintext packet's place in its block, from its `lilynk/2` header.
 #[derive(Clone, Copy)]
 struct Place {
     base: u32,

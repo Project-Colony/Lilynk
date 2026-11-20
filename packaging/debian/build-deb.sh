@@ -283,10 +283,10 @@ Homepage: https://github.com/Project-Colony/Lilynk
 Depends: $DEPENDS
 Recommends: $RECOMMENDS
 Suggests: $SUGGESTS
-Description: Low-latency desktop/game streaming host (Moonlight + punktfunk/2)
+Description: Low-latency desktop/game streaming host (Moonlight + lilynk/2)
  lilynk is a Linux-first, low-latency desktop and game streaming host. It speaks
  the Moonlight/GameStream protocol (pair a stock Moonlight client) and its own native
- punktfunk/2 protocol (GF(2^16) Leopard FEC + AES-GCM, mid-stream mode renegotiation,
+ lilynk/2 protocol (GF(2^16) Leopard FEC + AES-GCM, mid-stream mode renegotiation,
  client microphone passthrough). Each session gets a virtual output at the client's
  exact resolution and refresh via a per-compositor backend (KWin, gamescope, Mutter,
  Sway/wlroots), captured zero-copy (dmabuf -> CUDA -> NVENC). Input (mouse, keyboard,

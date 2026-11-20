@@ -33,7 +33,7 @@ Dein DualSense, vollständig: Rumble, adaptive Trigger, Lightbar, Touchpad und G
 ### Alternate C — leads on latency (153)
 
 ```
-Kein Konto, keine Cloud, kein Umweg: punktfunk/1 fährt über QUIC direkt zu deinem PC. Auflösungswechsel mitten im Stream, ohne die Verbindung zu trennen.
+Kein Konto, keine Cloud, kein Umweg: lilynk/1 fährt über QUIC direkt zu deinem PC. Auflösungswechsel mitten im Stream, ohne die Verbindung zu trennen.
 ```
 
 ---

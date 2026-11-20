@@ -22,7 +22,7 @@ import org.projectcolony.lilynk.kit.link.LinkError
 import org.projectcolony.lilynk.kit.security.ClientIdentity
 import org.projectcolony.lilynk.kit.security.KnownHost
 
-// Where a `punktfunk://` URL goes besides a browser (design/client-deep-links.md §4/§5): the
+// Where a `lilynk://` URL goes besides a browser (design/client-deep-links.md §4/§5): the
 // clipboard, a home-screen shortcut, and a launcher file a frontend such as Cocoon or ES-DE opens.
 // Each surface that hands a link out builds its own URL; whether the platform took it, and what
 // to say about that, is answered here once for every shell.
@@ -30,7 +30,7 @@ import org.projectcolony.lilynk.kit.security.KnownHost
 /** What a link handed out by a title (or host) can become. */
 internal enum class LinkAction { Copy, HomeScreen, LauncherFile }
 
-/** Put a `punktfunk://` URL on the clipboard. False = no clipboard service, or it refused. */
+/** Put a `lilynk://` URL on the clipboard. False = no clipboard service, or it refused. */
 internal fun putLinkOnClipboard(context: Context, url: String): Boolean {
     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
         ?: return false
@@ -60,7 +60,7 @@ internal fun canPinShortcuts(context: Context): Boolean =
 /**
  * Ask the home screen to pin a shortcut that opens [url]; the OS asks the user to confirm. [id]
  * keys it, so pinning the same thing again updates the old one. The intent names MainActivity,
- * so another app claiming `punktfunk://` can't take the tap. False = the launcher refused.
+ * so another app claiming `lilynk://` can't take the tap. False = the launcher refused.
  */
 internal fun pinLinkShortcut(
     context: Context,

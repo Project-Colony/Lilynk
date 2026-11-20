@@ -1,7 +1,7 @@
-//! `punktfunk://` activation for the Windows shell (design/client-deep-links.md §4.2).
+//! `lilynk://` activation for the Windows shell (design/client-deep-links.md §4.2).
 //!
 //! Protocol activation of a full-trust packaged app delivers the URI as the command line, so
-//! a browser prompt, `start punktfunk://…` and a written `.lnk` all arrive the same way: as a
+//! a browser prompt, `start lilynk://…` and a written `.lnk` all arrive the same way: as a
 //! positional argument. What Windows does NOT give us is single-instancing — unlike
 //! GApplication on Linux, a second activation is simply a second process. So this module adds
 //! it: the first instance claims a named mutex, and any later one hands its URL to the winner
@@ -55,7 +55,7 @@ unsafe fn close_handle(handle: HANDLE) {
     let _ = unsafe { CloseHandle(handle) };
 }
 
-/// A positional `punktfunk://` (or the `pf://` input alias) anywhere in argv — how protocol
+/// A positional `lilynk://` (or the `ly://` input alias) anywhere in argv — how protocol
 /// activation, `start`, and a `.lnk` shortcut all deliver a link. Validation happens later in
 /// the shared parser; this only decides whether argv carries something addressed to us.
 pub(crate) fn positional_url(args: &[String]) -> Option<String> {
@@ -403,10 +403,10 @@ mod tests {
     #[test]
     fn utf16_payload_decodes_without_alignment() {
         let mut storage = vec![0xff];
-        storage.extend(utf16_bytes("punktfunk://connect/Café 🎮"));
+        storage.extend(utf16_bytes("lilynk://connect/Café 🎮"));
         assert_eq!(
             decode_utf16_payload(&storage[1..]),
-            Some("punktfunk://connect/Café 🎮".to_string())
+            Some("lilynk://connect/Café 🎮".to_string())
         );
     }
 
@@ -432,17 +432,17 @@ mod tests {
     fn positional_url_finds_links_only() {
         let args = |v: &[&str]| v.iter().map(|s| s.to_string()).collect::<Vec<_>>();
         assert_eq!(
-            positional_url(&args(&["lilynk-client.exe", "punktfunk://connect/Desk"])),
-            Some("punktfunk://connect/Desk".into())
+            positional_url(&args(&["lilynk-client.exe", "lilynk://connect/Desk"])),
+            Some("lilynk://connect/Desk".into())
         );
         // The alias form still parses (it is never emitted, only accepted).
         assert_eq!(
-            positional_url(&args(&["exe", "--windowed", "PF://connect/Desk"])),
-            Some("PF://connect/Desk".into())
+            positional_url(&args(&["exe", "--windowed", "LY://connect/Desk"])),
+            Some("LY://connect/Desk".into())
         );
         assert_eq!(positional_url(&args(&["exe", "--console"])), None);
         // argv[0] is never a link, even if someone renames the binary.
-        assert_eq!(positional_url(&args(&["punktfunk://connect/Desk"])), None);
+        assert_eq!(positional_url(&args(&["lilynk://connect/Desk"])), None);
     }
 
     /// Shortcut names survive user text: reserved characters, control characters, a trailing

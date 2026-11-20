@@ -53,7 +53,7 @@ them reach every port on it, so step 2 matters.
 
    Add `47990` only if the friend should browse your game library.
 3. The friend adds `100.x.y.z:9777` as a host, or opens a
-   [link](/docs/presets-and-links#punktfunk-links) you send: `punktfunk://connect/100.x.y.z:9777`.
+   [link](/docs/presets-and-links#lilynk-links) you send: `lilynk://connect/100.x.y.z:9777`.
 4. [Admit them as a guest](#admit-them-as-a-guest).
 
 ## Admit them as a guest
@@ -82,7 +82,7 @@ checks the host's identity. A device that was only given the address can't ask f
 the **Deep link** from **Host** and swap in your public address:
 
 ```
-punktfunk://connect/<id>?host=203.0.113.5&fp=<64 hex>
+lilynk://connect/<id>?host=203.0.113.5&fp=<64 hex>
 ```
 
 Strangers will knock once the port is open. An unpaired device gets nothing. A knock from the

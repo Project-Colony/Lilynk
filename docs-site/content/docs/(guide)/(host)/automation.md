@@ -57,7 +57,7 @@ didn't set.
 | `debounce_ms` | Minimum gap between firings of this hook. Default 0. |
 | `hold` | Only with `on: game.launching`: the game waits for this hook, up to `timeout_s`. |
 | `elevated` | Windows: runs `run` as administrator. See [Run as administrator](#run-as-administrator). |
-| `hmac_secret_file` | Signs webhooks with `X-Punktfunk-Signature: sha256=<hex HMAC-SHA256 of the body>`. |
+| `hmac_secret_file` | Signs webhooks with `X-Lilynk-Signature: sha256=<hex HMAC-SHA256 of the body>`. |
 
 Filter on `fingerprint`, not `client`: names aren't unique and change on rename. The console's
 device picker stores the fingerprint; `GET /api/v1/clients` lists both.
@@ -118,7 +118,7 @@ With `hmac_secret_file` set, the host signs every POST, and skips it if it can't
 ```python
 import hmac, hashlib
 expected = "sha256=" + hmac.new(secret, body, hashlib.sha256).hexdigest()
-ok = hmac.compare_digest(request.headers["X-Punktfunk-Signature"], expected)
+ok = hmac.compare_digest(request.headers["X-Lilynk-Signature"], expected)
 ```
 
 ### Hold the launch

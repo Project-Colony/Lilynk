@@ -217,7 +217,7 @@ mod tests {
         let client = endpoint::client_insecure().expect("client");
         let (host, peer) = tokio::join!(
             async { server.accept().await.expect("incoming").await },
-            async { client.connect(addr, "punktfunk").expect("dial").await },
+            async { client.connect(addr, "lilynk").expect("dial").await },
         );
         let host = host.expect("host side connects");
         let media = std::net::UdpSocket::bind("127.0.0.1:0").expect("media socket");

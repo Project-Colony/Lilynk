@@ -36,7 +36,7 @@ data class PendingTrust(
     val advertisedFp: String?,
     val kind: Kind,
     /**
-     * What the connect on the far side of this decision should carry — a `punktfunk://` link's
+     * What the connect on the far side of this decision should carry — a `lilynk://` link's
      * one-off preset and library id. A link to an unknown host goes through the confirmation
      * first, and the user's stated intent must survive that detour rather than being silently
      * dropped on the way to a plain desktop session.
@@ -50,11 +50,11 @@ data class PendingTrust(
 }
 
 /**
- * A `punktfunk://` link that named a saved host by something GUESSABLE — its display name or its
+ * A `lilynk://` link that named a saved host by something GUESSABLE — its display name or its
  * address — instead of by its stable record id, waiting for the user's OK before it dials.
  *
- * MainActivity is exported with a BROWSABLE `punktfunk://` filter, so any app or web page can emit
- * `punktfunk://connect/Gaming%20PC?launch=steam:570`; guessing a label must not be enough to start
+ * MainActivity is exported with a BROWSABLE `lilynk://` filter, so any app or web page can emit
+ * `lilynk://connect/Gaming%20PC?launch=steam:570`; guessing a label must not be enough to start
  * a stream and boot a game. A link that names the record id (the shortcuts this app emits) still
  * connects on its own. [preset] and [launch] are the link's, carried across the detour exactly as
  * [PendingTrust] carries them.
@@ -85,7 +85,7 @@ data class ActiveSession(
      */
     val presetName: String? = null,
     /**
-     * The stable id of the host being streamed, when it is a saved one — so a `punktfunk://` link
+     * The stable id of the host being streamed, when it is a saved one — so a `lilynk://` link
      * that arrives mid-stream can tell "this same host" (a no-op; the intent already focused us)
      * from "a different host" (a notice; a URL may never preempt a live session).
      */

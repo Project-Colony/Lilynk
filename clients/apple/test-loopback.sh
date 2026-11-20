@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Loopback integration: real punktfunk/1 hosts (synthetic source — pure protocol, runs fine on
+# Loopback integration: real lilynk/1 hosts (synthetic source — pure protocol, runs fine on
 # macOS) on 127.0.0.1, then the Swift integration tests against them through the xcframework.
 # Three hosts: an OPEN one (--allow-tofu; the anonymous stream round trip — bare lilynk1-host
 # defaults to require-pairing), one armed with --require-pairing (the PIN ceremony + pairing

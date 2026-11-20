@@ -15,7 +15,7 @@
 //! Framing is four bytes of big-endian length, a JSON head, then the body until FIN, both ways
 //! ([`Head`], [`Reply`]). Nothing here parses HTTP, so there is no parser to smuggle past.
 //!
-//! A native `punktfunk/2` connection whose streams are typed management ([`serve_quic`]) gets the
+//! A native `lilynk/2` connection whose streams are typed management ([`serve_quic`]) gets the
 //! same router, each request after its stream type. Its requests carry the client certificate its
 //! handshake proved, so a paired device has the authority it has over HTTPS with that certificate.
 
@@ -173,7 +173,7 @@ pub(crate) async fn tunnel(
     }
 }
 
-/// A `punktfunk/2` connection opened for management: `first` is its first stream, its type
+/// A `lilynk/2` connection opened for management: `first` is its first stream, its type
 /// already read. Every later stream must be typed management too; [`tunnel`]'s caps apply.
 pub(crate) async fn serve_quic(
     conn: quinn::Connection,
@@ -776,7 +776,7 @@ mod tests {
         parse_reply(&all)
     }
 
-    /// A native client on a `punktfunk/2` management connection: the first stream and a later
+    /// A native client on a `lilynk/2` management connection: the first stream and a later
     /// one are answered, a stream of another type is stopped unanswered, and every request
     /// carries the certificate the client's handshake proved.
     #[tokio::test]
@@ -815,7 +815,7 @@ mod tests {
         let (client, _) =
             endpoint::client_shared(None, Some((&me_cert, &me_key)), &[registry::ALPN], None);
         let (client, _media) = client.unwrap();
-        let conn = client.connect(bind, "punktfunk").unwrap().await.unwrap();
+        let conn = client.connect(bind, "lilynk").unwrap().await.unwrap();
         let call = |ty: u64, path: &'static str| {
             let conn = conn.clone();
             async move {

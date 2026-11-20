@@ -47,21 +47,21 @@ comes back.
 
 Both run in one `lilynk-host serve` process.
 
-| | `punktfunk/2` | GameStream |
+| | `lilynk/2` | GameStream |
 |---|---|---|
 | Clients | The native clients | Moonlight |
 | On | Always | `serve --gamestream` (trusted LAN only) |
 | Control | QUIC: SPAKE2 pairing, mode changes, clock sync, adaptive bitrate, clipboard | HTTPS pairing (nvhttp), RTSP, ENet |
 | Data | The QUIC port's UDP path, GF(2¹⁶) Leopard FEC, keys from the TLS exporter | UDP, GF(2⁸) Reed–Solomon FEC |
-| Discovery | mDNS `_punktfunk._udp` | mDNS `_nvstream._tcp` |
+| Discovery | mDNS `_lilynk._udp` | mDNS `_nvstream._tcp` |
 | Code | `lilynk-core`, `lilynk-host/src/native*` | `lilynk-host/src/gamestream` |
 
 `--no-default-features --features pyrowave` builds a host without the GameStream code. A third
 plane, WebTransport for the browser client, is off unless `--webtransport` is passed. Port numbers:
 [Ports](/docs/ports).
 
-`punktfunk/2` is ALPN `pkf2`, and timestamps run on a per-session clock. The browser plane serves
-it at `/pf2`. A client that offers only `pkf1` is closed with the wire-version code, which it shows
+`lilynk/2` is ALPN `lyk2`, and timestamps run on a per-session clock. The browser plane serves
+it at `/ly2`. A client that offers only `lyk1` is closed with the wire-version code, which it shows
 as "update both".
 
 ## Control plane and management API
@@ -190,7 +190,7 @@ pin these crates as git dependencies.
   client names a smaller view (render scale above 1×), the host scales the picture down before it
   encodes; any other scaling happens in the client's presenter.
 - **FEC sized to the protocol.** GF(2⁸) (at most 255 shards a block) for Moonlight; GF(2¹⁶) (up
-  to 65535 shards, O(n log n)) for `punktfunk/2`.
-- **Each version moves alone.** The ALPN (`pkf2`) versions the wire. `ABI_VERSION` tracks the C
+  to 65535 shards, O(n log n)) for `lilynk/2`.
+- **Each version moves alone.** The ALPN (`lyk2`) versions the wire. `ABI_VERSION` tracks the C
   surface; `PROTOCOL_VERSION` in `ly-driver-proto` tracks the driver. Never ride one bump on
   another.

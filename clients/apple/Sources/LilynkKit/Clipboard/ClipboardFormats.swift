@@ -11,7 +11,7 @@ import Foundation
 
 enum ClipboardFormats {
     /// Wire MIME ↔ uniform type identifier, in announce order. Files
-    /// (`application/x-punktfunk-files`) ride Phase 2 and are absent here.
+    /// (`application/x-lilynk-files`) ride Phase 2 and are absent here.
     ///
     /// Original image formats sit beside the mandatory `image/png` floor rather than replacing it:
     /// a copied JPEG never balloons into PNG and a GIF keeps its animation, while a peer that can

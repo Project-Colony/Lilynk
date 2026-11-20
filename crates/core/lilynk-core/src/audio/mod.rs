@@ -5,7 +5,7 @@
 //! 6/8 map). Capturers and decoders both use it; the Opus multistream `mapping` only decides
 //! which slots share a coupled stream ([`AudioLayout`]), never the order samples come out in.
 //! GFE pre-rotation (`gamestream::audio::surround_params`) is GameStream-only; it never
-//! touches `punktfunk/1`.
+//! touches `lilynk/1`.
 //!
 //! Negotiated counts: `2`, `6`, `8`. Anything else clamps to stereo ([`normalize_channels`]).
 //! Opus is 48 kHz; the lossless plane is a second plane — [`pcm`], `design/hi-res-audio.md`.

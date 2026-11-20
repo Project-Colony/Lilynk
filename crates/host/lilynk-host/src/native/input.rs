@@ -1963,7 +1963,7 @@ mod tests {
             (server, conn)
         });
         let client = endpoint::client_insecure().unwrap();
-        let client_conn = client.connect(addr, "punktfunk").unwrap().await.unwrap();
+        let client_conn = client.connect(addr, "lilynk").unwrap().await.unwrap();
         let (_server, host_conn) = accept.await.unwrap();
 
         // Held open for the whole test: `Disconnected` must not be what ends the thread.

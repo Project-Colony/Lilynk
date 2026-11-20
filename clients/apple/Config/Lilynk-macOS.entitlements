@@ -75,7 +75,7 @@
 	     macOS — but that path needs no exception either; see DualSenseHID.) -->
 
 	<!-- Keychain Sharing (unchanged from the shared file): a team-scoped access group so the
-	     punktfunk/1 client identity in the data-protection keychain is gated by the app's
+	     lilynk/1 client identity in the data-protection keychain is gated by the app's
 	     entitlement (team + bundle id), persisting across rebuilds with NO prompt — see
 	     ClientIdentityStore. $(AppIdentifierPrefix) expands to the team prefix at signing
 	     time (the Developer ID codesign step in release.yml resolves it via sed). -->

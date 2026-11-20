@@ -126,7 +126,7 @@ pub struct LiveSession {
     pub label: String,
     /// `None` while the row is a [`Reservation`]: admitted, not streaming yet.
     pub display: Option<LiveDisplay>,
-    /// The `punktfunk/2` session id a reconnect presents to retire exactly this session.
+    /// The `lilynk/2` session id a reconnect presents to retire exactly this session.
     pub resume_id: Option<[u8; 16]>,
     /// Stopped by its own client's reconnect ([`supersede`]).
     superseded: bool,
@@ -361,7 +361,7 @@ pub fn preempt_same_identity(req_identity: Option<[u8; 32]>) -> Vec<Arc<AtomicBo
     same_identity_stops(req_identity, &table().lock().unwrap())
 }
 
-/// Stop flags of the session a `punktfunk/2` reconnect names by `resume_id`. Only the identity
+/// Stop flags of the session a `lilynk/2` reconnect names by `resume_id`. Only the identity
 /// that owned it may retire it: the id is a bearer secret, and this keeps it one.
 pub fn preempt_resumed(
     resume_id: [u8; 16],
@@ -523,7 +523,7 @@ pub struct Reservation {
 
 impl Reservation {
     /// The session streams: later clients see its mode, label and display, a `join` shares it,
-    /// a connect waiting on it wakes, and a `punktfunk/2` resume finds it by `resume_id`.
+    /// a connect waiting on it wakes, and a `lilynk/2` resume finds it by `resume_id`.
     pub fn register(
         self,
         mode: (u32, u32, u32),

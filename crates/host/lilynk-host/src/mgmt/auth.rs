@@ -399,7 +399,7 @@ pub(crate) async fn require_auth(
 }
 
 /// A device the admin caller vouches for: the door, passing on a call a device made to it.
-pub(crate) const VOUCH_HEADER: &str = "x-punktfunk-device";
+pub(crate) const VOUCH_HEADER: &str = "x-lilynk-device";
 
 /// The vouched device's fingerprint, when the request carries one that could be a fingerprint.
 fn vouched(req: &Request) -> Option<String> {

@@ -21,4 +21,4 @@ Keywords[fr]=streaming;diffusion;distant;jeu;jeux;moonlight;
 Keywords[it]=streaming;remoto;gioco;giochi;moonlight;
 Keywords[pt_BR]=streaming;transmissão;remoto;jogo;jogos;moonlight;
 StartupNotify=true
-MimeType=x-scheme-handler/punktfunk;
+MimeType=x-scheme-handler/lilynk;

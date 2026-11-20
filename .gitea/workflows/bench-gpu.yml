@@ -1,4 +1,4 @@
-# Tier-3 real-world GPU benchmark — the actual capture → zero-copy → NVENC → punktfunk/1 → reassemble
+# Tier-3 real-world GPU benchmark — the actual capture → zero-copy → NVENC → lilynk/1 → reassemble
 # pipeline, measuring encode time / throughput / end-to-end latency. The GPU-less CI containers
 # (bench.yml) can only run the Tier-1/2 GPU-free benchmarks; this runs on a SELF-HOSTED GPU
 # runner — a dev box with an NVIDIA GPU + a KWin session.

@@ -114,7 +114,7 @@ mod tests {
             r"HKLM\SOFTWARE\WOW6432Node\Ubisoft\Launcher",
             r"HKLM\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall",
             r"HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall",
-            r"HKLM\SOFTWARE\Classes\punktfunk",
+            r"HKLM\SOFTWARE\Classes\lilynk",
             r"HKLM\SOFTWARE\PoliciesFoo",
             r"HKLM\SOFTWARE\Microsoft\CryptographyX",
             r"HKCU\SOFTWARE\Ubisoft\Launcher",

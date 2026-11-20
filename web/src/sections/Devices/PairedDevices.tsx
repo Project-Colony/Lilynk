@@ -48,7 +48,7 @@ import {
 export type { PairedProtocol, PairedRow };
 
 /**
- * ALL paired devices in one list: the native (punktfunk/1) clients and the GameStream/Moonlight
+ * ALL paired devices in one list: the native (lilynk/1) clients and the GameStream/Moonlight
  * clients — two host endpoints — merged and tagged by protocol, each unpair routed back to its
  * own endpoint. `dialogs` are the access and display sheets and the password confirm, mounted
  * once by the page.

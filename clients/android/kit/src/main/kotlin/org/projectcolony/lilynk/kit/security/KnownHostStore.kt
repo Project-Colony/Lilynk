@@ -13,7 +13,7 @@ import org.json.JSONObject
  *
  * [id] is the record's **stable identity** — minted once, never changed, and the key this record is
  * stored under. Everything that needs to point AT a host (a settings-preset binding, a pinned
- * card, a `punktfunk://` link) points at the id, so renaming a host or moving it to a new address
+ * card, a `lilynk://` link) points at the id, so renaming a host or moving it to a new address
  * doesn't strand those references. Mirrors the Apple client's `StoredHost.id` and the Rust
  * `KnownHost.id`: a UUID v4, written lowercase here and by Rust, upper case by Apple.
  */
@@ -198,7 +198,7 @@ class KnownHostStore(context: Context) {
      * When a record already exists there — a re-pair after the host's identity changed, an
      * approval that upgrades a TOFU record to paired — it keeps its identity and everything the
      * user set on it: the stable [KnownHost.id] (so preset bindings, pinned cards and any
-     * `punktfunk://` shortcut still point at it), the per-host clipboard decision, the binding,
+     * `lilynk://` shortcut still point at it), the per-host clipboard decision, the binding,
      * the pins and the learned MACs. Only the pin and paired flag are refreshed, plus [name] on a
      * placeholder taking its first pin: a pinned record keeps the name the user knows it by, even
      * when a dial meant for another card at this address landed on it. Returns the stored record.
@@ -488,7 +488,7 @@ class KnownHostStore(context: Context) {
 
 /**
  * A fresh stable record identity: a lowercase UUID v4, the shape the Apple client's
- * `StoredHost.id` (printed upper case) and the Rust `KnownHost.id` use, so a `punktfunk://` host
+ * `StoredHost.id` (printed upper case) and the Rust `KnownHost.id` use, so a `lilynk://` host
  * reference is one grammar everywhere.
  */
 fun newRecordId(): String = UUID.randomUUID().toString()

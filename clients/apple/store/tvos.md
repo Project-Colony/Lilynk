@@ -79,7 +79,7 @@ Installierte Steam-Titel und selbst hinzugefügte Spiele erscheinen als Raster m
 
 SCHNELL, WEIL UNS DER GANZE WEG GEHÖRT
 
-Die nativen Apps sprechen punktfunk/1: eine QUIC-Steuerebene und eine verschlüsselte Datenebene mit Vorwärtsfehlerkorrektur. Ein gestuftes Overlay zeigt Bildrate, Bitrate und Latenz – über zwei Maschinen hinweg um den Uhrenversatz korrigiert, also eine Messung und kein Versprechen. Ein Geschwindigkeitstest pro Host schlägt eine passende Bitrate für dein Netzwerk vor.
+Die nativen Apps sprechen lilynk/1: eine QUIC-Steuerebene und eine verschlüsselte Datenebene mit Vorwärtsfehlerkorrektur. Ein gestuftes Overlay zeigt Bildrate, Bitrate und Latenz – über zwei Maschinen hinweg um den Uhrenversatz korrigiert, also eine Messung und kein Versprechen. Ein Geschwindigkeitstest pro Host schlägt eine passende Bitrate für dein Netzwerk vor.
 
 WAS DU BRAUCHST
 
@@ -115,7 +115,7 @@ Installed Steam titles and games you add yourself appear as a grid with artwork,
 
 FAST, BECAUSE WE OWN THE WHOLE PATH
 
-The native apps speak punktfunk/1: a QUIC control plane and an encrypted data plane with forward error correction. A tiered overlay shows frame rate, bitrate, and latency — corrected for clock skew across the two machines, so it is a measurement rather than a claim. A per-host speed test suggests a bitrate that matches your network.
+The native apps speak lilynk/1: a QUIC control plane and an encrypted data plane with forward error correction. A tiered overlay shows frame rate, bitrate, and latency — corrected for clock skew across the two machines, so it is a measurement rather than a claim. A per-host speed test suggests a bitrate that matches your network.
 
 WHAT YOU NEED
 

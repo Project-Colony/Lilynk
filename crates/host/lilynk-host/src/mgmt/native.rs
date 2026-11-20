@@ -1,4 +1,4 @@
-//! Native (punktfunk/1) pairing: arm/disarm a PIN window, list and unpair
+//! Native (lilynk/1) pairing: arm/disarm a PIN window, list and unpair
 //! clients, and approve pending knocks.
 
 use super::shared::*;

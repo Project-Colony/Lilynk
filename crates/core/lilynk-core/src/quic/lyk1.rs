@@ -1,6 +1,6 @@
-//! What a client from before `punktfunk/2` still speaks: the PIN ceremony over ALPN `pkf1`, and
+//! What a client from before `lilynk/2` still speaks: the PIN ceremony over ALPN `lyk1`, and
 //! the refusal a browser page of that time reads. Each message is `u16 LE length ‖ payload`; the
-//! payloads are the `encode_pkf1` / `decode_pkf1` forms of [`super::PairRequest`],
+//! payloads are the `encode_lyk1` / `decode_lyk1` forms of [`super::PairRequest`],
 //! [`super::PairChallenge`], [`super::PairProof`], [`super::PairResult`] and [`super::Refused`].
 //!
 //! Not cancel-safe: the ceremony runs to completion on its own connection.

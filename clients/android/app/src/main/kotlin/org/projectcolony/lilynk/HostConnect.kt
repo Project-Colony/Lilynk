@@ -78,7 +78,7 @@ object SessionFactory {
  * The one session this process owns, and the one dial allowed to be in flight.
  *
  * [owner] holds the session for the process: an activity recreated mid-stream attaches to it
- * again, and the process dying ends it. `launchMode` is `standard`, so a `punktfunk://` link
+ * again, and the process dying ends it. `launchMode` is `standard`, so a `lilynk://` link
  * arrives as a second activity instance that knows nothing about the first; static state is what
  * crosses that gap.
  *

@@ -1,4 +1,4 @@
-// What a `punktfunk://` link should DO, decided once for both routes.
+// What a `lilynk://` link should DO, decided once for both routes.
 //
 // Connect and browse share three checks — resolve a `preset=` reference, refuse a fingerprint that
 // disagrees with the saved record, refuse to preempt a live session — so the two routes cannot

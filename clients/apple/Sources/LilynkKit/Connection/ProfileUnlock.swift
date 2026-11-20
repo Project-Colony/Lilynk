@@ -139,7 +139,7 @@ public struct ProfileUnlock: Sendable, CustomStringConvertible {
     }
 
     /// The 152 bytes a key proof signs (the multi-seat contract page), built by the core:
-    /// `"punktfunk-seat-unlock-v1" ‖ challenge ‖ seat ‖ device ‖ box`. nil for a wrong shape.
+    /// `"lilynk-seat-unlock-msg-1" ‖ challenge ‖ seat ‖ device ‖ box`. nil for a wrong shape.
     public static func message(challenge: Data, seat: String, device: Data, box: Data) -> Data? {
         guard challenge.count == 32, device.count == 32, box.count == 32 else { return nil }
         var out = [UInt8](repeating: 0, count: Int(LILYNK_UNLOCK_MESSAGE_LEN))
@@ -159,7 +159,7 @@ public struct ProfileUnlock: Sendable, CustomStringConvertible {
     }
 
     /// The 187 bytes a locked profile's key proof signs, built by the core:
-    /// `"punktfunk-profile-unlock-v1" ‖ challenge ‖ profile id, zero-padded to 64 ‖ device ‖ box`.
+    /// `"lilynk-profile-unlock-msg-1" ‖ challenge ‖ profile id, zero-padded to 64 ‖ device ‖ box`.
     /// nil for a wrong shape.
     public static func message(challenge: Data, profile: String, device: Data, box: Data) -> Data? {
         // Checked here too: a C string ends at a NUL the id carries.

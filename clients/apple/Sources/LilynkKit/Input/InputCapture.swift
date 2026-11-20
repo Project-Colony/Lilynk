@@ -1,4 +1,4 @@
-// Input capture → punktfunk/1 datagrams.
+// Input capture → lilynk/1 datagrams.
 //
 // macOS takes mouse motion and buttons from StreamLayerView's NSEvent monitor under cursor
 // disassociation, as the mouse's own counts before macOS acceleration: the host applies its

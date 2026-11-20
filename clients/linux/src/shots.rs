@@ -59,7 +59,7 @@ pub fn run_shot(ctx: &ShotCtx, scene: &str) {
     let mock_advert =
         |key: &str, name: &str, addr: &str, fp: &str| crate::discovery::DiscoveredHost {
             key: key.to_string(),
-            fullname: format!("{key}._punktfunk._udp.local."),
+            fullname: format!("{key}._lilynk._udp.local."),
             name: name.to_string(),
             addr: addr.to_string(),
             port: 9777,

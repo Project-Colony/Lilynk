@@ -252,12 +252,12 @@ object NativeBridge {
     /** Tear down a session handle returned by [nativeConnect]. No-op on `0`. */
     external fun nativeClose(handle: Long)
 
-    // ---- LAN discovery: mDNS browse of `_punktfunk._udp` in Rust (mdns-sd), polled by Kotlin ----
+    // ---- LAN discovery: mDNS browse of `_lilynk._udp` in Rust (mdns-sd), polled by Kotlin ----
     // The caller holds the Wi-Fi MulticastLock for the browse lifetime; raw multicast *reception*
     // needs it. See org.projectcolony.lilynk.kit.discovery.HostDiscovery.
 
     /**
-     * Start browsing `_punktfunk._udp` on the LAN. Returns an opaque discovery handle, or `0` on
+     * Start browsing `_lilynk._udp` on the LAN. Returns an opaque discovery handle, or `0` on
      * failure. Pair with exactly one [nativeDiscoveryStop]. Cheap + non-blocking (spawns the mDNS
      * daemon + a worker thread).
      */
@@ -1279,6 +1279,6 @@ object NativeBridge {
     /** The preset catalog `[{id, name, overrides}]`. */
     external fun nativeConsoleSetPresets(handle: Long, json: String)
 
-    /** The known-hosts records (`KnownHosts` JSON) the console builds `punktfunk://` links from. */
+    /** The known-hosts records (`KnownHosts` JSON) the console builds `lilynk://` links from. */
     external fun nativeConsoleSetKnownHosts(handle: Long, json: String)
 }

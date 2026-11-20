@@ -10,10 +10,10 @@
   ok would unpack the payload into %LocalAppData%\Programs\Lilynk
   + icacls %LocalAppData%\Programs\Lilynk /grant *S-1-5-19:(OI)(CI)RX /Q
 ==> Registry
-  + reg add HKCU\Software\Classes\punktfunk /ve /t REG_SZ /d "URL:Lilynk stream link" /f
-  + reg add HKCU\Software\Classes\punktfunk /v "URL Protocol" /t REG_SZ /d  /f
-  + reg add HKCU\Software\Classes\punktfunk\DefaultIcon /ve /t REG_SZ /d %LocalAppData%\Programs\Lilynk\lilynk-client.exe,0 /f
-  + reg add HKCU\Software\Classes\punktfunk\shell\open\command /ve /t REG_SZ /d ""%LocalAppData%\Programs\Lilynk\lilynk-client.exe" "%1"" /f
+  + reg add HKCU\Software\Classes\lilynk /ve /t REG_SZ /d "URL:Lilynk stream link" /f
+  + reg add HKCU\Software\Classes\lilynk /v "URL Protocol" /t REG_SZ /d  /f
+  + reg add HKCU\Software\Classes\lilynk\DefaultIcon /ve /t REG_SZ /d %LocalAppData%\Programs\Lilynk\lilynk-client.exe,0 /f
+  + reg add HKCU\Software\Classes\lilynk\shell\open\command /ve /t REG_SZ /d ""%LocalAppData%\Programs\Lilynk\lilynk-client.exe" "%1"" /f
   ok would add %LocalAppData%\Programs\Lilynk to the user PATH
 ==> Shortcuts
   ok would create <start menu>\Lilynk.lnk → %LocalAppData%\Programs\Lilynk\lilynk-client.exe

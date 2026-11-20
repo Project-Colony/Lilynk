@@ -120,16 +120,16 @@ fn endpoint_config(host: Option<std::net::IpAddr>) -> quinn::EndpointConfig {
 /// Fresh self-signed cert. Tests/dev only; a host persists its identity and serves through
 /// [`server_shared`].
 pub fn server(addr: std::net::SocketAddr) -> anyhow_result::Result<quinn::Endpoint> {
-    let cert = rcgen::generate_simple_self_signed(vec!["punktfunk".into()])
+    let cert = rcgen::generate_simple_self_signed(vec!["lilynk".into()])
         .map_err(|e| anyhow_result::Error::msg(format!("self-signed cert: {e}")))?;
     let cert_der = rustls::pki_types::CertificateDer::from(cert.cert);
     let key_der = rustls::pki_types::PrivatePkcs8KeyDer::from(cert.signing_key.serialize_der());
     server_from_der(cert_der, key_der.into(), addr, DEFAULT_IDLE_TIMEOUT)
 }
 
-/// `pkf1`, the protocol before `punktfunk/2`. A host lists it only to answer an older client's
+/// `lyk1`, the protocol before `lilynk/2`. A host lists it only to answer an older client's
 /// PIN ceremony and to refuse everything else that client sends with the wire-version code.
-pub const QUIC_ALPN: &[u8] = b"pkf1";
+pub const QUIC_ALPN: &[u8] = b"lyk1";
 
 fn server_from_der(
     cert_der: rustls::pki_types::CertificateDer<'static>,
@@ -143,7 +143,7 @@ fn server_from_der(
 
 /// A host endpoint answering `alpns`, and a clone of its socket for
 /// [`MediaSender`](crate::transport::shared::MediaSender). TLS takes the first of the host's
-/// ALPNs the client offers, so listing `pkf2` first picks it wherever both ends speak it.
+/// ALPNs the client offers, so listing `lyk2` first picks it wherever both ends speak it.
 /// Its QUIC packets carry the video mark, as the media does.
 pub fn server_shared(
     addr: std::net::SocketAddr,
@@ -205,7 +205,7 @@ fn server_config(
 
 /// Fresh self-signed PEM identity for a client to persist and present on connect.
 pub fn generate_identity() -> anyhow_result::Result<(String, String)> {
-    let cert = rcgen::generate_simple_self_signed(vec!["punktfunk-client".into()])
+    let cert = rcgen::generate_simple_self_signed(vec!["lilynk-client".into()])
         .map_err(|e| anyhow_result::Error::msg(format!("self-signed cert: {e}")))?;
     Ok((cert.cert.pem(), cert.signing_key.serialize_pem()))
 }
@@ -287,7 +287,7 @@ pub type SharedClient = (
 /// [`client_pinned_with_identity`] on one socket for QUIC and media, offering `alpns` in
 /// order. The endpoint never lets the host grease the QUIC fixed bit, which is what keeps a
 /// QUIC packet from reading as media. The media side is the session's transport once the host
-/// answers `pkf2`. `host` is the streaming host, whose adapter decides jumbo
+/// answers `lyk2`. `host` is the streaming host, whose adapter decides jumbo
 /// ([`endpoint_config`]); `None` for a dial that carries no video.
 pub fn client_shared(
     pin: Option<[u8; 32]>,
@@ -345,7 +345,7 @@ fn client_config(
     Ok(client_cfg)
 }
 
-/// The `punktfunk/2` media secrets of session `session_id` on `conn`, from its TLS exporter.
+/// The `lilynk/2` media secrets of session `session_id` on `conn`, from its TLS exporter.
 /// Both ends call this with the same arguments and hold the same keys; none crosses the wire.
 pub fn media_keys(
     conn: &quinn::Connection,
@@ -593,7 +593,7 @@ mod tests {
                 let conn = incoming.await.expect("host side connects");
                 (server, conn)
             });
-            let client_conn = client.connect(addr, "punktfunk").unwrap().await.unwrap();
+            let client_conn = client.connect(addr, "lilynk").unwrap().await.unwrap();
             let (_server_ep, host_conn) = accept.await.unwrap();
             // Probes ride `poll_transmit`; a stream write is what starts the search.
             let mut s = host_conn.open_uni().await.unwrap();

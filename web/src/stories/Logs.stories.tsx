@@ -43,7 +43,7 @@ const fixtureEntries: LogEntry[] = [
 		3,
 		"DEBUG",
 		"lilynk_host::discovery",
-		"mDNS advertise _punktfunk._udp pair=required",
+		"mDNS advertise _lilynk._udp pair=required",
 	),
 	entry(
 		4,

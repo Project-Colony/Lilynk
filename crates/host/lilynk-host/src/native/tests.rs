@@ -101,7 +101,7 @@ fn an_unvalidated_first_contact_is_retried_then_accepted() {
         });
         let client = endpoint::client_insecure().unwrap();
         let client_conn = client
-            .connect(addr, "punktfunk")
+            .connect(addr, "lilynk")
             .unwrap()
             .await
             .expect("client completes across the Retry");
@@ -1006,7 +1006,7 @@ async fn a_drain_ends_once_nothing_can_leave() {
     assert!(started.elapsed() >= DRAIN, "a live client keeps it");
 }
 
-/// A client streams over `punktfunk/2`: the handshake crosses the translated control stream,
+/// A client streams over `lilynk/2`: the handshake crosses the translated control stream,
 /// the media arrives on the connection's own socket under exporter keys, and every frame is
 /// the host's byte for byte. Each frame's `HostTiming` names it by the
 /// session-clock pts it arrived with. Control round trips keep working.
@@ -1647,7 +1647,7 @@ async fn raw_dial(port: u16, identity: (&str, &str)) -> RawDial {
     let (ep, _observed) = endpoint::client_shared(None, Some(identity), &[registry::ALPN], None);
     let (ep, media) = ep.expect("client endpoint");
     let conn = ep
-        .connect(format!("127.0.0.1:{port}").parse().unwrap(), "punktfunk")
+        .connect(format!("127.0.0.1:{port}").parse().unwrap(), "lilynk")
         .expect("connect")
         .await
         .expect("QUIC handshake");
@@ -1746,15 +1746,15 @@ async fn closed_app_code(conn: &quinn::Connection) -> u32 {
     }
 }
 
-/// A client from before `punktfunk/2` still pairs by PIN over `pkf1`, and is closed with the
+/// A client from before `lilynk/2` still pairs by PIN over `lyk1`, and is closed with the
 /// wire-version code when it dials anything else there.
 #[test]
-fn a_pkf1_client_pairs_and_is_told_to_update() {
+fn a_lyk1_client_pairs_and_is_told_to_update() {
     let _registry = crate::session_status::tests::registry_lock();
     let _serial = SESSION_TEST_LOCK.lock().unwrap_or_else(|p| p.into_inner());
     use lilynk_core::quic::{endpoint, pake, PairChallenge, PairProof, PairResult};
 
-    let store = access_store_path("pkf1-pair");
+    let store = access_store_path("lyk1-pair");
     let _ = std::fs::remove_file(&store);
     let host = std::thread::spawn({
         let store = store.clone();
@@ -1791,8 +1791,8 @@ fn a_pkf1_client_pairs_and_is_told_to_update() {
         );
         let ep = ep.expect("client endpoint");
 
-        // The PIN ceremony in `punktfunk/1`'s framing, as such a client runs it.
-        let conn = ep.connect(addr, "punktfunk").unwrap().await.unwrap();
+        // The PIN ceremony in `lilynk/1`'s framing, as such a client runs it.
+        let conn = ep.connect(addr, "lilynk").unwrap().await.unwrap();
         let host_fp = observed.lock().unwrap().expect("the host's certificate");
         let (mut send, mut recv) = conn.open_bi().await.unwrap();
         let (spake, spake_a) = pake::start(true, "2468", &client_fp, &host_fp);
@@ -1801,22 +1801,22 @@ fn a_pkf1_client_pairs_and_is_told_to_update() {
             spake_a,
             device_key: Vec::new(),
         };
-        pkf1::write(&mut send, &req.encode_pkf1()).await.unwrap();
-        let challenge = PairChallenge::decode_pkf1(&pkf1::read(&mut recv).await.unwrap()).unwrap();
+        lyk1::write(&mut send, &req.encode_lyk1()).await.unwrap();
+        let challenge = PairChallenge::decode_lyk1(&lyk1::read(&mut recv).await.unwrap()).unwrap();
         let confirms = spake.finish(&challenge.spake_b).unwrap();
         assert!(pake::verify(&confirms.host, &challenge.confirm));
         let proof = PairProof {
             confirm: confirms.client,
         };
-        pkf1::write(&mut send, &proof.encode_pkf1()).await.unwrap();
-        let result = PairResult::decode_pkf1(&pkf1::read(&mut recv).await.unwrap()).unwrap();
+        lyk1::write(&mut send, &proof.encode_lyk1()).await.unwrap();
+        let result = PairResult::decode_lyk1(&lyk1::read(&mut recv).await.unwrap()).unwrap();
         assert!(result.ok, "the pairing completes");
         conn.close(0u32.into(), b"pair done");
 
-        // Its session dial is told to update. A v1 Hello opens with `PKF1`.
-        let conn = ep.connect(addr, "punktfunk").unwrap().await.unwrap();
+        // Its session dial is told to update. A v1 Hello opens with `LYK1`.
+        let conn = ep.connect(addr, "lilynk").unwrap().await.unwrap();
         let (mut send, _recv) = conn.open_bi().await.unwrap();
-        pkf1::write(&mut send, b"PKF1\x01\x00\x00\x00")
+        lyk1::write(&mut send, b"LYK1\x01\x00\x00\x00")
             .await
             .unwrap();
         let code = tokio::time::timeout(std::time::Duration::from_secs(5), closed_app_code(&conn))
@@ -2555,7 +2555,7 @@ async fn dial_until(
         ep.wait_idle().await;
     };
     let conn = ep
-        .connect(format!("127.0.0.1:{port}").parse().unwrap(), "punktfunk")
+        .connect(format!("127.0.0.1:{port}").parse().unwrap(), "lilynk")
         .expect("connect")
         .await
         .expect("QUIC handshake");

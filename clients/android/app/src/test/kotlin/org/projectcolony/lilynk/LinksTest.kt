@@ -9,7 +9,7 @@ import org.junit.Test
  * link a frontend's file hands back. Run: `./gradlew -PexcludeScreenshots :app:testDebugUnitTest`.
  */
 class LinksTest {
-    private val url = "punktfunk://connect/abc?launch=steam:570"
+    private val url = "lilynk://connect/abc?launch=steam:570"
 
     @Test
     fun aTitleSavesUnderANameEverySdCardTakes() {
@@ -22,7 +22,7 @@ class LinksTest {
     fun theFilesFirstNonBlankLineIsTheLink() {
         assertEquals(url, launcherFileLink("$url\n"))
         assertEquals(url, launcherFileLink("﻿\r\n  $url  \r\nignored"))
-        assertEquals("pf://connect/abc", launcherFileLink("pf://connect/abc"))
+        assertEquals("ly://connect/abc", launcherFileLink("ly://connect/abc"))
     }
 
     @Test
@@ -34,6 +34,6 @@ class LinksTest {
 
     @Test
     fun aLinkTheRoutersWillRefuseStillReachesThemToSayWhy() {
-        assertEquals("punktfunk://pair/abc", launcherFileLink("punktfunk://pair/abc"))
+        assertEquals("lilynk://pair/abc", launcherFileLink("lilynk://pair/abc"))
     }
 }

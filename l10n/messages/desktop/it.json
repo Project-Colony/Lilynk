@@ -27,7 +27,7 @@
 	"desktop_hostcard_remove_failed": "Impossibile rimuovere l’host — {reason}",
 	"desktop_hostcard_create_shortcut": "Crea scorciatoia…",
 	"desktop_hostcard_create_shortcut_hint": "Una voce del menu delle app che si connette a questo host",
-	"desktop_hostcard_copy_link_hint": "Un link punktfunk:// che si connette a questo host",
+	"desktop_hostcard_copy_link_hint": "Un link lilynk:// che si connette a questo host",
 	"desktop_shortcut_title": "Crea scorciatoia",
 	"desktop_shortcut_sandboxed_body": "Qui Lilynk è in una sandbox e non può aggiungere da sé la scorciatoia. Copia questo link e crea un launcher per esso — apre la stessa sessione.",
 	"desktop_shortcut_added_body": "Scorciatoia per “{name}” aggiunta alle tue applicazioni",

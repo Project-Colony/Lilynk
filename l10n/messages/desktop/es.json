@@ -27,7 +27,7 @@
 	"desktop_hostcard_remove_failed": "No se pudo eliminar el host — {reason}",
 	"desktop_hostcard_create_shortcut": "Crear acceso directo…",
 	"desktop_hostcard_create_shortcut_hint": "Una entrada del lanzador de aplicaciones que conecta con este host",
-	"desktop_hostcard_copy_link_hint": "Un enlace punktfunk:// que conecta con este host",
+	"desktop_hostcard_copy_link_hint": "Un enlace lilynk:// que conecta con este host",
 	"desktop_shortcut_title": "Crear acceso directo",
 	"desktop_shortcut_sandboxed_body": "Lilynk está aislado aquí en un sandbox, así que no puede añadir el acceso directo por sí solo. Copia este enlace y crea un lanzador con él — abre la misma transmisión.",
 	"desktop_shortcut_added_body": "Acceso directo de “{name}” añadido a tus aplicaciones",

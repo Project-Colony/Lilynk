@@ -421,7 +421,7 @@ pub(super) mod tests {
             let client = endpoint::client_insecure().expect("client");
             let (host_conn, client_conn) = tokio::join!(
                 async { server.accept().await.expect("incoming").await },
-                async { client.connect(addr, "punktfunk").expect("dial").await },
+                async { client.connect(addr, "lilynk").expect("dial").await },
             );
             (
                 server,

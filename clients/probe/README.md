@@ -1,6 +1,6 @@
 # lilynk — probe (reference client)
 
-`lilynk-probe` is the headless reference client for `punktfunk/2`: it connects, exercises a
+`lilynk-probe` is the headless reference client for `lilynk/2`: it connects, exercises a
 plane, and reports numbers. Nothing to watch on — use a real client for that. Because it links the
 same `lilynk-core` as every other client, it doubles as the worked example of driving the
 protocol end to end.

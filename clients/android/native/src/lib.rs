@@ -2,7 +2,7 @@
 //!
 //! Architecture: the **Rust-heavy** client model (like `lilynk-client-linux`, *not* the
 //! thin-native-over-C-ABI Apple model). This `cdylib` links `lilynk-core` directly and drives
-//! the whole `punktfunk/1` protocol through [`lilynk_core::client::NativeClient`]; Kotlin owns
+//! the whole `lilynk/1` protocol through [`lilynk_core::client::NativeClient`]; Kotlin owns
 //! only the Android-framework surface (Compose UI, `SurfaceView` lifecycle, input capture, the
 //! Wi-Fi `MulticastLock` + permission UX, Keystore). The JNI seam below is the one place the two
 //! languages meet.

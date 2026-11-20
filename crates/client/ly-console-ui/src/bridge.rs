@@ -71,7 +71,7 @@ pub struct CreateOptions {
     /// The preset catalog as `[{id, name, overrides}, …]`.
     #[serde(default)]
     pub presets: Vec<PresetJson>,
-    /// The known-hosts records, for building `punktfunk://` links.
+    /// The known-hosts records, for building `lilynk://` links.
     #[serde(default)]
     pub known_hosts: KnownHosts,
     /// Where to start: `{}` is Home, `{"library": <HostRow>}` a shelf.

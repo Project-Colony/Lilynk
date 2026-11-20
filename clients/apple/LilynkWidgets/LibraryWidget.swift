@@ -1,7 +1,7 @@
 // Configurable Home-Screen / Lock-Screen library widget (kind "LilynkLibrary"). The user picks
 // a saved host in the widget's configuration (long-press → Edit Widget — the picker is
 // `HostEntity`'s query over the shared App-Group store, running in this extension process); a tap
-// deep-links into that host's game library via `punktfunk://browse/<uuid>` — the app's onOpenURL
+// deep-links into that host's game library via `lilynk://browse/<uuid>` — the app's onOpenURL
 // routes it to the same library presentation every internal surface drives. No session starts
 // until a title is picked there.
 //

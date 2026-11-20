@@ -113,7 +113,7 @@ pub(crate) struct Ticket<'a> {
 
 /// The signed message. A cross-process contract: `ctl` signs it, the seat host checks it.
 fn message(ts: u64, nonce: &str, profile: &str) -> String {
-    format!("pf-person-session:v1:{ts}:{nonce}:{profile}")
+    format!("ly-person-session:v1:{ts}:{nonce}:{profile}")
 }
 
 fn mac_of(token: &str) -> Hmac<sha2::Sha256> {

@@ -908,7 +908,7 @@ struct LibraryView: View {
         }
     }
 
-    /// Put this title's self-emitted `punktfunk://` link on the clipboard: the shelf's host,
+    /// Put this title's self-emitted `lilynk://` link on the clipboard: the shelf's host,
     /// the pinned card's preset when a pin opened it, and the game's own `launch=` id — so
     /// the URL boots straight into the title, the way a host card's link opens the desktop
     /// (design/client-deep-links.md §5).

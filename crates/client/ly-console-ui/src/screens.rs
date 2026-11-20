@@ -479,7 +479,7 @@ impl Outbox {
     }
 }
 
-/// A saved host's `punktfunk://` link from the store (fingerprint + stable id a
+/// A saved host's `lilynk://` link from the store (fingerprint + stable id a
 /// screen does not hold). `launch` makes a game's link. `None` if the host has
 /// left the store since the menu opened. The row's pin names the record; an unpinned
 /// row is the placeholder at its address, never a host pinned there.

@@ -84,7 +84,7 @@ impl Discovery {
 
 static DISCOVERIES: HandleTable<Discovery> = HandleTable::new(0x3000_0000_0000_0001);
 
-/// Start `_punktfunk._udp` browsing and return an opaque table key.
+/// Start `_lilynk._udp` browsing and return an opaque table key.
 /// Kotlin holds its Wi-Fi multicast lock until stop; `0` reports daemon setup failure.
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_org_projectcolony_lilynk_kit_NativeBridge_nativeDiscoveryStart(
@@ -151,7 +151,7 @@ mod tests {
     fn host() -> DiscoveredHost {
         DiscoveredHost {
             key: "host-123".into(),
-            fullname: "home-worker-2._punktfunk._udp.local.".into(),
+            fullname: "home-worker-2._lilynk._udp.local.".into(),
             name: "home-worker-2".into(),
             addr: "192.168.1.70".into(),
             port: 9777,

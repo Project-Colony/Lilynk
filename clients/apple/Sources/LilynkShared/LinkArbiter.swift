@@ -1,4 +1,4 @@
-// Which window acts on a hand-off: a `punktfunk://` link an intent posts to every window, or a
+// Which window acts on a hand-off: a `lilynk://` link an intent posts to every window, or a
 // Mac host page's request. `ContentView` asks in each window and performs the answer; the first
 // window to take the hand-off from its inbox runs it. The platform is a value, so the Mac runs
 // every row (`LinkArbiterTests`).

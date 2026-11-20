@@ -117,7 +117,7 @@ game runs on the host, the tile reads **Resume** and the game's name.
 | Controller home (TV, Steam Deck, a client with a controller) | **Y** on a saved host, or the host's options → **Library** |
 | Steam Deck | **Open Lilynk** in the Decky panel, then the controller home. See [Steam Deck](/docs/steam-deck). |
 | Moonlight | Turn on GameStream ([Moonlight](/docs/moonlight)). Titles appear in Moonlight's app list beside **Desktop**; titles with no launch command are left out. |
-| A link | `punktfunk://connect/couch-pc?launch=steam:570`. See [Presets and links](/docs/presets-and-links). |
+| A link | `lilynk://connect/couch-pc?launch=steam:570`. See [Presets and links](/docs/presets-and-links). |
 | Command line | `lilynk library couch-pc` lists ids; `lilynk launch couch-pc --game steam:570` streams one. See [the `lilynk` CLI](/docs/clients#scripting-the-lilynk-cli). |
 
 Where the game opens (your desktop, a gamescope session, or a headless session of its own) is

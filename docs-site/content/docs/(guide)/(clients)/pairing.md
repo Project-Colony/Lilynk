@@ -29,7 +29,7 @@ its own after that. There are no accounts and nothing leaves your network.
    controller interface, **Use a PIN instead…** on a Steam Deck), and type the PIN.
 3. The host now shows as paired. Pick it again to start streaming.
 
-If the PIN runs out, click **Pair a device** again. A `punktfunk://` link can't pair a device.
+If the PIN runs out, click **Pair a device** again. A `lilynk://` link can't pair a device.
 
 **Moonlight** works the other way round: Moonlight shows the PIN and you type it into the console.
 See [Connect with Moonlight → Pair](/docs/moonlight#3-pair).

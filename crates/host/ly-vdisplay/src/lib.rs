@@ -868,7 +868,7 @@ pub fn gamescope_splash_client() -> anyhow::Result<()> {
 
 /// Can a gamescope session on this host stream 10-bit BT.2020 PQ?
 ///
-/// Settled **before spawn** — punktfunk/1 Welcome fixes bit depth and cannot
+/// Settled **before spawn** — lilynk/1 Welcome fixes bit depth and cannot
 /// take it back. Both terms must hold: the resolved binary offers 10-bit PQ
 /// capture (`--version` banner, kept once it answers), and this host **spawns**
 /// gamescope rather than attaching (`LILYNK_GAMESCOPE_NODE` inherits
@@ -1240,7 +1240,7 @@ mod tests {
 
     /// Spawn-vs-attach for [`gamescope_hdr_available`] /
     /// [`gamescope_composites_cursor`]. Both answers are irrevocable once
-    /// punktfunk/1 Welcome has gone out; an over-promise is not recoverable.
+    /// lilynk/1 Welcome has gone out; an over-promise is not recoverable.
     #[test]
     fn only_a_session_we_start_can_promise_gamescope_capabilities() {
         // Attach is somebody else's session, whatever rung reached it.

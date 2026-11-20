@@ -40,7 +40,7 @@ final class LinkIdleTests: XCTestCase {
         let other = StoredHost(name: "Couch", address: "10.0.0.3")
         let session = DeepLinkRouter.SessionState(isIdle: idle(waking: true), activeHostID: waking.id)
         func resolve(_ host: StoredHost) throws -> DeepLinkRouter.Outcome {
-            let url = try XCTUnwrap(URL(string: "punktfunk://connect/\(host.id.uuidString)"))
+            let url = try XCTUnwrap(URL(string: "lilynk://connect/\(host.id.uuidString)"))
             return DeepLinkRouter.resolve(
                 link: try DeepLink(url: url), hosts: [waking, other],
                 catalog: PresetCatalog(presets: []), session: session, browse: false)

@@ -36,7 +36,7 @@ and `web` print their usage when run with no arguments. Commands not listed here
 
 ## `serve`
 
-Runs the native `punktfunk/2` host and the management API in one process. The native plane always
+Runs the native `lilynk/2` host and the management API in one process. The native plane always
 runs.
 
 ```sh
@@ -159,7 +159,7 @@ covers the host cached for clients.
 
 ## `lilynk1-host`
 
-A standalone native-only host for testing the `punktfunk/2` path, with no GameStream and no console.
+A standalone native-only host for testing the `lilynk/2` path, with no GameStream and no console.
 Pairing is required; it logs a PIN at startup.
 
 ```sh

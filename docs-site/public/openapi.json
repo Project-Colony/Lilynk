@@ -15463,7 +15463,7 @@
               "string",
               "null"
             ],
-            "description": "HMAC secret file (`X-Punktfunk-Signature: sha256=<hex>`). Warns if world-readable."
+            "description": "HMAC secret file (`X-Lilynk-Signature: sha256=<hex>`). Warns if world-readable."
           },
           "hold": {
             "type": "boolean",
@@ -17774,7 +17774,7 @@
           },
           "token": {
             "type": "string",
-            "description": "Present as `Authorization: Bearer <token>` to this seat host, or as\n`X-Punktfunk-Person-Session` to the box. 64 lowercase hex."
+            "description": "Present as `Authorization: Bearer <token>` to this seat host, or as\n`X-Lilynk-Person-Session` to the box. 64 lowercase hex."
           }
         }
       },
@@ -21259,7 +21259,7 @@
               "string",
               "null"
             ],
-            "description": "Hex ECDSA-P256-SHA256 signature (ASN.1 DER) by the host's long-lived native identity over\n`\"punktfunk-wt-cert-v1:\" + cert_hash_sha256`. Absent when that identity is not a P-256\nkey. A browser that has paired MUST check this; one that has not cannot, and does not."
+            "description": "Hex ECDSA-P256-SHA256 signature (ASN.1 DER) by the host's long-lived native identity over\n`\"lilynk-wt-cert-v1:\" + cert_hash_sha256`. Absent when that identity is not a P-256\nkey. A browser that has paired MUST check this; one that has not cannot, and does not."
           },
           "expires_at": {
             "type": "integer",

@@ -1,4 +1,4 @@
-// "Copy Link" on a host or pinned card puts a `punktfunk://` URL on the clipboard — the same
+// "Copy Link" on a host or pinned card puts a `lilynk://` URL on the clipboard — the same
 // self-emitted form a shortcut or a Playnite entry would carry (design/client-deep-links.md §5):
 // stable id first, with the address and pin alongside so it still resolves after the record is
 // re-addressed or the store is wiped.

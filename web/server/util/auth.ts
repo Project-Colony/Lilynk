@@ -283,7 +283,7 @@ function sessionKey(token: string): string | null {
 	if (!key && token) {
 		// Hashed with its own label: the raw admin token is never the seal key.
 		key = createHash("sha256")
-			.update(`punktfunk-session-v1:token:${token}`)
+			.update(`lilynk-session-v1:token:${token}`)
 			.digest("hex");
 		try {
 			mkdirSync(dirname(file), { recursive: true });
@@ -320,7 +320,7 @@ export function sessionConfig(): SessionConfig {
 				// Last resort (no token configured — dev/local only). A real deployment always has a
 				// token and never reaches here.
 				createHash("sha256")
-					.update(`punktfunk-session-v1:${uiPasswordHash() || uiPassword()}`)
+					.update(`lilynk-session-v1:${uiPasswordHash() || uiPassword()}`)
 					.digest("hex"));
 	return {
 		name: SESSION_NAME,

@@ -733,7 +733,7 @@ mod tests {
         )
         .unwrap();
         let url = format!(
-            "https://127.0.0.1:{}/pf2",
+            "https://127.0.0.1:{}/ly2",
             server.local_addr().unwrap().port()
         );
         let sem = Arc::new(tokio::sync::Semaphore::new(1));

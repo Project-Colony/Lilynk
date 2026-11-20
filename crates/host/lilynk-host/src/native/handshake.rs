@@ -1,9 +1,9 @@
-//! Native `punktfunk/1` Hello → Welcome → Start negotiation.
+//! Native `lilynk/1` Hello → Welcome → Start negotiation.
 //!
 //! Pairing stays in `serve_session`: the delegated-approval wait must outlive this handshake
 //! timeout and must release the session permit. This module then admits the client, negotiates
 //! encode / audio / cursor, binds the data-plane UDP socket, and returns the values
-//! `serve_session` needs to stand the session up. On `punktfunk/2` a client can instead be
+//! `serve_session` needs to stand the session up. On `lilynk/2` a client can instead be
 //! sent to another host of the box before any `Welcome` ([`redirect`]).
 //!
 //! Evidence: `design/hi-res-audio.md`, `design/remote-desktop-sweep.md`.
@@ -1335,7 +1335,7 @@ async fn admit_mode(
     use crate::vdisplay::admission::{admit, preempt_resumed, preempt_same_identity, Admission};
     let peer_fp = n.conn.peer_fingerprint();
 
-    // Own prior session (QUIC idle has not fired), and on `punktfunk/2` the exact session a
+    // Own prior session (QUIC idle has not fired), and on `lilynk/2` the exact session a
     // `resume` names. Supersede them and wait for their release, so this reconnect reuses the
     // kept display. Runs before we register, so we never stop ourselves.
     let mut own_zombies = preempt_same_identity(peer_fp);
@@ -3025,7 +3025,7 @@ pub(crate) mod tests {
             (server, conn)
         });
         let client = endpoint::client_insecure().unwrap();
-        let _client_conn = client.connect(addr, "punktfunk").unwrap().await.unwrap();
+        let _client_conn = client.connect(addr, "lilynk").unwrap().await.unwrap();
         let (_server, conn) = accept.await.unwrap();
         let socket = Arc::new(std::net::UdpSocket::bind("127.0.0.1:0").unwrap());
         let link = super::super::link::SessionLink::QuicV2(

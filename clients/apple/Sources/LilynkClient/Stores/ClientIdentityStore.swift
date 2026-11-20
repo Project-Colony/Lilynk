@@ -1,4 +1,4 @@
-// This client's persistent punktfunk/1 identity: a self-signed certificate + key (PEM),
+// This client's persistent lilynk/1 identity: a self-signed certificate + key (PEM),
 // generated once and stored in the data-protection Keychain, this-device-only (with a legacy
 // file-keychain fallback for unsigned builds — see `query(dataProtection:)`). The certificate's
 // fingerprint is how hosts recognize this client after PIN pairing — losing the key un-pairs this

@@ -1,17 +1,17 @@
 //! The control plane's message vocabulary, and the quinn transport that carries it.
 //!
 //! **The messages are not behind the `quic` feature; the transport is.** A browser speaks the
-//! same protocol over WebTransport, where quinn cannot go, so only [`endpoint`], [`pkf1`],
+//! same protocol over WebTransport, where quinn cannot go, so only [`endpoint`], [`lyk1`],
 //! [`clipstream`] and [`pake`] need a feature.
 //!
 //! The structs here are the session's semantic model; [`v2`] encodes them for the wire (ALPN
-//! `pkf2`). The handshake is `ClientHello` → `ServerHello` → `Ready` on the first stream, then
+//! `lyk2`). The handshake is `ClientHello` → `ServerHello` → `Ready` on the first stream, then
 //! both sides open a [`crate::session::Session`] over the connection's own socket, keyed from
 //! its TLS exporter. The host presents a long-lived self-signed cert; the client pins its
 //! SHA-256 fingerprint (no pin = TOFU).
 
-/// First bytes of a [`pkf1`] pairing message or refusal.
-pub const CTL_MAGIC: &[u8; 4] = b"PKFc";
+/// First bytes of a [`lyk1`] pairing message or refusal.
+pub const CTL_MAGIC: &[u8; 4] = b"LYKc";
 
 mod access;
 mod caps;
@@ -26,7 +26,7 @@ mod pen;
 mod touchpad;
 mod wire;
 
-/// The `punktfunk/2` codecs (ALPN `pkf2`). Ungated like the v1 vocabulary: the browser speaks it too.
+/// The `lilynk/2` codecs (ALPN `lyk2`). Ungated like the v1 vocabulary: the browser speaks it too.
 /// cbindgen:ignore
 pub mod v2;
 
@@ -35,9 +35,9 @@ pub mod v2;
 #[cfg(feature = "quic")]
 pub mod endpoint;
 
-/// The PIN ceremony and refusal an older client still speaks over `pkf1`.
+/// The PIN ceremony and refusal an older client still speaks over `lyk1`.
 #[cfg(feature = "quic")]
-pub mod pkf1;
+pub mod lyk1;
 
 /// Per-transfer clipboard fetch streams: a transfer stream, a request frame, then raw bytes.
 /// Transport only; state per side.

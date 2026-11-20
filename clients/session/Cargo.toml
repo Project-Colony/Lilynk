@@ -1,6 +1,6 @@
 [package]
 name = "lilynk-client-session"
-description = "punktfunk/1 Vulkan session binary — SDL3 window, ash presenter, terminal stats; the power-user / gamescope stream client"
+description = "lilynk/1 Vulkan session binary — SDL3 window, ash presenter, terminal stats; the power-user / gamescope stream client"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true

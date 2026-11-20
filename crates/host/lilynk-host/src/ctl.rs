@@ -755,7 +755,7 @@ fn person_ticket(dir: &std::path::Path, ts: u64, nonce: &str) -> Result<String> 
     Ok(crate::person_token::sign(&token, ts, nonce, &profile))
 }
 
-/// The signed half: `<unix-seconds>.<nonce>.<HMAC-SHA256>` over `pf-console-handoff:v1:ts:nonce`.
+/// The signed half: `<unix-seconds>.<nonce>.<HMAC-SHA256>` over `ly-console-handoff:v1:ts:nonce`.
 ///
 /// Kept alone because it is the cross-language contract — `handoffMessage` in
 /// `web/server/util/handoff.ts` builds the same string, and the console recomputes this MAC with
@@ -766,7 +766,7 @@ fn handoff_ticket(token: &str, ts: u64, nonce: &str) -> Result<String> {
     use hmac::{Hmac, KeyInit, Mac};
     let mut mac = Hmac::<sha2::Sha256>::new_from_slice(token.as_bytes())
         .map_err(|e| Failure::api(format!("key the handoff HMAC: {e}")))?;
-    mac.update(format!("pf-console-handoff:v1:{ts}:{nonce}").as_bytes());
+    mac.update(format!("ly-console-handoff:v1:{ts}:{nonce}").as_bytes());
     Ok(format!(
         "{ts}.{nonce}.{}",
         hex::encode(mac.finalize().into_bytes())
@@ -1127,7 +1127,7 @@ mod tests {
         let t = handoff_ticket("test-token", 1_700_000_000, "abc123").unwrap();
         assert_eq!(
             t,
-            "1700000000.abc123.754d195691c7b24f4a6b8966541deca3c958919e7d33da9e0d4e3acfebf6df2c"
+            "1700000000.abc123.a0d5df4dfb21ad2956e07bbadac8d93dcf44c2c0fb01592df1a498f6e098cba1"
         );
     }
 

@@ -1659,7 +1659,7 @@ typedef struct JitterTuning JitterTuning;
 typedef struct LilynkAv1Concealer LilynkAv1Concealer;
 
 #if defined(LILYNK_FEATURE_QUIC)
-// Live `punktfunk/2` connection (one QUIC connection and its media, pumped on internal threads).
+// Live `lilynk/2` connection (one QUIC connection and its media, pumped on internal threads).
 // One puller thread per plane; never two threads on the same plane.
 typedef struct LilynkConnection LilynkConnection;
 #endif
@@ -2840,7 +2840,7 @@ LilynkConnection *lilynk_connect_ex12(const char *host,
 
 #if defined(LILYNK_FEATURE_QUIC)
 // The bytes a profile's unlock key signs, with SHA-256 as the digest, into `out`:
-// `"punktfunk-seat-unlock-v1" ‖ challenge ‖ seat id ‖ device fingerprint ‖ box fingerprint`.
+// `"lilynk-seat-unlock-msg-1" ‖ challenge ‖ seat id ‖ device fingerprint ‖ box fingerprint`.
 // `seat_id` is the seat's 32 lowercase hex characters; `device_sha256` is this device's
 // certificate fingerprint, `box_sha256` the box's as this caller pinned it. `INVALID_ARG` for
 // any other seat id, `NULL_POINTER` for a null argument.
@@ -2857,7 +2857,7 @@ LilynkStatus lilynk_profile_unlock_message(const uint8_t *challenge,
 
 #if defined(LILYNK_FEATURE_QUIC)
 // What a locked profile's unlock key signs, with SHA-256 as the digest, into `out`:
-// `"punktfunk-profile-unlock-v1" ‖ challenge ‖ profile id, zero-padded to 64 ‖ device
+// `"lilynk-profile-unlock-msg-1" ‖ challenge ‖ profile id, zero-padded to 64 ‖ device
 // fingerprint ‖ box fingerprint`. `profile_id` is 1 to 64 of `[A-Za-z0-9_-]`; the rest is
 // [`lilynk_profile_unlock_message`]'s. `INVALID_ARG` for any other id, `NULL_POINTER` for a
 // null argument.

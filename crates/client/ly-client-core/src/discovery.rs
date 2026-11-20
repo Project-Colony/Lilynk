@@ -1,4 +1,4 @@
-//! mDNS browse of `_punktfunk._udp` (TXT `fp`/`pair`/`id`; host crate
+//! mDNS browse of `_lilynk._udp` (TXT `fp`/`pair`/`id`; host crate
 //! `discovery.rs`). A worker streams [`DiscoveryEvent`]; it exits when the
 //! receiver is dropped, polled so an empty LAN still stops.
 
@@ -10,7 +10,7 @@ use std::sync::Arc;
 use std::time::{Duration, Instant};
 
 /// DNS-SD type hosts advertise. See host crate `lilynk_host::hostsys::discovery`.
-const SERVICE_TYPE: &str = "_punktfunk._udp.local.";
+const SERVICE_TYPE: &str = "_lilynk._udp.local.";
 
 pub use lilynk_core::discovery::DiscoveredHost;
 
@@ -266,7 +266,7 @@ mod tests {
             fp_hex: "bb".into(),
             ..Default::default()
         };
-        let other_os = host("id-2", "desk-linux._punktfunk._udp.local.", "192.168.1.9");
+        let other_os = host("id-2", "desk-linux._lilynk._udp.local.", "192.168.1.9");
         assert!(
             !same_host(&saved, &other_os),
             "a different pin is a different host"
@@ -312,7 +312,7 @@ mod tests {
                 addr: advert["addr"].as_str().unwrap().into(),
                 port: advert["port"].as_u64().unwrap() as u16,
                 fp_hex: advert["fp"].as_str().unwrap().into(),
-                ..host("id", "desk._punktfunk._udp.local.", "")
+                ..host("id", "desk._lilynk._udp.local.", "")
             };
             assert_eq!(
                 same_host(&saved, &advert),
@@ -332,9 +332,9 @@ mod tests {
             rescan: Rescan(Arc::default()),
             polls: 0,
         };
-        let mut fp_less = host("id-1", "desk._punktfunk._udp.local.", "192.168.1.9");
+        let mut fp_less = host("id-1", "desk._lilynk._udp.local.", "192.168.1.9");
         fp_less.fp_hex = String::new();
-        let mut moved = host("id-2", "desk._punktfunk._udp.local.", "192.168.1.20");
+        let mut moved = host("id-2", "desk._lilynk._udp.local.", "192.168.1.20");
         moved.fp_hex = "bb".into();
 
         tx.try_send(DiscoveryEvent::Resolved(fp_less.clone()))
@@ -365,20 +365,16 @@ mod tests {
         let mut adverts = Adverts::new();
         fold(
             &mut adverts,
-            DiscoveryEvent::Resolved(host("id-1", "desk._punktfunk._udp.local.", "192.168.1.9")),
+            DiscoveryEvent::Resolved(host("id-1", "desk._lilynk._udp.local.", "192.168.1.9")),
         );
         fold(
             &mut adverts,
-            DiscoveryEvent::Resolved(host("id-1", "desk._punktfunk._udp.local.", "192.168.1.20")),
+            DiscoveryEvent::Resolved(host("id-1", "desk._lilynk._udp.local.", "192.168.1.20")),
         );
         // The same host under a second instance name (an mDNS conflict suffix) that sorts first.
         fold(
             &mut adverts,
-            DiscoveryEvent::Resolved(host(
-                "id-1",
-                "desk (2)._punktfunk._udp.local.",
-                "192.168.1.30",
-            )),
+            DiscoveryEvent::Resolved(host("id-1", "desk (2)._lilynk._udp.local.", "192.168.1.30")),
         );
         let out = sorted(adverts);
         assert_eq!(out.len(), 1, "same key must not render twice");
@@ -390,16 +386,16 @@ mod tests {
         let mut adverts = Adverts::new();
         fold(
             &mut adverts,
-            DiscoveryEvent::Resolved(host("id-1", "desk._punktfunk._udp.local.", "192.168.1.9")),
+            DiscoveryEvent::Resolved(host("id-1", "desk._lilynk._udp.local.", "192.168.1.9")),
         );
         fold(
             &mut adverts,
-            DiscoveryEvent::Resolved(host("id-2", "tv._punktfunk._udp.local.", "192.168.1.10")),
+            DiscoveryEvent::Resolved(host("id-2", "tv._lilynk._udp.local.", "192.168.1.10")),
         );
         fold(
             &mut adverts,
             DiscoveryEvent::Removed {
-                fullname: "desk._punktfunk._udp.local.".into(),
+                fullname: "desk._lilynk._udp.local.".into(),
             },
         );
         let out = sorted(adverts);
@@ -411,11 +407,11 @@ mod tests {
     /// or a launch would target a nonexistent reference.
     #[test]
     fn advertised_id_is_empty_without_the_txt() {
-        let named = host("id-1", "desk._punktfunk._udp.local.", "10.0.0.1");
+        let named = host("id-1", "desk._lilynk._udp.local.", "10.0.0.1");
         assert_eq!(named.advertised_id(), "id-1");
         let anonymous = host(
-            "desk._punktfunk._udp.local.",
-            "desk._punktfunk._udp.local.",
+            "desk._lilynk._udp.local.",
+            "desk._lilynk._udp.local.",
             "10.0.0.1",
         );
         assert_eq!(anonymous.advertised_id(), "");

@@ -1,4 +1,4 @@
-//! Native host plane: `pkf2` sessions over QUIC; `pkf1` only pairs an older client. Video,
+//! Native host plane: `lyk2` sessions over QUIC; `lyk1` only pairs an older client. Video,
 //! audio and input ride the connection's datagrams; the data planes are threads, not async.
 //! Concurrent sessions share the host-lifetime injector, mic and audio capture.
 //!
@@ -25,7 +25,7 @@ use lilynk_core::packet::{FLAG_PIC, FLAG_PROBE, FLAG_SOF};
 use lilynk_core::quic::v2::hello::{ClientHello, Ready, ServerHello};
 use lilynk_core::quic::v2::msg as v2msg;
 use lilynk_core::quic::{
-    classify, endpoint, pkf1, AccessUpdate, AckReason, BitrateChanged, ClockEcho, ClockProbe,
+    classify, endpoint, lyk1, AccessUpdate, AckReason, BitrateChanged, ClockEcho, ClockProbe,
     GrantClass, Hello, PairRequest, PipelineGap, ProbeResult, ProbeShaped, Reconfigure,
     Reconfigured, SetBitrate, Welcome, GRANT_ALL, GRANT_CLIPBOARD, GRANT_LAUNCH,
 };
@@ -141,7 +141,7 @@ pub struct Lilynk1Options {
     /// `LILYNK_IDLE_TIMEOUT_MS`; ≥1 s floor, keep-alive scales so a live session
     /// never false-closes.
     pub idle_timeout: Option<std::time::Duration>,
-    /// `_punktfunk._udp` advert. `--no-mdns` / `LILYNK_MDNS=0` skips it.
+    /// `_lilynk._udp` advert. `--no-mdns` / `LILYNK_MDNS=0` skips it.
     pub mdns: bool,
 }
 
@@ -236,7 +236,7 @@ pub(crate) struct NativeServe {
     pub require_pairing: bool,
     /// Management API TCP port, advertised over mDNS so a client browses the library on this IP.
     pub mgmt_port: u16,
-    /// Gates `_punktfunk._udp` and GameStream `_nvstream` together. See [`Lilynk1Options::mdns`].
+    /// Gates `_lilynk._udp` and GameStream `_nvstream` together. See [`Lilynk1Options::mdns`].
     pub mdns: bool,
     /// Where the browser plane listens, or `None` when it is off — which is the default
     /// (`--webtransport` / `LILYNK_WEBTRANSPORT`). See `crate::webtransport`.
@@ -280,7 +280,7 @@ pub(crate) async fn serve(
     let fingerprint = endpoint::fingerprint_of_pem(&identity.cert_pem)
         .map_err(|e| anyhow!("cert fingerprint: {e}"))?;
     hold_guests_kept_at_start(&np);
-    // Media leaves from this socket. `pkf1` stays listed for [`serve_pkf1`]: an older client
+    // Media leaves from this socket. `lyk1` stays listed for [`serve_lyk1`]: an older client
     // still pairs there, and is told to update for anything else.
     let alpns: &[&[u8]] = &[lilynk_core::quic::v2::registry::ALPN, endpoint::QUIC_ALPN];
     let (ep, media_socket) = endpoint::server_shared(
@@ -439,7 +439,7 @@ pub(crate) async fn serve(
     Ok(())
 }
 
-/// The `_punktfunk._udp` advert. None on a seat host, with `--no-mdns`, or when discovery fails:
+/// The `_lilynk._udp` advert. None on a seat host, with `--no-mdns`, or when discovery fails:
 /// a client still connects by address.
 fn advertise(
     opts: &Lilynk1Options,
@@ -490,7 +490,7 @@ struct Accepting {
 }
 
 /// One connection, off the accept loop: a peer that stalls its handshake holds only its own task,
-/// up to the idle timeout. A pin mismatch ends here, before a session slot is taken; a `pkf1`
+/// up to the idle timeout. A pin mismatch ends here, before a session slot is taken; a `lyk1`
 /// client is answered on the pairing path; a session's error closes typed.
 async fn serve_connection(incoming: quinn::Incoming, host: SessionHost, at: Arc<Accepting>) {
     let conn = match incoming.await {
@@ -509,7 +509,7 @@ async fn serve_connection(incoming: quinn::Incoming, host: SessionHost, at: Arc<
     }
     let peer = conn.remote_address();
     if endpoint::negotiated_alpn(&conn).as_deref() != Some(lilynk_core::quic::v2::registry::ALPN) {
-        serve_pkf1(
+        serve_lyk1(
             conn,
             at.media_socket.clone(),
             &at.fingerprint,
@@ -743,7 +743,7 @@ use crate::audio::AudioCapSlot;
 /// Under the pending TTL (`native_pairing::approval::PENDING_TTL`).
 const PENDING_APPROVAL_WAIT: std::time::Duration = std::time::Duration::from_secs(180);
 
-/// How often a parked `punktfunk/2` knock is told the host is still deciding.
+/// How often a parked `lilynk/2` knock is told the host is still deciding.
 const PENDING_EVERY: std::time::Duration = std::time::Duration::from_secs(10);
 
 /// [`wait_for_approval`], then a session slot like any fresh client's (waits if busy).
@@ -783,7 +783,7 @@ pub(crate) async fn slot_while_connected(
 const TRUST_COPY_WAIT: std::time::Duration = std::time::Duration::from_secs(3);
 
 /// Park an unpaired knock until the console decides, holding no session slot. A
-/// `punktfunk/2` client hears `Pending` on `v2` meanwhile, every [`PENDING_EVERY`]. A seat host
+/// `lilynk/2` client hears `Pending` on `v2` meanwhile, every [`PENDING_EVERY`]. A seat host
 /// parks nothing: it admits a device once the box's pairing reaches it, within
 /// [`TRUST_COPY_WAIT`], and refuses one the box never paired.
 ///
@@ -1078,7 +1078,7 @@ async fn serve_session(
     };
     let data_plane = DataPlane::Shared(
         conn.v2()
-            .context("the native plane admitted a link with no punktfunk/2 state")?
+            .context("the native plane admitted a link with no lilynk/2 state")?
             .clone(),
     );
     run_admitted(conn, send, recv, first, &host, data_plane, permit).await
@@ -1149,10 +1149,10 @@ where
         .map(|()| Served::Session)
 }
 
-/// A `pkf1` dial. A client that pairs over `pkf1` still reaches the PIN ceremony, in that
-/// wire's framing; every other `pkf1` dial is closed with the wire-version code, which the
+/// A `lyk1` dial. A client that pairs over `lyk1` still reaches the PIN ceremony, in that
+/// wire's framing; every other `lyk1` dial is closed with the wire-version code, which the
 /// client shows as "update both".
-async fn serve_pkf1(
+async fn serve_lyk1(
     conn: quinn::Connection,
     media_socket: Arc<std::net::UdpSocket>,
     host_fp: &[u8; 32],
@@ -1162,20 +1162,20 @@ async fn serve_pkf1(
     let peer = conn.remote_address();
     let first = async {
         let (send, mut recv) = conn.accept_bi().await?;
-        let first = pkf1::read(&mut recv).await?;
+        let first = lyk1::read(&mut recv).await?;
         anyhow::Ok((send, recv, first))
     };
     if let Ok(Ok((send, recv, first))) = tokio::time::timeout(HANDSHAKE_TIMEOUT, first).await {
-        if let Ok(req) = PairRequest::decode_pkf1(&first) {
+        if let Ok(req) = PairRequest::decode_lyk1(&first) {
             let link = link::SessionLink::QuicV2(
                 conn.clone(),
                 Arc::new(link::V2Link::new(conn.clone(), media_socket)),
             );
-            let wire = pairing::PairWire::Pkf1 { send, recv };
+            let wire = pairing::PairWire::Lyk1 { send, recv };
             match serve_pairing(&link, wire, req, host_fp, np, pairing_clocks).await {
-                Ok(_) => tracing::info!(%peer, "pairing over punktfunk/1 complete"),
+                Ok(_) => tracing::info!(%peer, "pairing over lilynk/1 complete"),
                 Err(e) => {
-                    tracing::warn!(%peer, error = %format!("{e:#}"), "pairing over punktfunk/1 failed")
+                    tracing::warn!(%peer, error = %format!("{e:#}"), "pairing over lilynk/1 failed")
                 }
             }
             return;
@@ -1183,7 +1183,7 @@ async fn serve_pkf1(
     }
     let reason = lilynk_core::reject::RejectReason::WireVersionMismatch;
     conn.close(reason.close_code().into(), reason.to_string().as_bytes());
-    tracing::info!(%peer, "punktfunk/1 client refused — it needs an update");
+    tracing::info!(%peer, "lilynk/1 client refused — it needs an update");
 }
 
 /// Everything a session needs from the plane that admitted it. One value, cloned per session,
@@ -2679,12 +2679,12 @@ fn bind_data_plane(
         DataPlane::Shared(v2) => {
             let suite = v2
                 .suite()
-                .ok_or_else(|| anyhow!("punktfunk/2 session reached media with no suite"))?;
+                .ok_or_else(|| anyhow!("lilynk/2 session reached media with no suite"))?;
             let keys = endpoint::media_keys(&v2.conn, &v2.session_id, suite)
-                .ok_or_else(|| anyhow!("punktfunk/2 media keys: exporter refused"))?;
+                .ok_or_else(|| anyhow!("lilynk/2 media keys: exporter refused"))?;
             let mut sender =
                 lilynk_core::transport::shared::MediaSender::new(&v2.media_socket, v2.conn.clone())
-                    .context("punktfunk/2 media sender")?;
+                    .context("lilynk/2 media sender")?;
             sender.set_offload_switch(offload);
             let media = lilynk_core::session::MediaV2 {
                 clock_origin_ns: v2.clock.origin_ns(),

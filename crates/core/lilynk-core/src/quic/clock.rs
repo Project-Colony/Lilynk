@@ -539,7 +539,7 @@ mod tests {
             (server, conn, send)
         });
         let client = endpoint::client_insecure().unwrap();
-        let conn = client.connect(addr, "punktfunk").unwrap().await.unwrap();
+        let conn = client.connect(addr, "lilynk").unwrap().await.unwrap();
         let (mut send, recv) = conn.open_bi().await.unwrap();
         let mut recv = FrameReader::new(recv);
         let skew = clock_sync(&mut send, &mut recv)
@@ -583,7 +583,7 @@ mod tests {
             (server, conn, send)
         });
         let client = endpoint::client_insecure().unwrap();
-        let conn = client.connect(addr, "punktfunk").unwrap().await.unwrap();
+        let conn = client.connect(addr, "lilynk").unwrap().await.unwrap();
         let (mut send, recv) = conn.open_bi().await.unwrap();
         let mut recv = FrameReader::new(recv);
         assert!(

@@ -55,7 +55,7 @@ Für jede Verbindung legt der Host ein echtes virtuelles Display an – in genau
 
 SCHNELL, WEIL UNS DER GANZE WEG GEHÖRT
 
-Die nativen Apps sprechen punktfunk/1: eine QUIC-Steuerebene und eine verschlüsselte Datenebene mit Vorwärtsfehlerkorrektur, die Auflösung und Bildrate mitten im Stream wechselt, ohne neu zu verbinden. Dekodiert wird in Hardware über VideoToolbox – H.264, HEVC und AV1 auf Macs, die AV1 in Hardware können (M3 und neuer).
+Die nativen Apps sprechen lilynk/1: eine QUIC-Steuerebene und eine verschlüsselte Datenebene mit Vorwärtsfehlerkorrektur, die Auflösung und Bildrate mitten im Stream wechselt, ohne neu zu verbinden. Dekodiert wird in Hardware über VideoToolbox – H.264, HEVC und AV1 auf Macs, die AV1 in Hardware können (M3 und neuer).
 
 FÜR DEN MAC GEMACHT
 
@@ -99,7 +99,7 @@ For every connection, the host creates a real virtual display at exactly the res
 
 FAST, BECAUSE WE OWN THE WHOLE PATH
 
-The native apps speak punktfunk/1: a QUIC control plane and an encrypted data plane with forward error correction, able to change resolution and frame rate mid-stream without reconnecting. Decoding is done in hardware through VideoToolbox — H.264, HEVC, and AV1 on Macs with an AV1 hardware decoder (M3 and later).
+The native apps speak lilynk/1: a QUIC control plane and an encrypted data plane with forward error correction, able to change resolution and frame rate mid-stream without reconnecting. Decoding is done in hardware through VideoToolbox — H.264, HEVC, and AV1 on Macs with an AV1 hardware decoder (M3 and later).
 
 BUILT FOR THE MAC
 

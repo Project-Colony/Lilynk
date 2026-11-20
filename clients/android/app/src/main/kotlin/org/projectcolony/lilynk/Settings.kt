@@ -443,7 +443,7 @@ class SettingsStore(
 /**
  * The display the picture goes to, for capability/mode queries: the second screen the player
  * swapped it onto ([pictureDisplay]), else the context's own display, else the DEFAULT display.
- * A `punktfunk://` deep-link COLD start can reach the connect before the activity is attached to
+ * A `lilynk://` deep-link COLD start can reach the connect before the activity is attached to
  * its display — `context.display` then throws, and without the DEFAULT fallback the session would
  * open at 1080p60 with no HDR and nothing in the log.
  */

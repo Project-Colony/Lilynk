@@ -1,9 +1,9 @@
-// The `punktfunk://` URL grammar — the single builder/parser shared by the widget (which emits
+// The `lilynk://` URL grammar — the single builder/parser shared by the widget (which emits
 // links via `widgetURL`/`Link`), the App Intents (which round-trip through it rather than opening
 // a second connect path) and the app (`ContentView.onOpenURL`, which routes them into the existing
 // connect path). Keeping every side on one type means the wire format can't drift.
 //
-//   punktfunk://connect/<host-ref>[?fp=<64-hex>][&host=<addr[:port]>][&launch=<id>]
+//   lilynk://connect/<host-ref>[?fp=<64-hex>][&host=<addr[:port]>][&launch=<id>]
 //                                 [&preset=<ref>][&as=<profile>][&name=<label>]
 //
 // The invariant the grammar exists to keep: **a URL may only ever do what a click on an existing
@@ -13,7 +13,7 @@
 // among the user's own configurations. `pair` is deliberately not a route and never will be;
 // pairing stays an interactive ceremony.
 //
-// `pf://` parses as an alias so a hand-typed or legacy link still works, but nothing ever *emits*
+// `ly://` parses as an alias so a hand-typed or legacy link still works, but nothing ever *emits*
 // or registers it (design/client-deep-links.md §2).
 //
 // This is a port of `crates/client/ly-client-core/src/deeplink.rs`, and Rust, Kotlin and Swift are
@@ -59,12 +59,12 @@ public struct DeepLinkAddress: Equatable, Sendable {
 /// Why a URL was rejected. The `code` strings are the cross-language contract (the vector file
 /// names them) — Rust and Kotlin report the same code for the same input.
 public enum DeepLinkError: Error, Equatable, Sendable {
-    /// Not a `punktfunk://` (or `pf://`) URL at all — the caller should ignore it, not warn.
+    /// Not a `lilynk://` (or `ly://`) URL at all — the caller should ignore it, not warn.
     case notOurScheme
     case tooLong
     /// A route this grammar doesn't define.
     case unknownRoute(String)
-    /// `punktfunk://pair/…` — pairing is an interactive ceremony, never a link.
+    /// `lilynk://pair/…` — pairing is an interactive ceremony, never a link.
     case pairRefused
     case missingHostRef
     /// A `%` escape that isn't two hex digits, or a decode that isn't UTF-8.
@@ -136,7 +136,7 @@ public struct DeepLink: Equatable, Sendable {
     /// Display label for the unknown-host notice (external emitters).
     public var name: String?
 
-    public static let scheme = "punktfunk"
+    public static let scheme = "lilynk"
 
     public init(
         route: DeepLinkRoute = .connect, hostRef: String, fp: String? = nil,
@@ -155,9 +155,9 @@ public struct DeepLink: Equatable, Sendable {
 
     // MARK: - Emission
 
-    /// The canonical URL for this link — always `punktfunk://`, never the `pf://` alias.
+    /// The canonical URL for this link — always `lilynk://`, never the `ly://` alias.
     public var urlString: String {
-        var s = "punktfunk://\(route.rawValue)/\(Self.encode(hostRef))"
+        var s = "lilynk://\(route.rawValue)/\(Self.encode(hostRef))"
         var separator = "?"
         func push(_ key: String, _ value: String) {
             s += separator + key + "=" + Self.encode(value)
@@ -232,7 +232,7 @@ public struct DeepLink: Equatable, Sendable {
         guard text.utf8.count <= DeepLinkLimits.url else { throw DeepLinkError.tooLong }
         guard let separator = text.range(of: "://") else { throw DeepLinkError.notOurScheme }
         let scheme = text[text.startIndex..<separator.lowerBound].lowercased()
-        guard scheme == "punktfunk" || scheme == "pf" else { throw DeepLinkError.notOurScheme }
+        guard scheme == "lilynk" || scheme == "ly" else { throw DeepLinkError.notOurScheme }
         // A fragment is never part of this grammar; drop it rather than folding it into the last
         // parameter (where it would smuggle unvalidated text past the caps).
         let rest = String(text[separator.upperBound...].prefix { $0 != "#" })
@@ -255,7 +255,7 @@ public struct DeepLink: Equatable, Sendable {
             hostRefRaw = String(trimmed[trimmed.index(after: slash)...])
         } else if isRouteWord(trimmed) {
             // A single segment: a bare reference is unambiguous as long as it isn't one of the
-            // route words — those stay routes (with a missing reference), so `punktfunk://pair`
+            // route words — those stay routes (with a missing reference), so `lilynk://pair`
             // refuses instead of hunting for a host called "pair".
             routeWord = trimmed
             hostRefRaw = ""

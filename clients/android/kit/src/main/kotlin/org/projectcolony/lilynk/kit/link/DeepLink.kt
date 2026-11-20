@@ -9,13 +9,13 @@ import java.nio.charset.CodingErrorAction
 import java.nio.charset.StandardCharsets
 
 /**
- * The `punktfunk://` URL grammar (design/client-deep-links.md §2). A **port**, not a new design:
+ * The `lilynk://` URL grammar (design/client-deep-links.md §2). A **port**, not a new design:
  * the Rust `crates/client/ly-client-core/src/deeplink.rs` is the reference, Swift keeps a third copy, and
  * all three are held together by `clients/shared/deeplink-vectors.json`, which each language's test
  * suite runs verbatim — so the three parsers cannot drift into three different security postures.
  *
  * ```text
- * punktfunk://connect/<host-ref>[?fp=<64-hex>][&host=<addr[:port]>][&launch=<id>]
+ * lilynk://connect/<host-ref>[?fp=<64-hex>][&host=<addr[:port]>][&launch=<id>]
  *                               [&preset=<ref>][&as=<profile>][&name=<label>]
  * ```
  *
@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets
  * among the user's own configurations. `pair` is deliberately not a route and never will be;
  * pairing stays an interactive ceremony.
  *
- * `pf://` parses as an alias so a hand-typed or legacy link still works, but nothing ever *emits*
+ * `ly://` parses as an alias so a hand-typed or legacy link still works, but nothing ever *emits*
  * or registers it.
  */
 object DeepLinks {
@@ -42,7 +42,7 @@ object DeepLinks {
     const val DEFAULT_PORT = 9777
 
     /**
-     * Parse a `punktfunk://` (or `pf://`) URL. Everything hostile is rejected here, once: over-long
+     * Parse a `lilynk://` (or `ly://`) URL. Everything hostile is rejected here, once: over-long
      * input, malformed escapes, control characters, out-of-charset launch ids and fingerprints that
      * aren't fingerprints. What the caller still has to do is *resolve* — the references may name
      * things that don't exist on this device (see [resolveHost]).
@@ -52,7 +52,7 @@ object DeepLinks {
         val sep = url.indexOf("://")
         if (sep < 0) return DeepLinkResult.Refused(LinkError.NOT_OUR_SCHEME)
         val scheme = url.substring(0, sep)
-        if (!scheme.equals("punktfunk", ignoreCase = true) && !scheme.equals("pf", ignoreCase = true)) {
+        if (!scheme.equals("lilynk", ignoreCase = true) && !scheme.equals("ly", ignoreCase = true)) {
             return DeepLinkResult.Refused(LinkError.NOT_OUR_SCHEME)
         }
         // A fragment is never part of this grammar; drop it rather than folding it into the last
@@ -71,7 +71,7 @@ object DeepLinks {
             }
             // A single segment: Apple's shipped links are always `connect/<uuid>`, but a bare
             // reference is unambiguous as long as it isn't one of the route words — those stay
-            // routes (with a missing reference), so `punktfunk://pair` refuses instead of hunting
+            // routes (with a missing reference), so `lilynk://pair` refuses instead of hunting
             // for a host called "pair".
             isRouteWord(path) -> {
                 routeWord = path
@@ -180,7 +180,7 @@ object DeepLinks {
      * Only the record id is UNGUESSABLE, so only the record id resolves to [HostResolution.Known],
      * the silent one-click contract. A display name comes from an mDNS instance name or a user
      * label ("Gaming PC"), and an address is a LAN address: any zero-permission app or web page can
-     * emit `punktfunk://connect/Gaming%20PC` and would otherwise start a stream (and launch a
+     * emit `lilynk://connect/Gaming%20PC` and would otherwise start a stream (and launch a
      * title) on a guess. Those all resolve to [HostResolution.Confirm] — the same host, behind the
      * user's OK.
      */
@@ -366,12 +366,12 @@ enum class LinkRoute(val word: String) {
  * them, and Swift and Rust report the same code for the same input.
  */
 enum class LinkError(val code: String) {
-    /** Not a `punktfunk://` (or `pf://`) URL at all — ignore it, don't warn. */
+    /** Not a `lilynk://` (or `ly://`) URL at all — ignore it, don't warn. */
     NOT_OUR_SCHEME("not-our-scheme"),
     TOO_LONG("too-long"),
     UNKNOWN_ROUTE("unknown-route"),
 
-    /** `punktfunk://pair/…` — pairing is an interactive ceremony, never a link. */
+    /** `lilynk://pair/…` — pairing is an interactive ceremony, never a link. */
     PAIR_REFUSED("pair-refused"),
     MISSING_HOST_REF("missing-host-ref"),
 
@@ -407,9 +407,9 @@ data class DeepLink(
     /** The profile on the host to play as: an id or a name. Wins for this connect, never saved. */
     val asProfile: String? = null,
 ) {
-    /** The canonical URL for this link — always `punktfunk://`, never the `pf://` alias. */
+    /** The canonical URL for this link — always `lilynk://`, never the `ly://` alias. */
     fun toUrl(): String {
-        val sb = StringBuilder("punktfunk://${route.word}/${DeepLinks.encode(hostRef)}")
+        val sb = StringBuilder("lilynk://${route.word}/${DeepLinks.encode(hostRef)}")
         var sep = '?'
         fun push(key: String, value: String) {
             sb.append(sep).append(key).append('=').append(DeepLinks.encode(value))

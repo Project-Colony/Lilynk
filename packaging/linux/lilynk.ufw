@@ -22,8 +22,8 @@
 # 9783-9786/udp the same seats' browser streaming.
 
 [lilynk-native]
-title=lilynk host (native punktfunk/2)
-description=punktfunk/2 native streaming: QUIC control plane + browser streaming + seats + mDNS auto-discovery + mgmt/library API (HTTPS + mTLS)
+title=lilynk host (native lilynk/2)
+description=lilynk/2 native streaming: QUIC control plane + browser streaming + seats + mDNS auto-discovery + mgmt/library API (HTTPS + mTLS)
 ports=9777/udp|9778:9786/udp|5353/udp|47990/tcp
 
 [lilynk-gamestream]

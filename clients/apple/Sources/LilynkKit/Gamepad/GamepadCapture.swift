@@ -1,4 +1,4 @@
-// Gamepad capture → punktfunk/1 datagrams. Forwards every controller GamepadManager selected,
+// Gamepad capture → lilynk/1 datagrams. Forwards every controller GamepadManager selected,
 // each on its own stable wire pad index (ly-client-core's slot model), for a streaming session.
 // One unpinned controller is pad 0; a pin forwards only that one, also as pad 0.
 //

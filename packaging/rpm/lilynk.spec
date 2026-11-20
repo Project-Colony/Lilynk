@@ -26,7 +26,7 @@ Name:           lilynk
 # A plain `rpmbuild` (or COPR) with no defines builds 0.3.0-1.
 Version:        %{?ly_version}%{!?ly_version:0.3.0}
 Release:        %{?pf_release}%{!?pf_release:1}%{?dist}
-Summary:        Low-latency desktop/game streaming host (Moonlight-compatible + punktfunk/2)
+Summary:        Low-latency desktop/game streaming host (Moonlight-compatible + lilynk/2)
 
 License:        GPL-3.0-or-later
 URL:            https://github.com/Project-Colony/Lilynk
@@ -150,14 +150,14 @@ Requires:       lilynk-seats%{?_isa} = %{version}-%{release}
 %description
 lilynk is a Linux-first, low-latency desktop and game streaming host. It speaks
 the Moonlight/GameStream protocol (pair a stock Moonlight client) and its own native
-punktfunk/2 protocol (GF(2^16) Leopard FEC + AES-GCM, mid-stream mode renegotiation,
+lilynk/2 protocol (GF(2^16) Leopard FEC + AES-GCM, mid-stream mode renegotiation,
 client microphone passthrough). Each session gets a virtual output at the client's
 exact resolution and refresh via a per-compositor backend (KWin, gamescope, Mutter,
 Sway/wlroots), captured zero-copy (dmabuf -> CUDA -> NVENC) and split-encoded above
 ~1 Gpix/s. Input (mouse/keyboard/gamepads) is injected back into the session.
 
 %package client
-Summary:        Low-latency desktop/game streaming client (punktfunk/2, GTK4)
+Summary:        Low-latency desktop/game streaming client (lilynk/2, GTK4)
 # Audio playback / mic capture want the PipeWire daemon; degrade gracefully without it.
 Recommends:     pipewire
 Recommends:     wireplumber
@@ -808,7 +808,7 @@ udevadm trigger --subsystem-match=hidraw 2>/dev/null || :
 # Apply the UDP recv-buffer tuning now (also auto-applied at boot by systemd-sysctl; on
 # rpm-ostree it takes effect on the next boot into the layered deployment).
 sysctl -p %{_prefix}/lib/sysctl.d/99-lilynk-client-net.conf >/dev/null 2>&1 || :
-# Register the punktfunk:// scheme handler the .desktop entry declares (deb and arch do the
+# Register the lilynk:// scheme handler the .desktop entry declares (deb and arch do the
 # same in their own scriptlets) — without this, xdg-open and browser prompts have no idea the
 # client claims those links.
 update-desktop-database %{_datadir}/applications >/dev/null 2>&1 || :

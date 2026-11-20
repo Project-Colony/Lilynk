@@ -76,7 +76,7 @@ impl AsyncRead for CtlRecv {
 /// What accepting the control stream produced.
 pub(crate) enum Accepted {
     Stream(CtlSend, CtlRecv),
-    /// A `punktfunk/2` connection opened for management: its first stream is a request, and
+    /// A `lilynk/2` connection opened for management: its first stream is a request, and
     /// no session follows.
     Management(quinn::SendStream, quinn::RecvStream),
     /// A clean application close before any stream: a reachability probe, not a client.
@@ -113,7 +113,7 @@ impl V2Session {
         *self.suite.lock().unwrap_or_else(|e| e.into_inner())
     }
 
-    /// A `punktfunk/1` datagram as it leaves: host stamps in session time, its kind in front.
+    /// A `lilynk/1` datagram as it leaves: host stamps in session time, its kind in front.
     /// `None` for a datagram with no kind, a bug the caller drops.
     pub(crate) fn outgoing(&self, mut payload: Vec<u8>) -> Option<Vec<u8>> {
         self.clock.retime_datagram(&mut payload);
@@ -123,13 +123,13 @@ impl V2Session {
 
 /// One client datagram the session reads.
 pub(crate) enum Incoming {
-    /// Audio, input or a host-event kind: the `punktfunk/1` datagram inside.
+    /// Audio, input or a host-event kind: the `lilynk/1` datagram inside.
     Plain(Vec<u8>),
     /// The client's receive state.
     Feedback(lilynk_core::quic::v2::dgram::Feedback),
 }
 
-/// What a client's `punktfunk/2` datagram carries, or `None` for a kind the session takes
+/// What a client's `lilynk/2` datagram carries, or `None` for a kind the session takes
 /// nothing from.
 fn incoming(b: &[u8]) -> Option<Incoming> {
     use lilynk_core::quic::v2::dgram::{decode, Dgram};
@@ -142,7 +142,7 @@ fn incoming(b: &[u8]) -> Option<Incoming> {
     }
 }
 
-/// The native carrier of a `punktfunk/2` session: its connection, and the endpoint's socket
+/// The native carrier of a `lilynk/2` session: its connection, and the endpoint's socket
 /// that media leaves from. Derefs to the session's [`V2Session`].
 pub(crate) struct V2Link {
     pub conn: quinn::Connection,
@@ -334,7 +334,7 @@ impl SessionLink {
     }
 
     /// The peer's first bidirectional stream — the control stream on both carriers, or on
-    /// `punktfunk/2` a management request.
+    /// `lilynk/2` a management request.
     ///
     /// A clean close before any stream is a reachability probe, and is reported rather than
     /// failed. Anything else that is not a stream is the error it was.
@@ -376,7 +376,7 @@ impl SessionLink {
         }
     }
 
-    /// The `punktfunk/2` session state, on either carrier.
+    /// The `lilynk/2` session state, on either carrier.
     pub(crate) fn v2_session(&self) -> &Arc<V2Session> {
         match self {
             SessionLink::QuicV2(_, v2) => &v2.s,
@@ -384,7 +384,7 @@ impl SessionLink {
         }
     }
 
-    /// The native `punktfunk/2` link, with the socket its media leaves from.
+    /// The native `lilynk/2` link, with the socket its media leaves from.
     pub(crate) fn v2(&self) -> Option<&Arc<V2Link>> {
         match self {
             SessionLink::QuicV2(_, v2) => Some(v2),

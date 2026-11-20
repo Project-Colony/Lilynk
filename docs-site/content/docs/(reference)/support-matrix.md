@@ -253,7 +253,7 @@ Apple is one app across macOS, iOS/iPadOS and tvOS. Android TV is the Android ap
 
 ### Before you connect
 
-| Client | Presets | `punktfunk://` links | Game library | Speed test | Wake-on-LAN | Updates itself |
+| Client | Presets | `lilynk://` links | Game library | Speed test | Wake-on-LAN | Updates itself |
 |---|---|---|---|---|---|---|
 | Linux desktop | ✅ | ✅ | ✅ ¹ | ✅ | ✅ | ⚠️ ² |
 | Windows desktop | ✅ | ✅ | ✅ ¹ | ✅ | ✅ | ❌ ³ |
@@ -395,7 +395,7 @@ know is not offered, and the session goes ahead without it — see
 
 | Contract | Current | Rule |
 |---|---|---|
-| Native protocol | **`punktfunk/2`** | Hosts and apps from 0.44 on mix in either order; from a 0.45 host, a PyroWave app older than 0.45 drops more frames under loss. An app from 0.44 on needs a 0.44 host or newer: an older one shows as offline, and connecting says "update both". |
+| Native protocol | **`lilynk/2`** | Hosts and apps from 0.44 on mix in either order; from a 0.45 host, a PyroWave app older than 0.45 drops more frames under loss. An app from 0.44 on needs a 0.44 host or newer: an older one shows as offline, and connecting says "update both". |
 | C ABI version | **68** | Between an app and the core library it ships with. |
 | Windows display-driver protocol | **10** | The host drives a driver from protocol 9 up; the installer updates both. |
 | Windows virtual-gamepad channel | **3** | Host and pad driver must match; same installer. |

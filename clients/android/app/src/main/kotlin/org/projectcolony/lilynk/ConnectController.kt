@@ -69,7 +69,7 @@ internal class ConnectAttempt(val hostName: String) {
 
 /**
  * The connect screen's engine: the dial and its wake fallback, trust and PIN pairing, request
- * access, the profile ask, Wake and the `punktfunk://` router, with the Compose state they share.
+ * access, the profile ask, Wake and the `lilynk://` router, with the Compose state they share.
  *
  * [ConnectScreen] remembers one for its whole life, so a recomposition never drops a dial in
  * flight. The [State]s it is handed read the composable's latest settings, local-network grant
@@ -564,7 +564,7 @@ internal class ConnectController(
     }
 
     /**
-     * Routes a `punktfunk://` URL (design/client-deep-links.md §3). A link may only do what a tap
+     * Routes a `lilynk://` URL (design/client-deep-links.md §3). A link may only do what a tap
      * on a card could, minus trust decisions: it never pairs or trusts on its own, and carries
      * references rather than values. A reference it can't honour refuses with a line saying why,
      * because streaming with the wrong settings is worse than a notice.

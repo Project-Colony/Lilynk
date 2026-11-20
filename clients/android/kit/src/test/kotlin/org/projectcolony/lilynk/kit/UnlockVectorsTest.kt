@@ -108,8 +108,8 @@ class UnlockVectorsTest {
             val body = JSONObject().put("challenge", c.getString("challenge")).put(form, id)
             val parsed = UnlockChallenge.parse(body.toString())!!
             val (label, named) = when (form) {
-                "seat" -> "punktfunk-seat-unlock-v1" to parsed.seat!!.toByteArray()
-                else -> "punktfunk-profile-unlock-v1" to parsed.profile!!.toByteArray().copyOf(64)
+                "seat" -> "lilynk-seat-unlock-msg-1" to parsed.seat!!.toByteArray()
+                else -> "lilynk-profile-unlock-msg-1" to parsed.profile!!.toByteArray().copyOf(64)
             }
             val m = label.toByteArray() + parsed.challenge + named + bytes(c.getString("device")) + bytes(c.getString("box"))
             assertEquals(c.getString("name"), if (form == "seat") 152 else 187, m.size)

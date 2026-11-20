@@ -1,4 +1,4 @@
-//! The `punktfunk/2` media clock: time since the session began, on the host's monotonic clock.
+//! The `lilynk/2` media clock: time since the session began, on the host's monotonic clock.
 //!
 //! The host stamps media in Unix nanoseconds, as every capture backend does. Each stamp leaving
 //! on the wire is mapped onto this clock at the edge, from a fresh paired read of both clocks:
@@ -82,7 +82,7 @@ impl SessionClock {
         wire
     }
 
-    /// Rewrites the host stamp in an outgoing `punktfunk/1`-encoded datagram to wire form:
+    /// Rewrites the host stamp in an outgoing `lilynk/1`-encoded datagram to wire form:
     /// desktop and pad audio, and `HostTiming`, which names its frame by the video pts.
     pub fn retime_datagram(&self, d: &mut [u8]) {
         let (at, video) = match d.first() {

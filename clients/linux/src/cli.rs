@@ -18,7 +18,7 @@ pub fn arg_flag(flag: &str) -> bool {
     std::env::args().any(|a| a == flag)
 }
 
-/// A positional `punktfunk://` (or the `pf://` input alias) anywhere in argv — the deep-link
+/// A positional `lilynk://` (or the `ly://` input alias) anywhere in argv — the deep-link
 /// door (design/client-deep-links.md §4.1). It is positional, not a flag, because that is what
 /// `Exec=lilynk-client %u` hands us, what a `.desktop` shortcut embeds, and what a browser's
 /// "Open Lilynk?" prompt ends up invoking. Validation happens later, in the shared parser —

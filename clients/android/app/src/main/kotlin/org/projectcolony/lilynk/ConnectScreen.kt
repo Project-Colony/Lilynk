@@ -49,7 +49,7 @@ private const val HOST_ACTIONS_TTL_MS = 300_000L
  * The Hosts tab: discovery, trust and the dial itself.
  *
  * The engine is a [ConnectController], remembered here for the screen's life: the dial and its
- * wake fallback, trust, request access and the `punktfunk://` router, with the state they share.
+ * wake fallback, trust, request access and the `lilynk://` router, with the state they share.
  * This function runs the effects that feed it (the browse, the probe sweep, host actions, what
  * each host has up) and the acts only this screen has. What is drawn lives beside it:
  * [ConnectGrid], the host page ([HostDetailScreen]) in the grid's place while one is open, and
@@ -65,7 +65,7 @@ fun ConnectScreen(
     // (host, pinned preset id): Browse library on a card or the host page. A pinned card opens
     // its own shelf, whose launches run with that preset; null is the host's own.
     onOpenLibrary: (KnownHost, String?) -> Unit = { _, _ -> },
-    // A `punktfunk://` URL to route (design/client-deep-links.md §3). This screen owns it because
+    // A `lilynk://` URL to route (design/client-deep-links.md §3). This screen owns it because
     // it owns the connect path — trust decisions, the local-network grant, wake-and-retry — and a
     // link must go through all of them, not around them.
     deepLink: String? = null,
@@ -374,7 +374,7 @@ fun ConnectScreen(
         }
     }
 
-    // A `punktfunk://` link, routed once the identity has landed: the effect reruns when it does.
+    // A `lilynk://` link, routed once the identity has landed: the effect reruns when it does.
     LaunchedEffect(deepLink, ctl.identity, ctl.savedHosts) {
         val url = deepLink ?: return@LaunchedEffect
         if (ctl.identity == null) return@LaunchedEffect

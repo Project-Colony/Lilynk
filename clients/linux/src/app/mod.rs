@@ -69,7 +69,7 @@ pub struct AppModel {
 
 #[derive(Debug)]
 pub enum AppMsg {
-    /// A `punktfunk://` URL arrived (scheme handler, a shortcut, or a second invocation
+    /// A `lilynk://` URL arrived (scheme handler, a shortcut, or a second invocation
     /// forwarded to this instance by GApplication) — design/client-deep-links.md §4.1.
     DeepLink(String),
     /// The trust gate in front of every connect (see `AppModel::connect`).

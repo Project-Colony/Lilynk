@@ -435,19 +435,19 @@ impl SessionCrypto {
     }
 }
 
-/// Packets one `punktfunk/2` media key seals before the next takes over. RFC 9001 §6.6 sets
+/// Packets one `lilynk/2` media key seals before the next takes over. RFC 9001 §6.6 sets
 /// 2^23 for AES-GCM confidentiality; ChaCha20-Poly1305 follows the same schedule.
 /// cbindgen:ignore
 pub const MEDIA_KEY_PACKETS: u64 = 1 << 23;
 
-/// `punktfunk/2` media AEAD.
+/// `lilynk/2` media AEAD.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum MediaSuite {
     Aes128Gcm,
     ChaCha20Poly1305,
 }
 
-/// `punktfunk/2` media secrets, one per direction. Both ends derive them from the connection's
+/// `lilynk/2` media secrets, one per direction. Both ends derive them from the connection's
 /// TLS exporter, so no key byte crosses the wire, and each packet's key follows from its number:
 /// packet `n` seals under key `n / MEDIA_KEY_PACKETS`.
 #[derive(Clone)]
@@ -465,8 +465,8 @@ impl MediaKeys {
             host_to_client: [0; 32],
             client_to_host: [0; 32],
         };
-        expand(exporter, &[b"pf2 media h2c"], &mut k.host_to_client);
-        expand(exporter, &[b"pf2 media c2h"], &mut k.client_to_host);
+        expand(exporter, &[b"ly2 media h2c"], &mut k.host_to_client);
+        expand(exporter, &[b"ly2 media c2h"], &mut k.client_to_host);
         k
     }
 }
@@ -547,7 +547,7 @@ impl<'a> KeyRun<'a> {
     }
 }
 
-/// One direction of `punktfunk/2` media: its secret and the keys derived from it so far.
+/// One direction of `lilynk/2` media: its secret and the keys derived from it so far.
 struct MediaDir {
     suite: MediaSuite,
     secret: [u8; 32],
@@ -572,18 +572,18 @@ impl MediaDir {
         }
         let n = index.to_be_bytes();
         let mut iv = [0u8; 12];
-        expand(&self.secret, &[b"pf2 iv", &n], &mut iv);
+        expand(&self.secret, &[b"ly2 iv", &n], &mut iv);
         let cipher = match self.suite {
             MediaSuite::Aes128Gcm => {
                 let mut k = [0u8; 16];
-                expand(&self.secret, &[b"pf2 key", &n], &mut k);
+                expand(&self.secret, &[b"ly2 key", &n], &mut k);
                 let c = Cipher::Aes128Gcm(aes::Key::new(&k));
                 k.zeroize();
                 c
             }
             MediaSuite::ChaCha20Poly1305 => {
                 let mut k = [0u8; 32];
-                expand(&self.secret, &[b"pf2 key", &n], &mut k);
+                expand(&self.secret, &[b"ly2 key", &n], &mut k);
                 let c = Cipher::ChaCha20Poly1305(chacha::Key::new(&k));
                 k.zeroize();
                 c

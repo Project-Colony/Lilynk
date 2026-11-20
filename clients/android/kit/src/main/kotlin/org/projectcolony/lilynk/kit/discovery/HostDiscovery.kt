@@ -93,7 +93,7 @@ fun osIconTokens(chain: String): List<String> =
         }
 
 /**
- * Browses `_punktfunk._udp` for punktfunk/1 hosts via the native `mdns-sd` core (the same browse the
+ * Browses `_lilynk._udp` for lilynk/1 hosts via the native `mdns-sd` core (the same browse the
  * Linux/Windows clients use), exposed over JNI — *not* `NsdManager`, whose per-OEM system daemon
  * made discovery "mostly broken". The native browse is polled ~1 Hz on the main thread and the live
  * host set pushed to every listener (also on the main thread, only when it changes).

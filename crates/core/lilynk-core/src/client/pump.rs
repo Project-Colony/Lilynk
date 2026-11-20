@@ -347,7 +347,7 @@ pub(super) async fn run_pump(mut args: WorkerArgs) {
         clip_cmd_rx,
     ));
 
-    // Connection close: classify, then shutdown. A lost `punktfunk/2` session is kept for the
+    // Connection close: classify, then shutdown. A lost `lilynk/2` session is kept for the
     // next dial's resume, under the host that ran it.
     {
         let shared = shared.clone();

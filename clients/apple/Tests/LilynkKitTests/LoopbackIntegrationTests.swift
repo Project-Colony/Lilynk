@@ -1,4 +1,4 @@
-// Integration: the Swift wrapper against a real punktfunk/1 host over QUIC + UDP on loopback —
+// Integration: the Swift wrapper against a real lilynk/1 host over QUIC + UDP on loopback —
 // the Swift twin of lilynk-host's native/tests.rs::c_abi_connection_roundtrip, this time
 // through the statically linked xcframework. Driven by clients/apple/test-loopback.sh, which
 // builds and starts `lilynk-host lilynk1-host --source synthetic` and sets

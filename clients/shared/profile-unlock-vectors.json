@@ -1,5 +1,5 @@
 {
-  "$comment": "What a device's unlock key signs to open a profile, with SHA-256 as the digest. Every implementation replays these: lilynk-core msg.rs, ly-client-core unlock.rs, Swift, Kotlin. `seat` form: a profile on a person's own Linux account, `\"punktfunk-seat-unlock-v1\" ‖ challenge ‖ seat id (32 lowercase hex characters) ‖ device ‖ box`, 152 bytes. `profile` form: a locked profile, `\"punktfunk-profile-unlock-v1\" ‖ challenge ‖ profile id (its ASCII, then zero bytes to 64) ‖ device ‖ box`, 187 bytes; a profile id is 1 to 64 of [A-Za-z0-9_-]. `challenge` is the 32 bytes `unlock-challenge` answered, `device` the SHA-256 of this device's certificate, `box` the SHA-256 of the host certificate this device pinned. `message`, where given, is the whole message in hex. `refused` lists ids no message is built for. The other sections are the client's rules. `unlock_words`: enumerate's `unlock` word (null: absent) as the need it reads, and the prompt's form. `gate`: before a dial, for a need and whether this device holds its unlock key for the profile: `dial`, `key` (sign a fresh challenge) or `prompt`, and whether the key is deleted first. `after_refusal`: after a ProfileLocked close, from the profile's fresh row, whether the dial carried an unlock (`sent`). `pins`: what the PIN field holds, as the bytes the wire carries or the error the prompt shows (`empty`, `shape`). `challenge_answers`: unlock-challenge bodies, as what the message names, or refused.",
+  "$comment": "What a device's unlock key signs to open a profile, with SHA-256 as the digest. Every implementation replays these: lilynk-core msg.rs, ly-client-core unlock.rs, Swift, Kotlin. `seat` form: a profile on a person's own Linux account, `\"lilynk-seat-unlock-msg-1\" ‖ challenge ‖ seat id (32 lowercase hex characters) ‖ device ‖ box`, 152 bytes. `profile` form: a locked profile, `\"lilynk-profile-unlock-msg-1\" ‖ challenge ‖ profile id (its ASCII, then zero bytes to 64) ‖ device ‖ box`, 187 bytes; a profile id is 1 to 64 of [A-Za-z0-9_-]. `challenge` is the 32 bytes `unlock-challenge` answered, `device` the SHA-256 of this device's certificate, `box` the SHA-256 of the host certificate this device pinned. `message`, where given, is the whole message in hex. `refused` lists ids no message is built for. The other sections are the client's rules. `unlock_words`: enumerate's `unlock` word (null: absent) as the need it reads, and the prompt's form. `gate`: before a dial, for a need and whether this device holds its unlock key for the profile: `dial`, `key` (sign a fresh challenge) or `prompt`, and whether the key is deleted first. `after_refusal`: after a ProfileLocked close, from the profile's fresh row, whether the dial carried an unlock (`sent`). `pins`: what the PIN field holds, as the bytes the wire carries or the error the prompt shows (`empty`, `shape`). `challenge_answers`: unlock-challenge bodies, as what the message names, or refused.",
   "messages": [
     {
       "name": "seat form: the own-account contract vector",
@@ -8,7 +8,7 @@
       "seat": "0123456789abcdef0123456789abcdef",
       "device": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       "box": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-      "sha256": "31de46821f3058729b14c3585ad13159085ecb0d18c87194a34b1bddc8ddc31a"
+      "sha256": "70c89c17d9a34295d3cb6f6ebc2336daef54ee2fda37957eac2b0cb81396b089"
     },
     {
       "name": "profile form: a profile id as the host mints it",
@@ -17,8 +17,8 @@
       "profile": "9a3f1c2b7e40",
       "device": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       "box": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-      "message": "70756e6b7466756e6b2d70726f66696c652d756e6c6f636b2d76310102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f2039613366316332623765343000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-      "sha256": "136c555942eca9390851a8b3c95dd34e25dc65a9a185378b8f16000634cdc957"
+      "message": "6c696c796e6b2d70726f66696c652d756e6c6f636b2d6d73672d310102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f2039613366316332623765343000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "sha256": "637c2c7fedad592698ee50e7ad63f98c7653dcbcd47056f49cd185a9090d92c2"
     },
     {
       "name": "profile form: the seat vector's id as a profile id signs other bytes",
@@ -27,8 +27,8 @@
       "profile": "0123456789abcdef0123456789abcdef",
       "device": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       "box": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-      "message": "70756e6b7466756e6b2d70726f66696c652d756e6c6f636b2d76310102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f2030313233343536373839616263646566303132333435363738396162636465660000000000000000000000000000000000000000000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-      "sha256": "a29e797dd9961efd31e7591934262176fad290e66a1f404239674e37419a005f"
+      "message": "6c696c796e6b2d70726f66696c652d756e6c6f636b2d6d73672d310102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f2030313233343536373839616263646566303132333435363738396162636465660000000000000000000000000000000000000000000000000000000000000000aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "sha256": "fb52cbf2667660840f5f22e38b08b9818524a73056904868dcced9771e05be67"
     },
     {
       "name": "profile form: the shortest id",
@@ -37,8 +37,8 @@
       "profile": "k",
       "device": "0101010101010101010101010101010101010101010101010101010101010101",
       "box": "0202020202020202020202020202020202020202020202020202020202020202",
-      "message": "70756e6b7466756e6b2d70726f66696c652d756e6c6f636b2d7631ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6b00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001010101010101010101010101010101010101010101010101010101010101010202020202020202020202020202020202020202020202020202020202020202",
-      "sha256": "fb78c7a645333b15e73aceb831909a9c0713da8d43d488b9ade5602e9fc584ab"
+      "message": "6c696c796e6b2d70726f66696c652d756e6c6f636b2d6d73672d31ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff6b00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001010101010101010101010101010101010101010101010101010101010101010202020202020202020202020202020202020202020202020202020202020202",
+      "sha256": "33b2ae0ac040229575de923bbfb22eda2fa7b517c045ecddb2c9dbee43c5aa15"
     },
     {
       "name": "profile form: the longest id, every character it may hold",
@@ -47,8 +47,8 @@
       "profile": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-",
       "device": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
       "box": "a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
-      "message": "70756e6b7466756e6b2d70726f66696c652d756e6c6f636b2d7631201f1e1d1c1b1a191817161514131211100f0e0d0c0b0a090807060504030201303132333435363738396162636465666768696a6b6c6d6e6f707172737475767778797a4142434445464748494a4b4c4d4e4f505152535455565758595a5f2d5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5aa5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
-      "sha256": "3ff50f99d7b1f6d351394c3033d84bce17852b080e09410c1798275ef7c8fcb9"
+      "message": "6c696c796e6b2d70726f66696c652d756e6c6f636b2d6d73672d31201f1e1d1c1b1a191817161514131211100f0e0d0c0b0a090807060504030201303132333435363738396162636465666768696a6b6c6d6e6f707172737475767778797a4142434445464748494a4b4c4d4e4f505152535455565758595a5f2d5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5aa5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5",
+      "sha256": "c8394164d461111c696e89103e96fe28d18c841a3450e584425b8ec866ecf379"
     }
   ],
   "refused": [

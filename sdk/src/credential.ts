@@ -72,7 +72,7 @@ export interface DeviceKeyOptions {
 }
 
 /** Domain separation for the device signature: `lilynk_core::quic::AUTH_SIG_CONTEXT`. */
-export const DEVICE_AUTH_CONTEXT = "punktfunk-device-auth-v1:";
+export const DEVICE_AUTH_CONTEXT = "lilynk-device-auth-v1:";
 
 /**
  * The exact bytes a device signature covers: context, the channel, then the nonce.

@@ -918,7 +918,7 @@ unsafe fn unlock_of(
 }
 
 /// The bytes a profile's unlock key signs, with SHA-256 as the digest, into `out`:
-/// `"punktfunk-seat-unlock-v1" ‖ challenge ‖ seat id ‖ device fingerprint ‖ box fingerprint`.
+/// `"lilynk-seat-unlock-msg-1" ‖ challenge ‖ seat id ‖ device fingerprint ‖ box fingerprint`.
 /// `seat_id` is the seat's 32 lowercase hex characters; `device_sha256` is this device's
 /// certificate fingerprint, `box_sha256` the box's as this caller pinned it. `INVALID_ARG` for
 /// any other seat id, `NULL_POINTER` for a null argument.
@@ -944,7 +944,7 @@ pub unsafe extern "C" fn lilynk_profile_unlock_message(
 pub const LILYNK_LOCKED_PROFILE_UNLOCK_MESSAGE_LEN: usize = 187;
 
 /// What a locked profile's unlock key signs, with SHA-256 as the digest, into `out`:
-/// `"punktfunk-profile-unlock-v1" ‖ challenge ‖ profile id, zero-padded to 64 ‖ device
+/// `"lilynk-profile-unlock-msg-1" ‖ challenge ‖ profile id, zero-padded to 64 ‖ device
 /// fingerprint ‖ box fingerprint`. `profile_id` is 1 to 64 of `[A-Za-z0-9_-]`; the rest is
 /// [`lilynk_profile_unlock_message`]'s. `INVALID_ARG` for any other id, `NULL_POINTER` for a
 /// null argument.

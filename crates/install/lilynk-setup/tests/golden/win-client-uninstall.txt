@@ -5,7 +5,7 @@
   + taskkill /F /IM lilynk-session.exe
   + taskkill /F /IM lilynk-console.exe
   + taskkill /F /IM lilynk.exe
-  + reg delete HKCU\Software\Classes\punktfunk /f
+  + reg delete HKCU\Software\Classes\lilynk /f
   ok would delete <start menu>\Lilynk.lnk, <start menu>\Lilynk Console.lnk, <desktop>\Lilynk.lnk
   ok would remove C:\Users\me\AppData\Local\Programs\Lilynk from the user PATH (entry-by-entry, never a substring delete)
   ok would remove the Add/Remove Programs entry (HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{52464E61-68A1-4621-B6B3-5B8BBB823D1A}_is1)

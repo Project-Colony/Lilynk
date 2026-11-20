@@ -78,7 +78,7 @@ finish-args:
   #     real `pipewire-0` socket. The filesystem bind is the form both flatpak-builder and the
   #     Deck's flatpak 1.16 accept; `--socket=pipewire` is rejected by both. ---
   - --filesystem=xdg-run/pipewire-0
-  # --- network: QUIC control and media + mDNS discovery (_punktfunk._udp) ---
+  # --- network: QUIC control and media + mDNS discovery (_lilynk._udp) ---
   - --share=network
   # --- the client-* files older builds kept in ~/.config/lilynk, read-only: the client copies
   #     them into its own config dir under ~/.var/app on first start. Only these files: the rest

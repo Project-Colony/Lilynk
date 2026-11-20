@@ -2,7 +2,7 @@
 //! preset or a game), design/client-deep-links.md §5.
 //!
 //! The shortcut is a **container for a URL**, not a second launch mechanism: it invokes the
-//! client with a positional `punktfunk://…`, which is the same door xdg-open and a browser
+//! client with a positional `lilynk://…`, which is the same door xdg-open and a browser
 //! prompt use. That is deliberate — it keeps working if scheme registration is lost or the
 //! host store changes, because the URL itself carries the stable id, the address and the pin.
 //!

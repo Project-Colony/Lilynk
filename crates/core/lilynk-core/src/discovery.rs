@@ -118,10 +118,10 @@ fn routed_local_ipv4() -> Option<Ipv4Addr> {
 }
 
 /// The `proto` TXT values of a compatible host; absent is an older host. A current host says
-/// `punktfunk/2`; `punktfunk/1` stays so an older host still lists.
-const PROTOS: [&str; 2] = ["punktfunk/1", "punktfunk/2"];
+/// `lilynk/2`; `lilynk/1` stays so an older host still lists.
+const PROTOS: [&str; 2] = ["lilynk/1", "lilynk/2"];
 
-/// One resolved `_punktfunk._udp` advert.
+/// One resolved `_lilynk._udp` advert.
 #[derive(Clone, Debug, PartialEq)]
 pub struct DiscoveredHost {
     /// Advertised host id, or the mDNS fullname when `id` is absent.
@@ -144,7 +144,7 @@ pub struct DiscoveredHost {
     /// sanitized ([`sanitize_os`]). Empty if absent.
     pub os: String,
     /// The lilynk protocols the host answers, from mDNS `wire` (`1,2`). Empty from a host
-    /// that does not say, which answers `punktfunk/1`.
+    /// that does not say, which answers `lilynk/1`.
     pub wire: Vec<u8>,
 }
 
@@ -327,7 +327,7 @@ mod tests {
 
     fn advert(txt: &[(&str, &str)]) -> Option<super::DiscoveredHost> {
         advert_from_txt(
-            "desk._punktfunk._udp.local.",
+            "desk._lilynk._udp.local.",
             9777,
             &[ip("192.168.1.9")],
             |k| txt.iter().find(|(key, _)| *key == k).map(|(_, v)| *v),
@@ -345,7 +345,7 @@ mod tests {
     #[test]
     fn an_advert_reads_into_the_host_record() {
         let h = advert(&[
-            ("proto", "punktfunk/2"),
+            ("proto", "lilynk/2"),
             ("id", "id-1"),
             ("fp", "ab12"),
             ("pair", "required"),
@@ -367,7 +367,7 @@ mod tests {
     #[test]
     fn an_older_host_reads_with_defaults() {
         let h = advert(&[]).unwrap();
-        assert_eq!(h.key, "desk._punktfunk._udp.local.");
+        assert_eq!(h.key, "desk._lilynk._udp.local.");
         assert_eq!(h.advertised_id(), "");
         assert_eq!(h.mgmt_port, None);
         assert!(h.mac.is_empty() && h.os.is_empty());
@@ -376,8 +376,8 @@ mod tests {
     #[test]
     fn another_proto_or_no_ipv4_is_no_host() {
         assert!(advert(&[("proto", "sunshine/1")]).is_none());
-        assert!(advert(&[("proto", "punktfunk/1")]).is_some());
-        assert!(advert(&[("proto", "punktfunk/2")]).is_some());
+        assert!(advert(&[("proto", "lilynk/1")]).is_some());
+        assert!(advert(&[("proto", "lilynk/2")]).is_some());
         assert!(advert_from_txt("x.local.", 9777, &[], |_| None).is_none());
     }
 

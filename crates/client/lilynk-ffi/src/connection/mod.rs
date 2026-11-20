@@ -45,7 +45,7 @@ pub use video::*;
 #[cfg(feature = "quic")]
 use crate::*;
 
-/// Live `punktfunk/2` connection (one QUIC connection and its media, pumped on internal threads).
+/// Live `lilynk/2` connection (one QUIC connection and its media, pumped on internal threads).
 /// One puller thread per plane; never two threads on the same plane.
 #[cfg(feature = "quic")]
 pub struct LilynkConnection {

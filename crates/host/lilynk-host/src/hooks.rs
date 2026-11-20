@@ -65,7 +65,7 @@ pub struct HookEntry {
     /// only after an administrator ran `lilynk-host hooks elevated on`.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub elevated: bool,
-    /// HMAC secret file (`X-Punktfunk-Signature: sha256=<hex>`). Warns if world-readable.
+    /// HMAC secret file (`X-Lilynk-Signature: sha256=<hex>`). Warns if world-readable.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[schema(value_type = Option<String>)]
     pub hmac_secret_file: Option<PathBuf>,
@@ -1108,7 +1108,7 @@ fn post_webhook(url: &str, json: &str, secret_file: Option<&std::path::Path>, ti
                 };
                 mac.update(json.as_bytes());
                 let sig = hex::encode(mac.finalize().into_bytes());
-                req = req.header("X-Punktfunk-Signature", &format!("sha256={sig}"));
+                req = req.header("X-Lilynk-Signature", &format!("sha256={sig}"));
             }
             Err(e) => {
                 // Configured but unreadable: the operator wants signing. Do not POST unsigned.

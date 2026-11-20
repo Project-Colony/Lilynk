@@ -111,7 +111,7 @@ final class RemoteFirstLightTests: XCTestCase {
         }
         let port = env["LILYNK_REMOTE_PORT"].flatMap(UInt16.init) ?? 9777
         // LILYNK_REMOTE_COMPOSITOR=kwin|gamescope|… asks the host for a specific
-        // backend (verify in its log: "punktfunk/1 virtual display compositor=…").
+        // backend (verify in its log: "lilynk/1 virtual display compositor=…").
         let compositor = env["LILYNK_REMOTE_COMPOSITOR"]
             .flatMap(LilynkConnection.Compositor.init(name:)) ?? .auto
         let width: UInt32 = 1280

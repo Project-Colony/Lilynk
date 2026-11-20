@@ -41,7 +41,7 @@ pub struct Frame {
     pub frame_index: u32,
     pub pts_ns: u64,
     pub flags: u32,
-    /// Config generation the host stamped (`punktfunk/2`): the `StreamConfig` this frame
+    /// Config generation the host stamped (`lilynk/2`): the `StreamConfig` this frame
     /// decodes under.
     pub epoch: u8,
     /// The video stream it rode ([`crate::packet::screen_stream`]): 0 for the first screen.
@@ -105,7 +105,7 @@ pub struct Session {
     /// Receive-side anti-replay over the peer's authenticated sequence. `Some` exactly when
     /// `crypto` is: an unsealed packet's number is not authenticated.
     replay: Option<ReplayWindow>,
-    /// Client: the newest `punktfunk/2` epoch a delivered frame carried ([`Session::set_epoch`]).
+    /// Client: the newest `lilynk/2` epoch a delivered frame carried ([`Session::set_epoch`]).
     newest_epoch: Option<u8>,
     transport: Box<dyn Transport>,
     packetizer: Packetizer,
@@ -2044,7 +2044,7 @@ mod wire_equivalence_tests {
         }
     }
 
-    /// Whole frames of every shape cross the `punktfunk/2` wire byte-identical, with their
+    /// Whole frames of every shape cross the `lilynk/2` wire byte-identical, with their
     /// capture time, flags and epoch, and probe filler stays out of the video index space.
     #[test]
     fn v2_frames_cross_the_wire_with_their_epoch() {

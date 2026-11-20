@@ -1,10 +1,10 @@
-// LAN auto-discovery of punktfunk/1 hosts over mDNS — the client side of the host's
-// `crate::discovery` advert (`_punktfunk._udp`). Browses with NWBrowser (TXT rides in the
+// LAN auto-discovery of lilynk/1 hosts over mDNS — the client side of the host's
+// `crate::discovery` advert (`_lilynk._udp`). Browses with NWBrowser (TXT rides in the
 // result metadata), resolves each service to a connectable IP:port with a throwaway
 // NWConnection, and publishes the live set.
 //
 // The advertised `fp` (host cert SHA-256) is ADVISORY: mDNS is unauthenticated, so pinning
-// still verifies the host on connect. iOS/tvOS browse only with `_punktfunk._udp` listed in
+// still verifies the host on connect. iOS/tvOS browse only with `_lilynk._udp` listed in
 // Info.plist `NSBonjourServices` (Config/Info.plist).
 //
 // SELF-HEALING: neither Network.framework primitive recovers on its own.
@@ -21,7 +21,7 @@ import Foundation
 import Network
 import LilynkShared
 
-/// A punktfunk/1 host found on the LAN. `fingerprintHex` is advisory (see file header).
+/// A lilynk/1 host found on the LAN. `fingerprintHex` is advisory (see file header).
 public struct DiscoveredHost: Identifiable, Sendable, Equatable {
     /// Stable host id (mDNS `id` TXT); falls back to the Bonjour instance name.
     public let id: String
@@ -129,7 +129,7 @@ public final class HostDiscovery: ObservableObject {
 
     public init() {}
 
-    /// Start browsing `_punktfunk._udp`. Idempotent — a second call while live is a no-op.
+    /// Start browsing `_lilynk._udp`. Idempotent — a second call while live is a no-op.
     public func start() {
         #if DEBUG
         guard !debugPinned else { return } // a seeded advert set outranks the live LAN
@@ -251,7 +251,7 @@ public final class HostDiscovery: ObservableObject {
 
         let generation = self.generation
         let browser = NWBrowser(
-            for: .bonjourWithTXTRecord(type: "_punktfunk._udp", domain: nil),
+            for: .bonjourWithTXTRecord(type: "_lilynk._udp", domain: nil),
             using: NWParameters())
         // `[weak self]` sits on the handler itself: on the inner closure it would make the handler
         // hold `self` strongly, and the running browser keeps its handlers.

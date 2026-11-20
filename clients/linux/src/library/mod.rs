@@ -1244,7 +1244,7 @@ impl LibraryPage {
         self.relayout();
     }
 
-    /// A title's `punktfunk://` link and a launcher label for it. A pinned shelf's preset rides
+    /// A title's `lilynk://` link and a launcher label for it. A pinned shelf's preset rides
     /// the link: copying off that shelf is pressing its card and picking the title.
     fn link(&self, id: &str) -> Option<(String, String)> {
         let shelf = self.shelf()?;

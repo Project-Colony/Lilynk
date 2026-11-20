@@ -15,7 +15,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 # The whole protocol/transport/FEC/crypto + the embeddable NativeClient connector. `quic` pulls
-# the punktfunk/1 control plane, whose TLS runs on aws-lc-rs (see lilynk-core/Cargo.toml) —
+# the lilynk/1 control plane, whose TLS runs on aws-lc-rs (see lilynk-core/Cargo.toml) —
 # aws-lc-sys cross-compiles for all three ABIs with the NDK clang cargo-ndk already exports.
 lilynk-core = { path = "../../../crates/core/lilynk-core", features = ["quic"] }
 # 0.22, to match `rustls-platform-verifier` (via quinn-proto, for Android cert verification),

@@ -1,7 +1,7 @@
 // App Store screenshot scenes — the actual screens we render, each wired with mock data so it
 // looks populated without a live host. Every scene is built from the REAL app views (HomeView,
 // SettingsView, PairSheet, TrustCardView) so the screenshots track the shipping UI; only the
-// live stream is faked (StreamView needs a real punktfunk/1 connection — see ShotStreamHero).
+// live stream is faked (StreamView needs a real lilynk/1 connection — see ShotStreamHero).
 
 #if DEBUG
 import LilynkKit

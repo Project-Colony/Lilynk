@@ -3,7 +3,7 @@
 // page asks exactly when the server would refuse it without the password.
 
 /** Carries the console password on a plugin form's save, whose body goes to the plugin as typed. */
-export const PASSWORD_HEADER = "x-punktfunk-password";
+export const PASSWORD_HEADER = "x-lilynk-password";
 
 /** Host settings that open a plane to devices or weaken one. Any change to them asks. */
 export const PLANE_SETTINGS = [

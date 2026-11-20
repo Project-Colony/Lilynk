@@ -13,7 +13,7 @@ use lilynk_core::quic::{lift_pre_manage, normalize_legacy_full, GRANT_ALL};
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 
-/// Paired punktfunk/1 clients. GameStream pairing uses a different store.
+/// Paired lilynk/1 clients. GameStream pairing uses a different store.
 #[derive(Default, serde::Serialize, serde::Deserialize)]
 pub struct PairedClients {
     pub clients: Vec<PairedClient>,

@@ -27,7 +27,7 @@
 	"desktop_hostcard_remove_failed": "Couldn't remove the host — {reason}",
 	"desktop_hostcard_create_shortcut": "Create shortcut…",
 	"desktop_hostcard_create_shortcut_hint": "An app launcher entry that connects to this host",
-	"desktop_hostcard_copy_link_hint": "A punktfunk:// link that connects to this host",
+	"desktop_hostcard_copy_link_hint": "A lilynk:// link that connects to this host",
 	"desktop_shortcut_title": "Create shortcut",
 	"desktop_shortcut_sandboxed_body": "Lilynk is sandboxed here, so it can't add the shortcut itself. Copy this link and make a launcher for it — it opens the same stream.",
 	"desktop_shortcut_added_body": "Shortcut for “{name}” added to your applications",

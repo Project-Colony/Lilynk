@@ -8,7 +8,7 @@ use std::net::{IpAddr, Ipv4Addr};
 
 /// The header a page server puts on a request or session it relays: the visitor's address, or
 /// [`CLIENT_ADDR_UNKNOWN`].
-pub const CLIENT_ADDR_HEADER: &str = "pf-client-addr";
+pub const CLIENT_ADDR_HEADER: &str = "ly-client-addr";
 
 /// [`CLIENT_ADDR_HEADER`]'s value when the page server cannot tell who the visitor is.
 pub const CLIENT_ADDR_UNKNOWN: &str = "unknown";

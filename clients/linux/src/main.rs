@@ -1,4 +1,4 @@
-//! `lilynk-client` — the native Linux punktfunk/1 desktop shell (relm4/libadwaita).
+//! `lilynk-client` — the native Linux lilynk/1 desktop shell (relm4/libadwaita).
 //!
 //! Hosts, pairing/trust, settings, and the desktop library page; every stream (and the
 //! console game library) runs in the spawned `lilynk-session` Vulkan binary — the

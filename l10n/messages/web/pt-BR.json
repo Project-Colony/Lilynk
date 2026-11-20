@@ -298,13 +298,13 @@
 			"n=*": "Desparear todos os {count} dispositivos?"
 		}
 	}],
-	"pairing_native_unpair_all_body": "Todos os dispositivos pareados — tanto punktfunk/2 quanto Moonlight — precisarão parear de novo para se conectar, e tudo o que estiver sendo transmitido agora será desconectado.",
+	"pairing_native_unpair_all_body": "Todos os dispositivos pareados — tanto lilynk/2 quanto Moonlight — precisarão parear de novo para se conectar, e tudo o que estiver sendo transmitido agora será desconectado.",
 	"pairing_knock_title": "Um dispositivo quer parear",
 	"pairing_knock_desc": "{name} está aguardando aprovação.",
 	"pairing_knock_action": "Revisar",
 	"pairing_native_unpair_all_failed": "Não foi possível desparear alguns dispositivos",
 	"pairing_native_unpair_failed": "Não foi possível desparear {name}",
-	"pairing_protocol_native": "punktfunk/2",
+	"pairing_protocol_native": "lilynk/2",
 	"pairing_protocol_moonlight": "Moonlight",
 	"pairing_pending_title": "Aguardando aprovação",
 	"pairing_pending_approve": "Aprovar",

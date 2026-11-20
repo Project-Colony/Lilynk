@@ -18,7 +18,7 @@ container.
 exe lands under the ACL'd `C:\Program Files\WindowsApps`, which Steam's *Add a Non-Steam Game*
 picker cannot browse, and alias/`shell:AppsFolder` activation defeats the Steam overlay's injection
 and Big Picture launch. Steam must spawn the exe itself from a normal path. The installer re-creates
-the MSIX manifest's declarative grants per-user: `punktfunk://` in HKCU Classes, Start shortcuts,
+the MSIX manifest's declarative grants per-user: `lilynk://` in HKCU Classes, Start shortcuts,
 and `{app}` on the user PATH for the `lilynk` CLI.
 
 **Two architectures, one x64 runner.** `x86_64-pc-windows-msvc` builds natively and

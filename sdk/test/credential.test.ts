@@ -86,7 +86,7 @@ describe("signedMessage", () => {
 		expect(m[ctx.length]).toBe(0xaa);
 		expect(m[ctx.length + 32]).toBe(0xbb);
 		// Pinned against the host: `lilynk_core::quic::AUTH_SIG_CONTEXT` is exactly this.
-		expect(DEVICE_AUTH_CONTEXT).toBe("punktfunk-device-auth-v1:");
+		expect(DEVICE_AUTH_CONTEXT).toBe("lilynk-device-auth-v1:");
 	});
 
 	it("refuses anything that is not two 32-byte values", () => {

@@ -1,4 +1,4 @@
-//! `punktfunk/2` — the wire behind ALPN `pkf2` that replaces `punktfunk/1`.
+//! `lilynk/2` — the wire behind ALPN `lyk2` that replaces `lilynk/1`.
 //!
 //! A frame is `type ‖ len ‖ field*` and a field is `tag ‖ len ‖ value`, with QUIC varints for
 //! the numbers ([`field`]). A reader skips a type or a tag it does not know, so a message grows

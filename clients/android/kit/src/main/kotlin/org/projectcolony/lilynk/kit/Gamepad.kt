@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.roundToInt
 
 /**
- * Android gamepad capture → punktfunk/1 gamepad wire (the `input.rs::gamepad` contract; the host
+ * Android gamepad capture → lilynk/1 gamepad wire (the `input.rs::gamepad` contract; the host
  * accumulates the incremental events into its virtual xpad). The Android analogue of the desktop
  * clients' SDL3 gamepad module (`ly-client-core`'s `gamepad/`) and the Apple client's
  * `GamepadCapture.swift` (GameController) — all three emit byte-identical events. [GamepadRouter]

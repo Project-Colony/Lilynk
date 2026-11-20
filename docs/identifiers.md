@@ -22,7 +22,7 @@ convention instead.
 | Packages, binaries, systemd units, sysext images | Lowercase, hyphenated | `lilynk-host`, `lilynk-client.raw` |
 | Windows services, tasks, registry keys | CamelCase, no dots | `LilynkHost`, `HKLM\SOFTWARE\Lilynk` |
 | winget | Publisher.Package | `Lilynk.LilynkHost` |
-| URL scheme, DNS-SD service | Lowercase | `punktfunk://`, `_punktfunk._udp` |
+| URL scheme, DNS-SD service | Lowercase | `lilynk://`, `_lilynk._udp` |
 | GNOME Shell extension | name@domain | `lilynk-windows@projectcolony.org` |
 
 ## Never rename

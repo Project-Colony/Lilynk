@@ -15,8 +15,8 @@ import { type Lane, personLane } from "./personRoutes";
 import { encodeRest } from "./seatProxy";
 
 /** The headers the box reads a person session from (`mgmt/person_session.rs`). */
-export const SESSION_HEADER = "x-punktfunk-person-session";
-export const PROFILE_HEADER = "x-punktfunk-person-profile";
+export const SESSION_HEADER = "x-lilynk-person-session";
+export const PROFILE_HEADER = "x-lilynk-person-profile";
 
 /** What a person's call carries upstream, and what comes back. Cookies never cross. */
 const REQUEST_HEADERS = ["accept", "content-type", "if-none-match"];

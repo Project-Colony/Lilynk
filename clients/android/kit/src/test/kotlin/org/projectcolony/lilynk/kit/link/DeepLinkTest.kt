@@ -90,15 +90,15 @@ class DeepLinkResolutionTest {
 
     @Test
     fun idBeatsNameBeatsAddress() {
-        assertEquals(desk, (resolve("punktfunk://connect/${desk.id}") as HostResolution.Record).host)
-        assertEquals(desk, (resolve("punktfunk://connect/desk") as HostResolution.Record).host)
-        assertEquals(desk, (resolve("punktfunk://connect/192.168.1.50") as HostResolution.Record).host)
+        assertEquals(desk, (resolve("lilynk://connect/${desk.id}") as HostResolution.Record).host)
+        assertEquals(desk, (resolve("lilynk://connect/desk") as HostResolution.Record).host)
+        assertEquals(desk, (resolve("lilynk://connect/192.168.1.50") as HostResolution.Record).host)
         assertEquals(
             desk,
-            (resolve("punktfunk://connect/192.168.1.50:9777") as HostResolution.Record).host,
+            (resolve("lilynk://connect/192.168.1.50:9777") as HostResolution.Record).host,
         )
         // Two hosts answer to "Couch" — refuse with a notice, never pick one.
-        assertEquals(HostResolution.Ambiguous, resolve("punktfunk://connect/couch"))
+        assertEquals(HostResolution.Ambiguous, resolve("lilynk://connect/couch"))
     }
 
     /**
@@ -108,20 +108,20 @@ class DeepLinkResolutionTest {
      */
     @Test
     fun onlyTheRecordIdDialsWithoutAsking() {
-        assertEquals(HostResolution.Known(desk), resolve("punktfunk://connect/${desk.id}"))
-        assertEquals(HostResolution.Confirm(desk), resolve("punktfunk://connect/desk"))
-        assertEquals(HostResolution.Confirm(desk), resolve("punktfunk://connect/DESK"))
-        assertEquals(HostResolution.Confirm(desk), resolve("punktfunk://connect/192.168.1.50"))
-        assertEquals(HostResolution.Confirm(desk), resolve("punktfunk://connect/192.168.1.50:9777"))
+        assertEquals(HostResolution.Known(desk), resolve("lilynk://connect/${desk.id}"))
+        assertEquals(HostResolution.Confirm(desk), resolve("lilynk://connect/desk"))
+        assertEquals(HostResolution.Confirm(desk), resolve("lilynk://connect/DESK"))
+        assertEquals(HostResolution.Confirm(desk), resolve("lilynk://connect/192.168.1.50"))
+        assertEquals(HostResolution.Confirm(desk), resolve("lilynk://connect/192.168.1.50:9777"))
         // …including the `host=` recovery path, as `resolveHost`'s doc says.
         assertEquals(
             HostResolution.Confirm(desk),
-            resolve("punktfunk://connect/00000000-0000-4000-8000-000000000000?host=192.168.1.50"),
+            resolve("lilynk://connect/00000000-0000-4000-8000-000000000000?host=192.168.1.50"),
         )
         // A launch id doesn't buy a name any authority it didn't have.
         assertEquals(
             HostResolution.Confirm(desk),
-            resolve("punktfunk://connect/desk?launch=steam:570"),
+            resolve("lilynk://connect/desk?launch=steam:570"),
         )
     }
 
@@ -130,13 +130,13 @@ class DeepLinkResolutionTest {
         val stale = "00000000-0000-4000-8000-000000000000"
         assertEquals(
             desk,
-            (resolve("punktfunk://connect/$stale?host=192.168.1.50") as HostResolution.Record).host,
+            (resolve("lilynk://connect/$stale?host=192.168.1.50") as HostResolution.Record).host,
         )
         // …but a stale id is NOT a hostname: dialing "00000000-…" would be a confusing dead end
         // rather than the recovery the grammar specifies.
-        assertEquals(HostResolution.Unresolvable, resolve("punktfunk://connect/$stale"))
+        assertEquals(HostResolution.Unresolvable, resolve("lilynk://connect/$stale"))
         // Neither is a display name that can't be an address.
-        assertEquals(HostResolution.Unresolvable, resolve("punktfunk://connect/Basement%20PC"))
+        assertEquals(HostResolution.Unresolvable, resolve("lilynk://connect/Basement%20PC"))
     }
 
     /** Both OS installs of a dual-boot box at one address: the link's `fp` picks its own record. */
@@ -147,33 +147,33 @@ class DeepLinkResolutionTest {
         val linux = host("Desk (Linux)", "192.168.1.50", "66666666-7777-4888-8999-bbbbbbbbbbbb", linuxFp)
         val both = listOf(desk, linux)
         fun r(url: String) = DeepLinks.resolveHost((DeepLinks.parse(url) as DeepLinkResult.Parsed).link, both)
-        assertEquals(HostResolution.Confirm(desk), r("punktfunk://connect/192.168.1.50?fp=$fp"))
-        assertEquals(HostResolution.Confirm(linux), r("punktfunk://connect/192.168.1.50?fp=$linuxFp"))
+        assertEquals(HostResolution.Confirm(desk), r("lilynk://connect/192.168.1.50?fp=$fp"))
+        assertEquals(HostResolution.Confirm(linux), r("lilynk://connect/192.168.1.50?fp=$linuxFp"))
         // A pin nobody holds is a new host — the sheet, never the neighbour.
         assertEquals(
             HostResolution.Unknown("192.168.1.50", DeepLinks.DEFAULT_PORT, null, third),
-            r("punktfunk://connect/192.168.1.50?fp=$third"),
+            r("lilynk://connect/192.168.1.50?fp=$third"),
         )
     }
 
     @Test
     fun anUnknownHostBecomesTheConfirmationSheetsInput() {
-        val r = resolve("punktfunk://connect/10.0.0.9:7000?name=Studio&fp=$fp")
+        val r = resolve("lilynk://connect/10.0.0.9:7000?name=Studio&fp=$fp")
         assertEquals(HostResolution.Unknown("10.0.0.9", 7000, "Studio", fp), r)
         // An mDNS/DNS name we've never saved is offered the same way — the sheet, never a connect.
         assertEquals(
             HostResolution.Unknown("nas.local", DeepLinks.DEFAULT_PORT, null, null),
-            resolve("punktfunk://connect/nas.local"),
+            resolve("lilynk://connect/nas.local"),
         )
     }
 
     @Test
     fun aPinThatContradictsTheStoredOneIsTheLinkLying() {
         fun link(url: String) = (DeepLinks.parse(url) as DeepLinkResult.Parsed).link
-        assertTrue(link("punktfunk://connect/desk?fp=${"b".repeat(64)}").pinConflict(desk))
-        assertFalse(link("punktfunk://connect/desk?fp=$fp").pinConflict(desk))
+        assertTrue(link("lilynk://connect/desk?fp=${"b".repeat(64)}").pinConflict(desk))
+        assertFalse(link("lilynk://connect/desk?fp=$fp").pinConflict(desk))
         // No pin stored (an address-only record) → nothing to contradict; the trust flow runs.
-        assertFalse(link("punktfunk://connect/desk?fp=${"b".repeat(64)}").pinConflict(hosts[1]))
+        assertFalse(link("lilynk://connect/desk?fp=${"b".repeat(64)}").pinConflict(hosts[1]))
     }
 
     @Test
@@ -182,7 +182,7 @@ class DeepLinkResolutionTest {
         val link = DeepLinks.forHost(h, launch = "steam:570", preset = "aaaaaaaaaaaa")
         val url = link.toUrl()
         assertEquals(
-            "punktfunk://connect/${h.id}?fp=$fp&host=192.168.1.50:7777" +
+            "lilynk://connect/${h.id}?fp=$fp&host=192.168.1.50:7777" +
                 "&launch=steam:570&preset=aaaaaaaaaaaa&profile=aaaaaaaaaaaa",
             url,
         )
@@ -190,7 +190,7 @@ class DeepLinkResolutionTest {
 
         // Names with spaces and non-ASCII survive the round trip.
         val labelled = DeepLink(hostRef = "Wohnzimmer PC", name = "Büro · Mac")
-        assertTrue(labelled.toUrl().startsWith("punktfunk://connect/Wohnzimmer%20PC?"))
+        assertTrue(labelled.toUrl().startsWith("lilynk://connect/Wohnzimmer%20PC?"))
         assertEquals(labelled, (DeepLinks.parse(labelled.toUrl()) as DeepLinkResult.Parsed).link)
 
         // An emitted IPv6 host parameter comes back bracketed, so it parses again.

@@ -28,7 +28,7 @@ pub const MSG_REFUSED: u8 = 0x16;
 
 /// Domain separation for [`AuthResponse::signature`]. A device key may sign other things; a
 /// signature over a session nonce must not be replayable as one over any of them.
-pub const AUTH_SIG_CONTEXT: &[u8] = b"punktfunk-device-auth-v1:";
+pub const AUTH_SIG_CONTEXT: &[u8] = b"lilynk-device-auth-v1:";
 
 /// The exact bytes an [`AuthResponse`] signs. Both sides call this, so neither can hold a
 /// different opinion of what was signed.
@@ -111,7 +111,7 @@ pub struct Refused {
     pub code: u32,
     pub reason: String,
     /// The host message `reason` is the English of (`close_*`, `reject_*`), empty when it
-    /// has none. `punktfunk/1` framing leaves it out.
+    /// has none. `lilynk/1` framing leaves it out.
     pub reason_id: String,
     /// That message's placeholder values, by name.
     pub reason_params: Vec<(String, String)>,
@@ -142,7 +142,7 @@ fn get_bytes(b: &[u8], off: usize) -> Result<(&[u8], usize)> {
 }
 
 impl PairRequest {
-    pub fn encode_pkf1(&self) -> Vec<u8> {
+    pub fn encode_lyk1(&self) -> Vec<u8> {
         // Same cap as Hello: truncate on a char boundary. A mid-sequence cut
         // puts invalid UTF-8 on the wire and the host stores U+FFFD forever.
         let name = super::handshake::truncate_to(&self.name, HELLO_NAME_MAX).as_bytes();
@@ -160,7 +160,7 @@ impl PairRequest {
         b
     }
 
-    pub fn decode_pkf1(b: &[u8]) -> Result<PairRequest> {
+    pub fn decode_lyk1(b: &[u8]) -> Result<PairRequest> {
         if b.len() < 6 || &b[0..4] != CTL_MAGIC || b[4] != MSG_PAIR_REQUEST {
             return Err(LilynkError::InvalidArg("bad PairRequest"));
         }
@@ -187,7 +187,7 @@ impl PairRequest {
 }
 
 impl PairChallenge {
-    pub fn encode_pkf1(&self) -> Vec<u8> {
+    pub fn encode_lyk1(&self) -> Vec<u8> {
         let mut b = Vec::with_capacity(7 + self.spake_b.len() + 32);
         b.extend_from_slice(CTL_MAGIC);
         b.push(MSG_PAIR_CHALLENGE);
@@ -196,7 +196,7 @@ impl PairChallenge {
         b
     }
 
-    pub fn decode_pkf1(b: &[u8]) -> Result<PairChallenge> {
+    pub fn decode_lyk1(b: &[u8]) -> Result<PairChallenge> {
         if b.len() < 5 || &b[0..4] != CTL_MAGIC || b[4] != MSG_PAIR_CHALLENGE {
             return Err(LilynkError::InvalidArg("bad PairChallenge"));
         }
@@ -214,7 +214,7 @@ impl PairChallenge {
 }
 
 impl PairProof {
-    pub fn encode_pkf1(&self) -> Vec<u8> {
+    pub fn encode_lyk1(&self) -> Vec<u8> {
         let mut b = Vec::with_capacity(37);
         b.extend_from_slice(CTL_MAGIC);
         b.push(MSG_PAIR_PROOF);
@@ -222,7 +222,7 @@ impl PairProof {
         b
     }
 
-    pub fn decode_pkf1(b: &[u8]) -> Result<PairProof> {
+    pub fn decode_lyk1(b: &[u8]) -> Result<PairProof> {
         if b.len() != 37 || &b[0..4] != CTL_MAGIC || b[4] != MSG_PAIR_PROOF {
             return Err(LilynkError::InvalidArg("bad PairProof"));
         }
@@ -233,7 +233,7 @@ impl PairProof {
 }
 
 impl PairResult {
-    pub fn encode_pkf1(&self) -> Vec<u8> {
+    pub fn encode_lyk1(&self) -> Vec<u8> {
         let mut b = Vec::with_capacity(6);
         b.extend_from_slice(CTL_MAGIC);
         b.push(MSG_PAIR_RESULT);
@@ -241,7 +241,7 @@ impl PairResult {
         b
     }
 
-    pub fn decode_pkf1(b: &[u8]) -> Result<PairResult> {
+    pub fn decode_lyk1(b: &[u8]) -> Result<PairResult> {
         if b.len() != 6 || &b[0..4] != CTL_MAGIC || b[4] != MSG_PAIR_RESULT {
             return Err(LilynkError::InvalidArg("bad PairResult"));
         }
@@ -259,7 +259,7 @@ impl Refused {
         self
     }
 
-    /// Every field within its cap: what a `punktfunk/2` decoder accepts.
+    /// Every field within its cap: what a `lilynk/2` decoder accepts.
     pub(crate) fn bounded(&self) -> bool {
         self.reason.len() <= REFUSED_REASON_MAX
             && self.reason_id.len() <= LAUNCH_ID_MAX
@@ -267,7 +267,7 @@ impl Refused {
             && super::control::params_within(&self.reason_params, LAUNCH_MESSAGE_MAX)
     }
 
-    pub fn encode_pkf1(&self) -> Vec<u8> {
+    pub fn encode_lyk1(&self) -> Vec<u8> {
         let reason = super::handshake::truncate_to(&self.reason, REFUSED_REASON_MAX).as_bytes();
         let mut b = Vec::with_capacity(11 + reason.len());
         b.extend_from_slice(CTL_MAGIC);
@@ -277,7 +277,7 @@ impl Refused {
         b
     }
 
-    pub fn decode_pkf1(b: &[u8]) -> Result<Refused> {
+    pub fn decode_lyk1(b: &[u8]) -> Result<Refused> {
         if b.len() < 9 || &b[0..4] != CTL_MAGIC || b[4] != MSG_REFUSED {
             return Err(LilynkError::InvalidArg("bad Refused"));
         }
@@ -307,19 +307,19 @@ mod tests {
             reason: "no usable compositor".into(),
             ..Refused::default()
         };
-        assert_eq!(Refused::decode_pkf1(&r.encode_pkf1()).unwrap(), r);
+        assert_eq!(Refused::decode_lyk1(&r.encode_lyk1()).unwrap(), r);
         let long = Refused {
             code: 1,
             reason: "é".repeat(400),
             ..Refused::default()
         };
-        let back = Refused::decode_pkf1(&long.encode_pkf1()).unwrap();
+        let back = Refused::decode_lyk1(&long.encode_lyk1()).unwrap();
         assert!(back.reason.len() <= REFUSED_REASON_MAX, "capped");
         assert!(
             back.reason.chars().all(|c| c == 'é'),
             "cut on a char boundary"
         );
-        assert!(Refused::decode_pkf1(&PairResult { ok: true }.encode_pkf1()).is_err());
+        assert!(Refused::decode_lyk1(&PairResult { ok: true }.encode_lyk1()).is_err());
     }
 
     #[test]
@@ -329,33 +329,33 @@ mod tests {
             spake_a: vec![1, 2, 3, 4, 5],
             device_key: Vec::new(),
         };
-        assert_eq!(PairRequest::decode_pkf1(&pr.encode_pkf1()).unwrap(), pr);
+        assert_eq!(PairRequest::decode_lyk1(&pr.encode_lyk1()).unwrap(), pr);
         let keyed = PairRequest {
             device_key: vec![0x30, 0x59, 0x30, 0x13],
             ..pr.clone()
         };
         assert_eq!(
-            PairRequest::decode_pkf1(&keyed.encode_pkf1()).unwrap(),
+            PairRequest::decode_lyk1(&keyed.encode_lyk1()).unwrap(),
             keyed
         );
         let pc = PairChallenge {
             spake_b: vec![9; 33],
             confirm: [7u8; 32],
         };
-        assert_eq!(PairChallenge::decode_pkf1(&pc.encode_pkf1()).unwrap(), pc);
+        assert_eq!(PairChallenge::decode_lyk1(&pc.encode_lyk1()).unwrap(), pc);
         let pp = PairProof { confirm: [3u8; 32] };
-        assert_eq!(PairProof::decode_pkf1(&pp.encode_pkf1()).unwrap(), pp);
+        assert_eq!(PairProof::decode_lyk1(&pp.encode_lyk1()).unwrap(), pp);
         for ok in [true, false] {
             assert_eq!(
-                PairResult::decode_pkf1(&PairResult { ok }.encode_pkf1())
+                PairResult::decode_lyk1(&PairResult { ok }.encode_lyk1())
                     .unwrap()
                     .ok,
                 ok
             );
         }
-        let mut bad = pp.encode_pkf1();
+        let mut bad = pp.encode_lyk1();
         bad.push(0);
-        assert!(PairProof::decode_pkf1(&bad).is_err());
+        assert!(PairProof::decode_lyk1(&bad).is_err());
     }
 
     #[test]
@@ -367,7 +367,7 @@ mod tests {
             spake_a: vec![1, 2, 3],
             device_key: Vec::new(),
         };
-        let dec = PairRequest::decode_pkf1(&pr.encode_pkf1()).unwrap();
+        let dec = PairRequest::decode_lyk1(&pr.encode_lyk1()).unwrap();
         assert!(dec.name.len() <= HELLO_NAME_MAX && dec.name.starts_with('x'));
         assert!(
             !dec.name.contains('\u{FFFD}'),
@@ -384,7 +384,7 @@ mod tests {
             spake_a: vec![7; 33],
             device_key: Vec::new(),
         };
-        let bytes = pr.encode_pkf1();
+        let bytes = pr.encode_lyk1();
         let mut expected = Vec::new();
         expected.extend_from_slice(CTL_MAGIC);
         expected.push(MSG_PAIR_REQUEST);

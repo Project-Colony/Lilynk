@@ -158,7 +158,7 @@ build() {
 }
 
 package_lilynk-host() {
-  pkgdesc="Low-latency desktop/game streaming HOST (Moonlight-compatible + punktfunk/2)"
+  pkgdesc="Low-latency desktop/game streaming HOST (Moonlight-compatible + lilynk/2)"
   # NVENC + GPU EGL/CUDA come from the NVIDIA driver (nvidia-utils) — kept an optdepend, never a
   # hard dep, exactly as the RPM (__requires_exclude libcuda) and deb (shlibdeps filter) do.
   # The host captures the sink monitor through NATIVE PipeWire (ly-audio) — it never

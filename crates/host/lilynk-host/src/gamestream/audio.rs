@@ -8,7 +8,7 @@
 //! `timestamp += packetDuration`, `ssrc = 0`) then Opus. When negotiated, the
 //! payload is AES-128-CBC with PKCS7 and IV `BE32(rikeyid + seq)`; the RTP header
 //! stays clear. CBC has no auth tag — that is the protocol. Authenticated audio is
-//! the native `punktfunk/1` AES-GCM plane.
+//! the native `lilynk/1` AES-GCM plane.
 //!
 //! Stereo is one Opus stream; 5.1/7.1 is libopus multistream. Every layout then
 //! emits Sunshine-style FEC: each aligned block of 4 data packets is followed by

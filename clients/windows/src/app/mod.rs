@@ -335,7 +335,7 @@ pub(crate) enum Msg {
     Unlock(Option<unlock::UnlockAsk>),
     /// The device probe finished: the settings page reads it from `AppCtx::probes`.
     Devices,
-    /// A `punktfunk://` link, from argv or a later instance.
+    /// A `lilynk://` link, from argv or a later instance.
     Link(String),
     LinkConfirm(Option<Box<orchestrate::ConnectPlan>>),
     Pads(usize),
@@ -1047,7 +1047,7 @@ fn entrance(body: View, screen: &Screen, progress: f64) -> View {
         .into()
 }
 
-/// `punktfunk://` links: the receiver thread queues them (from this launch's argv, or from a
+/// `lilynk://` links: the receiver thread queues them (from this launch's argv, or from a
 /// later instance over WM_COPYDATA), and this poll posts each one to the shell.
 fn poll_links(set_link: AsyncSetState<String>) {
     std::thread::Builder::new()

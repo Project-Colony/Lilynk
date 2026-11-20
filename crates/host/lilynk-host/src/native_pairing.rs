@@ -1,4 +1,4 @@
-//! Shared native (`punktfunk/1`) pairing state: the on-demand arming PIN, the persistent
+//! Shared native (`lilynk/1`) pairing state: the on-demand arming PIN, the persistent
 //! paired-clients store, and the delegated-approval queue. One [`NativePairing`] handle is
 //! shared by the QUIC accept loop ([`crate::native`]) and the management API ([`crate::mgmt`]),
 //! so an operator can arm pairing and read the PIN from the web console.

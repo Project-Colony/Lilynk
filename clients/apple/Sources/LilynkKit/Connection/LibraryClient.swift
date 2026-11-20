@@ -4,7 +4,7 @@
 // running (`GET /api/v1/status`), so a title the player can return to can be marked as such.
 // Offered for a PAIRED host only: the fetch authenticates with the pinned identity.
 //
-// The management API serves HTTPS on a port distinct from the punktfunk/1 data plane (default
+// The management API serves HTTPS on a port distinct from the lilynk/1 data plane (default
 // `lilynkDefaultMgmtPort`, also advertised in the host's mDNS `mgmt` TXT). A paired client is
 // authorized for the routes in `mgmt_routes::paired_may_access` by its **mTLS certificate** — no
 // bearer token. The host binds the API to all interfaces by DEFAULT (the bearer-gated admin lane

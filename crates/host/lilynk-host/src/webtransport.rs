@@ -579,15 +579,15 @@ async fn session(
         return mgmt::serve(connection, serving).await;
     }
 
-    // An older page dials `/stream` on `punktfunk/1`. It reads a refusal in that framing.
-    if path != "/pf2" {
+    // An older page dials `/stream` on `lilynk/1`. It reads a refusal in that framing.
+    if path != "/ly2" {
         let reason = lilynk_core::reject::RejectReason::WireVersionMismatch;
         refuse_older_page(&connection, reason.close_code(), OLDER_PAGE).await;
         connection.close(
             wtransport::VarInt::from_u32(reason.close_code()),
             OLDER_PAGE.as_bytes(),
         );
-        tracing::info!(path = %path, "punktfunk/1 browser refused — the page needs an update");
+        tracing::info!(path = %path, "lilynk/1 browser refused — the page needs an update");
         return Ok(());
     }
     let peer = connection.remote_address();
@@ -625,7 +625,7 @@ async fn session(
     Ok(())
 }
 
-/// What a page that dials `punktfunk/1` is told.
+/// What a page that dials `lilynk/1` is told.
 const OLDER_PAGE: &str =
     "This page is older than the host. Reload it or update the app, then try again.";
 
@@ -646,7 +646,7 @@ pub(crate) async fn refuse(
     say_then_wait(connection, &refused.encode_v2()).await;
 }
 
-/// [`refuse`] in `punktfunk/1`'s framing, the only refusal a page from before `/pf2` reads.
+/// [`refuse`] in `lilynk/1`'s framing, the only refusal a page from before `/ly2` reads.
 async fn refuse_older_page(connection: &wtransport::Connection, code: u32, reason: &str) {
     let refused = lilynk_core::quic::Refused {
         code,
@@ -655,7 +655,7 @@ async fn refuse_older_page(connection: &wtransport::Connection, code: u32, reaso
     };
     say_then_wait(
         connection,
-        &lilynk_core::quic::pkf1::frame(&refused.encode_pkf1()),
+        &lilynk_core::quic::lyk1::frame(&refused.encode_lyk1()),
     )
     .await;
 }

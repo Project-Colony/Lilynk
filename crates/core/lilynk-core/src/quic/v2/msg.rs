@@ -1,8 +1,8 @@
-//! The post-handshake messages on the v2 wire: the same structs as `punktfunk/1`, each a frame
+//! The post-handshake messages on the v2 wire: the same structs as `lilynk/1`, each a frame
 //! of tagged fields ([`V2Message`]).
 //!
 //! A field the sender leaves out decodes to its type's zero, so a message gains a field by
-//! taking a new tag and an older reader skips it. Each message keeps `punktfunk/1`'s bounds on
+//! taking a new tag and an older reader skips it. Each message keeps `lilynk/1`'s bounds on
 //! what it holds (name and reason lengths, cursor size, clipboard kinds), checked on decode.
 //! Tags are per message and, like every number on this wire, never reused.
 
@@ -290,7 +290,7 @@ v2_message!(PadFeature = reg::MSG_PAD_FEATURE, { 1 => pad, 2 => data },
     check |m| !m.data.is_empty() && m.data.len() <= crate::quic::HID_REPORT_MAX);
 
 /// `host → client`, before `ServerHello`, repeating: the host is still deciding, such as a
-/// console approval of this device. `punktfunk/2` only.
+/// console approval of this device. `lilynk/2` only.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct Pending {}
 
@@ -324,7 +324,7 @@ pub const REDIRECT_PIN_LEN: usize = 64;
 /// `profile` is the id the host resolved, `seat_no` and `seat_name` the seat, and `occupant`
 /// the device already there when this one joins a live session. To a browser, `port` is the
 /// seat's browser plane and `cert_hash` its certificate's SHA-256, the hash the browser pins and
-/// binds its credential to; empty to a native client. `punktfunk/2` only.
+/// binds its credential to; empty to a native client. `lilynk/2` only.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Redirect {
     pub addr: String,
@@ -480,10 +480,10 @@ v2_message!(ProfileUnlock = reg::MSG_PROFILE_UNLOCK,
 /// Length of [`unlock_signed_message`].
 pub const UNLOCK_SIGNED_LEN: usize = 152;
 /// First bytes of [`unlock_signed_message`].
-pub const UNLOCK_SIGNED_LABEL: &[u8; 24] = b"punktfunk-seat-unlock-v1";
+pub const UNLOCK_SIGNED_LABEL: &[u8; 24] = b"lilynk-seat-unlock-msg-1";
 
 /// What a profile's unlock key signs, with SHA-256 as the digest:
-/// `"punktfunk-seat-unlock-v1" ‖ challenge ‖ seat id ‖ device fingerprint ‖ box fingerprint`.
+/// `"lilynk-seat-unlock-msg-1" ‖ challenge ‖ seat id ‖ device fingerprint ‖ box fingerprint`.
 /// `seat_id` is the `SeatId`'s 32 lowercase hex characters; the fingerprints are SHA-256 of the
 /// device's certificate and of the box's as this client pinned it. `InvalidArg` for any other
 /// seat id.
@@ -513,10 +513,10 @@ pub fn unlock_signed_message(
 /// Length of [`profile_unlock_signed_message`].
 pub const PROFILE_UNLOCK_SIGNED_LEN: usize = 187;
 /// First bytes of [`profile_unlock_signed_message`].
-pub const PROFILE_UNLOCK_SIGNED_LABEL: &[u8; 27] = b"punktfunk-profile-unlock-v1";
+pub const PROFILE_UNLOCK_SIGNED_LABEL: &[u8; 27] = b"lilynk-profile-unlock-msg-1";
 
 /// What a locked profile's unlock key signs, with SHA-256 as the digest:
-/// `"punktfunk-profile-unlock-v1" ‖ challenge ‖ profile id ‖ device fingerprint ‖ box
+/// `"lilynk-profile-unlock-msg-1" ‖ challenge ‖ profile id ‖ device fingerprint ‖ box
 /// fingerprint`. The id is its ASCII, zero bytes after it to [`PROFILE_ID_MAX`]; the rest is
 /// [`unlock_signed_message`]'s. `InvalidArg` for an id that is not 1 to 64 of `[A-Za-z0-9_-]`.
 pub fn profile_unlock_signed_message(
@@ -1622,7 +1622,7 @@ mod tests {
         .unwrap();
         assert_eq!(
             crate::fp::hex(&sha2::Sha256::digest(m).into()),
-            "31de46821f3058729b14c3585ad13159085ecb0d18c87194a34b1bddc8ddc31a"
+            "70c89c17d9a34295d3cb6f6ebc2336daef54ee2fda37957eac2b0cb81396b089"
         );
         for bad in [
             "0123456789ABCDEF0123456789abcdef",

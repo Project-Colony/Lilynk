@@ -149,7 +149,7 @@ Remove "Demo Host" from its host page to hide it again.
 
 WHY THE APP ASKS FOR WHAT IT ASKS FOR
 
-- Local Network: finds hosts via Bonjour (_punktfunk._udp) and connects to them -- the app's
+- Local Network: finds hosts via Bonjour (_lilynk._udp) and connects to them -- the app's
   entire purpose. The demo needs no permission.
 - Microphone (optional, off by default): audio goes to the user's own paired host, appearing
   there as a virtual microphone for voice chat. Never recorded, never sent to us.

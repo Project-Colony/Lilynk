@@ -270,7 +270,7 @@ class MainActivity : FragmentActivity() {
         private set
 
     /**
-     * A `punktfunk://` URL waiting to be routed — set from the VIEW intent that started (or
+     * A `lilynk://` URL waiting to be routed — set from the VIEW intent that started (or
      * re-entered) this activity, cleared by whoever handles it. Compose observes it.
      *
      * Read in BOTH [onCreate] and [onNewIntent] on purpose: `launchMode` is `standard`, so a second
@@ -423,7 +423,7 @@ class MainActivity : FragmentActivity() {
     }
 
     /**
-     * The link of a VIEW intent, or null: a `punktfunk://` URL, or the launcher file a frontend
+     * The link of a VIEW intent, or null: a `lilynk://` URL, or the launcher file a frontend
      * hands over as `content://` (read now, while its grant holds). Only VIEW: the launcher's MAIN
      * intent carries no data, and nothing else may inject a URL into the router.
      */

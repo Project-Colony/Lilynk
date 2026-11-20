@@ -290,7 +290,7 @@ mod tests {
         assert_eq!(addrs(&acc), [("b", "10.0.0.2")]);
     }
 
-    const VALID: &str = "punktfunk://connect/Desk";
+    const VALID: &str = "lilynk://connect/Desk";
 
     #[test]
     fn a_link_dials_from_an_idle_screen_and_holds_on_a_session() {
@@ -327,7 +327,7 @@ mod tests {
 
     #[test]
     fn a_bad_link_is_refused_on_an_idle_screen() {
-        let msg = deeplink::parse("punktfunk://pair").unwrap_err().message();
+        let msg = deeplink::parse("lilynk://pair").unwrap_err().message();
         assert_eq!(
             msg,
             "Pairing can't be done from a link \u{2014} pair the host in Lilynk first."
@@ -339,7 +339,7 @@ mod tests {
             Screen::Pair,
         ] {
             assert_eq!(
-                gate_link("punktfunk://pair", &s, false),
+                gate_link("lilynk://pair", &s, false),
                 LinkGate::Refuse(msg.clone())
             );
         }
@@ -355,7 +355,7 @@ mod tests {
 
     #[test]
     fn a_bad_link_during_a_connect_leaves_the_screen() {
-        let msg = deeplink::parse("punktfunk://pair").unwrap_err().message();
+        let msg = deeplink::parse("lilynk://pair").unwrap_err().message();
         for s in [
             Screen::Stream,
             Screen::Connecting,
@@ -363,12 +363,12 @@ mod tests {
             Screen::RequestAccess,
         ] {
             assert_eq!(
-                gate_link("punktfunk://pair", &s, false),
+                gate_link("lilynk://pair", &s, false),
                 LinkGate::Hold(msg.clone())
             );
         }
         assert_eq!(
-            gate_link("punktfunk://pair", &Screen::Home, true),
+            gate_link("lilynk://pair", &Screen::Home, true),
             LinkGate::Hold(msg)
         );
     }

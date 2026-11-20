@@ -1,4 +1,4 @@
-// What a `punktfunk://` link is allowed to do. The connect and browse routes share these rules,
+// What a `lilynk://` link is allowed to do. The connect and browse routes share these rules,
 // and a test holds them to the same verdict.
 
 import XCTest
@@ -23,7 +23,7 @@ final class DeepLinkRouterTests: XCTestCase {
     func testAnIdNamedHostProceeds() throws {
         let saved = host()
         let out = DeepLinkRouter.resolve(
-            link: try link("punktfunk://connect/\(saved.id.uuidString)"),
+            link: try link("lilynk://connect/\(saved.id.uuidString)"),
             hosts: [saved], catalog: PresetCatalog(presets: []), session: idle, browse: false)
         guard case .proceed(let h, let selection) = out else { return XCTFail("got \(out)") }
         XCTAssertEqual(h.id, saved.id)
@@ -34,7 +34,7 @@ final class DeepLinkRouterTests: XCTestCase {
         // A label is something anything that can open a URL could guess, so it costs a tap.
         let saved = host("Desk")
         let out = DeepLinkRouter.resolve(
-            link: try link("punktfunk://connect/Desk"),
+            link: try link("lilynk://connect/Desk"),
             hosts: [saved], catalog: PresetCatalog(presets: []), session: idle, browse: false)
         guard case .confirm = out else { return XCTFail("a guessable ref must confirm, got \(out)") }
     }
@@ -43,7 +43,7 @@ final class DeepLinkRouterTests: XCTestCase {
         let saved = host(pin: Data(repeating: 0xAB, count: 32))
         let other = String(repeating: "cd", count: 32)
         let out = DeepLinkRouter.resolve(
-            link: try link("punktfunk://connect/\(saved.id.uuidString)?fp=\(other)"),
+            link: try link("lilynk://connect/\(saved.id.uuidString)?fp=\(other)"),
             hosts: [saved], catalog: PresetCatalog(presets: []), session: idle, browse: false)
         guard case .notice(let text) = out else { return XCTFail("got \(out)") }
         XCTAssertTrue(text.contains("fingerprint"), text)
@@ -55,7 +55,7 @@ final class DeepLinkRouterTests: XCTestCase {
         let busy = DeepLinkRouter.SessionState(
             isIdle: false, activeHostID: other.id, activeHostName: other.displayName)
         let out = DeepLinkRouter.resolve(
-            link: try link("punktfunk://connect/\(saved.id.uuidString)"),
+            link: try link("lilynk://connect/\(saved.id.uuidString)"),
             hosts: [saved, other], catalog: PresetCatalog(presets: []),
             session: busy, browse: false)
         guard case .notice(let text) = out else { return XCTFail("got \(out)") }
@@ -67,7 +67,7 @@ final class DeepLinkRouterTests: XCTestCase {
         let busy = DeepLinkRouter.SessionState(
             isIdle: false, activeHostID: saved.id, activeHostName: saved.displayName)
         let out = DeepLinkRouter.resolve(
-            link: try link("punktfunk://connect/\(saved.id.uuidString)"),
+            link: try link("lilynk://connect/\(saved.id.uuidString)"),
             hosts: [saved], catalog: PresetCatalog(presets: []), session: busy, browse: false)
         XCTAssertEqual(out, .alreadyHere)
     }
@@ -76,7 +76,7 @@ final class DeepLinkRouterTests: XCTestCase {
         // The quiet degrade is the dangerous one: it streams with settings nobody asked for.
         let saved = host()
         let out = DeepLinkRouter.resolve(
-            link: try link("punktfunk://connect/\(saved.id.uuidString)?preset=Nope"),
+            link: try link("lilynk://connect/\(saved.id.uuidString)?preset=Nope"),
             hosts: [saved], catalog: PresetCatalog(presets: []), session: idle, browse: false)
         guard case .notice(let text) = out else { return XCTFail("got \(out)") }
         XCTAssertTrue(text.contains("Nope"), text)
@@ -88,9 +88,9 @@ final class DeepLinkRouterTests: XCTestCase {
         let other = String(repeating: "cd", count: 32)
         // An UNSAVED host is the one deliberate difference (asserted below), so it is not here.
         let cases = [
-            "punktfunk://connect/\(saved.id.uuidString)?fp=\(other)",
-            "punktfunk://connect/\(saved.id.uuidString)?preset=Nope",
-            "punktfunk://connect/Desk?fp=\(other)",
+            "lilynk://connect/\(saved.id.uuidString)?fp=\(other)",
+            "lilynk://connect/\(saved.id.uuidString)?preset=Nope",
+            "lilynk://connect/Desk?fp=\(other)",
         ]
         for raw in cases {
             let parsed = try link(raw)
@@ -108,7 +108,7 @@ final class DeepLinkRouterTests: XCTestCase {
         // The one place the two are meant to differ: a library rides the paired identity, so
         // there is nothing to show before the host is saved, while a connect can at least name
         // the address the link pointed at.
-        let parsed = try link("punktfunk://connect/nosuchhost")
+        let parsed = try link("lilynk://connect/nosuchhost")
         let empty = PresetCatalog(presets: [])
         let connect = DeepLinkRouter.resolve(
             link: parsed, hosts: [], catalog: empty, session: idle, browse: false)

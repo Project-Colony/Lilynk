@@ -16,7 +16,7 @@ pub(crate) async fn connect_pair() -> (
         (server, conn)
     });
     let client_conn = client
-        .connect(addr, "punktfunk")
+        .connect(addr, "lilynk")
         .unwrap()
         .await
         .expect("client side connects");

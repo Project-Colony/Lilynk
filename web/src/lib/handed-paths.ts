@@ -10,7 +10,7 @@ export interface HandedPath {
 }
 
 /** Carries a save's {@link Handover} to the console's server, as URI-encoded JSON. */
-export const GRANT_HEADER = "x-punktfunk-grant";
+export const GRANT_HEADER = "x-lilynk-grant";
 
 /** What one save hands over: the new paths the operator confirms, and, when the save drops a
  * path, every path the form still hands over (`null` otherwise). */
