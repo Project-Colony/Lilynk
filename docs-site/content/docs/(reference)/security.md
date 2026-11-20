@@ -231,7 +231,7 @@ it:
 
 ## Reporting a vulnerability
 
-**Email [security@punktfunk.com](mailto:security@punktfunk.com).** Don't open a public issue, pull
+**Report it privately through the [advisory form](https://github.com/Project-Colony/Lilynk/security/advisories/new).** Don't open a public issue, pull
 request or chat post — that exposes other users before a fix exists. Include the component and
 version (for example `lilynk-host 0.39.0` on Windows, and which client), the impact and the
 attacker's position (same LAN, paired client, local account, admin), and steps to reproduce or a

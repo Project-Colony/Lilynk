@@ -13,7 +13,7 @@ the tracker holds bugs and agreed work. A bug reported on improve unom gets its 
 itself ([Reporting an Issue](/docs/report-an-issue)). A new
 player-facing setting needs the maintainer's yes first
 ([docs/settings.md](https://github.com/Project-Colony/Lilynk/blob/main/docs/settings.md)).
-Security reports go to **security@punktfunk.com**, never to an issue.
+Security reports go through the [advisory form](https://github.com/Project-Colony/Lilynk/security/advisories/new), never to an issue.
 
 ## Git hooks
 

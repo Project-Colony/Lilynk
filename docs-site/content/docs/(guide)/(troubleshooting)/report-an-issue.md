@@ -6,7 +6,8 @@ description: Send a client's log to its host, export everything as one file from
 Build one file with the host's log, its health checks and your client's log, and attach it to a bug
 report.
 
-> **Security problem?** Don't open a public issue — email **security@punktfunk.com**
+> **Security problem?** Don't open a public issue: report it through the
+> [advisory form](https://github.com/Project-Colony/Lilynk/security/advisories/new)
 > ([SECURITY.md](https://github.com/Project-Colony/Lilynk/blob/main/SECURITY.md)).
 
 ## 1. Reproduce it, and keep the app open
